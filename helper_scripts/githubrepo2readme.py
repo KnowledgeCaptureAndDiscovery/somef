@@ -5,9 +5,18 @@
 import sys
 import re
 import requests
+import pandas as pd
 
-for line in sys.stdin:
-    url = line.strip()
+if (len(sys.argv) == 1):
+    sys.exit()
+csv_files = sys.argv[1:]
+urls = set()
+for csv in csv_files:
+    df = pd.read_csv(csv)
+    urls = urls|set(df.URL)
+print(urls)
+
+for url in urls:
     regex=re.compile('((git@|http(s)?:\/\/)([\w\.@]+)(\/|:))([\w,\-,\_]+)\/([\w,\-,\_]+)(.git){0,1}((\/){0,1})')
     owner = regex.findall(url)[0][5]
     repo = regex.findall(url)[0][6]
