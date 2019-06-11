@@ -1,0 +1,36 @@
+URL,excerpt
+https://github.com/tensorflow/tensorflow,"TensorFlow is an open source software library for numerical computation using data flow graphs. The graph nodes represent mathematical operations, while the graph edges represent the multidimensional data arrays (tensors) that flow between them. This flexible architecture enables you to deploy computation to one or more CPUs or GPUs in a desktop, server, or mobile device without rewriting code. TensorFlow also includes TensorBoard, a data visualization toolkit."
+https://github.com/tensorflow/tensorflow,"TensorFlow was originally developed by researchers and engineers working on the Google Brain team within Google's Machine Intelligence Research organization for the purposes of conducting machine learning and deep neural networks research. The system is general enough to be applicable in a wide variety of other domains, as well."
+https://github.com/tensorflow/tensorflow,"TensorFlow provides stable Python and C APIs as well as non-guaranteed backwards compatible API's for C++, Go, Java, JavaScript, and Swift."
+https://github.com/hiroharu-kato/neural_renderer,"This is code for the paper Neural 3D Mesh Renderer by Hiroharu Kato, Yoshitaka Ushiku, and Tatsuya Harada."
+https://github.com/hiroharu-kato/neural_renderer,"For more details, please visit project page."
+https://github.com/hiroharu-kato/neural_renderer,This repository only contains the core component and simple examples. Related repositories are:
+https://github.com/hiroharu-kato/neural_renderer,Neural Renderer (this repository)
+https://github.com/hiroharu-kato/neural_renderer,Single-image 3D mesh reconstruction
+https://github.com/hiroharu-kato/neural_renderer,2D-to-3D style transfer
+https://github.com/hiroharu-kato/neural_renderer,3D DeepDream
+https://github.com/hiroharu-kato/neural_renderer,For PyTorch users
+https://github.com/hiroharu-kato/neural_renderer,"This code is written in Chainer. For PyTorch users, there are two options."
+https://github.com/hiroharu-kato/neural_renderer,"Angjoo Kanazawa & Shubham Tulsiani provides PyTorch wrapper of our renderer used in their work ""Learning Category-Specific Mesh Reconstruction from Image Collections"" (ECCV 2018)."
+https://github.com/hiroharu-kato/neural_renderer,"Nikos Kolotouros provides PyTorch re-implementation of our renderer, which does not require installation of Chainer / CuPy."
+https://github.com/hiroharu-kato/neural_renderer,I'm grateful to these researchers for writing and releasing their codes.
+https://github.com/google/sg2im/,This is the code for the paper
+https://github.com/google/sg2im/,Image Generation from Scene Graphs
+https://github.com/google/sg2im/,"Justin Johnson, Agrim Gupta, Li Fei-Fei"
+https://github.com/google/sg2im/,Presented at CVPR 2018
+https://github.com/google/sg2im/,Please note that this is not an officially supported Google product.
+https://github.com/google/sg2im/,A scene graph is a structured representation of a visual scene where nodes represent objects in the scene and edges represent relationships between objects. In this paper we present and end-to-end neural network model that inputs a scene graph and outputs an image.
+https://github.com/google/sg2im/,Below we show some example scene graphs along with images generated from those scene graphs using our model. By modifying the input scene graph we can exercise fine-grained control over the objects in the generated image.
+https://github.com/google/sg2im/,Model
+https://github.com/google/sg2im/,"The input scene graph is processed with a graph convolution network which passes information along edges to compute embedding vectors for all objects. These vectors are used to predict bounding boxes and segmentation masks for all objects, which are combined to form a coarse scene layout. The layout is passed to a cascaded refinement network (Chen an Koltun, ICCV 2017) which generates an output image at increasing spatial scales. The model is trained adversarially against a pair of discriminator networks which ensure that output images look realistic."
+https://github.com/albertpumarola/GANimation,"Official implementation of GANimation. In this work we introduce a novel GAN conditioning scheme based on Action Units (AU) annotations, which describe in a continuous manifold the anatomical facial movements defining a human expression. Our approach permits controlling the magnitude of activation of each AU and combine several of them. For more information please refer to the paper."
+https://github.com/albertpumarola/GANimation,This code was made public to share our research for the benefit of the scientific community. Do NOT use it for immoral purposes.
+https://github.com/wuhuikai/DeepGuidedFilter,Official implementation of Fast End-to-End Trainable Guided Filter.
+https://github.com/wuhuikai/DeepGuidedFilter,"Faster, Better and Lighter for image processing and dense prediction."
+https://github.com/wuhuikai/DeepGuidedFilter,Overview
+https://github.com/wuhuikai/DeepGuidedFilter,DeepGuidedFilter is the author's implementation of the deep learning building block for joint upsampling described in:
+https://github.com/wuhuikai/DeepGuidedFilter,Fast End-to-End Trainable Guided Filter
+https://github.com/wuhuikai/DeepGuidedFilter,"Huikai Wu, Shuai Zheng, Junge Zhang, Kaiqi Huang"
+https://github.com/wuhuikai/DeepGuidedFilter,CVPR 2018
+https://github.com/wuhuikai/DeepGuidedFilter,"Given a reference image pair in high-resolution and low-resolution, our algorithm generates high-resolution target from the low-resolution input. Through joint training with CNNs, our algorithm achieves the state-of-the-art performance while runs 10-100 times faster."
+https://github.com/NVIDIA/vid2vid,"Pytorch implementation for high-resolution (e.g., 2048x1024) photorealistic video-to-video translation. It can be used for turning semantic label maps into photo-realistic videos, synthesizing people talking from edge maps, or generating human motions from poses. The core of video-to-video translation is image-to-image translation. Some of our work in that space can be found in pix2pixHD and SPADE. "

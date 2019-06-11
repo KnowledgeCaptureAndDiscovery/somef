@@ -1,0 +1,80 @@
+URL,excerpt
+https://github.com/tensorflow/tensorflow,Try your first TensorFlow program
+https://github.com/tensorflow/tensorflow,$ python
+https://github.com/tensorflow/tensorflow,>>> import tensorflow as tf
+https://github.com/tensorflow/tensorflow,>>> tf.enable_eager_execution()
+https://github.com/tensorflow/tensorflow,">>> tf.add(1, 2).numpy()"
+https://github.com/tensorflow/tensorflow,3
+https://github.com/tensorflow/tensorflow,">>> hello = tf.constant('Hello, TensorFlow!')"
+https://github.com/tensorflow/tensorflow,>>> hello.numpy()
+https://github.com/tensorflow/tensorflow,"'Hello, TensorFlow!'"
+https://github.com/tensorflow/tensorflow,Learn more examples about how to do specific tasks in TensorFlow at the tutorials page of tensorflow.org.
+https://github.com/hiroharu-kato/neural_renderer,Running examples
+https://github.com/hiroharu-kato/neural_renderer,python ./examples/example1.py
+https://github.com/hiroharu-kato/neural_renderer,python ./examples/example2.py
+https://github.com/hiroharu-kato/neural_renderer,python ./examples/example3.py
+https://github.com/hiroharu-kato/neural_renderer,python ./examples/example4.py
+https://github.com/albertpumarola/GANimation,Data Preparation
+https://github.com/albertpumarola/GANimation,The code requires a directory containing the following files:
+https://github.com/albertpumarola/GANimation,imgs/: folder with all image
+https://github.com/albertpumarola/GANimation,aus_openface.pkl: dictionary containing the images action units.
+https://github.com/albertpumarola/GANimation,train_ids.csv: file containing the images names to be used to train.
+https://github.com/albertpumarola/GANimation,test_ids.csv: file containing the images names to be used to test.
+https://github.com/albertpumarola/GANimation,An example of this directory is shown in sample_dataset/.
+https://github.com/albertpumarola/GANimation,To generate the aus_openface.pkl extract each image Action Units with OpenFace and store each output in a csv file the same name as the image. Then run:
+https://github.com/albertpumarola/GANimation,python data/prepare_au_annotations.py
+https://github.com/albertpumarola/GANimation,Run
+https://github.com/albertpumarola/GANimation,To train:
+https://github.com/albertpumarola/GANimation,bash launch/run_train.sh
+https://github.com/albertpumarola/GANimation,To test:
+https://github.com/albertpumarola/GANimation,python test --input_path path/to/img
+https://github.com/wuhuikai/DeepGuidedFilter,cd ImageProcessing/DeepGuidedFilteringNetwork
+https://github.com/wuhuikai/DeepGuidedFilter,python predict.py  --task auto_ps \
+https://github.com/wuhuikai/DeepGuidedFilter,--img_path ../../images/auto_ps.jpg \
+https://github.com/wuhuikai/DeepGuidedFilter,--save_folder . \
+https://github.com/wuhuikai/DeepGuidedFilter,--model deep_guided_filter_advanced \
+https://github.com/wuhuikai/DeepGuidedFilter,--low_size 64 \
+https://github.com/wuhuikai/DeepGuidedFilter,--gpu 0
+https://github.com/wuhuikai/DeepGuidedFilter,See Here or python predict.py -h for more details.
+https://github.com/wuhuikai/DeepGuidedFilter,Semantic Segmentation with Deeplab-Resnet
+https://github.com/wuhuikai/DeepGuidedFilter,Enter the directory.
+https://github.com/wuhuikai/DeepGuidedFilter,cd ComputerVision/Deeplab-Resnet
+https://github.com/wuhuikai/DeepGuidedFilter,Download the pretrained model [Google Drive|BaiduYunPan].
+https://github.com/wuhuikai/DeepGuidedFilter,Run it now !
+https://github.com/wuhuikai/DeepGuidedFilter,python predict_dgf.py --img_path ../../images/segmentation.jpg --snapshots [MODEL_PATH]
+https://github.com/wuhuikai/DeepGuidedFilter,Note:
+https://github.com/wuhuikai/DeepGuidedFilter,Result is in ../../images.
+https://github.com/wuhuikai/DeepGuidedFilter,Run python predict_dgf.py -h for more details.
+https://github.com/wuhuikai/DeepGuidedFilter,Saliency Detection with DSS
+https://github.com/wuhuikai/DeepGuidedFilter,Enter the directory.
+https://github.com/wuhuikai/DeepGuidedFilter,cd ComputerVision/Saliency_DSS
+https://github.com/wuhuikai/DeepGuidedFilter,Download the pretrained model [Google Drive|BaiduYunPan].
+https://github.com/wuhuikai/DeepGuidedFilter,Try it now !
+https://github.com/wuhuikai/DeepGuidedFilter,python predict.py --im_path ../../images/saliency.jpg \
+https://github.com/wuhuikai/DeepGuidedFilter,--netG [MODEL_PATH] \
+https://github.com/wuhuikai/DeepGuidedFilter,--thres 161 \
+https://github.com/wuhuikai/DeepGuidedFilter,--dgf --nn_dgf \
+https://github.com/wuhuikai/DeepGuidedFilter,--post_sigmoid --cuda
+https://github.com/wuhuikai/DeepGuidedFilter,Note:
+https://github.com/wuhuikai/DeepGuidedFilter,Result is in ../../images.
+https://github.com/wuhuikai/DeepGuidedFilter,See Here or python predict.py -h for more details.
+https://github.com/wuhuikai/DeepGuidedFilter,Monocular Depth Estimation (TensorFlow version)
+https://github.com/wuhuikai/DeepGuidedFilter,Enter the directory.
+https://github.com/wuhuikai/DeepGuidedFilter,cd ComputerVision/MonoDepth
+https://github.com/wuhuikai/DeepGuidedFilter,Download and Unzip Pretrained Model [Google Drive|BaiduYunPan]
+https://github.com/wuhuikai/DeepGuidedFilter,Run on an Image !
+https://github.com/wuhuikai/DeepGuidedFilter,python monodepth_simple.py --image_path ../../images/depth.jpg --checkpoint_path [MODEL_PATH] --guided_filter
+https://github.com/wuhuikai/DeepGuidedFilter,Note:
+https://github.com/wuhuikai/DeepGuidedFilter,Result is in ../../images.
+https://github.com/wuhuikai/DeepGuidedFilter,See Here or python monodepth_simple.py -h for more details.
+https://github.com/wuhuikai/DeepGuidedFilter,Usage
+https://github.com/wuhuikai/DeepGuidedFilter,PyTorch Version
+https://github.com/wuhuikai/DeepGuidedFilter,from guided_filter_pytorch.guided_filter import FastGuidedFilter
+https://github.com/wuhuikai/DeepGuidedFilter,"hr_y = FastGuidedFilter(r, eps)(lr_x, lr_y, hr_x)"
+https://github.com/wuhuikai/DeepGuidedFilter,from guided_filter_pytorch.guided_filter import GuidedFilter
+https://github.com/wuhuikai/DeepGuidedFilter,"hr_y = GuidedFilter(r, eps)(hr_x, init_hr_y)"
+https://github.com/wuhuikai/DeepGuidedFilter,Tensorflow Version
+https://github.com/wuhuikai/DeepGuidedFilter,from guided_filter_tf.guided_filter import fast_guided_filter
+https://github.com/wuhuikai/DeepGuidedFilter,"hr_y = fast_guided_filter(lr_x, lr_y, hr_x, r, eps, nhwc)"
+https://github.com/wuhuikai/DeepGuidedFilter,from guided_filter_tf.guided_filter import guided_filter
+https://github.com/wuhuikai/DeepGuidedFilter,"hr_y = guided_filter(hr_x, init_hr_y, r, eps, nhwc)"
