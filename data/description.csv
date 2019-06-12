@@ -1,7 +1,38 @@
 URL,excerpt
-https://github.com/tensorflow/tensorflow,"TensorFlow is an open source software library for numerical computation using data flow graphs. The graph nodes represent mathematical operations, while the graph edges represent the multidimensional data arrays (tensors) that flow between them. This flexible architecture enables you to deploy computation to one or more CPUs or GPUs in a desktop, server, or mobile device without rewriting code. TensorFlow also includes TensorBoard, a data visualization toolkit."
-https://github.com/tensorflow/tensorflow,"TensorFlow was originally developed by researchers and engineers working on the Google Brain team within Google's Machine Intelligence Research organization for the purposes of conducting machine learning and deep neural networks research. The system is general enough to be applicable in a wide variety of other domains, as well."
-https://github.com/tensorflow/tensorflow,"TensorFlow provides stable Python and C APIs as well as non-guaranteed backwards compatible API's for C++, Go, Java, JavaScript, and Swift."
+https://github.com/NVIDIA/vid2vid,"Pytorch implementation for high-resolution (e.g., 2048x1024) photorealistic video-to-video translation. It can be used for turning semantic label maps into photo-realistic videos, synthesizing people talking from edge maps, or generating human motions from poses. The core of video-to-video translation is image-to-image translation. Some of our work in that space can be found in pix2pixHD and SPADE. "
+https://github.com/albertpumarola/GANimation,"Official implementation of GANimation. In this work we introduce a novel GAN conditioning scheme based on Action Units (AU) annotations, which describe in a continuous manifold the anatomical facial movements defining a human expression. Our approach permits controlling the magnitude of activation of each AU and combine several of them. For more information please refer to the paper."
+https://github.com/albertpumarola/GANimation,This code was made public to share our research for the benefit of the scientific community. Do NOT use it for immoral purposes.
+https://github.com/driving-behavior/DBNet,Introduction
+https://github.com/driving-behavior/DBNet,"This work is based on our research paper, which appears in CVPR 2018. We propose a large-scale dataset for driving behavior learning, namely, DBNet. You can also check our dataset webpage for a deeper introduction."
+https://github.com/driving-behavior/DBNet,"In this repository, we release demo code and partial prepared data for training with only images, as well as leveraging feature maps or point clouds. The prepared data are accessible here. (More demo models and scripts are released soon!)"
+https://github.com/driving-behavior/DBNet,"This baseline is run on dbnet-2018 challenge data and only nvidia_pn is tested. To measure difficult architectures comprehensively, several metrics are set, including accuracy under different thresholds, area under curve (AUC), max error (ME), mean error (AE) and mean of max errors (AME)."
+https://github.com/driving-behavior/DBNet,The implementations of these metrics could be found in evaluate.py.
+https://github.com/facebookresearch/Detectron/,"Detectron is Facebook AI Research's software system that implements state-of-the-art object detection algorithms, including Mask R-CNN. It is written in Python and powered by the Caffe2 deep learning framework."
+https://github.com/facebookresearch/Detectron/,"At FAIR, Detectron has enabled numerous research projects, including: Feature Pyramid Networks for Object Detection, Mask R-CNN, Detecting and Recognizing Human-Object Interactions, Focal Loss for Dense Object Detection, Non-local Neural Networks, Learning to Segment Every Thing, Data Distillation: Towards Omni-Supervised Learning, DensePose: Dense Human Pose Estimation In The Wild, and Group Normalization."
+https://github.com/facebookresearch/Detectron/,"The goal of Detectron is to provide a high-quality, high-performance codebase for object detection research. It is designed to be flexible in order to support rapid implementation and evaluation of novel research. Detectron includes implementations of the following object detection algorithms:"
+https://github.com/facebookresearch/Detectron/,Mask R-CNN -- Marr Prize at ICCV 2017
+https://github.com/facebookresearch/Detectron/,RetinaNet -- Best Student Paper Award at ICCV 2017
+https://github.com/facebookresearch/Detectron/,Faster R-CNN
+https://github.com/facebookresearch/Detectron/,RPN
+https://github.com/facebookresearch/Detectron/,Fast R-CNN
+https://github.com/facebookresearch/Detectron/,R-FCN
+https://github.com/facebookresearch/Detectron/,using the following backbone network architectures:
+https://github.com/facebookresearch/Detectron/,"ResNeXt{50,101,152}"
+https://github.com/facebookresearch/Detectron/,"ResNet{50,101,152}"
+https://github.com/facebookresearch/Detectron/,Feature Pyramid Networks (with ResNet/ResNeXt)
+https://github.com/facebookresearch/Detectron/,VGG16
+https://github.com/facebookresearch/Detectron/,"Additional backbone architectures may be easily implemented. For more details about these models, please see References below."
+https://github.com/google/sg2im/,This is the code for the paper
+https://github.com/google/sg2im/,Image Generation from Scene Graphs
+https://github.com/google/sg2im/,"Justin Johnson, Agrim Gupta, Li Fei-Fei"
+https://github.com/google/sg2im/,Presented at CVPR 2018
+https://github.com/google/sg2im/,Please note that this is not an officially supported Google product.
+https://github.com/google/sg2im/,A scene graph is a structured representation of a visual scene where nodes represent objects in the scene and edges represent relationships between objects. In this paper we present and end-to-end neural network model that inputs a scene graph and outputs an image.
+https://github.com/google/sg2im/,Below we show some example scene graphs along with images generated from those scene graphs using our model. By modifying the input scene graph we can exercise fine-grained control over the objects in the generated image.
+https://github.com/google/sg2im/,Model
+https://github.com/google/sg2im/,"The input scene graph is processed with a graph convolution network which passes information along edges to compute embedding vectors for all objects. These vectors are used to predict bounding boxes and segmentation masks for all objects, which are combined to form a coarse scene layout. The layout is passed to a cascaded refinement network (Chen an Koltun, ICCV 2017) which generates an output image at increasing spatial scales. The model is trained adversarially against a pair of discriminator networks which ensure that output images look realistic."
+https://github.com/hezhangsprinter/DID-MDN,"We present a novel density-aware multi-stream densely connected convolutional neural network-based algorithm, called DID-MDN, for joint rain density estimation and de-raining. The proposed method enables the network itself to automatically determine the rain-density information and then efficiently remove the corresponding rain-streaks guided by the estimated rain-density label. To better characterize rain-streaks with dif- ferent scales and shapes, a multi-stream densely connected de-raining network is proposed which efficiently leverages features from different scales. Furthermore, a new dataset containing images with rain-density labels is created and used to train the proposed density-aware network."
+https://github.com/hezhangsprinter/DID-MDN,"To reproduce the quantitative results shown in the paper, please save both generated and target using python demo.py into the .png format and then test using offline tool such as the PNSR and SSIM measurement in Python or Matlab. In addition, please use netG.train() for testing since the batch for training is 1."
 https://github.com/hiroharu-kato/neural_renderer,"This is code for the paper Neural 3D Mesh Renderer by Hiroharu Kato, Yoshitaka Ushiku, and Tatsuya Harada."
 https://github.com/hiroharu-kato/neural_renderer,"For more details, please visit project page."
 https://github.com/hiroharu-kato/neural_renderer,This repository only contains the core component and simple examples. Related repositories are:
@@ -14,17 +45,47 @@ https://github.com/hiroharu-kato/neural_renderer,"This code is written in Chaine
 https://github.com/hiroharu-kato/neural_renderer,"Angjoo Kanazawa & Shubham Tulsiani provides PyTorch wrapper of our renderer used in their work ""Learning Category-Specific Mesh Reconstruction from Image Collections"" (ECCV 2018)."
 https://github.com/hiroharu-kato/neural_renderer,"Nikos Kolotouros provides PyTorch re-implementation of our renderer, which does not require installation of Chainer / CuPy."
 https://github.com/hiroharu-kato/neural_renderer,I'm grateful to these researchers for writing and releasing their codes.
-https://github.com/google/sg2im/,This is the code for the paper
-https://github.com/google/sg2im/,Image Generation from Scene Graphs
-https://github.com/google/sg2im/,"Justin Johnson, Agrim Gupta, Li Fei-Fei"
-https://github.com/google/sg2im/,Presented at CVPR 2018
-https://github.com/google/sg2im/,Please note that this is not an officially supported Google product.
-https://github.com/google/sg2im/,A scene graph is a structured representation of a visual scene where nodes represent objects in the scene and edges represent relationships between objects. In this paper we present and end-to-end neural network model that inputs a scene graph and outputs an image.
-https://github.com/google/sg2im/,Below we show some example scene graphs along with images generated from those scene graphs using our model. By modifying the input scene graph we can exercise fine-grained control over the objects in the generated image.
-https://github.com/google/sg2im/,Model
-https://github.com/google/sg2im/,"The input scene graph is processed with a graph convolution network which passes information along edges to compute embedding vectors for all objects. These vectors are used to predict bounding boxes and segmentation masks for all objects, which are combined to form a coarse scene layout. The layout is passed to a cascaded refinement network (Chen an Koltun, ICCV 2017) which generates an output image at increasing spatial scales. The model is trained adversarially against a pair of discriminator networks which ensure that output images look realistic."
-https://github.com/albertpumarola/GANimation,"Official implementation of GANimation. In this work we introduce a novel GAN conditioning scheme based on Action Units (AU) annotations, which describe in a continuous manifold the anatomical facial movements defining a human expression. Our approach permits controlling the magnitude of activation of each AU and combine several of them. For more information please refer to the paper."
-https://github.com/albertpumarola/GANimation,This code was made public to share our research for the benefit of the scientific community. Do NOT use it for immoral purposes.
+https://github.com/hszhao/ICNet,"Based on PSPNet, this repository is build for evaluation in ICNet. For installation, please follow the description in PSPNet repository (support CUDA 7.0/7.5 + cuDNN v4)."
+https://github.com/hszhao/ICNet,Results:
+https://github.com/hszhao/ICNet,Prediction results will show in folder 'evaluation/mc_result' and the expected scores are:
+https://github.com/hszhao/ICNet,"ICNet train on trainset for 30K, evaluated on valset (mIoU/pAcc): 67.7/94.5"
+https://github.com/hszhao/ICNet,"ICNet train on trainvalset for 90K, evaluated on testset (mIoU): 69.5"
+https://github.com/hszhao/ICNet,"Log information of inference time will be in file 'time.log', approximately 33~36ms on TitanX."
+https://github.com/hszhao/ICNet,Demo video:
+https://github.com/hszhao/ICNet,Video processed by ICNet on cityscapes dataset:
+https://github.com/hszhao/ICNet,Alpha blending with value as 0.5
+https://github.com/imfunniee/gitfolio,personal website + blog for every github user
+https://github.com/imfunniee/gitfolio,Gitfolio will help you get started with a portfolio website where you could showcase your work + a blog that will help you spread your ideas into real world.
+https://github.com/imfunniee/gitfolio,Check out this live demo to see gitfolio in action.
+https://github.com/kenshohara/3D-ResNets-PyTorch,Assume the structure of data directories is the following:
+https://github.com/kenshohara/3D-ResNets-PyTorch,~/
+https://github.com/kenshohara/3D-ResNets-PyTorch,data/
+https://github.com/kenshohara/3D-ResNets-PyTorch,kinetics_videos/
+https://github.com/kenshohara/3D-ResNets-PyTorch,jpg/
+https://github.com/kenshohara/3D-ResNets-PyTorch,.../ (directories of class names)
+https://github.com/kenshohara/3D-ResNets-PyTorch,.../ (directories of video names)
+https://github.com/kenshohara/3D-ResNets-PyTorch,... (jpg files)
+https://github.com/kenshohara/3D-ResNets-PyTorch,results/
+https://github.com/kenshohara/3D-ResNets-PyTorch,save_100.pth
+https://github.com/kenshohara/3D-ResNets-PyTorch,kinetics.json
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"This repository is implemented by Yuqing Zhu, Shuhao Fu, and Xizhou Zhu, when they are interns at MSRA."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Introduction
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Flow-Guided Feature Aggregation (FGFA) is initially described in an ICCV 2017 paper. It provides an accurate and end-to-end learning framework for video object detection. The proposed FGFA method, together with our previous work of Deep Feature Flow, powered the winning entry of ImageNet VID 2017. It is worth noting that:"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"FGFA improves the per-frame features by aggregating nearby frame features along the motion paths. It significantly improves the object detection accuracy in videos, especially for fast moving objects."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"FGFA is end-to-end trainable for the task of video object detection, which is vital for improving the recognition accuracy."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"We proposed to evaluate the detection accuracy for slow, medium and fast moving objects respectively, for better understanding and analysis of video object detection. The motion-specific evaluation code is included in this repository."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Q: I encounter segment fault at the beginning.
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,A: A compatibility issue has been identified between MXNet and opencv-python 3.0+. We suggest that you always import cv2 first before import mxnet in the entry script.
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Q: I find the training speed becomes slower when training for a long time.
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,A: It has been identified that MXNet on Windows has this problem. So we recommend to run this program on Linux. You could also stop it and resume the training process to regain the training speed if you encounter this problem.
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Q: Can you share your caffe implementation?
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"A: Due to several reasons (code is based on a old, internal Caffe, port to public Caffe needs extra work, time limit, etc.). We do not plan to release our Caffe code. Since a warping layer is easy to implement, anyone who wish to do it is welcome to make a pull request."
+https://github.com/phoenix104104/LapSRN,"The Laplacian Pyramid Super-Resolution Network (LapSRN) is a progressive super-resolution model that super-resolves an low-resolution images in a coarse-to-fine Laplacian pyramid framework. Our method is fast and achieves state-of-the-art performance on five benchmark datasets for 4x and 8x SR. For more details and evaluation results, please check out our project webpage and paper."
+https://github.com/phuang17/DeepMVS,DeepMVS is a Deep Convolutional Neural Network which learns to estimate pixel-wise disparity maps from a sequence of an arbitrary number of unordered images with the camera poses already known or estimated.
+https://github.com/phuang17/DeepMVS,"If you use our codes or datasets in your work, please cite:"
+https://github.com/tensorflow/tensorflow,"TensorFlow is an open source software library for numerical computation using data flow graphs. The graph nodes represent mathematical operations, while the graph edges represent the multidimensional data arrays (tensors) that flow between them. This flexible architecture enables you to deploy computation to one or more CPUs or GPUs in a desktop, server, or mobile device without rewriting code. TensorFlow also includes TensorBoard, a data visualization toolkit."
+https://github.com/tensorflow/tensorflow,"TensorFlow was originally developed by researchers and engineers working on the Google Brain team within Google's Machine Intelligence Research organization for the purposes of conducting machine learning and deep neural networks research. The system is general enough to be applicable in a wide variety of other domains, as well."
+https://github.com/tensorflow/tensorflow,"TensorFlow provides stable Python and C APIs as well as non-guaranteed backwards compatible API's for C++, Go, Java, JavaScript, and Swift."
 https://github.com/wuhuikai/DeepGuidedFilter,Official implementation of Fast End-to-End Trainable Guided Filter.
 https://github.com/wuhuikai/DeepGuidedFilter,"Faster, Better and Lighter for image processing and dense prediction."
 https://github.com/wuhuikai/DeepGuidedFilter,Overview
@@ -33,4 +94,4 @@ https://github.com/wuhuikai/DeepGuidedFilter,Fast End-to-End Trainable Guided Fi
 https://github.com/wuhuikai/DeepGuidedFilter,"Huikai Wu, Shuai Zheng, Junge Zhang, Kaiqi Huang"
 https://github.com/wuhuikai/DeepGuidedFilter,CVPR 2018
 https://github.com/wuhuikai/DeepGuidedFilter,"Given a reference image pair in high-resolution and low-resolution, our algorithm generates high-resolution target from the low-resolution input. Through joint training with CNNs, our algorithm achieves the state-of-the-art performance while runs 10-100 times faster."
-https://github.com/NVIDIA/vid2vid,"Pytorch implementation for high-resolution (e.g., 2048x1024) photorealistic video-to-video translation. It can be used for turning semantic label maps into photo-realistic videos, synthesizing people talking from edge maps, or generating human motions from poses. The core of video-to-video translation is image-to-image translation. Some of our work in that space can be found in pix2pixHD and SPADE. "
+https://github.com/yuhuayc/da-faster-rcnn,"This is the implementation of our CVPR 2018 work 'Domain Adaptive Faster R-CNN for Object Detection in the Wild'. The aim is to improve the cross-domain robustness of object detection, in the screnario where training and test data are drawn from different distributions. The original paper can be found here."

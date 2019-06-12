@@ -1,42 +1,9 @@
 URL,excerpt
-https://github.com/tensorflow/tensorflow,Installation
-https://github.com/tensorflow/tensorflow,To install the current release for CPU-only:
-https://github.com/tensorflow/tensorflow,pip install tensorflow
-https://github.com/tensorflow/tensorflow,Use the GPU package for CUDA-enabled GPU cards:
-https://github.com/tensorflow/tensorflow,pip install tensorflow-gpu
-https://github.com/tensorflow/tensorflow,"See Installing TensorFlow for detailed instructions, and how to build from source."
-https://github.com/tensorflow/tensorflow,People who are a little more adventurous can also try our nightly binaries:
-https://github.com/tensorflow/tensorflow,"Nightly pip packages * We are pleased to announce that TensorFlow now offers nightly pip packages under the tf-nightly and tf-nightly-gpu project on PyPi. Simply run pip install tf-nightly or pip install tf-nightly-gpu in a clean environment to install the nightly TensorFlow build. We support CPU and GPU packages on Linux, Mac, and Windows."
-https://github.com/hiroharu-kato/neural_renderer,Installation
-https://github.com/hiroharu-kato/neural_renderer,sudo python setup.py install
-https://github.com/google/sg2im/,Setup
-https://github.com/google/sg2im/,All code was developed and tested on Ubuntu 16.04 with Python 3.5 and PyTorch 0.4.
-https://github.com/google/sg2im/,You can setup a virtual environment to run the code like this:
-https://github.com/google/sg2im/,python3 -m venv env               # Create a virtual environment
-https://github.com/google/sg2im/,source env/bin/activate           # Activate virtual environment
-https://github.com/google/sg2im/,pip install -r requirements.txt   # Install dependencies
-https://github.com/google/sg2im/,echo $PWD > env/lib/python3.5/site-packages/sg2im.pth  # Add current directory to python path
-https://github.com/google/sg2im/,# Work for a while ...
-https://github.com/google/sg2im/,deactivate  # Exit virtual environment
-https://github.com/albertpumarola/GANimation,Prerequisites
-https://github.com/albertpumarola/GANimation,"Install PyTorch (version 0.3.1), Torch Vision and dependencies from http://pytorch.org"
-https://github.com/albertpumarola/GANimation,Install requirements.txt (pip install -r requirements.txt)
-https://github.com/wuhuikai/DeepGuidedFilter,Prepare Environment
-https://github.com/wuhuikai/DeepGuidedFilter,Download source code from GitHub.
-https://github.com/wuhuikai/DeepGuidedFilter,git clone https://github.com/wuhuikai/DeepGuidedFilter
-https://github.com/wuhuikai/DeepGuidedFilter,cd DeepGuidedFilter && git checkout release
-https://github.com/wuhuikai/DeepGuidedFilter,Install dependencies (PyTorch version).
-https://github.com/wuhuikai/DeepGuidedFilter,conda install opencv
-https://github.com/wuhuikai/DeepGuidedFilter,conda install pytorch=0.2.0 cuda80 -c soumith
-https://github.com/wuhuikai/DeepGuidedFilter,pip install -r requirements.txt
-https://github.com/wuhuikai/DeepGuidedFilter,(Optional) Install dependencies for MonoDepth (Tensorflow version).
-https://github.com/wuhuikai/DeepGuidedFilter,cd ComputerVision/MonoDepth
-https://github.com/wuhuikai/DeepGuidedFilter,pip install -r requirements.txt
-https://github.com/wuhuikai/DeepGuidedFilter,Install Released Version
-https://github.com/wuhuikai/DeepGuidedFilter,PyTorch Version
-https://github.com/wuhuikai/DeepGuidedFilter,pip install guided-filter-pytorch
-https://github.com/wuhuikai/DeepGuidedFilter,Tensorflow Version
-https://github.com/wuhuikai/DeepGuidedFilter,pip install guided-filter-tf
+https://github.com/NVIDIA/vid2vid,Prerequisites
+https://github.com/NVIDIA/vid2vid,Linux or macOS
+https://github.com/NVIDIA/vid2vid,Python 3
+https://github.com/NVIDIA/vid2vid,NVIDIA GPU + CUDA cuDNN
+https://github.com/NVIDIA/vid2vid,PyTorch 0.4
 https://github.com/NVIDIA/vid2vid,Installation
 https://github.com/NVIDIA/vid2vid,Install python libraries dominate and requests.
 https://github.com/NVIDIA/vid2vid,pip install dominate requests
@@ -47,3 +14,133 @@ https://github.com/NVIDIA/vid2vid,Clone this repo:
 https://github.com/NVIDIA/vid2vid,git clone https://github.com/NVIDIA/vid2vid
 https://github.com/NVIDIA/vid2vid,cd vid2vid
 https://github.com/NVIDIA/vid2vid,"Docker Image If you have difficulty building the repo, a docker image can be found in the docker folder."
+https://github.com/albertpumarola/GANimation,Prerequisites
+https://github.com/albertpumarola/GANimation,"Install PyTorch (version 0.3.1), Torch Vision and dependencies from http://pytorch.org"
+https://github.com/albertpumarola/GANimation,Install requirements.txt (pip install -r requirements.txt)
+https://github.com/driving-behavior/DBNet,Requirements
+https://github.com/driving-behavior/DBNet,Tensorflow 1.2.0
+https://github.com/driving-behavior/DBNet,Python 2.7
+https://github.com/driving-behavior/DBNet,CUDA 8.0+ (For GPU)
+https://github.com/driving-behavior/DBNet,"Python Libraries: numpy, scipy and laspy"
+https://github.com/driving-behavior/DBNet,"The code has been tested with Python 2.7, Tensorflow 1.2.0, CUDA 8.0 and cuDNN 5.1 on Ubuntu 14.04. But it may work on more machines (directly or through mini-modification), pull-requests or test report are well welcomed."
+https://github.com/google/sg2im/,Setup
+https://github.com/google/sg2im/,All code was developed and tested on Ubuntu 16.04 with Python 3.5 and PyTorch 0.4.
+https://github.com/google/sg2im/,You can setup a virtual environment to run the code like this:
+https://github.com/google/sg2im/,python3 -m venv env               # Create a virtual environment
+https://github.com/google/sg2im/,source env/bin/activate           # Activate virtual environment
+https://github.com/google/sg2im/,pip install -r requirements.txt   # Install dependencies
+https://github.com/google/sg2im/,echo $PWD > env/lib/python3.5/site-packages/sg2im.pth  # Add current directory to python path
+https://github.com/google/sg2im/,# Work for a while ...
+https://github.com/google/sg2im/,deactivate  # Exit virtual environment
+https://github.com/hezhangsprinter/DID-MDN,Prerequisites:
+https://github.com/hezhangsprinter/DID-MDN,Linux
+https://github.com/hezhangsprinter/DID-MDN,Python 2 or 3
+https://github.com/hezhangsprinter/DID-MDN,CPU or NVIDIA GPU + CUDA CuDNN (CUDA 8.0)
+https://github.com/hezhangsprinter/DID-MDN,Installation:
+https://github.com/hezhangsprinter/DID-MDN,Install PyTorch and dependencies from http://pytorch.org (Ubuntu+Python2.7) (conda install pytorch torchvision -c pytorch)
+https://github.com/hezhangsprinter/DID-MDN,Install Torch vision from the source. (git clone https://github.com/pytorch/vision cd vision python setup.py install)
+https://github.com/hezhangsprinter/DID-MDN,"Install python package: numpy, scipy, PIL, pdb"
+https://github.com/hiroharu-kato/neural_renderer,Installation
+https://github.com/hiroharu-kato/neural_renderer,sudo python setup.py install
+https://github.com/hszhao/ICNet,Clone the repository recursively:
+https://github.com/hszhao/ICNet,git clone --recursive https://github.com/hszhao/ICNet.git
+https://github.com/hszhao/ICNet,Build Caffe and matcaffe:
+https://github.com/hszhao/ICNet,cd $ICNET_ROOT/PSPNet
+https://github.com/hszhao/ICNet,cp Makefile.config.example Makefile.config
+https://github.com/hszhao/ICNet,vim Makefile.config
+https://github.com/hszhao/ICNet,make -j8 && make matcaffe
+https://github.com/hszhao/ICNet,cd ..
+https://github.com/imfunniee/gitfolio,Let's Install
+https://github.com/imfunniee/gitfolio,Install gitfolio
+https://github.com/imfunniee/gitfolio,npm i gitfolio -g
+https://github.com/kenshohara/3D-ResNets-PyTorch,PyTorch
+https://github.com/kenshohara/3D-ResNets-PyTorch,conda install pytorch torchvision cuda80 -c soumith
+https://github.com/kenshohara/3D-ResNets-PyTorch,"FFmpeg, FFprobe"
+https://github.com/kenshohara/3D-ResNets-PyTorch,wget http://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz
+https://github.com/kenshohara/3D-ResNets-PyTorch,tar xvf ffmpeg-release-64bit-static.tar.xz
+https://github.com/kenshohara/3D-ResNets-PyTorch,cd ./ffmpeg-3.3.3-64bit-static/; sudo cp ffmpeg ffprobe /usr/local/bin;
+https://github.com/kenshohara/3D-ResNets-PyTorch,Python 3
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Requirements: Software
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"MXNet from the offical repository. We tested our code on MXNet@(v0.10.0). Due to the rapid development of MXNet, it is recommended to checkout this version if you encounter any issues. We may maintain this repository periodically if MXNet adds important feature in future release."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Python packages might missing: cython, opencv-python >= 3.2.0, easydict. If pip is set up on your system, those packages should be able to be fetched and installed by running"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,pip install Cython
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,pip install opencv-python==3.2.0.6
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,pip install easydict==1.6
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"For Windows users, Visual Studio 2015 is needed to compile cython module."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Requirements: Hardware
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Any NVIDIA GPUs with at least 8GB memory should be OK.
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Installation
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Clone the Flow-Guided Feature Aggregation repository, and we call the directory that you cloned as ${FGFA_ROOT}."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,git clone https://github.com/msracver/Flow-Guided-Feature-Aggregation.git
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"For Windows users, run cmd .\init.bat. For Linux user, run sh ./init.sh. The scripts will build cython module automatically and create some folders."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Install MXNet:
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,3.1 Clone MXNet and checkout to MXNet@(v0.10.0) by
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,git clone --recursive https://github.com/apache/incubator-mxnet.git
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,cd incubator-mxnet
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,git checkout v0.10.0
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,git submodule update
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,3.2 Copy operators in $(FGFA_ROOT)/fgfa_rfcn/operator_cxx to $(YOUR_MXNET_FOLDER)/src/operator/contrib by
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,cp -r $(FGFA_ROOT)/fgfa_rfcn/operator_cxx/* $(MXNET_ROOT)/src/operator/contrib/
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,3.3 Compile MXNet
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,cd ${MXNET_ROOT}
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,make -j4
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,3.4 Install the MXNet Python binding by
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Note: If you will actively switch between different versions of MXNet, please follow 3.5 instead of 3.4"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,cd python
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,sudo python setup.py install
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"3.5 For advanced users, you may put your Python packge into ./external/mxnet/$(YOUR_MXNET_PACKAGE), and modify MXNET_VERSION in ./experiments/fgfa_rfcn/cfgs/*.yaml to $(YOUR_MXNET_PACKAGE). Thus you can switch among different versions of MXNet quickly."
+https://github.com/phoenix104104/LapSRN,Requirements and Dependencies
+https://github.com/phoenix104104/LapSRN,MATLAB (we test with MATLAB R2017a on Ubuntu 16.04 and Windows 7)
+https://github.com/phoenix104104/LapSRN,Cuda & Cudnn (we test with Cuda 8.0 and Cudnn 5.1)
+https://github.com/phoenix104104/LapSRN,Installation
+https://github.com/phoenix104104/LapSRN,Download repository:
+https://github.com/phoenix104104/LapSRN,$ git clone https://github.com/phoenix104104/LapSRN.git
+https://github.com/phoenix104104/LapSRN,Run install.m in MATLAB to compile MatConvNet:
+https://github.com/phoenix104104/LapSRN,# Start MATLAB
+https://github.com/phoenix104104/LapSRN,$ matlab
+https://github.com/phoenix104104/LapSRN,>> install
+https://github.com/phoenix104104/LapSRN,"If you install MatConvNet in your own path, you need to change the corresponding path in install.m, train_LapSRN.m and test_LapSRN.m."
+https://github.com/phuang17/DeepMVS,Requirements
+https://github.com/phuang17/DeepMVS,python 2.7
+https://github.com/phuang17/DeepMVS,numpy 1.13.1
+https://github.com/phuang17/DeepMVS,pytorch 0.3.0 and torchvision: Follow the instructions from their website.
+https://github.com/phuang17/DeepMVS,opencv 3.1.0: Run conda install -c menpo opencv or pip install opencv-python.
+https://github.com/phuang17/DeepMVS,"imageio 2.2.0 (with freeimage plugin): Run conda install -c conda-forge imageio or pip install imageio. To install freeimage plugin, run the following Python script once:"
+https://github.com/phuang17/DeepMVS,import imageio
+https://github.com/phuang17/DeepMVS,imageio.plugins.freeimage.download()
+https://github.com/phuang17/DeepMVS,h5py 2.7.0: Run conda install h5py or pip install h5py.
+https://github.com/phuang17/DeepMVS,lz4 0.23.1: Run pip install lz4.
+https://github.com/phuang17/DeepMVS,"cuda 8.0.61 and 16GB GPU RAM (required for gpu support): The training codes use up to 14GB of the GPU RAM with the default configuration. We train our model with an NVIDIA Tesla P100 GPU. To reduce GPU RAM usage, feel free to try smaller --patch_width, --patch_height, --num_depths, and --max_num_neighbors. However, the resulting model may not show the efficacy as appeared in our paper."
+https://github.com/phuang17/DeepMVS,"python python/train.py # This may take up to 4-6 days to complete, depending on which GPU is used."
+https://github.com/phuang17/DeepMVS,imageio 2.2.0: Run conda install -c conda-forge imageio or pip install imageio.
+https://github.com/phuang17/DeepMVS,pyquaternion 0.9.0: Run pip install pyquaternion.
+https://github.com/phuang17/DeepMVS,pydensecrf: Run pip install pydensecrf.
+https://github.com/phuang17/DeepMVS,cuda 8.0.61 and 6GB GPU RAM (required for gpu support): The testing codes use up to 4GB of the GPU RAM with the default configuration.
+https://github.com/phuang17/DeepMVS,COLMAP 3.2: Follow the instructions from their website.
+https://github.com/tensorflow/tensorflow,Installation
+https://github.com/tensorflow/tensorflow,To install the current release for CPU-only:
+https://github.com/tensorflow/tensorflow,pip install tensorflow
+https://github.com/tensorflow/tensorflow,Use the GPU package for CUDA-enabled GPU cards:
+https://github.com/tensorflow/tensorflow,pip install tensorflow-gpu
+https://github.com/tensorflow/tensorflow,"See Installing TensorFlow for detailed instructions, and how to build from source."
+https://github.com/tensorflow/tensorflow,People who are a little more adventurous can also try our nightly binaries:
+https://github.com/tensorflow/tensorflow,"Nightly pip packages * We are pleased to announce that TensorFlow now offers nightly pip packages under the tf-nightly and tf-nightly-gpu project on PyPi. Simply run pip install tf-nightly or pip install tf-nightly-gpu in a clean environment to install the nightly TensorFlow build. We support CPU and GPU packages on Linux, Mac, and Windows."
+https://github.com/wuhuikai/DeepGuidedFilter,Prepare Environment
+https://github.com/wuhuikai/DeepGuidedFilter,Download source code from GitHub.
+https://github.com/wuhuikai/DeepGuidedFilter,git clone https://github.com/wuhuikai/DeepGuidedFilter
+https://github.com/wuhuikai/DeepGuidedFilter,cd DeepGuidedFilter && git checkout release
+https://github.com/wuhuikai/DeepGuidedFilter,Install dependencies (PyTorch version).
+https://github.com/wuhuikai/DeepGuidedFilter,conda install opencv
+https://github.com/wuhuikai/DeepGuidedFilter,conda install pytorch=0.2.0 cuda80 -c soumith
+https://github.com/wuhuikai/DeepGuidedFilter,pip install -r requirements.txt
+https://github.com/wuhuikai/DeepGuidedFilter,(Optional) Install dependencies for MonoDepth (Tensorflow version).
+https://github.com/wuhuikai/DeepGuidedFilter,cd ComputerVision/MonoDepth
+https://github.com/wuhuikai/DeepGuidedFilter,Install Released Version
+https://github.com/wuhuikai/DeepGuidedFilter,PyTorch Version
+https://github.com/wuhuikai/DeepGuidedFilter,pip install guided-filter-pytorch
+https://github.com/wuhuikai/DeepGuidedFilter,Tensorflow Version
+https://github.com/wuhuikai/DeepGuidedFilter,pip install guided-filter-tf
+https://github.com/yuhuayc/da-faster-rcnn,Build Caffe and pycaffe (see: Caffe installation instructions)
+https://github.com/yuhuayc/da-faster-rcnn,Build the Cython modules
+https://github.com/yuhuayc/da-faster-rcnn,cd $FRCN_ROOT/lib
+https://github.com/yuhuayc/da-faster-rcnn,make

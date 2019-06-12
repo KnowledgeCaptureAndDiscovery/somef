@@ -1,19 +1,4 @@
 URL,excerpt
-https://github.com/tensorflow/tensorflow,Try your first TensorFlow program
-https://github.com/tensorflow/tensorflow,$ python
-https://github.com/tensorflow/tensorflow,>>> import tensorflow as tf
-https://github.com/tensorflow/tensorflow,>>> tf.enable_eager_execution()
-https://github.com/tensorflow/tensorflow,">>> tf.add(1, 2).numpy()"
-https://github.com/tensorflow/tensorflow,3
-https://github.com/tensorflow/tensorflow,">>> hello = tf.constant('Hello, TensorFlow!')"
-https://github.com/tensorflow/tensorflow,>>> hello.numpy()
-https://github.com/tensorflow/tensorflow,"'Hello, TensorFlow!'"
-https://github.com/tensorflow/tensorflow,Learn more examples about how to do specific tasks in TensorFlow at the tutorials page of tensorflow.org.
-https://github.com/hiroharu-kato/neural_renderer,Running examples
-https://github.com/hiroharu-kato/neural_renderer,python ./examples/example1.py
-https://github.com/hiroharu-kato/neural_renderer,python ./examples/example2.py
-https://github.com/hiroharu-kato/neural_renderer,python ./examples/example3.py
-https://github.com/hiroharu-kato/neural_renderer,python ./examples/example4.py
 https://github.com/albertpumarola/GANimation,Data Preparation
 https://github.com/albertpumarola/GANimation,The code requires a directory containing the following files:
 https://github.com/albertpumarola/GANimation,imgs/: folder with all image
@@ -28,6 +13,201 @@ https://github.com/albertpumarola/GANimation,To train:
 https://github.com/albertpumarola/GANimation,bash launch/run_train.sh
 https://github.com/albertpumarola/GANimation,To test:
 https://github.com/albertpumarola/GANimation,python test --input_path path/to/img
+https://github.com/driving-behavior/DBNet,Quick Start
+https://github.com/driving-behavior/DBNet,Training
+https://github.com/driving-behavior/DBNet,To train a model to predict vehicle speeds and steering angles:
+https://github.com/driving-behavior/DBNet,python train.py --model nvidia_pn --batch_size 16 --max_epoch 125 --gpu 0
+https://github.com/driving-behavior/DBNet,The names of the models are consistent with our paper. Log files and network parameters will be saved to logs folder in default.
+https://github.com/driving-behavior/DBNet,To see HELP for the training script:
+https://github.com/driving-behavior/DBNet,python train.py -h
+https://github.com/driving-behavior/DBNet,We can use TensorBoard to view the network architecture and monitor the training progress.
+https://github.com/driving-behavior/DBNet,tensorboard --logdir logs
+https://github.com/driving-behavior/DBNet,Evaluation
+https://github.com/driving-behavior/DBNet,"After training, you could evaluate the performance of models using evaluate.py. To plot the figures or calculate AUC, you may need to have matplotlib library installed."
+https://github.com/driving-behavior/DBNet,python evaluate.py --model_path logs/nvidia_pn/model.ckpt
+https://github.com/driving-behavior/DBNet,Prediction
+https://github.com/driving-behavior/DBNet,To get the predictions of test data:
+https://github.com/driving-behavior/DBNet,python predict.py
+https://github.com/driving-behavior/DBNet,The results are saved in results/results (every segment) and results/behavior_pred.txt (merged) by default. To change the storation location:
+https://github.com/driving-behavior/DBNet,python predict.py --result_dir specified_dir
+https://github.com/driving-behavior/DBNet,The result directory will be created automatically if it doesn't exist.
+https://github.com/hezhangsprinter/DID-MDN,python test.py --dataroot ./facades/github --valDataroot ./facades/github --netG ./pre_trained/netG_epoch_9.pth   
+https://github.com/hezhangsprinter/DID-MDN,python derain_train_2018.py  --dataroot ./facades/DID-MDN-training/Rain_Medium/train2018new  --valDataroot ./facades/github --exp ./check --netG ./pre_trained/netG_epoch_9.pth.
+https://github.com/hezhangsprinter/DID-MDN,Make sure you download the training sample and put in the right folder
+https://github.com/hezhangsprinter/DID-MDN,python train_rain_class.py  --dataroot ./facades/DID-MDN-training/Rain_Medium/train2018new  --exp ./check_class
+https://github.com/hezhangsprinter/DID-MDN,python demo.py --dataroot ./your_dataroot --valDataroot ./your_dataroot --netG ./pre_trained/netG_epoch_9.pth   
+https://github.com/hiroharu-kato/neural_renderer,Running examples
+https://github.com/hiroharu-kato/neural_renderer,python ./examples/example1.py
+https://github.com/hiroharu-kato/neural_renderer,python ./examples/example2.py
+https://github.com/hiroharu-kato/neural_renderer,python ./examples/example3.py
+https://github.com/hiroharu-kato/neural_renderer,python ./examples/example4.py
+https://github.com/hszhao/ICNet,Evaluation mIoU:
+https://github.com/hszhao/ICNet,Evaluation code is in folder 'evaluation'.
+https://github.com/hszhao/ICNet,Download trained models and put them in folder 'evaluation/model':
+https://github.com/hszhao/ICNet,icnet_cityscapes_train_30k.caffemodel: GoogleDrive
+https://github.com/hszhao/ICNet,"(31M, md5: c7038630c4b6c869afaaadd811bdb539; train on trainset for 30k)"
+https://github.com/hszhao/ICNet,icnet_cityscapes_trainval_90k.caffemodel: GoogleDrive
+https://github.com/hszhao/ICNet,"(31M, md5: 4f4dd9eecd465dd8de7e4cf88ba5d5d5; train on trainvalset for 90k)"
+https://github.com/hszhao/ICNet,Modify the related paths in 'eval_all.m':
+https://github.com/hszhao/ICNet,"Mainly variables 'data_root' and 'eval_list', and your image list for evaluation should be similar to that in folder 'evaluation/samplelist' if you use this evaluation code structure."
+https://github.com/hszhao/ICNet,cd evaluation
+https://github.com/hszhao/ICNet,vim eval_all.m
+https://github.com/hszhao/ICNet,Run the evaluation scripts:
+https://github.com/hszhao/ICNet,./run.sh
+https://github.com/hszhao/ICNet,Evaluation time:
+https://github.com/hszhao/ICNet,"To get inference time as accurate as possible, it's suggested to make sure the GPU card with specified ID in script 'test_time.sh' is empty (without other processes executing)"
+https://github.com/hszhao/ICNet,./test_time.sh
+https://github.com/imfunniee/gitfolio,Forks
+https://github.com/imfunniee/gitfolio,To include forks on your personal website just provide -f or --fork argument while building
+https://github.com/imfunniee/gitfolio,$ gitfolio build <username> -f
+https://github.com/imfunniee/gitfolio,Sorting Repos
+https://github.com/imfunniee/gitfolio,"To sort repos provide --sort [sortBy] argument while building. Where [sortBy] can be star, created, updated, pushed,full_name. Default: created"
+https://github.com/imfunniee/gitfolio,$ gitfolio build <username> --sort star
+https://github.com/imfunniee/gitfolio,Ordering Repos
+https://github.com/imfunniee/gitfolio,To order the sorted repos provide --order [orderBy] argument while building. Where [orderBy] can be asc or desc. Default: asc
+https://github.com/imfunniee/gitfolio,$ gitfolio build <username> --sort star --order desc
+https://github.com/imfunniee/gitfolio,Customize Themes
+https://github.com/imfunniee/gitfolio,Themes are specified using the --theme [theme-name] flag when running the build command. The available themes are
+https://github.com/imfunniee/gitfolio,light
+https://github.com/imfunniee/gitfolio,dark
+https://github.com/imfunniee/gitfolio,"For example, the following command will build the website with the dark theme"
+https://github.com/imfunniee/gitfolio,$ gitfolio build <username> --theme dark
+https://github.com/imfunniee/gitfolio,Customize background image
+https://github.com/imfunniee/gitfolio,To customize the background image just provide --background [url] argument while building
+https://github.com/imfunniee/gitfolio,$ gitfolio build <username> --background https://images.unsplash.com/photo-1557277770-baf0ca74f908?w=1634
+https://github.com/imfunniee/gitfolio,You could also add in your custom CSS inside index.css to give it a more personal feel.
+https://github.com/imfunniee/gitfolio,Let's Publish
+https://github.com/imfunniee/gitfolio,"Head over to GitHub and create a new repository named username.github.io, where username is your username. Push the files inside/dist folder to repo you just created."
+https://github.com/imfunniee/gitfolio,Go To username.github.io your site should be up!!
+https://github.com/imfunniee/gitfolio,Updating
+https://github.com/imfunniee/gitfolio,"To update your info, simply run"
+https://github.com/imfunniee/gitfolio,$ gitfolio update
+https://github.com/imfunniee/gitfolio,This will update your info and your repository info.
+https://github.com/imfunniee/gitfolio,To Update background or theme you need to run build command again.
+https://github.com/imfunniee/gitfolio,Add a Blog
+https://github.com/imfunniee/gitfolio,To add your first blog run this command.
+https://github.com/imfunniee/gitfolio,$ gitfolio blog my-first-blog
+https://github.com/kenshohara/3D-ResNets-PyTorch,ActivityNet
+https://github.com/kenshohara/3D-ResNets-PyTorch,Download videos using the official crawler.
+https://github.com/kenshohara/3D-ResNets-PyTorch,Convert from avi to jpg files using utils/video_jpg.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,python utils/video_jpg.py avi_video_directory jpg_video_directory
+https://github.com/kenshohara/3D-ResNets-PyTorch,Generate fps files using utils/fps.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,python utils/fps.py avi_video_directory jpg_video_directory
+https://github.com/kenshohara/3D-ResNets-PyTorch,Kinetics
+https://github.com/kenshohara/3D-ResNets-PyTorch,Locate test set in video_directory/test.
+https://github.com/kenshohara/3D-ResNets-PyTorch,Convert from avi to jpg files using utils/video_jpg_kinetics.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,python utils/video_jpg_kinetics.py avi_video_directory jpg_video_directory
+https://github.com/kenshohara/3D-ResNets-PyTorch,Generate n_frames files using utils/n_frames_kinetics.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,python utils/n_frames_kinetics.py jpg_video_directory
+https://github.com/kenshohara/3D-ResNets-PyTorch,Generate annotation file in json format similar to ActivityNet using utils/kinetics_json.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,"The CSV files (kinetics_{train, val, test}.csv) are included in the crawler."
+https://github.com/kenshohara/3D-ResNets-PyTorch,python utils/kinetics_json.py train_csv_path val_csv_path test_csv_path dst_json_path
+https://github.com/kenshohara/3D-ResNets-PyTorch,UCF-101
+https://github.com/kenshohara/3D-ResNets-PyTorch,Download videos and train/test splits here.
+https://github.com/kenshohara/3D-ResNets-PyTorch,Convert from avi to jpg files using utils/video_jpg_ucf101_hmdb51.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,python utils/video_jpg_ucf101_hmdb51.py avi_video_directory jpg_video_directory
+https://github.com/kenshohara/3D-ResNets-PyTorch,Generate n_frames files using utils/n_frames_ucf101_hmdb51.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,python utils/n_frames_ucf101_hmdb51.py jpg_video_directory
+https://github.com/kenshohara/3D-ResNets-PyTorch,Generate annotation file in json format similar to ActivityNet using utils/ucf101_json.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,"annotation_dir_path includes classInd.txt, trainlist0{1, 2, 3}.txt, testlist0{1, 2, 3}.txt"
+https://github.com/kenshohara/3D-ResNets-PyTorch,python utils/ucf101_json.py annotation_dir_path
+https://github.com/kenshohara/3D-ResNets-PyTorch,HMDB-51
+https://github.com/kenshohara/3D-ResNets-PyTorch,Generate annotation file in json format similar to ActivityNet using utils/hmdb51_json.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,"annotation_dir_path includes brush_hair_test_split1.txt, ..."
+https://github.com/kenshohara/3D-ResNets-PyTorch,python utils/hmdb51_json.py annotation_dir_path
+https://github.com/kenshohara/3D-ResNets-PyTorch,Running the code
+https://github.com/kenshohara/3D-ResNets-PyTorch,Confirm all options.
+https://github.com/kenshohara/3D-ResNets-PyTorch,python main.lua -h
+https://github.com/kenshohara/3D-ResNets-PyTorch,Train ResNets-34 on the Kinetics dataset (400 classes) with 4 CPU threads (for data loading).
+https://github.com/kenshohara/3D-ResNets-PyTorch,Batch size is 128.
+https://github.com/kenshohara/3D-ResNets-PyTorch,"Save models at every 5 epochs. All GPUs is used for the training. If you want a part of GPUs, use CUDA_VISIBLE_DEVICES=...."
+https://github.com/kenshohara/3D-ResNets-PyTorch,python main.py --root_path ~/data --video_path kinetics_videos/jpg --annotation_path kinetics.json \
+https://github.com/kenshohara/3D-ResNets-PyTorch,--result_path results --dataset kinetics --model resnet \
+https://github.com/kenshohara/3D-ResNets-PyTorch,--model_depth 34 --n_classes 400 --batch_size 128 --n_threads 4 --checkpoint 5
+https://github.com/kenshohara/3D-ResNets-PyTorch,Continue Training from epoch 101. (~/data/results/save_100.pth is loaded.)
+https://github.com/kenshohara/3D-ResNets-PyTorch,--result_path results --dataset kinetics --resume_path results/save_100.pth \
+https://github.com/kenshohara/3D-ResNets-PyTorch,Fine-tuning conv5_x and fc layers of a pretrained model (~/data/models/resnet-34-kinetics.pth) on UCF-101.
+https://github.com/kenshohara/3D-ResNets-PyTorch,python main.py --root_path ~/data --video_path ucf101_videos/jpg --annotation_path ucf101_01.json \
+https://github.com/kenshohara/3D-ResNets-PyTorch,--result_path results --dataset ucf101 --n_classes 400 --n_finetune_classes 101 \
+https://github.com/kenshohara/3D-ResNets-PyTorch,--pretrain_path models/resnet-34-kinetics.pth --ft_begin_index 4 \
+https://github.com/kenshohara/3D-ResNets-PyTorch,--model resnet --model_depth 34 --resnet_shortcut A --batch_size 128 --n_threads 4 --checkpoint 5
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Demo
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"To run the demo with our trained model (on ImageNet DET + VID train), please download the model manually from OneDrive, and put it under folder model/."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Make sure it looks like this:
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,./model/rfcn_fgfa_flownet_vid-0000.params
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Run
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,python ./fgfa_rfcn/demo.py
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Preparation for Training & Testing
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Please download ILSVRC2015 DET and ILSVRC2015 VID dataset, and make sure it looks like this:"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,./data/ILSVRC2015/
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,./data/ILSVRC2015/Annotations/DET
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,./data/ILSVRC2015/Annotations/VID
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,./data/ILSVRC2015/Data/DET
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,./data/ILSVRC2015/Data/VID
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,./data/ILSVRC2015/ImageSets
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Please download ImageNet pre-trained ResNet-v1-101 model and Flying-Chairs pre-trained FlowNet model manually from OneDrive, and put it under folder ./model. Make sure it looks like this:"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,./model/pretrained_model/resnet_v1_101-0000.params
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,./model/pretrained_model/flownet-0000.params
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Usage
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"All of our experiment settings (GPU #, dataset, etc.) are kept in yaml config files at folder ./experiments/fgfa_rfcn/cfgs."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Two config files have been provided so far, namely, frame baseline (R-FCN) and the proposed FGFA for ImageNet VID. We use 4 GPUs to train models on ImageNet VID."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"To perform experiments, run the python script with the corresponding config file as input. For example, to train and test FGFA with R-FCN, use the following command"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,python experiments/fgfa_rfcn/fgfa_rfcn_end2end_train_test.py --cfg experiments/fgfa_rfcn/cfgs/resnet_v1_101_flownet_imagenet_vid_rfcn_end2end_ohem.yaml
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,A cache folder would be created automatically to save the model and the log under output/fgfa_rfcn/imagenet_vid/.
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Please find more details in config files and in our code.
+https://github.com/phoenix104104/LapSRN,Test Pre-trained Models
+https://github.com/phoenix104104/LapSRN,To test LapSRN / MS-LapSRN on a single-image:
+https://github.com/phoenix104104/LapSRN,>> demo_LapSRN
+https://github.com/phoenix104104/LapSRN,>> demo_MSLapSRN
+https://github.com/phoenix104104/LapSRN,This script will load the pretrained LapSRN / MS-LapSRN model and apply SR on emma.jpg.
+https://github.com/phoenix104104/LapSRN,"To test LapSRN / MS-LapSRN on benchmark datasets, first download the testing datasets:"
+https://github.com/phoenix104104/LapSRN,$ cd datasets
+https://github.com/phoenix104104/LapSRN,$ wget http://vllab1.ucmerced.edu/~wlai24/LapSRN/results/SR_testing_datasets.zip
+https://github.com/phoenix104104/LapSRN,$ unzip SR_testing_datasets.zip
+https://github.com/phoenix104104/LapSRN,$ cd ..
+https://github.com/phoenix104104/LapSRN,"Then choose the evaluated dataset and upsampling scale in evaluate_LapSRN_dataset.m and evaluate_MSLapSRN_dataset.m, and run:"
+https://github.com/phoenix104104/LapSRN,>> evaluate_LapSRN_dataset
+https://github.com/phoenix104104/LapSRN,>> evaluate_MSLapSRN_dataset
+https://github.com/phoenix104104/LapSRN,which can reproduce the results in our paper.
+https://github.com/phoenix104104/LapSRN,Training LapSRN
+https://github.com/phoenix104104/LapSRN,"To train LapSRN from scratch, first download the training datasets:"
+https://github.com/phoenix104104/LapSRN,$ wget http://vllab1.ucmerced.edu/~wlai24/LapSRN/results/SR_training_datasets.zip
+https://github.com/phoenix104104/LapSRN,$ unzip SR_train_datasets.zip
+https://github.com/phoenix104104/LapSRN,or use the provided bash script to download all datasets and unzip at once:
+https://github.com/phoenix104104/LapSRN,$ ./download_SR_datasets.sh
+https://github.com/phoenix104104/LapSRN,"Then, setup training options in init_LapSRN_opts.m, and run train_LapSRN(scale, depth, gpuID). For example, to train LapSRN with depth = 10 for 4x SR using GPU ID = 1:"
+https://github.com/phoenix104104/LapSRN,">> train_LapSRN(4, 10, 1)"
+https://github.com/phoenix104104/LapSRN,"Note that we only test our code on single-GPU mode. MatConvNet supports training with multiple GPUs but you may need to modify our script and options (e.g., opts.gpu)."
+https://github.com/phoenix104104/LapSRN,"To test your trained LapSRN model, use test_LapSRN(model_name, epoch, dataset, test_scale, gpu). For example, test LapSRN with depth = 10, scale = 4, epoch = 10 on Set5:"
+https://github.com/phoenix104104/LapSRN,">> test_LapSRN('LapSRN_x4_depth10_L1_train_T91_BSDS200_pw128_lr1e-05_step50_drop0.5_min1e-06_bs64', 10, 'Set5', 4, 1)"
+https://github.com/phoenix104104/LapSRN,which will report the PSNR and SSIM.
+https://github.com/phoenix104104/LapSRN,Training MS-LapSRN
+https://github.com/phoenix104104/LapSRN,"Setup training options in init_MSLapSRN_opts.m, and run train_MSLapSRN(scales, depth, recursive, gpuID), where scales should be a vector, e.g., [2, 4, 8]. For example, to train MS-LapSRN with D = 5, R = 2 for 2x, 4x and 8x SR:"
+https://github.com/phoenix104104/LapSRN,">> train_MSLapSRN([2, 4, 8], 5, 2, 1)"
+https://github.com/phoenix104104/LapSRN,"To test your trained MS-LapSRN model, use test_MS-LapSRN(model_name, model_scale, epoch, dataset, test_scale, gpu), where model_scale is used to define the number of pyramid levels. test_scale could be different from model_scale. For example, test MS-LapSRN-D5R2 with two pyramid levels (model_scale = 4), epoch = 10, on Set5 for 3x SR:"
+https://github.com/phoenix104104/LapSRN,">> test_MSLapSRN('MSLapSRN_x248_SS_D5_R2_fn64_L1_train_T91_BSDS200_pw128_lr5e-06_step100_drop0.5_min1e-06_bs64', 4, 10, 'Set5', 3, 1)"
+https://github.com/phuang17/DeepMVS,Download the training datasets.
+https://github.com/phuang17/DeepMVS,python python/download_training_datasets.py # This may take up to 1-2 days to complete.
+https://github.com/phuang17/DeepMVS,Train the network.
+https://github.com/phuang17/DeepMVS,Download the trained model.
+https://github.com/phuang17/DeepMVS,python python/download_trained_model.py
+https://github.com/phuang17/DeepMVS,Run the sparse reconstruction and the image_undistorter using COLMAP. The image_undistorter will generate a images folder which contains undistorted images and a sparse folder which contains three .bin files.
+https://github.com/phuang17/DeepMVS,Run the testing script with the paths to the undistorted images and the sparse construction model.
+https://github.com/phuang17/DeepMVS,python python/test.py --load_bin --image_path path/to/images --sparse_path path/to/sparse --output_path path/to/output/directory
+https://github.com/phuang17/DeepMVS,"By default, the script resizes the images to be 540px in height to reduce the running time. If you would like to run the model with other resolutions, please pass the arguments --image_width XXX and --image_height XXX. If your COLMAP outputs .txt files instead of .bin files for the sparse reconstruction, simply remove the --load_bin flag."
+https://github.com/phuang17/DeepMVS,"To evaluate the predicted results, run"
+https://github.com/phuang17/DeepMVS,python python/eval.py --load_bin --image_path path/to/images --sparse_path path/to/sparse --output_path path/to/output/directory --gt_path path/to/gt/directory --image_width 810 --image_height 540 --size_mismatch crop_pad
+https://github.com/phuang17/DeepMVS,"In gt_path, the ground truth disparity maps should be stored in npy format with filenames being <image_name>.depth.npy. If the ground truths are depth maps instead of disparity maps, please add --gt_type depth flag."
+https://github.com/tensorflow/tensorflow,Try your first TensorFlow program
+https://github.com/tensorflow/tensorflow,$ python
+https://github.com/tensorflow/tensorflow,>>> import tensorflow as tf
+https://github.com/tensorflow/tensorflow,>>> tf.enable_eager_execution()
+https://github.com/tensorflow/tensorflow,">>> tf.add(1, 2).numpy()"
+https://github.com/tensorflow/tensorflow,3
+https://github.com/tensorflow/tensorflow,">>> hello = tf.constant('Hello, TensorFlow!')"
+https://github.com/tensorflow/tensorflow,>>> hello.numpy()
+https://github.com/tensorflow/tensorflow,"'Hello, TensorFlow!'"
+https://github.com/tensorflow/tensorflow,Learn more examples about how to do specific tasks in TensorFlow at the tutorials page of tensorflow.org.
 https://github.com/wuhuikai/DeepGuidedFilter,cd ImageProcessing/DeepGuidedFilteringNetwork
 https://github.com/wuhuikai/DeepGuidedFilter,python predict.py  --task auto_ps \
 https://github.com/wuhuikai/DeepGuidedFilter,--img_path ../../images/auto_ps.jpg \
@@ -46,26 +226,18 @@ https://github.com/wuhuikai/DeepGuidedFilter,Note:
 https://github.com/wuhuikai/DeepGuidedFilter,Result is in ../../images.
 https://github.com/wuhuikai/DeepGuidedFilter,Run python predict_dgf.py -h for more details.
 https://github.com/wuhuikai/DeepGuidedFilter,Saliency Detection with DSS
-https://github.com/wuhuikai/DeepGuidedFilter,Enter the directory.
 https://github.com/wuhuikai/DeepGuidedFilter,cd ComputerVision/Saliency_DSS
-https://github.com/wuhuikai/DeepGuidedFilter,Download the pretrained model [Google Drive|BaiduYunPan].
 https://github.com/wuhuikai/DeepGuidedFilter,Try it now !
 https://github.com/wuhuikai/DeepGuidedFilter,python predict.py --im_path ../../images/saliency.jpg \
 https://github.com/wuhuikai/DeepGuidedFilter,--netG [MODEL_PATH] \
 https://github.com/wuhuikai/DeepGuidedFilter,--thres 161 \
 https://github.com/wuhuikai/DeepGuidedFilter,--dgf --nn_dgf \
 https://github.com/wuhuikai/DeepGuidedFilter,--post_sigmoid --cuda
-https://github.com/wuhuikai/DeepGuidedFilter,Note:
-https://github.com/wuhuikai/DeepGuidedFilter,Result is in ../../images.
-https://github.com/wuhuikai/DeepGuidedFilter,See Here or python predict.py -h for more details.
 https://github.com/wuhuikai/DeepGuidedFilter,Monocular Depth Estimation (TensorFlow version)
-https://github.com/wuhuikai/DeepGuidedFilter,Enter the directory.
 https://github.com/wuhuikai/DeepGuidedFilter,cd ComputerVision/MonoDepth
 https://github.com/wuhuikai/DeepGuidedFilter,Download and Unzip Pretrained Model [Google Drive|BaiduYunPan]
 https://github.com/wuhuikai/DeepGuidedFilter,Run on an Image !
 https://github.com/wuhuikai/DeepGuidedFilter,python monodepth_simple.py --image_path ../../images/depth.jpg --checkpoint_path [MODEL_PATH] --guided_filter
-https://github.com/wuhuikai/DeepGuidedFilter,Note:
-https://github.com/wuhuikai/DeepGuidedFilter,Result is in ../../images.
 https://github.com/wuhuikai/DeepGuidedFilter,See Here or python monodepth_simple.py -h for more details.
 https://github.com/wuhuikai/DeepGuidedFilter,Usage
 https://github.com/wuhuikai/DeepGuidedFilter,PyTorch Version
@@ -78,3 +250,16 @@ https://github.com/wuhuikai/DeepGuidedFilter,from guided_filter_tf.guided_filter
 https://github.com/wuhuikai/DeepGuidedFilter,"hr_y = fast_guided_filter(lr_x, lr_y, hr_x, r, eps, nhwc)"
 https://github.com/wuhuikai/DeepGuidedFilter,from guided_filter_tf.guided_filter import guided_filter
 https://github.com/wuhuikai/DeepGuidedFilter,"hr_y = guided_filter(hr_x, init_hr_y, r, eps, nhwc)"
+https://github.com/yuhuayc/da-faster-rcnn,Follow the instrutions of rbgirshick/py-faster-rcnn to download related data.
+https://github.com/yuhuayc/da-faster-rcnn,"Prepare the dataset, source domain data should start with the filename 'source_', and target domain data with 'target_'."
+https://github.com/yuhuayc/da-faster-rcnn,To train the Domain Adaptive Faster R-CNN:
+https://github.com/yuhuayc/da-faster-rcnn,cd $FRCN_ROOT
+https://github.com/yuhuayc/da-faster-rcnn,./tools/train_net.py --gpu {GPU_ID} --solver models/da_faster_rcnn/solver.prototxt --weights data/imagenet_models/VGG16.v2.caffemodel --imdb voc_2007_trainval --iters  {NUM_ITER}  --cfg  {CONFIGURATION_FILE}
+https://github.com/yuhuayc/da-faster-rcnn,Example
+https://github.com/yuhuayc/da-faster-rcnn,An example of adapting from Cityscapes dataset to Foggy Cityscapes dataset is provided:
+https://github.com/yuhuayc/da-faster-rcnn,"Download the datasets from here. Specifically, we will use gtFine_trainvaltest.zip, leftImg8bit_trainvaltest.zip and leftImg8bit_trainvaltest_foggy.zip."
+https://github.com/yuhuayc/da-faster-rcnn,Prepare the data using the scripts in 'prepare_data/prepare_data.m'.
+https://github.com/yuhuayc/da-faster-rcnn,Train the Domain Adaptive Faster R-CNN:
+https://github.com/yuhuayc/da-faster-rcnn,./tools/train_net.py --gpu {GPU_ID} --solver models/da_faster_rcnn/solver.prototxt --weights data/imagenet_models/VGG16.v2.caffemodel --imdb voc_2007_trainval --iters  70000  --cfg  models/da_faster_rcnn/faster_rcnn_end2end.yml
+https://github.com/yuhuayc/da-faster-rcnn,Test the trained model:
+https://github.com/yuhuayc/da-faster-rcnn,./tools/test_net.py --gpu {GPU_ID} --def models/da_faster_rcnn/test.prototxt --net output/faster_rcnn_end2end/voc_2007_trainval/vgg16_da_faster_rcnn_iter_70000.caffemodel --imdb voc_2007_test --cfg models/da_faster_rcnn/faster_rcnn_end2end.yml

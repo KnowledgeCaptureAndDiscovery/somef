@@ -1,39 +1,4 @@
 URL,excerpt
-https://github.com/hiroharu-kato/neural_renderer,Citation
-https://github.com/hiroharu-kato/neural_renderer,@InProceedings{kato2018renderer
-https://github.com/hiroharu-kato/neural_renderer,"title={Neural 3D Mesh Renderer},"
-https://github.com/hiroharu-kato/neural_renderer,"author={Kato, Hiroharu and Ushiku, Yoshitaka and Harada, Tatsuya},"
-https://github.com/hiroharu-kato/neural_renderer,"booktitle={The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
-https://github.com/hiroharu-kato/neural_renderer,year={2018}
-https://github.com/hiroharu-kato/neural_renderer,}
-https://github.com/kenshohara/3D-ResNets-PyTorch,"If you use this code or pre-trained models, please cite the following:"
-https://github.com/kenshohara/3D-ResNets-PyTorch,"@inproceedings{hara3dcnns,"
-https://github.com/kenshohara/3D-ResNets-PyTorch,"author={Kensho Hara and Hirokatsu Kataoka and Yutaka Satoh},"
-https://github.com/kenshohara/3D-ResNets-PyTorch,"title={Can Spatiotemporal 3D CNNs Retrace the History of 2D CNNs and ImageNet?},"
-https://github.com/kenshohara/3D-ResNets-PyTorch,"booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
-https://github.com/kenshohara/3D-ResNets-PyTorch,"pages={6546--6555},"
-https://github.com/kenshohara/3D-ResNets-PyTorch,"year={2018},"
-https://github.com/kenshohara/3D-ResNets-PyTorch,}
-https://github.com/google/sg2im/,"@inproceedings{johnson2018image,"
-https://github.com/google/sg2im/,"title={Image Generation from Scene Graphs},"
-https://github.com/google/sg2im/,"author={Johnson, Justin and Gupta, Agrim and Fei-Fei, Li},"
-https://github.com/google/sg2im/,"booktitle={CVPR},"
-https://github.com/google/sg2im/,year={2018}
-https://github.com/google/sg2im/,}
-https://github.com/albertpumarola/GANimation,Citation
-https://github.com/albertpumarola/GANimation,"If you use this code or ideas from the paper for your research, please cite our paper:"
-https://github.com/albertpumarola/GANimation,"@inproceedings{pumarola2018ganimation,"
-https://github.com/albertpumarola/GANimation,"title={GANimation: Anatomically-aware Facial Animation from a Single Image},"
-https://github.com/albertpumarola/GANimation,"author={A. Pumarola and A. Agudo and A.M. Martinez and A. Sanfeliu and F. Moreno-Noguer},"
-https://github.com/albertpumarola/GANimation,"booktitle={Proceedings of the European Conference on Computer Vision (ECCV)},"
-https://github.com/albertpumarola/GANimation,year={2018}
-https://github.com/albertpumarola/GANimation,}
-https://github.com/wuhuikai/DeepGuidedFilter,"@inproceedings{wu2017fast,"
-https://github.com/wuhuikai/DeepGuidedFilter,"title     = {Fast End-to-End Trainable Guided Filter},"
-https://github.com/wuhuikai/DeepGuidedFilter,"author    = {Wu, Huikai and Zheng, Shuai and Zhang, Junge and Huang, Kaiqi},"
-https://github.com/wuhuikai/DeepGuidedFilter,"booktitle = {CVPR},"
-https://github.com/wuhuikai/DeepGuidedFilter,year = {2018}
-https://github.com/wuhuikai/DeepGuidedFilter,}
 https://github.com/NVIDIA/vid2vid,"If you find this useful for your research, please cite the following paper."
 https://github.com/NVIDIA/vid2vid,
 https://github.com/NVIDIA/vid2vid,"@inproceedings{wang2018vid2vid,"
@@ -43,3 +8,115 @@ https://github.com/NVIDIA/vid2vid,"title     = {Video-to-Video Synthesis},"
 https://github.com/NVIDIA/vid2vid,"booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},"
 https://github.com/NVIDIA/vid2vid,"year      = {2018},"
 https://github.com/NVIDIA/vid2vid,}
+https://github.com/NVIDIA/vid2vid,Video-to-Video Synthesis
+https://github.com/NVIDIA/vid2vid,"Ting-Chun Wang1, Ming-Yu Liu1, Jun-Yan Zhu2, Guilin Liu1, Andrew Tao1, Jan Kautz1, Bryan Catanzaro1"
+https://github.com/NVIDIA/vid2vid,"1NVIDIA Corporation, 2MIT CSAIL"
+https://github.com/NVIDIA/vid2vid,In Neural Information Processing Systems (NeurIPS) 2018
+https://github.com/albertpumarola/GANimation,Citation
+https://github.com/albertpumarola/GANimation,"If you use this code or ideas from the paper for your research, please cite our paper:"
+https://github.com/albertpumarola/GANimation,"@inproceedings{pumarola2018ganimation,"
+https://github.com/albertpumarola/GANimation,"title={GANimation: Anatomically-aware Facial Animation from a Single Image},"
+https://github.com/albertpumarola/GANimation,"author={A. Pumarola and A. Agudo and A.M. Martinez and A. Sanfeliu and F. Moreno-Noguer},"
+https://github.com/albertpumarola/GANimation,"booktitle={Proceedings of the European Conference on Computer Vision (ECCV)},"
+https://github.com/albertpumarola/GANimation,year={2018}
+https://github.com/albertpumarola/GANimation,}
+https://github.com/driving-behavior/DBNet,"DBNet was developed by MVIG, Shanghai Jiao Tong University* and SCSC Lab, Xiamen University* (alphabetical order)."
+https://github.com/driving-behavior/DBNet,Citation
+https://github.com/driving-behavior/DBNet,"If you find our work useful in your research, please consider citing:"
+https://github.com/driving-behavior/DBNet,"@InProceedings{DBNet2018,"
+https://github.com/driving-behavior/DBNet,"author = {Yiping Chen and Jingkang Wang and Jonathan Li and Cewu Lu and Zhipeng Luo and HanXue and Cheng Wang},"
+https://github.com/driving-behavior/DBNet,"title = {LiDAR-Video Driving Dataset: Learning Driving Policies Effectively},"
+https://github.com/driving-behavior/DBNet,"booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
+https://github.com/driving-behavior/DBNet,"month = {June},"
+https://github.com/driving-behavior/DBNet,year = {2018}
+https://github.com/driving-behavior/DBNet,}
+https://github.com/facebookresearch/Detectron/,"If you use Detectron in your research or wish to refer to the baseline results published in the Model Zoo, please use the following BibTeX entry."
+https://github.com/facebookresearch/Detectron/,"@misc{Detectron2018,"
+https://github.com/facebookresearch/Detectron/,author =       {Ross Girshick and Ilija Radosavovic and Georgia Gkioxari and
+https://github.com/facebookresearch/Detectron/,"Piotr Doll\'{a}r and Kaiming He},"
+https://github.com/facebookresearch/Detectron/,"title =        {Detectron},"
+https://github.com/facebookresearch/Detectron/,"howpublished = {\url{https://github.com/facebookresearch/detectron}},"
+https://github.com/facebookresearch/Detectron/,year =         {2018}
+https://github.com/facebookresearch/Detectron/,}
+https://github.com/google/sg2im/,"@inproceedings{johnson2018image,"
+https://github.com/google/sg2im/,"title={Image Generation from Scene Graphs},"
+https://github.com/google/sg2im/,"author={Johnson, Justin and Gupta, Agrim and Fei-Fei, Li},"
+https://github.com/google/sg2im/,"booktitle={CVPR},"
+https://github.com/google/sg2im/,year={2018}
+https://github.com/google/sg2im/,}
+https://github.com/hezhangsprinter/DID-MDN,"@inproceedings{derain_zhang_2018,		"
+https://github.com/hezhangsprinter/DID-MDN,"title={Density-aware Single Image De-raining using a Multi-stream Dense Network},"
+https://github.com/hezhangsprinter/DID-MDN,"author={Zhang, He and Patel, Vishal M},"
+https://github.com/hezhangsprinter/DID-MDN,"booktitle={CVPR},"
+https://github.com/hezhangsprinter/DID-MDN,year={2018}
+https://github.com/hezhangsprinter/DID-MDN,}
+https://github.com/hiroharu-kato/neural_renderer,Citation
+https://github.com/hiroharu-kato/neural_renderer,@InProceedings{kato2018renderer
+https://github.com/hiroharu-kato/neural_renderer,"title={Neural 3D Mesh Renderer},"
+https://github.com/hiroharu-kato/neural_renderer,"author={Kato, Hiroharu and Ushiku, Yoshitaka and Harada, Tatsuya},"
+https://github.com/hiroharu-kato/neural_renderer,"booktitle={The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
+https://github.com/hiroharu-kato/neural_renderer,year={2018}
+https://github.com/hiroharu-kato/neural_renderer,}
+https://github.com/hszhao/ICNet,"by Hengshuang Zhao, Xiaojuan Qi, Xiaoyong Shen, Jianping Shi, Jiaya Jia"
+https://github.com/hszhao/ICNet,"@article{zhao2017icnet,"
+https://github.com/hszhao/ICNet,author = {Hengshuang Zhao and
+https://github.com/hszhao/ICNet,Xiaojuan Qi and
+https://github.com/hszhao/ICNet,Xiaoyong Shen and
+https://github.com/hszhao/ICNet,Jianping Shi and
+https://github.com/hszhao/ICNet,"Jiaya Jia},"
+https://github.com/hszhao/ICNet,"title = {ICNet for Real-Time Semantic Segmentation on High-Resolution Images},"
+https://github.com/hszhao/ICNet,"journal={arXiv preprint arXiv:1704.08545},"
+https://github.com/hszhao/ICNet,year = {2017}
+https://github.com/hszhao/ICNet,}
+https://github.com/kenshohara/3D-ResNets-PyTorch,"If you use this code or pre-trained models, please cite the following:"
+https://github.com/kenshohara/3D-ResNets-PyTorch,"@inproceedings{hara3dcnns,"
+https://github.com/kenshohara/3D-ResNets-PyTorch,"author={Kensho Hara and Hirokatsu Kataoka and Yutaka Satoh},"
+https://github.com/kenshohara/3D-ResNets-PyTorch,"title={Can Spatiotemporal 3D CNNs Retrace the History of 2D CNNs and ImageNet?},"
+https://github.com/kenshohara/3D-ResNets-PyTorch,"booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
+https://github.com/kenshohara/3D-ResNets-PyTorch,"pages={6546--6555},"
+https://github.com/kenshohara/3D-ResNets-PyTorch,"year={2018},"
+https://github.com/kenshohara/3D-ResNets-PyTorch,}
+https://github.com/kenshohara/3D-ResNets-PyTorch,"Kensho Hara, Hirokatsu Kataoka, and Yutaka Satoh,"
+https://github.com/kenshohara/3D-ResNets-PyTorch,"Can Spatiotemporal 3D CNNs Retrace the History of 2D CNNs and ImageNet?"","
+https://github.com/kenshohara/3D-ResNets-PyTorch,"Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pp. 6546-6555, 2018."
+https://github.com/kenshohara/3D-ResNets-PyTorch,"Learning Spatio-Temporal Features with 3D Residual Networks for Action Recognition"","
+https://github.com/kenshohara/3D-ResNets-PyTorch,"Proceedings of the ICCV Workshop on Action, Gesture, and Emotion Recognition, 2017."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"@inproceedings{zhu17fgfa,"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Author = {Xizhou Zhu, Yujie Wang, Jifeng Dai, Lu Yuan, Yichen Wei},"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Title = {Flow-Guided Feature Aggregation for Video Object Detection},"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Conference = {ICCV},"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Year = {2017}
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,}
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"@inproceedings{dai16rfcn,"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Author = {Jifeng Dai, Yi Li, Kaiming He, Jian Sun},"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Title = {{R-FCN}: Object Detection via Region-based Fully Convolutional Networks},"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Conference = {NIPS},"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Year = {2016}
+https://github.com/phoenix104104/LapSRN,"Wei-Sheng Lai, Jia-Bin Huang, Narendra Ahuja, and Ming-Hsuan Yang"
+https://github.com/phoenix104104/LapSRN,"IEEE Conference on Computer Vision and Pattern Recognition, CVPR 2017"
+https://github.com/phoenix104104/LapSRN,"If you find the code and datasets useful in your research, please cite:"
+https://github.com/phoenix104104/LapSRN,"@inproceedings{LapSRN,"
+https://github.com/phoenix104104/LapSRN,"author    = {Lai, Wei-Sheng and Huang, Jia-Bin and Ahuja, Narendra and Yang, Ming-Hsuan},"
+https://github.com/phoenix104104/LapSRN,"title     = {Deep Laplacian Pyramid Networks for Fast and Accurate Super-Resolution},"
+https://github.com/phoenix104104/LapSRN,"booktitle = {IEEE Conferene on Computer Vision and Pattern Recognition},"
+https://github.com/phoenix104104/LapSRN,year      = {2017}
+https://github.com/phoenix104104/LapSRN,}
+https://github.com/phuang17/DeepMVS,"@inproceedings{DeepMVS,"
+https://github.com/phuang17/DeepMVS,"author       = ""Huang, Po-Han and Matzen, Kevin and Kopf, Johannes and Ahuja, Narendra and Huang, Jia-Bin"","
+https://github.com/phuang17/DeepMVS,"title        = ""DeepMVS: Learning Multi-View Stereopsis"","
+https://github.com/phuang17/DeepMVS,"booktitle    = ""IEEE Conference on Computer Vision and Pattern Recognition (CVPR)"","
+https://github.com/phuang17/DeepMVS,"year         = ""2018"""
+https://github.com/phuang17/DeepMVS,}
+https://github.com/wuhuikai/DeepGuidedFilter,"@inproceedings{wu2017fast,"
+https://github.com/wuhuikai/DeepGuidedFilter,"title     = {Fast End-to-End Trainable Guided Filter},"
+https://github.com/wuhuikai/DeepGuidedFilter,"author    = {Wu, Huikai and Zheng, Shuai and Zhang, Junge and Huang, Kaiqi},"
+https://github.com/wuhuikai/DeepGuidedFilter,"booktitle = {CVPR},"
+https://github.com/wuhuikai/DeepGuidedFilter,year = {2018}
+https://github.com/wuhuikai/DeepGuidedFilter,}
+https://github.com/yuhuayc/da-faster-rcnn,"If you find it helpful for your research, please consider citing:"
+https://github.com/yuhuayc/da-faster-rcnn,"@inproceedings{chen2018domain,"
+https://github.com/yuhuayc/da-faster-rcnn,"title={Domain Adaptive Faster R-CNN for Object Detection in the Wild},"
+https://github.com/yuhuayc/da-faster-rcnn,"author={Chen, Yuhua and Li, Wen and Sakaridis, Christos and Dai, Dengxin and Van Gool, Luc},"
+https://github.com/yuhuayc/da-faster-rcnn,"booktitle = {Computer Vision and Pattern Recognition (CVPR)},"
+https://github.com/yuhuayc/da-faster-rcnn,year={2018}
+https://github.com/yuhuayc/da-faster-rcnn,}
