@@ -42,14 +42,6 @@ https://github.com/hezhangsprinter/DID-MDN,Install Torch vision from the source.
 https://github.com/hezhangsprinter/DID-MDN,"Install python package: numpy, scipy, PIL, pdb"
 https://github.com/hiroharu-kato/neural_renderer,Installation
 https://github.com/hiroharu-kato/neural_renderer,sudo python setup.py install
-https://github.com/hszhao/ICNet,Clone the repository recursively:
-https://github.com/hszhao/ICNet,git clone --recursive https://github.com/hszhao/ICNet.git
-https://github.com/hszhao/ICNet,Build Caffe and matcaffe:
-https://github.com/hszhao/ICNet,cd $ICNET_ROOT/PSPNet
-https://github.com/hszhao/ICNet,cp Makefile.config.example Makefile.config
-https://github.com/hszhao/ICNet,vim Makefile.config
-https://github.com/hszhao/ICNet,make -j8 && make matcaffe
-https://github.com/hszhao/ICNet,cd ..
 https://github.com/imfunniee/gitfolio,Let's Install
 https://github.com/imfunniee/gitfolio,Install gitfolio
 https://github.com/imfunniee/gitfolio,npm i gitfolio -g

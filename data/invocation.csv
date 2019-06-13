@@ -41,22 +41,6 @@ https://github.com/hiroharu-kato/neural_renderer,python ./examples/example1.py
 https://github.com/hiroharu-kato/neural_renderer,python ./examples/example2.py
 https://github.com/hiroharu-kato/neural_renderer,python ./examples/example3.py
 https://github.com/hiroharu-kato/neural_renderer,python ./examples/example4.py
-https://github.com/hszhao/ICNet,Evaluation mIoU:
-https://github.com/hszhao/ICNet,Evaluation code is in folder 'evaluation'.
-https://github.com/hszhao/ICNet,Download trained models and put them in folder 'evaluation/model':
-https://github.com/hszhao/ICNet,icnet_cityscapes_train_30k.caffemodel: GoogleDrive
-https://github.com/hszhao/ICNet,"(31M, md5: c7038630c4b6c869afaaadd811bdb539; train on trainset for 30k)"
-https://github.com/hszhao/ICNet,icnet_cityscapes_trainval_90k.caffemodel: GoogleDrive
-https://github.com/hszhao/ICNet,"(31M, md5: 4f4dd9eecd465dd8de7e4cf88ba5d5d5; train on trainvalset for 90k)"
-https://github.com/hszhao/ICNet,Modify the related paths in 'eval_all.m':
-https://github.com/hszhao/ICNet,"Mainly variables 'data_root' and 'eval_list', and your image list for evaluation should be similar to that in folder 'evaluation/samplelist' if you use this evaluation code structure."
-https://github.com/hszhao/ICNet,cd evaluation
-https://github.com/hszhao/ICNet,vim eval_all.m
-https://github.com/hszhao/ICNet,Run the evaluation scripts:
-https://github.com/hszhao/ICNet,./run.sh
-https://github.com/hszhao/ICNet,Evaluation time:
-https://github.com/hszhao/ICNet,"To get inference time as accurate as possible, it's suggested to make sure the GPU card with specified ID in script 'test_time.sh' is empty (without other processes executing)"
-https://github.com/hszhao/ICNet,./test_time.sh
 https://github.com/imfunniee/gitfolio,Forks
 https://github.com/imfunniee/gitfolio,To include forks on your personal website just provide -f or --fork argument while building
 https://github.com/imfunniee/gitfolio,$ gitfolio build <username> -f

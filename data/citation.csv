@@ -44,7 +44,7 @@ https://github.com/google/sg2im/,"author={Johnson, Justin and Gupta, Agrim and F
 https://github.com/google/sg2im/,"booktitle={CVPR},"
 https://github.com/google/sg2im/,year={2018}
 https://github.com/google/sg2im/,}
-https://github.com/hezhangsprinter/DID-MDN,"@inproceedings{derain_zhang_2018,		"
+https://github.com/hezhangsprinter/DID-MDN,"@inproceedings{derain_zhang_2018,"
 https://github.com/hezhangsprinter/DID-MDN,"title={Density-aware Single Image De-raining using a Multi-stream Dense Network},"
 https://github.com/hezhangsprinter/DID-MDN,"author={Zhang, He and Patel, Vishal M},"
 https://github.com/hezhangsprinter/DID-MDN,"booktitle={CVPR},"
@@ -57,17 +57,6 @@ https://github.com/hiroharu-kato/neural_renderer,"author={Kato, Hiroharu and Ush
 https://github.com/hiroharu-kato/neural_renderer,"booktitle={The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
 https://github.com/hiroharu-kato/neural_renderer,year={2018}
 https://github.com/hiroharu-kato/neural_renderer,}
-https://github.com/hszhao/ICNet,"by Hengshuang Zhao, Xiaojuan Qi, Xiaoyong Shen, Jianping Shi, Jiaya Jia"
-https://github.com/hszhao/ICNet,"@article{zhao2017icnet,"
-https://github.com/hszhao/ICNet,author = {Hengshuang Zhao and
-https://github.com/hszhao/ICNet,Xiaojuan Qi and
-https://github.com/hszhao/ICNet,Xiaoyong Shen and
-https://github.com/hszhao/ICNet,Jianping Shi and
-https://github.com/hszhao/ICNet,"Jiaya Jia},"
-https://github.com/hszhao/ICNet,"title = {ICNet for Real-Time Semantic Segmentation on High-Resolution Images},"
-https://github.com/hszhao/ICNet,"journal={arXiv preprint arXiv:1704.08545},"
-https://github.com/hszhao/ICNet,year = {2017}
-https://github.com/hszhao/ICNet,}
 https://github.com/kenshohara/3D-ResNets-PyTorch,"If you use this code or pre-trained models, please cite the following:"
 https://github.com/kenshohara/3D-ResNets-PyTorch,"@inproceedings{hara3dcnns,"
 https://github.com/kenshohara/3D-ResNets-PyTorch,"author={Kensho Hara and Hirokatsu Kataoka and Yutaka Satoh},"
