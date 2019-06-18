@@ -29,13 +29,13 @@ In this repository, descriptions include:
 and
 
 > # Features
-
+>
 > 1. Overburden (or Lithostatic) Pressure Calculation
 > 2. Eaton's method and Parameter Optimization
 > 3. Bowers' method and Parameter Optimization
 > 4. Multivariate method and Parameter Optimization
 
-Citation information include:
+Citation information includes:
 > Yu, (2018). PyGeoPressure: Geopressure Prediction in Python. Journal of Open Source Software, 3(30), 992, https://doi.org/10.21105/joss.00992
 
 and
