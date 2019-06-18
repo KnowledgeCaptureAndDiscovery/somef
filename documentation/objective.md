@@ -1,4 +1,4 @@
-# Approaches
+# Problem Description & Motivation
 ## Recap of problem
 A good Github repository README (or similar documentation) file informs the user of the following:
 1. What
@@ -88,7 +88,7 @@ and its invocation command is found in its `Example` section, i.e.
 > ```
 
 ### Observations and Discussions
-Whereas sometimes a reader of documentation relies on headings to identify a text's function, i.e. description / installation / invocation / citation, sometimes this heading is missing and the reader must deduce the function from the text. In the previous example, an example of this would be the citation information. However, in other circumstances, a heading may prove indispensable to distinguish categories, let's say an installation from an invocation. For example, without the aid of a heading, the difference between `python3 setup.py` and `python3 run.py` may not be obvious enough to qualify as an installation or execution.
+Whereas often a reader of documentation relies on headings to identify a text's function, i.e. description / installation / invocation / citation, sometimes this heading is missing and the reader must deduce the function from the text. In the previous example, an example of this would be the citation information. However, in other circumstances, a heading may prove indispensable to distinguish categories, let's say an installation from an invocation. For example, without the aid of a heading, the difference between `python3 setup.py` and `python3 run.py` may not be obvious enough to qualify as an installation or execution.
 
 Given this information, the focus is on the following two approaches:
 
