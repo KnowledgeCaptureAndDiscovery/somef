@@ -1,0 +1,8 @@
+Category,URL,description
+technical,https://towardsdatascience.com/sentence-classification-using-bi-lstm-b74151ffa565,sentence classification with bidirectional-LSTMs
+repo,https://github.com/shulele/PIHMgisR,PIHM GIS (hydrology)
+info,http://www.pihm.psu.edu/,info for https://github.com/shulele/PIHMgisR
+info,https://github.com/peckhams/topoflow/blob/master/docs/How_to_Install_TopoFlow_3.5.pdf,topoflow pdf description
+repo,https://github.com/mintproject/simplewg,weather generator
+repo,https://github.com/KnowledgeCaptureAndDiscovery/ClimComp,climcomp
+technical,https://developers.google.com/machine-learning/guides/text-classification/,google text classification
