@@ -90,4 +90,9 @@ and its invocation command is found in its `Example` section, i.e.
 ### Observations and Discussions
 Whereas sometimes a reader of documentation relies on headings to identify a text's function, i.e. description / installation / invocation / citation, sometimes this heading is missing and the reader must deduce the function from the text. In the previous example, an example of this would be the citation information. However, in other circumstances, a heading may prove indispensable to distinguish categories, let's say an installation from an invocation. For example, without the aid of a heading, the difference between `python3 setup.py` and `python3 run.py` may not be obvious enough to qualify as an installation or execution.
 
-Given this information, 
+Given this information, the focus is on the following two approaches:
+
+1. Identify the headers within a document and deduce from them the text's function. Possibly, also follow links within the text to find more information. For example, if the README links to an `INSTALLATION.md` file, this `INSTALLATION.md` is probably of interest.
+2. Analyze a corpus of descriptions, installations, invocations, and citations to detect linguistic properties and signals that distinguish one from the others.
+
+It may even be possible to eventually synthesize these two methods.
