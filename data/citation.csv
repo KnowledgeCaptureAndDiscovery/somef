@@ -262,6 +262,9 @@ https://github.com/whimian/pyGeoPressure,"number = {30},"
 https://github.com/whimian/pyGeoPressure,"year = {2018},"
 https://github.com/whimian/pyGeoPressure,"doi = {10.21105/joss.00992},"
 https://github.com/whimian/pyGeoPressure,}
+https://github.com/wuhuikai/DeepGuidedFilter,Fast End-to-End Trainable Guided Filter
+https://github.com/wuhuikai/DeepGuidedFilter,"Huikai Wu, Shuai Zheng, Junge Zhang, Kaiqi Huang"
+https://github.com/wuhuikai/DeepGuidedFilter,CVPR 2018
 https://github.com/wuhuikai/DeepGuidedFilter,"@inproceedings{wu2017fast,"
 https://github.com/wuhuikai/DeepGuidedFilter,"title     = {Fast End-to-End Trainable Guided Filter},"
 https://github.com/wuhuikai/DeepGuidedFilter,"author    = {Wu, Huikai and Zheng, Shuai and Zhang, Junge and Huang, Kaiqi},"

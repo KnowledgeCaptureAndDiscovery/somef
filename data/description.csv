@@ -295,9 +295,6 @@ https://github.com/wuhuikai/DeepGuidedFilter,Official implementation of Fast End
 https://github.com/wuhuikai/DeepGuidedFilter,"Faster, Better and Lighter for image processing and dense prediction."
 https://github.com/wuhuikai/DeepGuidedFilter,Overview
 https://github.com/wuhuikai/DeepGuidedFilter,DeepGuidedFilter is the author's implementation of the deep learning building block for joint upsampling described in:
-https://github.com/wuhuikai/DeepGuidedFilter,Fast End-to-End Trainable Guided Filter
-https://github.com/wuhuikai/DeepGuidedFilter,"Huikai Wu, Shuai Zheng, Junge Zhang, Kaiqi Huang"
-https://github.com/wuhuikai/DeepGuidedFilter,CVPR 2018
 https://github.com/wuhuikai/DeepGuidedFilter,"Given a reference image pair in high-resolution and low-resolution, our algorithm generates high-resolution target from the low-resolution input. Through joint training with CNNs, our algorithm achieves the state-of-the-art performance while runs 10-100 times faster."
 https://github.com/yuhuayc/da-faster-rcnn,"This is the implementation of our CVPR 2018 work 'Domain Adaptive Faster R-CNN for Object Detection in the Wild'. The aim is to improve the cross-domain robustness of object detection, in the screnario where training and test data are drawn from different distributions. The original paper can be found here."
 https://github.com/yulunzhang/RDN,This repository is for RDN introduced in the following paper

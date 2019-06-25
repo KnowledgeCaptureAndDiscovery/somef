@@ -30,7 +30,7 @@ for url in urls:
     if len(split_path) == 3: #get default README
         owner = split_path[1]
         repo = split_path[2]
-        if repo+"-README.md" in collected_READMEs:
+        if repo+"-README.md" in collected_READMEs: # this README has already been downloaded
             print("{} by {} already downloaded".format(repo, owner))
             continue
         else:
@@ -44,8 +44,13 @@ for url in urls:
             fh = open(dest_path + repo+"-README.md", 'w')
             fh.write(readme.text)
             fh.close()
+    elif len(split_path) > 3:
+        owner = split_path[1]
+        repo = split_path[2]
+        # type is split_path[3]
+        # branch is split_path[4]
+        nested_path = split_path[5:]
 
-# - get default README
 # - get specific documentation file
 # - get Github Wiki file
 # If proposed filename is in list of files in destination directory, continue.
