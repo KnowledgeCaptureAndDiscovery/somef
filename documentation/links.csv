@@ -6,3 +6,10 @@ info,https://github.com/peckhams/topoflow/blob/master/docs/How_to_Install_TopoFl
 repo,https://github.com/mintproject/simplewg,weather generator
 repo,https://github.com/KnowledgeCaptureAndDiscovery/ClimComp,climcomp
 technical,https://developers.google.com/machine-learning/guides/text-classification/,google text classification
+technical,https://ai.facebook.com/blog/neural-code-search-ml-based-code-search-using-natural-language-queries/,"Given natural language query, find pertinent source code."
+technical,https://chrisalbon.com/machine_learning/model_evaluation/cross_validation_pipeline/,Cross Validation Pipeline with sklearn
+,https://towardsdatascience.com/train-test-split-and-cross-validation-in-python-80b61beca4b6,
+,https://ryan-cranfill.github.io/sentiment-pipeline-sklearn-2/,
+,https://towardsdatascience.com/a-simple-example-of-pipeline-in-machine-learning-with-scikit-learn-e726ffbb6976,
+,https://medium.com/@contactsunny/how-to-split-your-dataset-to-train-and-test-datasets-using-scikit-learn-e7cf6eb5e0d,
+,https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html,
