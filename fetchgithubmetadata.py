@@ -9,7 +9,9 @@ import requests
 import json
 import pprint
 
-auth2token_header = {'Authorization': 'token 1ea8df0c5fe5f10c75bcd7d0d55d3b565dc5c066'}
+auth2token_header = {}
+with open('config.json') as fh:
+    auth2token_header = json.load(fh)
 ## Parse command line arguments
 argparser = argparse.ArgumentParser(description="Fetch Github repository metadata.")
 argparser.add_argument("repo_url", help="URL of the Github repository")
@@ -36,9 +38,9 @@ filtered_resp['owner'] = filtered_resp['owner']['login']
 filtered_resp['license'] = {k: filtered_resp['license'][k] for k in ('name', 'url')}
 # get keywords / topics
 topics_headers = {
-    'Accept': 'application/vnd.github.mercy-preview+json',
-    'Authorization': 'token 1ea8df0c5fe5f10c75bcd7d0d55d3b565dc5c066'
+    'Accept': 'application/vnd.github.mercy-preview+json'
 }
+topics_headers.update(auth2token_header)
 topics_resp = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/topics', headers=topics_headers).json()
 filtered_resp['topics'] = topics_resp['names']
 
