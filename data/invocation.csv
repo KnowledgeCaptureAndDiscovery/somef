@@ -715,6 +715,17 @@ https://github.com/kenshohara/3D-ResNets-PyTorch,Generate annotation file in jso
 https://github.com/kenshohara/3D-ResNets-PyTorch,"annotation_dir_path includes brush_hair_test_split1.txt, ..."
 https://github.com/kenshohara/3D-ResNets-PyTorch,python utils/hmdb51_json.py annotation_dir_path
 https://github.com/kenshohara/3D-ResNets-PyTorch,Running the code
+https://github.com/kenshohara/3D-ResNets-PyTorch,Assume the structure of data directories is the following:
+https://github.com/kenshohara/3D-ResNets-PyTorch,~/
+https://github.com/kenshohara/3D-ResNets-PyTorch,data/
+https://github.com/kenshohara/3D-ResNets-PyTorch,kinetics_videos/
+https://github.com/kenshohara/3D-ResNets-PyTorch,jpg/
+https://github.com/kenshohara/3D-ResNets-PyTorch,.../ (directories of class names)
+https://github.com/kenshohara/3D-ResNets-PyTorch,.../ (directories of video names)
+https://github.com/kenshohara/3D-ResNets-PyTorch,... (jpg files)
+https://github.com/kenshohara/3D-ResNets-PyTorch,results/
+https://github.com/kenshohara/3D-ResNets-PyTorch,save_100.pth
+https://github.com/kenshohara/3D-ResNets-PyTorch,kinetics.json
 https://github.com/kenshohara/3D-ResNets-PyTorch,Confirm all options.
 https://github.com/kenshohara/3D-ResNets-PyTorch,python main.lua -h
 https://github.com/kenshohara/3D-ResNets-PyTorch,Train ResNets-34 on the Kinetics dataset (400 classes) with 4 CPU threads (for data loading).
