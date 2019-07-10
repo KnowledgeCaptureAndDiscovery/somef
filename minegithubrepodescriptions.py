@@ -24,7 +24,8 @@ try:
         f.seek(f.tell() - 2, os.SEEK_SET) # ...jump back the read byte plus one more.
         #f.seek(-2, 1)
     last = f.readline()         # Read last line.
-    id, _ = [x.strip('\"') for x in last.split(',')]
+#    id, _ = [x.strip('\"') for x in last.split(',')]
+    id, _ = list(csv.reader([last], dialect='unix'))[0]
     id = int(id)
     f.seek(0, os.SEEK_END)
 except (FileNotFoundError, ValueError):
@@ -43,9 +44,9 @@ requests_remaining = 1
 while requests_remaining > 0:
 #    print(id)
     reporequest = requests.get("https://api.github.com/repositories", params={'since':id}, headers=auth2token_header)
-#    print(reporequest.request)
-    requests_remaining = int(reporequest.headers['X-RateLimit-Remaining'])
-    total_requests = int(reporequest.headers['X-RateLimit-Limit'])
+    print(reporequest.headers)
+    requests_remaining = int(reporequest.headers['x-ratelimit-remaining'])
+    total_requests = int(reporequest.headers['x-ratelimit-limit'])
     #print(reporequest.json())
     for repo in reporequest.json():
         repo_id = repo['id']
