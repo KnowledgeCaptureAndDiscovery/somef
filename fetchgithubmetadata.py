@@ -27,7 +27,7 @@ _, owner, repo_name = url.path.split('/')
 general_resp = requests.get("https://api.github.com/repos/" + owner + "/" + repo_name, headers=auth2token_header).json()
 
 ## Remove extraneous data
-keep_keys = ('description', 'name', 'owner', 'license', 'languages_url')
+keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_url')
 filtered_resp = {k: general_resp[k] for k in keep_keys}
 
 ## Condense owner information
