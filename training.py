@@ -17,6 +17,7 @@ from sklearn.model_selection import train_test_split
 
 argparser = argparse.ArgumentParser(description=f"Train binary classifier for one of categories: {categories}.")
 argparser.add_argument('-c', '--category', choices=categories, required=True, help='category in question')
+argparser.add_argument('-o', '--output', help='output pickled model')
 argv = argparser.parse_args()
 selected_category = argv.category
 categories_df = {cat : pd.read_csv(f"./data/{cat}.csv") for cat in categories}
@@ -85,3 +86,11 @@ print(confusion_matrix(y_test, y_pred_class))
 print('-' * 75 + '\nClassification Report\n')
 print(classification_report(y_test, y_pred_class))
 display_accuracy_difference(y_test, y_pred_class)
+
+if argv.output is not None:
+    out_file = argv.output
+else:
+    out_file = f'models/{selected_category}.sk'
+print(f"Saving model to {out_file}")
+import pickle
+pickle.dump(pipeline, open(out_file, 'wb+'))
