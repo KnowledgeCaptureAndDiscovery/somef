@@ -4,7 +4,7 @@
 ## model_name
 # output:
 ## to console: Classification Report
-## to SM2KG/models/model_name: pickled model
+## to SM2KG/models/`model_name`: pickled model
 
 #Constants:
 categories = ('description', 'installation', 'invocation', 'citation')
@@ -21,14 +21,23 @@ argv = argparser.parse_args()
 selected_category = argv.category
 categories_df = {cat : pd.read_csv(f"./data/{cat}.csv") for cat in categories}
 
-
-# in this case: equal representation from all categories
-entries_per_category = min(list(map(lambda df: len(df), categories_df.keys())))
-treebank_background = pd.DataFrame(list(map(lambda sent: ' '.join(sent), random.sample(list(treebank.sents()), entries_per_category))), columns=["excerpt"]).assign(description=False)
-corpus = pd.concat([categories_df[category].assign(**{selected_category: category == selected_category}) for category in categories_df.keys()])
+negative_sample_size = int(len(categories_df[selected_category]) / 5)
+#print("Collecting {} {} samples and 5 * {} negative samples".format(len(categories_df[selected_category]), selected_category, negative_sample_size))
+for category in categories_df:
+    categories_df[category].drop('URL', 1, inplace=True)
+    if category != selected_category:
+        categories_df[category] = categories_df[category].sample(negative_sample_size)
+    categories_df[category] = categories_df[category].assign(**{selected_category: category == selected_category})
+    print("{} has {} samples;".format(category, len(categories_df[category])))
+    print(categories_df[category].head())
+treebank_background = pd.DataFrame(map(lambda sent: ' '.join(sent), random.sample(list(treebank.sents()), negative_sample_size)), columns=["excerpt"]).assign(description=False)
+print("Treebank has {} samples.".format(len(treebank_background)))
+print("categories_df")
+corpus = pd.concat(categories_df.values(), ignore_index=True)
+corpus.append(treebank_background, ignore_index=True)
 corpus.dropna(0, inplace=True)
-corpus.reset_index(drop=True, inplace=True)
 print(corpus)
+
 
 X, y = corpus.excerpt, corpus[selected_category]
 X_train, X_test, y_train, y_test = train_test_split(X, y)
