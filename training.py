@@ -13,7 +13,11 @@ import argparse
 import random
 import pandas as pd
 from nltk.corpus import treebank
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score, cross_validate
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 
 argparser = argparse.ArgumentParser(description=f"Train binary classifier for one of categories: {categories}.")
 argparser.add_argument('-c', '--category', choices=categories, required=True, help='category in question')
@@ -22,7 +26,7 @@ argv = argparser.parse_args()
 selected_category = argv.category
 categories_df = {cat : pd.read_csv(f"./data/{cat}.csv") for cat in categories}
 
-negative_sample_size = int(len(categories_df[selected_category]) / 5)
+negative_sample_size = int(len(categories_df[selected_category]) / 4)
 #print("Collecting {} {} samples and 5 * {} negative samples".format(len(categories_df[selected_category]), selected_category, negative_sample_size))
 for category in categories_df:
     categories_df[category].drop('URL', 1, inplace=True)
@@ -30,26 +34,29 @@ for category in categories_df:
         categories_df[category] = categories_df[category].sample(negative_sample_size)
     categories_df[category] = categories_df[category].assign(**{selected_category: category == selected_category})
     print("{} has {} samples;".format(category, len(categories_df[category])))
-    print(categories_df[category].head())
+    #print(categories_df[category].head())
 treebank_background = pd.DataFrame(map(lambda sent: ' '.join(sent), random.sample(list(treebank.sents()), negative_sample_size)), columns=["excerpt"]).assign(description=False)
-print("Treebank has {} samples.".format(len(treebank_background)))
-print("categories_df")
-corpus = pd.concat(categories_df.values(), ignore_index=True)
-corpus.append(treebank_background, ignore_index=True)
+#print("Treebank has {} samples.".format(len(treebank_background)))
+#print("categories_df")
+corpus = pd.concat(categories_df.values(), ignore_index=True, sort=False)
+corpus.append(treebank_background, ignore_index=True, sort=False)
 corpus.dropna(0, inplace=True)
-print(corpus)
+#print(corpus)
 
+#pipeline = make_pipeline(CountVectorizer(), LogisticRegression())
+pipeline = make_pipeline(TfidfVectorizer(), LogisticRegression(solver='liblinear'))
 
 X, y = corpus.excerpt, corpus[selected_category]
+
+#cross validation
+cv_results = cross_validate(pipeline, X, y, cv=5)
+print(cv_results['test_score'])
+#scores = cross_val_score(pipeline, X, y, cv=5)
+#print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+
 X_train, X_test, y_train, y_test = train_test_split(X, y)
 
 # ## Count Vectorizer and Logistic Regression in Pipeline
-
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.linear_model import LogisticRegression
-from sklearn.pipeline import make_pipeline
-from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
-
 def display_accuracy_score(y_test, y_pred_class):
     score = accuracy_score(y_test, y_pred_class)
     print('accuracy score: %s' % '{:.2%}'.format(score))
@@ -72,7 +79,7 @@ def display_accuracy_difference(y_test, y_pred_class):
         print('model is exactly as accurate as null accuracy')
     return null_accuracy, accuracy_score
 
-pipeline = make_pipeline(CountVectorizer(), LogisticRegression())
+
 pipeline.fit(X_train, y_train)
 
 y_pred_class = pipeline.predict(X_test)
@@ -81,8 +88,8 @@ y_pred_vals = pipeline.predict_proba(X_test)
 #print("X_test: {}, y_pred: {}".format(X_test, y_pred_class))
 #results_df = pd.DataFrame({"x_test": X_test, "y_pred": y_pred_vals[:,1], "y_TF_pred": y_pred_class, "y_actual": y_test})
 results_df = pd.DataFrame({"x_test": X_test,  "y_TF_pred": y_pred_class, "y_actual": y_test})
-print(results_df)
-print(confusion_matrix(y_test, y_pred_class))
+#print(results_df)
+#print(confusion_matrix(y_test, y_pred_class))
 print('-' * 75 + '\nClassification Report\n')
 print(classification_report(y_test, y_pred_class))
 display_accuracy_difference(y_test, y_pred_class)
