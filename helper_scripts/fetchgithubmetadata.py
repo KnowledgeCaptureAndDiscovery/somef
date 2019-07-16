@@ -10,7 +10,7 @@ import json
 import pprint
 
 auth2token_header = {}
-with open('config.json') as fh:
+with open('../config.json') as fh:
     auth2token_header = json.load(fh)
 ## Parse command line arguments
 argparser = argparse.ArgumentParser(description="Fetch Github repository metadata.")

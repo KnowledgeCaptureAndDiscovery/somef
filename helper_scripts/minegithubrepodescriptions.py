@@ -9,11 +9,11 @@ import traceback
 import csv
 from printprogressbar import printProgressBar
 
-output_corpus = 'data/repos_summary.csv'
+output_corpus = '../data/repos_summary.csv'
 
 ## read auth key
 auth2token_header = {}
-with open('config.json') as configfh:
+with open('../config.json') as configfh:
     auth2token_header = json.load(configfh)
     configfh.close()
 
