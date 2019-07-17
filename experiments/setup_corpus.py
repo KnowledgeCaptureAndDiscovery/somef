@@ -30,6 +30,6 @@ def build_corpus(selected_category):
     #print("categories_df")
     corpus = pd.concat(categories_df.values(), ignore_index=True, sort=False)
     corpus.append(treebank_background, ignore_index=True, sort=False)
-    corpus.dropna(0, inplace=True)
+    corpus.fillna(value='', inplace=True)
     return corpus
     
