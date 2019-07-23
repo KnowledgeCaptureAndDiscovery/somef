@@ -43,7 +43,6 @@ corpus.append(treebank_background, ignore_index=True, sort=False)
 corpus.dropna(0, inplace=True)
 #print(corpus)
 
-#pipeline = make_pipeline(CountVectorizer(), LogisticRegression())
 pipeline = make_pipeline(TfidfVectorizer(), LogisticRegression(solver='liblinear'))
 
 X, y = corpus.excerpt, corpus[selected_category]
