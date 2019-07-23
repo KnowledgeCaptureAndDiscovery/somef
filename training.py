@@ -27,7 +27,7 @@ selected_category = argv.category
 categories_df = {cat : pd.read_csv(f"./data/{cat}.csv") for cat in categories}
 
 negative_sample_size = int(len(categories_df[selected_category]) / 4)
-#print("Collecting {} {} samples and 5 * {} negative samples".format(len(categories_df[selected_category]), selected_category, negative_sample_size))
+print(f"Selected Category: {selected_category}")
 for category in categories_df:
     categories_df[category].drop('URL', 1, inplace=True)
     if category != selected_category:
@@ -40,7 +40,7 @@ treebank_background = pd.DataFrame(map(lambda sent: ' '.join(sent), random.sampl
 #print("categories_df")
 corpus = pd.concat(categories_df.values(), ignore_index=True, sort=False)
 corpus.append(treebank_background, ignore_index=True, sort=False)
-corpus.dropna(0, inplace=True)
+corpus.fillna(value='', inplace=True)
 #print(corpus)
 
 pipeline = make_pipeline(TfidfVectorizer(), LogisticRegression(solver='liblinear'))

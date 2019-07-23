@@ -14,6 +14,8 @@ from markdown import Markdown
 from bs4 import BeautifulSoup
 from io import StringIO
 import pickle
+import pprint
+
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
@@ -48,6 +50,7 @@ src.add_argument('--repo_url', help="URL of the Github repository")
 src.add_argument('--doc_src', help='path to documentation file')
 argparser.add_argument('-m', '--model_src', help='path to pickled model', required=True)
 argparser.add_argument('--output', '-o', help="path for output json")
+argparser.add_argument('--threshold', '-t', help="threshold score", type=float)
 argv = argparser.parse_args()
 
 if (argv.repo_url):
@@ -57,8 +60,8 @@ if (argv.repo_url):
         sys.exit("Error: repository must come from github")
     _, owner, repo_name = url.path.split('/')
     general_resp = requests.get(f"https://api.github.com/repos/{owner}/{repo_name}/readme", headers=header).json()
-    readme = base64.b64decode(general_resp['content'])
-    #html = markdown(readme)
+    readme = base64.b64decode(general_resp['content']).decode("utf-8") 
+    #html = Markdown(readme)
     #text = ''.join(BeautifulSoup(html, features="html.parser").findAll(text=True))
     text = unmark(readme)
 elif (argv.doc_src):
@@ -69,5 +72,10 @@ elif (argv.doc_src):
 #print(text)
 
 classifier = pickle.load(open(argv.model_src, 'rb'))
-results = [{'excerpt': line, os.path.basename(argv.model_src): classifier.predict_proba([line])} for line in text.splitlines()]
-print(results)
+results = [{'excerpt': line, os.path.basename(argv.model_src): classifier.predict_proba([line])[0][1]} for line in text.splitlines()]
+pp = pprint.PrettyPrinter()
+pp.pprint(results)
+
+if argv.output:
+    with open(argv.output, 'w') as outfile:
+        json.dump(results, outfile)
