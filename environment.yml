@@ -8,3 +8,4 @@ dependencies:
   - markdown
   - jupyter
   - matplotlib
+  - beautifulsoup4
