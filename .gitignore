@@ -1,2 +1,4 @@
+.vscode/
+.ipynb_checkpoints/
 config.json
 __pycache__/
