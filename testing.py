@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 from io import StringIO
 import pickle
 import pprint
+import pandas as pd
 
 
 ## Markdown to plain text conversion: begin ##
@@ -39,6 +40,11 @@ def unmark(text):
     return __md.convert(text)
 ## Markdown to plain text conversion: end ##
 
+def restricted_float(x):
+    x = float(x)
+    if x < 0.0 or x > 1.0:
+        raise argparse.ArgumentTypeError(f"{x} not in range [0.0, 1.0]")
+    return x
 
 with open('config.json') as fh:
     header = json.load(fh)
@@ -50,7 +56,7 @@ src.add_argument('--repo_url', help="URL of the Github repository")
 src.add_argument('--doc_src', help='path to documentation file')
 argparser.add_argument('-m', '--model_src', help='path to pickled model', required=True)
 argparser.add_argument('--output', '-o', help="path for output json")
-argparser.add_argument('--threshold', '-t', help="threshold score", type=float)
+argparser.add_argument('--threshold', '-t', help="threshold score", type=restricted_float, default=0.0)
 argv = argparser.parse_args()
 
 if (argv.repo_url):
@@ -72,9 +78,16 @@ elif (argv.doc_src):
 #print(text)
 
 classifier = pickle.load(open(argv.model_src, 'rb'))
-results = [{'excerpt': line, os.path.basename(argv.model_src): classifier.predict_proba([line])[0][1]} for line in text.splitlines()]
+classifier_name = os.path.basename(argv.model_src)
+excerpts = text.splitlines()
+#results = [{'excerpt': line, os.path.basename(argv.model_src): classifier.predict_proba([line])[0][1]} for line in text.splitlines()]
+scores = classifier.predict_proba(excerpts)
+
+results = pd.DataFrame({'excerpt': excerpts, classifier_name: scores[:,1]})
+results = results[results[classifier_name] >= argv.threshold]
+predictions = results.to_dict(orient='records')
 pp = pprint.PrettyPrinter()
-pp.pprint(results)
+pp.pprint(predictions)
 
 if argv.output:
     with open(argv.output, 'w') as outfile:
