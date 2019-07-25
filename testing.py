@@ -80,6 +80,7 @@ elif (argv.doc_src):
 classifier = pickle.load(open(argv.model_src, 'rb'))
 classifier_name = os.path.basename(argv.model_src)
 excerpts = text.splitlines()
+excerpts = [i for i in excerpts if i]
 #results = [{'excerpt': line, os.path.basename(argv.model_src): classifier.predict_proba([line])[0][1]} for line in text.splitlines()]
 scores = classifier.predict_proba(excerpts)
 
