@@ -57,13 +57,11 @@ https://github.com/driftingtides/hyvr,HyVR: Turning your geofantasy into reality
 https://github.com/driftingtides/hyvr,"The Hydrogeological Virtual Reality simulation package (HyVR) is a Python module that helps researchers and practitioners generate subsurface models with multiple scales of heterogeneity that are based on geological concepts. The simulation outputs can then be used to explore groundwater flow and solute transport behaviour. This is facilitated by HyVR outputs in common flow simulation packages' input formats. As each site is unique, HyVR has been designed that users can take the code and extend it to suit their particular simulation needs."
 https://github.com/driftingtides/hyvr,"The original motivation for HyVR was the lack of tools for modelling sedimentary deposits that include bedding structure model outputs (i.e., dip and azimuth). Such bedding parameters were required to approximate full hydraulic-conductivity tensors for groundwater flow modelling. HyVR is able to simulate these bedding parameters and generate spatially distributed parameter fields, including full hydraulic-conductivity tensors. More information about HyVR is available in the online technical documentation."
 https://github.com/driftingtides/hyvr,I hope you enjoy using HyVR much more than I enjoyed putting it together! I look forward to seeing what kind of funky fields you created in the course of your work.
-https://github.com/driving-behavior/DBNet,Introduction
 https://github.com/driving-behavior/DBNet,"This work is based on our research paper, which appears in CVPR 2018. We propose a large-scale dataset for driving behavior learning, namely, DBNet. You can also check our dataset webpage for a deeper introduction."
 https://github.com/driving-behavior/DBNet,"In this repository, we release demo code and partial prepared data for training with only images, as well as leveraging feature maps or point clouds. The prepared data are accessible here. (More demo models and scripts are released soon!)"
 https://github.com/driving-behavior/DBNet,"This baseline is run on dbnet-2018 challenge data and only nvidia_pn is tested. To measure difficult architectures comprehensively, several metrics are set, including accuracy under different thresholds, area under curve (AUC), max error (ME), mean error (AE) and mean of max errors (AME)."
 https://github.com/driving-behavior/DBNet,The implementations of these metrics could be found in evaluate.py.
 https://github.com/empymod/empymod,"The electromagnetic modeller empymod can model electric or magnetic responses due to a three-dimensional electric or magnetic source in a layered-earth model with vertical transverse isotropic (VTI) resistivity, VTI electric permittivity, and VTI magnetic permeability, from very low frequencies (DC) to very high frequencies (GPR). The calculation is carried out in the wavenumber-frequency domain, and various Hankel- and Fourier-transform methods are included to transform the responses into the space-frequency and space-time domains."
-https://github.com/empymod/empymod,Features
 https://github.com/empymod/empymod,"Calculates the complete (diffusion and wave phenomena) 3D electromagnetic field in a layered-earth model including vertical transverse isotropic (VTI) resistivity, VTI electric permittivity, and VTI magnetic permeability, for electric and magnetic sources as well as electric and magnetic receivers."
 https://github.com/empymod/empymod,Modelling routines:
 https://github.com/empymod/empymod,"bipole: arbitrary oriented, finite length bipoles with given source strength; space-frequency and space-time domains."
@@ -128,7 +126,6 @@ https://github.com/foolwood/DaSiamRPN,"DaSiamRPN improves the performances of Si
 https://github.com/geo-data/gdal-docker,This is an Ubuntu derived image containing the Geospatial Data Abstraction Library (GDAL) compiled with a broad range of drivers. The build process is based on that defined in the GDAL TravisCI tests.
 https://github.com/geo-data/gdal-docker,Each branch in the git repository corresponds to a supported GDAL version (e.g. 1.11.2) with the master branch following GDAL master. These branch names are reflected in the image tags on the Docker Index (e.g. branch 1.11.2 corresponds to the image geodata/gdal:1.11.2).
 https://github.com/geopandas/geopandas/,Python tools for geographic data
-https://github.com/geopandas/geopandas/,Introduction
 https://github.com/geopandas/geopandas/,GeoPandas is a project to add support for geographic data to pandas objects. It currently implements GeoSeries and GeoDataFrame types which are subclasses of pandas.Series and pandas.DataFrame respectively. GeoPandas objects can act on shapely geometry objects and perform geometric operations.
 https://github.com/geopandas/geopandas/,"GeoPandas geometry operations are cartesian. The coordinate reference system (crs) can be stored as an attribute on an object, and is automatically set when loading from a file. Objects may be transformed to new coordinate systems with the to_crs() method. There is currently no enforcement of like coordinates for operations, but that may change in the future."
 https://github.com/google/sg2im/,This is the code for the paper
@@ -199,7 +196,6 @@ https://github.com/mbloch/mapshaper,"Mapshaper is software for editing Shapefile
 https://github.com/mbloch/mapshaper,"The mapshaper command line program supports essential map making tasks like simplifying shapes, editing attribute data, clipping, erasing, dissolving, filtering and more."
 https://github.com/mbloch/mapshaper,"The web UI supports interactive simplification, attribute data editing, and running cli commands in a built-in console. Visit the public website at www.mapshaper.org or use the web UI locally via the mapshaper-gui script."
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"This repository is implemented by Yuqing Zhu, Shuhao Fu, and Xizhou Zhu, when they are interns at MSRA."
-https://github.com/msracver/Flow-Guided-Feature-Aggregation,Introduction
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Flow-Guided Feature Aggregation (FGFA) is initially described in an ICCV 2017 paper. It provides an accurate and end-to-end learning framework for video object detection. The proposed FGFA method, together with our previous work of Deep Feature Flow, powered the winning entry of ImageNet VID 2017. It is worth noting that:"
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"FGFA improves the per-frame features by aggregating nearby frame features along the motion paths. It significantly improves the object detection accuracy in videos, especially for fast moving objects."
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"FGFA is end-to-end trainable for the task of video object detection, which is vital for improving the recognition accuracy."
@@ -262,7 +258,6 @@ https://github.com/ungarj/tilematrix,Tilematrix supports metatiling and tile buf
 https://github.com/ungarj/tilematrix,"It is very similar to mercantile but besides of supporting spherical mercator tile pyramids, it also supports geodetic (WGS84) tile pyramids."
 https://github.com/vuejs/vue,"Vue (pronounced /vjuː/, like view) is a progressive framework for building user interfaces. It is designed from the ground up to be incrementally adoptable, and can easily scale between a library and a framework depending on different use cases. It consists of an approachable core library that focuses on the view layer only, and an ecosystem of supporting libraries that helps you tackle complexity in large Single-Page Applications."
 https://github.com/whimian/pyGeoPressure,A Python package for pore pressure prediction using well log data and seismic velocity data.
-https://github.com/whimian/pyGeoPressure,Features
 https://github.com/whimian/pyGeoPressure,Overburden (or Lithostatic) Pressure Calculation
 https://github.com/whimian/pyGeoPressure,Eaton's method and Parameter Optimization
 https://github.com/whimian/pyGeoPressure,Bowers' method and Parameter Optimization
@@ -279,3 +274,64 @@ https://github.com/yulunzhang/RDN,"A very deep convolutional neural network (CNN
 https://github.com/zhiqiangdon/CU-Net,"The follwoing figure gives an illustration of naive dense U-Net, stacked U-Nets and coupled U-Nets (CU-Net). The naive dense U-Net and stacked U-Nets have shortcut connections only inside each U-Net. In contrast, the coupled U-Nets also have connections for semantic blocks across U-Nets. The CU-Net is a hybrid of naive dense U-Net and stacked U-Net, integrating the merits of both dense connectivity, intermediate supervisions and multi-stage top-down and bottom-up refinement. The resulted CU-Net could save ~70% parameters of the previous stacked U-Nets but with comparable accuracy."
 https://github.com/zhiqiangdon/CU-Net,"If we couple each U-Net pair in multiple U-Nets, the coupling connections would have quadratic growth with respect to the U-Net number. To make the model more parameter efficient, we propose the order-K coupling to trim off the long-distance coupling connections."
 https://github.com/zhiqiangdon/CU-Net,"For simplicity, each dot represents one U-Net. The red and blue lines are the shortcut connections of inside semantic blocks and outside inputs. Order-0 connectivity (Top) strings U-Nets together only by their inputs and outputs, i.e. stacked U-Nets. Order-1 connectivity (Middle) has shortcut connections for adjacent U-Nets. Similarly, order-2 connectivity (Bottom) has shortcut connections for 3 nearby U-Nets."
+https://github.com/cltk/cltk,The Classical Language Toolkit
+https://github.com/cltk/cltk,"The Classical Language Toolkit (CLTK) offers natural language processing (NLP) support for the languages of Ancient, Classical, and Medieval Eurasia. Greek, Latin, Akkadian, and the Germanic languages are currently most complete. The goals of the CLTK are to:"
+https://github.com/cltk/cltk,*   compile analysis-friendly corpora;
+https://github.com/cltk/cltk,*   collect and generate linguistic data;
+https://github.com/cltk/cltk,*   act as a free and open platform for generating scientific research.
+https://github.com/facebookresearch/DensePose,Dense Human Pose Estimation In The Wild
+https://github.com/facebookresearch/DensePose,"Rıza Alp Güler, Natalia Neverova, Iasonas Kokkinos"
+https://github.com/facebookresearch/DensePose,Dense human pose estimation aims at mapping all human pixels of an RGB image to the 3D surface of the human body. 
+https://github.com/facebookresearch/DensePose,DensePose-RCNN is implemented in the Detectron framework and is powered by Caffe2.
+https://github.com/facebookresearch/DensePose,"In this repository, we provide the code to train and evaluate DensePose-RCNN. We also provide notebooks to visualize the collected DensePose-COCO dataset and show the correspondences to the SMPL model."
+https://github.com/facebookresearch/ResNeXt,ResNeXt: Aggregated Residual Transformations for Deep Neural Networks
+https://github.com/facebookresearch/ResNeXt,ResNeXt is the foundation of their new SENet architecture (a ResNeXt-152 (64 x 4d) with the Squeeze-and-Excitation module)!
+https://github.com/facebookresearch/ResNeXt,This repository contains a Torch implementation for the ResNeXt algorithm for image classification. The code is based on fb.resnet.torch.
+https://github.com/facebookresearch/ResNeXt,"ResNeXt is a simple, highly modularized network architecture for image classification. Our network is constructed by repeating a building block that aggregates a set of transformations with the same topology. Our simple design results in a homogeneous, multi-branch architecture that has only a few hyper-parameters to set. This strategy exposes a new dimension, which we call “cardinality” (the size of the set of transformations), as an essential factor in addition to the dimensions of depth and width."
+https://github.com/facebookresearch/pyrobot,"PyRobot is a light weight, high-level interface which provides hardware independent APIs for robotic manipulation and navigation. This repository also contains the low-level stack for LoCoBot, a low cost mobile manipulator hardware platform."
+https://github.com/gitbucket/gitbucket,GitBucket is a Git web platform powered by Scala offering:
+https://github.com/gitbucket/gitbucket,"You can try an online demo (ID: root / Pass: root) of GitBucket, and also get the latest information at GitBucket News."
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,🔥 Ultimate Facebook Scrapper
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,A bot which scrapes almost everything about a facebook user's profile including
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,"The best thing about this scraper is that the data is scraped in an organized format so that it can be used for educational/research purpose by researchers. Moreover, this scraper does not use Facebook's Graph API so there are no rate limiting issues as such. "
+https://github.com/nextflow-io/nextflow,Nextflow is a bioinformatics workflow manager that enables the development of portable and reproducible workflows.
+https://github.com/nextflow-io/nextflow,"It supports deploying workflows on a variety of execution platforms including local, HPC schedulers, AWS Batch,"
+https://github.com/nextflow-io/nextflow,"Google Genomics Pipelines, and Kubernetes. Additionally, it provides support for manage your workflow dependencies"
+https://github.com/nextflow-io/nextflow,"through built-in support for Conda, Docker, Singularity, and Modules."
+https://github.com/nextflow-io/nextflow,"Nextflow framework is based on the dataflow programming model, which greatly simplifies writing parallel and distributed pipelines without adding unnecessary complexity and letting you concentrate on the flow of data, i.e. the functional logic of the application/algorithm."
+https://github.com/nextflow-io/nextflow,"It doesn't aim to be another pipeline scripting language yet, but it is built around the idea that the Linux platform is the lingua franca of data science, since it provides many simple command line and scripting tools, which by themselves are powerful, but when chained together facilitate complex data manipulations."
+https://github.com/nextflow-io/nextflow,"In practice, this means that a Nextflow script is defined by composing many different processes. Each process can execute a given bioinformatics tool or scripting language, to which is added the ability to coordinate and synchronize the processes execution by simply specifying their inputs and outputs."
+https://github.com/nextflow-io/nextflow,"Nextflow also supports running workflows across various clouds and cloud technologies. Nextflow can create AWS EC2 or Google GCE clusters and deploy your workflow. Managed solutions from both Amazon and Google are also supported through AWS Batch and Google Genomics Pipelines. Additionally, Nextflow can run workflows on either on-prem or managed cloud Kubernetes clusters. "
+https://github.com/nextflow-io/nextflow,"Nextflow is built on two great pieces of open source software, namely <a href='http://groovy-lang.org' target='_blank'>Groovy</a>"
+https://github.com/pyro-ppl/pyro,"Pyro is a flexible, scalable deep probabilistic programming library built on PyTorch.  Notably, it was designed with these principles in mind:"
+https://github.com/pyro-ppl/pyro,Universal: Pyro is a universal PPL - it can represent any computable probability distribution.
+https://github.com/pyro-ppl/pyro,Scalable: Pyro scales to large data sets with little overhead compared to hand-written code.
+https://github.com/pyro-ppl/pyro,"Minimal: Pyro is agile and maintainable. It is implemented with a small core of powerful, composable abstractions."
+https://github.com/pyro-ppl/pyro,"Flexible: Pyro aims for automation when you want it, control when you need it. This is accomplished through high-level abstractions to express generative and inference models, while allowing experts easy-access to customize inference."
+https://github.com/pyro-ppl/pyro,Pyro is in a beta release.  It is developed and maintained by Uber AI Labs and community contributors.
+https://github.com/reduxjs/react-redux,Official React bindings for Redux.
+https://github.com/reduxjs/react-redux,Performant and flexible.
+https://github.com/scikit-image/scikit-image,scikit-image: Image processing in Python
+https://github.com/scikit-learn/scikit-learn,scikit-learn is a Python module for machine learning built on top of
+https://github.com/scikit-learn/scikit-learn,SciPy and is distributed under the 3-Clause BSD license.
+https://github.com/scikit-learn/scikit-learn,The project was started in 2007 by David Cournapeau as a Google Summer
+https://github.com/scikit-learn/scikit-learn,"of Code project, and since then many volunteers have contributed. See"
+https://github.com/scikit-learn/scikit-learn,the About us &lt;http://scikit-learn.org/dev/about.html#authors&gt;_ page
+https://github.com/scikit-learn/scikit-learn,for a list of core contributors.
+https://github.com/scikit-learn/scikit-learn,It is currently maintained by a team of volunteers.
+https://github.com/scikit-learn/scikit-learn,Website: http://scikit-learn.org
+https://github.com/tensorflow/magenta,Magenta is a research project exploring the role of machine learning
+https://github.com/tensorflow/magenta,in the process of creating art and music.  Primarily this
+https://github.com/tensorflow/magenta,involves developing new deep learning and reinforcement learning
+https://github.com/tensorflow/magenta,"algorithms for generating songs, images, drawings, and other materials. But it's also"
+https://github.com/tensorflow/magenta,an exploration in building smart tools and interfaces that allow
+https://github.com/tensorflow/magenta,artists and musicians to extend (not replace!) their processes using
+https://github.com/tensorflow/magenta,these models.  Magenta was started by some researchers and engineers
+https://github.com/tensorflow/magenta,"from the Google Brain team,"
+https://github.com/tensorflow/magenta,but many others have contributed significantly to the project. We use
+https://github.com/tensorflow/magenta,TensorFlow and release our models and
+https://github.com/tensorflow/magenta,tools in open source on this GitHub.  If you’d like to learn more
+https://github.com/tensorflow/magenta,"about Magenta, check out our blog,"
+https://github.com/tensorflow/magenta,where we post technical details.  You can also join our discussion
+https://github.com/tensorflow/magenta,group.
+https://github.com/tensorflow/magenta,"This is the home for our Python TensorFlow library. To use our models in the browser with TensorFlow.js, head to the Magenta.js repository."

@@ -36,7 +36,6 @@ https://github.com/LMescheder/GAN_stability,python interpolate_class.py PATH_TO_
 https://github.com/NSGeophysics/GPRPy,Running the software
 https://github.com/NSGeophysics/GPRPy,"After installation, you can run the script from the Anaconda Prompt (or your Python-enabled prompt) by running either"
 https://github.com/NSGeophysics/GPRPy,gprpy
-https://github.com/NSGeophysics/GPRPy,or
 https://github.com/NSGeophysics/GPRPy,python -m gprpy
 https://github.com/NSGeophysics/GPRPy,The first time you run GPRPy it could take a while to initialize. GPRPy will ask you if you want to run the profile [p] or WARR / CMP [c] user interface. Type
 https://github.com/NSGeophysics/GPRPy,p
@@ -81,7 +80,6 @@ https://github.com/OpenGeoVis/omfvista,p.screenshot('wolfpass.png')
 https://github.com/OpenGeoscience/geonotebook/,Run the notebook:
 https://github.com/OpenGeoscience/geonotebook/,cd notebooks/
 https://github.com/OpenGeoscience/geonotebook/,jupyter notebook
-https://github.com/Toblerity/Fiona/,Usage
 https://github.com/Toblerity/Fiona/,Collections
 https://github.com/Toblerity/Fiona/,"Records are read from and written to file-like Collection objects returned from the fiona.open() function. Records are mappings modeled on the GeoJSON format. They don't have any spatial methods of their own, so if you want to do anything fancy with them you will probably need Shapely or something like it. Here is an example of using Fiona to read some records from one data file, change their geometry attributes, and write them to a new data file."
 https://github.com/Toblerity/Fiona/,import fiona
@@ -172,7 +170,6 @@ https://github.com/Toblerity/Fiona/,"{count"": 67,
       ""STATE_FIPS"": ""str:80"",
       ""WILDRNP020"": ""int:10"",
       ""STATE"": ""str:80}}}"
-https://github.com/Toblerity/Shapely,Usage
 https://github.com/Toblerity/Shapely,Here is the canonical example of building an approximately circular patch by buffering a point.
 https://github.com/Toblerity/Shapely,>>> from shapely.geometry import Point
 https://github.com/Toblerity/Shapely,">>> patch = Point(0.0, 0.0).buffer(10.0)"
@@ -252,7 +249,6 @@ https://github.com/akaszynski/pyansys,grid = archive.parse_vtk()
 https://github.com/akaszynski/pyansys,grid.plot()
 https://github.com/akaszynski/pyansys,# write this as a vtk xml file
 https://github.com/akaszynski/pyansys,grid.Write('hex.vtu')
-https://github.com/akaszynski/pyansys,import pyvista as pv
 https://github.com/akaszynski/pyansys,grid = pv.UnstructuredGrid('hex.vtu')
 https://github.com/akaszynski/pyansys,Loading the Result File
 https://github.com/akaszynski/pyansys,This example reads in binary results from a modal analysis of a beam from ANSYS.
@@ -331,7 +327,6 @@ https://github.com/d3/d3,In Node:
 https://github.com/d3/d3,"var d3 = require(""d3"");"
 https://github.com/d3/d3,You can also require individual modules and combine them into a d3 object using Object.assign:
 https://github.com/d3/d3,"var d3 = Object.assign({}, require(""d3-format""), require(""d3-geo""), require(""d3-geo-projection""));"
-https://github.com/driftingtides/hyvr,Usage
 https://github.com/driftingtides/hyvr,To use HyVR you have to create a configuration file with your settings. You can then run HyVR the following way:
 https://github.com/driftingtides/hyvr,(hyvr_env) $ python -m hyvr my_configfile.ini
 https://github.com/driftingtides/hyvr,"HyVR will then run and store all results in a subdirectory. If no configfile is given, it will run a test case instead:"
@@ -557,7 +552,6 @@ https://github.com/hezhangsprinter/DID-MDN,python test.py --dataroot ./facades/g
 https://github.com/hezhangsprinter/DID-MDN,python derain_train_2018.py  --dataroot ./facades/DID-MDN-training/Rain_Medium/train2018new  --valDataroot ./facades/github --exp ./check --netG ./pre_trained/netG_epoch_9.pth.
 https://github.com/hezhangsprinter/DID-MDN,Make sure you download the training sample and put in the right folder
 https://github.com/hezhangsprinter/DID-MDN,python train_rain_class.py  --dataroot ./facades/DID-MDN-training/Rain_Medium/train2018new  --exp ./check_class
-https://github.com/hezhangsprinter/DID-MDN,python demo.py --dataroot ./your_dataroot --valDataroot ./your_dataroot --netG ./pre_trained/netG_epoch_9.pth   
 https://github.com/hiroharu-kato/neural_renderer,Running examples
 https://github.com/hiroharu-kato/neural_renderer,python ./examples/example1.py
 https://github.com/hiroharu-kato/neural_renderer,python ./examples/example2.py
@@ -641,9 +635,7 @@ https://github.com/jiangsutx/SRN-Deblur,"To test the model, pre-defined height a
 https://github.com/jiangsutx/SRN-Deblur,"Otherwise, the images will be downsampled by the largest scale factor to be fed into the placeholder. And results will be upsampled to the original size."
 https://github.com/jiangsutx/SRN-Deblur,"According to our experience, --height=720 and --width=1280 work well on a Gefore GTX 1050 TI with 4GB memory. For example,"
 https://github.com/jiangsutx/SRN-Deblur,python run_model.py --height=720 --width=1280
-https://github.com/jiangsutx/SRN-Deblur,Evaluation
 https://github.com/jiangsutx/SRN-Deblur,The quantitative results of PSNR and SSIM in the paper is calculated using MATLAB built-in function psnr() and ssim() based on the generated color results.
-https://github.com/jiangsutx/SRN-Deblur,Training
 https://github.com/jiangsutx/SRN-Deblur,We trained our model using the dataset from DeepDeblur_release. Please put the dataset into training_set/. And the provided datalist_gopro.txt can be used to train the model.
 https://github.com/jiangsutx/SRN-Deblur,"Hyper parameters such as batch size, learning rate, epoch number can be tuned through command line:"
 https://github.com/jiangsutx/SRN-Deblur,python run_model.py --phase=train --batch=16 --lr=1e-4 --epoch=4000
@@ -665,7 +657,6 @@ https://github.com/joferkington/mplstereonet,"ax.pole(strike, dip, 'g^', markers
 https://github.com/joferkington/mplstereonet,"ax.rake(strike, dip, -25)"
 https://github.com/joferkington/mplstereonet,ax.grid()
 https://github.com/joferkington/mplstereonet,plt.show()
-https://github.com/joferkington/mplstereonet,import numpy as np
 https://github.com/joferkington/mplstereonet,"fig, ax = mplstereonet.subplots()"
 https://github.com/joferkington/mplstereonet,"strike, dip = 90, 80"
 https://github.com/joferkington/mplstereonet,num = 10
@@ -796,7 +787,6 @@ https://github.com/kinverarity1/lasio/,"...,"
 https://github.com/kinverarity1/lasio/,"[ 1670.   ,   123.45 ,  2550.   , ...,   123.45 ,   110.2  ,   105.6  ],"
 https://github.com/kinverarity1/lasio/,"[ 1669.875,   123.45 ,  2550.   , ...,   123.45 ,   110.2  ,   105.6  ]])"
 https://github.com/kinverarity1/lasio/,"You can also retrieve and load data as a pandas DataFrame, build LAS files from scratch, write them back to disc, and export to Excel, amongst other things."
-https://github.com/kosmtik/kosmtik,Usage
 https://github.com/kosmtik/kosmtik,"To get command line help, run:"
 https://github.com/kosmtik/kosmtik,kosmtik -h
 https://github.com/kosmtik/kosmtik,"To run a Carto project (or .yml, .yaml):"
@@ -808,14 +798,12 @@ https://github.com/kosmtik/kosmtik,And then pick one and install it like this:
 https://github.com/kosmtik/kosmtik,kosmtik plugins --install pluginname
 https://github.com/kosmtik/kosmtik,For example:
 https://github.com/kosmtik/kosmtik,kosmtik plugins --install kosmtik-map-compare [--install kosmtik-overlay…]
-https://github.com/mapbox/geojson-vt,Usage
 https://github.com/mapbox/geojson-vt,// build an initial index of tiles
 https://github.com/mapbox/geojson-vt,var tileIndex = geojsonvt(geoJSON);
 https://github.com/mapbox/geojson-vt,// request a particular tile
 https://github.com/mapbox/geojson-vt,"var features = tileIndex.getTile(z, x, y).features;"
 https://github.com/mapbox/geojson-vt,// show an array of tile coordinates created so far
 https://github.com/mapbox/geojson-vt,"console.log(tileIndex.tileCoords); // [{z: 0, x: 0, y: 0}, ...]"
-https://github.com/mapbox/rasterio,import numpy as np
 https://github.com/mapbox/rasterio,import rasterio
 https://github.com/mapbox/rasterio,# Read raster bands directly to Numpy arrays.
 https://github.com/mapbox/rasterio,#
@@ -838,7 +826,6 @@ https://github.com/mapbox/rasterio,profile = src.profile
 https://github.com/mapbox/rasterio,"profile.update(dtype=rasterio.uint8, count=1, compress='lzw')"
 https://github.com/mapbox/rasterio,"with rasterio.open('example-total.tif', 'w', **profile) as dst:"
 https://github.com/mapbox/rasterio,"dst.write(total.astype(rasterio.uint8), 1)"
-https://github.com/mapbox/tilelive-mapnik,Usage
 https://github.com/mapbox/tilelive-mapnik,var tilelive = require('tilelive');
 https://github.com/mapbox/tilelive-mapnik,require('tilelive-mapnik').registerProtocols(tilelive);
 https://github.com/mapbox/tilelive-mapnik,"tilelive.load('mapnik:///path/to/file.xml', function(err, source) {"
@@ -859,7 +846,6 @@ https://github.com/msracver/Flow-Guided-Feature-Aggregation,Demo
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"To run the demo with our trained model (on ImageNet DET + VID train), please download the model manually from OneDrive, and put it under folder model/."
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,Make sure it looks like this:
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,./model/rfcn_fgfa_flownet_vid-0000.params
-https://github.com/msracver/Flow-Guided-Feature-Aggregation,Run
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,python ./fgfa_rfcn/demo.py
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,Preparation for Training & Testing
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Please download ILSVRC2015 DET and ILSVRC2015 VID dataset, and make sure it looks like this:"
@@ -872,7 +858,6 @@ https://github.com/msracver/Flow-Guided-Feature-Aggregation,./data/ILSVRC2015/Im
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Please download ImageNet pre-trained ResNet-v1-101 model and Flying-Chairs pre-trained FlowNet model manually from OneDrive, and put it under folder ./model. Make sure it looks like this:"
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,./model/pretrained_model/resnet_v1_101-0000.params
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,./model/pretrained_model/flownet-0000.params
-https://github.com/msracver/Flow-Guided-Feature-Aggregation,Usage
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"All of our experiment settings (GPU #, dataset, etc.) are kept in yaml config files at folder ./experiments/fgfa_rfcn/cfgs."
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Two config files have been provided so far, namely, frame baseline (R-FCN) and the proposed FGFA for ImageNet VID. We use 4 GPUs to train models on ImageNet VID."
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"To perform experiments, run the python script with the corresponding config file as input. For example, to train and test FGFA with R-FCN, use the following command"
@@ -883,7 +868,6 @@ https://github.com/nypl-spacetime/map-vectorizer,Run the script on the provided 
 https://github.com/nypl-spacetime/map-vectorizer,usage: vectorize_map.py [-h] --gimp-path GIMP_PATH [--chunksize CHUNKSIZE]
 https://github.com/nypl-spacetime/map-vectorizer,[--image-processing-configuration-file VECTORIZE_CONFIG]
 https://github.com/nypl-spacetime/map-vectorizer,<input file or dir>
-https://github.com/odoe/generator-arcgis-js-app,Usage
 https://github.com/odoe/generator-arcgis-js-app,"grunt - default task, will output code to a dist folder with sourcemaps."
 https://github.com/odoe/generator-arcgis-js-app,grunt dev - will start a local server on at http://localhost:8282/ and watch for changes. Uses livereload to refresh browser with each update.
 https://github.com/odoe/generator-arcgis-js-app,http://localhost:8282/dist/ - application
@@ -933,7 +917,6 @@ https://github.com/phuang17/DeepMVS,"By default, the script resizes the images t
 https://github.com/phuang17/DeepMVS,"To evaluate the predicted results, run"
 https://github.com/phuang17/DeepMVS,python python/eval.py --load_bin --image_path path/to/images --sparse_path path/to/sparse --output_path path/to/output/directory --gt_path path/to/gt/directory --image_width 810 --image_height 540 --size_mismatch crop_pad
 https://github.com/phuang17/DeepMVS,"In gt_path, the ground truth disparity maps should be stored in npy format with filenames being <image_name>.depth.npy. If the ground truths are depth maps instead of disparity maps, please add --gt_type depth flag."
-https://github.com/pyvista/pymeshfix,Examples
 https://github.com/pyvista/pymeshfix,Test installation with the following from Python:
 https://github.com/pyvista/pymeshfix,from pymeshfix import examples
 https://github.com/pyvista/pymeshfix,# Test of pymeshfix without VTK module
@@ -982,14 +965,11 @@ https://github.com/pyvista/pymeshfix,# Output mesh
 https://github.com/pyvista/pymeshfix,tin.save_file(outfile)
 https://github.com/pyvista/pymeshfix,# or return numpy arrays
 https://github.com/pyvista/pymeshfix,"vclean, fclean = tin.return_arrays()"
-https://github.com/pyvista/tetgen,import pyvista as pv
 https://github.com/pyvista/tetgen,import tetgen
-https://github.com/pyvista/tetgen,import numpy as np
 https://github.com/pyvista/tetgen,sphere = pv.Sphere()
 https://github.com/pyvista/tetgen,tet = tetgen.TetGen(sphere)
 https://github.com/pyvista/tetgen,"tet.tetrahedralize(order=1, mindihedral=20, minratio=1.5)"
 https://github.com/pyvista/tetgen,grid = tet.grid
-https://github.com/pyvista/tetgen,grid.plot()
 https://github.com/pyvista/tetgen,# get cell centroids
 https://github.com/pyvista/tetgen,"cells = grid.cells.reshape(-1, 5)[:, 1:]"
 https://github.com/pyvista/tetgen,cell_center = grid.points[cells].mean(1)
@@ -1029,10 +1009,7 @@ https://github.com/ryersonvisionlab/two-stream-dyntex-synth,python synthesize.py
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Store your chosen static texture in /data/textures. The filepath to this texture is your --appearance_target path. This texture should be the last frame of a previously generated sequence.
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Static texture synthesis
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,python synthesize.py --type=sta --gpu=<NUMBER> --runid=<NAME> --appearance_target=data/textures/<IMAGE>
-https://github.com/salihkaragoz/pose-residual-network-pytorch,Training
-https://github.com/salihkaragoz/pose-residual-network-pytorch,python train.py
 https://github.com/salihkaragoz/pose-residual-network-pytorch,For more options look at opt.py
-https://github.com/salihkaragoz/pose-residual-network-pytorch,Testing
 https://github.com/salihkaragoz/pose-residual-network-pytorch,Download pre-train model
 https://github.com/salihkaragoz/pose-residual-network-pytorch,python test.py --test_cp=PathToPreTrainModel/PRN.pth.tar
 https://github.com/sentinelsat/sentinelsat,sentinelsat -u <user> -p <password> -g <search_polygon.geojson> --sentinel 2 --cloud 30
@@ -1106,7 +1083,6 @@ https://github.com/wuhuikai/DeepGuidedFilter,Download and Unzip Pretrained Model
 https://github.com/wuhuikai/DeepGuidedFilter,Run on an Image !
 https://github.com/wuhuikai/DeepGuidedFilter,python monodepth_simple.py --image_path ../../images/depth.jpg --checkpoint_path [MODEL_PATH] --guided_filter
 https://github.com/wuhuikai/DeepGuidedFilter,See Here or python monodepth_simple.py -h for more details.
-https://github.com/wuhuikai/DeepGuidedFilter,Usage
 https://github.com/wuhuikai/DeepGuidedFilter,PyTorch Version
 https://github.com/wuhuikai/DeepGuidedFilter,from guided_filter_pytorch.guided_filter import FastGuidedFilter
 https://github.com/wuhuikai/DeepGuidedFilter,"hr_y = FastGuidedFilter(r, eps)(lr_x, lr_y, hr_x)"
@@ -1122,7 +1098,6 @@ https://github.com/yuhuayc/da-faster-rcnn,"Prepare the dataset, source domain da
 https://github.com/yuhuayc/da-faster-rcnn,To train the Domain Adaptive Faster R-CNN:
 https://github.com/yuhuayc/da-faster-rcnn,cd $FRCN_ROOT
 https://github.com/yuhuayc/da-faster-rcnn,./tools/train_net.py --gpu {GPU_ID} --solver models/da_faster_rcnn/solver.prototxt --weights data/imagenet_models/VGG16.v2.caffemodel --imdb voc_2007_trainval --iters  {NUM_ITER}  --cfg  {CONFIGURATION_FILE}
-https://github.com/yuhuayc/da-faster-rcnn,Example
 https://github.com/yuhuayc/da-faster-rcnn,An example of adapting from Cityscapes dataset to Foggy Cityscapes dataset is provided:
 https://github.com/yuhuayc/da-faster-rcnn,"Download the datasets from here. Specifically, we will use gtFine_trainvaltest.zip, leftImg8bit_trainvaltest.zip and leftImg8bit_trainvaltest_foggy.zip."
 https://github.com/yuhuayc/da-faster-rcnn,Prepare the data using the scripts in 'prepare_data/prepare_data.m'.
@@ -1130,7 +1105,6 @@ https://github.com/yuhuayc/da-faster-rcnn,Train the Domain Adaptive Faster R-CNN
 https://github.com/yuhuayc/da-faster-rcnn,./tools/train_net.py --gpu {GPU_ID} --solver models/da_faster_rcnn/solver.prototxt --weights data/imagenet_models/VGG16.v2.caffemodel --imdb voc_2007_trainval --iters  70000  --cfg  models/da_faster_rcnn/faster_rcnn_end2end.yml
 https://github.com/yuhuayc/da-faster-rcnn,Test the trained model:
 https://github.com/yuhuayc/da-faster-rcnn,./tools/test_net.py --gpu {GPU_ID} --def models/da_faster_rcnn/test.prototxt --net output/faster_rcnn_end2end/voc_2007_trainval/vgg16_da_faster_rcnn_iter_70000.caffemodel --imdb voc_2007_test --cfg models/da_faster_rcnn/faster_rcnn_end2end.yml
-https://github.com/zhiqiangdon/CU-Net,Training
 https://github.com/zhiqiangdon/CU-Net,python cu-net.py --gpu_id 0 --exp_id cu-net-2 --layer_num 2 --order 1 --loss_num 2 --is_train true --bs 24
 https://github.com/zhiqiangdon/CU-Net,Validation
 https://github.com/zhiqiangdon/CU-Net,python cu-net.py --gpu_id 0 --exp_id cu-net-2 --layer_num 2 --order 1 --loss_num 2 --resume_prefix your_pretrained_model.pth.tar --is_train false --bs 24
@@ -1138,3 +1112,45 @@ https://github.com/zhiqiangdon/CU-Net,Model Options
 https://github.com/zhiqiangdon/CU-Net,layer_num     # number of coupled U-Nets
 https://github.com/zhiqiangdon/CU-Net,order         # the order of coupling
 https://github.com/zhiqiangdon/CU-Net,loss_num      # number of losses. Losses are uniformly distributed along the CU-Net. Each U-Net at most has one loss. (loss_num <= layer_num)
+https://github.com/facebookresearch/ResNeXt,"Please follow fb.resnet.torch for the general usage of the code, including how to use pretrained ResNeXt models for your own task."
+https://github.com/facebookresearch/ResNeXt,There are two new hyperparameters need to be specified to determine the bottleneck template:
+https://github.com/facebookresearch/ResNeXt,-baseWidth and -cardinality
+https://github.com/facebookresearch/ResNeXt,To train ResNeXt-50 (32x4d) on 8 GPUs for ImageNet:
+https://github.com/facebookresearch/ResNeXt,bash
+https://github.com/facebookresearch/ResNeXt,th main.lua -dataset imagenet -bottleneckType resnext_C -depth 50 -baseWidth 4 -cardinality 32 -batchSize 256 -nGPU 8 -nThreads 8 -shareGradInput true -data [imagenet-folder]
+https://github.com/facebookresearch/ResNeXt,To reproduce CIFAR results (e.g. ResNeXt 16x64d for cifar10) on 8 GPUs:
+https://github.com/facebookresearch/ResNeXt,th main.lua -dataset cifar10 -bottleneckType resnext_C -depth 29 -baseWidth 64 -cardinality 16 -weightDecay 5e-4 -batchSize 128 -nGPU 8 -nThreads 8 -shareGradInput true
+https://github.com/facebookresearch/ResNeXt,"To get comparable results using 2/4 GPUs, you should change the batch size and the corresponding learning rate:"
+https://github.com/facebookresearch/ResNeXt,th main.lua -dataset cifar10 -bottleneckType resnext_C -depth 29 -baseWidth 64 -cardinality 16 -weightDecay 5e-4 -batchSize 64 -nGPU 4 -LR 0.05 -nThreads 8 -shareGradInput true
+https://github.com/facebookresearch/ResNeXt,th main.lua -dataset cifar10 -bottleneckType resnext_C -depth 29 -baseWidth 64 -cardinality 16 -weightDecay 5e-4 -batchSize 32 -nGPU 2 -LR 0.025 -nThreads 8 -shareGradInput true
+https://github.com/facebookresearch/ResNeXt,Note: CIFAR datasets will be automatically downloaded and processed for the first time. Note that in the arXiv paper CIFAR results are based on pre-activated bottleneck blocks and a batch size of 256. We found that better CIFAR test acurracy can be achieved using original bottleneck blocks and a batch size of 128.
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,How to Run
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,"There's a file named ""input.txt"". You can add as many profiles as you want in the following format with each link on a new line:"
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,https://www.facebook.com/andrew.ng.96
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,https://www.facebook.com/zuck
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Make sure the link only contains the username or id number at the end and not any other stuff. Make sure its in the format mentioned above.
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Note: There are two modes to download Friends Profile Pics and the user's Photos: Large Size and Small Size. You can change the following variables. By default they are set to Small Sized Pics because its really quick while Large Size Mode takes time depending on the number of pictures to download
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,whether to download the full image or its thumbnail (small size)
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,if small size is True then it will be very quick else if its False then it will open each photo to download it
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,and it will take much more time
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,friends_small_size = True
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,photos_small_size = True
+https://github.com/microsoft/malmo,cd CSharp_Examples
+https://github.com/microsoft/malmo,CSharpExamples_RunMission.exe
+https://github.com/microsoft/malmo,"To build the sample yourself, open CSharp_Examples/RunMission.csproj in Visual Studio."
+https://github.com/microsoft/malmo,Or from the command-line:
+https://github.com/microsoft/malmo,"Then, on Windows:"
+https://github.com/microsoft/malmo,msbuild RunMission.csproj /p:Platform=x64
+https://github.com/microsoft/malmo,bin\x64\Debug\CSharpExamples_RunMission.exe
+https://github.com/microsoft/malmo,Running a Java agent:
+https://github.com/microsoft/malmo,cd Java_Examples
+https://github.com/microsoft/malmo,java -cp MalmoJavaJar.jar:JavaExamples_run_mission.jar -Djava.library.path=. JavaExamples_run_mission (on Linux or MacOSX)
+https://github.com/microsoft/malmo,java -cp MalmoJavaJar.jar;JavaExamples_run_mission.jar -Djava.library.path=. JavaExamples_run_mission (on Windows)
+https://github.com/microsoft/malmo,Running an Atari agent: (Linux only)
+https://github.com/microsoft/malmo,cd Python_Examples
+https://github.com/microsoft/malmo,python3 ALE_HAC.py
+https://github.com/pyro-ppl/pyro,Running Pyro from a Docker Container
+https://github.com/pyro-ppl/pyro,Refer to the instructions here.
+https://github.com/scikit-learn/scikit-learn,"After installation, you can launch the test suite from outside the"
+https://github.com/scikit-learn/scikit-learn,source directory (you will need to have pytest >= 3.3.0 installed)::
+https://github.com/scikit-learn/scikit-learn,pytest sklearn
