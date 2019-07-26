@@ -12,14 +12,12 @@ https://github.com/JimmySuen/integral-human-pose,Python Version: 3.6
 https://github.com/JimmySuen/integral-human-pose,OS: CentOs7 (Other Linux system is also OK)
 https://github.com/JimmySuen/integral-human-pose,CUDA: 9.0 (least 8.0)
 https://github.com/JimmySuen/integral-human-pose,PyTorch:0.4.0(see issue https://github.com/JimmySuen/integral-human-pose/issues/4)
-https://github.com/JimmySuen/integral-human-pose,Installation
 https://github.com/JimmySuen/integral-human-pose,"We recommend installing python from Anaconda, installing pytorch following guide on PyTorch according to your specific CUDA & python version. In addition, you need to install dependencies below."
 https://github.com/JimmySuen/integral-human-pose,pip install scipy
 https://github.com/JimmySuen/integral-human-pose,pip install matplotlib
 https://github.com/JimmySuen/integral-human-pose,pip install opencv-python
 https://github.com/JimmySuen/integral-human-pose,pip install easydict
 https://github.com/JimmySuen/integral-human-pose,pip install pyyaml
-https://github.com/JuliaGeo/LibGEOS.jl,Installation
 https://github.com/JuliaGeo/LibGEOS.jl,"At the Julia prompt, run"
 https://github.com/JuliaGeo/LibGEOS.jl,"julia> Pkg.add(""LibGEOS"")"
 https://github.com/JuliaGeo/LibGEOS.jl,"This will install both the Julia package and GEOS shared libraries together. To just reinstall the GEOS shared libraries, run Pkg.build(""LibGEOS"")."
@@ -48,7 +46,6 @@ https://github.com/NVIDIA/vid2vid,Linux or macOS
 https://github.com/NVIDIA/vid2vid,Python 3
 https://github.com/NVIDIA/vid2vid,NVIDIA GPU + CUDA cuDNN
 https://github.com/NVIDIA/vid2vid,PyTorch 0.4
-https://github.com/NVIDIA/vid2vid,Installation
 https://github.com/NVIDIA/vid2vid,Install python libraries dominate and requests.
 https://github.com/NVIDIA/vid2vid,pip install dominate requests
 https://github.com/NVIDIA/vid2vid,"If you plan to train with face datasets, please install dlib."
@@ -60,11 +57,9 @@ https://github.com/NVIDIA/vid2vid,cd vid2vid
 https://github.com/NVIDIA/vid2vid,"Docker Image If you have difficulty building the repo, a docker image can be found in the docker folder."
 https://github.com/OpenGeoVis/PVGeo,"To begin using the PVGeo Python package, create/activate your Python virtual environment (we highly recommend using anaconda) and install PVGeo through pip:"
 https://github.com/OpenGeoVis/PVGeo,pip install PVGeo
-https://github.com/OpenGeoVis/omfvista,Installation
 https://github.com/OpenGeoVis/omfvista,Installation is simply:
 https://github.com/OpenGeoVis/omfvista,pip install omfvista
 https://github.com/OpenGeoVis/omfvista,All necessary dependencies will be installed alongside omfvista. Please note that this package heavily leverages the PyVista package.
-https://github.com/OpenGeoscience/geonotebook/,Installation
 https://github.com/OpenGeoscience/geonotebook/,System Prerequisites
 https://github.com/OpenGeoscience/geonotebook/,For default tile serving
 https://github.com/OpenGeoscience/geonotebook/,GDAL >= 2.1.0
@@ -78,7 +73,6 @@ https://github.com/OpenGeoscience/geonotebook/,mkvirtualenv -a . geonotebook
 https://github.com/OpenGeoscience/geonotebook/,# Numpy must be fully installed before rasterio
 https://github.com/OpenGeoscience/geonotebook/,pip install -r prerequirements.txt
 https://github.com/OpenGeoscience/geonotebook/,pip install -r requirements.txt
-https://github.com/OpenGeoscience/geonotebook/,pip install .
 https://github.com/OpenGeoscience/geonotebook/,# Enable both the notebook and server extensions
 https://github.com/OpenGeoscience/geonotebook/,jupyter serverextension enable --sys-prefix --py geonotebook
 https://github.com/OpenGeoscience/geonotebook/,jupyter nbextension enable --sys-prefix --py geonotebook
@@ -93,7 +87,6 @@ https://github.com/OpenGeoscience/geonotebook/,# Enable the extension
 https://github.com/OpenGeoscience/geonotebook/,# Start the javascript builder
 https://github.com/OpenGeoscience/geonotebook/,cd js
 https://github.com/OpenGeoscience/geonotebook/,npm run watch
-https://github.com/Toblerity/Fiona/,Installation
 https://github.com/Toblerity/Fiona/,"Fiona requires Python 2.7 or 3.4+ and GDAL/OGR 1.8+. To build from a source distribution you will need a C compiler and GDAL and Python development headers and libraries (libgdal1-dev for Debian/Ubuntu, gdal-dev for CentOS/Fedora)."
 https://github.com/Toblerity/Fiona/,"To build from a repository copy, you will also need Cython to build C sources from the project's .pyx files. See the project's requirements-dev.txt file for guidance."
 https://github.com/Toblerity/Fiona/,"The Kyngchaos GDAL frameworks will satisfy the GDAL/OGR dependency for OS X, as will Homebrew's GDAL Formula (brew install gdal)."
@@ -141,7 +134,6 @@ https://github.com/XiaLiPKU/RESCAN,Python>=3.6
 https://github.com/XiaLiPKU/RESCAN,Pytorch>=4.1.0
 https://github.com/XiaLiPKU/RESCAN,Opencv>=3.1.0
 https://github.com/XiaLiPKU/RESCAN,tensorboardX
-https://github.com/ZhouYanzhao/PRM,Prerequisites
 https://github.com/ZhouYanzhao/PRM,System (tested on Ubuntu 14.04LTS and Win10)
 https://github.com/ZhouYanzhao/PRM,NVIDIA GPU + CUDA CuDNN (CPU mode is also supported but significantly slower)
 https://github.com/ZhouYanzhao/PRM,Python>=3.5
@@ -174,28 +166,22 @@ https://github.com/agile-geoscience/striplog/,"Then do this to create an environ
 https://github.com/agile-geoscience/striplog/,conda create -n myenv python=3.5 numpy matplotlib
 https://github.com/agile-geoscience/striplog/,source activate myenv
 https://github.com/agile-geoscience/striplog/,Then you can do:
-https://github.com/akanazawa/hmr,Requirements
 https://github.com/akanazawa/hmr,Python 2.7
 https://github.com/akanazawa/hmr,"TensorFlow tested on version 1.3, demo alone runs with TF 1.12"
-https://github.com/akanazawa/hmr,Installation
 https://github.com/akanazawa/hmr,Setup virtualenv
 https://github.com/akanazawa/hmr,virtualenv venv_hmr
 https://github.com/akanazawa/hmr,source venv_hmr/bin/activate
 https://github.com/akanazawa/hmr,pip install -U pip
 https://github.com/akanazawa/hmr,deactivate
-https://github.com/akanazawa/hmr,pip install -r requirements.txt
 https://github.com/akanazawa/hmr,Install TensorFlow
 https://github.com/akanazawa/hmr,With GPU:
 https://github.com/akanazawa/hmr,pip install tensorflow-gpu==1.3.0
 https://github.com/akanazawa/hmr,Without GPU:
 https://github.com/akanazawa/hmr,pip install tensorflow==1.3.0
-https://github.com/akaszynski/pyansys,Installation
 https://github.com/akaszynski/pyansys,Installation through pip:
 https://github.com/akaszynski/pyansys,pip install pyansys
-https://github.com/albertpumarola/GANimation,Prerequisites
 https://github.com/albertpumarola/GANimation,"Install PyTorch (version 0.3.1), Torch Vision and dependencies from http://pytorch.org"
 https://github.com/albertpumarola/GANimation,Install requirements.txt (pip install -r requirements.txt)
-https://github.com/cgre-aachen/gempy,Installation
 https://github.com/cgre-aachen/gempy,We provide the latest release version of GemPy via the Conda and PyPi package services. We highly recommend using either PyPi as it will take care of automatically installing all dependencies.
 https://github.com/cgre-aachen/gempy,PyPi
 https://github.com/cgre-aachen/gempy,$ pip install gempy
@@ -229,7 +215,6 @@ https://github.com/d3/d3,"You can also use the standalone D3 microlibraries. For
 https://github.com/d3/d3,"<script src=""https://d3js.org/d3-selection.v1.js""></script>"
 https://github.com/driftingtides/hyvr,Installing the HyVR package
 https://github.com/driftingtides/hyvr,Installing Python
-https://github.com/driftingtides/hyvr,Windows
 https://github.com/driftingtides/hyvr,"If you are using Windows, we recommend installing the Anaconda distribution of Python 3. This distribution has the majority of dependencies that HyVR requires."
 https://github.com/driftingtides/hyvr,It is also a good idea to install the HyVR package into a virtual environment. Do this by opening a command prompt window and typing the following:
 https://github.com/driftingtides/hyvr,conda create --name hyvr_env
@@ -246,10 +231,8 @@ https://github.com/driftingtides/hyvr,"The version on PyPI should always be up t
 https://github.com/driftingtides/hyvr,git clone https://github.com/driftingtides/hyvr.git
 https://github.com/driftingtides/hyvr,To install from source you need a C compiler.
 https://github.com/driftingtides/hyvr,Installation from conda-forge will (hopefully) be coming soon.
-https://github.com/driftingtides/hyvr,Requirements
 https://github.com/driftingtides/hyvr,Python
 https://github.com/driftingtides/hyvr,"HyVR was developed for use with Python 3.4 or greater. It may be possible to use with earlier versions of Python 3, however this has not been tested."
-https://github.com/driftingtides/hyvr,Dependencies
 https://github.com/driftingtides/hyvr,numpy <= 1.13.3
 https://github.com/driftingtides/hyvr,matplotlib <= 2.1.0
 https://github.com/driftingtides/hyvr,scipy = 1.0.0
@@ -257,19 +240,15 @@ https://github.com/driftingtides/hyvr,pandas = 0.21.0
 https://github.com/driftingtides/hyvr,flopy == 3.2.9 (optional for modflow output)
 https://github.com/driftingtides/hyvr,pyevtk = 1.1.0 (optional for VTK output)
 https://github.com/driftingtides/hyvr,h5py (optional for HDF5 output)
-https://github.com/driving-behavior/DBNet,Requirements
 https://github.com/driving-behavior/DBNet,Tensorflow 1.2.0
-https://github.com/driving-behavior/DBNet,Python 2.7
 https://github.com/driving-behavior/DBNet,CUDA 8.0+ (For GPU)
 https://github.com/driving-behavior/DBNet,"Python Libraries: numpy, scipy and laspy"
 https://github.com/driving-behavior/DBNet,"The code has been tested with Python 2.7, Tensorflow 1.2.0, CUDA 8.0 and cuDNN 5.1 on Ubuntu 14.04. But it may work on more machines (directly or through mini-modification), pull-requests or test report are well welcomed."
-https://github.com/empymod/empymod,Installation
 https://github.com/empymod/empymod,You can install empymod either via conda:
 https://github.com/empymod/empymod,conda install -c prisae empymod
 https://github.com/empymod/empymod,or via pip:
 https://github.com/empymod/empymod,pip install empymod
 https://github.com/empymod/empymod,Required are Python version 3.5 or higher and the modules NumPy and SciPy. Consult the installation notes in the manual for more information regarding installation and requirements.
-https://github.com/endernewton/iter-reason,Prerequisites
 https://github.com/endernewton/iter-reason,"Tensorflow, tested with version 1.6 with Ubuntu 16.04, installed with:"
 https://github.com/endernewton/iter-reason,pip install --ignore-installed --upgrade https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.6.0-cp27-none-linux_x86_64.whl
 https://github.com/endernewton/iter-reason,Other packages needed can be installed with pip:
@@ -358,18 +337,15 @@ https://github.com/equinor/segyio,git clone https://github.com/equinor/segyio
 https://github.com/equinor/segyio,mkdir segyio/build
 https://github.com/equinor/segyio,cd segyio/build
 https://github.com/equinor/segyio,cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON
-https://github.com/equinor/segyio,make
 https://github.com/equinor/segyio,make install
 https://github.com/equinor/segyio,"make install must be done as root for a system install; if you want to install in your home directory, add -DCMAKE_INSTALL_PREFIX=~/ or some other appropriate directory, or make DESTDIR=~/ install. Please ensure your environment picks up on non-standard install locations (PYTHONPATH, LD_LIBRARY_PATH and PATH)."
 https://github.com/equinor/segyio,"If you have multiple Python installations, or want to use some alternative interpreter, you can help cmake find the right one by passing -DPYTHON_EXECUTABLE=/opt/python/binary along with install prefix and build type."
 https://github.com/equinor/segyio,"To build the matlab bindings, invoke CMake with the option -DBUILD_MEX=ON. In some environments the Matlab binaries are in a non-standard location, in which case you need to help CMake find the matlab binaries by passing -DMATLAB_ROOT=/path/to/matlab."
-https://github.com/facebook/react,Installation
 https://github.com/facebook/react,"React has been designed for gradual adoption from the start, and you can use as little or as much React as you need:"
 https://github.com/facebook/react,Use Online Playgrounds to get a taste of React.
 https://github.com/facebook/react,Add React to a Website as a <script> tag in one minute.
 https://github.com/facebook/react,Create a New React App if you're looking for a powerful JavaScript toolchain.
 https://github.com/facebook/react,"You can use React as a <script> tag from a CDN, or as a react package on npm."
-https://github.com/geopandas/geopandas/,Install
 https://github.com/geopandas/geopandas/,See the installation docs for all details. GeoPandas depends on the following packages:
 https://github.com/geopandas/geopandas/,pandas
 https://github.com/geopandas/geopandas/,shapely
@@ -386,7 +362,6 @@ https://github.com/google/sg2im/,pip install -r requirements.txt   # Install dep
 https://github.com/google/sg2im/,echo $PWD > env/lib/python3.5/site-packages/sg2im.pth  # Add current directory to python path
 https://github.com/google/sg2im/,# Work for a while ...
 https://github.com/google/sg2im/,deactivate  # Exit virtual environment
-https://github.com/gprMax/gprMax,Installation
 https://github.com/gprMax/gprMax,The following steps provide guidance on how to install gprMax:
 https://github.com/gprMax/gprMax,"Install Python, required Python packages, and get the gprMax source code from GitHub"
 https://github.com/gprMax/gprMax,Install a C compiler which supports OpenMP
@@ -404,7 +379,6 @@ https://github.com/gprMax/gprMax,$ conda env create -f conda_env.yml
 https://github.com/gprMax/gprMax,"This will make sure conda is up-to-date, install Git, get the latest gprMax source code from GitHub, and create an environment for gprMax with all the necessary Python packages."
 https://github.com/gprMax/gprMax,"If you prefer to install Python and the required Python packages manually, i.e. without using Anaconda/Miniconda, look in the conda_env.yml file for a list of the requirements."
 https://github.com/gprMax/gprMax,2. Install a C compiler which supports OpenMP
-https://github.com/gprMax/gprMax,Linux
 https://github.com/gprMax/gprMax,"gcc should be already installed, so no action is required."
 https://github.com/gprMax/gprMax,macOS
 https://github.com/gprMax/gprMax,"Xcode (the IDE for macOS) comes with the LLVM (clang) compiler, but it does not currently support OpenMP, so you must install gcc. That said, it is still useful to have Xcode (with command line tools) installed. It can be downloaded from the App Store. Once Xcode is installed, download and install the Homebrew package manager and then to install gcc, run:"
@@ -419,10 +393,8 @@ https://github.com/gprMax/gprMax,(gprMax)$ python setup.py build
 https://github.com/gprMax/gprMax,(gprMax)$ python setup.py install
 https://github.com/gprMax/gprMax,You are now ready to proceed to running gprMax.
 https://github.com/gprMax/gprMax,"If you have problems with building gprMax on Microsoft Windows, you may need to add C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin to your path environment variable."
-https://github.com/haoliangyu/node-qa-masker,Installation
 https://github.com/haoliangyu/node-qa-masker,npm install qa-masker
 https://github.com/hezhangsprinter/DCPDN,Prerequisites:
-https://github.com/hezhangsprinter/DCPDN,Linux
 https://github.com/hezhangsprinter/DCPDN,Python 2 or 3
 https://github.com/hezhangsprinter/DCPDN,CPU or NVIDIA GPU + CUDA CuDNN (CUDA 8.0)
 https://github.com/hezhangsprinter/DCPDN,Installation:
@@ -432,22 +404,13 @@ https://github.com/hezhangsprinter/DCPDN,git clone https://github.com/pytorch/vi
 https://github.com/hezhangsprinter/DCPDN,cd vision
 https://github.com/hezhangsprinter/DCPDN,python setup.py install
 https://github.com/hezhangsprinter/DCPDN,"Install python package: numpy, scipy, PIL, pdb"
-https://github.com/hezhangsprinter/DID-MDN,Prerequisites:
-https://github.com/hezhangsprinter/DID-MDN,Linux
-https://github.com/hezhangsprinter/DID-MDN,Python 2 or 3
-https://github.com/hezhangsprinter/DID-MDN,CPU or NVIDIA GPU + CUDA CuDNN (CUDA 8.0)
-https://github.com/hezhangsprinter/DID-MDN,Installation:
 https://github.com/hezhangsprinter/DID-MDN,Install PyTorch and dependencies from http://pytorch.org (Ubuntu+Python2.7) (conda install pytorch torchvision -c pytorch)
 https://github.com/hezhangsprinter/DID-MDN,Install Torch vision from the source. (git clone https://github.com/pytorch/vision cd vision python setup.py install)
-https://github.com/hezhangsprinter/DID-MDN,"Install python package: numpy, scipy, PIL, pdb"
-https://github.com/hiroharu-kato/neural_renderer,Installation
 https://github.com/hiroharu-kato/neural_renderer,sudo python setup.py install
 https://github.com/iannesbitt/readgssi,requirements
 https://github.com/iannesbitt/readgssi,Strongly recommended to install via anaconda:
 https://github.com/iannesbitt/readgssi,obspy
-https://github.com/iannesbitt/readgssi,matplotlib
 https://github.com/iannesbitt/readgssi,numpy
-https://github.com/iannesbitt/readgssi,pandas
 https://github.com/iannesbitt/readgssi,h5py
 https://github.com/iannesbitt/readgssi,Install via pip:
 https://github.com/iannesbitt/readgssi,pynmea2
@@ -466,24 +429,18 @@ https://github.com/iannesbitt/readgssi,pip install ~/readgssi
 https://github.com/imfunniee/gitfolio,Let's Install
 https://github.com/imfunniee/gitfolio,Install gitfolio
 https://github.com/imfunniee/gitfolio,npm i gitfolio -g
-https://github.com/jiangsutx/SRN-Deblur,Prerequisites
 https://github.com/jiangsutx/SRN-Deblur,Python2.7
 https://github.com/jiangsutx/SRN-Deblur,Scipy
 https://github.com/jiangsutx/SRN-Deblur,Scikit-image
-https://github.com/jiangsutx/SRN-Deblur,numpy
 https://github.com/jiangsutx/SRN-Deblur,Tensorflow 1.4 with NVIDIA GPU or CPU (cpu testing is very slow)
-https://github.com/jiangsutx/SRN-Deblur,Installation
 https://github.com/jiangsutx/SRN-Deblur,Clone this project to your machine.
 https://github.com/jiangsutx/SRN-Deblur,git clone https://github.com/jiangsutx/SRN-Deblur.git
 https://github.com/jiangsutx/SRN-Deblur,cd SRN-Deblur
-https://github.com/joferkington/mplstereonet,Install
 https://github.com/joferkington/mplstereonet,mplstereonet can be installed from PyPi using pip by:
 https://github.com/joferkington/mplstereonet,pip install mplstereonet
 https://github.com/joferkington/mplstereonet,"Alternatively, you can download the source and install locally using (from the main directory of the repository):"
-https://github.com/joferkington/mplstereonet,python setup.py install
 https://github.com/joferkington/mplstereonet,"If you're planning on developing mplstereonet or would like to experiment with making local changes, consider setting up a development installation so that your changes are reflected when you import the package:"
 https://github.com/joferkington/mplstereonet,python setup.py develop
-https://github.com/jupyter-widgets/ipyleaflet,Installation
 https://github.com/jupyter-widgets/ipyleaflet,Using conda:
 https://github.com/jupyter-widgets/ipyleaflet,$ conda install -c conda-forge ipyleaflet
 https://github.com/jupyter-widgets/ipyleaflet,Using pip:
@@ -517,7 +474,6 @@ https://github.com/kenshohara/3D-ResNets-PyTorch,"FFmpeg, FFprobe"
 https://github.com/kenshohara/3D-ResNets-PyTorch,wget http://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz
 https://github.com/kenshohara/3D-ResNets-PyTorch,tar xvf ffmpeg-release-64bit-static.tar.xz
 https://github.com/kenshohara/3D-ResNets-PyTorch,cd ./ffmpeg-3.3.3-64bit-static/; sudo cp ffmpeg ffprobe /usr/local/bin;
-https://github.com/kenshohara/3D-ResNets-PyTorch,Python 3
 https://github.com/kinverarity1/lasio/,Install the usual way:
 https://github.com/kinverarity1/lasio/,$ pip install lasio
 https://github.com/kosmtik/kosmtik,Install or Update
@@ -528,27 +484,22 @@ https://github.com/kosmtik/kosmtik,npm install kosmtik
 https://github.com/kosmtik/kosmtik,This will create a node_modules/kosmtik folder. You then have to replace all occurences of kosmtik below with node node_modules/kosmtik/index.js.
 https://github.com/kosmtik/kosmtik,To reinstall all plugins:
 https://github.com/kosmtik/kosmtik,kosmtik plugins --reinstall
-https://github.com/mapbox/geojson-vt,Install
 https://github.com/mapbox/geojson-vt,Install using NPM (npm install geojson-vt) or Yarn (yarn add geojson-vt)
-https://github.com/mapbox/rasterio,Installation
 https://github.com/mapbox/rasterio,Please install Rasterio in a virtual environment so that its requirements don't tamper with your system's Python.
 https://github.com/mapbox/rasterio,SSL certs
 https://github.com/mapbox/rasterio,"The Linux wheels on PyPI are built on CentOS and libcurl expects certs to be in /etc/pki/tls/certs/ca-bundle.crt. Ubuntu's certs, for example, are in a different location. You may need to use the CURL_CA_BUNDLE environment variable to specify the location of SSL certs on your computer. On an Ubuntu system set the variable as shown below."
 https://github.com/mapbox/rasterio,$ export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
-https://github.com/mapbox/rasterio,Dependencies
 https://github.com/mapbox/rasterio,Rasterio has a C library dependency: GDAL >=1.11. GDAL itself depends on some other libraries provided by most major operating systems and also depends on the non standard GEOS and PROJ4 libraries. How to meet these requirement will be explained below.
 https://github.com/mapbox/rasterio,Rasterio's Python dependencies are listed in its requirements.txt file.
 https://github.com/mapbox/rasterio,Development also requires (see requirements-dev.txt) Cython and other packages.
 https://github.com/mapbox/rasterio,Binary Distributions
 https://github.com/mapbox/rasterio,Use a binary distributions that directly or indirectly provide GDAL if possible.
-https://github.com/mapbox/rasterio,Linux
 https://github.com/mapbox/rasterio,Rasterio distributions are available from UbuntuGIS and Anaconda's conda-forge channel.
 https://github.com/mapbox/rasterio,Manylinux1 wheels are available on PyPI.
 https://github.com/mapbox/rasterio,OS X
 https://github.com/mapbox/rasterio,"Binary distributions with GDAL, GEOS, and PROJ4 libraries included are available for OS X versions 10.7+ starting with Rasterio version 0.17. To install, run pip install rasterio. These binary wheels are preferred by newer versions of pip."
 https://github.com/mapbox/rasterio,"If you don't want these wheels and want to install from a source distribution, run pip install rasterio --no-binary rasterio instead."
 https://github.com/mapbox/rasterio,"The included GDAL library is fairly minimal, providing only the format drivers that ship with GDAL and are enabled by default. To get access to more formats, you must build from a source distribution (see below)."
-https://github.com/mapbox/rasterio,Windows
 https://github.com/mapbox/rasterio,Binary wheels for rasterio and GDAL are created by Christoph Gohlke and are available from his website.
 https://github.com/mapbox/rasterio,"To install rasterio, simply download both binaries for your system (rasterio and GDAL) and run something like this from the downloads folder:"
 https://github.com/mapbox/rasterio,$ pip install -U pip
@@ -569,7 +520,6 @@ https://github.com/mapbox/rasterio,$ brew update
 https://github.com/mapbox/rasterio,$ brew install gdal
 https://github.com/mapbox/rasterio,$ pip install --no-use-wheel rasterio
 https://github.com/mapbox/rasterio,"Alternatively, you can install GDAL binaries from kyngchaos. You will then need to add the installed location /Library/Frameworks/GDAL.framework/Programs to your system path."
-https://github.com/mapbox/rasterio,You can download a binary distribution of GDAL from here. You will also need to download the compiled libraries and headers (include files).
 https://github.com/mapbox/rasterio,"When building from source on Windows, it is important to know that setup.py cannot rely on gdal-config, which is only present on UNIX systems, to discover the locations of header files and libraries that rasterio needs to compile its C extensions. On Windows, these paths need to be provided by the user. You will need to find the include files and the library files for gdal and use setup.py as follows."
 https://github.com/mapbox/rasterio,$ python setup.py build_ext -I<path to gdal include files> -lgdal_i -L<path to gdal library>
 https://github.com/mapbox/rasterio,$ python setup.py install
@@ -577,7 +527,6 @@ https://github.com/mapbox/rasterio,We have had success compiling code using the 
 https://github.com/mapbox/rasterio,Note: The GDAL dll (gdal111.dll) and gdal-data directory need to be in your Windows PATH otherwise rasterio will fail to work.
 https://github.com/mapbox/tilelive-mapnik,npm install tilelive-mapnik
 https://github.com/mapbox/tilelive-mapnik,Though tilelive is not a dependency of tilelive-mapnik you will want to install it to actually make use of tilelive-mapnik through a reasonable API.
-https://github.com/mapbox/tippecanoe,Installation
 https://github.com/mapbox/tippecanoe,The easiest way to install tippecanoe on OSX is with Homebrew:
 https://github.com/mapbox/tippecanoe,$ brew install tippecanoe
 https://github.com/mapbox/tippecanoe,On Ubuntu it will usually be easiest to build from the source repository:
@@ -597,7 +546,6 @@ https://github.com/msracver/Flow-Guided-Feature-Aggregation,pip install easydict
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"For Windows users, Visual Studio 2015 is needed to compile cython module."
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,Requirements: Hardware
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,Any NVIDIA GPUs with at least 8GB memory should be OK.
-https://github.com/msracver/Flow-Guided-Feature-Aggregation,Installation
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Clone the Flow-Guided Feature Aggregation repository, and we call the directory that you cloned as ${FGFA_ROOT}."
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,git clone https://github.com/msracver/Flow-Guided-Feature-Aggregation.git
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"For Windows users, run cmd .\init.bat. For Linux user, run sh ./init.sh. The scripts will build cython module automatically and create some folders."
@@ -615,7 +563,6 @@ https://github.com/msracver/Flow-Guided-Feature-Aggregation,make -j4
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,3.4 Install the MXNet Python binding by
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Note: If you will actively switch between different versions of MXNet, please follow 3.5 instead of 3.4"
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,cd python
-https://github.com/msracver/Flow-Guided-Feature-Aggregation,sudo python setup.py install
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"3.5 For advanced users, you may put your Python packge into ./external/mxnet/$(YOUR_MXNET_PACKAGE), and modify MXNET_VERSION in ./experiments/fgfa_rfcn/cfgs/*.yaml to $(YOUR_MXNET_PACKAGE). Thus you can switch among different versions of MXNet quickly."
 https://github.com/nypl-spacetime/map-vectorizer,If you use PIP (recommended) you will get the necessary Python packages with: pip install -r requirements.txt
 https://github.com/nypl-spacetime/map-vectorizer,install.packages('rgdal')
@@ -628,12 +575,10 @@ https://github.com/odoe/generator-arcgis-js-app,npm install -g bower
 https://github.com/odoe/generator-arcgis-js-app,Bower is a required dependency of using the packages in the generated app.
 https://github.com/odoe/generator-arcgis-js-app,"To install generator-arcgis-js-app from npm, run:"
 https://github.com/odoe/generator-arcgis-js-app,npm install -g generator-arcgis-js-app
-https://github.com/ondrolexa/apsg,Installation
 https://github.com/ondrolexa/apsg,PyPI
 https://github.com/ondrolexa/apsg,"To install APSG, just execute"
 https://github.com/ondrolexa/apsg,pip install apsg
 https://github.com/ondrolexa/apsg,"Alternatively, you download the package manually from the Python Package Index https://pypi.org/project/apsg, unzip it, navigate into the package, and use the command:"
-https://github.com/ondrolexa/apsg,python setup.py install
 https://github.com/ondrolexa/apsg,Upgrading via pip
 https://github.com/ondrolexa/apsg,"To upgrade an existing version of APSG from PyPI, execute"
 https://github.com/ondrolexa/apsg,pip install apsg --upgrade --no-deps
@@ -646,7 +591,6 @@ https://github.com/ondrolexa/apsg,Conda
 https://github.com/ondrolexa/apsg,The APSG package is also available through conda-forge.
 https://github.com/ondrolexa/apsg,Installing apsg
 https://github.com/ondrolexa/apsg,Installing apsg from the conda-forge channel can be achieved by adding conda-forge to your channels with:
-https://github.com/ondrolexa/apsg,conda config --add channels conda-forge
 https://github.com/ondrolexa/apsg,"Once the conda-forge channel has been enabled, apsg can be installed with:"
 https://github.com/ondrolexa/apsg,conda install apsg
 https://github.com/ondrolexa/apsg,It is possible to list all of the versions of apsg available on your platform with:
@@ -658,7 +602,6 @@ https://github.com/ondrolexa/apsg,"Or, you can fork the GitHub repository from h
 https://github.com/phoenix104104/LapSRN,Requirements and Dependencies
 https://github.com/phoenix104104/LapSRN,MATLAB (we test with MATLAB R2017a on Ubuntu 16.04 and Windows 7)
 https://github.com/phoenix104104/LapSRN,Cuda & Cudnn (we test with Cuda 8.0 and Cudnn 5.1)
-https://github.com/phoenix104104/LapSRN,Installation
 https://github.com/phoenix104104/LapSRN,Download repository:
 https://github.com/phoenix104104/LapSRN,$ git clone https://github.com/phoenix104104/LapSRN.git
 https://github.com/phoenix104104/LapSRN,Run install.m in MATLAB to compile MatConvNet:
@@ -666,7 +609,6 @@ https://github.com/phoenix104104/LapSRN,# Start MATLAB
 https://github.com/phoenix104104/LapSRN,$ matlab
 https://github.com/phoenix104104/LapSRN,>> install
 https://github.com/phoenix104104/LapSRN,"If you install MatConvNet in your own path, you need to change the corresponding path in install.m, train_LapSRN.m and test_LapSRN.m."
-https://github.com/phuang17/DeepMVS,Requirements
 https://github.com/phuang17/DeepMVS,python 2.7
 https://github.com/phuang17/DeepMVS,numpy 1.13.1
 https://github.com/phuang17/DeepMVS,pytorch 0.3.0 and torchvision: Follow the instructions from their website.
@@ -683,7 +625,6 @@ https://github.com/phuang17/DeepMVS,pyquaternion 0.9.0: Run pip install pyquater
 https://github.com/phuang17/DeepMVS,pydensecrf: Run pip install pydensecrf.
 https://github.com/phuang17/DeepMVS,cuda 8.0.61 and 6GB GPU RAM (required for gpu support): The testing codes use up to 4GB of the GPU RAM with the default configuration.
 https://github.com/phuang17/DeepMVS,COLMAP 3.2: Follow the instructions from their website.
-https://github.com/pysal/pysal/,Installation
 https://github.com/pysal/pysal/,PySAL is available through Anaconda (in the defaults or conda-forge channel) and Enthought Canopy. We recommend installing PySAL from conda-forge:
 https://github.com/pysal/pysal/,conda install pysal
 https://github.com/pysal/pysal/,PySAL can be installed using pip:
@@ -691,55 +632,42 @@ https://github.com/pysal/pysal/,pip install pysal
 https://github.com/pysal/pysal/,As of version 2.0.0 PySAL has shifted to Python 3 only.
 https://github.com/pysal/pysal/,Users who need an older stable version of PySAL that is Python 2 compatible can install version 1.14.3 through pip or conda:
 https://github.com/pysal/pysal/,conda install pysal==1.14.3
-https://github.com/pyvista/pymeshfix,Installation
 https://github.com/pyvista/pymeshfix,From PyPI
 https://github.com/pyvista/pymeshfix,pip install pymeshfix
 https://github.com/pyvista/pymeshfix,From source at GitHub
 https://github.com/pyvista/pymeshfix,git clone https://github.com/pyvista/pymeshfix
 https://github.com/pyvista/pymeshfix,cd pymeshfix
-https://github.com/pyvista/pymeshfix,pip install .
-https://github.com/pyvista/pyvista,Installation
 https://github.com/pyvista/pyvista,PyVista can be installed from PyPI using pip on Python >= 3.5:
 https://github.com/pyvista/pyvista,pip install pyvista
 https://github.com/pyvista/pyvista,"You can also visit PyPi, Anaconda, or GitHub to download the source."
-https://github.com/pyvista/tetgen,Installation
-https://github.com/pyvista/tetgen,From PyPI
 https://github.com/pyvista/tetgen,pip install tetgen
-https://github.com/pyvista/tetgen,From source at GitHub
 https://github.com/pyvista/tetgen,git clone https://github.com/pyvista/tetgen
 https://github.com/pyvista/tetgen,cd tetgen
-https://github.com/pyvista/tetgen,pip install .
 https://github.com/rowanz/neural-motifs,"Install python3.6 and pytorch 3. I recommend the Anaconda distribution. To install PyTorch if you haven't already, use conda install pytorch=0.3.0 torchvision=0.2.0 cuda90 -c pytorch."
 https://github.com/rowanz/neural-motifs,Update the config file with the dataset paths. Specifically:
 https://github.com/rowanz/neural-motifs,"Visual Genome (the VG_100K folder, image_data.json, VG-SGG.h5, and VG-SGG-dicts.json). See data/stanford_filtered/README.md for the steps I used to download these."
 https://github.com/rowanz/neural-motifs,You'll also need to fix your PYTHONPATH: export PYTHONPATH=/home/rowan/code/scene-graph
 https://github.com/rowanz/neural-motifs,Compile everything. run make in the main directory: this compiles the Bilinear Interpolation operation for the RoIs as well as the Highway LSTM.
-https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Requirements
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,"Tensorflow 1.3 (or latest, although not tested)"
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Preferably a Titan X for synthesizing 12 frames
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Appearance-stream tfmodel
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Dynamics-stream tfmodel
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Dynamic textures
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Static textures (for dynamics style transfer)
-https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Setup
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Store the appearance-stream tfmodel in ./models.
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Store the dynamics-stream tfmodel in ./models. The filepath to this model is your --dynamics_model path.
-https://github.com/salihkaragoz/pose-residual-network-pytorch,Prerequisites
 https://github.com/salihkaragoz/pose-residual-network-pytorch,python
 https://github.com/salihkaragoz/pose-residual-network-pytorch,pytorch
-https://github.com/salihkaragoz/pose-residual-network-pytorch,numpy
 https://github.com/salihkaragoz/pose-residual-network-pytorch,tqdm
 https://github.com/salihkaragoz/pose-residual-network-pytorch,pycocotools
 https://github.com/salihkaragoz/pose-residual-network-pytorch,progress
 https://github.com/salihkaragoz/pose-residual-network-pytorch,scikit-image
-https://github.com/salihkaragoz/pose-residual-network-pytorch,Installing
 https://github.com/salihkaragoz/pose-residual-network-pytorch,Clone this repository git clone https://github.com/salihkaragoz/pose-residual-network-pytorch.git
 https://github.com/salihkaragoz/pose-residual-network-pytorch,Install Pytorch
 https://github.com/salihkaragoz/pose-residual-network-pytorch,pip install -r src/requirements.txt
 https://github.com/salihkaragoz/pose-residual-network-pytorch,To download COCO dataset train2017 and val2017 annotations run: bash data/coco.sh. (data size: ~240Mb)
 https://github.com/sentinelsat/sentinelsat,Install sentinelsat through pip:
 https://github.com/sentinelsat/sentinelsat,pip install sentinelsat
-https://github.com/tensorflow/tensorflow,Installation
 https://github.com/tensorflow/tensorflow,To install the current release for CPU-only:
 https://github.com/tensorflow/tensorflow,pip install tensorflow
 https://github.com/tensorflow/tensorflow,Use the GPU package for CUDA-enabled GPU cards:
@@ -753,13 +681,9 @@ https://github.com/twbs/bootstrap,Install with npm: npm install bootstrap
 https://github.com/twbs/bootstrap,Install with yarn: yarn add bootstrap@4.3.1
 https://github.com/twbs/bootstrap,Install with Composer: composer require twbs/bootstrap:4.3.1
 https://github.com/twbs/bootstrap,Install with NuGet: CSS: Install-Package bootstrap Sass: Install-Package bootstrap.sass
-https://github.com/ungarj/tilematrix,Installation
 https://github.com/ungarj/tilematrix,Use pip to install the latest stable version:
 https://github.com/ungarj/tilematrix,pip install tilematrix
 https://github.com/ungarj/tilematrix,Manually install the latest development version
-https://github.com/ungarj/tilematrix,pip install -r requirements.txt
-https://github.com/ungarj/tilematrix,python setup.py install
-https://github.com/vuejs/vue-devtools/,Installation
 https://github.com/vuejs/vue-devtools/,Get the Chrome Extension / (beta channel)
 https://github.com/vuejs/vue-devtools/,Get the Firefox Addon / (beta channel)
 https://github.com/vuejs/vue-devtools/,Get standalone Electron app (works with any environment!)
@@ -772,7 +696,6 @@ https://github.com/vuejs/vue-devtools/,npm run build
 https://github.com/vuejs/vue-devtools/,Open Chrome extension page
 https://github.com/vuejs/vue-devtools/,"Check ""developer mode"""
 https://github.com/vuejs/vue-devtools/,"Click ""load unpacked extension"", and choose shells/chrome."
-https://github.com/whimian/pyGeoPressure,Installation
 https://github.com/whimian/pyGeoPressure,pyGeoPressure is on PyPI:
 https://github.com/whimian/pyGeoPressure,pip install pygeopressure
 https://github.com/wuhuikai/DeepGuidedFilter,Prepare Environment
@@ -782,7 +705,6 @@ https://github.com/wuhuikai/DeepGuidedFilter,cd DeepGuidedFilter && git checkout
 https://github.com/wuhuikai/DeepGuidedFilter,Install dependencies (PyTorch version).
 https://github.com/wuhuikai/DeepGuidedFilter,conda install opencv
 https://github.com/wuhuikai/DeepGuidedFilter,conda install pytorch=0.2.0 cuda80 -c soumith
-https://github.com/wuhuikai/DeepGuidedFilter,pip install -r requirements.txt
 https://github.com/wuhuikai/DeepGuidedFilter,(Optional) Install dependencies for MonoDepth (Tensorflow version).
 https://github.com/wuhuikai/DeepGuidedFilter,cd ComputerVision/MonoDepth
 https://github.com/wuhuikai/DeepGuidedFilter,Install Released Version
@@ -793,9 +715,216 @@ https://github.com/wuhuikai/DeepGuidedFilter,pip install guided-filter-tf
 https://github.com/yuhuayc/da-faster-rcnn,Build Caffe and pycaffe (see: Caffe installation instructions)
 https://github.com/yuhuayc/da-faster-rcnn,Build the Cython modules
 https://github.com/yuhuayc/da-faster-rcnn,cd $FRCN_ROOT/lib
-https://github.com/yuhuayc/da-faster-rcnn,make
-https://github.com/zhiqiangdon/CU-Net,Prerequisites
 https://github.com/zhiqiangdon/CU-Net,This package has the following requirements:
-https://github.com/zhiqiangdon/CU-Net,Python 2.7
 https://github.com/zhiqiangdon/CU-Net,Pytorch v0.4.0 or Pytorch v0.1.12
 https://github.com/zhiqiangdon/CU-Net,Note that the script name with string prev-version requires Pytorch v0.1.12.
+https://github.com/cltk/cltk,"CLTK supports Python versions 3.6 and 3.7. The software only runs on POSIX–compliant operating systems (Linux, Mac OS X, FreeBSD, etc.)."
+https://github.com/cltk/cltk,bash
+https://github.com/cltk/cltk,$ pip install cltk
+https://github.com/cltk/cltk,See docs for complete installation instructions.
+https://github.com/cltk/cltk,"The CLTK organization curates corpora which can be downloaded directly or, better, imported by the toolkit."
+https://github.com/facebookresearch/DensePose,"Please find installation instructions for Caffe2 and DensePose in INSTALL.md, a document based on the Detectron installation instructions."
+https://github.com/facebookresearch/ResNeXt,See the fb.resnet.torch installation instructions for a step-by-step guide.
+https://github.com/facebookresearch/ResNeXt,- Install Torch on a machine with CUDA GPU
+https://github.com/facebookresearch/ResNeXt,- Install cuDNN v4 or v5 and the Torch cuDNN bindings
+https://github.com/facebookresearch/ResNeXt,- Download the ImageNet dataset and move validation images to labeled subfolders
+https://github.com/facebookresearch/pyrobot,Installing both PyRobot and LoCoBot dependencies
+https://github.com/facebookresearch/pyrobot,Install Ubuntu 16.04
+https://github.com/facebookresearch/pyrobot,Download the installation script
+https://github.com/facebookresearch/pyrobot,sudo apt update
+https://github.com/facebookresearch/pyrobot,sudo apt-get install curl
+https://github.com/facebookresearch/pyrobot,curl 'https://raw.githubusercontent.com/facebookresearch/pyrobot/master/robots/LoCoBot/install/locobot_install_all.sh' &gt; locobot_install_all.sh
+https://github.com/facebookresearch/pyrobot,"Run the script to install everything (ROS, realsense driver, etc.). Please connect the nuc machine to a realsense camera before running the following commands."
+https://github.com/facebookresearch/pyrobot,chmod +x locobot_install_all.sh 
+https://github.com/facebookresearch/pyrobot,./locobot_install_all.sh
+https://github.com/facebookresearch/pyrobot,Installing just PyRobot
+https://github.com/facebookresearch/pyrobot,Install Ubuntu 16.04 
+https://github.com/facebookresearch/pyrobot,Install ROS kinetic
+https://github.com/facebookresearch/pyrobot,Install KDL
+https://github.com/facebookresearch/pyrobot,sudo apt-get -y install ros-kinetic-orocos-kdl ros-kinetic-kdl-parser-py ros-kinetic-python-orocos-kdl ros-kinetic-trac-ik
+https://github.com/facebookresearch/pyrobot,Install Python virtual environment
+https://github.com/facebookresearch/pyrobot,sudo apt-get -y install python-virtualenv
+https://github.com/facebookresearch/pyrobot,"virtualenv_name=""pyenv_pyrobot"""
+https://github.com/facebookresearch/pyrobot,VIRTUALENV_FOLDER=~/${virtualenv_name}
+https://github.com/facebookresearch/pyrobot,virtualenv --system-site-packages -p python2.7 $VIRTUALENV_FOLDER
+https://github.com/facebookresearch/pyrobot,Install PyRobot 
+https://github.com/facebookresearch/pyrobot,cd ~
+https://github.com/facebookresearch/pyrobot,mkdir -p low_cost_ws/src
+https://github.com/facebookresearch/pyrobot,cd ~/low_cost_ws/src
+https://github.com/facebookresearch/pyrobot,source ~/${virtualenv_name}/bin/activate
+https://github.com/facebookresearch/pyrobot,git clone --recurse-submodules https://github.com/facebookresearch/pyrobot.git
+https://github.com/facebookresearch/pyrobot,cd pyrobot/
+https://github.com/gitbucket/gitbucket,"GitBucket requires Java8. You have to install it, if it is not already installed."
+https://github.com/gitbucket/gitbucket,Download the latest gitbucket.war from the releases page and run it by java -jar gitbucket.war.
+https://github.com/gitbucket/gitbucket,Go to http://[hostname]:8080/ and log in with ID: root / Pass: root.
+https://github.com/gitbucket/gitbucket,You can specify following options:
+https://github.com/gitbucket/gitbucket,--port=[NUMBER]
+https://github.com/gitbucket/gitbucket,--prefix=[CONTEXTPATH]
+https://github.com/gitbucket/gitbucket,--host=[HOSTNAME]
+https://github.com/gitbucket/gitbucket,--gitbucket.home=[DATA_DIR]
+https://github.com/gitbucket/gitbucket,--temp_dir=[TEMP_DIR]
+https://github.com/gitbucket/gitbucket,--max_file_size=[MAX_FILE_SIZE]
+https://github.com/gitbucket/gitbucket,"TEMP_DIR is used as the temporary directory for the jetty application context. This is the directory into which the gitbucket.war file is unpacked, the source files are compiled, etc. If given this parameter must match the path of an existing directory or the application will quit reporting an error; if not given the path used will be a tmp directory inside the gitbucket home."
+https://github.com/gitbucket/gitbucket,MAX_FILE_SIZE is the max file size for upload files.
+https://github.com/gitbucket/gitbucket,"You can also deploy gitbucket.war to a servlet container which supports Servlet 3.0 (like Jetty, Tomcat, JBoss, etc)"
+https://github.com/gitbucket/gitbucket,"For more information about installation on Mac or Windows Server (with IIS), or configuration of Apache or Nginx and also integration with other tools or services such as Jenkins or Slack, see Wiki."
+https://github.com/gitbucket/gitbucket,"To upgrade GitBucket, replace gitbucket.war with the new version, after stopping GitBucket. All GitBucket data is stored in HOME/.gitbucket by default. So if you want to back up GitBucket's data, copy this directory to the backup location."
+https://github.com/gitbucket/gitbucket,Plugins
+https://github.com/gitbucket/gitbucket,GitBucket has a plug-in system that allows extra functionality. Officially the following plug-ins are provided:
+https://github.com/gitbucket/gitbucket,gitbucket-gist-plugin
+https://github.com/gitbucket/gitbucket,gitbucket-emoji-plugin
+https://github.com/gitbucket/gitbucket,gitbucket-pages-plugin
+https://github.com/gitbucket/gitbucket,gitbucket-notifications-plugin
+https://github.com/gitbucket/gitbucket,You can find more plugins made by the community at GitBucket community plugins.
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,"You will need to install latest version of Google Chrome. Moreover, you need to install selenium module as well using"
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,pip install selenium
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,"Run the code using Python 3. Also, the code is multi-platform and is tested on both Windows and Linux."
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,The tool uses latest version of Chrome Web Driver. I have placed the webdriver along with the code but if that version doesn't work then replace the chrome web driver with the latest one.
+https://github.com/nextflow-io/nextflow,Download the package
+https://github.com/nextflow-io/nextflow,"Nextflow does not require any installation procedure, just download the distribution package by copying and pasting"
+https://github.com/nextflow-io/nextflow,this command in your terminal:
+https://github.com/nextflow-io/nextflow,curl -fsSL https://get.nextflow.io | bash
+https://github.com/nextflow-io/nextflow,It creates the nextflow executable file in the current directory. You may want to move it to a folder accessible from your $PATH.
+https://github.com/nextflow-io/nextflow,Download from Conda
+https://github.com/nextflow-io/nextflow,Nextflow can also be installed from Bioconda
+https://github.com/nextflow-io/nextflow,conda install -c bioconda nextflow
+https://github.com/nextflow-io/nextflow,make compile
+https://github.com/nextflow-io/nextflow,"The very first time you run it, it will automatically download all the libraries required by the build process."
+https://github.com/nextflow-io/nextflow,It may take some minutes to complete.
+https://github.com/nextflow-io/nextflow,"When complete, execute the program by using the launch.sh script in the project directory."
+https://github.com/nextflow-io/nextflow,The self-contained runnable Nextflow packages can be created by using the following command:
+https://github.com/nextflow-io/nextflow,make pack
+https://github.com/nextflow-io/nextflow,In order to install the compiled packages use the following command:
+https://github.com/nextflow-io/nextflow,Then you will be able to run nextflow using the nextflow launcher script in the project root folder.
+https://github.com/nextflow-io/nextflow,Known compilation problems
+https://github.com/nextflow-io/nextflow,Nextflow required JDK 8 to be compiled. The Java compiler used by the build process can be choose by setting the
+https://github.com/nextflow-io/nextflow,JAVA_HOME environment variable accordingly.
+https://github.com/nextflow-io/nextflow,"If the compilation stops reporting the error: java.lang.VerifyError: Bad &lt;init&gt; method call from inside of a branch,"
+https://github.com/nextflow-io/nextflow,this is due to a bug affecting the following Java JDK:
+https://github.com/nextflow-io/nextflow,1.8.0 update 11
+https://github.com/nextflow-io/nextflow,1.8.0 update 20
+https://github.com/nextflow-io/nextflow,Upgrade to a newer JDK to avoid to this issue. Alternatively a possible workaround is to define the following variable
+https://github.com/nextflow-io/nextflow,in your environment:
+https://github.com/nextflow-io/nextflow,_JAVA_OPTIONS='-Xverify:none'
+https://github.com/nextflow-io/nextflow,Read more at these links:
+https://github.com/nextflow-io/nextflow,https://bugs.openjdk.java.net/browse/JDK-8051012
+https://github.com/nextflow-io/nextflow,https://jira.codehaus.org/browse/GROOVY-6951
+https://github.com/nextflow-io/nextflow,IntelliJ IDEA
+https://github.com/nextflow-io/nextflow,Nextflow development with IntelliJ IDEA requires the latest version of the IDE (2019.1.2 or later).
+https://github.com/nextflow-io/nextflow,"If you have it installed in your computer, follow the steps below in order to use it with Nextflow:"
+https://github.com/pyro-ppl/pyro,Installing a stable Pyro release
+https://github.com/pyro-ppl/pyro,Install using pip:
+https://github.com/pyro-ppl/pyro,Pyro supports Python 3.4+.
+https://github.com/pyro-ppl/pyro,sh
+https://github.com/pyro-ppl/pyro,pip install pyro-ppl
+https://github.com/pyro-ppl/pyro,Install from source:
+https://github.com/pyro-ppl/pyro,git clone git@github.com:pyro-ppl/pyro.git
+https://github.com/pyro-ppl/pyro,cd pyro
+https://github.com/pyro-ppl/pyro,git checkout master  # master is pinned to the latest release
+https://github.com/pyro-ppl/pyro,Install with extra packages:
+https://github.com/pyro-ppl/pyro,"To install the dependencies required to run the probabilistic models included in the examples/tutorials directories, please use the following command:"
+https://github.com/pyro-ppl/pyro,pip install pyro-ppl[extras]
+https://github.com/pyro-ppl/pyro,Make sure that the models come from the same release version of the Pyro source code as you have installed.
+https://github.com/pyro-ppl/pyro,Installing Pyro dev branch
+https://github.com/pyro-ppl/pyro,For recent features you can install Pyro from source.
+https://github.com/pyro-ppl/pyro,pip install git+https://github.com/pyro-ppl/pyro.git
+https://github.com/pyro-ppl/pyro,"or, with the extras dependency to run the probabilistic models included in the examples/tutorials directories:"
+https://github.com/pyro-ppl/pyro,pip install git+https://github.com/pyro-ppl/pyro.git#egg=project[extras]
+https://github.com/pyro-ppl/pyro,git clone https://github.com/pyro-ppl/pyro
+https://github.com/pyro-ppl/pyro,pip install .  # pip install .[extras] for running models in examples/tutorials
+https://github.com/reduxjs/react-redux,React Redux requires React 16.8.3 or later.
+https://github.com/reduxjs/react-redux,npm install --save react-redux
+https://github.com/reduxjs/react-redux,This assumes that you’re using npm package manager 
+https://github.com/reduxjs/react-redux,with a module bundler like Webpack or 
+https://github.com/reduxjs/react-redux,Browserify to consume CommonJS 
+https://github.com/reduxjs/react-redux,modules.
+https://github.com/reduxjs/react-redux,"If you don’t yet use npm or a modern module bundler, and would rather prefer a single-file UMD build that makes ReactRedux available as a global object, you can grab a pre-built version from cdnjs. We don’t recommend this approach for any serious application, as most of the libraries complementary to Redux are only available on npm."
+https://github.com/reduxjs/react-redux,React Native
+https://github.com/reduxjs/react-redux,"As of React Native 0.18, React Redux 5.x should work with React Native. If you have any issues with React Redux 5.x on React Native, run npm ls react and make sure you don’t have a duplicate React installation in your node_modules. We recommend that you use npm@3.x which is better at avoiding these kinds of issues."
+https://github.com/scikit-image/scikit-image,Installation from binaries
+https://github.com/scikit-image/scikit-image,Debian/Ubuntu: sudo apt-get install python-skimage
+https://github.com/scikit-image/scikit-image,OSX: pip install scikit-image
+https://github.com/scikit-image/scikit-image,Anaconda: conda install -c conda-forge scikit-image
+https://github.com/scikit-image/scikit-image,Windows: Download Windows binaries
+https://github.com/scikit-image/scikit-image,Also see installing scikit-image.
+https://github.com/scikit-image/scikit-image,Installation from source
+https://github.com/scikit-image/scikit-image,Install dependencies using:
+https://github.com/scikit-image/scikit-image,"Then, install scikit-image using:"
+https://github.com/scikit-image/scikit-image,$ pip install .
+https://github.com/scikit-image/scikit-image,"If you plan to develop the package, you may run it directly from source:"
+https://github.com/scikit-image/scikit-image,$ pip install -e .  # Do this once to add package to Python path
+https://github.com/scikit-image/scikit-image,"Every time you modify Cython files, also run:"
+https://github.com/scikit-image/scikit-image,$ python setup.py build_ext -i  # Build binary extensions
+https://github.com/scikit-learn/scikit-learn,~~~~~~~~~~~~
+https://github.com/scikit-learn/scikit-learn,scikit-learn requires:
+https://github.com/scikit-learn/scikit-learn,Python (>= 3.5)
+https://github.com/scikit-learn/scikit-learn,NumPy (>= 1.11.0)
+https://github.com/scikit-learn/scikit-learn,SciPy (>= 0.17.0)
+https://github.com/scikit-learn/scikit-learn,joblib (>= 0.11)
+https://github.com/scikit-learn/scikit-learn,Scikit-learn 0.20 was the last version to support Python 2.7 and Python 3.4.
+https://github.com/scikit-learn/scikit-learn,scikit-learn 0.21 and later require Python 3.5 or newer.
+https://github.com/scikit-learn/scikit-learn,"Scikit-learn plotting capabilities (i.e., functions start with ""plot_"") require"
+https://github.com/scikit-learn/scikit-learn,Matplotlib (>= 1.5.1). For running the examples Matplotlib >= 1.5.1 is
+https://github.com/scikit-learn/scikit-learn,"required. A few examples require scikit-image >= 0.12.3, a few examples require"
+https://github.com/scikit-learn/scikit-learn,pandas >= 0.18.0.
+https://github.com/scikit-learn/scikit-learn,User installation
+https://github.com/scikit-learn/scikit-learn,~~~~~~~~~~~~~~~~~
+https://github.com/scikit-learn/scikit-learn,"If you already have a working installation of numpy and scipy,"
+https://github.com/scikit-learn/scikit-learn,the easiest way to install scikit-learn is using pip   ::
+https://github.com/scikit-learn/scikit-learn,pip install -U scikit-learn
+https://github.com/scikit-learn/scikit-learn,or conda::
+https://github.com/scikit-learn/scikit-learn,conda install scikit-learn
+https://github.com/scikit-learn/scikit-learn,The documentation includes more detailed installation instructions &lt;http://scikit-learn.org/stable/install.html&gt;_.
+https://github.com/scikit-learn/scikit-learn,Changelog
+https://github.com/scikit-learn/scikit-learn,See the changelog &lt;http://scikit-learn.org/dev/whats_new.html&gt;__
+https://github.com/scikit-learn/scikit-learn,for a history of notable changes to scikit-learn.
+https://github.com/sequelize/sequelize,```bash
+https://github.com/sequelize/sequelize,$ npm install --save sequelize # This will install v5
+https://github.com/sequelize/sequelize,And one of the following:
+https://github.com/sequelize/sequelize,$ npm install --save pg pg-hstore # Postgres
+https://github.com/sequelize/sequelize,$ npm install --save mysql2
+https://github.com/sequelize/sequelize,$ npm install --save mariadb
+https://github.com/sequelize/sequelize,$ npm install --save sqlite3
+https://github.com/sequelize/sequelize,$ npm install --save tedious # Microsoft SQL Server
+https://github.com/tensorflow/magenta,Magenta maintains a pip package for easy
+https://github.com/tensorflow/magenta,"installation. We recommend using Anaconda to install it, but it can work in any"
+https://github.com/tensorflow/magenta,standard Python environment. We support both Python 2 (>= 2.7) and Python 3 (>= 3.5).
+https://github.com/tensorflow/magenta,These instructions will assume you are using Anaconda.
+https://github.com/tensorflow/magenta,"Note that if you want to enable GPU support, you should follow the GPU Installation instructions below."
+https://github.com/tensorflow/magenta,Automated Install (w/ Anaconda)
+https://github.com/tensorflow/magenta,"If you are running Mac OS X or Ubuntu, you can try using our automated"
+https://github.com/tensorflow/magenta,installation script. Just paste the following command into your terminal.
+https://github.com/tensorflow/magenta,curl https://raw.githubusercontent.com/tensorflow/magenta/master/magenta/tools/magenta-install.sh &gt; /tmp/magenta-install.sh
+https://github.com/tensorflow/magenta,bash /tmp/magenta-install.sh
+https://github.com/tensorflow/magenta,"After the script completes, open a new terminal window so the environment"
+https://github.com/tensorflow/magenta,variable changes take effect.
+https://github.com/tensorflow/magenta,The Magenta libraries are now available for use within Python programs and
+https://github.com/tensorflow/magenta,"Jupyter notebooks, and the Magenta scripts are installed in your path!"
+https://github.com/tensorflow/magenta,Note that you will need to run source activate magenta to use Magenta every
+https://github.com/tensorflow/magenta,time you open a new terminal window.
+https://github.com/tensorflow/magenta,Manual Install (w/o Anaconda)
+https://github.com/tensorflow/magenta,"If the automated script fails for any reason, or you'd prefer to install by"
+https://github.com/tensorflow/magenta,"hand, do the following steps."
+https://github.com/tensorflow/magenta,Install the Magenta pip package:
+https://github.com/tensorflow/magenta,pip install magenta
+https://github.com/tensorflow/magenta,"NOTE: In order to install the rtmidi package that we depend on, you may need to install headers for some sound libraries. On Linux, this command should install the necessary packages:"
+https://github.com/tensorflow/magenta,sudo apt-get install build-essential libasound2-dev libjack-dev
+https://github.com/tensorflow/magenta,GPU Installation
+https://github.com/tensorflow/magenta,"If you have a GPU installed and you want Magenta to use it, you will need to"
+https://github.com/tensorflow/magenta,"follow the Manual Install instructions, but with a few"
+https://github.com/tensorflow/magenta,modifications.
+https://github.com/tensorflow/magenta,"First, make sure your system meets the requirements to run tensorflow with GPU support."
+https://github.com/tensorflow/magenta,"Next, follow the Manual Install instructions, but install the"
+https://github.com/tensorflow/magenta,magenta-gpu package instead of the magenta package:
+https://github.com/tensorflow/magenta,pip install magenta-gpu
+https://github.com/tensorflow/magenta,The only difference between the two packages is that magenta-gpu depends on
+https://github.com/tensorflow/magenta,tensorflow-gpu instead of tensorflow.
+https://github.com/tensorflow/magenta,Magenta should now have access to your GPU.
+https://github.com/tensorflow/magenta,Using Magenta
+https://github.com/tensorflow/magenta,"You can now train our various models and use them to generate music, audio, and images. You can"
+https://github.com/tensorflow/magenta,find instructions for each of the models by exploring the models directory.
+https://github.com/tensorflow/magenta,"To get started, create your own melodies with TensorFlow using one of the various configurations of our Melody RNN model; a recurrent neural network for predicting melodies."
+https://github.com/tensorflow/magenta,Playing a MIDI Instrument
+https://github.com/tensorflow/magenta,"After you've trained one of the models above, you can use our MIDI interface to play with it interactively."
+https://github.com/tensorflow/magenta,"We also have created several demos that provide a UI for this interface, making it easier to use (e.g., the browser-based AI Jam)."
+https://github.com/tensorflow/magenta,Development Environment

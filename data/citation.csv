@@ -16,7 +16,6 @@ https://github.com/LMescheder/GAN_stability,"author = {Lars Mescheder and Sebast
 https://github.com/LMescheder/GAN_stability,"title = {Which Training Methods for GANs do actually Converge?},"
 https://github.com/LMescheder/GAN_stability,"booktitle = {International Conference on Machine Learning (ICML)},"
 https://github.com/LMescheder/GAN_stability,year = {2018}
-https://github.com/LMescheder/GAN_stability,}
 https://github.com/NVIDIA/vid2vid,"If you find this useful for your research, please cite the following paper."
 https://github.com/NVIDIA/vid2vid,
 https://github.com/NVIDIA/vid2vid,"@inproceedings{wang2018vid2vid,"
@@ -25,7 +24,6 @@ https://github.com/NVIDIA/vid2vid,"and Andrew Tao and Jan Kautz and Bryan Catanz
 https://github.com/NVIDIA/vid2vid,"title     = {Video-to-Video Synthesis},"
 https://github.com/NVIDIA/vid2vid,"booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},"
 https://github.com/NVIDIA/vid2vid,"year      = {2018},"
-https://github.com/NVIDIA/vid2vid,}
 https://github.com/NVIDIA/vid2vid,Video-to-Video Synthesis
 https://github.com/NVIDIA/vid2vid,"Ting-Chun Wang1, Ming-Yu Liu1, Jun-Yan Zhu2, Guilin Liu1, Andrew Tao1, Jan Kautz1, Bryan Catanzaro1"
 https://github.com/NVIDIA/vid2vid,"1NVIDIA Corporation, 2MIT CSAIL"
@@ -43,15 +41,12 @@ https://github.com/XiaLiPKU/RESCAN,"booktitle={European Conference on Computer V
 https://github.com/XiaLiPKU/RESCAN,"pages={262--277},"
 https://github.com/XiaLiPKU/RESCAN,"year={2018},"
 https://github.com/XiaLiPKU/RESCAN,organization={Springer}
-https://github.com/XiaLiPKU/RESCAN,}
 https://github.com/ZhouYanzhao/PRM,Citation
 https://github.com/ZhouYanzhao/PRM,"If you find the code useful for your research, please cite:"
 https://github.com/ZhouYanzhao/PRM,"@INPROCEEDINGS{Zhou2018PRM,"
 https://github.com/ZhouYanzhao/PRM,"author = {Zhou, Yanzhao and Zhu, Yi and Ye, Qixiang and Qiu, Qiang and Jiao, Jianbin},"
 https://github.com/ZhouYanzhao/PRM,"title = {Weakly Supervised Instance Segmentation using Class Peak Response},"
 https://github.com/ZhouYanzhao/PRM,"booktitle = {CVPR},"
-https://github.com/ZhouYanzhao/PRM,year = {2018}
-https://github.com/ZhouYanzhao/PRM,}
 https://github.com/akanazawa/hmr,"Angjoo Kanazawa, Michael J. Black, David W. Jacobs, Jitendra Malik CVPR 2018"
 https://github.com/akanazawa/hmr,"@inProceedings{kanazawaHMR18,"
 https://github.com/akanazawa/hmr,"title={End-to-end Recovery of Human Shape and Pose},"
@@ -60,16 +55,11 @@ https://github.com/akanazawa/hmr,and Michael J. Black
 https://github.com/akanazawa/hmr,and David W. Jacobs
 https://github.com/akanazawa/hmr,"and Jitendra Malik},"
 https://github.com/akanazawa/hmr,"booktitle={Computer Vision and Pattern Regognition (CVPR)},"
-https://github.com/akanazawa/hmr,year={2018}
-https://github.com/akanazawa/hmr,}
-https://github.com/albertpumarola/GANimation,Citation
 https://github.com/albertpumarola/GANimation,"If you use this code or ideas from the paper for your research, please cite our paper:"
 https://github.com/albertpumarola/GANimation,"@inproceedings{pumarola2018ganimation,"
 https://github.com/albertpumarola/GANimation,"title={GANimation: Anatomically-aware Facial Animation from a Single Image},"
 https://github.com/albertpumarola/GANimation,"author={A. Pumarola and A. Agudo and A.M. Martinez and A. Sanfeliu and F. Moreno-Noguer},"
 https://github.com/albertpumarola/GANimation,"booktitle={Proceedings of the European Conference on Computer Vision (ECCV)},"
-https://github.com/albertpumarola/GANimation,year={2018}
-https://github.com/albertpumarola/GANimation,}
 https://github.com/cgre-aachen/gempy,"For a more detailed elaboration of the theory behind GemPy, take a look at the upcoming scientific publication ""GemPy 1.0: open-source stochastic geological modeling and inversion"" by de la Varga et al. (2018)."
 https://github.com/cgre-aachen/gempy,References
 https://github.com/cgre-aachen/gempy,"de la Varga, M., Schaaf, A., and Wellmann, F.: GemPy 1.0: open-source stochastic geological modeling and inversion, Geosci. Model Dev., 12, 1-32, https://doi.org/10.5194/gmd-12-1-2019, 2019"
@@ -77,16 +67,12 @@ https://github.com/cgre-aachen/gempy,"Calcagno, P., Chilès, J. P., Courrioux, G
 https://github.com/cgre-aachen/gempy,"Lajaunie, C., Courrioux, G., & Manuel, L. (1997). Foliation fields and 3D cartography in geology: principles of a method based on potential interpolation. Mathematical Geology, 29(4), 571-584."
 https://github.com/driftingtides/hyvr,"HyVR can be attributed by citing the following journal article: Bennett, J. P., Haslauer, C. P., Ross, M., & Cirpka, O. A. (2018). An open, object-based framework for generating anisotropy in sedimentary subsurface models. Groundwater. DOI: 10.1111/gwat.12803."
 https://github.com/driving-behavior/DBNet,"DBNet was developed by MVIG, Shanghai Jiao Tong University* and SCSC Lab, Xiamen University* (alphabetical order)."
-https://github.com/driving-behavior/DBNet,Citation
 https://github.com/driving-behavior/DBNet,"If you find our work useful in your research, please consider citing:"
 https://github.com/driving-behavior/DBNet,"@InProceedings{DBNet2018,"
 https://github.com/driving-behavior/DBNet,"author = {Yiping Chen and Jingkang Wang and Jonathan Li and Cewu Lu and Zhipeng Luo and HanXue and Cheng Wang},"
 https://github.com/driving-behavior/DBNet,"title = {LiDAR-Video Driving Dataset: Learning Driving Policies Effectively},"
 https://github.com/driving-behavior/DBNet,"booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
 https://github.com/driving-behavior/DBNet,"month = {June},"
-https://github.com/driving-behavior/DBNet,year = {2018}
-https://github.com/driving-behavior/DBNet,}
-https://github.com/empymod/empymod,Citation
 https://github.com/empymod/empymod,"If you publish results for which you used empymod, please give credit by citing Werthmüller (2017):"
 https://github.com/empymod/empymod,"Werthmüller, D., 2017, An open-source full 3D electromagnetic modeler for 1D VTI media in Python: empymod: Geophysics, 82(6), WB9--WB19; DOI: 10.1190/geo2016-0626.1."
 https://github.com/empymod/empymod,"All releases have a Zenodo-DOI, provided on the release-page. Also consider citing Hunziker et al. (2015) and Key (2012), without which empymod would not exist."
@@ -95,7 +81,6 @@ https://github.com/endernewton/iter-reason,"author = {Xinlei Chen and Li-Jia Li 
 https://github.com/endernewton/iter-reason,"title = {Iterative Visual Reasoning Beyond Convolutions},"
 https://github.com/endernewton/iter-reason,"booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},"
 https://github.com/endernewton/iter-reason,Year = {2018}
-https://github.com/endernewton/iter-reason,}
 https://github.com/endernewton/iter-reason,"@inproceedings{chen2017spatial,"
 https://github.com/endernewton/iter-reason,"author = {Xinlei Chen and Abhinav Gupta},"
 https://github.com/endernewton/iter-reason,"title = {Spatial Memory for Context Reasoning in Object Detection},"
@@ -113,7 +98,6 @@ https://github.com/facebookresearch/Detectron/,"Piotr Doll\'{a}r and Kaiming He}
 https://github.com/facebookresearch/Detectron/,"title =        {Detectron},"
 https://github.com/facebookresearch/Detectron/,"howpublished = {\url{https://github.com/facebookresearch/detectron}},"
 https://github.com/facebookresearch/Detectron/,year =         {2018}
-https://github.com/facebookresearch/Detectron/,}
 https://github.com/foolwood/DaSiamRPN,"Zheng Zhu*, Qiang Wang*, Bo Li*, Wei Wu, Junjie Yan, and Weiming Hu"
 https://github.com/foolwood/DaSiamRPN,"European Conference on Computer Vision (ECCV), 2018"
 https://github.com/foolwood/DaSiamRPN,Citing DaSiamRPN
@@ -121,20 +105,13 @@ https://github.com/foolwood/DaSiamRPN,"If you find DaSiamRPN and SiamRPN useful 
 https://github.com/foolwood/DaSiamRPN,"@inproceedings{Zhu_2018_ECCV,"
 https://github.com/foolwood/DaSiamRPN,"title={Distractor-aware Siamese Networks for Visual Object Tracking},"
 https://github.com/foolwood/DaSiamRPN,"author={Zhu, Zheng and Wang, Qiang and Bo, Li and Wu, Wei and Yan, Junjie and Hu, Weiming},"
-https://github.com/foolwood/DaSiamRPN,"booktitle={European Conference on Computer Vision},"
-https://github.com/foolwood/DaSiamRPN,year={2018}
-https://github.com/foolwood/DaSiamRPN,}
 https://github.com/foolwood/DaSiamRPN,"@InProceedings{Li_2018_CVPR,"
 https://github.com/foolwood/DaSiamRPN,"title = {High Performance Visual Tracking With Siamese Region Proposal Network},"
 https://github.com/foolwood/DaSiamRPN,"author = {Li, Bo and Yan, Junjie and Wu, Wei and Zhu, Zheng and Hu, Xiaolin},"
-https://github.com/foolwood/DaSiamRPN,"booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
-https://github.com/foolwood/DaSiamRPN,year = {2018}
 https://github.com/google/sg2im/,"@inproceedings{johnson2018image,"
 https://github.com/google/sg2im/,"title={Image Generation from Scene Graphs},"
 https://github.com/google/sg2im/,"author={Johnson, Justin and Gupta, Agrim and Fei-Fei, Li},"
 https://github.com/google/sg2im/,"booktitle={CVPR},"
-https://github.com/google/sg2im/,year={2018}
-https://github.com/google/sg2im/,}
 https://github.com/google/sg2im/,Image Generation from Scene Graphs
 https://github.com/google/sg2im/,"Justin Johnson, Agrim Gupta, Li Fei-Fei"
 https://github.com/google/sg2im/,Presented at CVPR 2018
@@ -146,25 +123,16 @@ https://github.com/hezhangsprinter/DCPDN,[Paper Link] (CVPR'18)
 https://github.com/hezhangsprinter/DID-MDN,"@inproceedings{derain_zhang_2018,"
 https://github.com/hezhangsprinter/DID-MDN,"title={Density-aware Single Image De-raining using a Multi-stream Dense Network},"
 https://github.com/hezhangsprinter/DID-MDN,"author={Zhang, He and Patel, Vishal M},"
-https://github.com/hezhangsprinter/DID-MDN,"booktitle={CVPR},"
-https://github.com/hezhangsprinter/DID-MDN,year={2018}
-https://github.com/hezhangsprinter/DID-MDN,}
-https://github.com/hiroharu-kato/neural_renderer,Citation
 https://github.com/hiroharu-kato/neural_renderer,@InProceedings{kato2018renderer
 https://github.com/hiroharu-kato/neural_renderer,"title={Neural 3D Mesh Renderer},"
 https://github.com/hiroharu-kato/neural_renderer,"author={Kato, Hiroharu and Ushiku, Yoshitaka and Harada, Tatsuya},"
 https://github.com/hiroharu-kato/neural_renderer,"booktitle={The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
-https://github.com/hiroharu-kato/neural_renderer,year={2018}
-https://github.com/hiroharu-kato/neural_renderer,}
 https://github.com/iannesbitt/readgssi,"Ian M. Nesbitt, François-Xavier Simon, Thomas Paulin, 2018. readgssi - an open-source tool to read and plot GSSI ground-penetrating radar data. doi:10.5281/zenodo.1439119"
 https://github.com/jiangsutx/SRN-Deblur,"Xin Tao, Hongyun Gao, Xiaoyong Shen, Jue Wang, Jiaya Jia."
 https://github.com/jiangsutx/SRN-Deblur,"@inproceedings{tao2018srndeblur,"
 https://github.com/jiangsutx/SRN-Deblur,"title={Scale-recurrent Network for Deep Image Deblurring},"
 https://github.com/jiangsutx/SRN-Deblur,"author={Tao, Xin and Gao, Hongyun and Shen, Xiaoyong and Wang, Jue and Jia, Jiaya},"
 https://github.com/jiangsutx/SRN-Deblur,"booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
-https://github.com/jiangsutx/SRN-Deblur,year={2018}
-https://github.com/jiangsutx/SRN-Deblur,}
-https://github.com/joferkington/mplstereonet,References
 https://github.com/joferkington/mplstereonet,"[Kamb1956]Kamb, 1959. Ice Petrofabric Observations from Blue Glacier, Washington, in Relation to Theory and Experiment. Journal of Geophysical Research, Vol. 64, No. 11, pp. 1891--1909."
 https://github.com/joferkington/mplstereonet,"[Vollmer1995]Vollmer, 1995. C Program for Automatic Contouring of Spherical Orientation Data Using a Modified Kamb Method. Computers & Geosciences, Vol. 21, No. 1, pp. 31--49."
 https://github.com/kenshohara/3D-ResNets-PyTorch,"If you use this code or pre-trained models, please cite the following:"
@@ -173,8 +141,6 @@ https://github.com/kenshohara/3D-ResNets-PyTorch,"author={Kensho Hara and Hiroka
 https://github.com/kenshohara/3D-ResNets-PyTorch,"title={Can Spatiotemporal 3D CNNs Retrace the History of 2D CNNs and ImageNet?},"
 https://github.com/kenshohara/3D-ResNets-PyTorch,"booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
 https://github.com/kenshohara/3D-ResNets-PyTorch,"pages={6546--6555},"
-https://github.com/kenshohara/3D-ResNets-PyTorch,"year={2018},"
-https://github.com/kenshohara/3D-ResNets-PyTorch,}
 https://github.com/kenshohara/3D-ResNets-PyTorch,"Kensho Hara, Hirokatsu Kataoka, and Yutaka Satoh,"
 https://github.com/kenshohara/3D-ResNets-PyTorch,"Can Spatiotemporal 3D CNNs Retrace the History of 2D CNNs and ImageNet?"","
 https://github.com/kenshohara/3D-ResNets-PyTorch,"Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pp. 6546-6555, 2018."
@@ -184,8 +150,6 @@ https://github.com/msracver/Flow-Guided-Feature-Aggregation,"@inproceedings{zhu1
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Author = {Xizhou Zhu, Yujie Wang, Jifeng Dai, Lu Yuan, Yichen Wei},"
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Title = {Flow-Guided Feature Aggregation for Video Object Detection},"
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Conference = {ICCV},"
-https://github.com/msracver/Flow-Guided-Feature-Aggregation,Year = {2017}
-https://github.com/msracver/Flow-Guided-Feature-Aggregation,}
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"@inproceedings{dai16rfcn,"
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Author = {Jifeng Dai, Yi Li, Kaiming He, Jian Sun},"
 https://github.com/msracver/Flow-Guided-Feature-Aggregation,"Title = {{R-FCN}: Object Detection via Region-based Fully Convolutional Networks},"
@@ -201,13 +165,11 @@ https://github.com/phoenix104104/LapSRN,"author    = {Lai, Wei-Sheng and Huang, 
 https://github.com/phoenix104104/LapSRN,"title     = {Deep Laplacian Pyramid Networks for Fast and Accurate Super-Resolution},"
 https://github.com/phoenix104104/LapSRN,"booktitle = {IEEE Conferene on Computer Vision and Pattern Recognition},"
 https://github.com/phoenix104104/LapSRN,year      = {2017}
-https://github.com/phoenix104104/LapSRN,}
 https://github.com/phuang17/DeepMVS,"@inproceedings{DeepMVS,"
 https://github.com/phuang17/DeepMVS,"author       = ""Huang, Po-Han and Matzen, Kevin and Kopf, Johannes and Ahuja, Narendra and Huang, Jia-Bin"","
 https://github.com/phuang17/DeepMVS,"title        = ""DeepMVS: Learning Multi-View Stereopsis"","
 https://github.com/phuang17/DeepMVS,"booktitle    = ""IEEE Conference on Computer Vision and Pattern Recognition (CVPR)"","
 https://github.com/phuang17/DeepMVS,"year         = ""2018"""
-https://github.com/phuang17/DeepMVS,}
 https://github.com/pyvista/pymeshfix,Algorithm and Citation Policy
 https://github.com/pyvista/pymeshfix,"To better understand how the algorithm works, please refer to the following paper:"
 https://github.com/pyvista/pymeshfix,"M. Attene. A lightweight approach to repairing digitized polygon meshes. The Visual Computer, 2010. (c) Springer. DOI: 10.1007/s00371-010-0416-3"
@@ -229,32 +191,24 @@ https://github.com/pyvista/pyvista,"pages = {1450},"
 https://github.com/pyvista/pyvista,"author = {C. Bane Sullivan and Alexander Kaszynski},"
 https://github.com/pyvista/pyvista,"title = {{PyVista}: 3D plotting and mesh analysis through a streamlined interface for the Visualization Toolkit ({VTK})},"
 https://github.com/pyvista/pyvista,journal = {Journal of Open Source Software}
-https://github.com/pyvista/pyvista,}
 https://github.com/rowanz/neural-motifs,Bibtex
 https://github.com/rowanz/neural-motifs,"@inproceedings{zellers2018scenegraphs,"
 https://github.com/rowanz/neural-motifs,"title={Neural Motifs: Scene Graph Parsing with Global Context},"
 https://github.com/rowanz/neural-motifs,"author={Zellers, Rowan and Yatskar, Mark and Thomson, Sam and Choi, Yejin},"
 https://github.com/rowanz/neural-motifs,"booktitle = ""Conference on Computer Vision and Pattern Recognition"","
-https://github.com/rowanz/neural-motifs,year={2018}
-https://github.com/rowanz/neural-motifs,}
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,"@inproceedings{tesfaldet2018,"
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,"author = {Matthew Tesfaldet and Marcus A. Brubaker and Konstantinos G. Derpanis},"
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,"title = {Two-Stream Convolutional Networks for Dynamic Texture Synthesis},"
 https://github.com/ryersonvisionlab/two-stream-dyntex-synth,"booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
-https://github.com/ryersonvisionlab/two-stream-dyntex-synth,year = {2018}
-https://github.com/ryersonvisionlab/two-stream-dyntex-synth,}
 https://github.com/salihkaragoz/pose-residual-network-pytorch,"Muhammed Kocabas, Salih Karagoz, Emre Akbas. MultiPoseNet: Fast Multi-Person Pose Estimation using Pose Residual Network. In ECCV, 2018. arxiv"
-https://github.com/salihkaragoz/pose-residual-network-pytorch,Citation
 https://github.com/salihkaragoz/pose-residual-network-pytorch,"If you find this code useful for your research, please consider citing our paper:"
 https://github.com/salihkaragoz/pose-residual-network-pytorch,"@Inproceedings{kocabas18prn,"
 https://github.com/salihkaragoz/pose-residual-network-pytorch,"Title          = {Multi{P}ose{N}et: Fast Multi-Person Pose Estimation using Pose Residual Network},"
 https://github.com/salihkaragoz/pose-residual-network-pytorch,"Author         = {Kocabas, Muhammed and Karagoz, Salih and Akbas, Emre},"
 https://github.com/salihkaragoz/pose-residual-network-pytorch,"Booktitle      = {European Conference on Computer Vision (ECCV)},"
 https://github.com/salihkaragoz/pose-residual-network-pytorch,Year           = {2018}
-https://github.com/salihkaragoz/pose-residual-network-pytorch,}
 https://github.com/whimian/pyGeoPressure,Cite pyGeoPressure as:
 https://github.com/whimian/pyGeoPressure,"Yu, (2018). PyGeoPressure: Geopressure Prediction in Python. Journal of Open Source Software, 3(30), 992, https://doi.org/10.21105/joss.00992"
-https://github.com/whimian/pyGeoPressure,BibTex:
 https://github.com/whimian/pyGeoPressure,"@article{yu2018pygeopressure,"
 https://github.com/whimian/pyGeoPressure,"title = {{PyGeoPressure}: {Geopressure} {Prediction} in {Python}},"
 https://github.com/whimian/pyGeoPressure,"author = {Yu, Hao},"
@@ -264,23 +218,17 @@ https://github.com/whimian/pyGeoPressure,pages = {922}
 https://github.com/whimian/pyGeoPressure,"number = {30},"
 https://github.com/whimian/pyGeoPressure,"year = {2018},"
 https://github.com/whimian/pyGeoPressure,"doi = {10.21105/joss.00992},"
-https://github.com/whimian/pyGeoPressure,}
 https://github.com/wuhuikai/DeepGuidedFilter,Fast End-to-End Trainable Guided Filter
 https://github.com/wuhuikai/DeepGuidedFilter,"Huikai Wu, Shuai Zheng, Junge Zhang, Kaiqi Huang"
 https://github.com/wuhuikai/DeepGuidedFilter,CVPR 2018
 https://github.com/wuhuikai/DeepGuidedFilter,"@inproceedings{wu2017fast,"
 https://github.com/wuhuikai/DeepGuidedFilter,"title     = {Fast End-to-End Trainable Guided Filter},"
 https://github.com/wuhuikai/DeepGuidedFilter,"author    = {Wu, Huikai and Zheng, Shuai and Zhang, Junge and Huang, Kaiqi},"
-https://github.com/wuhuikai/DeepGuidedFilter,"booktitle = {CVPR},"
-https://github.com/wuhuikai/DeepGuidedFilter,year = {2018}
-https://github.com/wuhuikai/DeepGuidedFilter,}
 https://github.com/yuhuayc/da-faster-rcnn,"If you find it helpful for your research, please consider citing:"
 https://github.com/yuhuayc/da-faster-rcnn,"@inproceedings{chen2018domain,"
 https://github.com/yuhuayc/da-faster-rcnn,"title={Domain Adaptive Faster R-CNN for Object Detection in the Wild},"
 https://github.com/yuhuayc/da-faster-rcnn,"author={Chen, Yuhua and Li, Wen and Sakaridis, Christos and Dai, Dengxin and Van Gool, Luc},"
 https://github.com/yuhuayc/da-faster-rcnn,"booktitle = {Computer Vision and Pattern Recognition (CVPR)},"
-https://github.com/yuhuayc/da-faster-rcnn,year={2018}
-https://github.com/yuhuayc/da-faster-rcnn,}
 https://github.com/yulunzhang/RDN,"Yulun Zhang, Yapeng Tian, Yu Kong, Bineng Zhong, and Yun Fu, ""Residual Dense Network for Image Super-Resolution"", CVPR 2018 (spotlight), [arXiv]"
 https://github.com/yulunzhang/RDN,"Yulun Zhang, Yapeng Tian, Yu Kong, Bineng Zhong, and Yun Fu, ""Residual Dense Network for Image Restoration"", arXiv 2018, [arXiv]"
 https://github.com/yulunzhang/RDN,"@InProceedings{Lim_2017_CVPR_Workshops,"
@@ -289,12 +237,9 @@ https://github.com/yulunzhang/RDN,"title = {Enhanced Deep Residual Networks for 
 https://github.com/yulunzhang/RDN,"booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},"
 https://github.com/yulunzhang/RDN,"month = {July},"
 https://github.com/yulunzhang/RDN,year = {2017}
-https://github.com/yulunzhang/RDN,}
 https://github.com/yulunzhang/RDN,"@inproceedings{zhang2018residual,"
 https://github.com/yulunzhang/RDN,"title={Residual Dense Network for Image Super-Resolution},"
 https://github.com/yulunzhang/RDN,"author={Zhang, Yulun and Tian, Yapeng and Kong, Yu and Zhong, Bineng and Fu, Yun},"
-https://github.com/yulunzhang/RDN,"booktitle={CVPR},"
-https://github.com/yulunzhang/RDN,year={2018}
 https://github.com/yulunzhang/RDN,"@article{zhang2018rdnir,"
 https://github.com/yulunzhang/RDN,"title={Residual Dense Network for Image Restoration},"
 https://github.com/yulunzhang/RDN,"booktitle={arXiv},"
@@ -302,9 +247,52 @@ https://github.com/zhiqiangdon/CU-Net,"@inproceedings{tang2018quantized,"
 https://github.com/zhiqiangdon/CU-Net,"title={Quantized densely connected U-Nets for efficient landmark localization},"
 https://github.com/zhiqiangdon/CU-Net,"author={Tang, Zhiqiang and Peng, Xi and Geng, Shijie and Wu, Lingfei and Zhang, Shaoting and Metaxas, Dimitris},"
 https://github.com/zhiqiangdon/CU-Net,"booktitle={ECCV},"
-https://github.com/zhiqiangdon/CU-Net,year={2018}
-https://github.com/zhiqiangdon/CU-Net,}
 https://github.com/zhiqiangdon/CU-Net,"@inproceedings{tang2018cu,"
 https://github.com/zhiqiangdon/CU-Net,"title={CU-Net: Coupled U-Nets},"
 https://github.com/zhiqiangdon/CU-Net,"author={Tang, Zhiqiang and Peng, Xi and Geng, Shijie and Zhu, Yizhe and Metaxas, Dimitris},"
 https://github.com/zhiqiangdon/CU-Net,"booktitle={BMVC},"
+https://github.com/cltk/cltk,"Each major release of the CLTK is given a DOI, a type of unique identity for digital documents. This DOI ought to be included in your citation, as it will allow researchers to reproduce your results should the CLTK's API or codebase change. To find the CLTK's current DOI, observe the blue DOI button in the repository's home on GitHub. To the end of your bibliographic entry, append DOI plus the current identifier. You may also add version/release number, located in the pypi button at the project's GitHub repository homepage."
+https://github.com/cltk/cltk,"Thus, please cite core software as something like:"
+https://github.com/cltk/cltk,Kyle P. Johnson et al.. (2014-2019). CLTK: The Classical Language Toolkit. DOI 10.5281/zenodo.&lt;current_release_id&gt;
+https://github.com/cltk/cltk,A style-neutral BibTeX entry would look like this:
+https://github.com/cltk/cltk,"@Misc{johnson2014,"
+https://github.com/cltk/cltk,"author = {Kyle P. Johnson et al.},"
+https://github.com/cltk/cltk,"title = {CLTK: The Classical Language Toolkit},"
+https://github.com/cltk/cltk,"howpublished = {\url{https://github.com/cltk/cltk}},"
+https://github.com/cltk/cltk,"note = {{DOI} 10.5281/zenodo.&lt;current_release_id&gt;},"
+https://github.com/cltk/cltk,"year = {2014--2019},"
+https://github.com/facebookresearch/DensePose,"<a name=""CitingDensePose""></a>Citing DensePose"
+https://github.com/facebookresearch/DensePose,"If you use Densepose, please use the following BibTeX entry."
+https://github.com/facebookresearch/DensePose,"@InProceedings{Guler2018DensePose,"
+https://github.com/facebookresearch/DensePose,"  title={DensePose: Dense Human Pose Estimation In The Wild},"
+https://github.com/facebookresearch/DensePose,"  author={R\{i}za Alp G\""uler, Natalia Neverova, Iasonas Kokkinos},"
+https://github.com/facebookresearch/DensePose,"  journal={The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
+https://github.com/facebookresearch/DensePose,  year={2018}
+https://github.com/facebookresearch/DensePose,  }
+https://github.com/facebookresearch/ResNeXt,"If you use ResNeXt in your research, please cite the paper:"
+https://github.com/facebookresearch/ResNeXt,"@article{Xie2016,"
+https://github.com/facebookresearch/ResNeXt,"  title={Aggregated Residual Transformations for Deep Neural Networks},"
+https://github.com/facebookresearch/ResNeXt,"  author={Saining Xie and Ross Girshick and Piotr Dollár and Zhuowen Tu and Kaiming He},"
+https://github.com/facebookresearch/ResNeXt,"  journal={arXiv preprint arXiv:1611.05431},"
+https://github.com/facebookresearch/ResNeXt,  year={2016}
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,"If you use this tool for your research, then kindly cite it. Click the above badge for more information regarding the complete citation for this tool and diffferent citation formats like IEEE, APA etc."
+https://github.com/microsoft/malmo,Citations
+https://github.com/microsoft/malmo,Please cite Malmo as:
+https://github.com/microsoft/malmo,"Johnson M., Hofmann K., Hutton T., Bignell D. (2016) The Malmo Platform for Artificial Intelligence Experimentation. Proc. 25th International Joint Conference on Artificial Intelligence, Ed. Kambhampati S., p. 4246. AAAI Press, Palo Alto, California USA. https://github.com/Microsoft/malmo"
+https://github.com/nextflow-io/nextflow,"If you use Nextflow in your research, please cite:"
+https://github.com/nextflow-io/nextflow,"P. Di Tommaso, et al. Nextflow enables reproducible computational workflows. Nature Biotechnology 35, 316–319 (2017) doi:10.1038/nbt.3820"
+https://github.com/pyro-ppl/pyro,"If you use Pyro, please consider citing:"
+https://github.com/pyro-ppl/pyro,"@article{bingham2018pyro,"
+https://github.com/pyro-ppl/pyro,"  author = {Bingham, Eli and Chen, Jonathan P. and Jankowiak, Martin and Obermeyer, Fritz and"
+https://github.com/pyro-ppl/pyro,"            Pradhan, Neeraj and Karaletsos, Theofanis and Singh, Rohit and Szerlip, Paul and"
+https://github.com/pyro-ppl/pyro,"            Horsfall, Paul and Goodman, Noah D.},"
+https://github.com/pyro-ppl/pyro,"  title = {{Pyro: Deep Universal Probabilistic Programming}},"
+https://github.com/pyro-ppl/pyro,"  journal = {arXiv preprint arXiv:1810.09538},"
+https://github.com/pyro-ppl/pyro,  year = {2018}
+https://github.com/scikit-image/scikit-image,"If you find this project useful, please cite:"
+https://github.com/scikit-image/scikit-image,"Stéfan van der Walt, Johannes L. Schönberger, Juan Nunez-Iglesias,"
+https://github.com/scikit-image/scikit-image,"François Boulogne, Joshua D. Warner, Neil Yager, Emmanuelle"
+https://github.com/scikit-image/scikit-image,"Gouillart, Tony Yu, and the scikit-image contributors."
+https://github.com/scikit-image/scikit-image,scikit-image: Image processing in Python. PeerJ 2:e453 (2014)
+https://github.com/scikit-image/scikit-image,https://doi.org/10.7717/peerj.453
+https://github.com/scikit-learn/scikit-learn,"If you use scikit-learn in a scientific publication, we would appreciate citations: http://scikit-learn.org/stable/about.html#citing-scikit-learn"
