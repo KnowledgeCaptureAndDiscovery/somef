@@ -13,15 +13,23 @@ def httpToJson(url):
 
 #synthesizes repo json with gitub description(using api) and outputs to another json
 #should check if actually git url probably
-def synthRepoDataWithHttp(repo_data_file, git_url, outfile):
-    with open(repo_data_file) as json_file:
-        data = json.load(json_file)
-        git_data = httpToJson(git_url)
-        
-        data['description.sk'].append(git_data['description'])
+def synthRepoDataWithHttp(git_data, repo_data, outfile):   
+    
+    for i in git_data.keys():
+        if(i == 'description'):
+            repo_data['description.sk'].append(git_data[i])
+        else:
+            repo_data[i] = git_data[i]
 
-        with open(outfile, 'w') as output:
-            json.dump(data, output)
+    with open(outfile, 'w') as output:
+        json.dump(repo_data, output)
 
 #for testing purposes
 #synthRepoDataWithHttp(repo, git, out)
+with open(repo) as file_one:
+    repo_data = json.load(file_one)
+with open('output.json') as file_two:
+    git_data = json.load(file_two)
+
+synthRepoDataWithHttp(git_data, repo_data, out)
+
