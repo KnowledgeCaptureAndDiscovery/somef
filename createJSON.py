@@ -59,22 +59,31 @@ def load_repository_information(repository_url):
     _, owner, repo_name = url.path.split('/')
     general_resp = requests.get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header).json() 
 
+    if 'message' in general_resp.keys() and general_resp['message']=="Not Found":
+        sys.exit("Error: repository name is incorrect")
+
     ## Remove extraneous data
     keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_url')
     filtered_resp = {k: general_resp[k] for k in keep_keys}
 
     ## Condense owner information
-    filtered_resp['owner'] = filtered_resp['owner']['login']
+    if filtered_resp['owner'] and 'login' in filtered_resp['owner'].keys():
+        filtered_resp['owner'] = filtered_resp['owner']['login']
     
     ## condense license information
-    filtered_resp['license'] = {k: filtered_resp['license'][k] for k in ('name', 'url')}
+    license_info = {}
+    for k in ('name', 'url'):
+        if filtered_resp['license'] and k in filtered_resp['license'].keys():
+            license_info[k] = filtered_resp['license'][k]
+    filtered_resp['license'] = license_info
     
     # get keywords / topics
     topics_headers = {}
     topics_headers.update(header)
     topics_headers = {'accept': 'application/vnd.github.mercy-preview+json'}
     topics_resp = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/topics', headers=topics_headers).json()
-    filtered_resp['topics'] = topics_resp['names']
+    if topics_resp and 'names' in topics_resp.keys():
+        filtered_resp['topics'] = topics_resp['names']
 
     ## get languages
     filtered_resp['languages'] = list(requests.get(filtered_resp['languages_url']).json().keys())
