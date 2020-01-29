@@ -8,8 +8,11 @@ createJSON.py generates a JSON object after extracting useful information from t
 The createJSON.py file takes as input the following parameters:
 
 --repo_url: Link to the github repository for extracting information
+
 -m: Path to the pickled models for extraction
+
 -o: Output file name
+
 -t: threshold to classify the content of the readme file
 
 Example:
