@@ -1,6 +1,12 @@
 # SM2KG
 Software Metadata 2 Knowledge Graphs: A tool for automatically extracting relevant information from readme files
 
+Installation Instructions - 
+
+pip3 install -r requirements.txt
+
+Create a config.json file containing '{}'.
+
 Command Line Interface - 
 
 createJSON.py generates a JSON object after extracting useful information from the github repository. It classifies the readme file into one of four categories - description, invocation, installation, citation depending on highest confidence above a given threshold.
