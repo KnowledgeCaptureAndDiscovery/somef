@@ -17,4 +17,4 @@ The createJSON.py file takes as input the following parameters:
 
 Example:
 
-python3 createJSON.py --repo_url https://github.com/{owner}/{repository_name} -m ./models/ -o output.json -t 0.5
+`python3 createJSON.py --repo_url https://github.com/{owner}/{repository_name} -m ./models/ -o output.json -t 0.5`
