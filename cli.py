@@ -69,7 +69,6 @@ def load_repository_information(repository_url):
     ## Condense owner information
     if filtered_resp['owner'] and 'login' in filtered_resp['owner'].keys():
         filtered_resp['owner'] = filtered_resp['owner']['login']
-   
     
     ## condense license information
     license_info = {}
@@ -113,39 +112,41 @@ def run_classifiers(path_to_models, text):
         excerpts = text.splitlines()
         excerpts = [i for i in excerpts if i]
         scores = classifier.predict_proba(excerpts)
-        score_dict={'excerpt': excerpts, classifier_name: scores[:,1]}
+        score_dict[classifier_name]={'excerpt': excerpts, 'confidence': scores[:,1]}
     else :
+        excerpts = text.splitlines()
+        excerpts = [i for i in excerpts if i]
         for file in os.listdir(path_to_models):
             classifier = pickle.load(open(path_to_models+'/'+file, 'rb'))
             classifier_name = os.path.basename(file)
-            excerpts = text.splitlines()
-            excerpts = [i for i in excerpts if i]
             scores = classifier.predict_proba(excerpts)
-            if 'excerpt' not in score_dict.keys():
-                score_dict={'excerpt': excerpts, classifier_name: scores[:,1]}
-            else :
-                score_dict[classifier_name]=scores[:,1]
+            score_dict[classifier_name]={'excerpt': excerpts, 'confidence': scores[:,1]}
     return score_dict 
 
 def classify_into_one(scores, threshold):
-    results = pd.DataFrame(scores)
-    col = results[results.columns[1:]].idxmax(axis=1)
-    maxval = results[results.columns[1:]].max(axis=1)
-    pred = np.column_stack((results['excerpt'],col,maxval))
-    pred = pred[pred[:,2] >= threshold]
-    predictions = {'description.sk':[],'invocation.sk':[],'installation.sk':[],'citation.sk':[]}
-    curr=""
+    predictions = {}
     excerpt=""
-    for ele in range(len(pred)):
-        if curr=="":
-            excerpt=excerpt+pred[ele][0]+' \n'
-            curr = pred[ele][1]
-        elif curr==pred[ele][1]:
-            excerpt=excerpt+pred[ele][0]+' \n'
-        else :
-            predictions[pred[ele][1]].append(excerpt)
-            excerpt = pred[ele][0]+' \n'
-            curr = pred[ele][1]
+    for ele in scores.keys():
+        flag = False
+        predictions[ele] = []
+        excerpt=""
+        confid=[]
+        for i in range(len(scores[ele]['confidence'])):
+            if scores[ele]['confidence'][i]>=threshold:
+                if flag==False:
+                    excerpt=excerpt+scores[ele]['excerpt'][i]+' \n'
+                    confid.append(scores[ele]['confidence'][i])
+                    flag=True
+                else:
+                    excerpt=excerpt+scores[ele]['excerpt'][i]+' \n'
+                    confid.append(scores[ele]['confidence'][i])
+            else :
+                if flag==True:
+                    element = {'excerpt':excerpt,'confidence':confid}
+                    predictions[ele].append(element)
+                    excerpt=""
+                    confid=[]
+                    flag=False               
     return predictions
 
 def synthRepoData(git_data, repo_data, outfile):   

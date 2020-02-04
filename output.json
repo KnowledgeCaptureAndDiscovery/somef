@@ -1,43 +1,401 @@
 {
+  "citation.sk": [
+    {
+      "excerpt": "WIzard for DOCumenting Ontologies (WIDOCO) \nAuthor: Daniel Garijo Verdejo (@dgarijo) \nContributors: María Poveda, Idafen Santana, Almudena Ruiz, Miguel Angel García, Oscar Corcho, Daniel Vila, Sergio Barrio, Martin Scharm, Maxime Lefrancois, Alfredo Serafini, @kartgk. \nCiting WIDOCO: Please cite the latest version of WIDOCO in Zenodo: https://zenodo.org/badge/latestdoi/11427075. \nISWC 2017 paper: https://iswc2017.semanticweb.org/paper-138 \n@inproceedings{garijo2017widoco, \n  title={WIDOCO: a wizard for documenting ontologies}, \n  author={Garijo, Daniel}, \n  booktitle={International Semantic Web Conference}, \n  pages={94--102}, \n  year={2017}, \n  organization={Springer, Cham}, \n  doi = {10.1007/978-3-319-68204-4_9}, \n  funding = {USNSF ICER-1541029, NIH 1R01GM117097-01}, \n  url={http://dgarijo.com/papers/widoco-iswc2017.pdf} \n} \n",
+      "confidence": [
+        0.5842602046714032,
+        0.8273918360294598,
+        0.5453876700347428,
+        0.615000258845131,
+        0.6356788571097686,
+        0.9132063211932561,
+        0.8493415301144451,
+        0.8273918360294598,
+        0.7110098892025157,
+        0.6557563570707792,
+        0.8595081760750233,
+        0.6448348221890952,
+        0.6781271475254176,
+        0.5453876700347428,
+        0.5105712459954294,
+        0.5453876700347428
+      ]
+    },
+    {
+      "excerpt": "=================== \n",
+      "confidence": [
+        0.5453876700347428
+      ]
+    },
+    {
+      "excerpt": "Description \n",
+      "confidence": [
+        0.5453876700347428
+      ]
+    },
+    {
+      "excerpt": "* Content negotiation and serialization of your ontology according to W3C best practices \n",
+      "confidence": [
+        0.5246513683661227
+      ]
+    },
+    {
+      "excerpt": "Tutorial \n",
+      "confidence": [
+        0.5453876700347428
+      ]
+    },
+    {
+      "excerpt": "Add them in your OWL file. For guidelines on which ones to include, follow our Best Practices document, which indicates which ones we recommend. \n",
+      "confidence": [
+        0.5064504818593589
+      ]
+    },
+    {
+      "excerpt": "Current improvements \n",
+      "confidence": [
+        0.5183765422789443
+      ]
+    },
+    {
+      "excerpt": "Contribution guidelines \n",
+      "confidence": [
+        0.5453876700347428
+      ]
+    }
+  ],
   "description.sk": [
-    "Description \n",
-    "* Integration with diagram creators (WebVOWL). \n",
-    "Examples \n",
-    "Tutorial \n",
-    "java -jar widoco-VERSION-jar-with-dependencies.jar [-ontFile file] or [-ontURI uri] [-outFolder folderName] [-confFile propertiesFile] or [-getOntologyMetadata] [-oops] [-rewriteAll] [-crossRef] [-saveConfig configOutFile] [-useCustomStyle] [-lang lang1-lang2] [-includeImportedOntologies] [-htaccess] [-webVowl] [-licensius] [-ignoreIndividuals] [-analytics analyticsCode] [-doNotDisplaySerializations][-displayDirectImportsOnly] [-rewriteBase rewriteBasePath] [-excludeIntroduction] [-uniteSections] \n",
-    "The -outFolder option specifies where you want to place the output. \n",
-    "The -oops flag creates an html page with the evaluation from the OOPS service (http://oops.linkeddata.es/) \nThe -rewriteAll option will tell WIDOCO to rewrite files if the new generate files are replacing existing files. Otherwise the tool will promt a window asking the user. \n",
-    "The -includeAnnotationProperties flag will include annotation properties defined in your ontology (by default they are not included) \n",
-    "The -rewriteBase flag allows changing the default rewrite base path (until the documentation folder). By default it is \"/\". \n",
-    "How can I make WIDOCO automatically recognize my vocabulary annotations? \n",
-    "(WIN) chrome.exe --allow-file-access-from-files, \n(OSX) open /Applications/Google\\ Chrome.app/ --args --allow-file-access-from-files \n(UNX) /usr/bin/google-chrome --allow-file-access-from-files \nCurrent improvements \n",
-    "* Means to add examples to your ontology terms. \n",
-    "Otherwise, you will probably experience an \"Unsupported major.minor version 52.0\" exception when executing the JAR file. \nContribution guidelines \n",
+    {
+      "excerpt": "WIzard for DOCumenting Ontologies (WIDOCO) \n",
+      "confidence": [
+        0.8073788059002611
+      ]
+    },
+    {
+      "excerpt": "Citing WIDOCO: Please cite the latest version of WIDOCO in Zenodo: https://zenodo.org/badge/latestdoi/11427075. \n",
+      "confidence": [
+        0.5380148763720959
+      ]
+    },
+    {
+      "excerpt": "Downloading the executable \n",
+      "confidence": [
+        0.589941174902783
+      ]
+    },
+    {
+      "excerpt": "WIDOCO helps you to publish and create an enriched and customized documentation of your ontology, by following a series of steps in a wizard. We extend the LODE framework by Silvio Peroni to describe the classes, properties and data properties of the ontology, the OOPS! webservice by María Poveda to print an evaluation and the Licensius service by Victor Rodriguez Doncel to determine the license URI and title being used. In addition, we use WebVowl to visualize the ontology and have extended Bubastis to show a complete changelog between different versions of your ontology. \nFeatures of WIDOCO: \n* Automatic documentation of the terms in your ontology (based on LODE) \n* Automatic annotation in JSON-LD snippets of the html produced. \n* Association of a provenance page which includes the history of your vocabulary (W3C PROV-O compliant). \n* Metadata extraction from the ontology plus the means to complete it on the fly when generating your ontology. Check the best practice document to know more about the terms recognized by WIDOCO. \n* Guidelines on the main sections that your document should have and how to complete them. \n* Integration with diagram creators (WebVOWL). \n* Automatic changelog of differences between the actual and the previous version of the ontology (based on Bubastis). \n* Separation of the sections of your html page so you can write them independently and replace only those needed. \n* Content negotiation and serialization of your ontology according to W3C best practices \n",
+      "confidence": [
+        0.8676245545215737,
+        0.8434615223618694,
+        0.7057329842826681,
+        0.7052120748336989,
+        0.6741134181133629,
+        0.7431826624380229,
+        0.6229285628530826,
+        0.5609615660579162,
+        0.7892729155918689,
+        0.6631520283901499,
+        0.6329823134823336
+      ]
+    },
+    {
+      "excerpt": "Examples of the features of WIDOCO can be seen on the gallery    \n",
+      "confidence": [
+        0.8444800568394065
+      ]
+    },
+    {
+      "excerpt": "A tutorial explaining the main features of the GUI can be found here     \nHow to use WIDOCO \nDownload all the files of the \"JAR\" folder into the same folder. Then just double click the .jar file. \nNow you can execute WIDOCO through the console. Usage: \njava -jar widoco-VERSION-jar-with-dependencies.jar [-ontFile file] or [-ontURI uri] [-outFolder folderName] [-confFile propertiesFile] or [-getOntologyMetadata] [-oops] [-rewriteAll] [-crossRef] [-saveConfig configOutFile] [-useCustomStyle] [-lang lang1-lang2] [-includeImportedOntologies] [-htaccess] [-webVowl] [-licensius] [-ignoreIndividuals] [-analytics analyticsCode] [-doNotDisplaySerializations][-displayDirectImportsOnly] [-rewriteBase rewriteBasePath] [-excludeIntroduction] [-uniteSections] \nThe ontFile and ontURI options allow you to choose the ontology file or ontology URI of your ontology. \nThe -outFolder option specifies where you want to place the output. \nThe -confFile allows you to choose your own configuration file for the ontology metadata. However you can tell WIDOCO to try to extract some of the metadata from the ontology with getOntologyMetadata. \nThe -oops flag creates an html page with the evaluation from the OOPS service (http://oops.linkeddata.es/) \nThe -rewriteAll option will tell WIDOCO to rewrite files if the new generate files are replacing existing files. Otherwise the tool will promt a window asking the user. \nThe -crossRef option will ONLY generate the overview and cross reference sections. The index document will NOT be generated. The htaccess, provenance page, etc., will not be generated unless requested by other flags. This flag in intended to be used only after a first version of the documentation exists. \nThe -saveConfig option allows you to save a configuration file on the \"configOutFile\" route with the properties of a given ontology. \nThe -useCustomStyle option allows exporting the documentation using alternate css files (thanks to Daniel Vila). \nThe -lang option allows showing the languages in which the documentation will be published (separated by \"-\"). Note that if the language is not supported, the system will load the labels in english. For example: en-pt-es \nThe -includeImportedOntologies flag indicates whether the terms of the imported ontologies of the current ontology should be documented as well or not. \nThe -htaccess flag creates a bundle for publication ready to be deployed on your apache server. \nThe -webVowl flag provides a link to a visualization based on WebVowl (http://vowl.visualdataweb.org/webvowl/index.html#). \nThe -licensius flag uses the Licensius web services (http://licensius.com/apidoc/index.html) to retrieve license metadata. Only works if the -getOntologyMetadata flag is enabled. \nThe -ignoreIndividuals flag allows you to ignore the named individuals in the ontology. \nThe -includeAnnotationProperties flag will include annotation properties defined in your ontology (by default they are not included) \nThe -analytics flag will add a code snippet for Google analytics to track your page. You need to add your code next to it. For example: UA-1234 \nThe -doNotDisplaySerializations flag allows not displaying available serializations of the ontology. \nThe -displayDirectImportsOnly flag allows displaying only those imported ontologies that are directly imported in the ontology being documented. \nThe -rewriteBase flag allows changing the default rewrite base path (until the documentation folder). By default it is \"/\". \nThe -excludeIntroduction flag skips adding an introduction section. \nThe -uniteSections includes all sections in the same HTML document. \n",
+      "confidence": [
+        0.7294725932852963,
+        0.6155919564359572,
+        0.6485630403731563,
+        0.5304013435407224,
+        0.5754212010962264,
+        0.7616719999833607,
+        0.6274931085112424,
+        0.8013879032297736,
+        0.6178676501744003,
+        0.626753885937295,
+        0.7308486989429855,
+        0.803562806149038,
+        0.6751147828065674,
+        0.7737332938407381,
+        0.7983539921907916,
+        0.6544399630427565,
+        0.6427070658598666,
+        0.6365698833245319,
+        0.72897006792718,
+        0.5142843813438018,
+        0.6705677838304225,
+        0.7037564638758089,
+        0.679633539055841,
+        0.6151733764179571,
+        0.7215795818826714,
+        0.6659200031789076
+      ]
+    },
+    {
+      "excerpt": "There are two ways for making WIDOCO get your vocabulary metadata annotations and use them automatically to document the ontology.  \nAdd them in your OWL file. For guidelines on which ones to include, follow our Best Practices document, which indicates which ones we recommend. \nEdit the project properties of /config/config.properties. This is a key-value pair file with metadata properties. Some people consider it easier than adding the property annotations to the OWL file, although I recommend doing the former option. Note that the character \";\" is used for lists (for instance first author; second author; third author). \nBrowser issues (Why can't I see the generated documentation / visualization?) \nThe result of executing WIDOCO is an HTML file. We have successfully tested it in Mozilla, IE, Safari and Chrome.  When the page is stored in a server, WIDOCO's HTML  works correctly in all browsers. If you view the file on your local browser, we recommend you to use Mozilla Firefox, Safari or Internet Explorer. Google Chrome will not show the contents correctly, as it doesn't allow  XMLHttpRequest without HTTP. If you want to view the page locally with Google Chrome you have two possibilities: \na) Place the file in a server and access it via its URL (for example, put it in dropbox and access through its public url, or on a Github page). \nb) Execute Chrome with the following commands (Thanks to Alejandro Fernandez Carrera): \n",
+      "confidence": [
+        0.6609924055003863,
+        0.6230039023159415,
+        0.7069710203337009,
+        0.5941160863084669,
+        0.7406356639640443,
+        0.6808990562343953,
+        0.6625867558855812
+      ]
+    },
+    {
+      "excerpt": "We are working on the following features: \n* Means to add examples to your ontology terms. \n* Previsualization of the terms that will be generated. \nFor a complete list, check the project open issues. \n",
+      "confidence": [
+        0.7232978232209017,
+        0.5605769914625431,
+        0.7083330550894784,
+        0.6227145093770529
+      ]
+    },
+    {
+      "excerpt": "You will need Java 1.8 or higher (SDK 1.8 or JRE 8) for WIDOCO to work \nOtherwise, you will probably experience an \"Unsupported major.minor version 52.0\" exception when executing the JAR file. \n",
+      "confidence": [
+        0.6367414951932647,
+        0.5814799479586049
+      ]
+    },
     "Wizard for documenting ontologies. WIDOCO is a step by step generator of HTML templates with the documentation of your ontology. It uses the LODE environment to create part of the template."
   ],
-  "invocation.sk": [
-    "Author: Daniel Garijo Verdejo (@dgarijo) \nContributors: María Poveda, Idafen Santana, Almudena Ruiz, Miguel Angel García, Oscar Corcho, Daniel Vila, Sergio Barrio, Martin Scharm, Maxime Lefrancois, Alfredo Serafini, @kartgk. \nCiting WIDOCO: Please cite the latest version of WIDOCO in Zenodo: https://zenodo.org/badge/latestdoi/11427075. \nISWC 2017 paper: https://iswc2017.semanticweb.org/paper-138 \n@inproceedings{garijo2017widoco, \n  title={WIDOCO: a wizard for documenting ontologies}, \n  author={Garijo, Daniel}, \n  booktitle={International Semantic Web Conference}, \n  pages={94--102}, \n  year={2017}, \n  organization={Springer, Cham}, \n  doi = {10.1007/978-3-319-68204-4_9}, \n",
-    "To download WIDOCO, you need to download a JAR executable file. Check the latest release for more details: (https://github.com/dgarijo/WIDOCO/releases/latest). \n",
-    "WIDOCO helps you to publish and create an enriched and customized documentation of your ontology, by following a series of steps in a wizard. We extend the LODE framework by Silvio Peroni to describe the classes, properties and data properties of the ontology, the OOPS! webservice by María Poveda to print an evaluation and the Licensius service by Victor Rodriguez Doncel to determine the license URI and title being used. In addition, we use WebVowl to visualize the ontology and have extended Bubastis to show a complete changelog between different versions of your ontology. \nFeatures of WIDOCO: \n* Automatic documentation of the terms in your ontology (based on LODE) \n* Automatic annotation in JSON-LD snippets of the html produced. \n* Association of a provenance page which includes the history of your vocabulary (W3C PROV-O compliant). \n* Metadata extraction from the ontology plus the means to complete it on the fly when generating your ontology. Check the best practice document to know more about the terms recognized by WIDOCO. \n* Guidelines on the main sections that your document should have and how to complete them. \n",
-    "* Automatic changelog of differences between the actual and the previous version of the ontology (based on Bubastis). \n* Separation of the sections of your html page so you can write them independently and replace only those needed. \n* Content negotiation and serialization of your ontology according to W3C best practices \n",
-    "Examples of the features of WIDOCO can be seen on the gallery    \n",
-    "A tutorial explaining the main features of the GUI can be found here     \nHow to use WIDOCO \n",
-    "The ontFile and ontURI options allow you to choose the ontology file or ontology URI of your ontology. \n",
-    "The -confFile allows you to choose your own configuration file for the ontology metadata. However you can tell WIDOCO to try to extract some of the metadata from the ontology with getOntologyMetadata. \n",
-    "The -crossRef option will ONLY generate the overview and cross reference sections. The index document will NOT be generated. The htaccess, provenance page, etc., will not be generated unless requested by other flags. This flag in intended to be used only after a first version of the documentation exists. \nThe -saveConfig option allows you to save a configuration file on the \"configOutFile\" route with the properties of a given ontology. \nThe -useCustomStyle option allows exporting the documentation using alternate css files (thanks to Daniel Vila). \nThe -lang option allows showing the languages in which the documentation will be published (separated by \"-\"). Note that if the language is not supported, the system will load the labels in english. For example: en-pt-es \nThe -includeImportedOntologies flag indicates whether the terms of the imported ontologies of the current ontology should be documented as well or not. \nThe -htaccess flag creates a bundle for publication ready to be deployed on your apache server. \nThe -webVowl flag provides a link to a visualization based on WebVowl (http://vowl.visualdataweb.org/webvowl/index.html#). \nThe -licensius flag uses the Licensius web services (http://licensius.com/apidoc/index.html) to retrieve license metadata. Only works if the -getOntologyMetadata flag is enabled. \nThe -ignoreIndividuals flag allows you to ignore the named individuals in the ontology. \n",
-    "The -analytics flag will add a code snippet for Google analytics to track your page. You need to add your code next to it. For example: UA-1234 \nThe -doNotDisplaySerializations flag allows not displaying available serializations of the ontology. \nThe -displayDirectImportsOnly flag allows displaying only those imported ontologies that are directly imported in the ontology being documented. \n",
-    "There are two ways for making WIDOCO get your vocabulary metadata annotations and use them automatically to document the ontology.  \nAdd them in your OWL file. For guidelines on which ones to include, follow our Best Practices document, which indicates which ones we recommend. \nEdit the project properties of /config/config.properties. This is a key-value pair file with metadata properties. Some people consider it easier than adding the property annotations to the OWL file, although I recommend doing the former option. Note that the character \";\" is used for lists (for instance first author; second author; third author). \nBrowser issues (Why can't I see the generated documentation / visualization?) \nThe result of executing WIDOCO is an HTML file. We have successfully tested it in Mozilla, IE, Safari and Chrome.  When the page is stored in a server, WIDOCO's HTML  works correctly in all browsers. If you view the file on your local browser, we recommend you to use Mozilla Firefox, Safari or Internet Explorer. Google Chrome will not show the contents correctly, as it doesn't allow  XMLHttpRequest without HTTP. If you want to view the page locally with Google Chrome you have two possibilities: \na) Place the file in a server and access it via its URL (for example, put it in dropbox and access through its public url, or on a Github page). \nb) Execute Chrome with the following commands (Thanks to Alejandro Fernandez Carrera): \n",
-    "We are working on the following features: \n",
-    "Requirements \nYou will need Java 1.8 or higher (SDK 1.8 or JRE 8) for WIDOCO to work \n"
-  ],
   "installation.sk": [
-    "  funding = {USNSF ICER-1541029, NIH 1R01GM117097-01}, \n  url={http://dgarijo.com/papers/widoco-iswc2017.pdf} \n} \nDownloading the executable \n=================== \n",
-    "Download all the files of the \"JAR\" folder into the same folder. Then just double click the .jar file. \nNow you can execute WIDOCO through the console. Usage: \n",
-    "The -excludeIntroduction flag skips adding an introduction section. \nThe -uniteSections includes all sections in the same HTML document. \n",
-    "* Previsualization of the terms that will be generated. \nFor a complete list, check the project open issues. \n"
+    {
+      "excerpt": "To download WIDOCO, you need to download a JAR executable file. Check the latest release for more details: (https://github.com/dgarijo/WIDOCO/releases/latest). \n",
+      "confidence": [
+        0.6756189927221673
+      ]
+    },
+    {
+      "excerpt": "* Metadata extraction from the ontology plus the means to complete it on the fly when generating your ontology. Check the best practice document to know more about the terms recognized by WIDOCO. \n* Guidelines on the main sections that your document should have and how to complete them. \n",
+      "confidence": [
+        0.5395263070453569,
+        0.5533653194763165
+      ]
+    },
+    {
+      "excerpt": "How to use WIDOCO \n",
+      "confidence": [
+        0.5241820785602166
+      ]
+    },
+    {
+      "excerpt": "Now you can execute WIDOCO through the console. Usage: \njava -jar widoco-VERSION-jar-with-dependencies.jar [-ontFile file] or [-ontURI uri] [-outFolder folderName] [-confFile propertiesFile] or [-getOntologyMetadata] [-oops] [-rewriteAll] [-crossRef] [-saveConfig configOutFile] [-useCustomStyle] [-lang lang1-lang2] [-includeImportedOntologies] [-htaccess] [-webVowl] [-licensius] [-ignoreIndividuals] [-analytics analyticsCode] [-doNotDisplaySerializations][-displayDirectImportsOnly] [-rewriteBase rewriteBasePath] [-excludeIntroduction] [-uniteSections] \n",
+      "confidence": [
+        0.6415865886134414,
+        0.7758143247142087
+      ]
+    },
+    {
+      "excerpt": "The -outFolder option specifies where you want to place the output. \nThe -confFile allows you to choose your own configuration file for the ontology metadata. However you can tell WIDOCO to try to extract some of the metadata from the ontology with getOntologyMetadata. \n",
+      "confidence": [
+        0.6223335428972187,
+        0.5000957065548255
+      ]
+    },
+    {
+      "excerpt": "The -rewriteAll option will tell WIDOCO to rewrite files if the new generate files are replacing existing files. Otherwise the tool will promt a window asking the user. \n",
+      "confidence": [
+        0.513109877080257
+      ]
+    },
+    {
+      "excerpt": "The -lang option allows showing the languages in which the documentation will be published (separated by \"-\"). Note that if the language is not supported, the system will load the labels in english. For example: en-pt-es \n",
+      "confidence": [
+        0.5318708281277784
+      ]
+    },
+    {
+      "excerpt": "The -htaccess flag creates a bundle for publication ready to be deployed on your apache server. \n",
+      "confidence": [
+        0.5535964708954193
+      ]
+    },
+    {
+      "excerpt": "The -licensius flag uses the Licensius web services (http://licensius.com/apidoc/index.html) to retrieve license metadata. Only works if the -getOntologyMetadata flag is enabled. \n",
+      "confidence": [
+        0.5116943456269532
+      ]
+    },
+    {
+      "excerpt": "The -includeAnnotationProperties flag will include annotation properties defined in your ontology (by default they are not included) \nThe -analytics flag will add a code snippet for Google analytics to track your page. You need to add your code next to it. For example: UA-1234 \n",
+      "confidence": [
+        0.562328708902558,
+        0.5514401017594123
+      ]
+    },
+    {
+      "excerpt": "The -rewriteBase flag allows changing the default rewrite base path (until the documentation folder). By default it is \"/\". \n",
+      "confidence": [
+        0.5312102681235781
+      ]
+    },
+    {
+      "excerpt": "How can I make WIDOCO automatically recognize my vocabulary annotations? \n",
+      "confidence": [
+        0.6283619549395677
+      ]
+    },
+    {
+      "excerpt": "Browser issues (Why can't I see the generated documentation / visualization?) \n",
+      "confidence": [
+        0.510885854799806
+      ]
+    },
+    {
+      "excerpt": "b) Execute Chrome with the following commands (Thanks to Alejandro Fernandez Carrera): \n",
+      "confidence": [
+        0.586383757545377
+      ]
+    },
+    {
+      "excerpt": "Current improvements \nWe are working on the following features: \n",
+      "confidence": [
+        0.5262260210976475,
+        0.5561204415522281
+      ]
+    },
+    {
+      "excerpt": "For a complete list, check the project open issues. \nRequirements \nYou will need Java 1.8 or higher (SDK 1.8 or JRE 8) for WIDOCO to work \nOtherwise, you will probably experience an \"Unsupported major.minor version 52.0\" exception when executing the JAR file. \n",
+      "confidence": [
+        0.5176480646572161,
+        0.83412016338525,
+        0.6859831708805074,
+        0.6033446058999854
+      ]
+    }
   ],
-  "citation.sk": [
-    "WIzard for DOCumenting Ontologies (WIDOCO) \n"
+  "invocation.sk": [
+    {
+      "excerpt": "  pages={94--102}, \n",
+      "confidence": [
+        0.5375440594212295
+      ]
+    },
+    {
+      "excerpt": "  organization={Springer, Cham}, \n  doi = {10.1007/978-3-319-68204-4_9}, \n  funding = {USNSF ICER-1541029, NIH 1R01GM117097-01}, \n  url={http://dgarijo.com/papers/widoco-iswc2017.pdf} \n} \nDownloading the executable \n=================== \n",
+      "confidence": [
+        0.5024643905702276,
+        0.5700115988593752,
+        0.7981991290765549,
+        0.5426742466654296,
+        0.6253537343153588,
+        0.5987305525192003,
+        0.6253537343153588
+      ]
+    },
+    {
+      "excerpt": "Description \n",
+      "confidence": [
+        0.6051300517248024
+      ]
+    },
+    {
+      "excerpt": "* Automatic annotation in JSON-LD snippets of the html produced. \n",
+      "confidence": [
+        0.5891033823183361
+      ]
+    },
+    {
+      "excerpt": "* Metadata extraction from the ontology plus the means to complete it on the fly when generating your ontology. Check the best practice document to know more about the terms recognized by WIDOCO. \n",
+      "confidence": [
+        0.51305763358465
+      ]
+    },
+    {
+      "excerpt": "* Integration with diagram creators (WebVOWL). \n",
+      "confidence": [
+        0.6358796811144762
+      ]
+    },
+    {
+      "excerpt": "Examples \n",
+      "confidence": [
+        0.8698197885997628
+      ]
+    },
+    {
+      "excerpt": "Tutorial \nA tutorial explaining the main features of the GUI can be found here     \nHow to use WIDOCO \nDownload all the files of the \"JAR\" folder into the same folder. Then just double click the .jar file. \nNow you can execute WIDOCO through the console. Usage: \njava -jar widoco-VERSION-jar-with-dependencies.jar [-ontFile file] or [-ontURI uri] [-outFolder folderName] [-confFile propertiesFile] or [-getOntologyMetadata] [-oops] [-rewriteAll] [-crossRef] [-saveConfig configOutFile] [-useCustomStyle] [-lang lang1-lang2] [-includeImportedOntologies] [-htaccess] [-webVowl] [-licensius] [-ignoreIndividuals] [-analytics analyticsCode] [-doNotDisplaySerializations][-displayDirectImportsOnly] [-rewriteBase rewriteBasePath] [-excludeIntroduction] [-uniteSections] \nThe ontFile and ontURI options allow you to choose the ontology file or ontology URI of your ontology. \nThe -outFolder option specifies where you want to place the output. \n",
+      "confidence": [
+        0.7095445405479481,
+        0.5204985919200906,
+        0.5066097116442825,
+        0.8347651310791816,
+        0.7233411254715865,
+        0.5931315477794302,
+        0.5040051341203743,
+        0.6652328240670206
+      ]
+    },
+    {
+      "excerpt": "The -oops flag creates an html page with the evaluation from the OOPS service (http://oops.linkeddata.es/) \nThe -rewriteAll option will tell WIDOCO to rewrite files if the new generate files are replacing existing files. Otherwise the tool will promt a window asking the user. \nThe -crossRef option will ONLY generate the overview and cross reference sections. The index document will NOT be generated. The htaccess, provenance page, etc., will not be generated unless requested by other flags. This flag in intended to be used only after a first version of the documentation exists. \nThe -saveConfig option allows you to save a configuration file on the \"configOutFile\" route with the properties of a given ontology. \nThe -useCustomStyle option allows exporting the documentation using alternate css files (thanks to Daniel Vila). \nThe -lang option allows showing the languages in which the documentation will be published (separated by \"-\"). Note that if the language is not supported, the system will load the labels in english. For example: en-pt-es \nThe -includeImportedOntologies flag indicates whether the terms of the imported ontologies of the current ontology should be documented as well or not. \n",
+      "confidence": [
+        0.627937647954913,
+        0.7243088524717736,
+        0.548249447486742,
+        0.5089681400685672,
+        0.5585411194181614,
+        0.5943391409345902,
+        0.5597852471570235
+      ]
+    },
+    {
+      "excerpt": "The -includeAnnotationProperties flag will include annotation properties defined in your ontology (by default they are not included) \n",
+      "confidence": [
+        0.6450522141828473
+      ]
+    },
+    {
+      "excerpt": "The -displayDirectImportsOnly flag allows displaying only those imported ontologies that are directly imported in the ontology being documented. \nThe -rewriteBase flag allows changing the default rewrite base path (until the documentation folder). By default it is \"/\". \nThe -excludeIntroduction flag skips adding an introduction section. \nThe -uniteSections includes all sections in the same HTML document. \nHow can I make WIDOCO automatically recognize my vocabulary annotations? \n",
+      "confidence": [
+        0.5799042111333581,
+        0.6245580920029208,
+        0.5519693603239522,
+        0.609759676665765,
+        0.6165326934165005
+      ]
+    },
+    {
+      "excerpt": "Add them in your OWL file. For guidelines on which ones to include, follow our Best Practices document, which indicates which ones we recommend. \n",
+      "confidence": [
+        0.5045646455853418
+      ]
+    },
+    {
+      "excerpt": "Browser issues (Why can't I see the generated documentation / visualization?) \nThe result of executing WIDOCO is an HTML file. We have successfully tested it in Mozilla, IE, Safari and Chrome.  When the page is stored in a server, WIDOCO's HTML  works correctly in all browsers. If you view the file on your local browser, we recommend you to use Mozilla Firefox, Safari or Internet Explorer. Google Chrome will not show the contents correctly, as it doesn't allow  XMLHttpRequest without HTTP. If you want to view the page locally with Google Chrome you have two possibilities: \na) Place the file in a server and access it via its URL (for example, put it in dropbox and access through its public url, or on a Github page). \nb) Execute Chrome with the following commands (Thanks to Alejandro Fernandez Carrera): \n(WIN) chrome.exe --allow-file-access-from-files, \n(OSX) open /Applications/Google\\ Chrome.app/ --args --allow-file-access-from-files \n(UNX) /usr/bin/google-chrome --allow-file-access-from-files \nCurrent improvements \n",
+      "confidence": [
+        0.5501240204013124,
+        0.5412616872202458,
+        0.5135747834574199,
+        0.5268262712119768,
+        0.7610068513627465,
+        0.7398041237901458,
+        0.7788263263911405,
+        0.6571108506699105
+      ]
+    },
+    {
+      "excerpt": "* Means to add examples to your ontology terms. \n* Previsualization of the terms that will be generated. \nFor a complete list, check the project open issues. \n",
+      "confidence": [
+        0.6373188120752915,
+        0.5231879467231124,
+        0.5996934650737783
+      ]
+    },
+    {
+      "excerpt": "Otherwise, you will probably experience an \"Unsupported major.minor version 52.0\" exception when executing the JAR file. \nContribution guidelines \n",
+      "confidence": [
+        0.7442847035663297,
+        0.6253537343153588
+      ]
+    }
   ],
   "name": "Widoco",
   "owner": "dgarijo",
