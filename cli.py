@@ -168,10 +168,12 @@ def classify(scores, threshold):
 ## Returns a list of bibtex citations
 def extract_bibtex(readme_text):
     print("Extracting bibtex citation from readme")
-    regex = r'\@[a-zA-z]+\{[.\n\S\s]+?author[.\n\S\s]+?title[.\n\S\s]+?\n\}'
+    regex = r'\@[a-zA-z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title][.\n\S\s]+?\n\}'
     excerpts = readme_text
     citations = re.findall(regex,excerpts)
     print("Extracting bibtex citation from readme completed.")
+    print(citations)
+    print(len(citations))
     return citations
 
 ## Function takes metadata, readme text predictions, bibtex citations and path to the output file
