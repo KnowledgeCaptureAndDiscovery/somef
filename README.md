@@ -5,7 +5,7 @@ Installation Instructions -
 
 `pip3 install -r requirements.txt`
 
-Create a config.json file containing '{}'.
+Create a config.json file using the sample file in the repository.
 
 Command Line Interface - 
 
@@ -30,8 +30,6 @@ The cli.py file takes as input the following parameters:
 
 -r / --repo_url: Link to the github repository for extracting information
 
--m / --model_path: Path to the pickled models for extraction
-
 -o / --output: Output file name
 
 -t / --threshold: Threshold to classify the content of the readme file
@@ -42,4 +40,4 @@ Example:
 
 `python3 createJSON.py -r https://github.com/{owner}/{repository_name} -m ./models/ -o output.json -t 0.5`
 
-`python3 cli.py -r https://github.com/{owner}/{repository_name} -m ./models/ -o output.json -t 0.5`
+`python3 cli.py -r https://github.com/{owner}/{repository_name} -o output.json -t 0.5`
