@@ -1,70 +1,5 @@
 {
-  "citation.sk": [
-    {
-      "excerpt": "WIzard for DOCumenting Ontologies (WIDOCO) \nAuthor: Daniel Garijo Verdejo (@dgarijo) \nContributors: María Poveda, Idafen Santana, Almudena Ruiz, Miguel Angel García, Oscar Corcho, Daniel Vila, Sergio Barrio, Martin Scharm, Maxime Lefrancois, Alfredo Serafini, @kartgk. \nCiting WIDOCO: Please cite the latest version of WIDOCO in Zenodo: https://zenodo.org/badge/latestdoi/11427075. \nISWC 2017 paper: https://iswc2017.semanticweb.org/paper-138 \n@inproceedings{garijo2017widoco, \n  title={WIDOCO: a wizard for documenting ontologies}, \n  author={Garijo, Daniel}, \n  booktitle={International Semantic Web Conference}, \n  pages={94--102}, \n  year={2017}, \n  organization={Springer, Cham}, \n  doi = {10.1007/978-3-319-68204-4_9}, \n  funding = {USNSF ICER-1541029, NIH 1R01GM117097-01}, \n  url={http://dgarijo.com/papers/widoco-iswc2017.pdf} \n} \n",
-      "confidence": [
-        0.5842602046714032,
-        0.8273918360294598,
-        0.5453876700347428,
-        0.615000258845131,
-        0.6356788571097686,
-        0.9132063211932561,
-        0.8493415301144451,
-        0.8273918360294598,
-        0.7110098892025157,
-        0.6557563570707792,
-        0.8595081760750233,
-        0.6448348221890952,
-        0.6781271475254176,
-        0.5453876700347428,
-        0.5105712459954294,
-        0.5453876700347428
-      ]
-    },
-    {
-      "excerpt": "=================== \n",
-      "confidence": [
-        0.5453876700347428
-      ]
-    },
-    {
-      "excerpt": "Description \n",
-      "confidence": [
-        0.5453876700347428
-      ]
-    },
-    {
-      "excerpt": "* Content negotiation and serialization of your ontology according to W3C best practices \n",
-      "confidence": [
-        0.5246513683661227
-      ]
-    },
-    {
-      "excerpt": "Tutorial \n",
-      "confidence": [
-        0.5453876700347428
-      ]
-    },
-    {
-      "excerpt": "Add them in your OWL file. For guidelines on which ones to include, follow our Best Practices document, which indicates which ones we recommend. \n",
-      "confidence": [
-        0.5064504818593589
-      ]
-    },
-    {
-      "excerpt": "Current improvements \n",
-      "confidence": [
-        0.5183765422789443
-      ]
-    },
-    {
-      "excerpt": "Contribution guidelines \n",
-      "confidence": [
-        0.5453876700347428
-      ]
-    }
-  ],
-  "description.sk": [
+  "description": [
     {
       "excerpt": "WIzard for DOCumenting Ontologies (WIDOCO) \n",
       "confidence": [
@@ -166,7 +101,75 @@
     },
     "Wizard for documenting ontologies. WIDOCO is a step by step generator of HTML templates with the documentation of your ontology. It uses the LODE environment to create part of the template."
   ],
-  "installation.sk": [
+  "citation": [
+    {
+      "excerpt": "WIzard for DOCumenting Ontologies (WIDOCO) \nAuthor: Daniel Garijo Verdejo (@dgarijo) \nContributors: María Poveda, Idafen Santana, Almudena Ruiz, Miguel Angel García, Oscar Corcho, Daniel Vila, Sergio Barrio, Martin Scharm, Maxime Lefrancois, Alfredo Serafini, @kartgk. \nCiting WIDOCO: Please cite the latest version of WIDOCO in Zenodo: https://zenodo.org/badge/latestdoi/11427075. \nISWC 2017 paper: https://iswc2017.semanticweb.org/paper-138 \n@inproceedings{garijo2017widoco, \n  title={WIDOCO: a wizard for documenting ontologies}, \n  author={Garijo, Daniel}, \n  booktitle={International Semantic Web Conference}, \n  pages={94--102}, \n  year={2017}, \n  organization={Springer, Cham}, \n  doi = {10.1007/978-3-319-68204-4_9}, \n  funding = {USNSF ICER-1541029, NIH 1R01GM117097-01}, \n  url={http://dgarijo.com/papers/widoco-iswc2017.pdf} \n} \n",
+      "confidence": [
+        0.5842602046714032,
+        0.8273918360294598,
+        0.5453876700347428,
+        0.615000258845131,
+        0.6356788571097686,
+        0.9132063211932561,
+        0.8493415301144451,
+        0.8273918360294598,
+        0.7110098892025157,
+        0.6557563570707792,
+        0.8595081760750233,
+        0.6448348221890952,
+        0.6781271475254176,
+        0.5453876700347428,
+        0.5105712459954294,
+        0.5453876700347428
+      ]
+    },
+    {
+      "excerpt": "=================== \n",
+      "confidence": [
+        0.5453876700347428
+      ]
+    },
+    {
+      "excerpt": "Description \n",
+      "confidence": [
+        0.5453876700347428
+      ]
+    },
+    {
+      "excerpt": "* Content negotiation and serialization of your ontology according to W3C best practices \n",
+      "confidence": [
+        0.5246513683661227
+      ]
+    },
+    {
+      "excerpt": "Tutorial \n",
+      "confidence": [
+        0.5453876700347428
+      ]
+    },
+    {
+      "excerpt": "Add them in your OWL file. For guidelines on which ones to include, follow our Best Practices document, which indicates which ones we recommend. \n",
+      "confidence": [
+        0.5064504818593589
+      ]
+    },
+    {
+      "excerpt": "Current improvements \n",
+      "confidence": [
+        0.5183765422789443
+      ]
+    },
+    {
+      "excerpt": "Contribution guidelines \n",
+      "confidence": [
+        0.5453876700347428
+      ]
+    },
+    {
+      "excerpt": "@inproceedings{garijo2017widoco,\n  title={WIDOCO: a wizard for documenting ontologies},\n  author={Garijo, Daniel},\n  booktitle={International Semantic Web Conference},\n  pages={94--102},\n  year={2017},\n  organization={Springer, Cham},\n  doi = {10.1007/978-3-319-68204-4_9},\n  funding = {USNSF ICER-1541029, NIH 1R01GM117097-01},\n  url={http://dgarijo.com/papers/widoco-iswc2017.pdf}\n}"
+    }
+  ],
+  "installation": [
     {
       "excerpt": "To download WIDOCO, you need to download a JAR executable file. Check the latest release for more details: (https://github.com/dgarijo/WIDOCO/releases/latest). \n",
       "confidence": [
@@ -272,7 +275,7 @@
       ]
     }
   ],
-  "invocation.sk": [
+  "invocation": [
     {
       "excerpt": "  pages={94--102}, \n",
       "confidence": [

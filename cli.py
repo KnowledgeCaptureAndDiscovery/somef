@@ -1,7 +1,7 @@
 # creatJSON.py
 # parameters:
 ## input file: either: url to github repository OR markdown documentation file path
-## output file: json with each paragraph marked with all four classification scores
+## output file: json with each excerpt marked with all four classification scores
 
 import argparse
 import json
@@ -18,10 +18,7 @@ import pickle
 import pprint
 import pandas as pd
 import numpy as np
-
-with open('config.json') as fh:
-    header = json.load(fh)
-header['accept'] = 'application/vnd.github.v3+json'
+import re
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
@@ -51,7 +48,15 @@ def restricted_float(x):
         raise argparse.ArgumentTypeError(f"{x} not in range [0.0, 1.0]")
     return x
 
-def load_repository_information(repository_url):
+categories = ['description','citation','installation','invocation']
+keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_url')
+
+
+## Function uses the repository_url provided to load required information from github.
+## Information kept from the repository is written in keep_keys.
+## Returns the readme text and required metadata
+def load_repository_metadata(repository_url):
+    print("Loading Repository Information....")
     ## load general response of the repository
     url = urlparse(repository_url)
     if url.netloc != 'github.com':
@@ -63,7 +68,6 @@ def load_repository_information(repository_url):
         sys.exit("Error: repository name is incorrect")
 
     ## Remove extraneous data
-    keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_url')
     filtered_resp = {k: general_resp[k] for k in keep_keys}
 
     ## Condense owner information
@@ -99,34 +103,43 @@ def load_repository_information(repository_url):
     releases_list = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/releases', headers=header).json()
     releases_list = map(lambda release : {'tag_name': release['tag_name'], 'name': release['name'], 'author_name': release['author']['login'], 'body': release['body'], 'tarball_url': release['tarball_url'], 'zipball_url': release['zipball_url'], 'html_url':release['html_url'], 'url':release['url']}, releases_list)
     filtered_resp['releases'] = list(releases_list)
-
+    
+    print("Repository Information Successfully Loaded.")
     return text, filtered_resp
 
-def run_classifiers(path_to_models, text):
+## Function takes readme text as input and divides it into excerpts
+## Returns the extracted excerpts
+def create_excerpts(text):
+    divisions = text.splitlines()
+    divisions = [i for i in divisions if i]
+    return divisions
+
+## Function takes readme text as input and runs the provided classifiers on it
+## Returns the dictionary containing scores for each excerpt.
+def run_classifiers(text):
     score_dict={}
-    if(not path.exists(path_to_models)):
-        sys.exit("Error: File/Directory does not exist")
-    if(path.isfile(path_to_models)):
-        classifier = pickle.load(open(path_to_models, 'rb'))
-        classifier_name = os.path.basename(path_to_models)
-        excerpts = text.splitlines()
-        excerpts = [i for i in excerpts if i]
+    for category in categories:
+        excerpts = create_excerpts(text)
+        file_name = file_paths[category]
+        if file_name=="":
+            print('I am here')
+            continue
+        if not path.exists(file_name):
+            sys.exit("Error: File/Directory does not exist")
+        print("Classifying excerpts for the catgory",category)
+        classifier = pickle.load(open(file_name, 'rb'))
         scores = classifier.predict_proba(excerpts)
-        score_dict[classifier_name]={'excerpt': excerpts, 'confidence': scores[:,1]}
-    else :
-        excerpts = text.splitlines()
-        excerpts = [i for i in excerpts if i]
-        for file in os.listdir(path_to_models):
-            classifier = pickle.load(open(path_to_models+'/'+file, 'rb'))
-            classifier_name = os.path.basename(file)
-            scores = classifier.predict_proba(excerpts)
-            score_dict[classifier_name]={'excerpt': excerpts, 'confidence': scores[:,1]}
+        score_dict[category]={'excerpt': excerpts, 'confidence': scores[:,1]}
+        print("Excerpt Classification Successful for the Category",category)   
     return score_dict 
 
-def classify_into_one(scores, threshold):
+## Function takes scores dictionary and a threshold as input 
+## Returns predictions containing excerpts with a confidence above the given threshold.
+def classify(scores, threshold):
+    print("Checking Thresholds for Excerpt Classification.")
     predictions = {}
-    excerpt=""
     for ele in scores.keys():
+        print("Running for",ele)
         flag = False
         predictions[ele] = []
         excerpt=""
@@ -146,39 +159,68 @@ def classify_into_one(scores, threshold):
                     predictions[ele].append(element)
                     excerpt=""
                     confid=[]
-                    flag=False               
+                    flag=False
+        print("Run completed.")
+    print("All Excerpts below the given Threshold Removed.")
     return predictions
 
-def synthRepoData(git_data, repo_data, outfile):   
+## Function takes readme text as input and runs a regex parser on it
+## Returns a list of bibtex citations
+def extract_bibtex(readme_text):
+    print("Extracting bibtex citation from readme")
+    regex = r'\@[a-zA-z]+\{[.\n\S\s]+?author[.\n\S\s]+?title[.\n\S\s]+?\n\}'
+    excerpts = readme_text
+    citations = re.findall(regex,excerpts)
+    print("Extracting bibtex citation from readme completed.")
+    return citations
+
+## Function takes metadata, readme text predictions, bibtex citations and path to the output file
+## Performs some combinations and saves the final json Object in the file
+def save_json(git_data, repo_data, citations, outfile):   
     
     for i in git_data.keys():
-        if(i == 'description'):
-            repo_data['description.sk'].append(git_data[i])
+        if i == 'description':
+            if 'description' not in repo_data.keys():
+                repo_data['description'] = []
+            repo_data['description'].append(git_data[i])
         else:
             repo_data[i] = git_data[i]
 
+    for i in range(len(citations)):
+        if 'citation' not in repo_data.keys():
+            repo_data['citation'] = []
+        repo_data['citation'].append({'excerpt': citations[i]})
+
+    print("Saving json data to",outfile)
     with open(outfile, 'w') as output:
         json.dump(repo_data, output)  
 
+header = {}
+with open('config.json') as fh:
+    file_paths = json.load(fh)
+header['Authorization'] = file_paths['Authorization']
+header['accept'] = 'application/vnd.github.v3+json'
 
 argparser = argparse.ArgumentParser(description="Fetch Github README, split paragraphs, run classifiers and output json containing repository information, classified excerpts and confidence.")
 src = argparser.add_mutually_exclusive_group(required=True)
 src.add_argument('-r', '--repo_url', help="URL of the Github repository")
 src.add_argument('-d', '--doc_src', help='path to documentation file')
-argparser.add_argument('-m', '--model_path', help='path to pickled model', required=True)
 argparser.add_argument('-o', '--output', help="path for output json", required=True)
 argparser.add_argument('-t','--threshold', help="threshold score", type=restricted_float, default=0.5)
 argv = argparser.parse_args()
 
+github_data = {}
 if (argv.repo_url):
-    text, github_data = load_repository_information(argv.repo_url)
+    text, github_data = load_repository_metadata(argv.repo_url)
 elif (argv.doc_src):
     # Documentation from already downloaded Markdown file.
     with open(argv.doc_src, 'r') as doc_fh:
         text = unmark(doc_fh.read())
 
-score_dict = run_classifiers(argv.model_path, text)
+score_dict = run_classifiers(text)
 
-predictions = classify_into_one(score_dict, argv.threshold)
+predictions = classify(score_dict, argv.threshold)
 
-synthRepoData(github_data, predictions, argv.output)
+citations = extract_bibtex(text)
+
+save_json(github_data, predictions, citations, argv.output)
