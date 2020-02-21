@@ -1,0 +1,12 @@
+sklearn Primitive - Citation,Hyperparameters,Input Data Used,Accuracy,Precision,Recall,F-measure,Pickle ID
+"sklearnpipeline(CountVectorizer, NaiveBayes)", -,Allen,0.92,0.89,0.98,0.93,citcvnb.p
+"sklearnpipeline(CountVectorizer, LogisticRegression)", - ,Allen,0.89,0.85,0.98,0.91,citcvlr.p
+"sklearnpipeline(TFIDFVectorizer, StochasticGradientDescent)",loss = 'log',Allen,0.89,0.86,0.97,0.91,cittfsgd.p
+"sklearnpipeline(TFIDFVectorizer, LogisticRegression)", - ,Allen,0.88,0.84,0.98,0.91,cittflr.p
+"sklearnpipeline(TFIDFVectorizer, NaiveBayes)", - ,Allen,0.88,0.85,0.98,0.91,cittfnb.p
+"sklearnpipeline(TFIDFVectorizer, Perceptron)", -,Allen,0.87,0.84,0.86,0.89,cittfper.p
+"sklearnpipeline(TFIDFVectorizer, AdaBoostClassifier)", -,Allen,0.84,0.93,0.78,0.85,cittfada.p
+"sklearnpipeline(TFIDFVectorizer, DecisionTreeClassifier)", -,Allen,0.81,0.8,0.9,0.84,cittfdtc.p
+"sklearnpipeline(TFIDFVectorizer, XGBClassifier)", -,Allen,0.8,0.9,0.76,0.81,cittfxgb.p
+"sklearnpipeline(TFIDFVectorizer, RandomForestClassifier)", -,Allen,0.78,0.75,0.94,0.83,cittfrfc.p
+"sklearnpipeline(TFIDFVectorizer, BernoulliBayes)", -,Allen,0.74,0.69,0.99,0.81,cittfbb.p
