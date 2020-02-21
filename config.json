@@ -1,0 +1,7 @@
+{
+	"Authorization" : "token PersonalAccessToken",
+	"description" : "./models/description.sk",
+	"citation" : "./models/citation.sk",
+	"installation" : "./models/installation.sk",
+	"invocation" : "./models/invocation.sk"
+}
