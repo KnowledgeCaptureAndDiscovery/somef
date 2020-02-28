@@ -14,6 +14,10 @@ def urlPage():
     invocation = None
     description = None
     showDownload = None
+    git_name = None
+    git_owner = None
+    git_topics = None
+    git_languages = None
 
     if downloadForm.submit_download.data:
         return send_file("giturl_class/testfile.txt", as_attachment=True)
@@ -28,6 +32,10 @@ def urlPage():
             installation = data['installation.sk']
             invocation = data['invocation.sk']
             description = data['description.sk']
+            git_name = data["name"]
+            git_owner = data["owner"]
+            git_topics = data["topics"]
+            git_languages = data['languages']
             showDownload = True
 
     return render_template('giturl_class/giturl.html',
@@ -37,7 +45,10 @@ def urlPage():
                            citation = citation,
                            installation = installation,
                            invocation = invocation,
-                           description = description)
+                           description = description,
+                           git_name = git_name,
+                           git_owner = git_owner,
+                           git_languages = git_languages)
 
 
 @bp.route('/about', methods = ['GET'])

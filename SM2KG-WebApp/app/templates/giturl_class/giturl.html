@@ -79,11 +79,23 @@ SM2KG
 	{{ downloadForm.submit_download }}
 </form>
 {% endif %}
+<!-- display git name -->
+{% if git_name and showDownload %}
+	<p class="git-metadata">Repo Name: {{ git_name }} </p>
+{% endif %}
+{% if not git_name and showDownload %}
+	<p class="git-metadata">No Repo Name Found</p>
+{% endif %}
 
-<!--
-	<input type="submit" name="btn" value="Classify">
-	<input type="submit" name="btn" value="Download">
--->
+<!-- display git owner -->
+{% if git_owner and showDownload %}
+	<p class="git-metadata">Owner: {{ git_owner }} </p>
+{% endif %}
+{% if not git_owner and showDownload %}
+	<p class="git-metadata">No Owner Found</p>
+{% endif %}
+
+
 {% if citation %}
 	<div class="panel panel-primary">
 	  <!-- Default panel contents -->
