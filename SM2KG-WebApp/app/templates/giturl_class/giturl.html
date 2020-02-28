@@ -84,57 +84,57 @@ SM2KG
 	<input type="submit" name="btn" value="Classify">
 	<input type="submit" name="btn" value="Download">
 -->
+{% if showDownload %}
+	<ul class="nav nav-pills">
+	  <li class="active"><a data-toggle="tab" href="#home">Description</a></li>
+	  <li><a data-toggle="tab" href="#menu1">Installation</a></li>
+	  <li><a data-toggle="tab" href="#menu2">Invocation</a></li>
+	  <li><a data-toggle="tab" href="#menu3">Citation</a></li>
+	</ul>
 
-<ul class="nav nav-pills">
-  <li class="active"><a data-toggle="tab" href="#home">Description</a></li>
-  <li><a data-toggle="tab" href="#menu1">Installation</a></li>
-  <li><a data-toggle="tab" href="#menu2">Invocation</a></li>
-  <li><a data-toggle="tab" href="#menu3">Citation</a></li>
-</ul>
-
-<div class="tab-content">
-  <div id="home" class="tab-pane fade in active">
-    	<div class="panel panel-primary">
-	  <!-- Default panel contents -->
-			<div class="panel-body fixed-panel">
-				<div class="well">
-				<p> {{ description }} </p>
+	<div class="tab-content">
+	  <div id="home" class="tab-pane fade in active">
+		<div class="panel panel-primary">
+		  <!-- Default panel contents -->
+				<div class="panel-body fixed-panel">
+					<div class="well">
+					<p> {{ description }} </p>
+				</div>
 			</div>
 		</div>
-	</div>
-  </div>
-  <div id="menu1" class="tab-pane fade">
-	<div class="panel panel-primary">
-	  <!-- Default panel contents -->
-		<div class="panel-body fixed-panel">
-			<div class="well">
-			<p> {{ installation }} </p>
-		</div>
-		</div>
-	</div>
-  </div>
-  <div id="menu2" class="tab-pane fade">
-    	<div class="panel panel-primary">
-	  <!-- Default panel contents -->
+	  </div>
+	  <div id="menu1" class="tab-pane fade">
+		<div class="panel panel-primary">
+		  <!-- Default panel contents -->
 			<div class="panel-body fixed-panel">
 				<div class="well">
-				<p> {{ invocation }} </p>
-				</div>
+				<p> {{ installation }} </p>
+			</div>
+			</div>
+		</div>
+	  </div>
+	  <div id="menu2" class="tab-pane fade">
+		<div class="panel panel-primary">
+		  <!-- Default panel contents -->
+				<div class="panel-body fixed-panel">
+					<div class="well">
+					<p> {{ invocation }} </p>
+					</div>
+			  </div>
+		</div>
+	  </div>
+	    <div id="menu3" class="tab-pane fade">
+		<div class="panel panel-primary">
+		  <!-- Default panel contents -->
+		  <div class="panel-body fixed-panel" >
+			<div class="well">
+			    <p> {{ citation }} </p>
+			</div>
 		  </div>
-	</div>
-  </div>
-    <div id="menu3" class="tab-pane fade">
-	<div class="panel panel-primary">
-	  <!-- Default panel contents -->
-	  <div class="panel-body fixed-panel" >
-		<div class="well">
-		    <p> {{ citation }} </p>
 		</div>
 	  </div>
 	</div>
-  </div>
-</div>
-
+{% endif %}
 
 </div>
 {% endblock %}
