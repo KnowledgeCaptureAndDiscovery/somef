@@ -5,21 +5,24 @@ Installation Instructions -
 
 `pip3 install -r requirements.txt`
 
-Configuration:
-
 Create a config.json file using the sample file in the repository.
 
-Path to the corresponding Model files are provided as shown in the sample config file.
-
-Optional Authentication:
-
-Add the following line to the config.json to add Authentication for requests to github repository:
-
-`"Authentication": "token PersonalAccessToken"`
-
-Information on generating Personal Access Token - https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
-
 Command Line Interface - 
+
+createJSON.py generates a JSON object after extracting useful information from the github repository. It classifies the readme file into one of four categories - description, invocation, installation, citation depending on highest confidence above a given threshold.
+
+The createJSON.py file takes as input the following parameters:
+
+-r / --repo_url: Link to the github repository for extracting information
+
+-m / --model_path: Path to the pickled models for extraction
+
+-o / --output: Output file name
+
+-t / --threshold: Threshold to classify the content of the readme file
+
+-d / --doc_src: Path of documentation file
+
 
 cli.py generates a JSON object after extracting useful information from the github repository. It classifies the readme file into one of four categories - description, invocation, installation, citation depending on confidence above a given threshold.
 
@@ -33,11 +36,8 @@ The cli.py file takes as input the following parameters:
 
 -d / --doc_src: Path of documentation file
 
-Add/Remove a Category:
-
-If user wants to run the classifier for an additional category or wants to remove an existing category, corresponding path entry in the config.json should be provided and the category type should be added in the category variable in the cli.py
-
-
 Example:
+
+`python3 createJSON.py -r https://github.com/{owner}/{repository_name} -m ./models/ -o output.json -t 0.5`
 
 `python3 cli.py -r https://github.com/{owner}/{repository_name} -o output.json -t 0.5`
