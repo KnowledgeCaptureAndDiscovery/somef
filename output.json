@@ -103,14 +103,19 @@
   ],
   "citation": [
     {
-      "excerpt": "WIzard for DOCumenting Ontologies (WIDOCO) \nAuthor: Daniel Garijo Verdejo (@dgarijo) \nContributors: María Poveda, Idafen Santana, Almudena Ruiz, Miguel Angel García, Oscar Corcho, Daniel Vila, Sergio Barrio, Martin Scharm, Maxime Lefrancois, Alfredo Serafini, @kartgk. \nCiting WIDOCO: Please cite the latest version of WIDOCO in Zenodo: https://zenodo.org/badge/latestdoi/11427075. \nISWC 2017 paper: https://iswc2017.semanticweb.org/paper-138 \n@inproceedings{garijo2017widoco, \n  title={WIDOCO: a wizard for documenting ontologies}, \n  author={Garijo, Daniel}, \n  booktitle={International Semantic Web Conference}, \n  pages={94--102}, \n  year={2017}, \n  organization={Springer, Cham}, \n  doi = {10.1007/978-3-319-68204-4_9}, \n  funding = {USNSF ICER-1541029, NIH 1R01GM117097-01}, \n  url={http://dgarijo.com/papers/widoco-iswc2017.pdf} \n} \n",
+      "excerpt": "@inproceedings{garijo2017widoco,\n  title={WIDOCO: a wizard for documenting ontologies},\n  author={Garijo, Daniel},\n  booktitle={International Semantic Web Conference},\n  pages={94--102},\n  year={2017},\n  organization={Springer, Cham},\n  doi = {10.1007/978-3-319-68204-4_9},\n  funding = {USNSF ICER-1541029, NIH 1R01GM117097-01},\n  url={http://dgarijo.com/papers/widoco-iswc2017.pdf}\n}",
+      "confidence": [
+        1
+      ]
+    },
+    {
+      "excerpt": "WIzard for DOCumenting Ontologies (WIDOCO) \nAuthor: Daniel Garijo Verdejo (@dgarijo) \nContributors: María Poveda, Idafen Santana, Almudena Ruiz, Miguel Angel García, Oscar Corcho, Daniel Vila, Sergio Barrio, Martin Scharm, Maxime Lefrancois, Alfredo Serafini, @kartgk. \nCiting WIDOCO: Please cite the latest version of WIDOCO in Zenodo: https://zenodo.org/badge/latestdoi/11427075. \nISWC 2017 paper: https://iswc2017.semanticweb.org/paper-138 \n  title={WIDOCO: a wizard for documenting ontologies}, \n  author={Garijo, Daniel}, \n  booktitle={International Semantic Web Conference}, \n  pages={94--102}, \n  year={2017}, \n  organization={Springer, Cham}, \n  doi = {10.1007/978-3-319-68204-4_9}, \n  funding = {USNSF ICER-1541029, NIH 1R01GM117097-01}, \n  url={http://dgarijo.com/papers/widoco-iswc2017.pdf} \n",
       "confidence": [
         0.5842602046714032,
         0.8273918360294598,
         0.5453876700347428,
         0.615000258845131,
         0.6356788571097686,
-        0.9132063211932561,
         0.8493415301144451,
         0.8273918360294598,
         0.7110098892025157,
@@ -119,32 +124,13 @@
         0.6448348221890952,
         0.6781271475254176,
         0.5453876700347428,
-        0.5105712459954294,
-        0.5453876700347428
-      ]
-    },
-    {
-      "excerpt": "=================== \n",
-      "confidence": [
-        0.5453876700347428
-      ]
-    },
-    {
-      "excerpt": "Description \n",
-      "confidence": [
-        0.5453876700347428
+        0.5105712459954294
       ]
     },
     {
       "excerpt": "* Content negotiation and serialization of your ontology according to W3C best practices \n",
       "confidence": [
         0.5246513683661227
-      ]
-    },
-    {
-      "excerpt": "Tutorial \n",
-      "confidence": [
-        0.5453876700347428
       ]
     },
     {
@@ -164,9 +150,6 @@
       "confidence": [
         0.5453876700347428
       ]
-    },
-    {
-      "excerpt": "@inproceedings{garijo2017widoco,\n  title={WIDOCO: a wizard for documenting ontologies},\n  author={Garijo, Daniel},\n  booktitle={International Semantic Web Conference},\n  pages={94--102},\n  year={2017},\n  organization={Springer, Cham},\n  doi = {10.1007/978-3-319-68204-4_9},\n  funding = {USNSF ICER-1541029, NIH 1R01GM117097-01},\n  url={http://dgarijo.com/papers/widoco-iswc2017.pdf}\n}"
     }
   ],
   "installation": [
@@ -266,10 +249,9 @@
       ]
     },
     {
-      "excerpt": "For a complete list, check the project open issues. \nRequirements \nYou will need Java 1.8 or higher (SDK 1.8 or JRE 8) for WIDOCO to work \nOtherwise, you will probably experience an \"Unsupported major.minor version 52.0\" exception when executing the JAR file. \n",
+      "excerpt": "For a complete list, check the project open issues. \nYou will need Java 1.8 or higher (SDK 1.8 or JRE 8) for WIDOCO to work \nOtherwise, you will probably experience an \"Unsupported major.minor version 52.0\" exception when executing the JAR file. \n",
       "confidence": [
         0.5176480646572161,
-        0.83412016338525,
         0.6859831708805074,
         0.6033446058999854
       ]
@@ -283,21 +265,13 @@
       ]
     },
     {
-      "excerpt": "  organization={Springer, Cham}, \n  doi = {10.1007/978-3-319-68204-4_9}, \n  funding = {USNSF ICER-1541029, NIH 1R01GM117097-01}, \n  url={http://dgarijo.com/papers/widoco-iswc2017.pdf} \n} \nDownloading the executable \n=================== \n",
+      "excerpt": "  organization={Springer, Cham}, \n  doi = {10.1007/978-3-319-68204-4_9}, \n  funding = {USNSF ICER-1541029, NIH 1R01GM117097-01}, \n  url={http://dgarijo.com/papers/widoco-iswc2017.pdf} \nDownloading the executable \n",
       "confidence": [
         0.5024643905702276,
         0.5700115988593752,
         0.7981991290765549,
         0.5426742466654296,
-        0.6253537343153588,
-        0.5987305525192003,
-        0.6253537343153588
-      ]
-    },
-    {
-      "excerpt": "Description \n",
-      "confidence": [
-        0.6051300517248024
+        0.5987305525192003
       ]
     },
     {
@@ -319,15 +293,8 @@
       ]
     },
     {
-      "excerpt": "Examples \n",
+      "excerpt": "A tutorial explaining the main features of the GUI can be found here     \nHow to use WIDOCO \nDownload all the files of the \"JAR\" folder into the same folder. Then just double click the .jar file. \nNow you can execute WIDOCO through the console. Usage: \njava -jar widoco-VERSION-jar-with-dependencies.jar [-ontFile file] or [-ontURI uri] [-outFolder folderName] [-confFile propertiesFile] or [-getOntologyMetadata] [-oops] [-rewriteAll] [-crossRef] [-saveConfig configOutFile] [-useCustomStyle] [-lang lang1-lang2] [-includeImportedOntologies] [-htaccess] [-webVowl] [-licensius] [-ignoreIndividuals] [-analytics analyticsCode] [-doNotDisplaySerializations][-displayDirectImportsOnly] [-rewriteBase rewriteBasePath] [-excludeIntroduction] [-uniteSections] \nThe ontFile and ontURI options allow you to choose the ontology file or ontology URI of your ontology. \nThe -outFolder option specifies where you want to place the output. \n",
       "confidence": [
-        0.8698197885997628
-      ]
-    },
-    {
-      "excerpt": "Tutorial \nA tutorial explaining the main features of the GUI can be found here     \nHow to use WIDOCO \nDownload all the files of the \"JAR\" folder into the same folder. Then just double click the .jar file. \nNow you can execute WIDOCO through the console. Usage: \njava -jar widoco-VERSION-jar-with-dependencies.jar [-ontFile file] or [-ontURI uri] [-outFolder folderName] [-confFile propertiesFile] or [-getOntologyMetadata] [-oops] [-rewriteAll] [-crossRef] [-saveConfig configOutFile] [-useCustomStyle] [-lang lang1-lang2] [-includeImportedOntologies] [-htaccess] [-webVowl] [-licensius] [-ignoreIndividuals] [-analytics analyticsCode] [-doNotDisplaySerializations][-displayDirectImportsOnly] [-rewriteBase rewriteBasePath] [-excludeIntroduction] [-uniteSections] \nThe ontFile and ontURI options allow you to choose the ontology file or ontology URI of your ontology. \nThe -outFolder option specifies where you want to place the output. \n",
-      "confidence": [
-        0.7095445405479481,
         0.5204985919200906,
         0.5066097116442825,
         0.8347651310791816,

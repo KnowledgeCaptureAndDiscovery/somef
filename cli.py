@@ -67,6 +67,9 @@ def load_repository_metadata(repository_url):
     if 'message' in general_resp.keys() and general_resp['message']=="Not Found":
         sys.exit("Error: repository name is incorrect")
 
+    if 'message' in general_resp.keys():
+        sys.exit("Error: ",message)
+
     ## Remove extraneous data
     filtered_resp = {k: general_resp[k] for k in keep_keys}
 
@@ -86,6 +89,8 @@ def load_repository_metadata(repository_url):
     topics_headers.update(header)
     topics_headers = {'accept': 'application/vnd.github.mercy-preview+json'}
     topics_resp = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/topics', headers=topics_headers).json()
+    if 'message' in topics_resp.keys():
+        sys.exit("Error: ",message)
     if topics_resp and 'names' in topics_resp.keys():
         filtered_resp['topics'] = topics_resp['names']
 
@@ -95,12 +100,16 @@ def load_repository_metadata(repository_url):
 
     ## get default README
     readme_info = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/readme', headers=topics_headers).json()
+    if 'message' in readme_info.keys():
+        sys.exit("Error: ",message)
     readme = base64.b64decode(readme_info['content']).decode("utf-8")
     text = unmark(readme)
     filtered_resp['readme_url'] = readme_info['html_url']
 
     ## get releases
     releases_list = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/releases', headers=header).json()
+    if isinstance(releases_list,dict) and 'message' in releases_list.keys():
+        sys.exit("Error: ",message)        
     releases_list = map(lambda release : {'tag_name': release['tag_name'], 'name': release['name'], 'author_name': release['author']['login'], 'body': release['body'], 'tarball_url': release['tarball_url'], 'zipball_url': release['zipball_url'], 'html_url':release['html_url'], 'url':release['url']}, releases_list)
     filtered_resp['releases'] = list(releases_list)
     
@@ -121,9 +130,6 @@ def run_classifiers(text):
     for category in categories:
         excerpts = create_excerpts(text)
         file_name = file_paths[category]
-        if file_name=="":
-            print('I am here')
-            continue
         if not path.exists(file_name):
             sys.exit("Error: File/Directory does not exist")
         print("Classifying excerpts for the catgory",category)
@@ -132,6 +138,21 @@ def run_classifiers(text):
         score_dict[category]={'excerpt': excerpts, 'confidence': scores[:,1]}
         print("Excerpt Classification Successful for the Category",category)   
     return score_dict 
+
+## Function removes all excerpt lines which have been classified but contain only one word.
+## Returns the excerpt to be entered into the predictions
+def remove_unimportant_excerpts(excerpt_element):
+    excerpt_info = excerpt_element['excerpt']
+    excerpt_confidence = excerpt_element['confidence']
+    excerpt_lines = excerpt_info.split('\n')
+    final_excerpt = {'excerpt':"",'confidence':[]}
+    for i in range(len(excerpt_lines)-1):
+        words = excerpt_lines[i].split(' ')
+        if len(words)==2:
+            continue
+        final_excerpt['excerpt'] += excerpt_lines[i]+'\n';
+        final_excerpt['confidence'].append(excerpt_confidence[i])
+    return final_excerpt
 
 ## Function takes scores dictionary and a threshold as input 
 ## Returns predictions containing excerpts with a confidence above the given threshold.
@@ -155,14 +176,20 @@ def classify(scores, threshold):
                     confid.append(scores[ele]['confidence'][i])
             else :
                 if flag==True:
-                    element = {'excerpt':excerpt,'confidence':confid}
-                    predictions[ele].append(element)
+                    element = remove_unimportant_excerpts({'excerpt':excerpt,'confidence':confid})
+                    if len(element['confidence'])!=0:
+                        predictions[ele].append(element)
                     excerpt=""
                     confid=[]
                     flag=False
         print("Run completed.")
     print("All Excerpts below the given Threshold Removed.")
     return predictions
+
+## Function adds category information extracted using header information
+## Returns json with the information added.
+def extract_categories_using_headers(repo_data):
+    return repo_data
 
 ## Function takes readme text as input and runs a regex parser on it
 ## Returns a list of bibtex citations
@@ -172,8 +199,6 @@ def extract_bibtex(readme_text):
     excerpts = readme_text
     citations = re.findall(regex,excerpts)
     print("Extracting bibtex citation from readme completed.")
-    print(citations)
-    print(len(citations))
     return citations
 
 ## Function takes metadata, readme text predictions, bibtex citations and path to the output file
@@ -191,16 +216,19 @@ def save_json(git_data, repo_data, citations, outfile):
     for i in range(len(citations)):
         if 'citation' not in repo_data.keys():
             repo_data['citation'] = []
-        repo_data['citation'].append({'excerpt': citations[i]})
+        repo_data['citation'].insert(0,{'excerpt': citations[i],'confidence': [1.0]})
 
     print("Saving json data to",outfile)
     with open(outfile, 'w') as output:
         json.dump(repo_data, output)  
 
+if not path.exists('config.json'):
+    sys.exit("Error: Please provide a config.json file.")
 header = {}
 with open('config.json') as fh:
     file_paths = json.load(fh)
-header['Authorization'] = file_paths['Authorization']
+if 'Authorization' in file_paths.keys():
+    header['Authorization'] = file_paths['Authorization']
 header['accept'] = 'application/vnd.github.v3+json'
 
 argparser = argparse.ArgumentParser(description="Fetch Github README, split paragraphs, run classifiers and output json containing repository information, classified excerpts and confidence.")
