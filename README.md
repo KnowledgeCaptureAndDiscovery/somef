@@ -35,8 +35,11 @@ The cli.py file takes as input the following parameters:
 
 Add/Remove a Category:
 
-If user wants to run the classifier for an additional category or wants to remove an existing category, corresponding path entry in the config.json should be provided and the category type should be added in the category variable in the cli.py
+If user wants to run the classifier for an additional category or wants to remove an existing category, corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in the cli.py
 
+Github Repository Metadata:
+
+In addition to the classified readme file, the metadata from the repository to be shown in the application is part of the keep_keys variable. If more information is to be added/removed then it should be added/removed to the keep_keys variable. 
 
 Example:
 

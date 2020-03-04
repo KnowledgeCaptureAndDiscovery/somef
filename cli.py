@@ -71,7 +71,11 @@ def load_repository_metadata(repository_url):
         sys.exit("Error: ",message)
 
     ## Remove extraneous data
-    filtered_resp = {k: general_resp[k] for k in keep_keys}
+    filtered_resp = {}
+    for k in keep_keys:
+        if k not in general_resp.keys():
+            sys.exit("Error: key "+k+" not present in github repository")
+        filtered_resp[k] = general_resp[k]
 
     ## Condense owner information
     if filtered_resp['owner'] and 'login' in filtered_resp['owner'].keys():
@@ -129,6 +133,8 @@ def run_classifiers(text):
     score_dict={}
     for category in categories:
         excerpts = create_excerpts(text)
+        if category not in file_paths.keys():
+            sys.exit("Error: Category file path not present in config.json")
         file_name = file_paths[category]
         if not path.exists(file_name):
             sys.exit("Error: File/Directory does not exist")
