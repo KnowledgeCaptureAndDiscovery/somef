@@ -1,0 +1,107 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf%}
+
+<!DOCTYPE html>
+<html>
+{% block title %}
+SM2KG
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">SoMEF</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/index">Home</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/about">About</a></li>
+        <li><a href="/help">Help</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="jumbotron">
+  <h1 class = "display-4">About Us!</h1>
+  
+  <hr class = "my-4">
+    <p>With an increase of complex scientific software, researchers need to spend a large portion of their time searching for avaliable software documentation and source code, and reading it to understand the software used and the proper way to cite it. SoMEF is designed to help highlight the most significant aspects of the scientific documentation by processing README files in GitHub repositories. It automatically extracts the contents of the README file into 4 categories: description, installation, invocation, or a citation of a software component.</p>
+
+</div>
+
+  <h2>Developers for this Project!</h2>
+		<div class = "row1">
+			<div class="col-sm-4">
+				<div class = card>
+					  <img class="card-img-top" src="..." alt="Card image cap">
+					  <div class="card-body">
+					    <h5 class="card-title">Daniel Garijo</h5>
+					    <p class="card-text">Something about him!</p>
+					  </div>
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class = card>
+					  <img class="card-img-top" src="..." alt="Card image cap">
+					  <div class="card-body">
+					    <h5 class="card-title">Priya Dharmala</h5>
+					    <p class="card-text">Something about her!</p>
+					  </div>
+				</div>
+			</div>	
+			<div class="col-sm-4">
+				<div class = card>
+					  <img class="card-img-top" src="..." alt="Card image cap">
+					  <div class="card-body">
+					    <h5 class="card-title">Jiayang Wang</h5>
+					    <p class="card-text">Jiayang is currently a Masters student at USC majoring in Applied Data Science with an interest in natural language processing. Within this project, Jiayang was a part of the Machine Learning Team and was responsible for text data splitting for analysis and worked with classifiers to interpret the automated understandings of scientific software.</p>
+					  </div>
+				</div>
+			</div>	
+			<br><br>
+		<div class = "row1">
+			<div class="col-sm-4">
+				<div class = card>
+					  <img class="card-img-top" src="..." alt="Card image cap">
+					  <div class="card-body">
+					    <h5 class="card-title">Vedant Diwanji</h5>
+					    <p class="card-text">Vedant Diwanji is currently a Masters student at USC. Vedant was in charge of creating command a command line interface that creates classifications based on README files from GitHub.</p>
+					  </div>
+				</div>
+			</div>
+			<div class="col-sm-4">
+				<div class = card>
+					  <img class="card-img-top" src="..." alt="Card image cap">
+					  <div class="card-body">
+					    <h5 class="card-title">Thomas Eblen</h5>
+					    <p class="card-text">Thomas Eblen is currently an undergraduate student at USC majoring in Applied Mathematics. Thomas was in charge of integrating the backend databases and classifiers along with front end user interfaces. </p>
+					  </div>
+				</div>
+			</div>	
+			<div class="col-sm-4">
+				<div class = card>
+					  <img class="card-img-top" src="..." alt="Card image cap">
+					  <div class="card-body">
+					    <h5 class="card-title">Joseph Lee</h5>
+					    <p class="card-text">Joseph Lee is currently an undergraduate student at USC majoring in Computer Science. Joseph assisted in integrating the backend databases and classifiers along with front end user interfaces. </p>
+					  </div>
+				</div>
+			</div>	
+		</div>
+	</div>
+
+</div>
+{% endblock %}
+</html>
