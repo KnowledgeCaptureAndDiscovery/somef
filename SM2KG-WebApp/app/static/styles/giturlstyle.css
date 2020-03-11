@@ -1,0 +1,8 @@
+.fixed-panel{
+	max-height: 450px;
+	overflow-y: scroll
+}
+
+.git-metadata{
+	font-size: 20px;
+}
