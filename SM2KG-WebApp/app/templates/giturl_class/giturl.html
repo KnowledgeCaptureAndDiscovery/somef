@@ -1,0 +1,194 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf%}
+
+<!DOCTYPE html>
+<html>
+{% block title %}
+SM2KG
+{% endblock %}
+
+{% block content %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet"
+      href="{{url_for('static', filename='styles/giturlstyle.css')}}">
+{% endblock %}
+
+<div class="container">
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">SoMEF</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/index">Home</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/about">About</a></li>
+        <li><a href="/help">Help</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="jumbotron">
+  <h1>SM2KG</h1>
+  <p>Software Metadata 2 Knowledge Graphs: A tool for automatically extracting relevant information from README files</p>
+  <!-- <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p> -->
+</div>
+
+<form action="" method="post" novalidate>
+	{{ form.hidden_tag() }}
+	<p>
+		<div class = "row">
+			<div class="col-sm-10">
+				<div class = form-group>
+					{{ wtf.form_field(form.giturl) }}
+				</div>
+			</div>
+			<div class="col-sm-2">
+
+				<div class = form-group>
+					{{ wtf.form_field(form.threshold)}} <br>
+				</div>
+
+			<button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#exampleModal">
+			  <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings
+			</button>
+
+			<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h4 class="modal-title" id="exampleModalLabel">Settings</h4>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+			      </div>
+			      <div class="modal-body">
+							<div class = form-group>
+								{{ wtf.form_field(form.threshold)}}
+							</div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			        <button type="button" data-toggle="collapse" data-target="#savedChanges" class="btn btn-primary">Save changes</button>
+			          <div id="savedChanges" class="collapse fade-out">
+			          	Saved Changes
+  						</div>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+
+
+
+
+				</button>
+
+			</div>	
+		</div>
+	</p>
+	{% with messages = get_flashed_messages() %}
+	{% if messages %}
+	<ul>
+		{% for message in messages %}
+		<li>{{ message }}</li>
+		{% endfor %}
+	</ul>
+	{% endif %}
+	{% endwith %}
+
+	<p> {{ form.submit() }} </p>
+</form>
+{% if showDownload %}
+<form action"" method="post" novalidate>
+	{{ downloadForm.submit_download }}
+</form>
+{% endif %}
+<!-- display git name -->
+{% if git_name and showDownload %}
+	<p class="git-metadata">Repo Name: {{ git_name }} </p>
+{% endif %}
+{% if not git_name and showDownload %}
+	<p class="git-metadata">No Repo Name Found</p>
+{% endif %}
+
+<!-- display git owner -->
+{% if git_owner and showDownload %}
+	<p class="git-metadata">Owner: {{ git_owner }} </p>
+{% endif %}
+{% if not git_owner and showDownload %}
+	<p class="git-metadata">No Owner Found</p>
+{% endif %}
+
+
+<!--
+	<input type="submit" name="btn" value="Classify">
+	<input type="submit" name="btn" value="Download">
+-->
+{% if showDownload %}
+	<ul class="nav nav-pills">
+	  <li class="active"><a data-toggle="tab" href="#home">Description</a></li>
+	  <li><a data-toggle="tab" href="#menu1">Installation</a></li>
+	  <li><a data-toggle="tab" href="#menu2">Invocation</a></li>
+	  <li><a data-toggle="tab" href="#menu3">Citation</a></li>
+	</ul>
+
+
+	<div class="tab-content">
+	  <div id="home" class="tab-pane fade in active">
+		<div class="panel panel-primary">
+		  <!-- Default panel contents -->
+				<div class="panel-body fixed-panel">
+					<div class="well">
+					<p> {{ description }} </p>
+				</div>
+			</div>
+		</div>
+	  </div>
+	  <div id="menu1" class="tab-pane fade">
+		<div class="panel panel-primary">
+		  <!-- Default panel contents -->
+			<div class="panel-body fixed-panel">
+				<div class="well">
+				<p> {{ installation }} </p>
+			</div>
+			</div>
+		</div>
+	  </div>
+	  <div id="menu2" class="tab-pane fade">
+		<div class="panel panel-primary">
+		  <!-- Default panel contents -->
+				<div class="panel-body fixed-panel">
+					<div class="well">
+					<p> {{ invocation }} </p>
+					</div>
+			  </div>
+		</div>
+	  </div>
+	    <div id="menu3" class="tab-pane fade">
+		<div class="panel panel-primary">
+		  <!-- Default panel contents -->
+		  <div class="panel-body fixed-panel" >
+			<div class="well">
+			    <p> {{ citation }} </p>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+{% endif %}
+
+</div>
+{% endblock %}
+</html>
