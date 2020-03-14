@@ -19,6 +19,7 @@ import pprint
 import pandas as pd
 import numpy as np
 import re
+from createExcerpts import split_into_excerpts
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
@@ -107,7 +108,7 @@ def load_repository_metadata(repository_url):
     if 'message' in readme_info.keys():
         sys.exit("Error: ",message)
     readme = base64.b64decode(readme_info['content']).decode("utf-8")
-    text = unmark(readme)
+    text = readme
     filtered_resp['readme_url'] = readme_info['html_url']
 
     ## get releases
@@ -123,8 +124,7 @@ def load_repository_metadata(repository_url):
 ## Function takes readme text as input and divides it into excerpts
 ## Returns the extracted excerpts
 def create_excerpts(text):
-    divisions = text.splitlines()
-    divisions = [i for i in divisions if i]
+    divisions = split_into_excerpts(text)
     return divisions
 
 ## Function takes readme text as input and runs the provided classifiers on it
@@ -194,8 +194,8 @@ def classify(scores, threshold):
 
 ## Function adds category information extracted using header information
 ## Returns json with the information added.
-def extract_categories_using_headers(repo_data):
-    return repo_data
+def extract_categories_using_headers(repo_data, predictions):
+    return predictions
 
 ## Function takes readme text as input and runs a regex parser on it
 ## Returns a list of bibtex citations
@@ -246,17 +246,21 @@ argparser.add_argument('-t','--threshold', help="threshold score", type=restrict
 argv = argparser.parse_args()
 
 github_data = {}
-if (argv.repo_url):
-    text, github_data = load_repository_metadata(argv.repo_url)
-elif (argv.doc_src):
-    # Documentation from already downloaded Markdown file.
-    with open(argv.doc_src, 'r') as doc_fh:
-        text = unmark(doc_fh.read())
 
-score_dict = run_classifiers(text)
 
-predictions = classify(score_dict, argv.threshold)
+def run_cli(repo_url, threshold, output):
+    if (repo_url):
+        text, github_data = load_repository_metadata(repo_url)
+    elif (argv.doc_src):
+        # Documentation from already downloaded Markdown file.
+        with open(argv.doc_src, 'r') as doc_fh:
+            text = unmark(doc_fh.read())
+    unfiltered_text = text
+    text = unmark(text)
+    score_dict = run_classifiers(text)
+    predictions = classify(score_dict, threshold)
+    predictions = extract_categories_using_headers(unfiltered_text, predictions)
+    citations = extract_bibtex(text)
+    save_json(github_data, predictions, citations, output)
 
-citations = extract_bibtex(text)
-
-save_json(github_data, predictions, citations, argv.output)
+run_cli(argv.repo_url,argv.threshold,argv.output)
