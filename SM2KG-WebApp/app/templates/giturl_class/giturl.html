@@ -151,7 +151,9 @@ SM2KG
 		  <!-- Default panel contents -->
 				<div class="panel-body fixed-panel">
 					<div class="well">
-					<p> {{ description }} </p>
+					{% for i in description %}
+						<p> {{ i }} </p>
+					{% endfor %}
 				</div>
 			</div>
 		</div>
@@ -161,7 +163,9 @@ SM2KG
 		  <!-- Default panel contents -->
 			<div class="panel-body fixed-panel">
 				<div class="well">
-				<p> {{ installation }} </p>
+				{% for i in installation %}
+					<p> {{ i }} </p>
+				{% endfor %}
 			</div>
 			</div>
 		</div>
@@ -171,7 +175,9 @@ SM2KG
 		  <!-- Default panel contents -->
 				<div class="panel-body fixed-panel">
 					<div class="well">
-					<p> {{ invocation }} </p>
+					{% for i in invocation %}
+						<p> {{ i }} </p>
+					{% endfor %}
 					</div>
 			  </div>
 		</div>
@@ -181,7 +187,9 @@ SM2KG
 		  <!-- Default panel contents -->
 		  <div class="panel-body fixed-panel" >
 			<div class="well">
-			    <p> {{ citation }} </p>
+			    {% for i in citation %}
+			    	<p> {{ i }} </p>
+			    {% endfor %}
 			</div>
 		  </div>
 		</div>

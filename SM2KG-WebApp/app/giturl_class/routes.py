@@ -13,10 +13,11 @@ def urlPage():
     urlForm = UrlForm()
     downloadForm = DownloadButton()
 
-    citation = None
-    installation = None
-    invocation = None
-    description = None
+    citation_list = []
+    installation_list = []
+    invocation_list = []
+    description_list = []
+    description_conf_list = None
     showDownload = None
     git_name = None
     git_owner = None
@@ -32,10 +33,21 @@ def urlPage():
 
         with open('data/output.json') as json_file:
             data = json.load(json_file)
-            citation = data['citation.sk']
-            installation = data['installation.sk']
-            invocation = data['invocation.sk']
-            description = data['description.sk']
+            for i in data['citation.sk']:
+                if type(i) is dict:
+                    citation_list.append(i['excerpt'])
+            for i in data['installation.sk']:
+                if type(i) is dict:
+                    installation_list.append(i['excerpt'])
+            for i in data['invocation.sk']:
+                if type(i) is dict:
+                    invocation_list.append(i['excerpt'])
+            
+            for i in data['description.sk']: 
+                if type(i) is dict:
+                    description_list.append(i['excerpt'])
+
+            
             git_name = data["name"]
             git_owner = data["owner"]
             git_topics = data["topics"]
@@ -46,10 +58,10 @@ def urlPage():
                            form = urlForm,
                            downloadForm = downloadForm,
                            showDownload = showDownload,
-                           citation = citation,
-                           installation = installation,
-                           invocation = invocation,
-                           description = description,
+                           citation = citation_list,
+                           installation = installation_list,
+                           invocation = invocation_list,
+                           description = description_list,
                            git_name = git_name,
                            git_owner = git_owner,
                            git_languages = git_languages)
