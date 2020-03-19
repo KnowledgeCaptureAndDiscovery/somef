@@ -15,7 +15,7 @@ Optional Authentication:
 
 Add the following line to the config.json to add Authentication for requests to github repository:
 
-`"Authentication": "token PersonalAccessToken"`
+`"Authorization": "token PersonalAccessToken"`
 
 Information on generating Personal Access Token - https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
 
