@@ -39,12 +39,13 @@ SM2KG
   </div>
 </nav>
 
-
+<!--
 <div class="jumbotron">
   <h1>SM2KG</h1>
   <p>Software Metadata 2 Knowledge Graphs: A tool for automatically extracting relevant information from README files</p>
-  <!-- <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p> -->
+
 </div>
+-->
 
 <form action="" method="post" novalidate>
 	{{ form.hidden_tag() }}
@@ -111,25 +112,56 @@ SM2KG
 	<p> {{ form.submit() }} </p>
 </form>
 {% if showDownload %}
-<form action"" method="post" novalidate>
+<form action="" method="post" novalidate>
 	{{ downloadForm.submit_download }}
 </form>
 {% endif %}
 <!-- display git name -->
 {% if git_name and showDownload %}
-	<p class="git-metadata">Repo Name: {{ git_name }} </p>
+	<p class="gitdata-header"> {{ git_name }} </p>
 {% endif %}
 {% if not git_name and showDownload %}
-	<p class="git-metadata">No Repo Name Found</p>
+	<p class="gitdata-header">No Repo Name Found</p>
 {% endif %}
 
 <!-- display git owner -->
 {% if git_owner and showDownload %}
-	<p class="git-metadata">Owner: {{ git_owner }} </p>
+<p class="gitdata-owner">Owned by <a href="https://github.com/{{ git_owner }}">{{ git_owner }}</a></p>
 {% endif %}
 {% if not git_owner and showDownload %}
-	<p class="git-metadata">No Owner Found</p>
+	<p class="gitdata-owner">No Owner Found</p>
 {% endif %}
+
+<div class="gitdata-fetchdata">
+	<div class="gitdata-fetchdataleft">
+		{% if git_license %}
+		<p> License: {{ git_license['name'] }}, {{ git_license['url'] }} </p>
+		{% endif %}
+
+		{% if git_forks_url %}
+		<p> Forks Url: <a href="{{ git_forks_url }}">{{ git_forks_url }}</a></p>
+		{% endif %}
+	</div>
+	<div class="gitdata-fetchdataright">
+		<p>
+		{% for i in git_topics %}
+			{{ i }},
+		{% endfor %}
+		</p>
+		<p>
+		{% for i in git_languages %}
+			{{ i }},
+		{% endfor %}
+		</p>
+		{% if git_readme_url %}
+		<p> README Url: <a href="{{ git_readme_url }}">{{ git_readme_url }}</a></p>
+		{% endif %}
+		
+
+	</div>
+</div>
+<br/>
+<br/>
 
 
 <!--

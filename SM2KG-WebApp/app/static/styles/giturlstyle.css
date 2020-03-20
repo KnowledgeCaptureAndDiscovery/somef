@@ -3,11 +3,35 @@
 	overflow-y: scroll
 }
 
-.git-metadata{
-	font-size: 20px;
+.gitdata-header{
+	font-size: 50px;
+	text-align: center;
 }
-<<<<<<< HEAD
-=======
+.gitdata-owner{
+	font-size: 20px;
+	text-align: center;
+}
+.gitdata-fetchdata{
+	position: relative;
+	width: 80%;
+	left: 10%;
+	min-height: 15vh;
+	background-color: white;
+}
+.gitdata-fetchdataleft{	
+	width: 50%;
+	height: 100%;
+	float: left;
+	font-size: 12px;
+
+}
+.gitdata-fetchdataright{
+	width: 50%;
+	height: 100%;
+	float: right;	
+	font-size: 12px;
+
+}
 
 @keyframes fadeInOut {
   0% {
@@ -84,4 +108,5 @@
   100% {
     opacity:0;
 }
->>>>>>> 0b143d4f77549d41efed5f89b20c97d7df70480d
+
+
