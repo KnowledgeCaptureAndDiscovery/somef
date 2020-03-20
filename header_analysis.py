@@ -27,7 +27,7 @@ def stemTitle(title):
             stem_title.append(porter.stem(word))
             stem_title.append(" ")
     return "".join(stem_title)
-    
+
 
 def extract_categories_using_headers(text):
     # Extract header and content
@@ -38,11 +38,14 @@ def extract_categories_using_headers(text):
     Header = re.findall('#{1,5} .*', text)
     content = re.split('#{1,5} .*', text)
     Content = [re.sub('#notes', '#', i) for i in content]
-    Content.pop(0)
+    # if len(Header)>0:
+    #     Content.pop(0)
+    Header.insert(0,"initial page content")
     df = pd.DataFrame(columns=['Header', 'Content'])
     for i, j in zip(Header, Content):
         df = df.append({'Header': i, 'Content': j}, ignore_index=True)
 
+    print(df)
     # Clean the content
     df['Content'] = df['Content'].str.split("[\n]+", n=1, expand=True)[1]
     df['Header'] = df['Header'].str.replace('#', '')
