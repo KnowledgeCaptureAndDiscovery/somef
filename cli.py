@@ -92,8 +92,7 @@ def load_repository_metadata(repository_url):
     filtered_resp['license'] = license_info
     
     # get keywords / topics
-    topics_headers = {}
-    topics_headers['Authorization'] = header['Authorization']
+    topics_headers = header
     topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
     topics_resp = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/topics', headers=topics_headers).json()
     if 'message' in topics_resp.keys():
