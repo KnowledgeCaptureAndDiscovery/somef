@@ -1,0 +1,2 @@
+include sm2kg/config.json
+include sm2kg/models/*

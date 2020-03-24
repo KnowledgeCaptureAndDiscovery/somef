@@ -19,7 +19,10 @@ import pprint
 import pandas as pd
 import numpy as np
 import re
-from createExcerpts import split_into_excerpts
+from .createExcerpts import split_into_excerpts
+
+#get config file path
+dirname = os.path.dirname(__file__)
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
@@ -61,7 +64,7 @@ def load_repository_metadata(repository_url):
     ## load general response of the repository
     url = urlparse(repository_url)
     if url.netloc != 'github.com':
-        sys.exit("Error: repository must come from github")
+        sys.exit("Error: repository must come from github" + repository_url)
     _, owner, repo_name = url.path.split('/')
     general_resp = requests.get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header).json() 
 
@@ -136,8 +139,10 @@ def run_classifiers(text):
         if category not in file_paths.keys():
             sys.exit("Error: Category file path not present in config.json")
         file_name = file_paths[category]
+        file_name = os.path.join(dirname, file_name)
+
         if not path.exists(file_name):
-            sys.exit("Error: File/Directory does not exist")
+            sys.exit("Error: File/Directory does not exist" + dirname)
         print("Classifying excerpts for the catgory",category)
         classifier = pickle.load(open(file_name, 'rb'))
         scores = classifier.predict_proba(excerpts)
@@ -228,22 +233,24 @@ def save_json(git_data, repo_data, citations, outfile):
     with open(outfile, 'w') as output:
         json.dump(repo_data, output)  
 
-if not path.exists('config.json'):
-    sys.exit("Error: Please provide a config.json file.")
+configname = os.path.join(dirname, 'config.json')
+
+if not path.exists(configname):
+    sys.exit("Error: Please provide a config.json file." + dirname)
 header = {}
-with open('config.json') as fh:
+with open(configname) as fh:
     file_paths = json.load(fh)
 if 'Authorization' in file_paths.keys():
     header['Authorization'] = file_paths['Authorization']
 header['accept'] = 'application/vnd.github.v3+json'
 
-argparser = argparse.ArgumentParser(description="Fetch Github README, split paragraphs, run classifiers and output json containing repository information, classified excerpts and confidence.")
-src = argparser.add_mutually_exclusive_group(required=True)
-src.add_argument('-r', '--repo_url', help="URL of the Github repository")
-src.add_argument('-d', '--doc_src', help='path to documentation file')
-argparser.add_argument('-o', '--output', help="path for output json", required=True)
-argparser.add_argument('-t','--threshold', help="threshold score", type=restricted_float, default=0.5)
-argv = argparser.parse_args()
+#argparser = argparse.ArgumentParser(description="Fetch Github README, split paragraphs, run classifiers and output json containing repository information, classified excerpts and confidence.")
+#src = argparser.add_mutually_exclusive_group(required=True)
+#src.add_argument('-r', '--repo_url', help="URL of the Github repository")
+#src.add_argument('-d', '--doc_src', help='path to documentation file')
+#argparser.add_argument('-o', '--output', help="path for output json", required=True)
+#argparser.add_argument('-t','--threshold', help="threshold score", type=restricted_float, default=0.5)
+#argv = argparser.parse_args()
 
 github_data = {}
 
@@ -263,4 +270,4 @@ def run_cli(repo_url, threshold, output):
     citations = extract_bibtex(text)
     save_json(github_data, predictions, citations, output)
 
-run_cli(argv.repo_url,argv.threshold,argv.output)
+#run_cli(argv.repo_url,argv.threshold,argv.output)

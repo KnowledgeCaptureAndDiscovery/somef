@@ -39,9 +39,11 @@ SM2KG
   </div>
 </nav>
 
+
 <a href="https://www.isi.edu/">
 	<img src="/static/images/KnowledgeGraph.png" alt="KnowledgeGraph">
 </a>
+
 
 <form action="" method="post" novalidate>
 	{{ form.hidden_tag() }}
@@ -112,25 +114,56 @@ SM2KG
 
 
 {% if showDownload %}
-<form action"" method="post" novalidate>
+<form action="" method="post" novalidate>
 	{{ downloadForm.submit_download }}
 </form>
 {% endif %}
 <!-- display git name -->
 {% if git_name and showDownload %}
-	<p class="git-metadata">Repo Name: {{ git_name }} </p>
+	<p class="gitdata-header"> {{ git_name }} </p>
 {% endif %}
 {% if not git_name and showDownload %}
-	<p class="git-metadata">No Repo Name Found</p>
+	<p class="gitdata-header">No Repo Name Found</p>
 {% endif %}
 
 <!-- display git owner -->
 {% if git_owner and showDownload %}
-	<p class="git-metadata">Owner: {{ git_owner }} </p>
+<p class="gitdata-owner">Owned by <a href="https://github.com/{{ git_owner }}">{{ git_owner }}</a></p>
 {% endif %}
 {% if not git_owner and showDownload %}
-	<p class="git-metadata">No Owner Found</p>
+	<p class="gitdata-owner">No Owner Found</p>
 {% endif %}
+
+<div class="gitdata-fetchdata">
+	<div class="gitdata-fetchdataleft">
+		{% if git_license %}
+		<p> License: {{ git_license['name'] }}, {{ git_license['url'] }} </p>
+		{% endif %}
+
+		{% if git_forks_url %}
+		<p> Forks Url: <a href="{{ git_forks_url }}">{{ git_forks_url }}</a></p>
+		{% endif %}
+	</div>
+	<div class="gitdata-fetchdataright">
+		<p>Topics: 
+		{% for i in git_topics %}
+			{{ i }}
+		{% endfor %}
+		</p>
+		<p>Languages: 
+		{% for i in git_languages %}
+			{{ i }}
+		{% endfor %}
+		</p>
+		{% if git_readme_url %}
+		<p> README Url: <a href="{{ git_readme_url }}">{{ git_readme_url }}</a></p>
+		{% endif %}
+		
+
+	</div>
+</div>
+<br/>
+<br/>
 
 
 {% if showDownload %}
@@ -148,7 +181,9 @@ SM2KG
 		  <!-- Default panel contents -->
 				<div class="panel-body fixed-panel">
 					<div class="well">
-					<p> {{ description }} </p>
+					{% for i in description %}
+						<p> {{ i }} </p>
+					{% endfor %}
 				</div>
 			</div>
 		</div>
@@ -158,7 +193,9 @@ SM2KG
 		  <!-- Default panel contents -->
 			<div class="panel-body fixed-panel">
 				<div class="well">
-				<p> {{ installation }} </p>
+				{% for i in installation %}
+					<p> {{ i }} </p>
+				{% endfor %}
 			</div>
 			</div>
 		</div>
@@ -168,7 +205,9 @@ SM2KG
 		  <!-- Default panel contents -->
 				<div class="panel-body fixed-panel">
 					<div class="well">
-					<p> {{ invocation }} </p>
+					{% for i in invocation %}
+						<p> {{ i }} </p>
+					{% endfor %}
 					</div>
 			  </div>
 		</div>
@@ -178,7 +217,9 @@ SM2KG
 		  <!-- Default panel contents -->
 		  <div class="panel-body fixed-panel" >
 			<div class="well">
-			    <p> {{ citation }} </p>
+			    {% for i in citation %}
+			    	<p> {{ i }} </p>
+			    {% endfor %}
 			</div>
 		  </div>
 		</div>

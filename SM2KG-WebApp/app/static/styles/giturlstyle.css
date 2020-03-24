@@ -3,8 +3,34 @@
 	overflow-y: scroll
 }
 
-.git-metadata{
+.gitdata-header{
+	font-size: 50px;
+	text-align: center;
+}
+.gitdata-owner{
 	font-size: 20px;
+	text-align: center;
+}
+.gitdata-fetchdata{
+	position: relative;
+	width: 80%;
+	left: 10%;
+	min-height: 15vh;
+	background-color: white;
+}
+.gitdata-fetchdataleft{	
+	width: 50%;
+	height: 100%;
+	float: left;
+	font-size: 12px;
+
+}
+.gitdata-fetchdataright{
+	width: 50%;
+	height: 100%;
+	float: right;	
+	font-size: 12px;
+
 }
 
 
@@ -107,4 +133,4 @@
   }
   100% {
     opacity:0;
-}
+

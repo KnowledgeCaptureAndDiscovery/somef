@@ -1,0 +1,14 @@
+MANIFEST.in
+setup.py
+sm2kg/__init__.py
+sm2kg/cli.py
+sm2kg/config.json
+sm2kg/createExcerpts.py
+sm2kg/createJSON.py
+sm2kg/testing.py
+sm2kg/training.py
+sm2kg.egg-info/PKG-INFO
+sm2kg.egg-info/SOURCES.txt
+sm2kg.egg-info/dependency_links.txt
+sm2kg.egg-info/not-zip-safe
+sm2kg.egg-info/top_level.txt
