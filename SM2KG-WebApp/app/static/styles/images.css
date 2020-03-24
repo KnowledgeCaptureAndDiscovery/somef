@@ -1,0 +1,11 @@
+img {
+	border-radius: 50%;
+	height: 250px;
+	width: 225px;
+	image-orientation: from-image;
+}
+
+.container {
+	align-items: flex-start;
+	align-content: flex;
+}

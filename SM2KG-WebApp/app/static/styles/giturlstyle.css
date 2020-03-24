@@ -6,8 +6,32 @@
 .git-metadata{
 	font-size: 20px;
 }
-<<<<<<< HEAD
-=======
+
+
+.form-control{
+  width: 100% !important;
+  height: 75px !important;
+  padding: 12px 20px !important;
+  box-sizing: border-box !important;
+  border: 2px solid #ccc;
+  border-radius: 4px !important;
+  background-color: #f8f8f8;
+  resize: none !important;
+  text-align: initial !important;
+}
+
+.control-label{
+  font-size: 20px !important;
+}
+
+.container-content{
+  top: 100000px !important;
+}
+
+.modal-header{
+  text-align: center !important;
+}
+
 
 @keyframes fadeInOut {
   0% {
@@ -84,4 +108,3 @@
   100% {
     opacity:0;
 }
->>>>>>> 0b143d4f77549d41efed5f89b20c97d7df70480d
