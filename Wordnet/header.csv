@@ -1,0 +1,862 @@
+,Name,Header,token
+0,GPRPy, GPRPy,gprpi 
+1,GPRPy, Simplemost installation,simplemost instal 
+2,GPRPy, Running the software,run softwar 
+3,GPRPy, Running automatically generated scripts,run automat gener script 
+4,GPRPy, In case of trouble,In case troubl 
+5,GPRPy, Uninstalling GPRPy,uninstal gprpi 
+6,GPRPy, News,new 
+7,SRN-Deblur, Scale-recurrent Network for Deep Image Deblurring,scale-recurr network deep imag deblur 
+8,SRN-Deblur, Our results on real data,our result real data 
+9,SRN-Deblur, Results on the testing dataset,result test dataset 
+10,SRN-Deblur, More cases on real photos from previous papers:,more case real photo previou paper : 
+11,SRN-Deblur, Prerequisites,prerequisit 
+12,SRN-Deblur, Installation,instal 
+13,SRN-Deblur, Testing,test 
+14,SRN-Deblur, Evaluation,evalu 
+15,SRN-Deblur, Training,train 
+16,SRN-Deblur, Models,model 
+17,SRN-Deblur, How to choose,how choos 
+18,SRN-Deblur, Reference,refer 
+19,SRN-Deblur, Contact,contact 
+20,SRN-Deblur, Reference,refer 
+21,sentinelsat, connect to the API,connect api 
+22,sentinelsat, download single scene by known product id,download singl scene known product id 
+23,sentinelsat," search by polygon, time, and Hub query keywords","search polygon , time , hub queri keyword "
+24,sentinelsat, download all results from the search,download result search 
+25,sentinelsat, GeoJSON FeatureCollection containing footprints and metadata of the scenes,geojson featurecollect contain footprint metadata scene 
+26,sentinelsat, GeoPandas GeoDataFrame with the metadata of the scenes and the footprints as geometries,geopanda geodatafram metadata scene footprint geometri 
+27,sentinelsat," Get basic information about the product: its title, file size, MD5 sum, date, footprint and","get basic inform product : titl , file size , md5 sum , date , footprint "
+28,sentinelsat, its download url,download url 
+29,sentinelsat, Get the product's full metadata available on the server,get product 's full metadata avail server 
+30,sentinelsat, same result as query above,result queri 
+31,RDN, Residual Dense Network for Image Super-Resolution,residu dens network imag super-resolut 
+32,RDN, Contents,content 
+33,RDN, Introduction,introduct 
+34,RDN, Train,train 
+35,RDN, Prepare training data ,prepar train data 
+36,RDN, Begin to train,begin train 
+37,RDN, Test,test 
+38,RDN, Quick start,quick start 
+39,RDN, The whole test pipeline,the whole test pipelin 
+40,RDN, Results,result 
+41,RDN, Citation,citat 
+42,RDN, Acknowledgements,acknowledg 
+43,Fiona," Open a file for reading. We'll call this the ""source.""",open file read . We 'll call `` sourc . '' 
+44,Fiona," The file we'll write to, the ""destination"", must be initialized","the file 'll write , `` destin '' , must initi "
+45,Fiona," with a coordinate system, a format driver name, and","coordin system , format driver name , "
+46,Fiona, a record schema.  We can get initial values from the open,record schema . We get initi valu open 
+47,Fiona, collection's ``meta`` property and then modify them as,collect 's `` meta `` properti modifi 
+48,Fiona, desired.,desir . 
+49,Fiona," Open an output file, using the same format driver and","open output file , use format driver "
+50,Fiona, coordinate reference system as the source. The ``meta``,coordin refer system sourc . the `` meta `` 
+51,Fiona, mapping fills in the keyword parameters of fiona.open().,map fill keyword paramet fiona.open ( ) . 
+52,Fiona, Process only the records intersecting a box.,process record intersect box . 
+53,Fiona, Get a point on the boundary of the record's,get point boundari record 's 
+54,Fiona, geometry.,geometri . 
+55,Fiona, Write the record out.,write record . 
+56,Fiona, The destination's contents are flushed to disk and the file is,the destin 's content flush disk file 
+57,Fiona, closed when its ``with`` block ends. This effectively,close `` `` block end . thi effect 
+58,Fiona, executes ``dst.flush(); dst.close()``.,execut `` dst.flush ( ) ; dst.close ( ) `` . 
+59,Fiona, Output:,output : 
+60,Fiona," (u'coutwildrnp', 67)","( u'coutwildrnp ' , 67 ) "
+61,Fiona, Output:,output : 
+62,Fiona," (0, u'coutwildrnp', 67)","( 0 , u'coutwildrnp ' , 67 ) "
+63,Fiona, Output:,output : 
+64,Fiona, [u'bar'],[ u'bar ' ] 
+65,Fiona, 1,1 
+66,Fiona, Polygon,polygon 
+67,Fiona," OrderedDict([(u'PERIMETER', 1.22107), (u'FEATURE2', None), (u'NAME', u'Mount Naomi Wilderness'), (u'FEATURE1', u'Wilderness'), (u'URL', u'http://www.wilderness.net/index.cfm?fuse=NWPS&sec=wildView&wname=Mount%20Naomi'), (u'AGBUR', u'FS'), (u'AREA', 0.0179264), (u'STATE_FIPS', u'49'), (u'WILDRNP020', 332), (u'STATE', u'UT')])","ordereddict ( [ ( u'perimet ' , 1.22107 ) , ( u'feature2 ' , none ) , ( u'nam ' , u'mount naomi wilder ' ) , ( u'feature1 ' , u'wild ' ) , ( u'url ' , u'http : //www.wilderness.net/index.cfm ? fuse=nwp & sec=wildview & wname=mount % 20naomi ' ) , ( u'agbur ' , u'f ' ) , ( u'area ' , 0.0179264 ) , ( u'state_fip ' , u'49 ' ) , ( u'wildrnp020 ' , 332 ) , ( u'stat ' , u'ut ' ) ] ) "
+68,Fiona, Output:,output : 
+69,Fiona," (0, u'coutwildrnp', 67)","( 0 , u'coutwildrnp ' , 67 ) "
+70,Fiona, Output:,output : 
+71,Fiona, 67,67 
+72,hmr, End-to-end Recovery of Human Shape and Pose,end-to-end recoveri human shape pose 
+73,hmr, Requirements,requir 
+74,hmr, Installation,instal 
+75,hmr, Linux Setup with virtualenv,linux setup virtualenv 
+76,hmr, Install TensorFlow,instal tensorflow 
+77,hmr, Windows Setup with python 3 and Anaconda,window setup python 3 anaconda 
+78,hmr, if you need to get chumpy ,need get chumpi 
+79,hmr, Demo,demo 
+80,hmr, Webcam Demo (thanks @JulesDoe!),webcam demo ( thank @ julesdo ! ) 
+81,hmr, Training code/data,train code/data 
+82,hmr, Citation,citat 
+83,hmr, Opensource contributions,opensourc contribut 
+84,apsg, APSG - python package for structural geologists,apsg - python packag structur geologist 
+85,apsg, Installation,instal 
+86,apsg, PyPI,pypi 
+87,apsg, Upgrading via pip,upgrad via pip 
+88,apsg, Installing APSG from the source distribution,instal apsg sourc distribut 
+89,apsg, Conda,conda 
+90,apsg, Current release info,current releas info 
+91,apsg, Installing apsg,instal apsg 
+92,apsg, Master version,master version 
+93,apsg, Getting started,get start 
+94,apsg, Documentation,document 
+95,apsg, Contributing,contribut 
+96,apsg, Donate,donat 
+97,apsg, License,licens 
+98,mplleaflet, mplleaflet,mplleaflet 
+99,mplleaflet, Examples,exampl 
+100,mplleaflet, Basic usage,basic usag 
+101,mplleaflet, IPython Notebook embedding,ipython notebook embed 
+102,mplleaflet, Other examples,other exampl 
+103,mplleaflet, Why mplleaflet?,whi mplleaflet ? 
+104,mplleaflet, Installation,instal 
+105,mplleaflet, Development,develop 
+106,mplleaflet, Dependencies,depend 
+107,pylops, Objective,object 
+108,pylops, Project structure,project structur 
+109,pylops, Getting started,get start 
+110,pylops, From PyPi,from pypi 
+111,pylops, From Conda-forge,from conda-forg 
+112,pylops, From Docker,from docker 
+113,pylops, Contributing,contribut 
+114,pylops, 1. Fork and clone the repository,1 . fork clone repositori 
+115,pylops, 2. Install PyLops in a new Conda environment,2 . instal pylop new conda environ 
+116,pylops, Documentation,document 
+117,pylops, History,histori 
+118,pylops, Contributors,contributor 
+119,tensorflow-magenta, Getting Started,get start 
+120,tensorflow-magenta, Installation,instal 
+121,tensorflow-magenta, Automated Install (w/ Anaconda),autom instal ( w/ anaconda ) 
+122,tensorflow-magenta, Manual Install (w/o Anaconda),manual instal ( w/o anaconda ) 
+123,tensorflow-magenta, GPU Installation,gpu instal 
+124,tensorflow-magenta, Using Magenta,use magenta 
+125,tensorflow-magenta, Playing a MIDI Instrument,play midi instrument 
+126,tensorflow-magenta, Development Environment,develop environ 
+127,tensorflow-magenta, PIP Release,pip releas 
+128,facebookresearch-wav2letter, wav2letter++,wav2letter++ 
+129,facebookresearch-wav2letter, Building wav2letter++,build wav2letter++ 
+130,facebookresearch-wav2letter, Full documentation,full document 
+131,facebookresearch-wav2letter, Citation,citat 
+132,facebookresearch-wav2letter, Join the wav2letter community,join wav2lett commun 
+133,facebookresearch-wav2letter, License,licens 
+134,omfvista, Grab a few elements of interest and plot em up!,grab element interest plot em ! 
+135,omfvista, Grab the active plotting window,grab activ plot window 
+136,omfvista,  from the thresher tool,thresher tool 
+137,omfvista, Add our datasets,add dataset 
+138,omfvista, Add the bounds axis,add bound axi 
+139,PRM, PyTorch Implementation,pytorch implement 
+140,PRM, Prerequisites,prerequisit 
+141,PRM, Installation,instal 
+142,PRM, Run demo,run demo 
+143,PRM, Citation ,citat 
+144,GAN_stability, GAN stability,gan stabil 
+145,GAN_stability, Usage,usag 
+146,GAN_stability, Notes,note 
+147,GAN_stability, Results,result 
+148,GAN_stability, celebA-HQ,celeba-hq 
+149,GAN_stability, Imagenet,imagenet 
+150,d3, D3: Data-Driven Documents,D3 : data-driven document 
+151,d3, Resources,resourc 
+152,d3, Installing,instal 
+153,microsoft-malmo, Malmö ,malmö 
+154,microsoft-malmo, Getting Started ,get start 
+155,microsoft-malmo, MalmoEnv ,malmoenv 
+156,microsoft-malmo, Malmo as a native Python wheel ,malmo nativ python wheel 
+157,microsoft-malmo, Problems: ,problem : 
+158,microsoft-malmo, Launching Minecraft with our Mod: ,launch minecraft mod : 
+159,microsoft-malmo, Launch an agent: ,launch agent : 
+160,microsoft-malmo, Running a Python agent: ,run python agent : 
+161,microsoft-malmo, Running a C++ agent: ,run c++ agent : 
+162,microsoft-malmo, Running a C agent: ,run C agent : 
+163,microsoft-malmo, Running a Java agent: ,run java agent : 
+164,microsoft-malmo, Running an Atari agent: (Linux only) ,run atari agent : ( linux ) 
+165,microsoft-malmo, Citations ,citat 
+166,microsoft-malmo, Code of Conduct ,code conduct 
+167,da-faster-rcnn,  Domain Adaptive Faster R-CNN for Object Detection in the Wild ,domain adapt faster r-cnn object detect wild 
+168,da-faster-rcnn, Acknowledgment,acknowledg 
+169,da-faster-rcnn, Usage,usag 
+170,da-faster-rcnn, Example,exampl 
+171,da-faster-rcnn, Other Implementation,other implement 
+172,facebookresearch-ResNeXt, ResNeXt: Aggregated Residual Transformations for Deep Neural Networks,resnext : aggreg residu transform deep neural network 
+173,facebookresearch-ResNeXt, Table of Contents,tabl content 
+174,facebookresearch-ResNeXt, News,new 
+175,facebookresearch-ResNeXt, Introduction,introduct 
+176,facebookresearch-ResNeXt," Figure: Training curves on ImageNet-1K. (Left): ResNet/ResNeXt-50 with the same complexity (~4.1 billion FLOPs, ~25 million parameters); (Right): ResNet/ResNeXt-101 with the same complexity (~7.8 billion FLOPs, ~44 million parameters).","figur : train curv imagenet-1k . ( left ) : resnet/resnext-50 complex ( ~4.1 billion flop , ~25 million paramet ) ; ( right ) : resnet/resnext-101 complex ( ~7.8 billion flop , ~44 million paramet ) . "
+177,facebookresearch-ResNeXt, Citation,citat 
+178,facebookresearch-ResNeXt, Requirements and Dependencies,requir depend 
+179,facebookresearch-ResNeXt, Training,train 
+180,facebookresearch-ResNeXt, 1x Complexity Configurations Reference Table,1x complex configur refer tabl 
+181,facebookresearch-ResNeXt, ImageNet Pretrained Models,imagenet pretrain model 
+182,facebookresearch-ResNeXt, Single-crop (224x224) validation error rate,single-crop ( 224x224 ) valid error rate 
+183,facebookresearch-ResNeXt, Third-party re-implementations,third-parti re-implement 
+184,vue-devtools, vue-devtools,vue-devtool 
+185,vue-devtools, Installation,instal 
+186,vue-devtools, Important Usage Notes,import usag note 
+187,vue-devtools, Open component in editor,open compon editor 
+188,vue-devtools, Manual Installation,manual instal 
+189,vue-devtools, Development,develop 
+190,vue-devtools, Quick Start in chrome,quick start chrome 
+191,vue-devtools, Testing as Firefox addon,test firefox addon 
+192,vue-devtools, Common problems and how to fix,common problem fix 
+193,vue-devtools, License,licens 
+194,tippecanoe," Linear features (world railroads), visible at all zoom levels","linear featur ( world railroad ) , visibl zoom level "
+195,tippecanoe," Discontinuous polygon features (buildings of Rhode Island), visible at all zoom levels","discontinu polygon featur ( build rhode island ) , visibl zoom level "
+196,tippecanoe," Continuous polygon features (states and provinces), visible at all zoom levels","continu polygon featur ( state provinc ) , visibl zoom level "
+197,tippecanoe," Large point dataset (GPS bus locations), for visualization at all zoom levels","larg point dataset ( gp bu locat ) , visual zoom level "
+198,tippecanoe," Clustered points (world cities), summing the clustered population, visible at all zoom levels","cluster point ( world citi ) , sum cluster popul , visibl zoom level "
+199,tippecanoe, Show countries at low zoom levels but states at higher zoom levels,show countri low zoom level state higher zoom level 
+200,tippecanoe, Represent multiple sources (Illinois and Indiana counties) as separate layers,repres multipl sourc ( illinoi indiana counti ) separ layer 
+201,tippecanoe, Merge multiple sources (Illinois and Indiana counties) into the same layer,merg multipl sourc ( illinoi indiana counti ) layer 
+202,tippecanoe, Selectively remove and replace features (Census tracts) to update a tileset,select remov replac featur ( censu tract ) updat tileset 
+203,tippecanoe, Output tileset,output tileset 
+204,tippecanoe, Tileset description and attribution,tileset descript attribut 
+205,tippecanoe, Input files and layer names,input file layer name 
+206,tippecanoe, Parallel processing of input,parallel process input 
+207,tippecanoe, Projection of input,project input 
+208,tippecanoe, Zoom levels,zoom level 
+209,tippecanoe, Tile resolution,tile resolut 
+210,tippecanoe, Filtering feature attributes,filter featur attribut 
+211,tippecanoe, Modifying feature attributes,modifi featur attribut 
+212,tippecanoe, Filtering features by attributes,filter featur attribut 
+213,tippecanoe, Dropping a fixed fraction of features by zoom level,drop fix fraction featur zoom level 
+214,tippecanoe, Dropping a fraction of features to keep under tile size limits,drop fraction featur keep tile size limit 
+215,tippecanoe, Dropping tightly overlapping features,drop tightli overlap featur 
+216,tippecanoe, Line and polygon simplification,line polygon simplif 
+217,tippecanoe, Attempts to improve shared polygon boundaries,attempt improv share polygon boundari 
+218,tippecanoe, Controlling clipping to tile boundaries,control clip tile boundari 
+219,tippecanoe, Reordering features within each tile,reorder featur within tile 
+220,tippecanoe, Adding calculated attributes,ad calcul attribut 
+221,tippecanoe, Trying to correct bad source geometry,tri correct bad sourc geometri 
+222,tippecanoe, Setting or disabling tile size limits,set disabl tile size limit 
+223,tippecanoe, Temporary storage,temporari storag 
+224,tippecanoe, Progress indicator,progress indic 
+225,tippecanoe, Filters,filter 
+226,tippecanoe, Examples:,exampl : 
+227,tippecanoe, Output tileset,output tileset 
+228,tippecanoe, Tileset description and attribution,tileset descript attribut 
+229,tippecanoe, Layer filtering and naming,layer filter name 
+230,tippecanoe, Zoom levels,zoom level 
+231,tippecanoe, Merging attributes from a CSV file,merg attribut csv file 
+232,tippecanoe, Filtering features and feature attributes,filter featur featur attribut 
+233,tippecanoe, Setting or disabling tile size limits,set disabl tile size limit 
+234,tippecanoe, Options,option 
+235,tippecanoe, Options,option 
+236,tippecanoe, Example,exampl 
+237,lasio, lasio,lasio 
+238,lasio, Documentation,document 
+239,lasio, Quick start,quick start 
+240,lasio, License,licens 
+241,DID-MDN, DID-MDN,did-mdn 
+242,DID-MDN, Density-aware Single Image De-raining using a Multi-stream Dense Network,density-awar singl imag de-rain use multi-stream dens network 
+243,DID-MDN, Prerequisites:,prerequisit : 
+244,DID-MDN, Installation:,instal : 
+245,DID-MDN, Demo using pre-trained model,demo use pre-train model 
+246,DID-MDN, Training (Density-aware Deraining network using GT label),train ( density-awar derain network use GT label ) 
+247,DID-MDN, Density-estimation Training (rain-density classifier),density-estim train ( rain-dens classifi ) 
+248,DID-MDN, Testing,test 
+249,DID-MDN, Reproduce,reproduc 
+250,DID-MDN, Dataset,dataset 
+251,DID-MDN, Acknowledgments,acknowledg 
+252,bootstrap, Table of contents,tabl content 
+253,bootstrap, Quick start,quick start 
+254,bootstrap, Status,statu 
+255,bootstrap, What's included,what 's includ 
+256,bootstrap, Bugs and feature requests,bug featur request 
+257,bootstrap, Documentation,document 
+258,bootstrap, Running documentation locally,run document local 
+259,bootstrap, Documentation for previous releases,document previou releas 
+260,bootstrap, Contributing,contribut 
+261,bootstrap, Community,commun 
+262,bootstrap, Versioning,version 
+263,bootstrap, Creators,creator 
+264,bootstrap, Thanks,thank 
+265,bootstrap, Backers,backer 
+266,bootstrap, Sponsors,sponsor 
+267,bootstrap, Copyright and license,copyright licens 
+268,sequelize-sequelize, Sequelize,sequel 
+269,sequelize-sequelize, v5 Release,v5 releas 
+270,sequelize-sequelize, Table of Contents,tabl content 
+271,sequelize-sequelize, Installation,instal 
+272,sequelize-sequelize, Documentation,document 
+273,sequelize-sequelize, Responsible disclosure,respons disclosur 
+274,sequelize-sequelize, Resources,resourc 
+275,sequelize-sequelize, Tools,tool 
+276,sequelize-sequelize, Learning,learn 
+277,sequelize-sequelize, Translations,translat 
+278,DCPDN, DCPDN,dcpdn 
+279,DCPDN, Densely Connected Pyramid Dehazing Network (CVPR'2018),dens connect pyramid dehaz network ( cvpr'2018 ) 
+280,DCPDN, Prerequisites:,prerequisit : 
+281,DCPDN, Installation:,instal : 
+282,DCPDN, Demo using pre-trained model,demo use pre-train model 
+283,DCPDN, Training (Fine-tuning),train ( fine-tun ) 
+284,DCPDN, Testing,test 
+285,DCPDN, Reproduce,reproduc 
+286,DCPDN, Dataset,dataset 
+287,DCPDN, How to creat your own testing samples,how creat test sampl 
+288,DCPDN, Extension,extens 
+289,DCPDN, Acknowledgments,acknowledg 
+290,react, [React](https://reactjs.org/) &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebook/react/blob/master/LICENSE) [![npm version](https://img.shields.io/npm/v/react.svg?style=flat)](https://www.npmjs.com/package/react) [![CircleCI Status](https://circleci.com/gh/facebook/react.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/facebook/react) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://reactjs.org/docs/how-to-contribute.htmlyour-first-pull-request),[ react ] ( http : //reactjs.org/ ) & middot ; [ ! [ github licens ] ( http : //img.shields.io/badge/license-mit-blue.svg ) ] ( http : //github.com/facebook/react/blob/master/licens ) [ ! [ npm version ] ( http : //img.shields.io/npm/v/react.svg ? style=flat ) ] ( http : //www.npmjs.com/package/react ) [ ! [ circleci statu ] ( http : //circleci.com/gh/facebook/react.svg ? style=shield & circle-token= : circle-token ) ] ( http : //circleci.com/gh/facebook/react ) [ ! [ pr welcom ] ( http : //img.shields.io/badge/prs-welcome-brightgreen.svg ) ] ( http : //reactjs.org/docs/how-to-contribute.htmlyour-first-pull-request ) 
+291,react, Installation,instal 
+292,react, Documentation,document 
+293,react, Examples,exampl 
+294,react, Contributing,contribut 
+295,react, [Code of Conduct](https://code.fb.com/codeofconduct),[ code conduct ] ( http : //code.fb.com/codeofconduct ) 
+296,react, [Contributing Guide](https://reactjs.org/contributing/how-to-contribute.html),[ contribut guid ] ( http : //reactjs.org/contributing/how-to-contribute.html ) 
+297,react, Good First Issues,good first issu 
+298,react, License,licens 
+299,pose-residual-network-pytorch, Pose Residual Network,pose residu network 
+300,pose-residual-network-pytorch, Getting Started,get start 
+301,pose-residual-network-pytorch, Prerequisites,prerequisit 
+302,pose-residual-network-pytorch, Installing,instal 
+303,pose-residual-network-pytorch, Training,train 
+304,pose-residual-network-pytorch, Testing,test 
+305,pose-residual-network-pytorch, Results,result 
+306,pose-residual-network-pytorch, License,licens 
+307,pose-residual-network-pytorch, Citation,citat 
+308,gempy," <p align=""left""><img src=""docs/logos/gempy1.png"" width=""300""></p>",< p align= '' left '' > < img src= '' docs/logos/gempy1.png '' width= '' 300 '' > < /p > 
+309,gempy, What is it,what 
+310,gempy, Table of Contents,tabl content 
+311,gempy, News,new 
+312,gempy, GemPy v2.0 beta release,gempi v2.0 beta releas 
+313,gempy, What is new,what new 
+314,gempy, Features,featur 
+315,gempy, Sandbox,sandbox 
+316,gempy, Remote Geomod: From GoogleEarth to 3-D Geology,remot geomod : from googleearth 3-d geolog 
+317,gempy, Getting Started,get start 
+318,gempy, Dependencies,depend 
+319,gempy, Conflictive packages.,conflict packag . 
+320,gempy, Installation,instal 
+321,gempy, PyPi ,pypi 
+322,gempy, New in GemPy 2.0: Docker image,new gempi 2.0 : docker imag 
+323,gempy, Pull Docker image from DockerHub,pull docker imag dockerhub 
+324,gempy, Manual,manual 
+325,gempy, Windows installation guide (Jun 2019),window instal guid ( jun 2019 ) 
+326,gempy, Documentation,document 
+327,gempy, References,refer 
+328,iter-reason, Iterative Visual Reasoning Beyond Convolutions,iter visual reason beyond convolut 
+329,iter-reason, Disclaimer,disclaim 
+330,iter-reason, Prerequisites,prerequisit 
+331,iter-reason, Setup and Running,setup run 
+332,iter-reason, References,refer 
+333,DeepGuidedFilter, Fast End-to-End Trainable Guided Filter,fast end-to-end trainabl guid filter 
+334,DeepGuidedFilter, Overview,overview 
+335,DeepGuidedFilter, Try it on an image!,tri imag ! 
+336,DeepGuidedFilter, Prepare Environment,prepar environ 
+337,DeepGuidedFilter, Ready to **GO** !,readi **go** ! 
+338,DeepGuidedFilter, Image Processing,imag process 
+339,DeepGuidedFilter, Semantic Segmentation with Deeplab-Resnet,semant segment deeplab-resnet 
+340,DeepGuidedFilter, Saliency Detection with DSS,salienc detect dss 
+341,DeepGuidedFilter, Monocular Depth Estimation (TensorFlow version),monocular depth estim ( tensorflow version ) 
+342,DeepGuidedFilter, Guided Filtering Layer,guid filter layer 
+343,DeepGuidedFilter, Install Released Version,instal releas version 
+344,DeepGuidedFilter, Usage,usag 
+345,DeepGuidedFilter, Training from scratch,train scratch 
+346,DeepGuidedFilter, Prepare Training Environment,prepar train environ 
+347,DeepGuidedFilter, Start to Train,start train 
+348,DeepGuidedFilter, Citation,citat 
+349,gitfolio, Gitfolio  [![Tweet](https://img.shields.io/twitter/url/https/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=personal%20website%20and%20a%20blog%20for%20every%20github%20user%20&url=https://github.com/imfunniee/gitfolio) ![GitHub release](https://img.shields.io/github/release/imfunniee/gitfolio.svg?style=popout-square) ![npm](https://img.shields.io/npm/dm/gitfolio.svg?style=popout-square) ![GitHub top language](https://img.shields.io/github/languages/top/imfunniee/gitfolio.svg?style=popout-square) ![GitHub last commit](https://img.shields.io/github/last-commit/imfunniee/gitfolio.svg?style=popout-square) ![GitHub](https://img.shields.io/github/license/imfunniee/gitfolio.svg?style=popout-square),gitfolio [ ! [ tweet ] ( http : //img.shields.io/twitter/url/https/shields.io.svg ? style=soci ) ] ( http : //twitter.com/intent/tweet ? text=person % 20websit % 20and % 20a % 20blog % 20for % 20everi % 20github % 20user % 20 & url=http : //github.com/imfunniee/gitfolio ) ! [ github releas ] ( http : //img.shields.io/github/release/imfunniee/gitfolio.svg ? style=popout-squar ) ! [ npm ] ( http : //img.shields.io/npm/dm/gitfolio.svg ? style=popout-squar ) ! [ github top languag ] ( http : //img.shields.io/github/languages/top/imfunniee/gitfolio.svg ? style=popout-squar ) ! [ github last commit ] ( http : //img.shields.io/github/last-commit/imfunniee/gitfolio.svg ? style=popout-squar ) ! [ github ] ( http : //img.shields.io/github/license/imfunniee/gitfolio.svg ? style=popout-squar ) 
+350,gitfolio, personal website + blog  for every github user,person websit + blog everi github user 
+351,gitfolio, Getting Started,get start 
+352,gitfolio, Let's Install,let 's instal 
+353,gitfolio, Let's Build,let 's build 
+354,gitfolio, Let's Customize,let 's custom 
+355,gitfolio, Forks,fork 
+356,gitfolio, Sorting Repos,sort repo 
+357,gitfolio, Ordering Repos,order repo 
+358,gitfolio, Customize Themes,custom theme 
+359,gitfolio, Customize background image,custom background imag 
+360,gitfolio, Let's Publish,let 's publish 
+361,gitfolio, Updating,updat 
+362,gitfolio, Add a Blog,add blog 
+363,gitfolio, License,licens 
+364,gitbucket-gitbucket, 4.31.2 - 7 Apr 2019,4.31.2 - 7 apr 2019 
+365,gitbucket-gitbucket, 4.31.1 - 17 Mar 2019,4.31.1 - 17 mar 2019 
+366,gitbucket-gitbucket, 4.31.0 - 17 Mar 2019,4.31.0 - 17 mar 2019 
+367,neural_renderer, Neural 3D Mesh Renderer (CVPR 2018),neural 3D mesh render ( cvpr 2018 ) 
+368,neural_renderer, For PyTorch users,for pytorch user 
+369,neural_renderer, Installation,instal 
+370,neural_renderer, Running examples,run exampl 
+371,neural_renderer, Example 1: Drawing an object from multiple viewpoints,exampl 1 : draw object multipl viewpoint 
+372,neural_renderer, Example 2: Optimizing vertices,exampl 2 : optim vertic 
+373,neural_renderer, Example 3: Optimizing textures,exampl 3 : optim textur 
+374,neural_renderer, Example 4: Finding camera parameters,exampl 4 : find camera paramet 
+375,neural_renderer, FAQ,faq 
+376,neural_renderer, CPU implementation?,cpu implement ? 
+377,neural_renderer, Python3 support?,python3 support ? 
+378,neural_renderer, Citation,citat 
+379,facebookresearch-DensePose, DensePose: ,densepos : 
+380,facebookresearch-DensePose, Installation,instal 
+381,facebookresearch-DensePose, Inference-Training-Testing,inference-training-test 
+382,facebookresearch-DensePose, Notebooks,notebook 
+383,facebookresearch-DensePose, Visualization of DensePose-COCO annotations:,visual densepose-coco annot : 
+384,facebookresearch-DensePose, DensePose-COCO in 3D:,densepose-coco 3D : 
+385,facebookresearch-DensePose, Visualize DensePose-RCNN Results:,visual densepose-rcnn result : 
+386,facebookresearch-DensePose, DensePose-RCNN Texture Transfer:,densepose-rcnn textur transfer : 
+387,facebookresearch-DensePose, License,licens 
+388,facebookresearch-DensePose," <a name=""CitingDensePose""></a>Citing DensePose",< name= '' citingdensepos '' > < /a > cite densepos 
+389,node-qa-masker, node-qa-masker,node-qa-mask 
+390,node-qa-masker, Installation,instal 
+391,node-qa-masker, Use Example,use exampl 
+392,node-qa-masker, Landsat 8,landsat 8 
+393,node-qa-masker, MODIS Land Products,modi land product 
+394,node-qa-masker, Looking for command line tool?,look command line tool ? 
+395,node-qa-masker, You are a GIS guy and want something GIS?,you gi guy want someth gi ? 
+396,mapshaper, mapshaper,mapshap 
+397,mapshaper, Introduction,introduct 
+398,mapshaper, Command line tool,command line tool 
+399,mapshaper, Interactive web interface,interact web interfac 
+400,mapshaper, Large file support,larg file support 
+401,mapshaper, run the command line program,run command line program 
+402,mapshaper, use the web UI locally,use web UI local 
+403,mapshaper, Building and testing,build test 
+404,mapshaper, License,licens 
+405,mapshaper, Acknowledgements,acknowledg 
+406,segyio, segyio ,segyio 
+407,segyio, Index ,index 
+408,segyio, Introduction ,introduct 
+409,segyio, Feature summary ,featur summari 
+410,segyio, Getting started ,get start 
+411,segyio, Quick start ,quick start 
+412,segyio, Get segyio ,get segyio 
+413,segyio, Build segyio ,build segyio 
+414,segyio, Developers ,develop 
+415,segyio, Tutorial ,tutori 
+416,segyio, Basics ,basic 
+417,segyio, Modes ,mode 
+418,segyio, Mode examples ,mode exampl 
+419,segyio, Project goals ,project goal 
+420,segyio, SEG-Y Revisions ,seg-i revis 
+421,segyio, Contributing ,contribut 
+422,segyio, xarray integration ,xarray integr 
+423,segyio, Reproducing the test data ,reproduc test data 
+424,segyio, Examples ,exampl 
+425,segyio, Python ,python 
+426,segyio, MATLAB ,matlab 
+427,segyio, Common issues ,common issu 
+428,segyio, ImportError: libsegyio.so.1: cannot open shared object file,importerror : libsegyio.so.1 : open share object file 
+429,segyio, Possible solutions,possibl solut 
+430,segyio, RuntimeError: unable to find sorting,runtimeerror : unabl find sort 
+431,segyio, Possible solutions,possibl solut 
+432,segyio, History ,histori 
+433,vid2vid, vid2vid,vid2vid 
+434,vid2vid, [Project](https://tcwang0509.github.io/vid2vid/) | [YouTube(short)](https://youtu.be/5zlcXTCpQqM) | [YouTube(full)](https://youtu.be/GrP_aOSXt5U) | [arXiv](https://arxiv.org/abs/1808.06601) | [Paper(full)](https://tcwang0509.github.io/vid2vid/paper_vid2vid.pdf),[ project ] ( http : //tcwang0509.github.io/vid2vid/ ) | [ youtub ( short ) ] ( http : //youtu.be/5zlcxtcpqqm ) | [ youtub ( full ) ] ( http : //youtu.be/grp_aosxt5u ) | [ arxiv ] ( http : //arxiv.org/abs/1808.06601 ) | [ paper ( full ) ] ( http : //tcwang0509.github.io/vid2vid/paper_vid2vid.pdf ) 
+435,vid2vid, Video-to-Video Translation,video-to-video translat 
+436,vid2vid, Prerequisites,prerequisit 
+437,vid2vid, Getting Started,get start 
+438,vid2vid, Installation,instal 
+439,vid2vid, Testing ,test 
+440,vid2vid, Dataset,dataset 
+441,vid2vid, Training with Cityscapes dataset,train cityscap dataset 
+442,vid2vid, Training with face datasets,train face dataset 
+443,vid2vid, Training with pose datasets,train pose dataset 
+444,vid2vid, Training with your own dataset,train dataset 
+445,vid2vid, More Training/Test Details,more training/test detail 
+446,vid2vid, Citation,citat 
+447,vid2vid, Acknowledgments,acknowledg 
+448,PVGeo, Demonstrations of *PVGeo*,demonstr *pvgeo* 
+449,PVGeo, Connections,connect 
+450,PVGeo, Getting Started,get start 
+451,PVGeo, Report Issues and Contribute,report issu contribut 
+452,PVGeo, About the Authors [![Open Source](https://img.shields.io/badge/open--source-yes-brightgreen.svg)](https://opensource.com/resources/what-open-source),about author [ ! [ open sourc ] ( http : //img.shields.io/badge/open -- source-yes-brightgreen.svg ) ] ( http : //opensource.com/resources/what-open-sourc ) 
+453,PVGeo, Linking PVGeo to ParaView,link pvgeo paraview 
+454,CU-Net, ,
+455,CU-Net, **[Quantized Densely Connected U-Nets for Efficient Landmark Localization](https://arxiv.org/abs/1808.02194)**,** [ quantiz dens connect u-net effici landmark local ] ( http : //arxiv.org/abs/1808.02194 ) ** 
+456,CU-Net, **[CU-Net: Coupled U-Nets](https://arxiv.org/abs/1808.06521)**,** [ cu-net : coupl u-net ] ( http : //arxiv.org/abs/1808.06521 ) ** 
+457,CU-Net, Overview,overview 
+458,CU-Net, Prerequisites,prerequisit 
+459,CU-Net, Training,train 
+460,CU-Net, Validation,valid 
+461,CU-Net, Model Options,model option 
+462,CU-Net, Project Page,project page 
+463,CU-Net, Citation,citat 
+464,cltk-cltk, The Classical Language Toolkit,the classic languag toolkit 
+465,cltk-cltk, About,about 
+466,cltk-cltk, Documentation,document 
+467,cltk-cltk, Installation,instal 
+468,cltk-cltk, Tutorials,tutori 
+469,cltk-cltk, Contributing,contribut 
+470,cltk-cltk, Citation,citat 
+471,cltk-cltk, Gratitude,gratitud 
+472,cltk-cltk, License,licens 
+473,ICNet, ICNet for Real-Time Semantic Segmentation on High-Resolution Images,icnet real-tim semant segment high-resolut imag 
+474,ICNet, Introduction,introduct 
+475,ICNet, Usage,usag 
+476,ICNet, Citation,citat 
+477,ICNet, Questions,question 
+478,tetgen, get cell centroids,get cell centroid 
+479,tetgen, extract cells below the 0 xy plane,extract cell 0 xy plane 
+480,tetgen, advanced plotting,advanc plot 
+481,tetgen, plot quality,plot qualiti 
+482,geojson-vt, geojson-vt &mdash; GeoJSON Vector Tiles,geojson-vt & mdash ; geojson vector tile 
+483,geojson-vt, Demo,demo 
+484,geojson-vt, Usage,usag 
+485,geojson-vt, Options,option 
+486,geojson-vt, Install,instal 
+487,DaSiamRPN, DaSiamRPN,dasiamrpn 
+488,DaSiamRPN, Introduction,introduct 
+489,DaSiamRPN, Prerequisites,prerequisit 
+490,DaSiamRPN, Pretrained model for SiamRPN,pretrain model siamrpn 
+491,DaSiamRPN, Detailed steps to install the prerequisites,detail step instal prerequisit 
+492,DaSiamRPN, Results,result 
+493,DaSiamRPN, Demo and Test on OTB2015,demo test otb2015 
+494,DaSiamRPN, License,licens 
+495,DaSiamRPN, Citing DaSiamRPN,cite dasiamrpn 
+496,scikit-image-scikit-image, scikit-image: Image processing in Python,scikit-imag : imag process python 
+497,scikit-image-scikit-image, Installation from binaries,instal binari 
+498,scikit-image-scikit-image, Installation from source,instal sourc 
+499,scikit-image-scikit-image, License (Modified BSD),licens ( modifi bsd ) 
+500,scikit-image-scikit-image, Citation,citat 
+501,geonotebook, GeoNotebook [![CircleCI](https://circleci.com/gh/OpenGeoscience/geonotebook.svg?style=shield)](https://circleci.com/gh/OpenGeoscience/geonotebook) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/OpenGeoscience/geonotebook),geonotebook [ ! [ circleci ] ( http : //circleci.com/gh/opengeoscience/geonotebook.svg ? style=shield ) ] ( http : //circleci.com/gh/opengeoscience/geonotebook ) [ ! [ gitter chat ] ( http : //badges.gitter.im/gitterhq/gitter.png ) ] ( http : //gitter.im/opengeoscience/geonotebook ) 
+502,geonotebook, Screenshots,screenshot 
+503,geonotebook, Installation,instal 
+504,geonotebook, System Prerequisites,system prerequisit 
+505,geonotebook, Clone the repo:,clone repo : 
+506,geonotebook," Make a virtualenv, install jupyter[notebook], install geonotebook","make virtualenv , instal jupyt [ notebook ] , instal geonotebook "
+507,geonotebook, Installing geonotebook for development,instal geonotebook develop 
+508,geonotebook, Run the notebook:,run notebook : 
+509,geonotebook, Configure the notebook:,configur notebook : 
+510,geonotebook, Run the tests,run test 
+511,geonotebook, Docker Container,docker contain 
+512,geonotebook, Vagrant Machine,vagrant machin 
+513,geonotebook, Tile Server,tile server 
+514,geonotebook, Use geoserver for tile serving,use geoserv tile serv 
+515,generator-arcgis-js-app, generator-arcgis-js-app,generator-arcgis-js-app 
+516,generator-arcgis-js-app, Getting Started,get start 
+517,generator-arcgis-js-app, What is Yeoman?,what yeoman ? 
+518,generator-arcgis-js-app, Yeoman Generators,yeoman gener 
+519,generator-arcgis-js-app, What is used?,what use ? 
+520,generator-arcgis-js-app, Usage,usag 
+521,generator-arcgis-js-app, Still a beta,still beta 
+522,generator-arcgis-js-app, Notes,note 
+523,generator-arcgis-js-app, Getting To Know Yeoman,get To know yeoman 
+524,generator-arcgis-js-app, License,licens 
+525,tilelive-mapnik, tilelive-mapnik,tilelive-mapnik 
+526,tilelive-mapnik, Installation,instal 
+527,tilelive-mapnik, Usage,usag 
+528,map-vectorizer, An NYPL Labs project,An nypl lab project 
+529,map-vectorizer, Like OCR for maps,like ocr map 
+530,map-vectorizer, Example input,exampl input 
+531,map-vectorizer, Example output,exampl output 
+532,map-vectorizer, Extra feature detection,extra featur detect 
+533,map-vectorizer, Dependencies,depend 
+534,map-vectorizer, First run,first run 
+535,map-vectorizer, Configuring,configur 
+536,map-vectorizer, Required argument,requir argument 
+537,map-vectorizer, Semi-optional arguments,semi-opt argument 
+538,map-vectorizer, Optional arguments,option argument 
+539,map-vectorizer, Customizing The Vectorizer to your own maps,custom the vector map 
+540,map-vectorizer, Templates and other files,templat file 
+541,map-vectorizer, Other scripts,other script 
+542,map-vectorizer, Acknowledgements,acknowledg 
+543,map-vectorizer, Change log,chang log 
+544,LapSRN, Deep Laplacian Pyramid Networks for Fast and Accurate Super-Resolution (CVPR 2017),deep laplacian pyramid network fast accur super-resolut ( cvpr 2017 ) 
+545,LapSRN, Table of Contents,tabl content 
+546,LapSRN, Introduction,introduct 
+547,LapSRN, Citation,citat 
+548,LapSRN, Requirements and Dependencies,requir depend 
+549,LapSRN, Installation,instal 
+550,LapSRN, Start MATLAB,start matlab 
+551,LapSRN, Test Pre-trained Models,test pre-train model 
+552,LapSRN, Training LapSRN,train lapsrn 
+553,LapSRN, Training MS-LapSRN,train ms-lapsrn 
+554,LapSRN, Third-Party Implementation,third-parti implement 
+555,RESCAN, RESCAN: Recurrent Squeeze-and-Excitation Context Aggregation Net,rescan : recurr squeeze-and-excit context aggreg net 
+556,RESCAN, Prerequisite,prerequisit 
+557,RESCAN, Project Structure,project structur 
+558,RESCAN, Best Practices,best practic 
+559,RESCAN, Default Dataset settings,default dataset set 
+560,RESCAN," Train, Test and Show","train , test show "
+561,RESCAN, Scripts,script 
+562,RESCAN, Cite,cite 
+563,RESCAN, Recent Works,recent work 
+564,sg2im, sg2im,sg2im 
+565,sg2im, Model,model 
+566,sg2im, Setup,setup 
+567,sg2im, Pretrained Models,pretrain model 
+568,sg2im, Running Models,run model 
+569,sg2im, (Optional): GraphViz,( option ) : graphviz 
+570,sg2im, Training new models,train new model 
+571,pymeshfix, Test of pymeshfix without VTK module,test pymeshfix without vtk modul 
+572,pymeshfix, Performs same mesh repair while leveraging VTK's plotting/mesh loading,perform mesh repair leverag vtk 's plotting/mesh load 
+573,pymeshfix, Read mesh from infile and output cleaned mesh to outfile,read mesh infil output clean mesh outfil 
+574,pymeshfix, Generate vertex and face arrays of cleaned mesh,gener vertex face array clean mesh 
+575,pymeshfix, where v and f are numpy arrays or python lists,v f numpi array python list 
+576,pymeshfix, Create object from vertex and face arrays,creat object vertex face array 
+577,pymeshfix, Plot input,plot input 
+578,pymeshfix, Repair input mesh,repair input mesh 
+579,pymeshfix, Access the repaired mesh with vtk,access repair mesh vtk 
+580,pymeshfix," Or, access the resulting arrays directly from the object","Or , access result array directli object "
+581,pymeshfix, numpy np.float array,numpi np.float array 
+582,pymeshfix, numpy np.int32 array,numpi np.int32 array 
+583,pymeshfix, View the repaired mesh (requires vtkInterface),view repair mesh ( requir vtkinterfac ) 
+584,pymeshfix, Save the mesh,save mesh 
+585,pymeshfix, Create TMesh object,creat tmesh object 
+586,pymeshfix," tin.load_array(v, f)  or read arrays from memory","tin.load_array ( v , f ) read array memori "
+587,pymeshfix, Attempt to join nearby components,attempt join nearbi compon 
+588,pymeshfix, tin.join_closest_components(),tin.join_closest_compon ( ) 
+589,pymeshfix, Fill holes,fill hole 
+590,pymeshfix, Clean (removes self intersections),clean ( remov self intersect ) 
+591,pymeshfix, Check mesh for holes again,check mesh hole 
+592,pymeshfix, Clean again if necessary...,clean necessari ... 
+593,pymeshfix, Output mesh,output mesh 
+594,pymeshfix, or return numpy arrays,return numpi array 
+595,neural-motifs, neural-motifs,neural-motif 
+596,neural-motifs," Like this work, or scene understanding in general? You might be interested in checking out my brand new dataset VCR: Visual Commonsense Reasoning, at [visualcommonsense.com](https://visualcommonsense.com)!","like work , scene understand gener ? you might interest check brand new dataset vcr : visual commonsens reason , [ visualcommonsense.com ] ( http : //visualcommonsense.com ) ! "
+597,neural-motifs, Bibtex,bibtex 
+598,neural-motifs, Setup,setup 
+599,neural-motifs, help,help 
+600,Flow-Guided-Feature-Aggregation, Flow-Guided Feature Aggregation for Video Object Detection,flow-guid featur aggreg video object detect 
+601,Flow-Guided-Feature-Aggregation, Introduction,introduct 
+602,Flow-Guided-Feature-Aggregation, Disclaimer,disclaim 
+603,Flow-Guided-Feature-Aggregation, License,licens 
+604,Flow-Guided-Feature-Aggregation, Citing Flow-Guided Feature Aggregation,cite flow-guid featur aggreg 
+605,Flow-Guided-Feature-Aggregation, Main Results,main result 
+606,Flow-Guided-Feature-Aggregation, Requirements: Software,requir : softwar 
+607,Flow-Guided-Feature-Aggregation, Requirements: Hardware,requir : hardwar 
+608,Flow-Guided-Feature-Aggregation, Installation,instal 
+609,Flow-Guided-Feature-Aggregation, Demo,demo 
+610,Flow-Guided-Feature-Aggregation, Preparation for Training & Testing,prepar train & test 
+611,Flow-Guided-Feature-Aggregation, Usage,usag 
+612,Flow-Guided-Feature-Aggregation, Misc.,misc . 
+613,Flow-Guided-Feature-Aggregation, FAQ,faq 
+614,facebookresearch-pyrobot, What can you do with PyRobot?,what pyrobot ? 
+615,facebookresearch-pyrobot, Installation,instal 
+616,facebookresearch-pyrobot, Installing both PyRobot and LoCoBot dependencies,instal pyrobot locobot depend 
+617,facebookresearch-pyrobot, Installing just PyRobot,instal pyrobot 
+618,facebookresearch-pyrobot, Getting Started,get start 
+619,facebookresearch-pyrobot, The Team,the team 
+620,facebookresearch-pyrobot, Future features,futur featur 
+621,facebookresearch-pyrobot, Citation,citat 
+622,facebookresearch-pyrobot, License,licens 
+623,Detectron, Detectron,detectron 
+624,Detectron, Introduction,introduct 
+625,Detectron, Update,updat 
+626,Detectron, License,licens 
+627,Detectron, Citing Detectron,cite detectron 
+628,Detectron, Model Zoo and Baselines,model zoo baselin 
+629,Detectron, Installation,instal 
+630,Detectron, Quick Start: Using Detectron,quick start : use detectron 
+631,Detectron, Getting Help,get help 
+632,Detectron, References,refer 
+633,DeepMVS, DeepMVS: Learning Multi-View Stereopsis,deepmv : learn multi-view stereopsi 
+634,DeepMVS, Training,train 
+635,DeepMVS, Requirements,requir 
+636,DeepMVS, Instructions,instruct 
+637,DeepMVS, Testing,test 
+638,DeepMVS, Requirements,requir 
+639,DeepMVS, Instructions,instruct 
+640,DeepMVS, License,licens 
+641,readgssi, readgssi,readgssi 
+642,readgssi, requirements,requir 
+643,readgssi, installation,instal 
+644,readgssi, installing from source:,instal sourc : 
+645,readgssi, usage,usag 
+646,readgssi, basic functionality,basic function 
+647,readgssi, CSV output,csv output 
+648,readgssi, plotting,plot 
+649,readgssi, example 1A,exampl 1A 
+650,readgssi, example 1B,exampl 1B 
+651,readgssi, example 1C: gain can be tricky depending on your colormap,exampl 1C : gain tricki depend colormap 
+652,readgssi, example 2A: no background removal,exampl 2A : background remov 
+653,readgssi, example 2B: horizontal mean BGR algorithm applied,exampl 2B : horizont mean bgr algorithm appli 
+654,readgssi, contributors,contributor 
+655,readgssi, citation suggestion:,citat suggest : 
+656,readgssi, known bugs:,known bug : 
+657,readgssi, future,futur 
+658,integral-human-pose, Integral Human Pose Regression,integr human pose regress 
+659,integral-human-pose, Introduction,introduct 
+660,integral-human-pose, Disclaimer,disclaim 
+661,integral-human-pose, License,licens 
+662,integral-human-pose, Citing Papers,cite paper 
+663,integral-human-pose, Main Results,main result 
+664,integral-human-pose, Environment,environ 
+665,integral-human-pose, Installation,instal 
+666,integral-human-pose, Preparation for Training & Testing,prepar train & test 
+667,integral-human-pose, Extensions,extens 
+668,gdal-docker, GDAL Docker Images,gdal docker imag 
+669,gdal-docker, Usage,usag 
+670,pyro-ppl-pyro, Installing,instal 
+671,pyro-ppl-pyro, Installing a stable Pyro release,instal stabl pyro releas 
+672,pyro-ppl-pyro, Installing Pyro dev branch,instal pyro dev branch 
+673,pyro-ppl-pyro, Running Pyro from a Docker Container,run pyro docker contain 
+674,pyro-ppl-pyro, Citation,citat 
+675,3D-ResNets-PyTorch, 3D ResNets for Action Recognition,3D resnet action recognit 
+676,3D-ResNets-PyTorch, Update (2018/2/21),updat ( 2018/2/21 ) 
+677,3D-ResNets-PyTorch, Update (2018/01/16),updat ( 2018/01/16 ) 
+678,3D-ResNets-PyTorch, Update (2017/11/27),updat ( 2017/11/27 ) 
+679,3D-ResNets-PyTorch, Summary,summari 
+680,3D-ResNets-PyTorch, Citation,citat 
+681,3D-ResNets-PyTorch, Pre-trained models,pre-train model 
+682,3D-ResNets-PyTorch, Performance of the models on Kinetics,perform model kinet 
+683,3D-ResNets-PyTorch, Requirements,requir 
+684,3D-ResNets-PyTorch, Preparation,prepar 
+685,3D-ResNets-PyTorch, ActivityNet,activitynet 
+686,3D-ResNets-PyTorch, Kinetics,kinet 
+687,3D-ResNets-PyTorch, UCF-101,ucf-101 
+688,3D-ResNets-PyTorch, HMDB-51,hmdb-51 
+689,3D-ResNets-PyTorch, Running the code,run code 
+690,striplog, Of course you don't need this one if you didn't install it yet.,Of cours n't need one n't instal yet . 
+691,striplog, Or whatever was the last version to build.,Or whatev last version build . 
+692,harismuneer-Ultimate-Facebook-Scraper, 🔥 Ultimate Facebook Scrapper ,🔥 ultim facebook scrapper 
+693,harismuneer-Ultimate-Facebook-Scraper, Note,note 
+694,harismuneer-Ultimate-Facebook-Scraper, Sample,sampl 
+695,harismuneer-Ultimate-Facebook-Scraper, Screenshot,screenshot 
+696,harismuneer-Ultimate-Facebook-Scraper, Usage,usag 
+697,harismuneer-Ultimate-Facebook-Scraper, Installation,instal 
+698,harismuneer-Ultimate-Facebook-Scraper, How to Run,how run 
+699,harismuneer-Ultimate-Facebook-Scraper, Citation,citat 
+700,harismuneer-Ultimate-Facebook-Scraper, Important Message,import messag 
+701,harismuneer-Ultimate-Facebook-Scraper, Authors,author 
+702,harismuneer-Ultimate-Facebook-Scraper, Haris Muneer,hari muneer 
+703,harismuneer-Ultimate-Facebook-Scraper, Hassaan Elahi,hassaan elahi 
+704,harismuneer-Ultimate-Facebook-Scraper, Contributions Welcome,contribut welcom 
+705,harismuneer-Ultimate-Facebook-Scraper, Issues,issu 
+706,harismuneer-Ultimate-Facebook-Scraper, License,licens 
+707,nextflow-io-nextflow, Contents,content 
+708,GANimation, GANimation: Anatomically-aware Facial Animation from a Single Image,ganim : anatomically-awar facial anim singl imag 
+709,GANimation, [[Project]](http://www.albertpumarola.com/research/GANimation/index.html)[ [Paper]](https://arxiv.org/abs/1807.09251) ,[ [ project ] ] ( http : //www.albertpumarola.com/research/ganimation/index.html ) [ [ paper ] ] ( http : //arxiv.org/abs/1807.09251 ) 
+710,GANimation, Prerequisites,prerequisit 
+711,GANimation, Data Preparation,data prepar 
+712,GANimation, Run,run 
+713,GANimation, Citation,citat 
+714,two-stream-dyntex-synth, Two-Stream Convolutional Networks for Dynamic Texture Synthesis,two-stream convolut network dynam textur synthesi 
+715,two-stream-dyntex-synth, Requirements,requir 
+716,two-stream-dyntex-synth, Setup,setup 
+717,two-stream-dyntex-synth, Dynamic texture synthesis,dynam textur synthesi 
+718,two-stream-dyntex-synth, Example usage,exampl usag 
+719,two-stream-dyntex-synth, Dynamics style transfer,dynam style transfer 
+720,two-stream-dyntex-synth, Example usage,exampl usag 
+721,two-stream-dyntex-synth, Temporally-endless dynamic texture synthesis,temporally-endless dynam textur synthesi 
+722,two-stream-dyntex-synth, Incremental dynamic texture synthesis,increment dynam textur synthesi 
+723,two-stream-dyntex-synth, Static texture synthesis,static textur synthesi 
+724,two-stream-dyntex-synth, Notes,note 
+725,two-stream-dyntex-synth, Citation,citat 
+726,two-stream-dyntex-synth, License,licens 
+727,ipyleaflet, ipyleaflet,ipyleaflet 
+728,ipyleaflet, Usage,usag 
+729,ipyleaflet, Installation,instal 
+730,ipyleaflet, Installation from sources,instal sourc 
+731,ipyleaflet, Documentation,document 
+732,ipyleaflet, License,licens 
+733,ipyleaflet, Related projects,relat project 
+734,rasterio, Read raster bands directly to Numpy arrays.,read raster band directli numpi array . 
+735,rasterio, Combine arrays in place. Expecting that the sum will,combin array place . expect sum 
+736,rasterio," temporarily exceed the 8-bit integer range, initialize it as","temporarili exceed 8-bit integ rang , initi "
+737,rasterio, a 64-bit float (the numpy default) array. Adding other,64-bit float ( numpi default ) array . ad 
+738,rasterio," arrays to it in-place converts those arrays ""up"" and",array in-plac convert array `` '' 
+739,rasterio, preserves the type of the total array.,preserv type total array . 
+740,rasterio, Write the product as a raster band to a new 8-bit file. For,write product raster band new 8-bit file . for 
+741,rasterio," the new file's profile, we start with the meta attributes of","new file 's profil , start meta attribut "
+742,rasterio," the source file, but then change the band count to 1, set the","sourc file , chang band count 1 , set "
+743,rasterio," dtype to uint8, and specify LZW compression.","dtype uint8 , specifi lzw compress . "
+744,rasterio, Printed:,print : 
+745,rasterio," (791, 718)","( 791 , 718 ) "
+746,rasterio," {u'units': u'm', u'no_defs': True, u'ellps': u'WGS84', u'proj': u'utm', u'zone': 18}","{ u'unit ' : u 'm ' , u'no_def ' : true , u'ellp ' : u'wgs84 ' , u'proj ' : u'utm ' , u'zon ' : 18 } "
+747,rasterio," Affine(300.0379266750948, 0.0, 101985.0,","affin ( 300.0379266750948 , 0.0 , 101985.0 , "
+748,rasterio,"        0.0, -300.041782729805, 2826915.0)","0.0 , -300.041782729805 , 2826915.0 ) "
+749,rasterio, 3,3 
+750,rasterio," [1, 2, 3]","[ 1 , 2 , 3 ] "
+751,rasterio, Printed:,print : 
+752,rasterio," ((100, 200), (100, 200))","( ( 100 , 200 ) , ( 100 , 200 ) ) "
+753,puppeteer, Puppeteer,puppet 
+754,puppeteer, [API](https://github.com/GoogleChrome/puppeteer/blob/v1.18.0/docs/api.md) | [FAQ](faq) | [Contributing](https://github.com/GoogleChrome/puppeteer/blob/master/CONTRIBUTING.md) | [Troubleshooting](https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md),[ api ] ( http : //github.com/googlechrome/puppeteer/blob/v1.18.0/docs/api.md ) | [ faq ] ( faq ) | [ contribut ] ( http : //github.com/googlechrome/puppeteer/blob/master/contributing.md ) | [ troubleshoot ] ( http : //github.com/googlechrome/puppeteer/blob/master/docs/troubleshooting.md ) 
+755,puppeteer, What can I do?,what I ? 
+756,puppeteer, Getting Started,get start 
+757,puppeteer, Installation,instal 
+758,puppeteer, puppeteer-core,puppeteer-cor 
+759,puppeteer, Usage,usag 
+760,puppeteer, Default runtime settings,default runtim set 
+761,puppeteer, Resources,resourc 
+762,puppeteer, Debugging tips,debug tip 
+763,puppeteer, Basic verbose logging,basic verbos log 
+764,puppeteer, Protocol traffic can be rather noisy. This example filters out all Network domain messages,protocol traffic rather noisi . thi exampl filter network domain messag 
+765,puppeteer, Contributing to Puppeteer,contribut puppet 
+766,puppeteer, FAQ,faq 
+767,puppeteer, Q: Who maintains Puppeteer?,Q : who maintain puppet ? 
+768,puppeteer, Q: What are Puppeteer’s goals and principles?,Q : what puppet ’ goal principl ? 
+769,puppeteer, Q: Is Puppeteer replacing Selenium/WebDriver?,Q : Is puppet replac selenium/webdriv ? 
+770,puppeteer, Q: Why doesn’t Puppeteer v.XXX work with Chromium v.YYY?,Q : whi ’ puppet v.xxx work chromium v.yyi ? 
+771,puppeteer, Q: Which Chromium version does Puppeteer use?,Q : which chromium version puppet use ? 
+772,puppeteer, Q: What’s considered a “Navigation”?,Q : what ’ consid “ navig ” ? 
+773,puppeteer," Q: What’s the difference between a “trusted"" and ""untrusted"" input event?",Q : what ’ differ “ trust '' `` untrust '' input event ? 
+774,puppeteer, Q: What features does Puppeteer not support?,Q : what featur puppet support ? 
+775,puppeteer, Q: I am having trouble installing / running Puppeteer in my test environment. Where should I look for help?,Q : I troubl instal / run puppet test environ . where I look help ? 
+776,puppeteer, Q: How do I try/test a prerelease version of Puppeteer?,Q : how I try/test prereleas version puppet ? 
+777,puppeteer, Q: I have more questions! Where do I ask?,Q : I question ! where I ask ? 
+778,tensorflow, Installation,instal 
+779,tensorflow, *Try your first TensorFlow program*,*tri first tensorflow program* 
+780,tensorflow, Contribution guidelines,contribut guidelin 
+781,tensorflow, Continuous build status,continu build statu 
+782,tensorflow, Official Builds,offici build 
+783,tensorflow, Community Supported Builds,commun support build 
+784,tensorflow, For more information,for inform 
+785,tensorflow, License,licens 
+786,vue, What's the difference between Patreon and OpenCollective?,what 's differ patreon opencollect ? 
+787,vue, Introduction,introduct 
+788,vue, Browser Compatibility,browser compat 
+789,vue, Ecosystem,ecosystem 
+790,vue, Documentation,document 
+791,vue, Questions,question 
+792,vue, Issues,issu 
+793,vue, Changelog,changelog 
+794,vue, Stay In Touch,stay In touch 
+795,vue, Contribution,contribut 
+796,vue, License,licens 
+797,reduxjs-react-redux, Installation,instal 
+798,reduxjs-react-redux, React Native,react nativ 
+799,reduxjs-react-redux, Documentation,document 
+800,reduxjs-react-redux, How Does It Work?,how doe It work ? 
+801,reduxjs-react-redux, License,licens 
+802,pyansys, create a square area using keypoints,creat squar area use keypoint 
+803,pyansys, Sample *.cdb,sampl *.cdb 
+804,pyansys, Read ansys archive file,read ansi archiv file 
+805,pyansys, Print raw data from cdb,print raw data cdb 
+806,pyansys, Create a vtk unstructured grid from the raw data and plot it,creat vtk unstructur grid raw data plot 
+807,pyansys, write this as a vtk xml file ,write vtk xml file 
+808,pyansys, Load this from vtk,load vtk 
+809,pyansys, Load the reader from pyansys,load reader pyansi 
+810,pyansys, Sample result file,sampl result file 
+811,pyansys, Create result object by loading the result file,creat result object load result file 
+812,pyansys, Beam natural frequencies,beam natur frequenc 
+813,pyansys, Get the 1st bending mode shape.  Results are ordered based on the sorted ,get 1st bend mode shape . result order base sort 
+814,pyansys, node numbering.  Note that results are zero indexed,node number . note result zero index 
+815,pyansys, Plot the displacement of Mode 0 in the x direction,plot displac mode 0 x direct 
+816,pyansys, Display node averaged stress in x direction for result 6,display node averag stress x direct result 6 
+817,pyansys, Load the reader from pyansys,load reader pyansi 
+818,pyansys, load the full file,load full file 
+819,pyansys, returns upper triangle only,return upper triangl 
+820,pyansys," make k, m full, symmetric matricies","make k , full , symmetr matrici "
+821,pyansys, condition the k matrix,condit k matrix 
+822,pyansys," to avoid getting the ""Factor is exactly singular"" error",avoid get `` factor exactli singular '' error 
+823,pyansys, Solve,solv 
+824,pyansys, System natural frequencies,system natur frequenc 
+825,kosmtik, Kosmtik,kosmtik 
+826,kosmtik, Lite,lite 
+827,kosmtik, Screenshot,screenshot 
+828,kosmtik, Install or Update,instal updat 
+829,kosmtik, Usage,usag 
+830,kosmtik, Configuration file,configur file 
+831,kosmtik, Local config,local config 
+832,kosmtik, Example of a json file,exampl json file 
+833,kosmtik, Example of a js module,exampl js modul 
+834,kosmtik, Custom renderers,custom render 
+835,kosmtik, Known plugins,known plugin 
+836,pyGeoPressure, pyGeoPressure -->,pygeopressur -- > 
+837,pyGeoPressure, Features,featur 
+838,pyGeoPressure, Getting Started,get start 
+839,pyGeoPressure, Installation,instal 
+840,pyGeoPressure, Example,exampl 
+841,pyGeoPressure, Pore Pressure Prediction using well log data,pore pressur predict use well log data 
+842,pyGeoPressure, Documentation,document 
+843,pyGeoPressure, Contribute,contribut 
+844,pyGeoPressure, Report Bugs,report bug 
+845,pyGeoPressure, Suggest Enhancements,suggest enhanc 
+846,pyGeoPressure, Submit Pull Requests,submit pull request 
+847,pyGeoPressure, Support,support 
+848,pyGeoPressure, License,licens 
+849,DBNet, News!,new ! 
+850,DBNet, Contents,content 
+851,DBNet, Introduction,introduct 
+852,DBNet, Requirements,requir 
+853,DBNet, Quick Start,quick start 
+854,DBNet, Training,train 
+855,DBNet, Evaluation    ,evalu 
+856,DBNet, Prediction,predict 
+857,DBNet, Baseline,baselin 
+858,DBNet, Contributors,contributor 
+859,DBNet, Citation,citat 
+860,DBNet, License,licens 
