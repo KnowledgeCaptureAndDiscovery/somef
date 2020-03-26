@@ -45,7 +45,6 @@ def extract_categories_using_headers(text):
     for i, j in zip(Header, Content):
         df = df.append({'Header': i, 'Content': j}, ignore_index=True)
 
-    print(df)
     # Clean the content
     df['Content'] = df['Content'].str.split("[\n]+", n=1, expand=True)[1]
     df['Header'] = df['Header'].str.replace('#', '')

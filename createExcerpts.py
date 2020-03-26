@@ -42,6 +42,7 @@ def unmark(text):
 def split_into_excerpts(string_list):
 	divisions = []
 	for text in string_list:
-		divisions = divisions + unmark(text).splitlines()
+		if text:
+			divisions = divisions + unmark(text).splitlines()
 	divisions = [i for i in divisions if i]
 	return divisions

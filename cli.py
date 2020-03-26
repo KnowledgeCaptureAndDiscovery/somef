@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 import sys
 import os
 from os import path
+from pathlib import Path
 import requests
 from markdown import Markdown
 from bs4 import BeautifulSoup
@@ -57,12 +58,14 @@ keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_
 ## Function uses the repository_url provided to load required information from github.
 ## Information kept from the repository is written in keep_keys.
 ## Returns the readme text and required metadata
-def load_repository_metadata(repository_url):
+def load_repository_metadata(repository_url, header):
     print("Loading Repository Information....")
     ## load general response of the repository
     url = urlparse(repository_url)
     if url.netloc != 'github.com':
         sys.exit("Error: repository must come from github")
+    if len(url.path.split('/')) != 3:
+        sys.exit("Github link is not correct. \nThe correct format is https://github.com/owner/repo_name.")
     _, owner, repo_name = url.path.split('/')
     general_resp = requests.get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header).json() 
 
@@ -115,7 +118,7 @@ def load_repository_metadata(repository_url):
     ## get releases
     releases_list = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/releases', headers=header).json()
     if isinstance(releases_list,dict) and 'message' in releases_list.keys():
-        sys.exit("Error: ",message)        
+        sys.exit("Error: "+general_resp['message'])        
     releases_list = map(lambda release : {'tag_name': release['tag_name'], 'name': release['name'], 'author_name': release['author']['login'], 'body': release['body'], 'tarball_url': release['tarball_url'], 'zipball_url': release['zipball_url'], 'html_url':release['html_url'], 'url':release['url']}, releases_list)
     filtered_resp['releases'] = list(releases_list)
     
@@ -132,11 +135,11 @@ def create_excerpts(string_list):
 
 ## Function takes readme text as input and runs the provided classifiers on it
 ## Returns the dictionary containing scores for each excerpt.
-def run_classifiers(excerpts):
+def run_classifiers(excerpts, file_paths):
     score_dict={}
     for category in categories:
         if category not in file_paths.keys():
-            sys.exit("Error: Category file path not present in config.json")
+            sys.exit("Error: Category " + category + " file path not present in config.json")
         file_name = file_paths[category]
         if not path.exists(file_name):
             sys.exit("Error: File/Directory does not exist")
@@ -222,10 +225,10 @@ def merge(header_predictions, predictions, citations):
             predictions['citation'] = []
         predictions['citation'].insert(0,{'excerpt': citations[i],'confidence': [1.0]})
 
-    for header in header_predictions:
-        if header not in predictions.keys():
-            predictions[header] = []
-        predictions[header].insert(0,header_predictions[header])
+    for headers in header_predictions:
+        if headers not in predictions.keys():
+            predictions[headers] = []
+        predictions[headers].insert(0,header_predictions[headers])
     print("Merging successful. \n")
     return predictions
 
@@ -245,32 +248,28 @@ def save_json(git_data, repo_data, outfile):
     with open(outfile, 'w') as output:
         json.dump(repo_data, output)  
 
-if not path.exists('config.json'):
-    sys.exit("Error: Please provide a config.json file.")
-header = {}
-with open('config.json') as fh:
-    file_paths = json.load(fh)
-if 'Authorization' in file_paths.keys():
-    header['Authorization'] = file_paths['Authorization']
-header['accept'] = 'application/vnd.github.v3+json'
-
-argparser = argparse.ArgumentParser(description="Fetch Github README, split paragraphs, run classifiers and output json containing repository information, classified excerpts and confidence.")
-src = argparser.add_mutually_exclusive_group(required=True)
-src.add_argument('-r', '--repo_url', help="URL of the Github repository")
-src.add_argument('-d', '--doc_src', help='path to documentation file')
-argparser.add_argument('-o', '--output', help="path for output json", required=True)
-argparser.add_argument('-t','--threshold', help="threshold score", type=restricted_float, default=0.5)
-argv = argparser.parse_args()
 
 ## Function runs all the required components of the cli for a repository
 def run_cli(repo_url, threshold, output):
-    text, github_data = load_repository_metadata(repo_url)
+    credentials_file = Path(
+        os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
+    ).expanduser()
+    if credentials_file.exists():
+        with credentials_file.open("r") as fh:
+            file_paths = json.load(fh)
+    else:
+        sys.exit("Error: Please provide a config.json file.")
+    header = {}
+    if 'Authorization' in file_paths.keys():
+        header['Authorization'] = file_paths['Authorization']
+    header['accept'] = 'application/vnd.github.v3+json'
+    text, github_data = load_repository_metadata(repo_url, header)
     github_data = {}
     unfiltered_text = text
     header_predictions, string_list = extract_categories_using_header(unfiltered_text)
     text = unmark(text)
     excerpts = create_excerpts(string_list)
-    score_dict = run_classifiers(excerpts)
+    score_dict = run_classifiers(excerpts, file_paths)
     predictions = classify(score_dict, threshold)
     citations = extract_bibtex(text)
     predictions = merge(header_predictions, predictions, citations)
@@ -278,6 +277,17 @@ def run_cli(repo_url, threshold, output):
 
 ## Function runs all the required components of the cli on a given document file
 def run_cli_document(doc_src, threshold, output):
+    credentials_file = Path(
+        os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
+    ).expanduser()
+    if credentials_file.exists():
+        with credentials_file.open("r") as fh:
+            file_paths = json.load(fh)
+    else:
+        sys.exit("Error: Please provide a config.json file.")
+    if 'Authorization' in file_paths.keys():
+        header['Authorization'] = file_paths['Authorization']
+    header['accept'] = 'application/vnd.github.v3+json'
     if not path.exists(doc_src):
         sys.exit("Error: Document does not exist at given path")
     with open(doc_src, 'r') as doc_fh:
@@ -287,15 +297,23 @@ def run_cli_document(doc_src, threshold, output):
     header_predictions, string_list = extract_categories_using_header(unfiltered_text)
     text = unmark(text)
     excerpts = create_excerpts(string_list)
-    score_dict = run_classifiers(excerpts)
+    score_dict = run_classifiers(excerpts, file_paths)
     predictions = classify(score_dict, threshold)
     citations = extract_bibtex(text)
     predictions = merge(header_predictions, predictions, citations)
     save_json(github_data, predictions, output)
 
-if argv.repo_url:
-    run_cli(argv.repo_url, argv.threshold, argv.output)
-elif argv.doc_src:
-    run_cli_document(argv.doc_src, argv.threshold, argv.output)
-else :
-    sys.exit("Either repository url or document path should be provided.")
+if __name__=='__main__':
+    argparser = argparse.ArgumentParser(description="Fetch Github README, split paragraphs, run classifiers and output json containing repository information, classified excerpts and confidence.")
+    src = argparser.add_mutually_exclusive_group(required=True)
+    src.add_argument('-r', '--repo_url', help="URL of the Github repository")
+    src.add_argument('-d', '--doc_src', help='path to documentation file')
+    argparser.add_argument('-o', '--output', help="path for output json", required=True)
+    argparser.add_argument('-t','--threshold', help="threshold score", type=restricted_float, default=0.5)
+    argv = argparser.parse_args()
+    if argv.repo_url:
+        run_cli(argv.repo_url, argv.threshold, argv.output)
+    elif argv.doc_src:
+        run_cli_document(argv.doc_src, argv.threshold, argv.output)
+    else :
+        sys.exit("Either repository url or document path should be provided.")
