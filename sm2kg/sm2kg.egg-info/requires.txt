@@ -1,0 +1,8 @@
+numpy
+pandas
+sklearn
+nltk
+matplotlib
+bs4
+requests
+markdown

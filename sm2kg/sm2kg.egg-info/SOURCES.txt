@@ -11,4 +11,9 @@ sm2kg.egg-info/PKG-INFO
 sm2kg.egg-info/SOURCES.txt
 sm2kg.egg-info/dependency_links.txt
 sm2kg.egg-info/not-zip-safe
+sm2kg.egg-info/requires.txt
 sm2kg.egg-info/top_level.txt
+sm2kg/models/citation.sk
+sm2kg/models/description.sk
+sm2kg/models/installation.sk
+sm2kg/models/invocation.sk
