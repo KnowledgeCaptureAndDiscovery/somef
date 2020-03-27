@@ -30,8 +30,39 @@
 	height: 100%;
 	float: right;	
 	font-size: 12px;
-
 }
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+.form-control{
+  width: 100% !important;
+  height: 75px !important;
+  padding: 12px 20px !important;
+  box-sizing: border-box !important;
+  border: 2px solid #ccc;
+  border-radius: 4px !important;
+  background-color: #f8f8f8;
+  resize: none !important;
+  text-align: initial !important;
+}
+
+.control-label{
+  font-size: 20px !important;
+}
+
+.container-content{
+  top: 100000px !important;
+}
+
+.modal-header{
+  text-align: center !important;
+}
+
 
 @keyframes fadeInOut {
   0% {
@@ -107,6 +138,4 @@
   }
   100% {
     opacity:0;
-}
-
 

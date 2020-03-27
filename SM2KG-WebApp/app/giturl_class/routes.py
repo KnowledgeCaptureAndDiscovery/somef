@@ -2,7 +2,7 @@ from flask import render_template, flash, send_from_directory, send_file
 from app.giturl_class.url_form import UrlForm
 from app.giturl_class.download_form import DownloadButton
 from app.giturl_class import bp
-from sm2kg import cli
+#from sm2kg import cli
 import json
 import os
 
@@ -36,10 +36,10 @@ def urlPage():
         
     if urlForm.validate_on_submit() and urlForm.submit.data:
         #flash("Classifying data")
-        try: 
-            cli.run_cli(urlForm.giturl.data, .7, 'data/output.json')
-        except:
-            print("cli error occured")
+        # try: 
+        #     cli.run_cli(urlForm.giturl.data, .7, 'data/output.json')
+        # except:
+        #     print("cli error occured")
       
 
         with open('data/outputput.json') as json_file:

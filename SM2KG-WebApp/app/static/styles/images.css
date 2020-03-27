@@ -1,0 +1,34 @@
+img {
+	border-radius: 50%;
+	height: 250px;
+	width: 225px;
+    display: block;
+    margin: 0 auto;
+	image-orientation: from-image;
+}
+
+.container {
+	align-items: flex-start;
+	align-content: flex;
+}
+
+.jumbotron {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+.center {
+  text-align: center;
+}
+
+.card-title {
+  text-align: center;
+}
+
+.card-img-top{
+  text-align: center;
+}
+
+.card-text{
+  text-align: center;
+}
