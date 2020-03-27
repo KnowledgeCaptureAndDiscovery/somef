@@ -30,9 +30,14 @@
 	height: 100%;
 	float: right;	
 	font-size: 12px;
-
 }
 
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
 
 .form-control{
   width: 100% !important;

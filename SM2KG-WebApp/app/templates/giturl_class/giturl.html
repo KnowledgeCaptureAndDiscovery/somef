@@ -17,7 +17,11 @@ SM2KG
 
 <div class="container">
 
-<nav class="navbar navbar-default">
+
+
+
+
+<nav class="navbar navbar-inverse navbar-expand-lg">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -41,7 +45,7 @@ SM2KG
 
 
 <a href="https://www.isi.edu/">
-	<img src="/static/images/KnowledgeGraph.png" alt="KnowledgeGraph">
+	<img src="/static/images/KnowledgeGraph.png" alt="KnowledgeGraph" height="50%" width="50%" class="center">
 </a>
 
 
@@ -87,11 +91,7 @@ SM2KG
 			    </div>
 			  </div>
 			</div>
-
-
-
-
-				</button>
+			</button>
 
 			</div>	
 		</div>
@@ -112,55 +112,56 @@ SM2KG
 </form>
 
 
+<div class="panel panel-default">
+  <div class="panel-body">
 
-{% if showDownload %}
-<form action="" method="post" novalidate>
-	{{ downloadForm.submit_download }}
-</form>
-{% endif %}
-<!-- display git name -->
-{% if git_name and showDownload %}
-	<p class="gitdata-header"> {{ git_name }} </p>
-{% endif %}
-{% if not git_name and showDownload %}
-	<p class="gitdata-header">No Repo Name Found</p>
-{% endif %}
+	<!-- display git name -->
+	{% if git_name and showDownload %}
+		<p class="gitdata-header"> {{ git_name }}</p>
+	{% endif %}
+	{% if not git_name and showDownload %}
+		<p class="gitdata-header">No Repo Name Found</p>
+	{% endif %}
 
-<!-- display git owner -->
-{% if git_owner and showDownload %}
-<p class="gitdata-owner">Owned by <a href="https://github.com/{{ git_owner }}">{{ git_owner }}</a></p>
-{% endif %}
-{% if not git_owner and showDownload %}
-	<p class="gitdata-owner">No Owner Found</p>
-{% endif %}
+	<!-- display git owner -->
+	{% if git_owner and showDownload %}
+	<p class="gitdata-owner">Owned by <a href="https://github.com/{{ git_owner }}">{{ git_owner }}</a></p>
+	{% endif %}
+	{% if not git_owner and showDownload %}
+		<p class="gitdata-owner">No Owner Found</p>
+	{% endif %}
 
-<div class="gitdata-fetchdata">
-	<div class="gitdata-fetchdataleft">
-		{% if git_license %}
-		<p> License: {{ git_license['name'] }}, {{ git_license['url'] }} </p>
-		{% endif %}
+	<div class="gitdata-fetchdata">
+		<div class="gitdata-fetchdataleft">
+			{% if git_license %}
+			<p> License: {{ git_license['name'] }}, <a href="{{ git_license['url'] }}"></a> </p>
+			{% endif %}
 
-		{% if git_forks_url %}
-		<p> Forks Url: <a href="{{ git_forks_url }}">{{ git_forks_url }}</a></p>
-		{% endif %}
+			{% if git_forks_url %}
+			<p> Forks Url: <a href="{{ git_forks_url }}">{{ git_forks_url }}</a></p>
+			{% endif %}
+		</div>
+		<div class="gitdata-fetchdataright">
+			{% if git_topics %}
+				<p>Topics: 
+				{% for i in git_topics %}
+					{{ i }}
+				{% endfor %}
+				</p>
+			{% endif %}
+			{%if git_languages %}
+				<p>Languages: 
+				{% for i in git_languages %}
+					{{ i }}
+				{% endfor %}
+			{% endif %}
+			</p>
+			{% if git_readme_url %}
+			<p> README Url: <a href="{{ git_readme_url }}">{{ git_readme_url }}</a></p>
+			{% endif %}
+	  </div>
 	</div>
-	<div class="gitdata-fetchdataright">
-		<p>Topics: 
-		{% for i in git_topics %}
-			{{ i }}
-		{% endfor %}
-		</p>
-		<p>Languages: 
-		{% for i in git_languages %}
-			{{ i }}
-		{% endfor %}
-		</p>
-		{% if git_readme_url %}
-		<p> README Url: <a href="{{ git_readme_url }}">{{ git_readme_url }}</a></p>
-		{% endif %}
-		
-
-	</div>
+</div>
 </div>
 <br/>
 <br/>
@@ -172,6 +173,7 @@ SM2KG
 	  <li><a data-toggle="tab" href="#menu1">Installation</a></li>
 	  <li><a data-toggle="tab" href="#menu2">Invocation</a></li>
 	  <li><a data-toggle="tab" href="#menu3">Citation</a></li>
+	  <li><a data-toggle="tab" href="#menu4">Download</a></li>
 	</ul>
 
 
@@ -196,7 +198,7 @@ SM2KG
 				{% for i in installation %}
 					<p> {{ i }} </p>
 				{% endfor %}
-			</div>
+				</div>
 			</div>
 		</div>
 	  </div>
@@ -223,10 +225,25 @@ SM2KG
 			</div>
 		  </div>
 		</div>
+	</div>
+	<div id="menu4" class="tab-pane fade">
+		<div class="panel panel-primary">
+		  <!-- Default panel contents -->
+		  <div class="panel-body fixed-panel" >
+			<div class="well">
+			    <form action="" method="post" novalidate>
+			    	<p> To download the JSON file: {{ downloadForm.submit_download(class="btn btn-light") }}</a> </p>
+
+				</form>
+			</div>
+		  </div>
+		</div>
 	  </div>
 	</div>
+</div>
 {% endif %}
 
 </div>
 {% endblock %}
 </html>
+

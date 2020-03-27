@@ -5,4 +5,4 @@ from wtforms.validators import DataRequired
 class UrlForm(FlaskForm):
     giturl = StringField('Git URL', validators=[DataRequired()], render_kw={"placeholder": "Enter GitHub URL"});
     threshold = StringField('Classifier Threshold', render_kw={"placeholder": "Default value: .80"})
-    submit = SubmitField('Classify')
+    submit = SubmitField('Get Data')
