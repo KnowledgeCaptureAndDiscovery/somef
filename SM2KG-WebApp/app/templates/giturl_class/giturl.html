@@ -15,13 +15,11 @@ SM2KG
       href="{{url_for('static', filename='styles/giturlstyle.css')}}">
 {% endblock %}
 
-<div class="container">
+
+<div class = "big-container">
 
 
-
-
-
-<nav class="navbar navbar-inverse navbar-expand-lg">
+<nav class="navbar navbar-inverse navbar-expand-lg navheader">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -43,6 +41,8 @@ SM2KG
   </div>
 </nav>
 
+<div class = "container">
+
 
 <a href="https://www.isi.edu/">
 	<img src="/static/images/KnowledgeGraph.png" alt="KnowledgeGraph" height="50%" width="50%" class="center">
@@ -63,8 +63,8 @@ SM2KG
 			</div>
 			<div class="col-sm-2">
 				<br><br>
-			<button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#exampleModal">
-			  <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings
+			<button type="button" class="btn btn-defaul" data-toggle="modal" data-target="#exampleModal">
+							  <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
 			</button>
 
 			<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -112,7 +112,7 @@ SM2KG
 </form>
 
 
-<div class="panel panel-default">
+<div class="panel panel-default gitdata-fullmetadata">
   <div class="panel-body">
 
 	<!-- display git name -->
@@ -162,7 +162,7 @@ SM2KG
 	  </div>
 	</div>
 </div>
-</div>
+
 <br/>
 <br/>
 
@@ -242,7 +242,8 @@ SM2KG
 	</div>
 </div>
 {% endif %}
-
+</div>
+</div>
 </div>
 {% endblock %}
 </html>

@@ -41,7 +41,7 @@
 
 .form-control{
   width: 100% !important;
-  height: 75px !important;
+  height: 40px !important;
   padding: 12px 20px !important;
   box-sizing: border-box !important;
   border: 2px solid #ccc;
@@ -95,6 +95,18 @@
   -moz-animation: fadeOut ease 8s;
   -o-animation: fadeOut ease 8s;
   -ms-animation: fadeOut ease 8s;
+}
+
+.navheader {
+  width: 100%; 
+  background-color: white;
+}
+.big-container {
+  width: 100%;
+  background-color: #fffcfd;  
+}
+.gitdata-fullmetadata {
+  background-color: white;
 }
 @keyframes fadeOut {
   0% {
