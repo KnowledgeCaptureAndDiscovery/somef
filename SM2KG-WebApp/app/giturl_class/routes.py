@@ -1,12 +1,17 @@
+USE_TEST_FILE = True
+
+
 from flask import render_template, flash, send_from_directory, send_file
 from app.giturl_class.url_form import UrlForm
 from app.giturl_class.download_form import DownloadButton
 from app.giturl_class import bp
-from sm2kg import cli
+if(not USE_TEST_FILE): 
+    from sm2kg import cli
 import json
 import os
 
 dirname = os.path.dirname(__file__)
+
 
 @bp.route('/index', methods = ['GET', 'POST'])
 def urlPage():
@@ -29,6 +34,8 @@ def urlPage():
     git_languages = []
     git_readme_url = None
 
+    
+
     if downloadForm.submit_download.data:
         output_file = os.path.join(dirname, '../data/output.txt')
         return send_file("../data/output.json", as_attachment=True)
@@ -44,8 +51,11 @@ def urlPage():
             print("There must be an error with your link")
             flash("There must be a problem with your link")
             showDownload = False 
-
-        with open('data/output.json') as json_file:
+        inputFile = 'data/output.json'
+        if(USE_TEST_FILE):
+            inputFile = 'data/test.json'
+            showDownload = True
+        with open(inputFile) as json_file:
             data = json.load(json_file)
             for i in data['citation']:
                 if type(i) is dict:
