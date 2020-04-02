@@ -13,12 +13,12 @@ SM2KG
 {{super()}}
 <link rel="stylesheet"
       href="{{url_for('static', filename='styles/giturlstyle.css')}}">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet"> 
 {% endblock %}
 
-<div class="container">
 
 
-<nav class="navbar navbar-default navbar-expand-lg">
+<nav class="navbar navbar-default navbar-expand-lg navheader">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -29,10 +29,10 @@ SM2KG
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="/index">Home</a></li>
+        <li class="active"><a href="/index" style="background-color: #F2EFF1;">Home</a></li>
       </ul>
         <span class="navbar-text">
-    		SoMEF
+		<div class="header-logo">S o M E F</div>
   		</span>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="/about">About</a></li>
@@ -41,10 +41,11 @@ SM2KG
     </div>
   </div>
 </nav>
+<div class="container">
 
 
 <a href="https://www.isi.edu/">
-	<img src="/static/images/KnowledgeGraph.png" alt="KnowledgeGraph" height="50%" width="50%" class="center">
+	<img src="/static/images/KnowledgeGraph.png" alt="KnowledgeGraph" height="45%" width="45%" class="center">
 </a>
 
 
@@ -105,7 +106,9 @@ SM2KG
 	</h1>
 </form>
 
-
+{% if not showDownload %}
+	{% include 'giturl_class/intro_text.html' %}
+{% endif %}
 {% if showDownload %}
 <div class="panel panel-default">
   <div class="panel-body">

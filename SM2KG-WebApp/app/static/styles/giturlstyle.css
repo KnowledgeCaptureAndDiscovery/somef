@@ -59,7 +59,23 @@ body{
   width: 70%;
   font-weight: bold;
 }
+.header-logo{
+  #background-color: red;
+  font-family: 'Roboto', sans-serif;
+  position: relative;
+  font-size: 25px;
+  height: 20px;
+  left: 13%;
+  padding-bottom: 0%;
 
+}
+.intro_text{
+  position: relative;
+  width: 40%;
+  left: 30%;
+  #background-color: red;
+  font-size: 20px;
+  }
 .navbar-default .navbar-brand{
   color: black !important;
 }
