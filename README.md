@@ -23,3 +23,10 @@ Installation Instructions:
   ```
   flask run
   ```
+Additional Instructions:
+  If you're having trouble connection to github or downloading the sm2kg package, you can run the site on an example repo by running: 
+  ```
+  export SM2KG_TEST_MODE=TRUE
+  flask run
+  ```
+  
