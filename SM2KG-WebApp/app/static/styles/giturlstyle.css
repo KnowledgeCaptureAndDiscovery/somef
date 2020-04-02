@@ -3,6 +3,28 @@
 	overflow-y: scroll
 }
 
+body{
+  background-color: #E8EDF2;
+}
+
+.panel{
+  width: 80%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.button-cog{
+  background-color: #F2EFF1 !important;
+}
+
+.gitdata{
+  width: 80%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .gitdata-header{
 	font-size: 50px;
 	text-align: center;
@@ -23,9 +45,41 @@
 	height: 100%;
 	float: left;
 	font-size: 12px;
-	
-
 }
+
+.navbar{
+  background-color: #A4C8F2;
+}
+
+.navbar-text{
+  color: black !important;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
+  font-weight: bold;
+}
+
+.navbar-default .navbar-brand{
+  color: black !important;
+}
+
+.navbar-default .navbar-nav>li>a {
+    color: black;
+}
+
+.navbar-default .navbar-nav > .active{
+    color: #000;
+    background: #DAE5F2;
+}
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+    color: #000;
+    background: #DAE5F2;
+}
+
+
 .gitdata-fetchdataright{
 	width: 50%;
 	height: 100%;
@@ -43,15 +97,26 @@
 
 .form-control{
   width: 100% !important;
-  height: 40px !important;
+  height: 50px !important;
   padding: 12px 20px !important;
   box-sizing: border-box !important;
   border: 2px solid #ccc;
   border-radius: 4px !important;
-  background-color: #f8f8f8;
+  background-color: #F2EFF1;
   resize: none !important;
   text-align: initial !important;
 }
+
+.inner{
+  display: inline-block;
+  margin: 1px;
+}
+
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+
 
 .control-label{
   font-size: 20px !important;

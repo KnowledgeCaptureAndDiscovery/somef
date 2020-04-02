@@ -15,11 +15,10 @@ SM2KG
       href="{{url_for('static', filename='styles/giturlstyle.css')}}">
 {% endblock %}
 
+<div class="container">
 
-<div class = "big-container">
 
-
-<nav class="navbar navbar-inverse navbar-expand-lg navheader">
+<nav class="navbar navbar-default navbar-expand-lg">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -27,12 +26,14 @@ SM2KG
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">SoMEF</a>
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         <li class="active"><a href="/index">Home</a></li>
       </ul>
+        <span class="navbar-text">
+    		SoMEF
+  		</span>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="/about">About</a></li>
         <li><a href="/help">Help</a></li>
@@ -40,8 +41,6 @@ SM2KG
     </div>
   </div>
 </nav>
-
-<div class = "container">
 
 
 <a href="https://www.isi.edu/">
@@ -51,69 +50,64 @@ SM2KG
 
 <form action="" method="post" novalidate>
 	{{ form.hidden_tag() }}
-	<p>
-		<div class = "row">
-			<div class="col-sm-10">
-				<div class = form-group>
-
-					{{ wtf.form_field(form.giturl, extra_classes=test, placeholder='Enter Github URL') }}
-
-
+	<h1>
+		<div class="formcontainer">
+			<div class = "row">
+				<div class="col-sm-10 no padding">
+					<div class = form-group>
+						{{ wtf.form_field(form.giturl, extra_classes=test, placeholder='Enter Github URL') }}
+					</div>
 				</div>
-			</div>
-			<div class="col-sm-2">
-				<br><br>
-			<button type="button" class="btn btn-defaul settings-btn" data-toggle="modal" data-target="#exampleModal">
-							  <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-			</button>
+				<div class="col-sm-2 nopadding">
+					<br>
+					<button type="button" class="btn btn-default btn-sm btn-space button-cog" data-toggle="modal" data-target="#exampleModal">
+						<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+					</button>
 
-			<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			  <div class="modal-dialog" role="document">
-			    <div class="modal-content">
-			      <div class="modal-header">
-			        <h4 class="modal-title" id="exampleModalLabel">Settings</h4>
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			          <span aria-hidden="true">&times;</span>
-			        </button>
-			      </div>
-			      <div class="modal-body">
-							<div class = form-group>
-								{{ wtf.form_field(form.threshold)}}
+					<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+					    		<div class="modal-header">
+					        		<h4 class="modal-title" id="exampleModalLabel">Settings</h4>
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							        	<span aria-hidden="true">&times;</span>
+							        </button>
+					    		</div>
+							    <div class="modal-body">
+									<div class = form-group>
+										{{ wtf.form_field(form.threshold)}}
+									</div>
+							    </div>
+							    <div class="modal-footer">
+							        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							        <button type="button" data-toggle="collapse" data-target="#savedChanges" class="btn btn-primary">Save changes</button>
+							        <div id="savedChanges" class="collapse fade-out">Saved Changes</div>
+							    </div>
 							</div>
-			      </div>
-			      <div class="modal-footer">
-			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-			        <button type="button" data-toggle="collapse" data-target="#savedChanges" class="btn btn-primary">Save changes</button>
-			          <div id="savedChanges" class="collapse fade-out">
-			          	Saved Changes
-  						</div>
-			      </div>
-			    </div>
-			  </div>
+						</div>
+					</div>
+					{{ wtf.form_field(form.submit, button_map={'submit':'primary'})}} 
+			  	</div>
 			</div>
-			</button>
-
-			</div>	
-		</div>
-	</p>
+		</div>	
+	</div>
+	<p>
 	{% with messages = get_flashed_messages() %}
 		{% if messages %}
 		<ul>
 			{% for message in messages %}
-			<li>{{ message }}</li>
+				<li>{{ message }}</li>
 			{% endfor %}
 		</ul>
 		{% endif %}
 	{% endwith %}
-
-	<p> 
-	{{ wtf.form_field(form.submit, button_map={'submit':'primary'})}} 
 	</p>
+	</h1>
 </form>
 
-{% if showDownload %}
 
-<div class="panel panel-default gitdata-fullmetadata">
+{% if showDownload %}
+<div class="panel panel-default">
   <div class="panel-body">
 
 	<!-- display git name -->
@@ -163,18 +157,22 @@ SM2KG
 	  </div>
 	</div>
 </div>
-
+</div>
 <br/>
 <br/>
+{% endif %}
 
 
-	<ul class="nav nav-pills">
-	  <li class="active"><a data-toggle="tab" href="#home">Description</a></li>
-	  <li><a data-toggle="tab" href="#menu1">Installation</a></li>
-	  <li><a data-toggle="tab" href="#menu2">Invocation</a></li>
-	  <li><a data-toggle="tab" href="#menu3">Citation</a></li>
-	  <li><a data-toggle="tab" href="#menu4">Download</a></li>
-	</ul>
+{% if showDownload %}
+
+		<ul class="nav nav-pills gitdata">
+		  <li class="active"><a data-toggle="tab" href="#home">Description</a></li>
+		  <li><a data-toggle="tab" href="#menu1">Installation</a></li>
+		  <li><a data-toggle="tab" href="#menu2">Invocation</a></li>
+		  <li><a data-toggle="tab" href="#menu3">Citation</a></li>
+		  <li><a data-toggle="tab" href="#menu4">Download</a></li>
+		</ul>
+
 
 
 	<div class="tab-content">
@@ -233,7 +231,6 @@ SM2KG
 			<div class="well">
 			    <form action="" method="post" novalidate>
 			    	<p> To download the JSON file: {{ downloadForm.submit_download(class="btn btn-light") }}</a> </p>
-
 				</form>
 			</div>
 		  </div>
@@ -241,9 +238,8 @@ SM2KG
 	  </div>
 	</div>
 </div>
-</div>
 {% endif %}
-</div>
+
 </div>
 {% endblock %}
 </html>
