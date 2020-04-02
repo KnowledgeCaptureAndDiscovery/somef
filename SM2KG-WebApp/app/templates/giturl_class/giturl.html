@@ -63,7 +63,7 @@ SM2KG
 			</div>
 			<div class="col-sm-2">
 				<br><br>
-			<button type="button" class="btn btn-defaul" data-toggle="modal" data-target="#exampleModal">
+			<button type="button" class="btn btn-defaul settings-btn" data-toggle="modal" data-target="#exampleModal">
 							  <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
 			</button>
 
@@ -97,13 +97,13 @@ SM2KG
 		</div>
 	</p>
 	{% with messages = get_flashed_messages() %}
-	{% if messages %}
-	<ul>
-		{% for message in messages %}
-		<li>{{ message }}</li>
-		{% endfor %}
-	</ul>
-	{% endif %}
+		{% if messages %}
+		<ul>
+			{% for message in messages %}
+			<li>{{ message }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
 	{% endwith %}
 
 	<p> 
@@ -111,6 +111,7 @@ SM2KG
 	</p>
 </form>
 
+{% if showDownload %}
 
 <div class="panel panel-default gitdata-fullmetadata">
   <div class="panel-body">
@@ -167,7 +168,6 @@ SM2KG
 <br/>
 
 
-{% if showDownload %}
 	<ul class="nav nav-pills">
 	  <li class="active"><a data-toggle="tab" href="#home">Description</a></li>
 	  <li><a data-toggle="tab" href="#menu1">Installation</a></li>
@@ -241,8 +241,8 @@ SM2KG
 	  </div>
 	</div>
 </div>
-{% endif %}
 </div>
+{% endif %}
 </div>
 </div>
 {% endblock %}

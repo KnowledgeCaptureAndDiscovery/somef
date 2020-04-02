@@ -16,13 +16,14 @@
 	width: 80%;
 	left: 10%;
 	min-height: 15vh;
-	background-color: white;
+	background-color: #fffcfd;
 }
 .gitdata-fetchdataleft{	
 	width: 50%;
 	height: 100%;
 	float: left;
 	font-size: 12px;
+	
 
 }
 .gitdata-fetchdataright{
@@ -30,6 +31,7 @@
 	height: 100%;
 	float: right;	
 	font-size: 12px;
+
 }
 
 .center {
@@ -98,15 +100,20 @@
 }
 
 .navheader {
-  width: 100%; 
-  background-color: white;
+  width: 100%;  
 }
 .big-container {
   width: 100%;
-  background-color: #fffcfd;  
+  background-color: white;  
 }
 .gitdata-fullmetadata {
-  background-color: white;
+  background-color: #fffcfd;
+}
+.settings-btn {
+  position: relative;
+  height: 6vh;
+
+
 }
 @keyframes fadeOut {
   0% {

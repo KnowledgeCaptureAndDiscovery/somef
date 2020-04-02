@@ -2,7 +2,7 @@ from flask import render_template, flash, send_from_directory, send_file
 from app.giturl_class.url_form import UrlForm
 from app.giturl_class.download_form import DownloadButton
 from app.giturl_class import bp
-#from sm2kg import cli
+from sm2kg import cli
 import json
 import os
 
@@ -36,13 +36,16 @@ def urlPage():
         
     if urlForm.validate_on_submit() and urlForm.submit.data:
         #flash("Classifying data")
-        # try: 
-        #     cli.run_cli(urlForm.giturl.data, .7, 'data/output.json')
-        # except:
-        #     print("cli error occured")
-      
 
-        with open('data/outputput.json') as json_file:
+        showDownload = True
+        try: 
+            cli.run_cli(urlForm.giturl.data, .7, 'data/output.json')
+        except:
+            print("There must be an error with your link")
+            flash("There must be a problem with your link")
+            showDownload = False 
+
+        with open('data/output.json') as json_file:
             data = json.load(json_file)
             for i in data['citation']:
                 if type(i) is dict:
@@ -73,7 +76,7 @@ def urlPage():
             git_readme_url = data['readme_url']
 
 
-            showDownload = True
+        
 
     return render_template('giturl_class/giturl.html',
                            form = urlForm,
