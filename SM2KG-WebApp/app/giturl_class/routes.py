@@ -1,14 +1,19 @@
-USE_TEST_FILE = True
+
 
 
 from flask import render_template, flash, send_from_directory, send_file
 from app.giturl_class.url_form import UrlForm
 from app.giturl_class.download_form import DownloadButton
 from app.giturl_class import bp
-if(not USE_TEST_FILE): 
-    from sm2kg import cli
 import json
 import os
+
+USE_TEST_FILE = False
+if(os.getenv('SM2KG_TEST_MODE') == 'TRUE'):
+    USE_TEST_FILE = True
+    print('SM2KG in Test Mode')
+if(not USE_TEST_FILE): 
+    from sm2kg import cli
 
 dirname = os.path.dirname(__file__)
 
