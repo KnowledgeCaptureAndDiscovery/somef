@@ -4,7 +4,7 @@
 }
 
 body{
-  background-color: #E8EDF2;
+  #background-color: #E8EDF2;
 }
 
 .panel{
@@ -38,7 +38,7 @@ body{
 	width: 80%;
 	left: 10%;
 	min-height: 15vh;
-	background-color: #fffcfd;
+	#background-color: #fffcfd;
 }
 .gitdata-fetchdataleft{	
 	width: 50%;

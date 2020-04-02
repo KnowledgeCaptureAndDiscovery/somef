@@ -29,7 +29,7 @@ SM2KG
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="/index" style="background-color: #F2EFF1;">Home</a></li>
+        <li class="active"><a href="/index" style="background-color: #A4C8F2;">Home</a></li>
       </ul>
         <span class="navbar-text">
 		<div class="header-logo">S o M E F</div>
@@ -90,19 +90,19 @@ SM2KG
 					{{ wtf.form_field(form.submit, button_map={'submit':'primary'})}} 
 			  	</div>
 			</div>
-		</div>	
+		</div>		
+		<p>
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+			<ul>
+				{% for message in messages %}
+					<li style = "font-size: 12px; color: red;">{{ message }}</li>
+				{% endfor %}
+			</ul>
+			{% endif %}
+		{% endwith %}
+		</p>
 	</div>
-	<p>
-	{% with messages = get_flashed_messages() %}
-		{% if messages %}
-		<ul>
-			{% for message in messages %}
-				<li>{{ message }}</li>
-			{% endfor %}
-		</ul>
-		{% endif %}
-	{% endwith %}
-	</p>
 	</h1>
 </form>
 
