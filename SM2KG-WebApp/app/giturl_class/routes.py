@@ -51,7 +51,7 @@ def urlPage():
 
         showDownload = True
         try: 
-            cli.run_cli(urlForm.giturl.data, .7, 'data/output.json')
+            cli.run_cli(urlForm.giturl.data, .8, 'data/output.json')
         except:
             print("There must be an error with your link")
             flash("There must be a problem with your link")

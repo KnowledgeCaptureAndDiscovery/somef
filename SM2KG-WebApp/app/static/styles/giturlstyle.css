@@ -48,7 +48,7 @@ body{
 }
 
 .navbar{
-  background-color: #A4C8F2;
+  background-color: #fed600;
 }
 
 .navbar-text{
@@ -86,13 +86,13 @@ body{
 
 .navbar-default .navbar-nav > .active{
     color: #000;
-    background: #DAE5F2;
+    #background: #DAE5F2;
 }
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
     color: #000;
-    background: #DAE5F2;
+    #background: #DAE5F2;
 }
 
 
