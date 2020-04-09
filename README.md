@@ -44,3 +44,30 @@ In addition to the classified readme file, the metadata from the repository to b
 Example:
 
 `python3 cli.py -r https://github.com/{owner}/{repository_name} -o output.json -t 0.5`
+
+Pip Package :
+
+somef - 
+
+Instructions: 
+
+`somef --help ` 
+will provide information on the different commands available in the package.
+
+`somef version`
+will provide the current version of the package in the system.
+
+`somef configure`
+user will be prompted to enter the following details:
+Authorization(optional): User can generate a Personal Access Token from github using the link provided above.
+Description: Absolute path to the description model file. 
+Invocation: Absolute path to the description model file.
+Citation: Absolute path to the citation model file.
+Installation: Absolute path to the installation model file.
+
+`somef describe -r repository_url -t threshold -o output file`
+will run the classifier on given repository and save it to output file
+
+Sample: 
+`somef describe -r https://github.com/{owner}/{repo_name} -t 0.8 -o output.json`
+
