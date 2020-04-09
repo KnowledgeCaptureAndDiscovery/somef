@@ -62,11 +62,17 @@ will provide the current version of the package in the system.
 `somef configure`
 
 user will be prompted to enter the following details:
+
 Authorization(optional): User can generate a Personal Access Token from github using the link provided above.
+
 Description: Absolute path to the description model file. 
+
 Invocation: Absolute path to the description model file.
+
 Citation: Absolute path to the citation model file.
+
 Installation: Absolute path to the installation model file.
+
 
 `somef describe -r repository_url -t threshold -o output file`
 
