@@ -10,23 +10,16 @@ import sys
 from pathlib import Path
 import json
 import click
-from cli import run_cli
+import somef
+from somef import cli
 
 __DEFAULT_SOMEF_CONFIGURATION_FILE__ = "~/.somef/config.json"
 # __DEFAULT_SOMEF_CONFIGURATION_FILE__ = "/Users/vedantdiwanji/Desktop/SM2KG/trial.json"
 
-@click.group()
-# @click.option("--verbose", "-v", default=0, count=True)
+
+@click.group(context_settings={'help_option_names':['-h','--help']})
 def trycli():
     print("SOMEF Command Line Interface")
-
-@trycli.command(help="Path Configuration")
-def trial():
-	path = Path(__file__).parent.absolute()
-	description = str(path)+'/models/description.sk'
-	print(path)
-	print(description)
-    # print("SOMEF Command Line Interface")
 
 @trycli.command(help="Configure credentials")
 def configure():
@@ -84,6 +77,7 @@ def version(debug=False):
     type=float,
     help="Threshold to classify the text",
     required=True,
+    default=0.8,
 )
 @click.option(
     "--output",
@@ -91,6 +85,7 @@ def version(debug=False):
     type=str,
     help="Path to the output file",
     required=True,
+    default="output.json"
 )
 def describe(repo_url,threshold,output):
     cli.run_cli(repo_url,threshold,output)
@@ -98,4 +93,4 @@ def describe(repo_url,threshold,output):
 
 
 if __name__=='__main__':
-	commandline(repo_url="https://github.com/dgarijo/Widoco",threshold=0.5,output="output.json")
+	version()

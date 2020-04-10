@@ -20,8 +20,8 @@ import pprint
 import pandas as pd
 import numpy as np
 import re
-from createExcerpts import split_into_excerpts
-from header_analysis import extract_categories_using_headers
+from somef import createExcerpts
+from somef import header_analysis
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
@@ -62,7 +62,7 @@ def load_repository_metadata(repository_url, header):
     print("Loading Repository Information....")
     ## load general response of the repository
     if repository_url[-1]=='/':
-        repository_url = repository_url[:-1]  
+        repository_url = repository_url[:-1] 
     url = urlparse(repository_url)
     if url.netloc != 'github.com':
         sys.exit("Error: repository must come from github")
@@ -131,7 +131,7 @@ def load_repository_metadata(repository_url, header):
 ## Returns the extracted excerpts
 def create_excerpts(string_list):
     print("Splitting text into valid excerpts for classification")
-    divisions = split_into_excerpts(string_list)
+    divisions = createExcerpts.split_into_excerpts(string_list)
     print("Text Successfully split. \n")
     return divisions
 
@@ -204,7 +204,7 @@ def classify(scores, threshold):
 ## Returns json with the information added.
 def extract_categories_using_header(repo_data):
     print("Extracting information using headers")
-    header_info, string_list = extract_categories_using_headers(repo_data)
+    header_info, string_list = header_analysis.extract_categories_using_headers(repo_data)
     print("Information extracted. \n")
     return header_info, string_list
 

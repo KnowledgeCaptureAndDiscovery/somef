@@ -1,0 +1,8 @@
+README.md
+setup.py
+somef/somef.egg-info/PKG-INFO
+somef/somef.egg-info/SOURCES.txt
+somef/somef.egg-info/dependency_links.txt
+somef/somef.egg-info/not-zip-safe
+somef/somef.egg-info/requires.txt
+somef/somef.egg-info/top_level.txt
