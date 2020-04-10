@@ -1,3 +1,0 @@
-[console_scripts]
-somef = somef.__main__:trycli
-

@@ -61,8 +61,6 @@ keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_
 def load_repository_metadata(repository_url, header):
     print("Loading Repository Information....")
     ## load general response of the repository
-    if repository_url[-1]=='/':
-        repository_url = repository_url[:-1]  
     url = urlparse(repository_url)
     if url.netloc != 'github.com':
         sys.exit("Error: repository must come from github")
@@ -266,6 +264,7 @@ def run_cli(repo_url, threshold, output):
         header['Authorization'] = file_paths['Authorization']
     header['accept'] = 'application/vnd.github.v3+json'
     text, github_data = load_repository_metadata(repo_url, header)
+    github_data = {}
     unfiltered_text = text
     header_predictions, string_list = extract_categories_using_header(unfiltered_text)
     text = unmark(text)

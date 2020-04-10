@@ -15,27 +15,13 @@ from cli import run_cli
 __DEFAULT_SOMEF_CONFIGURATION_FILE__ = "~/.somef/config.json"
 # __DEFAULT_SOMEF_CONFIGURATION_FILE__ = "/Users/vedantdiwanji/Desktop/SM2KG/trial.json"
 
-@click.group()
-# @click.option("--verbose", "-v", default=0, count=True)
-def trycli():
-    print("SOMEF Command Line Interface")
-
-@trycli.command(help="Path Configuration")
-def trial():
-	path = Path(__file__).parent.absolute()
-	description = str(path)+'/models/description.sk'
-	print(path)
-	print(description)
-    # print("SOMEF Command Line Interface")
-
-@trycli.command(help="Configure credentials")
+@click.command(help="Configure credentials")
 def configure():
-    path = Path(__file__).parent.absolute()
     authorization = click.prompt("Authorization",default="")
-    description = click.prompt("Documentation model file", default=str(path)+"/models/description.sk")
-    invocation = click.prompt("Invocation model file", default=str(path)+"/models/invocation.sk")
-    installation = click.prompt("Installation model file", default=str(path)+"/models/installation.sk")
-    citation = click.prompt("Citation model file", default=str(path)+"/models/citation.sk")
+    description = click.prompt("Documentation model file")
+    invocation = click.prompt("Invocation model file")
+    installation = click.prompt("Installation model file")
+    citation = click.prompt("Citation model file")
 
     credentials_file = Path(
         os.getenv("SOMEF_CONFIGURATION_FILE", __DEFAULT_SOMEF_CONFIGURATION_FILE__)
@@ -66,36 +52,14 @@ def configure():
         json.dump(data, fh) 
         click.secho(f"Success", fg="green")
 
-@trycli.command(help="Show somef version.")
-def version(debug=False):
-    click.echo(f"{Path(sys.argv[0]).name} v{somef.__version__}")
-
-@trycli.command(help="Running the Command Line Interface")
-@click.option(
-    "--repo_url",
-    "-r",
-    type=str,
-    help="Github Repository URL",
-    required=True,
-)
-@click.option(
-    "--threshold",
-    "-t",
-    type=float,
-    help="Threshold to classify the text",
-    required=True,
-)
-@click.option(
-    "--output",
-    "-o",
-    type=str,
-    help="Path to the output file",
-    required=True,
-)
-def describe(repo_url,threshold,output):
-    cli.run_cli(repo_url,threshold,output)
-    click.secho(f"Success", fg="green")
+@click.command(help="Running the Command Line Interface")
+def cli():
+	github_url = click.prompt("Github URL")
+	threshold = click.prompt("Threshold",type=float)
+	output_file_path = click.prompt("Output File Path")
+	run_cli(github_url,threshold,output_file_path)
+	click.secho(f"Success", fg="green")
 
 
 if __name__=='__main__':
-	commandline(repo_url="https://github.com/dgarijo/Widoco",threshold=0.5,output="output.json")
+	cli()
