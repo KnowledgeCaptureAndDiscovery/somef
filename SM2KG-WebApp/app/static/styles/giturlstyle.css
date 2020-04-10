@@ -33,6 +33,11 @@ body{
 	font-size: 20px;
 	text-align: center;
 }
+.gitdata-download{
+  font-size: 14px;
+  text-align: center;
+}
+
 .gitdata-fetchdata{
 	position: relative;
 	width: 80%;
