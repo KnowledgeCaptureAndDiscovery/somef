@@ -169,11 +169,20 @@ SM2KG
 {% if showDownload %}
 
 		<ul class="nav nav-pills gitdata">
-		  <li class="active"><a data-toggle="tab" href="#home">Description</a></li>
-		  <li><a data-toggle="tab" href="#menu1">Installation</a></li>
-		  <li><a data-toggle="tab" href="#menu2">Invocation</a></li>
-		  <li><a data-toggle="tab" href="#menu3">Citation</a></li>
-		  <li><a data-toggle="tab" href="#menu4">Download</a></li>
+		  {% if description %}
+		  	<li class="active"><a data-toggle="tab" href="#home">Description</a></li>
+		  {% endif %}
+		  {% if installation %} 
+		  	<li><a data-toggle="tab" href="#menu1">Installation</a></li>
+		  {% endif %}
+		  {% if invocation %}
+		  	<li><a data-toggle="tab" href="#menu2">Invocation</a></li>
+		  {% endif %}
+		  {% if citation %}
+		  	<li><a data-toggle="tab" href="#menu3">Citation</a></li>
+		  {% endif %}
+		 
+		  <li><a data-toggle="tab" href="#menu4">Download</a></li>	
 		</ul>
 
 
@@ -184,13 +193,20 @@ SM2KG
 		  <!-- Default panel contents -->
 				<div class="panel-body fixed-panel">
 					<div class="well">
+					{% set color_ns = namespace(color='block_color_one') %}
 					{% for i in description %}
-						<p> {{ i }} </p>
+						<p class = '{{ color_ns.color }}'> {{ i }} </p>
+						{% if color_ns.color == 'block_color_two' %}
+							{% set color_ns.color = 'block_color_one' %}
+						{% elif color_ns.color == 'block_color_one' %}
+							{% set color_ns.color = 'block_color_two' %}
+						{% endif %}
 					{% endfor %}
 				</div>
 			</div>
 		</div>
 	  </div>
+	  {% if installation %}
 	  <div id="menu1" class="tab-pane fade">
 		<div class="panel panel-primary">
 		  <!-- Default panel contents -->
@@ -203,6 +219,7 @@ SM2KG
 			</div>
 		</div>
 	  </div>
+	  {% endif %}
 	  <div id="menu2" class="tab-pane fade">
 		<div class="panel panel-primary">
 		  <!-- Default panel contents -->

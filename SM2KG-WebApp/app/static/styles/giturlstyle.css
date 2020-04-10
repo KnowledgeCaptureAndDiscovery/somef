@@ -6,7 +6,12 @@
 body{
   #background-color: #E8EDF2;
 }
-
+.block_color_one{
+  background-color: white;
+}
+.block_color_two{
+  background-color: #a4daf5;
+}
 .panel{
   width: 80%;
   display: block;

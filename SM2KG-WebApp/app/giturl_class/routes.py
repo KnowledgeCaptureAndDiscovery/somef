@@ -1,6 +1,4 @@
 
-
-
 from flask import render_template, flash, send_from_directory, send_file
 from app.giturl_class.url_form import UrlForm
 from app.giturl_class.download_form import DownloadButton
@@ -13,7 +11,9 @@ if(os.getenv('SM2KG_TEST_MODE') == 'TRUE'):
     USE_TEST_FILE = True
     print('SM2KG in Test Mode')
 if(not USE_TEST_FILE): 
-    from sm2kg import cli
+    #from sm2kg import cli
+    from somef import cli 
+from somef import cli
 
 dirname = os.path.dirname(__file__)
 
@@ -52,8 +52,8 @@ def urlPage():
         showDownload = True
         try: 
             cli.run_cli(urlForm.giturl.data, .8, 'data/output.json')
-        except:
-            print("There must be an error with your link")
+        except Exception as e: 
+            print("Error: " + e) 
             flash("There must be a problem with your link")
             showDownload = False 
         inputFile = 'data/output.json'
@@ -80,15 +80,15 @@ def urlPage():
                     description_list.append(i)
 
             
-            git_name = data["name"]
-            git_owner = data["owner"]
-            git_topics = data["topics"]
-            git_languages = data['languages']
-            git_license = data['license'] 
-            git_forks_url = data['forks_url'] 
-            git_topics = data['topics'] 
-            git_languages = data['languages']
-            git_readme_url = data['readme_url']
+            git_name = data["name"]["excerpt"]
+            git_owner = data["owner"]["excerpt"]
+            git_topics = data["topics"]["excerpt"]
+            git_languages = data['languages']["excerpt"]
+            git_license = data['license']["excerpt"] 
+            git_forks_url = data['forks_url']['excerpt']
+            git_topics = data['topics']['excerpt']
+            git_languages = data['languages']['excerpt']
+            git_readme_url = data['readme_url']['excerpt']
 
 
         
