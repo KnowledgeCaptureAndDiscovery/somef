@@ -61,6 +61,7 @@ SM2KG
 				</div>
 				<div class="col-sm-2 nopadding">
 					<br>
+					{{wtf.form_field(form.submit, button_map={'submit':'primary'})}}
 					<button type="button" class="btn btn-default btn-sm btn-space button-cog" data-toggle="modal" data-target="#exampleModal">
 						<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
 					</button>
@@ -87,7 +88,7 @@ SM2KG
 							</div>
 						</div>
 					</div>
-					{{ wtf.form_field(form.submit, button_map={'submit':'primary'})}} 
+
 			  	</div>
 			</div>
 		</div>		
@@ -157,9 +158,10 @@ SM2KG
 			{% if git_readme_url %}
 			<p> README Url: <a href="{{ git_readme_url }}">{{ git_readme_url }}</a></p>
 			{% endif %}
-	  </div>
+		</div>
 	</div>
 </div>
+	<p class="gitdata-download"> {{ downloadForm.submit_download(class="btn btn-light") }}</p>
 </div>
 <br/>
 <br/>
@@ -201,6 +203,14 @@ SM2KG
 						{% elif color_ns.color == 'block_color_one' %}
 							{% set color_ns.color = 'block_color_two' %}
 						{% endif %}
+<!--
+						<li class = "list-group-item">{{i}}
+							<div class="custom-control custom-checkbox">
+							    <input type="checkbox" class="custom-control-input" id="defaultUnchecked">
+							    <label class="custom-control-label" for="defaultUnchecked"></label>
+							</div>
+						</li>
+-->
 					{% endfor %}
 				</div>
 			</div>
@@ -212,8 +222,14 @@ SM2KG
 		  <!-- Default panel contents -->
 			<div class="panel-body fixed-panel">
 				<div class="well">
+
 				{% for i in installation %}
-					<p> {{ i }} </p>
+					<li class = "list-group-item">{{i}}
+						<div class="custom-control custom-checkbox">
+						    <input type="checkbox" class="custom-control-input" id="defaultUnchecked">
+						    <label class="custom-control-label" for="defaultUnchecked"></label>
+						</div>
+					</li>
 				{% endfor %}
 				</div>
 			</div>
@@ -226,7 +242,12 @@ SM2KG
 				<div class="panel-body fixed-panel">
 					<div class="well">
 					{% for i in invocation %}
-						<p> {{ i }} </p>
+						<li class = "list-group-item">{{i}}
+							<div class="custom-control custom-checkbox">
+							    <input type="checkbox" class="custom-control-input" id="defaultUnchecked">
+							    <label class="custom-control-label" for="defaultUnchecked"></label>
+							</div>
+						</li>
 					{% endfor %}
 					</div>
 			  </div>
@@ -238,24 +259,16 @@ SM2KG
 		  <div class="panel-body fixed-panel" >
 			<div class="well">
 			    {% for i in citation %}
-			    	<p> {{ i }} </p>
+					<li class = "list-group-item">{{i}}
+						<div class="custom-control custom-checkbox">
+						    <input type="checkbox" class="custom-control-input" id="defaultUnchecked">
+						    <label class="custom-control-label" for="defaultUnchecked"></label>
+						</div>
+					</li>
 			    {% endfor %}
 			</div>
 		  </div>
 		</div>
-	</div>
-	<div id="menu4" class="tab-pane fade">
-		<div class="panel panel-primary">
-		  <!-- Default panel contents -->
-		  <div class="panel-body fixed-panel" >
-			<div class="well">
-			    <form action="" method="post" novalidate>
-			    	<p> To download the JSON file: {{ downloadForm.submit_download(class="btn btn-light") }}</a> </p>
-				</form>
-			</div>
-		  </div>
-		</div>
-	  </div>
 	</div>
 </div>
 {% endif %}
