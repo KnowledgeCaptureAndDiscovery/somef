@@ -20,8 +20,8 @@ import pprint
 import pandas as pd
 import numpy as np
 import re
-from somef import createExcerpts
-from somef import header_analysis
+import createExcerpts
+import header_analysis
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
