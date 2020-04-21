@@ -131,34 +131,25 @@ SM2KG
 	{% endif %}
 
 	<div class="gitdata-fetchdata">
+				
 		<div class="gitdata-fetchdataleft">
-			{% if git_license %}
-			<p> License: {{ git_license['name'] }}, <a href="{{ git_license['url'] }}"></a> </p>
-			{% endif %}
-
-			{% if git_forks_url %}
-			<p> Forks Url: <a href="{{ git_forks_url }}">{{ git_forks_url }}</a></p>
-			{% endif %}
+			{% for i in range(0, headerClassBreak) %}	
+				<p>{{headerClasses[i]['className']}}: {{headerClasses[i]['excerpt']}}</p>	
+			{% endfor %}
 		</div>
 		<div class="gitdata-fetchdataright">
-			{% if git_topics %}
-				<p>Topics: 
-				{% for i in git_topics %}
-					{{ i }}
-				{% endfor %}
-				</p>
-			{% endif %}
-			{%if git_languages %}
-				<p>Languages: 
-				{% for i in git_languages %}
-					{{ i }}
-				{% endfor %}
-			{% endif %}
-			</p>
-			{% if git_readme_url %}
-			<p> README Url: <a href="{{ git_readme_url }}">{{ git_readme_url }}</a></p>
-			{% endif %}
+			{% for i in range(headerClassBreak, headerClasses| length) %}
+		
+				{% if headerClasses[i]['isURL'] %}
+				<p>{{headerClasses[i]['className']}}:  <a href="{{ headerClasses[i]['excerpt'] }}">{{headerClasses[i]['excerpt']}}</a></p>
+				{% elif not headerClasses[i]['isURL'] %}
+					<p>{{headerClasses[i]['className']}}: {{headerClasses[i]['excerpt']}}</p>
+				{% endif %}
+	
+
+			{% endfor %}
 		</div>
+		
 	</div>
 </div>
 	<p class="gitdata-download"> {{ downloadForm.submit_download(class="btn btn-light") }}</p>

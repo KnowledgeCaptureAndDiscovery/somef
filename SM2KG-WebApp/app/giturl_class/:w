@@ -18,7 +18,6 @@ else:
 
 dirname = os.path.dirname(__file__)
 
-#class names in json to be added in the header section. Can either add classes, or rearrange the order of these to change the display
 headerClassNames = [ 
         "topics",
         "languages",
@@ -26,30 +25,15 @@ headerClassNames = [
         "forks_url",
         "readme_url"
 ]
-
-#this is a defaultHeaderClassBreak value, could change it for different formatting
 headerClassBreak = int(len(headerClassNames)/2)
 
-#helper function to display array of data in string format
+
 def arrayToStr(arrayToCon):
     returnStr = arrayToCon[0] 
     for i in range(1, len(arrayToCon)):
         returnStr = returnStr + " " + arrayToCon[i] 
 
     return returnStr
-
-#checks if string starts with https:
-def isURL(urlString):
-    print("bla bla")
-    print(type(urlString))
-    if(not(type(urlString is str))):
-            print("sdf")
-            return False
-    elif(len(urlString) < 6): 
-            print("hal")
-            return False
-    print(urlString[0:6])
-    return urlString[0:6] == "https:"
 
 
 @bp.route('/index', methods = ['GET', 'POST'])
@@ -109,27 +93,21 @@ def urlPage():
                 if type(i) is dict:
                     invocation_list.append(i['excerpt'])
             
-            for i in data['description']:  
+            for i in data['description']: 
+                #some aren't dictionaries because pulled git data is appended, to make uniform maybe add pulled data with 100% confidence
                 if type(i) is dict:
                     description_list.append(i['excerpt'])
                 else:
                     description_list.append(i)
 
             for i in headerClassNames:
-                #if excerpt is a list, converts it to string for display 
-                if(type(data[i]["excerpt"]) is list):
+                if(type(data[i]["excerpt"]) == 'list'):
                     data[i]["excerpt"] = arrayToStr(data[i]["excerpt"])
 
-                #if excerpt is url, makes into link 
-                tempDict = {"className" : i,
-                    "excerpt" : data[i]["excerpt"],
-                    "confidence" : data[i]["confidence"],
-                    "isURL" : isURL(data[i]["excerpt"]) }
-
-                headerClassesToPass.append(tempDict)
-
-               
-            #two headerClasses that take special formating, could be passed in as special params but eh 
+                passData = [i, data[i]["excerpt"], data[i]["confidence"] ] 
+                headerClassesToPass.append(passData)
+            
+            print(headerClassesToPass)
             git_name = data["name"]["excerpt"]
             git_owner = data["owner"]["excerpt"]
                     
