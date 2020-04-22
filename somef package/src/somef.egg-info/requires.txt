@@ -8,3 +8,4 @@ nltk
 sklearn
 pandas
 numpy
+textblob

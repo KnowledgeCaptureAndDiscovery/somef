@@ -14,7 +14,6 @@ import somef
 from somef import cli
 
 __DEFAULT_SOMEF_CONFIGURATION_FILE__ = "~/.somef/config.json"
-# __DEFAULT_SOMEF_CONFIGURATION_FILE__ = "/Users/vedantdiwanji/Desktop/SM2KG/trial.json"
 
 
 @click.group(context_settings={'help_option_names':['-h','--help']})

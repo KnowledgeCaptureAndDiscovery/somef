@@ -229,8 +229,10 @@ def merge(header_predictions, predictions, citations):
 
     for headers in header_predictions:
         if headers not in predictions.keys():
-            predictions[headers] = []
-        predictions[headers].insert(0,header_predictions[headers])
+            predictions[headers] = header_predictions[headers]
+        else :
+            for h in header_predictions[headers]:
+                predictions[headers].insert(0,h)
     print("Merging successful. \n")
     return predictions
 
