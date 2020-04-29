@@ -14,7 +14,8 @@ install_requires = [
     "nltk",
     "sklearn",
     "pandas",
-    "numpy"
+    "numpy",
+    "textblob"
 ]
 
 
@@ -51,13 +52,12 @@ setup(
     description=__doc__,
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
-    url="https://github.com/KnowledgeCaptureAndDiscovery/SM2KG",
+    url="https://github.com/KnowledgeCaptureAndDiscovery/somef",
     classifiers=[
         "License :: OSI Approved :: Apache Software License",
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Intended Audience :: Science/Research",

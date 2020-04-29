@@ -11,7 +11,6 @@ from pathlib import Path
 import json
 import click
 import somef
-from somef import cli
 
 __DEFAULT_SOMEF_CONFIGURATION_FILE__ = "~/.somef/config.json"
 
@@ -87,6 +86,7 @@ def version(debug=False):
     default="output.json"
 )
 def describe(repo_url,threshold,output):
+    from somef import cli
     cli.run_cli(repo_url,threshold,output)
     click.secho(f"Success", fg="green")
 

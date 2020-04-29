@@ -129,23 +129,37 @@ def label_header(header): # label the header with a subgroup
                 label.append(bestgroup)
     return label
 
+def cleanhtml(text):
+  cleanr = re.compile('<.*?>')
+  cleantext = re.sub(cleanr, '', text)
+  return cleantext
 
 def extract_categories_using_headers(text): # main function
+    text = cleanhtml(text)
     data = extract_header_content(text)
     print('Labeling headers.')
     data['Group'] = data['Header'].apply(lambda row: label_header(row))
+    if len(data['Group'].iloc[0]) == 0:
+        data['Group'].iloc[0] = ['unknown']
     groups = data.apply(lambda x: pd.Series(x['Group']), axis=1).stack().reset_index(level=1, drop=True)
     groups.name = 'Group'
     data = data.drop('Group', axis=1).join(groups)
+    if data['Group'].iloc[0] == 'unknown':
+        data['Group'].iloc[0] = np.NaN
 
     # to json
     group = data.loc[(data['Group'] != 'None') & pd.notna(data['Group']), ['Content', 'Group']]
     group['confidence'] = [[1]] * len(group)
     group.rename(columns={'Content': 'excerpt'}, inplace=True)
+    group['technique'] = 'wordnet'
     group_json = group.groupby('Group').apply(lambda x: x.to_dict('r')).to_dict()
+    for key in group_json.keys():
+        for ind in range(len(group_json[key])):
+            del group_json[key][ind]['Group']
     print('Converting to json files.')
 
     # strings without tag
     str_list = data.loc[data['Group'].isna(), ['Content']].values.squeeze().tolist()
-
+    if type(str_list) != list:
+        str_list = [str_list]
     return group_json, str_list
