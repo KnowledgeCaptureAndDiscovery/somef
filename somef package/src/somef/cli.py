@@ -20,8 +20,8 @@ import pprint
 import pandas as pd
 import numpy as np
 import re
-import createExcerpts
-import header_analysis
+from somef import createExcerpts
+from somef import header_analysis
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
@@ -159,7 +159,7 @@ def remove_unimportant_excerpts(excerpt_element):
     excerpt_info = excerpt_element['excerpt']
     excerpt_confidence = excerpt_element['confidence']
     excerpt_lines = excerpt_info.split('\n')
-    final_excerpt = {'excerpt':"",'confidence':[]}
+    final_excerpt = {'excerpt':"",'confidence':[],'technique':'classifier'}
     for i in range(len(excerpt_lines)-1):
         words = excerpt_lines[i].split(' ')
         if len(words)==2:
@@ -225,7 +225,7 @@ def merge(header_predictions, predictions, citations):
     for i in range(len(citations)):
         if 'citation' not in predictions.keys():
             predictions['citation'] = []
-        predictions['citation'].insert(0,{'excerpt': citations[i],'confidence': [1.0]})
+        predictions['citation'].insert(0,{'excerpt': citations[i],'confidence': [1.0],'technique': 'classifier'})
 
     for headers in header_predictions:
         if headers not in predictions.keys():
@@ -244,13 +244,13 @@ def save_json(git_data, repo_data, outfile):
         if i == 'description':
             if 'description' not in repo_data.keys():
                 repo_data['description'] = []
-            repo_data['description'].append({'excerpt': git_data[i],'confidence': [1.0]})
+            repo_data['description'].append({'excerpt': git_data[i],'confidence': [1.0], 'technique': 'metadata'})
         else:
-            repo_data[i] = {'excerpt': git_data[i],'confidence': [1.0]}
+            repo_data[i] = {'excerpt': git_data[i],'confidence': [1.0], 'technique': 'metadata'}
 
     print("Saving json data to",outfile)
     with open(outfile, 'w') as output:
-        json.dump(repo_data, output)  
+        json.dump(repo_data, output)   
 
 
 ## Function runs all the required components of the cli for a repository

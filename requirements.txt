@@ -7,3 +7,5 @@ matplotlib
 bs4
 requests
 markdown
+Click
+textblob

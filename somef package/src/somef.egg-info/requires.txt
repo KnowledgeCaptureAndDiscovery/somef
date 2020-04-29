@@ -1,0 +1,11 @@
+Click
+requests
+markdown
+requests
+bs4
+matplotlib
+nltk
+sklearn
+pandas
+numpy
+textblob
