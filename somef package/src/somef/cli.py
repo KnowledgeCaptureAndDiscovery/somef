@@ -20,8 +20,8 @@ import pprint
 import pandas as pd
 import numpy as np
 import re
-from somef import createExcerpts
-from somef import header_analysis
+from . import createExcerpts
+from . import header_analysis
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
@@ -52,8 +52,22 @@ def restricted_float(x):
     return x
 
 categories = ['description','citation','installation','invocation']
-keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_url')
-
+# keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_url')
+# instead of keep keys, we have this table
+# it says that we want the key "codeRepository", and that we'll get it from the path "html_url" within the result object
+github_crosswalk_table = {
+    "codeRepository": "html_url",
+    "languages_url": "languages_url",
+    "downloadUrl": "archive_url",
+    "owner": ["owner", "login"],
+    "dateCreated": "created_at",
+    "dateModified": "updated_at",
+    "license": "license",
+    "description": "description",
+    "name": "full_name",
+    "issueTracker": "issues_url",
+    "forks_url": "forks_url"
+}
 
 ## Function uses the repository_url provided to load required information from github.
 ## Information kept from the repository is written in keep_keys.
@@ -78,21 +92,32 @@ def load_repository_metadata(repository_url, header):
         message = general_resp['message']
         sys.exit("Error: "+message)
 
-    ## Remove extraneous data
-    filtered_resp = {}
-    for k in keep_keys:
-        if k not in general_resp.keys():
-            sys.exit("Error: key "+k+" not present in github repository")
-        filtered_resp[k] = general_resp[k]
+    ## get only the fields that we want
+    def do_crosswalk(data, crosswalk_table):
+        def get_path(obj, path):        
+            if isinstance(path, list) or isinstance(path, tuple):
+                if len(path) == 1:
+                    path = path[0]
+                else:
+                    return get_path(obj[path[0]], path[1:])
+           
+            return obj[path] if path in obj else None
+        
+        output = {}
+        for codemeta_key, path in crosswalk_table.items():
+            value = get_path(data, path)
+            if value is not None:    
+                output[codemeta_key] = value
+            else:
+                print(f"Error: key {path} not present in github repository")
+        return output
 
-    ## Condense owner information
-    if filtered_resp['owner'] and 'login' in filtered_resp['owner'].keys():
-        filtered_resp['owner'] = filtered_resp['owner']['login']
-    
+    filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
+
     ## condense license information
     license_info = {}
     for k in ('name', 'url'):
-        if filtered_resp['license'] and k in filtered_resp['license'].keys():
+        if 'license' in filtered_resp and k in filtered_resp['license']:
             license_info[k] = filtered_resp['license'][k]
     filtered_resp['license'] = license_info
     
@@ -144,7 +169,7 @@ def run_classifiers(excerpts, file_paths):
             sys.exit("Error: Category " + category + " file path not present in config.json")
         file_name = file_paths[category]
         if not path.exists(file_name):
-            sys.exit("Error: File/Directory does not exist")
+            sys.exit(f"Error: File/Directory {file_name} does not exist")
         print("Classifying excerpts for the catgory",category)
         classifier = pickle.load(open(file_name, 'rb'))
         scores = classifier.predict_proba(excerpts)
@@ -237,9 +262,9 @@ def merge(header_predictions, predictions, citations):
     return predictions
 
 ## Function takes metadata, readme text predictions, bibtex citations and path to the output file
-## Performs some combinations and saves the final json Object in the file
-def save_json(git_data, repo_data, outfile):   
-    
+## Performs some combinations
+def format_output(git_data, repo_data):
+
     for i in git_data.keys():
         if i == 'description':
             if 'description' not in repo_data.keys():
@@ -248,13 +273,22 @@ def save_json(git_data, repo_data, outfile):
         else:
             repo_data[i] = {'excerpt': git_data[i],'confidence': [1.0], 'technique': 'metadata'}
 
+    return repo_data
+
+# saves the final json Object in the file
+def save_json_output(repo_data, outfile):
     print("Saving json data to",outfile)
     with open(outfile, 'w') as output:
         json.dump(repo_data, output)   
 
+## Function takes metadata, readme text predictions, bibtex citations and path to the output file
+## Performs some combinations and saves the final json Object in the file
+def save_json(git_data, repo_data, outfile):
+    repo_data = format_output(git_data, repo_data)
+    save_json_output(repo_data, outfile)
 
-## Function runs all the required components of the cli for a repository
-def run_cli(repo_url, threshold, output):
+
+def cli_get_data(repo_url, threshold):
     credentials_file = Path(
         os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
     ).expanduser()
@@ -276,7 +310,12 @@ def run_cli(repo_url, threshold, output):
     predictions = classify(score_dict, threshold)
     citations = extract_bibtex(text)
     predictions = merge(header_predictions, predictions, citations)
-    save_json(github_data, predictions, output)
+    return format_output(github_data, predictions)
+
+## Function runs all the required components of the cli for a repository
+def run_cli(repo_url, threshold, output):
+    repo_data = cli_get_data(repo_url, threshold)
+    save_json_output(repo_data, output)
 
 ## Function runs all the required components of the cli on a given document file
 def run_cli_document(doc_src, threshold, output):

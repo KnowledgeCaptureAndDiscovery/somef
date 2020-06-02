@@ -12,7 +12,7 @@ install_requires = [
     "bs4",
     "matplotlib",
     "nltk",
-    "sklearn",
+    "scikit-learn==0.21.2",
     "pandas",
     "numpy",
     "textblob"
