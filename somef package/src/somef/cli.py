@@ -60,13 +60,29 @@ github_crosswalk_table = {
     "languages_url": "languages_url",
     "downloadUrl": "archive_url",
     "owner": ["owner", "login"],
+    "ownerType": ["owner", "type"], # used to determine if owner is User or Organization
     "dateCreated": "created_at",
     "dateModified": "updated_at",
     "license": "license",
     "description": "description",
-    "name": "full_name",
+    "name": "name",
+    "fullName": "name",
     "issueTracker": "issues_url",
     "forks_url": "forks_url"
+}
+
+release_crosswalk_table = {
+    'tag_name': 'tag_name',
+    'name': 'name',
+    'author_name': ['author', 'login'],
+    'authorType': ['author', 'type'],
+    'body': 'body',
+    'tarball_url': 'tarball_url',
+    'zipball_url': 'zipball_url',
+    'html_url': 'html_url',
+    'url': 'url',
+    'dateCreated': 'created_at',
+    'datePublished': "published_at",
 }
 
 ## Function uses the repository_url provided to load required information from github.
@@ -144,9 +160,10 @@ def load_repository_metadata(repository_url, header):
 
     ## get releases
     releases_list = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/releases', headers=header).json()
+
     if isinstance(releases_list,dict) and 'message' in releases_list.keys():
         sys.exit("Error: "+general_resp['message'])        
-    releases_list = map(lambda release : {'tag_name': release['tag_name'], 'name': release['name'], 'author_name': release['author']['login'], 'body': release['body'], 'tarball_url': release['tarball_url'], 'zipball_url': release['zipball_url'], 'html_url':release['html_url'], 'url':release['url']}, releases_list)
+    releases_list = [do_crosswalk(release, release_crosswalk_table) for release in releases_list]
     filtered_resp['releases'] = list(releases_list)
     
     print("Repository Information Successfully Loaded. \n")
