@@ -305,7 +305,7 @@ def save_json(git_data, repo_data, outfile):
     save_json_output(repo_data, outfile)
 
 
-def cli_get_data(repo_url, threshold):
+def cli_get_data(threshold, repo_url=None, doc_src=None):
     credentials_file = Path(
         os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
     ).expanduser()
@@ -318,7 +318,17 @@ def cli_get_data(repo_url, threshold):
     if 'Authorization' in file_paths.keys():
         header['Authorization'] = file_paths['Authorization']
     header['accept'] = 'application/vnd.github.v3+json'
-    text, github_data = load_repository_metadata(repo_url, header)
+    if repo_url is not None:
+        assert(doc_src is None)
+        text, github_data = load_repository_metadata(repo_url, header)
+    else:
+        assert(doc_src is not None)
+        if not path.exists(doc_src):
+            sys.exit("Error: Document does not exist at given path")
+        with open(doc_src, 'r') as doc_fh:
+            text = doc_fh.read()
+        github_data = {}
+
     unfiltered_text = text
     header_predictions, string_list = extract_categories_using_header(unfiltered_text)
     text = unmark(text)
@@ -329,38 +339,20 @@ def cli_get_data(repo_url, threshold):
     predictions = merge(header_predictions, predictions, citations)
     return format_output(github_data, predictions)
 
-## Function runs all the required components of the cli for a repository
-def run_cli(repo_url, threshold, output):
-    repo_data = cli_get_data(repo_url, threshold)
-    save_json_output(repo_data, output)
 
-## Function runs all the required components of the cli on a given document file
+# Function runs all the required components of the cli for a repository
+def run_cli(repo_url, threshold, output):
+    return run_cli_helper(threshold, output, repo_url=repo_url)
+
+
+# Function runs all the required components of the cli on a given document file
 def run_cli_document(doc_src, threshold, output):
-    credentials_file = Path(
-        os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
-    ).expanduser()
-    if credentials_file.exists():
-        with credentials_file.open("r") as fh:
-            file_paths = json.load(fh)
-    else:
-        sys.exit("Error: Please provide a config.json file.")
-    if 'Authorization' in file_paths.keys():
-        header['Authorization'] = file_paths['Authorization']
-    header['accept'] = 'application/vnd.github.v3+json'
-    if not path.exists(doc_src):
-        sys.exit("Error: Document does not exist at given path")
-    with open(doc_src, 'r') as doc_fh:
-        text = doc_fh.read()
-    github_data = {}
-    unfiltered_text = text
-    header_predictions, string_list = extract_categories_using_header(unfiltered_text)
-    text = unmark(text)
-    excerpts = create_excerpts(string_list)
-    score_dict = run_classifiers(excerpts, file_paths)
-    predictions = classify(score_dict, threshold)
-    citations = extract_bibtex(text)
-    predictions = merge(header_predictions, predictions, citations)
-    save_json(github_data, predictions, output)
+    return run_cli_helper(threshold, output, doc_src=doc_src)
+
+
+def run_cli_helper(threshold, output, repo_url=None, doc_src=None):
+    repo_data = cli_get_data(threshold, repo_url=repo_url, doc_src=doc_src)
+    save_json_output(repo_data, output)
 
 if __name__=='__main__':
     argparser = argparse.ArgumentParser(description="Fetch Github README, split paragraphs, run classifiers and output json containing repository information, classified excerpts and confidence.")
