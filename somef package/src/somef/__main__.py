@@ -55,9 +55,16 @@ def version(debug=False):
     required=True,
     default="output.json"
 )
-def describe(repo_url,threshold,output):
+@click.option(
+    "--graph_out",
+    "-g",
+    type=str,
+    help="Optional path to a turtle file",
+    required=False
+)
+def describe(repo_url, threshold, output, graph_out):
     from somef import cli
-    cli.run_cli(repo_url,threshold,output)
+    cli.run_cli(repo_url,threshold,output,graph_out=graph_out)
     click.secho(f"Success", fg="green")
 
 

@@ -20,6 +20,9 @@ import pprint
 import pandas as pd
 import numpy as np
 import re
+
+from somef.data_to_graph import DataGraph
+
 from . import createExcerpts
 from . import header_analysis
 
@@ -341,8 +344,8 @@ def cli_get_data(threshold, repo_url=None, doc_src=None):
 
 
 # Function runs all the required components of the cli for a repository
-def run_cli(repo_url, threshold, output):
-    return run_cli_helper(threshold, output, repo_url=repo_url)
+def run_cli(repo_url, threshold, output, graph_out=None):
+    return run_cli_helper(threshold, output, repo_url=repo_url, graph_out=graph_out)
 
 
 # Function runs all the required components of the cli on a given document file
@@ -350,9 +353,18 @@ def run_cli_document(doc_src, threshold, output):
     return run_cli_helper(threshold, output, doc_src=doc_src)
 
 
-def run_cli_helper(threshold, output, repo_url=None, doc_src=None):
+def run_cli_helper(threshold, output, repo_url=None, doc_src=None, graph_out=None):
     repo_data = cli_get_data(threshold, repo_url=repo_url, doc_src=doc_src)
-    save_json_output(repo_data, output)
+    if graph_out is None:
+        save_json_output(repo_data, output)
+    else:
+        with open("test_out.json", "w") as test_out:
+            json.dump(repo_data, test_out)
+
+        data_graph = DataGraph()
+        data_graph.add_somef_data(repo_data)
+        with open(graph_out, "wb") as out_file:
+            out_file.write(data_graph.g.serialize(format="turtle"))
 
 if __name__=='__main__':
     argparser = argparse.ArgumentParser(description="Fetch Github README, split paragraphs, run classifiers and output json containing repository information, classified excerpts and confidence.")
