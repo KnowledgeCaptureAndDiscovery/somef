@@ -61,7 +61,7 @@ categories = ['description','citation','installation','invocation']
 github_crosswalk_table = {
     "codeRepository": "html_url",
     "languages_url": "languages_url",
-    "downloadUrl": "archive_url",
+    "downloadUrl": "archive_url",  # todo: I think I got this from CodeMeta but it seems wrong
     "owner": ["owner", "login"],
     "ownerType": ["owner", "type"], # used to determine if owner is User or Organization
     "dateCreated": "created_at",
@@ -295,11 +295,13 @@ def format_output(git_data, repo_data):
 
     return repo_data
 
+
 # saves the final json Object in the file
 def save_json_output(repo_data, outfile):
     print("Saving json data to",outfile)
     with open(outfile, 'w') as output:
         json.dump(repo_data, output)   
+
 
 ## Function takes metadata, readme text predictions, bibtex citations and path to the output file
 ## Performs some combinations and saves the final json Object in the file
@@ -358,11 +360,10 @@ def run_cli_helper(threshold, output, repo_url=None, doc_src=None, graph_out=Non
     if graph_out is None:
         save_json_output(repo_data, output)
     else:
-        with open("test_out.json", "w") as test_out:
-            json.dump(repo_data, test_out)
-
+        print("Generating Knowledge Graph")
         data_graph = DataGraph()
         data_graph.add_somef_data(repo_data)
+        print("Saving Knowledge Graph ttl data to", graph_out)
         with open(graph_out, "wb") as out_file:
             out_file.write(data_graph.g.serialize(format="turtle"))
 

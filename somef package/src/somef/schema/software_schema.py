@@ -30,21 +30,33 @@ software_schema = {
         "@type": "xsd:string"
     },
     "sd:hasInstallInstructions": {
-        "@path": "install",
+        "@path": "installation",
         "@type": "xsd:string"
     },
-    "sd:hasExecutionCommand": {
-        "@path": "run",
-        "@type": "xsd:string"
-    },
+    "sd:hasExecutionCommand": [
+        {
+            "@path": "run",
+            "@type": "xsd:string"
+        },
+        {
+            "@path": "invocation",
+            "@type": "xsd:string"
+        }
+    ],
     "sd:hasUsageNotes": {
         "@path": "usage",
         "@type": "xsd:string"
     },
-    "sd:downloadUrl": {
-        "@path": "download",
-        "@type": "xsd:anyURI"
-    },
+    "sd:downloadUrl": [
+        {
+            "@path": "downloadUrl",
+            "@type": "xsd:anyURI"
+        },
+        {
+            "@path": "download",
+            "@type": "xsd:string"
+        }
+    ],
     "sd:softwareRequirements": {
         "@path": "requirement",
         "@type": "xsd:string"
@@ -107,6 +119,17 @@ software_schema = {
             "tag_name": ["releases", "tag_name"],
             "name": "fullName"
         },
+        # "sd:author": {
+        #     "@class": "schema:Person",
+        #     "@id": {
+        #         "@format": "obj:Person/{name}",
+        #         "name": ["releases", "author_name"]
+        #     },
+        #     "sd:additionalName": {
+        #         "@path": ["releases", "author_name"],
+        #         "@type": "xsd:string"
+        #     }
+        # },
         "sd:hasVersionId": {
             "@path": ["releases", "tag_name"],
             "@type": "xsd:string"
