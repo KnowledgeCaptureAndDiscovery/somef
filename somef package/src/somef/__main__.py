@@ -5,14 +5,12 @@ somef.
 """
 
 import configparser
-import os
 import sys
 from pathlib import Path
-import json
 import click
+from click_option_group import optgroup, RequiredMutuallyExclusiveOptionGroup, RequiredAnyOptionGroup
 import somef
-
-__DEFAULT_SOMEF_CONFIGURATION_FILE__ = "~/.somef/config.json"
+from . import configuration
 
 
 @click.group(context_settings={'help_option_names':['-h','--help']})
@@ -21,54 +19,20 @@ def trycli():
 
 @trycli.command(help="Configure credentials")
 def configure():
-    path = Path(__file__).parent.absolute()
     authorization = click.prompt("Authorization",default="")
-    description = click.prompt("Documentation model file", default=str(path)+"/models/description.sk")
-    invocation = click.prompt("Invocation model file", default=str(path)+"/models/invocation.sk")
-    installation = click.prompt("Installation model file", default=str(path)+"/models/installation.sk")
-    citation = click.prompt("Citation model file", default=str(path)+"/models/citation.sk")
+    description = click.prompt("Documentation model file", default=configuration.default_description)
+    invocation = click.prompt("Invocation model file", default=configuration.default_invocation)
+    installation = click.prompt("Installation model file", default=configuration.default_installation)
+    citation = click.prompt("Citation model file", default=configuration.default_citation)
 
-    credentials_file = Path(
-        os.getenv("SOMEF_CONFIGURATION_FILE", __DEFAULT_SOMEF_CONFIGURATION_FILE__)
-    ).expanduser()
-    os.makedirs(str(credentials_file.parent), exist_ok=True)
-
-    # credentials_file = Path(os.getenv("SOMEF_CONFIGURATION_FILE", __DEFAULT_SOMEF_CONFIGURATION_FILE__)).expanduser()
-
-    if credentials_file.exists():
-        with credentials_file.open("r") as fh:
-            data = json.load(fh)
-
-
-    data = {
-        "Authorization": "token "+authorization,
-        "description": description,
-        "invocation": invocation,
-        "installation": installation,
-        "citation": citation,
-    }
-
-    if data['Authorization']=="token ":
-    	del data['Authorization']
-    
-    with credentials_file.open("w") as fh:
-        credentials_file.parent.chmod(0o700)
-        credentials_file.chmod(0o600)
-        json.dump(data, fh) 
-        click.secho(f"Success", fg="green")
+    configuration.configure(authorization, description, invocation, installation, citation)
+    click.secho(f"Success", fg="green")
 
 @trycli.command(help="Show somef version.")
 def version(debug=False):
     click.echo(f"{Path(sys.argv[0]).name} v{somef.__version__}")
 
 @trycli.command(help="Running the Command Line Interface")
-@click.option(
-    "--repo_url",
-    "-r",
-    type=str,
-    help="Github Repository URL",
-    required=True,
-)
 @click.option(
     "--threshold",
     "-t",
@@ -77,19 +41,48 @@ def version(debug=False):
     required=True,
     default=0.8,
 )
-@click.option(
+@optgroup.group('Input', cls=RequiredMutuallyExclusiveOptionGroup)
+@optgroup.option(
+    "--repo_url",
+    "-r",
+    type=str,
+    help="Github Repository URL",
+)
+@optgroup.option(
+    "--doc_src",
+    "-d",
+    type=str,
+    help="Path to the README file source"
+)
+@optgroup.option(
+    "--csv_file",
+    "-c",
+    type=str,
+    help="A csv file where the first column are links to GitHub repositories"
+)
+@optgroup.option(
+    "--in_file",
+    "-i",
+    type=str,
+    help="A file of newline separated links to GitHub repositories"
+)
+@optgroup.group('Output', cls=RequiredAnyOptionGroup)
+@optgroup.option(
     "--output",
     "-o",
     type=str,
     help="Path to the output file",
-    required=True,
-    default="output.json"
 )
-def describe(repo_url,threshold,output):
+@optgroup.option(
+    "--graph_out",
+    "-g",
+    type=str,
+)
+def describe(**kwargs):
     from somef import cli
-    cli.run_cli(repo_url,threshold,output)
+    cli.run_cli(**kwargs)
     click.secho(f"Success", fg="green")
 
 
-if __name__=='__main__':
-	version()
+if __name__ == '__main__':
+    version()

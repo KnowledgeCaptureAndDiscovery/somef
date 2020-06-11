@@ -6,13 +6,14 @@ from setuptools import find_packages, setup
 
 install_requires = [
     "Click",
+    "click-option-group",
     "requests",
     "markdown",
     "requests",
     "bs4",
     "matplotlib",
     "nltk",
-    "sklearn",
+    "scikit-learn==0.21.2",
     "pandas",
     "numpy",
     "textblob"

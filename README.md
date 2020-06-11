@@ -39,6 +39,9 @@ The cli.py file takes as input the following parameters:
 
 -d / --doc_src: Path of documentation file
 
+-g / --graph_out: (Optional) If given, the CLI will turn the SoMEF output into a Knowledge Graph and save it to the
+turtle (.ttl) file given after this argument
+
 ### Add/Remove a Category:
 
 If the user wants to run the classifier for an additional category or wants to remove an existing category, corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in cli.py
