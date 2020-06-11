@@ -61,7 +61,7 @@ class URLParamType(click.types.StringParamType):
 @optgroup.option(
     "--in_file",
     "-i",
-    type=str,
+    type=click.Path(exists=True),
     help="A file of newline separated links to GitHub repositories"
 )
 @optgroup.group('Output', cls=RequiredAnyOptionGroup)
