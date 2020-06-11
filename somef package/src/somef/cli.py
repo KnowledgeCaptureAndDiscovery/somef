@@ -26,6 +26,7 @@ from somef.data_to_graph import DataGraph
 from . import createExcerpts
 from . import header_analysis
 
+
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
 def unmark_element(element, stream=None):
@@ -39,13 +40,17 @@ def unmark_element(element, stream=None):
         stream.write(element.tail)
     return stream.getvalue()
 
+
 # patching Markdown
 Markdown.output_formats["plain"] = unmark_element
 __md = Markdown(output_format="plain")
 __md.stripTopLevelTags = False
 
+
 def unmark(text):
     return __md.convert(text)
+
+
 ## Markdown to plain text conversion: end ##
 
 def restricted_float(x):
@@ -54,7 +59,8 @@ def restricted_float(x):
         raise argparse.ArgumentTypeError(f"{x} not in range [0.0, 1.0]")
     return x
 
-categories = ['description','citation','installation','invocation']
+
+categories = ['description', 'citation', 'installation', 'invocation']
 # keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_url')
 # instead of keep keys, we have this table
 # it says that we want the key "codeRepository", and that we'll get it from the path "html_url" within the result object
@@ -63,7 +69,7 @@ github_crosswalk_table = {
     "languages_url": "languages_url",
     "downloadUrl": "archive_url",  # todo: I think I got this from CodeMeta but it seems wrong
     "owner": ["owner", "login"],
-    "ownerType": ["owner", "type"], # used to determine if owner is User or Organization
+    "ownerType": ["owner", "type"],  # used to determine if owner is User or Organization
     "dateCreated": "created_at",
     "dateModified": "updated_at",
     "license": "license",
@@ -88,44 +94,45 @@ release_crosswalk_table = {
     'datePublished': "published_at",
 }
 
+
 ## Function uses the repository_url provided to load required information from github.
 ## Information kept from the repository is written in keep_keys.
 ## Returns the readme text and required metadata
 def load_repository_metadata(repository_url, header):
     print("Loading Repository Information....")
     ## load general response of the repository
-    if repository_url[-1]=='/':
-        repository_url = repository_url[:-1] 
+    if repository_url[-1] == '/':
+        repository_url = repository_url[:-1]
     url = urlparse(repository_url)
     if url.netloc != 'github.com':
         sys.exit("Error: repository must come from github")
     if len(url.path.split('/')) != 3:
         sys.exit("Github link is not correct. \nThe correct format is https://github.com/owner/repo_name.")
     _, owner, repo_name = url.path.split('/')
-    general_resp = requests.get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header).json() 
+    general_resp = requests.get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header).json()
 
-    if 'message' in general_resp.keys() and general_resp['message']=="Not Found":
+    if 'message' in general_resp.keys() and general_resp['message'] == "Not Found":
         sys.exit("Error: repository name is incorrect")
 
     if 'message' in general_resp.keys():
         message = general_resp['message']
-        sys.exit("Error: "+message)
+        sys.exit("Error: " + message)
 
     ## get only the fields that we want
     def do_crosswalk(data, crosswalk_table):
-        def get_path(obj, path):        
+        def get_path(obj, path):
             if isinstance(path, list) or isinstance(path, tuple):
                 if len(path) == 1:
                     path = path[0]
                 else:
                     return get_path(obj[path[0]], path[1:])
-           
+
             return obj[path] if path in obj else None
-        
+
         output = {}
         for codemeta_key, path in crosswalk_table.items():
             value = get_path(data, path)
-            if value is not None:    
+            if value is not None:
                 output[codemeta_key] = value
             else:
                 print(f"Error: key {path} not present in github repository")
@@ -139,13 +146,14 @@ def load_repository_metadata(repository_url, header):
         if 'license' in filtered_resp and k in filtered_resp['license']:
             license_info[k] = filtered_resp['license'][k]
     filtered_resp['license'] = license_info
-    
+
     # get keywords / topics
     topics_headers = header
     topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
-    topics_resp = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/topics', headers=topics_headers).json()
+    topics_resp = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/topics',
+                               headers=topics_headers).json()
     if 'message' in topics_resp.keys():
-        sys.exit("Error: "+topics_resp['message'])
+        sys.exit("Error: " + topics_resp['message'])
     if topics_resp and 'names' in topics_resp.keys():
         filtered_resp['topics'] = topics_resp['names']
 
@@ -154,23 +162,26 @@ def load_repository_metadata(repository_url, header):
     del filtered_resp['languages_url']
 
     ## get default README
-    readme_info = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/readme', headers=topics_headers).json()
+    readme_info = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/readme',
+                               headers=topics_headers).json()
     if 'message' in readme_info.keys():
-        sys.exit("Error: "+general_resp['message'])
+        sys.exit("Error: " + general_resp['message'])
     readme = base64.b64decode(readme_info['content']).decode("utf-8")
     text = readme
     filtered_resp['readme_url'] = readme_info['html_url']
 
     ## get releases
-    releases_list = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/releases', headers=header).json()
+    releases_list = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/releases',
+                                 headers=header).json()
 
-    if isinstance(releases_list,dict) and 'message' in releases_list.keys():
-        sys.exit("Error: "+general_resp['message'])        
+    if isinstance(releases_list, dict) and 'message' in releases_list.keys():
+        sys.exit("Error: " + general_resp['message'])
     releases_list = [do_crosswalk(release, release_crosswalk_table) for release in releases_list]
     filtered_resp['releases'] = list(releases_list)
-    
+
     print("Repository Information Successfully Loaded. \n")
     return text, filtered_resp
+
 
 ## Function takes readme text as input and divides it into excerpts
 ## Returns the extracted excerpts
@@ -180,23 +191,25 @@ def create_excerpts(string_list):
     print("Text Successfully split. \n")
     return divisions
 
+
 ## Function takes readme text as input and runs the provided classifiers on it
 ## Returns the dictionary containing scores for each excerpt.
 def run_classifiers(excerpts, file_paths):
-    score_dict={}
+    score_dict = {}
     for category in categories:
         if category not in file_paths.keys():
             sys.exit("Error: Category " + category + " file path not present in config.json")
         file_name = file_paths[category]
         if not path.exists(file_name):
             sys.exit(f"Error: File/Directory {file_name} does not exist")
-        print("Classifying excerpts for the catgory",category)
+        print("Classifying excerpts for the catgory", category)
         classifier = pickle.load(open(file_name, 'rb'))
         scores = classifier.predict_proba(excerpts)
-        score_dict[category]={'excerpt': excerpts, 'confidence': scores[:,1]}
-        print("Excerpt Classification Successful for the Category",category)
-    print("\n")   
-    return score_dict 
+        score_dict[category] = {'excerpt': excerpts, 'confidence': scores[:, 1]}
+        print("Excerpt Classification Successful for the Category", category)
+    print("\n")
+    return score_dict
+
 
 ## Function removes all excerpt lines which have been classified but contain only one word.
 ## Returns the excerpt to be entered into the predictions
@@ -204,46 +217,48 @@ def remove_unimportant_excerpts(excerpt_element):
     excerpt_info = excerpt_element['excerpt']
     excerpt_confidence = excerpt_element['confidence']
     excerpt_lines = excerpt_info.split('\n')
-    final_excerpt = {'excerpt':"",'confidence':[],'technique':'classifier'}
-    for i in range(len(excerpt_lines)-1):
+    final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'classifier'}
+    for i in range(len(excerpt_lines) - 1):
         words = excerpt_lines[i].split(' ')
-        if len(words)==2:
+        if len(words) == 2:
             continue
-        final_excerpt['excerpt'] += excerpt_lines[i]+'\n';
+        final_excerpt['excerpt'] += excerpt_lines[i] + '\n';
         final_excerpt['confidence'].append(excerpt_confidence[i])
     return final_excerpt
 
-## Function takes scores dictionary and a threshold as input 
+
+## Function takes scores dictionary and a threshold as input
 ## Returns predictions containing excerpts with a confidence above the given threshold.
 def classify(scores, threshold):
     print("Checking Thresholds for Classified Excerpts.")
     predictions = {}
     for ele in scores.keys():
-        print("Running for",ele)
+        print("Running for", ele)
         flag = False
         predictions[ele] = []
-        excerpt=""
-        confid=[]
+        excerpt = ""
+        confid = []
         for i in range(len(scores[ele]['confidence'])):
-            if scores[ele]['confidence'][i]>=threshold:
-                if flag==False:
-                    excerpt=excerpt+scores[ele]['excerpt'][i]+' \n'
+            if scores[ele]['confidence'][i] >= threshold:
+                if flag == False:
+                    excerpt = excerpt + scores[ele]['excerpt'][i] + ' \n'
                     confid.append(scores[ele]['confidence'][i])
-                    flag=True
+                    flag = True
                 else:
-                    excerpt=excerpt+scores[ele]['excerpt'][i]+' \n'
+                    excerpt = excerpt + scores[ele]['excerpt'][i] + ' \n'
                     confid.append(scores[ele]['confidence'][i])
-            else :
-                if flag==True:
-                    element = remove_unimportant_excerpts({'excerpt':excerpt,'confidence':confid})
-                    if len(element['confidence'])!=0:
+            else:
+                if flag == True:
+                    element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid})
+                    if len(element['confidence']) != 0:
                         predictions[ele].append(element)
-                    excerpt=""
-                    confid=[]
-                    flag=False
+                    excerpt = ""
+                    confid = []
+                    flag = False
         print("Run completed.")
     print("All Excerpts below the given Threshold Removed. \n")
     return predictions
+
 
 ## Function adds category information extracted using header information
 ## Returns json with the information added.
@@ -253,15 +268,17 @@ def extract_categories_using_header(repo_data):
     print("Information extracted. \n")
     return header_info, string_list
 
+
 ## Function takes readme text as input and runs a regex parser on it
 ## Returns a list of bibtex citations
 def extract_bibtex(readme_text):
     print("Extracting bibtex citation from readme")
     regex = r'\@[a-zA-z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title][.\n\S\s]+?\n\}'
     excerpts = readme_text
-    citations = re.findall(regex,excerpts)
+    citations = re.findall(regex, excerpts)
     print("Extracting bibtex citation from readme completed. \n")
     return citations
+
 
 ## Function takes the predictions using header information, classifier and bibtek parser
 ## Returns a combined predictions
@@ -270,40 +287,41 @@ def merge(header_predictions, predictions, citations):
     for i in range(len(citations)):
         if 'citation' not in predictions.keys():
             predictions['citation'] = []
-        predictions['citation'].insert(0,{'excerpt': citations[i],'confidence': [1.0],'technique': 'classifier'})
+        predictions['citation'].insert(0, {'excerpt': citations[i], 'confidence': [1.0], 'technique': 'classifier'})
 
     for headers in header_predictions:
         if headers not in predictions.keys():
             predictions[headers] = header_predictions[headers]
-        else :
+        else:
             for h in header_predictions[headers]:
-                predictions[headers].insert(0,h)
+                predictions[headers].insert(0, h)
     print("Merging successful. \n")
     return predictions
+
 
 ## Function takes metadata, readme text predictions, bibtex citations and path to the output file
 ## Performs some combinations
 def format_output(git_data, repo_data):
-
     for i in git_data.keys():
         if i == 'description':
             if 'description' not in repo_data.keys():
                 repo_data['description'] = []
-            repo_data['description'].append({'excerpt': git_data[i],'confidence': [1.0], 'technique': 'metadata'})
+            repo_data['description'].append({'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'metadata'})
         else:
-            repo_data[i] = {'excerpt': git_data[i],'confidence': [1.0], 'technique': 'metadata'}
+            repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'metadata'}
 
     return repo_data
 
 
 # saves the final json Object in the file
 def save_json_output(repo_data, outfile):
-    print("Saving json data to",outfile)
+    print("Saving json data to", outfile)
     with open(outfile, 'w') as output:
-        json.dump(repo_data, output)   
+        json.dump(repo_data, output)
+
+    ## Function takes metadata, readme text predictions, bibtex citations and path to the output file
 
 
-## Function takes metadata, readme text predictions, bibtex citations and path to the output file
 ## Performs some combinations and saves the final json Object in the file
 def save_json(git_data, repo_data, outfile):
     repo_data = format_output(git_data, repo_data)
@@ -324,10 +342,10 @@ def cli_get_data(threshold, repo_url=None, doc_src=None):
         header['Authorization'] = file_paths['Authorization']
     header['accept'] = 'application/vnd.github.v3+json'
     if repo_url is not None:
-        assert(doc_src is None)
+        assert (doc_src is None)
         text, github_data = load_repository_metadata(repo_url, header)
     else:
-        assert(doc_src is not None)
+        assert (doc_src is not None)
         if not path.exists(doc_src):
             sys.exit("Error: Document does not exist at given path")
         with open(doc_src, 'r') as doc_fh:
@@ -345,39 +363,62 @@ def cli_get_data(threshold, repo_url=None, doc_src=None):
     return format_output(github_data, predictions)
 
 
-# Function runs all the required components of the cli for a repository
-def run_cli(repo_url, threshold, output, graph_out=None):
-    return run_cli_helper(threshold, output, repo_url=repo_url, graph_out=graph_out)
-
-
 # Function runs all the required components of the cli on a given document file
 def run_cli_document(doc_src, threshold, output):
-    return run_cli_helper(threshold, output, doc_src=doc_src)
+    return run_cli(threshold=threshold, output=output, doc_src=doc_src)
 
 
-def run_cli_helper(threshold, output, repo_url=None, doc_src=None, graph_out=None):
-    repo_data = cli_get_data(threshold, repo_url=repo_url, doc_src=doc_src)
-    if graph_out is None:
-        save_json_output(repo_data, output)
+# Function runs all the required components of the cli for a repository
+def run_cli(*,
+            threshold=0.5,
+            repo_url=None,
+            doc_src=None,
+            csv_file=None,
+            in_file=None,
+            output=None,
+            graph_out=None
+            ):
+    multiple_repos = (csv_file or in_file)
+    if multiple_repos:
+        if csv_file:
+            with open(csv_file, "r") as in_handle:
+                # get the first column of the csv, if it's not the first line (first line is headers)
+                # and if the line is not empty
+                repo_list = [first_col for first_col in
+                             (
+                                 line.split(",")[0] for index, line in enumerate(in_handle)
+                                 if index > 0
+                             )
+                             if len(first_col) > 0]
+                print(repo_list)
+        else:
+            with open(in_file, "r") as in_handle:
+                # get the line (with the final newline omitted) if the line is not empty
+                repo_list = [line[:-1] for line in in_handle if len(line) > 1]
+
+        # convert to a set to ensure uniqueness (we don't want to get the same data multiple times)
+        repo_set = set(repo_list)
+
+        repo_data = [cli_get_data(threshold, repo_url=repo_url) for repo_url in repo_set]
+
     else:
+        if repo_url:
+            repo_data = cli_get_data(threshold, repo_url=repo_url)
+        else:
+            repo_data = cli_get_data(threshold, doc_src=doc_src)
+
+    if output is not None:
+        save_json_output(repo_data, output)
+
+    if graph_out is not None:
         print("Generating Knowledge Graph")
         data_graph = DataGraph()
-        data_graph.add_somef_data(repo_data)
+        if multiple_repos:
+            for repo in repo_data:
+                data_graph.add_somef_data(repo)
+        else:
+            data_graph.add_somef_data(repo_data)
+
         print("Saving Knowledge Graph ttl data to", graph_out)
         with open(graph_out, "wb") as out_file:
             out_file.write(data_graph.g.serialize(format="turtle"))
-
-if __name__=='__main__':
-    argparser = argparse.ArgumentParser(description="Fetch Github README, split paragraphs, run classifiers and output json containing repository information, classified excerpts and confidence.")
-    src = argparser.add_mutually_exclusive_group(required=True)
-    src.add_argument('-r', '--repo_url', help="URL of the Github repository")
-    src.add_argument('-d', '--doc_src', help='path to documentation file')
-    argparser.add_argument('-o', '--output', help="path for output json", required=True)
-    argparser.add_argument('-t','--threshold', help="threshold score", type=restricted_float, default=0.5)
-    argv = argparser.parse_args()
-    if argv.repo_url:
-        run_cli(argv.repo_url, argv.threshold, argv.output)
-    elif argv.doc_src:
-        run_cli_document(argv.doc_src, argv.threshold, argv.output)
-    else :
-        sys.exit("Either repository url or document path should be provided.")

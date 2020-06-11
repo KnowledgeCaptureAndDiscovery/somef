@@ -8,6 +8,7 @@ import configparser
 import sys
 from pathlib import Path
 import click
+from click_option_group import optgroup, RequiredMutuallyExclusiveOptionGroup, RequiredAnyOptionGroup
 import somef
 from . import configuration
 
@@ -33,13 +34,6 @@ def version(debug=False):
 
 @trycli.command(help="Running the Command Line Interface")
 @click.option(
-    "--repo_url",
-    "-r",
-    type=str,
-    help="Github Repository URL",
-    required=True,
-)
-@click.option(
     "--threshold",
     "-t",
     type=float,
@@ -47,26 +41,48 @@ def version(debug=False):
     required=True,
     default=0.8,
 )
-@click.option(
+@optgroup.group('Input', cls=RequiredMutuallyExclusiveOptionGroup)
+@optgroup.option(
+    "--repo_url",
+    "-r",
+    type=str,
+    help="Github Repository URL",
+)
+@optgroup.option(
+    "--doc_src",
+    "-d",
+    type=str,
+    help="Path to the README file source"
+)
+@optgroup.option(
+    "--csv_file",
+    "-c",
+    type=str,
+    help="A csv file where the first column are links to GitHub repositories"
+)
+@optgroup.option(
+    "--in_file",
+    "-i",
+    type=str,
+    help="A file of newline separated links to GitHub repositories"
+)
+@optgroup.group('Output', cls=RequiredAnyOptionGroup)
+@optgroup.option(
     "--output",
     "-o",
     type=str,
     help="Path to the output file",
-    required=True,
-    default="output.json"
 )
-@click.option(
+@optgroup.option(
     "--graph_out",
     "-g",
     type=str,
-    help="Optional path to a turtle file",
-    required=False
 )
-def describe(repo_url, threshold, output, graph_out):
+def describe(**kwargs):
     from somef import cli
-    cli.run_cli(repo_url,threshold,output,graph_out=graph_out)
+    cli.run_cli(**kwargs)
     click.secho(f"Success", fg="green")
 
 
-if __name__=='__main__':
-	version()
+if __name__ == '__main__':
+    version()
