@@ -32,6 +32,10 @@ def configure():
 def version(debug=False):
     click.echo(f"{Path(sys.argv[0]).name} v{somef.__version__}")
 
+
+class URLParamType(click.types.StringParamType):
+    name = "url"
+
 @trycli.command(help="Running the Command Line Interface")
 @click.option(
     "--threshold",
@@ -45,20 +49,14 @@ def version(debug=False):
 @optgroup.option(
     "--repo_url",
     "-r",
-    type=str,
+    type=URLParamType(),
     help="Github Repository URL",
 )
 @optgroup.option(
     "--doc_src",
     "-d",
-    type=str,
+    type=click.Path(exists=True),
     help="Path to the README file source"
-)
-@optgroup.option(
-    "--csv_file",
-    "-c",
-    type=str,
-    help="A csv file where the first column are links to GitHub repositories"
 )
 @optgroup.option(
     "--in_file",
@@ -70,13 +68,22 @@ def version(debug=False):
 @optgroup.option(
     "--output",
     "-o",
-    type=str,
-    help="Path to the output file",
+    type=click.Path(),
+    help="Path to the output file. If supplied, the output will be in JSON",
 )
 @optgroup.option(
     "--graph_out",
     "-g",
-    type=str,
+    type=click.Path(),
+    help="""Path to the output Knowledge Graph file. If supplied, the output will be a Knowledge Graph,
+            in the format given in the --format option"""
+)
+@click.option(
+    "--graph_format",
+    "-f",
+    type=click.Choice(["turtle", "json-ld"]),
+    default="turtle",
+    help="""If the --graph_out option is given, this is the format that the graph will be stored in"""
 )
 def describe(**kwargs):
     from somef import cli

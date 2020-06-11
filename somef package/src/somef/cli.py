@@ -370,31 +370,19 @@ def run_cli_document(doc_src, threshold, output):
 
 # Function runs all the required components of the cli for a repository
 def run_cli(*,
-            threshold=0.5,
+            threshold=0.8,
             repo_url=None,
             doc_src=None,
-            csv_file=None,
             in_file=None,
             output=None,
-            graph_out=None
+            graph_out=None,
+            graph_format="turtle",
             ):
-    multiple_repos = (csv_file or in_file)
+    multiple_repos = in_file is not None
     if multiple_repos:
-        if csv_file:
-            with open(csv_file, "r") as in_handle:
-                # get the first column of the csv, if it's not the first line (first line is headers)
-                # and if the line is not empty
-                repo_list = [first_col for first_col in
-                             (
-                                 line.split(",")[0] for index, line in enumerate(in_handle)
-                                 if index > 0
-                             )
-                             if len(first_col) > 0]
-                print(repo_list)
-        else:
-            with open(in_file, "r") as in_handle:
-                # get the line (with the final newline omitted) if the line is not empty
-                repo_list = [line[:-1] for line in in_handle if len(line) > 1]
+        with open(in_file, "r") as in_handle:
+            # get the line (with the final newline omitted) if the line is not empty
+            repo_list = [line[:-1] for line in in_handle if len(line) > 1]
 
         # convert to a set to ensure uniqueness (we don't want to get the same data multiple times)
         repo_set = set(repo_list)
@@ -421,4 +409,4 @@ def run_cli(*,
 
         print("Saving Knowledge Graph ttl data to", graph_out)
         with open(graph_out, "wb") as out_file:
-            out_file.write(data_graph.g.serialize(format="turtle"))
+            out_file.write(data_graph.g.serialize(format=graph_format))
