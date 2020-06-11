@@ -16,7 +16,9 @@ install_requires = [
     "scikit-learn==0.21.2",
     "pandas",
     "numpy",
-    "textblob"
+    "textblob",
+    "rdflib",
+    "rdflib-jsonld"
 ]
 
 
