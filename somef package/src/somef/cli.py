@@ -95,6 +95,10 @@ release_crosswalk_table = {
 }
 
 
+# error when github url is wrong
+class GithubUrlError(Exception):
+    pass
+
 ## Function uses the repository_url provided to load required information from github.
 ## Information kept from the repository is written in keep_keys.
 ## Returns the readme text and required metadata
@@ -111,12 +115,14 @@ def load_repository_metadata(repository_url, header):
     _, owner, repo_name = url.path.split('/')
     general_resp = requests.get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header).json()
 
-    if 'message' in general_resp.keys() and general_resp['message'] == "Not Found":
-        sys.exit("Error: repository name is incorrect")
+    if 'message' in general_resp:
+        if general_resp['message'] == "Not Found":
+            print("Error: repository name is incorrect")
+        else:
+            message = general_resp['message']
+            print("Error: " + message)
 
-    if 'message' in general_resp.keys():
-        message = general_resp['message']
-        sys.exit("Error: " + message)
+        raise GithubUrlError
 
     ## get only the fields that we want
     def do_crosswalk(data, crosswalk_table):
@@ -196,18 +202,20 @@ def create_excerpts(string_list):
 ## Returns the dictionary containing scores for each excerpt.
 def run_classifiers(excerpts, file_paths):
     score_dict = {}
-    for category in categories:
-        if category not in file_paths.keys():
-            sys.exit("Error: Category " + category + " file path not present in config.json")
-        file_name = file_paths[category]
-        if not path.exists(file_name):
-            sys.exit(f"Error: File/Directory {file_name} does not exist")
-        print("Classifying excerpts for the catgory", category)
-        classifier = pickle.load(open(file_name, 'rb'))
-        scores = classifier.predict_proba(excerpts)
-        score_dict[category] = {'excerpt': excerpts, 'confidence': scores[:, 1]}
-        print("Excerpt Classification Successful for the Category", category)
-    print("\n")
+    if len(excerpts) > 0:
+        for category in categories:
+            if category not in file_paths.keys():
+                sys.exit("Error: Category " + category + " file path not present in config.json")
+            file_name = file_paths[category]
+            if not path.exists(file_name):
+                sys.exit(f"Error: File/Directory {file_name} does not exist")
+            print("Classifying excerpts for the catgory", category)
+            classifier = pickle.load(open(file_name, 'rb'))
+            scores = classifier.predict_proba(excerpts)
+            score_dict[category] = {'excerpt': excerpts, 'confidence': scores[:, 1]}
+            print("Excerpt Classification Successful for the Category", category)
+        print("\n")
+
     return score_dict
 
 
@@ -343,7 +351,10 @@ def cli_get_data(threshold, repo_url=None, doc_src=None):
     header['accept'] = 'application/vnd.github.v3+json'
     if repo_url is not None:
         assert (doc_src is None)
-        text, github_data = load_repository_metadata(repo_url, header)
+        try:
+            text, github_data = load_repository_metadata(repo_url, header)
+        except GithubUrlError:
+            return None
     else:
         assert (doc_src is not None)
         if not path.exists(doc_src):
