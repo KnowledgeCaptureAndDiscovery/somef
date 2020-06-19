@@ -138,6 +138,8 @@ def extract_categories_using_headers(text): # main function
     text = cleanhtml(text)
     data = extract_header_content(text)
     print('Labeling headers.')
+    if data.empty:
+        return {}, [] 
     data['Group'] = data['Header'].apply(lambda row: label_header(row))
     if len(data['Group'].iloc[0]) == 0:
         data['Group'].iloc[0] = ['unknown']

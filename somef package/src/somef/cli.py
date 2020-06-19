@@ -67,7 +67,6 @@ categories = ['description', 'citation', 'installation', 'invocation']
 github_crosswalk_table = {
     "codeRepository": "html_url",
     "languages_url": "languages_url",
-    "downloadUrl": "archive_url",  # todo: I think I got this from CodeMeta but it seems wrong
     "owner": ["owner", "login"],
     "ownerType": ["owner", "type"],  # used to determine if owner is User or Organization
     "dateCreated": "created_at",
@@ -103,15 +102,17 @@ class GithubUrlError(Exception):
 ## Information kept from the repository is written in keep_keys.
 ## Returns the readme text and required metadata
 def load_repository_metadata(repository_url, header):
-    print("Loading Repository Information....")
+    print(f"Loading Repository {repository_url} Information....")
     ## load general response of the repository
     if repository_url[-1] == '/':
         repository_url = repository_url[:-1]
     url = urlparse(repository_url)
     if url.netloc != 'github.com':
-        sys.exit("Error: repository must come from github")
+        print("Error: repository must come from github")
+        return " ", {}
     if len(url.path.split('/')) != 3:
-        sys.exit("Github link is not correct. \nThe correct format is https://github.com/owner/repo_name.")
+        print("Github link is not correct. \nThe correct format is https://github.com/owner/repo_name.")
+        return " ", {}
     _, owner, repo_name = url.path.split('/')
     general_resp = requests.get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header).json()
 
@@ -133,7 +134,10 @@ def load_repository_metadata(repository_url, header):
                 else:
                     return get_path(obj[path[0]], path[1:])
 
-            return obj[path] if path in obj else None
+            if obj is not None and path in obj:
+                return obj[path]
+            else:
+                return None
 
         output = {}
         for codemeta_key, path in crosswalk_table.items():
@@ -145,6 +149,8 @@ def load_repository_metadata(repository_url, header):
         return output
 
     filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
+    # add download URL
+    filtered_resp["downloadUrl"] = f"https://github.com/{owner}/{repo_name}/releases"
 
     ## condense license information
     license_info = {}
@@ -159,8 +165,8 @@ def load_repository_metadata(repository_url, header):
     topics_resp = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/topics',
                                headers=topics_headers).json()
     if 'message' in topics_resp.keys():
-        sys.exit("Error: " + topics_resp['message'])
-    if topics_resp and 'names' in topics_resp.keys():
+        print("Topics Error: " + topics_resp['message'])
+    elif topics_resp and 'names' in topics_resp.keys():
         filtered_resp['topics'] = topics_resp['names']
 
     ## get languages
@@ -171,17 +177,20 @@ def load_repository_metadata(repository_url, header):
     readme_info = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/readme',
                                headers=topics_headers).json()
     if 'message' in readme_info.keys():
-        sys.exit("Error: " + general_resp['message'])
-    readme = base64.b64decode(readme_info['content']).decode("utf-8")
-    text = readme
-    filtered_resp['readme_url'] = readme_info['html_url']
+        print("README Error: " + readme_info['message'])
+        text = ""
+    else:
+        readme = base64.b64decode(readme_info['content']).decode("utf-8")
+        text = readme
+        filtered_resp['readme_url'] = readme_info['html_url']
 
     ## get releases
     releases_list = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/releases',
                                  headers=header).json()
 
     if isinstance(releases_list, dict) and 'message' in releases_list.keys():
-        sys.exit("Error: " + general_resp['message'])
+        print("Releases Error: " + general_resp['message'])
+    
     releases_list = [do_crosswalk(release, release_crosswalk_table) for release in releases_list]
     filtered_resp['releases'] = list(releases_list)
 
@@ -272,6 +281,10 @@ def classify(scores, threshold):
 ## Returns json with the information added.
 def extract_categories_using_header(repo_data):
     print("Extracting information using headers")
+    # this is a hack because if repo_data is "" this errors out
+    if len(repo_data) == 0:
+        return {}, []
+
     header_info, string_list = header_analysis.extract_categories_using_headers(repo_data)
     print("Information extracted. \n")
     return header_info, string_list

@@ -4,7 +4,7 @@ software_prefixes = {
     "schema": "https://schema.org/",
     "sd": "https://w3id.org/okn/o/sd#",
     "xsd": str(XSD),
-    "obj": "http://example.org/"
+    "obj": "http://w3id.org/okn/o/i/"
 }
 
 software_schema = {
