@@ -16,6 +16,9 @@ def configure(authorization="",
         installation=default_installation,
         citation=default_citation):
 
+    import nltk
+    nltk.download('wordnet')
+
     credentials_file = Path(
         os.getenv("SOMEF_CONFIGURATION_FILE", __DEFAULT_SOMEF_CONFIGURATION_FILE__)
     ).expanduser()
