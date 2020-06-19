@@ -135,7 +135,10 @@ def load_repository_metadata(repository_url, header):
                 else:
                     return get_path(obj[path[0]], path[1:])
 
-            return obj[path] if path in obj else None
+            if obj is not None and path in obj:
+                return obj[path]
+            else:
+                return None
 
         output = {}
         for codemeta_key, path in crosswalk_table.items():
@@ -277,7 +280,6 @@ def classify(scores, threshold):
 ## Returns json with the information added.
 def extract_categories_using_header(repo_data):
     print("Extracting information using headers")
-    print(repo_data)
     # this is a hack because if repo_data is "" this errors out
     if len(repo_data) == 0:
         return {}, []
