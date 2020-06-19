@@ -171,7 +171,7 @@ def load_repository_metadata(repository_url, header):
     readme_info = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/readme',
                                headers=topics_headers).json()
     if 'message' in readme_info.keys():
-        sys.exit("Error: " + general_resp['message'])
+        sys.exit("Error: " + readme_info['message'])
     readme = base64.b64decode(readme_info['content']).decode("utf-8")
     text = readme
     filtered_resp['readme_url'] = readme_info['html_url']
