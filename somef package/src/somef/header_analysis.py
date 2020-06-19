@@ -136,7 +136,6 @@ def cleanhtml(text):
 
 def extract_categories_using_headers(text): # main function
     text = cleanhtml(text)
-    print(f"text: \"{text}\"")
     data = extract_header_content(text)
     print('Labeling headers.')
     print(data)

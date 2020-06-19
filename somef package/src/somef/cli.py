@@ -67,7 +67,6 @@ categories = ['description', 'citation', 'installation', 'invocation']
 github_crosswalk_table = {
     "codeRepository": "html_url",
     "languages_url": "languages_url",
-    "downloadUrl": "archive_url",  # todo: I think I got this from CodeMeta but it seems wrong
     "owner": ["owner", "login"],
     "ownerType": ["owner", "type"],  # used to determine if owner is User or Organization
     "dateCreated": "created_at",
@@ -147,6 +146,8 @@ def load_repository_metadata(repository_url, header):
         return output
 
     filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
+    # add download URL
+    filtered_resp["downloadUrl"] = f"https://github.com/{owner}/{repo_name}/releases"
 
     ## condense license information
     license_info = {}
