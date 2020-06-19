@@ -103,15 +103,17 @@ class GithubUrlError(Exception):
 ## Information kept from the repository is written in keep_keys.
 ## Returns the readme text and required metadata
 def load_repository_metadata(repository_url, header):
-    print("Loading Repository Information....")
+    print(f"Loading Repository {repository_url} Information....")
     ## load general response of the repository
     if repository_url[-1] == '/':
         repository_url = repository_url[:-1]
     url = urlparse(repository_url)
     if url.netloc != 'github.com':
-        sys.exit("Error: repository must come from github")
+        print("Error: repository must come from github")
+        return " ", {}
     if len(url.path.split('/')) != 3:
-        sys.exit("Github link is not correct. \nThe correct format is https://github.com/owner/repo_name.")
+        print("Github link is not correct. \nThe correct format is https://github.com/owner/repo_name.")
+        return " ", {}
     _, owner, repo_name = url.path.split('/')
     general_resp = requests.get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header).json()
 
@@ -159,8 +161,8 @@ def load_repository_metadata(repository_url, header):
     topics_resp = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/topics',
                                headers=topics_headers).json()
     if 'message' in topics_resp.keys():
-        sys.exit("Error: " + topics_resp['message'])
-    if topics_resp and 'names' in topics_resp.keys():
+        print("Topics Error: " + topics_resp['message'])
+    elif topics_resp and 'names' in topics_resp.keys():
         filtered_resp['topics'] = topics_resp['names']
 
     ## get languages
@@ -171,17 +173,20 @@ def load_repository_metadata(repository_url, header):
     readme_info = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/readme',
                                headers=topics_headers).json()
     if 'message' in readme_info.keys():
-        sys.exit("Error: " + readme_info['message'])
-    readme = base64.b64decode(readme_info['content']).decode("utf-8")
-    text = readme
-    filtered_resp['readme_url'] = readme_info['html_url']
+        print("README Error: " + readme_info['message'])
+        text = ""
+    else:
+        readme = base64.b64decode(readme_info['content']).decode("utf-8")
+        text = readme
+        filtered_resp['readme_url'] = readme_info['html_url']
 
     ## get releases
     releases_list = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/releases',
                                  headers=header).json()
 
     if isinstance(releases_list, dict) and 'message' in releases_list.keys():
-        sys.exit("Error: " + general_resp['message'])
+        print("Releases Error: " + general_resp['message'])
+    
     releases_list = [do_crosswalk(release, release_crosswalk_table) for release in releases_list]
     filtered_resp['releases'] = list(releases_list)
 
@@ -272,6 +277,11 @@ def classify(scores, threshold):
 ## Returns json with the information added.
 def extract_categories_using_header(repo_data):
     print("Extracting information using headers")
+    print(repo_data)
+    # this is a hack because if repo_data is "" this errors out
+    if len(repo_data) == 0:
+        return {}, []
+
     header_info, string_list = header_analysis.extract_categories_using_headers(repo_data)
     print("Information extracted. \n")
     return header_info, string_list
