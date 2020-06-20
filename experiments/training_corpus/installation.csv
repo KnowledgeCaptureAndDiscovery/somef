@@ -1,0 +1,930 @@
+URL,contributor,excerpt
+https://github.com/GoogleChrome/puppeteer,Allen Mao,Installation
+https://github.com/GoogleChrome/puppeteer,Allen Mao,"To use Puppeteer in your project, run:"
+https://github.com/GoogleChrome/puppeteer,Allen Mao,npm i puppeteer
+https://github.com/GoogleChrome/puppeteer,Allen Mao,"# or ""yarn add puppeteer"""
+https://github.com/GoogleChrome/puppeteer,Allen Mao,puppeteer-core
+https://github.com/GoogleChrome/puppeteer,Allen Mao,"Since version 1.7.0 we publish the puppeteer-core package, a version of Puppeteer that doesn't download Chromium by default."
+https://github.com/GoogleChrome/puppeteer,Allen Mao,npm i puppeteer-core
+https://github.com/GoogleChrome/puppeteer,Allen Mao,"# or ""yarn add puppeteer-core"""
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,Environment
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,Python Version: 3.6
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,OS: CentOs7 (Other Linux system is also OK)
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,CUDA: 9.0 (least 8.0)
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,PyTorch:0.4.0(see issue https://github.com/JimmySuen/integral-human-pose/issues/4)
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,"We recommend installing python from Anaconda, installing pytorch following guide on PyTorch according to your specific CUDA & python version. In addition, you need to install dependencies below."
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,pip install scipy
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,pip install matplotlib
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,pip install opencv-python
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,pip install easydict
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,pip install pyyaml
+https://github.com/JuliaGeo/LibGEOS.jl,Allen Mao,"At the Julia prompt, run"
+https://github.com/JuliaGeo/LibGEOS.jl,Allen Mao,"julia> Pkg.add(""LibGEOS"")"
+https://github.com/JuliaGeo/LibGEOS.jl,Allen Mao,"This will install both the Julia package and GEOS shared libraries together. To just reinstall the GEOS shared libraries, run Pkg.build(""LibGEOS"")."
+https://github.com/JuliaGeo/LibGEOS.jl,Allen Mao,Test that LibGEOS works by runnning
+https://github.com/JuliaGeo/LibGEOS.jl,Allen Mao,"julia> Pkg.test(""LibGEOS"")"
+https://github.com/NSGeophysics/GPRPy,Allen Mao,Simplemost installation
+https://github.com/NSGeophysics/GPRPy,Allen Mao,"In the following instructions, if you use Windows, use the comands python and pip. If you use Mac or Linux, use the commands python3 and pip3 instead."
+https://github.com/NSGeophysics/GPRPy,Allen Mao,Download the GPRPy software from https://github.com/NSGeophysics/GPRPy/archive/master.zip.
+https://github.com/NSGeophysics/GPRPy,Allen Mao,Save the file somewhere on your computer and extract the zip folder.
+https://github.com/NSGeophysics/GPRPy,Allen Mao,"As an alternative, you can install git from https://git-scm.com/, then run in a command prompt:"
+https://github.com/NSGeophysics/GPRPy,Allen Mao,git clone https://github.com/NSGeophysics/GPRPy.git
+https://github.com/NSGeophysics/GPRPy,Allen Mao,The advantage of the latter is that you can easily update your software by running from the GPRPy folder in a command prompt:
+https://github.com/NSGeophysics/GPRPy,Allen Mao,git pull origin master
+https://github.com/NSGeophysics/GPRPy,Allen Mao,Install Python 3.7 for example from https://conda.io/miniconda.html
+https://github.com/NSGeophysics/GPRPy,Allen Mao,"Once the installation finished, open a command prompt that can run Python"
+https://github.com/NSGeophysics/GPRPy,Allen Mao,"On Windows: click on Start, then enter ""Anaconda Prompt"", without the quotation marks into the ""Search programs and files"" field. On Mac or Linux, open the regular terminal."
+https://github.com/NSGeophysics/GPRPy,Allen Mao,"In the command prompt, change to the directory where you downloaded the GPRPy files. This is usually through a command like for example"
+https://github.com/NSGeophysics/GPRPy,Allen Mao,cd Desktop\GPRPy
+https://github.com/NSGeophysics/GPRPy,Allen Mao,if you downloaded GPRPy directly onto your desktop. Then type the following and press enter afterward:
+https://github.com/NSGeophysics/GPRPy,Allen Mao,python installMigration.py
+https://github.com/NSGeophysics/GPRPy,Allen Mao,Then type the following and press enter afterward:
+https://github.com/NSGeophysics/GPRPy,Allen Mao,pip install .
+https://github.com/NSGeophysics/GPRPy,Allen Mao,"don't forget the period ""."" at the end of the pip install command"
+https://github.com/NVIDIA/vid2vid,Allen Mao,Prerequisites
+https://github.com/NVIDIA/vid2vid,Allen Mao,Linux or macOS
+https://github.com/NVIDIA/vid2vid,Allen Mao,Python 3
+https://github.com/NVIDIA/vid2vid,Allen Mao,NVIDIA GPU + CUDA cuDNN
+https://github.com/NVIDIA/vid2vid,Allen Mao,PyTorch 0.4
+https://github.com/NVIDIA/vid2vid,Allen Mao,Install python libraries dominate and requests.
+https://github.com/NVIDIA/vid2vid,Allen Mao,pip install dominate requests
+https://github.com/NVIDIA/vid2vid,Allen Mao,"If you plan to train with face datasets, please install dlib."
+https://github.com/NVIDIA/vid2vid,Allen Mao,pip install dlib
+https://github.com/NVIDIA/vid2vid,Allen Mao,"If you plan to train with pose datasets, please install DensePose and/or OpenPose."
+https://github.com/NVIDIA/vid2vid,Allen Mao,Clone this repo:
+https://github.com/NVIDIA/vid2vid,Allen Mao,git clone https://github.com/NVIDIA/vid2vid
+https://github.com/NVIDIA/vid2vid,Allen Mao,cd vid2vid
+https://github.com/NVIDIA/vid2vid,Allen Mao,"Docker Image If you have difficulty building the repo, a docker image can be found in the docker folder."
+https://github.com/OpenGeoVis/PVGeo,Allen Mao,"To begin using the PVGeo Python package, create/activate your Python virtual environment (we highly recommend using anaconda) and install PVGeo through pip:"
+https://github.com/OpenGeoVis/PVGeo,Allen Mao,pip install PVGeo
+https://github.com/OpenGeoVis/omfvista,Allen Mao,Installation is simply:
+https://github.com/OpenGeoVis/omfvista,Allen Mao,pip install omfvista
+https://github.com/OpenGeoVis/omfvista,Allen Mao,All necessary dependencies will be installed alongside omfvista. Please note that this package heavily leverages the PyVista package.
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,System Prerequisites
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,For default tile serving
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,GDAL >= 2.1.0
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,mapnik >= 3.1.0
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,python-mapnik >= 0.1
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,Clone the repo:
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,git clone https://github.com/OpenGeoscience/geonotebook.git
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,cd geonotebook
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,"Make a virtualenv, install jupyter[notebook], install geonotebook"
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,mkvirtualenv -a . geonotebook
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,# Numpy must be fully installed before rasterio
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,pip install -r prerequirements.txt
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,pip install -r requirements.txt
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,# Enable both the notebook and server extensions
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,jupyter serverextension enable --sys-prefix --py geonotebook
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,jupyter nbextension enable --sys-prefix --py geonotebook
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,Note The serverextension and nbextension commands accept flags that configure how and where the extensions are installed. See jupyter serverextension --help for more information.
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,Installing geonotebook for development
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,"When developing geonotebook, it is often helpful to install packages as a reference to the checked out repository rather than copying them to the system site-packages. A ""development install"" will allow you to make live changes to python or javascript without reinstalling the package."
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,"# Install the geonotebook python package as ""editable"""
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,pip install -e .
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,# Install the notebook extension as a symlink
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,jupyter nbextension install --sys-prefix --symlink --py geonotebook
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,# Enable the extension
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,# Start the javascript builder
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,cd js
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,npm run watch
+https://github.com/Toblerity/Fiona/,Allen Mao,"Fiona requires Python 2.7 or 3.4+ and GDAL/OGR 1.8+. To build from a source distribution you will need a C compiler and GDAL and Python development headers and libraries (libgdal1-dev for Debian/Ubuntu, gdal-dev for CentOS/Fedora)."
+https://github.com/Toblerity/Fiona/,Allen Mao,"To build from a repository copy, you will also need Cython to build C sources from the project's .pyx files. See the project's requirements-dev.txt file for guidance."
+https://github.com/Toblerity/Fiona/,Allen Mao,"The Kyngchaos GDAL frameworks will satisfy the GDAL/OGR dependency for OS X, as will Homebrew's GDAL Formula (brew install gdal)."
+https://github.com/Toblerity/Fiona/,Allen Mao,Python Requirements
+https://github.com/Toblerity/Fiona/,Allen Mao,"Fiona depends on the modules enum34, six, cligj, munch, argparse, and ordereddict (the two latter modules are standard in Python 2.7+). Pip will fetch these requirements for you, but users installing Fiona from a Windows installer must get them separately."
+https://github.com/Toblerity/Fiona/,Allen Mao,Unix-like systems
+https://github.com/Toblerity/Fiona/,Allen Mao,"Assuming you're using a virtualenv (if not, skip to the 4th command) and GDAL/OGR libraries, headers, and gdal-config program are installed to well known locations on your system via your system's package manager (brew install gdal using Homebrew on OS X), installation is this simple."
+https://github.com/Toblerity/Fiona/,Allen Mao,$ mkdir fiona_env
+https://github.com/Toblerity/Fiona/,Allen Mao,$ virtualenv fiona_env
+https://github.com/Toblerity/Fiona/,Allen Mao,$ source fiona_env/bin/activate
+https://github.com/Toblerity/Fiona/,Allen Mao,(fiona_env)$ pip install fiona
+https://github.com/Toblerity/Fiona/,Allen Mao,"If gdal-config is not available or if GDAL/OGR headers and libs aren't installed to a well known location, you must set include dirs, library dirs, and libraries options via the setup.cfg file or setup command line as shown below (using git). You must also specify the version of the GDAL API on the command line using the --gdalversion argument (see example below) or with the GDAL_VERSION environment variable (e.g. export GDAL_VERSION=2.1)."
+https://github.com/Toblerity/Fiona/,Allen Mao,(fiona_env)$ git clone git://github.com/Toblerity/Fiona.git
+https://github.com/Toblerity/Fiona/,Allen Mao,(fiona_env)$ cd Fiona
+https://github.com/Toblerity/Fiona/,Allen Mao,(fiona_env)$ python setup.py build_ext -I/path/to/gdal/include -L/path/to/gdal/lib -lgdal install --gdalversion 2.1
+https://github.com/Toblerity/Fiona/,Allen Mao,Or specify that build options and GDAL API version should be provided by a particular gdal-config program.
+https://github.com/Toblerity/Fiona/,Allen Mao,(fiona_env)$ GDAL_CONFIG=/path/to/gdal-config pip install fiona
+https://github.com/Toblerity/Fiona/,Allen Mao,Windows
+https://github.com/Toblerity/Fiona/,Allen Mao,Binary installers are available at http://www.lfd.uci.edu/~gohlke/pythonlibs/#fiona and coming eventually to PyPI.
+https://github.com/Toblerity/Fiona/,Allen Mao,You can download a binary distribution of GDAL from here. You will also need to download the compiled libraries and headers (include files).
+https://github.com/Toblerity/Fiona/,Allen Mao,"When building from source on Windows, it is important to know that setup.py cannot rely on gdal-config, which is only present on UNIX systems, to discover the locations of header files and libraries that Fiona needs to compile its C extensions. On Windows, these paths need to be provided by the user. You will need to find the include files and the library files for gdal and use setup.py as follows. You must also specify the version of the GDAL API on the command line using the --gdalversion argument (see example below) or with the GDAL_VERSION environment variable (e.g. set GDAL_VERSION=2.1)."
+https://github.com/Toblerity/Fiona/,Allen Mao,$ python setup.py build_ext -I<path to gdal include files> -lgdal_i -L<path to gdal library> install --gdalversion 2.1
+https://github.com/Toblerity/Fiona/,Allen Mao,Note: The GDAL DLL (gdal111.dll or similar) and gdal-data directory need to be in your Windows PATH otherwise Fiona will fail to work.
+https://github.com/Toblerity/Fiona/,Allen Mao,"The Appveyor CI build uses the GISInternals GDAL binaries to build Fiona. This produces a binary wheel for successful builds, which includes GDAL and other dependencies, for users wanting to try an unstable development version. The Appveyor configuration file may be a useful example for users building from source on Windows."
+https://github.com/Toblerity/Shapely,Allen Mao,Requirements
+https://github.com/Toblerity/Shapely,Allen Mao,Shapely 1.6 requires
+https://github.com/Toblerity/Shapely,Allen Mao,"Python 2.7, >=3.4"
+https://github.com/Toblerity/Shapely,Allen Mao,GEOS >=3.3
+https://github.com/Toblerity/Shapely,Allen Mao,Installing Shapely 1.6
+https://github.com/Toblerity/Shapely,Allen Mao,Shapely may be installed from a source distribution or one of several kinds of built distribution.
+https://github.com/Toblerity/Shapely,Allen Mao,Built distributions
+https://github.com/Toblerity/Shapely,Allen Mao,Windows users have two good installation options: the wheels at http://www.lfd.uci.edu/~gohlke/pythonlibs/#shapely and the Anaconda platform's conda-forge channel.
+https://github.com/Toblerity/Shapely,Allen Mao,OS X and Linux users can get Shapely wheels with GEOS included from the Python Package Index with a recent version of pip (8+):
+https://github.com/Toblerity/Shapely,Allen Mao,$ pip install shapely
+https://github.com/Toblerity/Shapely,Allen Mao,A few extra speedups that require Numpy can be had by running
+https://github.com/Toblerity/Shapely,Allen Mao,$ pip install shapely[vectorized]
+https://github.com/Toblerity/Shapely,Allen Mao,"Shapely is available via system package management tools like apt, yum, and Homebrew, and is also provided by popular Python distributions like Canopy and Anaconda."
+https://github.com/Toblerity/Shapely,Allen Mao,Source distributions
+https://github.com/Toblerity/Shapely,Allen Mao,"If you want to build Shapely from source for compatibility with other modules that depend on GEOS (such as cartopy or osgeo.ogr) or want to use a different version of GEOS than the one included in the project wheels you should first install the GEOS library, Cython, and Numpy on your system (using apt, yum, brew, or other means) and then direct pip to ignore the binary wheels."
+https://github.com/Toblerity/Shapely,Allen Mao,$ pip install shapely --no-binary shapely
+https://github.com/Toblerity/Shapely,Allen Mao,"If you've installed GEOS to a standard location, the geos-config program will be used to get compiler and linker options. If geos-config is not on your executable, it can be specified with a GEOS_CONFIG environment variable, e.g.:"
+https://github.com/Toblerity/Shapely,Allen Mao,$ GEOS_CONFIG=/path/to/geos-config pip install shapely
+https://github.com/XiaLiPKU/RESCAN,Allen Mao,Prerequisite
+https://github.com/XiaLiPKU/RESCAN,Allen Mao,Python>=3.6
+https://github.com/XiaLiPKU/RESCAN,Allen Mao,Pytorch>=4.1.0
+https://github.com/XiaLiPKU/RESCAN,Allen Mao,Opencv>=3.1.0
+https://github.com/XiaLiPKU/RESCAN,Allen Mao,tensorboardX
+https://github.com/ZhouYanzhao/PRM,Allen Mao,System (tested on Ubuntu 14.04LTS and Win10)
+https://github.com/ZhouYanzhao/PRM,Allen Mao,NVIDIA GPU + CUDA CuDNN (CPU mode is also supported but significantly slower)
+https://github.com/ZhouYanzhao/PRM,Allen Mao,Python>=3.5
+https://github.com/ZhouYanzhao/PRM,Allen Mao,PyTorch>=0.4
+https://github.com/ZhouYanzhao/PRM,Allen Mao,Jupyter Notebook and ipywidgets (required by the demo):
+https://github.com/ZhouYanzhao/PRM,Allen Mao,# enable the widgetsnbextension before you start the notebook server
+https://github.com/ZhouYanzhao/PRM,Allen Mao,jupyter nbextension enable --py --sys-prefix widgetsnbextension
+https://github.com/ZhouYanzhao/PRM,Allen Mao,"Install Nest, a flexible tool for building and sharing deep learning modules:"
+https://github.com/ZhouYanzhao/PRM,Allen Mao,I created Nest in the process of refactoring PRM's pytorch implementation. It aims at encouraging code reuse and ships with a bunch of useful features. PRM is now implemented as a set of Nest modules; thus you can easily install and use it as demonstrated below.
+https://github.com/ZhouYanzhao/PRM,Allen Mao,$ pip install git+https://github.com/ZhouYanzhao/Nest.git
+https://github.com/ZhouYanzhao/PRM,Allen Mao,Install PRM via Nest's CLI tool:
+https://github.com/ZhouYanzhao/PRM,Allen Mao,# note that data will be saved under your current path
+https://github.com/ZhouYanzhao/PRM,Allen Mao,$ nest module install github@ZhouYanzhao/PRM:pytorch prm
+https://github.com/ZhouYanzhao/PRM,Allen Mao,# verify the installation
+https://github.com/ZhouYanzhao/PRM,Allen Mao,$ nest module list --filter prm
+https://github.com/ZhouYanzhao/PRM,Allen Mao,# Output:
+https://github.com/ZhouYanzhao/PRM,Allen Mao,# 3 Nest modules found.
+https://github.com/ZhouYanzhao/PRM,Allen Mao,# [0] prm.fc_resnet50 (1.0.0)
+https://github.com/ZhouYanzhao/PRM,Allen Mao,# [1] prm.peak_response_mapping (1.0.0)
+https://github.com/ZhouYanzhao/PRM,Allen Mao,# [2] prm.prm_visualize (1.0.0)
+https://github.com/agile-geoscience/striplog/,Allen Mao,Dependencies
+https://github.com/agile-geoscience/striplog/,Allen Mao,"These are best installed with Anaconda, see Install, below."
+https://github.com/agile-geoscience/striplog/,Allen Mao,NumPy
+https://github.com/agile-geoscience/striplog/,Allen Mao,matplotlib
+https://github.com/agile-geoscience/striplog/,Allen Mao,Install
+https://github.com/agile-geoscience/striplog/,Allen Mao,pip install striplog
+https://github.com/agile-geoscience/striplog/,Allen Mao,I recommend setting up a virtual environment:
+https://github.com/agile-geoscience/striplog/,Allen Mao,Install Anaconda if you don't have it already
+https://github.com/agile-geoscience/striplog/,Allen Mao,"Then do this to create an environment called myenv (or whatever you like), answering Yes to the confirmation question:"
+https://github.com/agile-geoscience/striplog/,Allen Mao,conda create -n myenv python=3.5 numpy matplotlib
+https://github.com/agile-geoscience/striplog/,Allen Mao,source activate myenv
+https://github.com/agile-geoscience/striplog/,Allen Mao,Then you can do:
+https://github.com/akanazawa/hmr,Allen Mao,Python 2.7
+https://github.com/akanazawa/hmr,Allen Mao,"TensorFlow tested on version 1.3, demo alone runs with TF 1.12"
+https://github.com/akanazawa/hmr,Allen Mao,Setup virtualenv
+https://github.com/akanazawa/hmr,Allen Mao,virtualenv venv_hmr
+https://github.com/akanazawa/hmr,Allen Mao,source venv_hmr/bin/activate
+https://github.com/akanazawa/hmr,Allen Mao,pip install -U pip
+https://github.com/akanazawa/hmr,Allen Mao,deactivate
+https://github.com/akanazawa/hmr,Allen Mao,Install TensorFlow
+https://github.com/akanazawa/hmr,Allen Mao,With GPU:
+https://github.com/akanazawa/hmr,Allen Mao,pip install tensorflow-gpu==1.3.0
+https://github.com/akanazawa/hmr,Allen Mao,Without GPU:
+https://github.com/akanazawa/hmr,Allen Mao,pip install tensorflow==1.3.0
+https://github.com/akaszynski/pyansys,Allen Mao,Installation through pip:
+https://github.com/akaszynski/pyansys,Allen Mao,pip install pyansys
+https://github.com/albertpumarola/GANimation,Allen Mao,"Install PyTorch (version 0.3.1), Torch Vision and dependencies from http://pytorch.org"
+https://github.com/albertpumarola/GANimation,Allen Mao,Install requirements.txt (pip install -r requirements.txt)
+https://github.com/cgre-aachen/gempy,Allen Mao,We provide the latest release version of GemPy via the Conda and PyPi package services. We highly recommend using either PyPi as it will take care of automatically installing all dependencies.
+https://github.com/cgre-aachen/gempy,Allen Mao,PyPi
+https://github.com/cgre-aachen/gempy,Allen Mao,$ pip install gempy
+https://github.com/cgre-aachen/gempy,Allen Mao,Manual
+https://github.com/cgre-aachen/gempy,Allen Mao,Otherwise you can clone the current repository by downloading is manually or by using Git by calling
+https://github.com/cgre-aachen/gempy,Allen Mao,$ git clone https://github.com/cgre-aachen/gempy.git
+https://github.com/cgre-aachen/gempy,Allen Mao,and then manually install it using the provided Python install file by calling
+https://github.com/cgre-aachen/gempy,Allen Mao,$ python gempy/setup.py install
+https://github.com/cgre-aachen/gempy,Allen Mao,in the cloned or downloaded repository folder. Make sure you have installed all necessary dependencies listed above before using GemPy.
+https://github.com/cgre-aachen/gempy,Allen Mao,Windows installation guide (Jun 2019)
+https://github.com/cgre-aachen/gempy,Allen Mao,Install CUDA if you do not have it already.
+https://github.com/cgre-aachen/gempy,Allen Mao,Install Anaconda3 2019.03 with Python 3.7 (this is the last release).
+https://github.com/cgre-aachen/gempy,Allen Mao,"Install Theano and associated packages from the Anaconda prompt as administrator, and finally install GemPy 2.0:"
+https://github.com/cgre-aachen/gempy,Allen Mao,conda update --all
+https://github.com/cgre-aachen/gempy,Allen Mao,conda install libpython
+https://github.com/cgre-aachen/gempy,Allen Mao,conda install m2w64-toolchain
+https://github.com/cgre-aachen/gempy,Allen Mao,conda install git
+https://github.com/cgre-aachen/gempy,Allen Mao,conda install pygpu
+https://github.com/cgre-aachen/gempy,Allen Mao,pip install theano==1.0.4
+https://github.com/cgre-aachen/gempy,Allen Mao,pip install gempy==2.0b0.dev2
+https://github.com/cgre-aachen/gempy,Allen Mao,Note that:
+https://github.com/cgre-aachen/gempy,Allen Mao,"a) some other packages required by Theano are already included in Anaconda: numpy, scipy, mkl-service, nose, and sphinx."
+https://github.com/cgre-aachen/gempy,Allen Mao,b) pydot-ng (suggested on Theano web site) yields a lot of errors. I dropped this. It is needed to handle large picture for gif/images and probably it is not needed by GemPy.
+https://github.com/cgre-aachen/gempy,Allen Mao,"c) Trying to install all the packages in one go but it does not work, as well as doing the same in Anaconda Navigator, or installing an older Anaconda release with Python 3.5 (Anaconda3 4.2.0) as indicated in some tutorial on Theano."
+https://github.com/d3/d3,Allen Mao,Installing
+https://github.com/d3/d3,Allen Mao,"If you use npm, npm install d3. Otherwise, download the latest release. The released bundle supports anonymous AMD, CommonJS, and vanilla environments. You can load directly from d3js.org, CDNJS, or unpkg. For example:"
+https://github.com/d3/d3,Allen Mao,"<script src=""https://d3js.org/d3.v5.js""></script>"
+https://github.com/d3/d3,Allen Mao,For the minified version:
+https://github.com/d3/d3,Allen Mao,"<script src=""https://d3js.org/d3.v5.min.js""></script>"
+https://github.com/d3/d3,Allen Mao,"You can also use the standalone D3 microlibraries. For example, d3-selection:"
+https://github.com/d3/d3,Allen Mao,"<script src=""https://d3js.org/d3-selection.v1.js""></script>"
+https://github.com/driftingtides/hyvr,Allen Mao,Installing the HyVR package
+https://github.com/driftingtides/hyvr,Allen Mao,Installing Python
+https://github.com/driftingtides/hyvr,Allen Mao,"If you are using Windows, we recommend installing the Anaconda distribution of Python 3. This distribution has the majority of dependencies that HyVR requires."
+https://github.com/driftingtides/hyvr,Allen Mao,It is also a good idea to install the HyVR package into a virtual environment. Do this by opening a command prompt window and typing the following:
+https://github.com/driftingtides/hyvr,Allen Mao,conda create --name hyvr_env
+https://github.com/driftingtides/hyvr,Allen Mao,You need to then activate this environment:
+https://github.com/driftingtides/hyvr,Allen Mao,conda activate hyvr_env
+https://github.com/driftingtides/hyvr,Allen Mao,Linux
+https://github.com/driftingtides/hyvr,Allen Mao,"Depending on your preferences you can either use the Anaconda/Miniconda distribution of python, or the version of your package manager. If you choose the former, follow the same steps as for Windows."
+https://github.com/driftingtides/hyvr,Allen Mao,"If you choose the latter, you probably already have Python 3 installed. If not, you can install it using your package manager (e.g. apt on Ubuntu/Debian)."
+https://github.com/driftingtides/hyvr,Allen Mao,In any way we recommend using a virtual environment. Non-conda users can use virtualenvwrapper or pipenv.
+https://github.com/driftingtides/hyvr,Allen Mao,Installing HyVR
+https://github.com/driftingtides/hyvr,Allen Mao,"Once you have activated your virtual environment, you can install HyVR from PyPI using pip:"
+https://github.com/driftingtides/hyvr,Allen Mao,pip install hyvr
+https://github.com/driftingtides/hyvr,Allen Mao,"The version on PyPI should always be up to date. If it's not, you can also install HyVR from github:"
+https://github.com/driftingtides/hyvr,Allen Mao,git clone https://github.com/driftingtides/hyvr.git
+https://github.com/driftingtides/hyvr,Allen Mao,To install from source you need a C compiler.
+https://github.com/driftingtides/hyvr,Allen Mao,Installation from conda-forge will (hopefully) be coming soon.
+https://github.com/driftingtides/hyvr,Allen Mao,Python
+https://github.com/driftingtides/hyvr,Allen Mao,"HyVR was developed for use with Python 3.4 or greater. It may be possible to use with earlier versions of Python 3, however this has not been tested."
+https://github.com/driftingtides/hyvr,Allen Mao,numpy <= 1.13.3
+https://github.com/driftingtides/hyvr,Allen Mao,matplotlib <= 2.1.0
+https://github.com/driftingtides/hyvr,Allen Mao,scipy = 1.0.0
+https://github.com/driftingtides/hyvr,Allen Mao,pandas = 0.21.0
+https://github.com/driftingtides/hyvr,Allen Mao,flopy == 3.2.9 (optional for modflow output)
+https://github.com/driftingtides/hyvr,Allen Mao,pyevtk = 1.1.0 (optional for VTK output)
+https://github.com/driftingtides/hyvr,Allen Mao,h5py (optional for HDF5 output)
+https://github.com/driving-behavior/DBNet,Allen Mao,Tensorflow 1.2.0
+https://github.com/driving-behavior/DBNet,Allen Mao,CUDA 8.0+ (For GPU)
+https://github.com/driving-behavior/DBNet,Allen Mao,"Python Libraries: numpy, scipy and laspy"
+https://github.com/driving-behavior/DBNet,Allen Mao,"The code has been tested with Python 2.7, Tensorflow 1.2.0, CUDA 8.0 and cuDNN 5.1 on Ubuntu 14.04. But it may work on more machines (directly or through mini-modification), pull-requests or test report are well welcomed."
+https://github.com/empymod/empymod,Allen Mao,You can install empymod either via conda:
+https://github.com/empymod/empymod,Allen Mao,conda install -c prisae empymod
+https://github.com/empymod/empymod,Allen Mao,or via pip:
+https://github.com/empymod/empymod,Allen Mao,pip install empymod
+https://github.com/empymod/empymod,Allen Mao,Required are Python version 3.5 or higher and the modules NumPy and SciPy. Consult the installation notes in the manual for more information regarding installation and requirements.
+https://github.com/endernewton/iter-reason,Allen Mao,"Tensorflow, tested with version 1.6 with Ubuntu 16.04, installed with:"
+https://github.com/endernewton/iter-reason,Allen Mao,pip install --ignore-installed --upgrade https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.6.0-cp27-none-linux_x86_64.whl
+https://github.com/endernewton/iter-reason,Allen Mao,Other packages needed can be installed with pip:
+https://github.com/endernewton/iter-reason,Allen Mao,pip install Cython easydict matplotlib opencv-python Pillow pyyaml scipy
+https://github.com/endernewton/iter-reason,Allen Mao,"For running COCO, the API can be installed globally:"
+https://github.com/endernewton/iter-reason,Allen Mao,# any path is okay
+https://github.com/endernewton/iter-reason,Allen Mao,mkdir ~/install && cd ~/install
+https://github.com/endernewton/iter-reason,Allen Mao,git clone https://github.com/cocodataset/cocoapi.git cocoapi
+https://github.com/endernewton/iter-reason,Allen Mao,cd cocoapi/PythonAPI
+https://github.com/endernewton/iter-reason,Allen Mao,python setup.py install --user
+https://github.com/endernewton/iter-reason,Allen Mao,git clone https://github.com/endernewton/iter-reason.git
+https://github.com/endernewton/iter-reason,Allen Mao,cd iter-reason
+https://github.com/endernewton/iter-reason,Allen Mao,"Set up data, here we use ADE20K as an example."
+https://github.com/endernewton/iter-reason,Allen Mao,mkdir -p data/ADE
+https://github.com/endernewton/iter-reason,Allen Mao,cd data/ADE
+https://github.com/endernewton/iter-reason,Allen Mao,wget -v http://groups.csail.mit.edu/vision/datasets/ADE20K/ADE20K_2016_07_26.zip
+https://github.com/endernewton/iter-reason,Allen Mao,tar -xzvf ADE20K_2016_07_26.zip
+https://github.com/endernewton/iter-reason,Allen Mao,mv ADE20K_2016_07_26/* ./
+https://github.com/endernewton/iter-reason,Allen Mao,rmdir ADE20K_2016_07_26
+https://github.com/endernewton/iter-reason,Allen Mao,# then get the train/val/test split
+https://github.com/endernewton/iter-reason,Allen Mao,wget -v http://xinleic.xyz/data/ADE_split.tar.gz
+https://github.com/endernewton/iter-reason,Allen Mao,tar -xzvf ADE_split.tar.gz
+https://github.com/endernewton/iter-reason,Allen Mao,rm -vf ADE_split.tar.gz
+https://github.com/endernewton/iter-reason,Allen Mao,cd ../..
+https://github.com/endernewton/iter-reason,Allen Mao,Set up pre-trained ImageNet models. This is similarly done in tf-faster-rcnn. Here by default we use ResNet-50 as the backbone:
+https://github.com/endernewton/iter-reason,Allen Mao,mkdir -p data/imagenet_weights
+https://github.com/endernewton/iter-reason,Allen Mao,cd data/imagenet_weights
+https://github.com/endernewton/iter-reason,Allen Mao,wget -v http://download.tensorflow.org/models/resnet_v1_50_2016_08_28.tar.gz
+https://github.com/endernewton/iter-reason,Allen Mao,tar -xzvf resnet_v1_50_2016_08_28.tar.gz
+https://github.com/endernewton/iter-reason,Allen Mao,mv resnet_v1_50.ckpt res50.ckpt
+https://github.com/endernewton/iter-reason,Allen Mao,Compile the library (for computing bounding box overlaps).
+https://github.com/endernewton/iter-reason,Allen Mao,cd lib
+https://github.com/endernewton/iter-reason,Allen Mao,make
+https://github.com/endernewton/iter-reason,Allen Mao,cd ..
+https://github.com/endernewton/iter-reason,Allen Mao,"Now you are ready to run! For example, to train and test the baseline:"
+https://github.com/endernewton/iter-reason,Allen Mao,./experiments/scripts/train.sh [GPU_ID] [DATASET] [NET] [STEPS] [ITER]
+https://github.com/endernewton/iter-reason,Allen Mao,# GPU_ID is the GPU you want to test on
+https://github.com/endernewton/iter-reason,Allen Mao,"# DATASET in {ade, coco, vg} is the dataset to train/test on, defined in the script"
+https://github.com/endernewton/iter-reason,Allen Mao,"# NET in {res50, res101} is the backbone networks to choose from"
+https://github.com/endernewton/iter-reason,Allen Mao,"# STEPS (x10K) is the number of iterations before it reduces learning rate, can support multiple steps separated by character 'a'"
+https://github.com/endernewton/iter-reason,Allen Mao,# ITER (x10K) is the total number of iterations to run
+https://github.com/endernewton/iter-reason,Allen Mao,# Examples:
+https://github.com/endernewton/iter-reason,Allen Mao,"# train on ADE20K for 320K iterations, reducing learning rate at 280K."
+https://github.com/endernewton/iter-reason,Allen Mao,./experiments/scripts/train.sh 0 ade 28 32
+https://github.com/endernewton/iter-reason,Allen Mao,"# train on COCO for 720K iterations, reducing at 320K and 560K."
+https://github.com/endernewton/iter-reason,Allen Mao,./experiments/scripts/train.sh 1 coco 32a56 72
+https://github.com/endernewton/iter-reason,Allen Mao,To train and test the reasoning modules (based on ResNet-50):
+https://github.com/endernewton/iter-reason,Allen Mao,./experiments/scripts/train_memory.sh [GPU_ID] [DATASET] [MEM] [STEPS] [ITER]
+https://github.com/endernewton/iter-reason,Allen Mao,# MEM in {local} is the type of reasoning modules to use
+https://github.com/endernewton/iter-reason,Allen Mao,# train on ADE20K on the local spatial memory.
+https://github.com/endernewton/iter-reason,Allen Mao,./experiments/scripts/train_memory.sh 0 ade local 28 32
+https://github.com/endernewton/iter-reason,Allen Mao,"Once the training is done, you can test the models separately with test.sh and test_memory.sh, we also provided a separate set of scripts to test on larger image inputs."
+https://github.com/endernewton/iter-reason,Allen Mao,"You can use tensorboard to visualize and track the progress, for example:"
+https://github.com/endernewton/iter-reason,Allen Mao,tensorboard --logdir=tensorboard/res50/ade_train_5/ --port=7002 &
+https://github.com/equinor/pylops,Allen Mao,From PyPi
+https://github.com/equinor/pylops,Allen Mao,"If you want to use PyLops within your codes, install it in your Python environment by typing the following command in your terminal:"
+https://github.com/equinor/pylops,Allen Mao,pip install pylops
+https://github.com/equinor/pylops,Allen Mao,Open a python terminal and type:
+https://github.com/equinor/pylops,Allen Mao,import pylops
+https://github.com/equinor/pylops,Allen Mao,"If you do not see any error, you should be good to go, enjoy!"
+https://github.com/equinor/pylops,Allen Mao,From Conda-forge
+https://github.com/equinor/pylops,Allen Mao,"Alternatively, you can install PyLops using the conda-forge distribution by typing the following command in your terminal:"
+https://github.com/equinor/pylops,Allen Mao,conda install -c conda-forge pylops
+https://github.com/equinor/segyio,Allen Mao,Get segyio
+https://github.com/equinor/segyio,Allen Mao,A copy of segyio is available both as pre-built binaries and source code:
+https://github.com/equinor/segyio,Allen Mao,In Debian unstable
+https://github.com/equinor/segyio,Allen Mao,apt install python3-segyio
+https://github.com/equinor/segyio,Allen Mao,Wheels for Python from PyPI
+https://github.com/equinor/segyio,Allen Mao,pip install segyio
+https://github.com/equinor/segyio,Allen Mao,Source code from github
+https://github.com/equinor/segyio,Allen Mao,git clone https://github.com/statoil/segyio
+https://github.com/equinor/segyio,Allen Mao,Source code in tarballs
+https://github.com/equinor/segyio,Allen Mao,Build segyio
+https://github.com/equinor/segyio,Allen Mao,To build segyio you need:
+https://github.com/equinor/segyio,Allen Mao,A C99 compatible C compiler (tested mostly on gcc and clang)
+https://github.com/equinor/segyio,Allen Mao,"A C++ compiler for the Python extension, and C++11 for the tests"
+https://github.com/equinor/segyio,Allen Mao,CMake version 2.8.12 or greater
+https://github.com/equinor/segyio,Allen Mao,Python 2.7 or 3.x.
+https://github.com/equinor/segyio,Allen Mao,numpy version 1.10 or greater
+https://github.com/equinor/segyio,Allen Mao,setuptools version 28 or greater
+https://github.com/equinor/segyio,Allen Mao,setuptools-scm
+https://github.com/equinor/segyio,Allen Mao,pytest
+https://github.com/equinor/segyio,Allen Mao,"To build the documentation, you also need sphinx"
+https://github.com/equinor/segyio,Allen Mao,"To build and install segyio, perform the following actions in your console:"
+https://github.com/equinor/segyio,Allen Mao,git clone https://github.com/equinor/segyio
+https://github.com/equinor/segyio,Allen Mao,mkdir segyio/build
+https://github.com/equinor/segyio,Allen Mao,cd segyio/build
+https://github.com/equinor/segyio,Allen Mao,cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON
+https://github.com/equinor/segyio,Allen Mao,make install
+https://github.com/equinor/segyio,Allen Mao,"make install must be done as root for a system install; if you want to install in your home directory, add -DCMAKE_INSTALL_PREFIX=~/ or some other appropriate directory, or make DESTDIR=~/ install. Please ensure your environment picks up on non-standard install locations (PYTHONPATH, LD_LIBRARY_PATH and PATH)."
+https://github.com/equinor/segyio,Allen Mao,"If you have multiple Python installations, or want to use some alternative interpreter, you can help cmake find the right one by passing -DPYTHON_EXECUTABLE=/opt/python/binary along with install prefix and build type."
+https://github.com/equinor/segyio,Allen Mao,"To build the matlab bindings, invoke CMake with the option -DBUILD_MEX=ON. In some environments the Matlab binaries are in a non-standard location, in which case you need to help CMake find the matlab binaries by passing -DMATLAB_ROOT=/path/to/matlab."
+https://github.com/facebook/react,Allen Mao,"React has been designed for gradual adoption from the start, and you can use as little or as much React as you need:"
+https://github.com/facebook/react,Allen Mao,Use Online Playgrounds to get a taste of React.
+https://github.com/facebook/react,Allen Mao,Add React to a Website as a <script> tag in one minute.
+https://github.com/facebook/react,Allen Mao,Create a New React App if you're looking for a powerful JavaScript toolchain.
+https://github.com/facebook/react,Allen Mao,"You can use React as a <script> tag from a CDN, or as a react package on npm."
+https://github.com/geopandas/geopandas/,Allen Mao,See the installation docs for all details. GeoPandas depends on the following packages:
+https://github.com/geopandas/geopandas/,Allen Mao,pandas
+https://github.com/geopandas/geopandas/,Allen Mao,shapely
+https://github.com/geopandas/geopandas/,Allen Mao,fiona
+https://github.com/geopandas/geopandas/,Allen Mao,pyproj
+https://github.com/geopandas/geopandas/,Allen Mao,"Further, descartes and matplotlib are optional dependencies, required for plotting, and rtree is an optional dependency, required for spatial joins. rtree requires the C library libspatialindex."
+https://github.com/geopandas/geopandas/,Allen Mao,"Those packages depend on several low-level libraries for geospatial analysis, which can be a challenge to install. Therefore, we recommend to install GeoPandas using the conda package manager. See the installation docs for more details."
+https://github.com/google/sg2im/,Allen Mao,Setup
+https://github.com/google/sg2im/,Allen Mao,All code was developed and tested on Ubuntu 16.04 with Python 3.5 and PyTorch 0.4.
+https://github.com/google/sg2im/,Allen Mao,You can setup a virtual environment to run the code like this:
+https://github.com/google/sg2im/,Allen Mao,python3 -m venv env               # Create a virtual environment
+https://github.com/google/sg2im/,Allen Mao,source env/bin/activate           # Activate virtual environment
+https://github.com/google/sg2im/,Allen Mao,pip install -r requirements.txt   # Install dependencies
+https://github.com/google/sg2im/,Allen Mao,echo $PWD > env/lib/python3.5/site-packages/sg2im.pth  # Add current directory to python path
+https://github.com/google/sg2im/,Allen Mao,# Work for a while ...
+https://github.com/google/sg2im/,Allen Mao,deactivate  # Exit virtual environment
+https://github.com/gprMax/gprMax,Allen Mao,The following steps provide guidance on how to install gprMax:
+https://github.com/gprMax/gprMax,Allen Mao,"Install Python, required Python packages, and get the gprMax source code from GitHub"
+https://github.com/gprMax/gprMax,Allen Mao,Install a C compiler which supports OpenMP
+https://github.com/gprMax/gprMax,Allen Mao,Build and install gprMax
+https://github.com/gprMax/gprMax,Allen Mao,You can watch screencasts that demonstrate the installation and update processes.
+https://github.com/gprMax/gprMax,Allen Mao,"1. Install Python, required Python packages, and get gprMax source"
+https://github.com/gprMax/gprMax,Allen Mao,"We recommend using Miniconda to install Python and the required Python packages for gprMax in a self-contained Python environment. Miniconda is a mini version of Anaconda which is a completely free Python distribution (including for commercial use and redistribution). It includes more than 300 of the most popular Python packages for science, math, engineering, and data analysis."
+https://github.com/gprMax/gprMax,Allen Mao,Download and install Miniconda. Choose the Python 3.x version for your platform. We recommend choosing the installation options to: install Miniconda only for your user account; add Miniconda to your PATH environment variable; and to register Miniconda Python as your default Python. See the Quick Install page for help installing Miniconda.
+https://github.com/gprMax/gprMax,Allen Mao,Open a Terminal (Linux/macOS) or Command Prompt (Windows) and run the following commands:
+https://github.com/gprMax/gprMax,Allen Mao,$ conda update conda
+https://github.com/gprMax/gprMax,Allen Mao,$ conda install git
+https://github.com/gprMax/gprMax,Allen Mao,$ git clone https://github.com/gprMax/gprMax.git
+https://github.com/gprMax/gprMax,Allen Mao,$ cd gprMax
+https://github.com/gprMax/gprMax,Allen Mao,$ conda env create -f conda_env.yml
+https://github.com/gprMax/gprMax,Allen Mao,"This will make sure conda is up-to-date, install Git, get the latest gprMax source code from GitHub, and create an environment for gprMax with all the necessary Python packages."
+https://github.com/gprMax/gprMax,Allen Mao,"If you prefer to install Python and the required Python packages manually, i.e. without using Anaconda/Miniconda, look in the conda_env.yml file for a list of the requirements."
+https://github.com/gprMax/gprMax,Allen Mao,2. Install a C compiler which supports OpenMP
+https://github.com/gprMax/gprMax,Allen Mao,"gcc should be already installed, so no action is required."
+https://github.com/gprMax/gprMax,Allen Mao,macOS
+https://github.com/gprMax/gprMax,Allen Mao,"Xcode (the IDE for macOS) comes with the LLVM (clang) compiler, but it does not currently support OpenMP, so you must install gcc. That said, it is still useful to have Xcode (with command line tools) installed. It can be downloaded from the App Store. Once Xcode is installed, download and install the Homebrew package manager and then to install gcc, run:"
+https://github.com/gprMax/gprMax,Allen Mao,$ brew install gcc
+https://github.com/gprMax/gprMax,Allen Mao,Microsoft Windows
+https://github.com/gprMax/gprMax,Allen Mao,"Download and install Microsoft Visual C++ 2015 Build Tools (currently you must use the 2015 version, not 2017). Use the custom installation option and deselect everything apart from the Windows SDK for your version of Windows."
+https://github.com/gprMax/gprMax,Allen Mao,"Alternatively if you are using Windows 10 and feeling adventurous you can install the Windows Subsystem for Linux and then follow the Linux install instructions for gprMax. Note however that currently WSL does not aim to support GUI desktops or applications, e.g. Gnome, KDE, etc...."
+https://github.com/gprMax/gprMax,Allen Mao,3. Build and install gprMax
+https://github.com/gprMax/gprMax,Allen Mao,Once you have installed the aforementioned tools follow these steps to build and install gprMax:
+https://github.com/gprMax/gprMax,Allen Mao,"Open a Terminal (Linux/macOS) or Command Prompt (Windows), navigate into the top-level gprMax directory, and if it is not already active, activate the gprMax conda environment conda activate gprMax. Run the following commands:"
+https://github.com/gprMax/gprMax,Allen Mao,(gprMax)$ python setup.py build
+https://github.com/gprMax/gprMax,Allen Mao,(gprMax)$ python setup.py install
+https://github.com/gprMax/gprMax,Allen Mao,You are now ready to proceed to running gprMax.
+https://github.com/gprMax/gprMax,Allen Mao,"If you have problems with building gprMax on Microsoft Windows, you may need to add C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin to your path environment variable."
+https://github.com/haoliangyu/node-qa-masker,Allen Mao,npm install qa-masker
+https://github.com/hezhangsprinter/DCPDN,Allen Mao,Prerequisites:
+https://github.com/hezhangsprinter/DCPDN,Allen Mao,Python 2 or 3
+https://github.com/hezhangsprinter/DCPDN,Allen Mao,CPU or NVIDIA GPU + CUDA CuDNN (CUDA 8.0)
+https://github.com/hezhangsprinter/DCPDN,Allen Mao,Installation:
+https://github.com/hezhangsprinter/DCPDN,Allen Mao,Install PyTorch and dependencies from http://pytorch.org (Ubuntu+Python2.7) (conda install pytorch torchvision -c pytorch) Install pytorch 0.3.1 https://pytorch.org/previous-versions/
+https://github.com/hezhangsprinter/DCPDN,Allen Mao,Install Torch vision from the source.
+https://github.com/hezhangsprinter/DCPDN,Allen Mao,git clone https://github.com/pytorch/vision
+https://github.com/hezhangsprinter/DCPDN,Allen Mao,cd vision
+https://github.com/hezhangsprinter/DCPDN,Allen Mao,python setup.py install
+https://github.com/hezhangsprinter/DCPDN,Allen Mao,"Install python package: numpy, scipy, PIL, pdb"
+https://github.com/hezhangsprinter/DID-MDN,Allen Mao,Install PyTorch and dependencies from http://pytorch.org (Ubuntu+Python2.7) (conda install pytorch torchvision -c pytorch)
+https://github.com/hezhangsprinter/DID-MDN,Allen Mao,Install Torch vision from the source. (git clone https://github.com/pytorch/vision cd vision python setup.py install)
+https://github.com/hiroharu-kato/neural_renderer,Allen Mao,sudo python setup.py install
+https://github.com/iannesbitt/readgssi,Allen Mao,requirements
+https://github.com/iannesbitt/readgssi,Allen Mao,Strongly recommended to install via anaconda:
+https://github.com/iannesbitt/readgssi,Allen Mao,obspy
+https://github.com/iannesbitt/readgssi,Allen Mao,numpy
+https://github.com/iannesbitt/readgssi,Allen Mao,h5py
+https://github.com/iannesbitt/readgssi,Allen Mao,Install via pip:
+https://github.com/iannesbitt/readgssi,Allen Mao,pynmea2
+https://github.com/iannesbitt/readgssi,Allen Mao,geopy
+https://github.com/iannesbitt/readgssi,Allen Mao,pytz
+https://github.com/iannesbitt/readgssi,Allen Mao,installation
+https://github.com/iannesbitt/readgssi,Allen Mao,"Once you have anaconda running, installing requirements is pretty easy."
+https://github.com/iannesbitt/readgssi,Allen Mao,conda config --add channels conda-forge
+https://github.com/iannesbitt/readgssi,Allen Mao,conda create -n readgssi python==3.7 pandas h5py pytz obspy
+https://github.com/iannesbitt/readgssi,Allen Mao,conda activate readgssi
+https://github.com/iannesbitt/readgssi,Allen Mao,pip install readgssi
+https://github.com/iannesbitt/readgssi,Allen Mao,That should allow you to run the commands below.
+https://github.com/iannesbitt/readgssi,Allen Mao,installing from source:
+https://github.com/iannesbitt/readgssi,Allen Mao,"If you choose to install a specific commit rather than the latest working release of this software, you may download this package, unzip to your home folder, open a command line, then install in the following way:"
+https://github.com/iannesbitt/readgssi,Allen Mao,pip install ~/readgssi
+https://github.com/imfunniee/gitfolio,Allen Mao,Let's Install
+https://github.com/imfunniee/gitfolio,Allen Mao,Install gitfolio
+https://github.com/imfunniee/gitfolio,Allen Mao,npm i gitfolio -g
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,Python2.7
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,Scipy
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,Scikit-image
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,Tensorflow 1.4 with NVIDIA GPU or CPU (cpu testing is very slow)
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,Clone this project to your machine.
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,git clone https://github.com/jiangsutx/SRN-Deblur.git
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,cd SRN-Deblur
+https://github.com/joferkington/mplstereonet,Allen Mao,mplstereonet can be installed from PyPi using pip by:
+https://github.com/joferkington/mplstereonet,Allen Mao,pip install mplstereonet
+https://github.com/joferkington/mplstereonet,Allen Mao,"Alternatively, you can download the source and install locally using (from the main directory of the repository):"
+https://github.com/joferkington/mplstereonet,Allen Mao,"If you're planning on developing mplstereonet or would like to experiment with making local changes, consider setting up a development installation so that your changes are reflected when you import the package:"
+https://github.com/joferkington/mplstereonet,Allen Mao,python setup.py develop
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,Using conda:
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,$ conda install -c conda-forge ipyleaflet
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,Using pip:
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,$ pip install ipyleaflet
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,$ jupyter nbextension enable --py --sys-prefix ipyleaflet  # can be skipped for
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,notebook 5.3 and above
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,"If you have JupyterLab, you will also need to install the JupyterLab extension:"
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,$ jupyter labextension install jupyter-leaflet
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,Some users have found that the jupyterlab-manager is also required in jupyterlab if the map does not display.
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,$ jupyter labextension install @jupyter-widgets/jupyterlab-manager
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,Installation from sources
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,For a development installation (requires npm):
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,$ git clone https://github.com/jupyter-widgets/ipyleaflet.git
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,$ cd ipyleaflet
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,$ pip install -e .
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,$ jupyter nbextension install --py --symlink --sys-prefix ipyleaflet
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,$ jupyter nbextension enable --py --sys-prefix ipyleaflet
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,$ jupyter labextension install js  # If you are developing on JupyterLab
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,Note for developers:
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,the -e pip option allows one to modify the Python code in-place. Restart the kernel in order to see the changes.
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,the --symlink argument on Linux or OS X allows one to modify the JavaScript code in-place. This feature is not available with Windows.
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,"For automatically building the JavaScript code every time there is a change, run the following command from the ipyleaflet/js/ directory:"
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,$ npm run watch
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,If you are on JupyterLab you also need to run the following in a separate terminal:
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,$ jupyter lab --watch
+https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,Every time a JavaScript build has terminated you need to refresh the Notebook page in order to load the JavaScript code again.
+https://github.com/jwass/mplleaflet,Allen Mao,Install mplleaflet from PyPI using $ pip install mplleaflet.
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,PyTorch
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,conda install pytorch torchvision cuda80 -c soumith
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,"FFmpeg, FFprobe"
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,wget http://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,tar xvf ffmpeg-release-64bit-static.tar.xz
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,cd ./ffmpeg-3.3.3-64bit-static/; sudo cp ffmpeg ffprobe /usr/local/bin;
+https://github.com/kinverarity1/lasio/,Allen Mao,Install the usual way:
+https://github.com/kinverarity1/lasio/,Allen Mao,$ pip install lasio
+https://github.com/kosmtik/kosmtik,Allen Mao,Install or Update
+https://github.com/kosmtik/kosmtik,Allen Mao,"Note: Node.js versions are moving very fast, and kosmtik or its dependencies are hardly totally up to date with latest release. Ideally, you should run the LTS version of Node.js. You can use a Node.js version manager (like NVM) to help."
+https://github.com/kosmtik/kosmtik,Allen Mao,npm -g install kosmtik
+https://github.com/kosmtik/kosmtik,Allen Mao,This might need root/Administrator rights. If you cannot install globally you can also install locally with
+https://github.com/kosmtik/kosmtik,Allen Mao,npm install kosmtik
+https://github.com/kosmtik/kosmtik,Allen Mao,This will create a node_modules/kosmtik folder. You then have to replace all occurences of kosmtik below with node node_modules/kosmtik/index.js.
+https://github.com/kosmtik/kosmtik,Allen Mao,To reinstall all plugins:
+https://github.com/kosmtik/kosmtik,Allen Mao,kosmtik plugins --reinstall
+https://github.com/mapbox/geojson-vt,Allen Mao,Install using NPM (npm install geojson-vt) or Yarn (yarn add geojson-vt)
+https://github.com/mapbox/rasterio,Allen Mao,Please install Rasterio in a virtual environment so that its requirements don't tamper with your system's Python.
+https://github.com/mapbox/rasterio,Allen Mao,SSL certs
+https://github.com/mapbox/rasterio,Allen Mao,"The Linux wheels on PyPI are built on CentOS and libcurl expects certs to be in /etc/pki/tls/certs/ca-bundle.crt. Ubuntu's certs, for example, are in a different location. You may need to use the CURL_CA_BUNDLE environment variable to specify the location of SSL certs on your computer. On an Ubuntu system set the variable as shown below."
+https://github.com/mapbox/rasterio,Allen Mao,$ export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+https://github.com/mapbox/rasterio,Allen Mao,Rasterio has a C library dependency: GDAL >=1.11. GDAL itself depends on some other libraries provided by most major operating systems and also depends on the non standard GEOS and PROJ4 libraries. How to meet these requirement will be explained below.
+https://github.com/mapbox/rasterio,Allen Mao,Rasterio's Python dependencies are listed in its requirements.txt file.
+https://github.com/mapbox/rasterio,Allen Mao,Development also requires (see requirements-dev.txt) Cython and other packages.
+https://github.com/mapbox/rasterio,Allen Mao,Binary Distributions
+https://github.com/mapbox/rasterio,Allen Mao,Use a binary distributions that directly or indirectly provide GDAL if possible.
+https://github.com/mapbox/rasterio,Allen Mao,Rasterio distributions are available from UbuntuGIS and Anaconda's conda-forge channel.
+https://github.com/mapbox/rasterio,Allen Mao,Manylinux1 wheels are available on PyPI.
+https://github.com/mapbox/rasterio,Allen Mao,OS X
+https://github.com/mapbox/rasterio,Allen Mao,"Binary distributions with GDAL, GEOS, and PROJ4 libraries included are available for OS X versions 10.7+ starting with Rasterio version 0.17. To install, run pip install rasterio. These binary wheels are preferred by newer versions of pip."
+https://github.com/mapbox/rasterio,Allen Mao,"If you don't want these wheels and want to install from a source distribution, run pip install rasterio --no-binary rasterio instead."
+https://github.com/mapbox/rasterio,Allen Mao,"The included GDAL library is fairly minimal, providing only the format drivers that ship with GDAL and are enabled by default. To get access to more formats, you must build from a source distribution (see below)."
+https://github.com/mapbox/rasterio,Allen Mao,Binary wheels for rasterio and GDAL are created by Christoph Gohlke and are available from his website.
+https://github.com/mapbox/rasterio,Allen Mao,"To install rasterio, simply download both binaries for your system (rasterio and GDAL) and run something like this from the downloads folder:"
+https://github.com/mapbox/rasterio,Allen Mao,$ pip install -U pip
+https://github.com/mapbox/rasterio,Allen Mao,$ pip install GDAL-2.0.2-cp27-none-win32.whl
+https://github.com/mapbox/rasterio,Allen Mao,$ pip install rasterio-0.34.0-cp27-cp27m-win32.whl
+https://github.com/mapbox/rasterio,Allen Mao,You can also install rasterio with conda using Anaconda's conda-forge channel.
+https://github.com/mapbox/rasterio,Allen Mao,$ conda install -c conda-forge rasterio
+https://github.com/mapbox/rasterio,Allen Mao,Source Distributions
+https://github.com/mapbox/rasterio,Allen Mao,Rasterio is a Python C extension and to build you'll need a working compiler (XCode on OS X etc). You'll also need Numpy preinstalled; the Numpy headers are required to run the rasterio setup script. Numpy has to be installed (via the indicated requirements file) before rasterio can be installed. See rasterio's Travis configuration for more guidance.
+https://github.com/mapbox/rasterio,Allen Mao,The following commands are adapted from Rasterio's Travis-CI configuration.
+https://github.com/mapbox/rasterio,Allen Mao,$ sudo add-apt-repository ppa:ubuntugis/ppa
+https://github.com/mapbox/rasterio,Allen Mao,$ sudo apt-get update
+https://github.com/mapbox/rasterio,Allen Mao,$ sudo apt-get install gdal-bin libgdal-dev
+https://github.com/mapbox/rasterio,Allen Mao,$ pip install rasterio
+https://github.com/mapbox/rasterio,Allen Mao,Adapt them as necessary for your Linux system.
+https://github.com/mapbox/rasterio,Allen Mao,"For a Homebrew based Python environment, do the following."
+https://github.com/mapbox/rasterio,Allen Mao,$ brew update
+https://github.com/mapbox/rasterio,Allen Mao,$ brew install gdal
+https://github.com/mapbox/rasterio,Allen Mao,$ pip install --no-use-wheel rasterio
+https://github.com/mapbox/rasterio,Allen Mao,"Alternatively, you can install GDAL binaries from kyngchaos. You will then need to add the installed location /Library/Frameworks/GDAL.framework/Programs to your system path."
+https://github.com/mapbox/rasterio,Allen Mao,"When building from source on Windows, it is important to know that setup.py cannot rely on gdal-config, which is only present on UNIX systems, to discover the locations of header files and libraries that rasterio needs to compile its C extensions. On Windows, these paths need to be provided by the user. You will need to find the include files and the library files for gdal and use setup.py as follows."
+https://github.com/mapbox/rasterio,Allen Mao,$ python setup.py build_ext -I<path to gdal include files> -lgdal_i -L<path to gdal library>
+https://github.com/mapbox/rasterio,Allen Mao,$ python setup.py install
+https://github.com/mapbox/rasterio,Allen Mao,We have had success compiling code using the same version of Microsoft's Visual Studio used to compile the targeted version of Python (more info on versions used here.).
+https://github.com/mapbox/rasterio,Allen Mao,Note: The GDAL dll (gdal111.dll) and gdal-data directory need to be in your Windows PATH otherwise rasterio will fail to work.
+https://github.com/mapbox/tilelive-mapnik,Allen Mao,npm install tilelive-mapnik
+https://github.com/mapbox/tilelive-mapnik,Allen Mao,Though tilelive is not a dependency of tilelive-mapnik you will want to install it to actually make use of tilelive-mapnik through a reasonable API.
+https://github.com/mapbox/tippecanoe,Allen Mao,The easiest way to install tippecanoe on OSX is with Homebrew:
+https://github.com/mapbox/tippecanoe,Allen Mao,$ brew install tippecanoe
+https://github.com/mapbox/tippecanoe,Allen Mao,On Ubuntu it will usually be easiest to build from the source repository:
+https://github.com/mapbox/tippecanoe,Allen Mao,$ git clone https://github.com/mapbox/tippecanoe.git
+https://github.com/mapbox/tippecanoe,Allen Mao,$ cd tippecanoe
+https://github.com/mapbox/tippecanoe,Allen Mao,$ make -j
+https://github.com/mapbox/tippecanoe,Allen Mao,$ make install
+https://github.com/mapbox/tippecanoe,Allen Mao,See Development below for how to upgrade your C++ compiler or install prerequisite packages if you get compiler errors.
+https://github.com/mbloch/mapshaper,Allen Mao,"With Node installed, you can install the latest release version of mapshaper using npm. Install with the ""-g"" flag to make the executable scripts available systemwide."
+https://github.com/mbloch/mapshaper,Allen Mao,npm install -g mapshaper
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,Requirements: Software
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,"MXNet from the offical repository. We tested our code on MXNet@(v0.10.0). Due to the rapid development of MXNet, it is recommended to checkout this version if you encounter any issues. We may maintain this repository periodically if MXNet adds important feature in future release."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,"Python packages might missing: cython, opencv-python >= 3.2.0, easydict. If pip is set up on your system, those packages should be able to be fetched and installed by running"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,pip install Cython
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,pip install opencv-python==3.2.0.6
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,pip install easydict==1.6
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,"For Windows users, Visual Studio 2015 is needed to compile cython module."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,Requirements: Hardware
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,Any NVIDIA GPUs with at least 8GB memory should be OK.
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,"Clone the Flow-Guided Feature Aggregation repository, and we call the directory that you cloned as ${FGFA_ROOT}."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,git clone https://github.com/msracver/Flow-Guided-Feature-Aggregation.git
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,"For Windows users, run cmd .\init.bat. For Linux user, run sh ./init.sh. The scripts will build cython module automatically and create some folders."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,Install MXNet:
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,3.1 Clone MXNet and checkout to MXNet@(v0.10.0) by
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,git clone --recursive https://github.com/apache/incubator-mxnet.git
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,cd incubator-mxnet
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,git checkout v0.10.0
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,git submodule update
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,3.2 Copy operators in $(FGFA_ROOT)/fgfa_rfcn/operator_cxx to $(YOUR_MXNET_FOLDER)/src/operator/contrib by
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,cp -r $(FGFA_ROOT)/fgfa_rfcn/operator_cxx/* $(MXNET_ROOT)/src/operator/contrib/
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,3.3 Compile MXNet
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,cd ${MXNET_ROOT}
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,make -j4
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,3.4 Install the MXNet Python binding by
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,"Note: If you will actively switch between different versions of MXNet, please follow 3.5 instead of 3.4"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,cd python
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,"3.5 For advanced users, you may put your Python packge into ./external/mxnet/$(YOUR_MXNET_PACKAGE), and modify MXNET_VERSION in ./experiments/fgfa_rfcn/cfgs/*.yaml to $(YOUR_MXNET_PACKAGE). Thus you can switch among different versions of MXNet quickly."
+https://github.com/nypl-spacetime/map-vectorizer,Allen Mao,If you use PIP (recommended) you will get the necessary Python packages with: pip install -r requirements.txt
+https://github.com/nypl-spacetime/map-vectorizer,Allen Mao,install.packages('rgdal')
+https://github.com/nypl-spacetime/map-vectorizer,Allen Mao,install.packages('alphahull')
+https://github.com/nypl-spacetime/map-vectorizer,Allen Mao,install.packages('igraph')
+https://github.com/nypl-spacetime/map-vectorizer,Allen Mao,install.packages('shapefiles')
+https://github.com/nypl-spacetime/map-vectorizer,Allen Mao,It is also a good idea to install QGIS to test your results
+https://github.com/odoe/generator-arcgis-js-app,Allen Mao,npm install -g yo
+https://github.com/odoe/generator-arcgis-js-app,Allen Mao,npm install -g bower
+https://github.com/odoe/generator-arcgis-js-app,Allen Mao,Bower is a required dependency of using the packages in the generated app.
+https://github.com/odoe/generator-arcgis-js-app,Allen Mao,"To install generator-arcgis-js-app from npm, run:"
+https://github.com/odoe/generator-arcgis-js-app,Allen Mao,npm install -g generator-arcgis-js-app
+https://github.com/ondrolexa/apsg,Allen Mao,PyPI
+https://github.com/ondrolexa/apsg,Allen Mao,"To install APSG, just execute"
+https://github.com/ondrolexa/apsg,Allen Mao,pip install apsg
+https://github.com/ondrolexa/apsg,Allen Mao,"Alternatively, you download the package manually from the Python Package Index https://pypi.org/project/apsg, unzip it, navigate into the package, and use the command:"
+https://github.com/ondrolexa/apsg,Allen Mao,Upgrading via pip
+https://github.com/ondrolexa/apsg,Allen Mao,"To upgrade an existing version of APSG from PyPI, execute"
+https://github.com/ondrolexa/apsg,Allen Mao,pip install apsg --upgrade --no-deps
+https://github.com/ondrolexa/apsg,Allen Mao,"Please note that the dependencies (Matplotlib, NumPy and SciPy) will also be upgraded if you omit the --no-deps flag; use the --no-deps (""no dependencies"") flag if you don't want this."
+https://github.com/ondrolexa/apsg,Allen Mao,Installing APSG from the source distribution
+https://github.com/ondrolexa/apsg,Allen Mao,"In rare cases, users reported problems on certain systems with the default pip installation command, which installs APSG from the binary distribution (""wheels"") on PyPI. If you should encounter similar problems, you could try to install APSG from the source distribution instead via"
+https://github.com/ondrolexa/apsg,Allen Mao,pip install --no-binary :all: apsg
+https://github.com/ondrolexa/apsg,Allen Mao,"Also, I would appreciate it if you could report any issues that occur when using pip install apsg in hope that we can fix these in future releases."
+https://github.com/ondrolexa/apsg,Allen Mao,Conda
+https://github.com/ondrolexa/apsg,Allen Mao,The APSG package is also available through conda-forge.
+https://github.com/ondrolexa/apsg,Allen Mao,Installing apsg
+https://github.com/ondrolexa/apsg,Allen Mao,Installing apsg from the conda-forge channel can be achieved by adding conda-forge to your channels with:
+https://github.com/ondrolexa/apsg,Allen Mao,"Once the conda-forge channel has been enabled, apsg can be installed with:"
+https://github.com/ondrolexa/apsg,Allen Mao,conda install apsg
+https://github.com/ondrolexa/apsg,Allen Mao,It is possible to list all of the versions of apsg available on your platform with:
+https://github.com/ondrolexa/apsg,Allen Mao,conda search apsg --channel conda-forge
+https://github.com/ondrolexa/apsg,Allen Mao,Master version
+https://github.com/ondrolexa/apsg,Allen Mao,The APSG version on PyPI may always one step behind; you can install the latest development version from the GitHub repository by executing
+https://github.com/ondrolexa/apsg,Allen Mao,pip install git+git://github.com/ondrolexa/apsg.git
+https://github.com/ondrolexa/apsg,Allen Mao,"Or, you can fork the GitHub repository from https://github.com/ondrolexa/apsg and install APSG from your local drive via"
+https://github.com/phoenix104104/LapSRN,Allen Mao,Requirements and Dependencies
+https://github.com/phoenix104104/LapSRN,Allen Mao,MATLAB (we test with MATLAB R2017a on Ubuntu 16.04 and Windows 7)
+https://github.com/phoenix104104/LapSRN,Allen Mao,Cuda & Cudnn (we test with Cuda 8.0 and Cudnn 5.1)
+https://github.com/phoenix104104/LapSRN,Allen Mao,Download repository:
+https://github.com/phoenix104104/LapSRN,Allen Mao,$ git clone https://github.com/phoenix104104/LapSRN.git
+https://github.com/phoenix104104/LapSRN,Allen Mao,Run install.m in MATLAB to compile MatConvNet:
+https://github.com/phoenix104104/LapSRN,Allen Mao,# Start MATLAB
+https://github.com/phoenix104104/LapSRN,Allen Mao,$ matlab
+https://github.com/phoenix104104/LapSRN,Allen Mao,>> install
+https://github.com/phoenix104104/LapSRN,Allen Mao,"If you install MatConvNet in your own path, you need to change the corresponding path in install.m, train_LapSRN.m and test_LapSRN.m."
+https://github.com/phuang17/DeepMVS,Allen Mao,python 2.7
+https://github.com/phuang17/DeepMVS,Allen Mao,numpy 1.13.1
+https://github.com/phuang17/DeepMVS,Allen Mao,pytorch 0.3.0 and torchvision: Follow the instructions from their website.
+https://github.com/phuang17/DeepMVS,Allen Mao,opencv 3.1.0: Run conda install -c menpo opencv or pip install opencv-python.
+https://github.com/phuang17/DeepMVS,Allen Mao,"imageio 2.2.0 (with freeimage plugin): Run conda install -c conda-forge imageio or pip install imageio. To install freeimage plugin, run the following Python script once:"
+https://github.com/phuang17/DeepMVS,Allen Mao,import imageio
+https://github.com/phuang17/DeepMVS,Allen Mao,imageio.plugins.freeimage.download()
+https://github.com/phuang17/DeepMVS,Allen Mao,h5py 2.7.0: Run conda install h5py or pip install h5py.
+https://github.com/phuang17/DeepMVS,Allen Mao,lz4 0.23.1: Run pip install lz4.
+https://github.com/phuang17/DeepMVS,Allen Mao,"cuda 8.0.61 and 16GB GPU RAM (required for gpu support): The training codes use up to 14GB of the GPU RAM with the default configuration. We train our model with an NVIDIA Tesla P100 GPU. To reduce GPU RAM usage, feel free to try smaller --patch_width, --patch_height, --num_depths, and --max_num_neighbors. However, the resulting model may not show the efficacy as appeared in our paper."
+https://github.com/phuang17/DeepMVS,Allen Mao,"python python/train.py # This may take up to 4-6 days to complete, depending on which GPU is used."
+https://github.com/phuang17/DeepMVS,Allen Mao,imageio 2.2.0: Run conda install -c conda-forge imageio or pip install imageio.
+https://github.com/phuang17/DeepMVS,Allen Mao,pyquaternion 0.9.0: Run pip install pyquaternion.
+https://github.com/phuang17/DeepMVS,Allen Mao,pydensecrf: Run pip install pydensecrf.
+https://github.com/phuang17/DeepMVS,Allen Mao,cuda 8.0.61 and 6GB GPU RAM (required for gpu support): The testing codes use up to 4GB of the GPU RAM with the default configuration.
+https://github.com/phuang17/DeepMVS,Allen Mao,COLMAP 3.2: Follow the instructions from their website.
+https://github.com/pysal/pysal/,Allen Mao,PySAL is available through Anaconda (in the defaults or conda-forge channel) and Enthought Canopy. We recommend installing PySAL from conda-forge:
+https://github.com/pysal/pysal/,Allen Mao,conda install pysal
+https://github.com/pysal/pysal/,Allen Mao,PySAL can be installed using pip:
+https://github.com/pysal/pysal/,Allen Mao,pip install pysal
+https://github.com/pysal/pysal/,Allen Mao,As of version 2.0.0 PySAL has shifted to Python 3 only.
+https://github.com/pysal/pysal/,Allen Mao,Users who need an older stable version of PySAL that is Python 2 compatible can install version 1.14.3 through pip or conda:
+https://github.com/pysal/pysal/,Allen Mao,conda install pysal==1.14.3
+https://github.com/pyvista/pymeshfix,Allen Mao,From PyPI
+https://github.com/pyvista/pymeshfix,Allen Mao,pip install pymeshfix
+https://github.com/pyvista/pymeshfix,Allen Mao,From source at GitHub
+https://github.com/pyvista/pymeshfix,Allen Mao,git clone https://github.com/pyvista/pymeshfix
+https://github.com/pyvista/pymeshfix,Allen Mao,cd pymeshfix
+https://github.com/pyvista/pyvista,Allen Mao,PyVista can be installed from PyPI using pip on Python >= 3.5:
+https://github.com/pyvista/pyvista,Allen Mao,pip install pyvista
+https://github.com/pyvista/pyvista,Allen Mao,"You can also visit PyPi, Anaconda, or GitHub to download the source."
+https://github.com/pyvista/tetgen,Allen Mao,pip install tetgen
+https://github.com/pyvista/tetgen,Allen Mao,git clone https://github.com/pyvista/tetgen
+https://github.com/pyvista/tetgen,Allen Mao,cd tetgen
+https://github.com/rowanz/neural-motifs,Allen Mao,"Install python3.6 and pytorch 3. I recommend the Anaconda distribution. To install PyTorch if you haven't already, use conda install pytorch=0.3.0 torchvision=0.2.0 cuda90 -c pytorch."
+https://github.com/rowanz/neural-motifs,Allen Mao,Update the config file with the dataset paths. Specifically:
+https://github.com/rowanz/neural-motifs,Allen Mao,"Visual Genome (the VG_100K folder, image_data.json, VG-SGG.h5, and VG-SGG-dicts.json). See data/stanford_filtered/README.md for the steps I used to download these."
+https://github.com/rowanz/neural-motifs,Allen Mao,You'll also need to fix your PYTHONPATH: export PYTHONPATH=/home/rowan/code/scene-graph
+https://github.com/rowanz/neural-motifs,Allen Mao,Compile everything. run make in the main directory: this compiles the Bilinear Interpolation operation for the RoIs as well as the Highway LSTM.
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,"Tensorflow 1.3 (or latest, although not tested)"
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Preferably a Titan X for synthesizing 12 frames
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Appearance-stream tfmodel
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Dynamics-stream tfmodel
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Dynamic textures
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Static textures (for dynamics style transfer)
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Store the appearance-stream tfmodel in ./models.
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Store the dynamics-stream tfmodel in ./models. The filepath to this model is your --dynamics_model path.
+https://github.com/salihkaragoz/pose-residual-network-pytorch,Allen Mao,python
+https://github.com/salihkaragoz/pose-residual-network-pytorch,Allen Mao,pytorch
+https://github.com/salihkaragoz/pose-residual-network-pytorch,Allen Mao,tqdm
+https://github.com/salihkaragoz/pose-residual-network-pytorch,Allen Mao,pycocotools
+https://github.com/salihkaragoz/pose-residual-network-pytorch,Allen Mao,progress
+https://github.com/salihkaragoz/pose-residual-network-pytorch,Allen Mao,scikit-image
+https://github.com/salihkaragoz/pose-residual-network-pytorch,Allen Mao,Clone this repository git clone https://github.com/salihkaragoz/pose-residual-network-pytorch.git
+https://github.com/salihkaragoz/pose-residual-network-pytorch,Allen Mao,Install Pytorch
+https://github.com/salihkaragoz/pose-residual-network-pytorch,Allen Mao,pip install -r src/requirements.txt
+https://github.com/salihkaragoz/pose-residual-network-pytorch,Allen Mao,To download COCO dataset train2017 and val2017 annotations run: bash data/coco.sh. (data size: ~240Mb)
+https://github.com/sentinelsat/sentinelsat,Allen Mao,Install sentinelsat through pip:
+https://github.com/sentinelsat/sentinelsat,Allen Mao,pip install sentinelsat
+https://github.com/tensorflow/tensorflow,Allen Mao,To install the current release for CPU-only:
+https://github.com/tensorflow/tensorflow,Allen Mao,pip install tensorflow
+https://github.com/tensorflow/tensorflow,Allen Mao,Use the GPU package for CUDA-enabled GPU cards:
+https://github.com/tensorflow/tensorflow,Allen Mao,pip install tensorflow-gpu
+https://github.com/tensorflow/tensorflow,Allen Mao,"See Installing TensorFlow for detailed instructions, and how to build from source."
+https://github.com/tensorflow/tensorflow,Allen Mao,People who are a little more adventurous can also try our nightly binaries:
+https://github.com/tensorflow/tensorflow,Allen Mao,"Nightly pip packages * We are pleased to announce that TensorFlow now offers nightly pip packages under the tf-nightly and tf-nightly-gpu project on PyPi. Simply run pip install tf-nightly or pip install tf-nightly-gpu in a clean environment to install the nightly TensorFlow build. We support CPU and GPU packages on Linux, Mac, and Windows."
+https://github.com/twbs/bootstrap,Allen Mao,Download the latest release.
+https://github.com/twbs/bootstrap,Allen Mao,Clone the repo: git clone https://github.com/twbs/bootstrap.git
+https://github.com/twbs/bootstrap,Allen Mao,Install with npm: npm install bootstrap
+https://github.com/twbs/bootstrap,Allen Mao,Install with yarn: yarn add bootstrap@4.3.1
+https://github.com/twbs/bootstrap,Allen Mao,Install with Composer: composer require twbs/bootstrap:4.3.1
+https://github.com/twbs/bootstrap,Allen Mao,Install with NuGet: CSS: Install-Package bootstrap Sass: Install-Package bootstrap.sass
+https://github.com/ungarj/tilematrix,Allen Mao,Use pip to install the latest stable version:
+https://github.com/ungarj/tilematrix,Allen Mao,pip install tilematrix
+https://github.com/ungarj/tilematrix,Allen Mao,Manually install the latest development version
+https://github.com/vuejs/vue-devtools/,Allen Mao,Get the Chrome Extension / (beta channel)
+https://github.com/vuejs/vue-devtools/,Allen Mao,Get the Firefox Addon / (beta channel)
+https://github.com/vuejs/vue-devtools/,Allen Mao,Get standalone Electron app (works with any environment!)
+https://github.com/vuejs/vue-devtools/,Allen Mao,Manual Installation
+https://github.com/vuejs/vue-devtools/,Allen Mao,This is only necessary when you want to build the extension yourself from source to get not-yet-released features.
+https://github.com/vuejs/vue-devtools/,Allen Mao,Make sure you are using Node 6+ and NPM 3+
+https://github.com/vuejs/vue-devtools/,Allen Mao,Clone this repo
+https://github.com/vuejs/vue-devtools/,Allen Mao,npm install (Or yarn install if you are using yarn as the package manager)
+https://github.com/vuejs/vue-devtools/,Allen Mao,npm run build
+https://github.com/vuejs/vue-devtools/,Allen Mao,Open Chrome extension page
+https://github.com/vuejs/vue-devtools/,Allen Mao,"Check ""developer mode"""
+https://github.com/vuejs/vue-devtools/,Allen Mao,"Click ""load unpacked extension"", and choose shells/chrome."
+https://github.com/whimian/pyGeoPressure,Allen Mao,pyGeoPressure is on PyPI:
+https://github.com/whimian/pyGeoPressure,Allen Mao,pip install pygeopressure
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Prepare Environment
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Download source code from GitHub.
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,git clone https://github.com/wuhuikai/DeepGuidedFilter
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,cd DeepGuidedFilter && git checkout release
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Install dependencies (PyTorch version).
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,conda install opencv
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,conda install pytorch=0.2.0 cuda80 -c soumith
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,(Optional) Install dependencies for MonoDepth (Tensorflow version).
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,cd ComputerVision/MonoDepth
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Install Released Version
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,PyTorch Version
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,pip install guided-filter-pytorch
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Tensorflow Version
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,pip install guided-filter-tf
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,Build Caffe and pycaffe (see: Caffe installation instructions)
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,Build the Cython modules
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,cd $FRCN_ROOT/lib
+https://github.com/zhiqiangdon/CU-Net,Allen Mao,This package has the following requirements:
+https://github.com/zhiqiangdon/CU-Net,Allen Mao,Pytorch v0.4.0 or Pytorch v0.1.12
+https://github.com/zhiqiangdon/CU-Net,Allen Mao,Note that the script name with string prev-version requires Pytorch v0.1.12.
+https://github.com/cltk/cltk,Rosna Thomas,"CLTK supports Python versions 3.6 and 3.7. The software only runs on POSIX–compliant operating systems (Linux, Mac OS X, FreeBSD, etc.)."
+https://github.com/cltk/cltk,Rosna Thomas,bash
+https://github.com/cltk/cltk,Rosna Thomas,$ pip install cltk
+https://github.com/cltk/cltk,Rosna Thomas,See docs for complete installation instructions.
+https://github.com/cltk/cltk,Rosna Thomas,"The CLTK organization curates corpora which can be downloaded directly or, better, imported by the toolkit."
+https://github.com/facebookresearch/DensePose,Rosna Thomas,"Please find installation instructions for Caffe2 and DensePose in INSTALL.md, a document based on the Detectron installation instructions."
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,See the fb.resnet.torch installation instructions for a step-by-step guide.
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,#NAME?
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,#NAME?
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,#NAME?
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,Installing both PyRobot and LoCoBot dependencies
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,Install Ubuntu 16.04
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,Download the installation script
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,sudo apt update
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,sudo apt-get install curl
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,curl 'https://raw.githubusercontent.com/facebookresearch/pyrobot/master/robots/LoCoBot/install/locobot_install_all.sh' &gt; locobot_install_all.sh
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,"Run the script to install everything (ROS, realsense driver, etc.). Please connect the nuc machine to a realsense camera before running the following commands."
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,chmod +x locobot_install_all.sh 
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,./locobot_install_all.sh
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,Installing just PyRobot
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,Install Ubuntu 16.04 
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,Install ROS kinetic
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,Install KDL
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,sudo apt-get -y install ros-kinetic-orocos-kdl ros-kinetic-kdl-parser-py ros-kinetic-python-orocos-kdl ros-kinetic-trac-ik
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,Install Python virtual environment
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,sudo apt-get -y install python-virtualenv
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,"virtualenv_name=""pyenv_pyrobot"""
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,VIRTUALENV_FOLDER=~/${virtualenv_name}
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,virtualenv --system-site-packages -p python2.7 $VIRTUALENV_FOLDER
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,Install PyRobot 
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,cd ~
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,mkdir -p low_cost_ws/src
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,cd ~/low_cost_ws/src
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,source ~/${virtualenv_name}/bin/activate
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,git clone --recurse-submodules https://github.com/facebookresearch/pyrobot.git
+https://github.com/facebookresearch/pyrobot,Rosna Thomas,cd pyrobot/
+https://github.com/gitbucket/gitbucket,Rosna Thomas,"GitBucket requires Java8. You have to install it, if it is not already installed."
+https://github.com/gitbucket/gitbucket,Rosna Thomas,Download the latest gitbucket.war from the releases page and run it by java -jar gitbucket.war.
+https://github.com/gitbucket/gitbucket,Rosna Thomas,Go to http://[hostname]:8080/ and log in with ID: root / Pass: root.
+https://github.com/gitbucket/gitbucket,Rosna Thomas,You can specify following options:
+https://github.com/gitbucket/gitbucket,Rosna Thomas,--port=[NUMBER]
+https://github.com/gitbucket/gitbucket,Rosna Thomas,--prefix=[CONTEXTPATH]
+https://github.com/gitbucket/gitbucket,Rosna Thomas,--host=[HOSTNAME]
+https://github.com/gitbucket/gitbucket,Rosna Thomas,--gitbucket.home=[DATA_DIR]
+https://github.com/gitbucket/gitbucket,Rosna Thomas,--temp_dir=[TEMP_DIR]
+https://github.com/gitbucket/gitbucket,Rosna Thomas,--max_file_size=[MAX_FILE_SIZE]
+https://github.com/gitbucket/gitbucket,Rosna Thomas,"TEMP_DIR is used as the temporary directory for the jetty application context. This is the directory into which the gitbucket.war file is unpacked, the source files are compiled, etc. If given this parameter must match the path of an existing directory or the application will quit reporting an error; if not given the path used will be a tmp directory inside the gitbucket home."
+https://github.com/gitbucket/gitbucket,Rosna Thomas,MAX_FILE_SIZE is the max file size for upload files.
+https://github.com/gitbucket/gitbucket,Rosna Thomas,"You can also deploy gitbucket.war to a servlet container which supports Servlet 3.0 (like Jetty, Tomcat, JBoss, etc)"
+https://github.com/gitbucket/gitbucket,Rosna Thomas,"For more information about installation on Mac or Windows Server (with IIS), or configuration of Apache or Nginx and also integration with other tools or services such as Jenkins or Slack, see Wiki."
+https://github.com/gitbucket/gitbucket,Rosna Thomas,"To upgrade GitBucket, replace gitbucket.war with the new version, after stopping GitBucket. All GitBucket data is stored in HOME/.gitbucket by default. So if you want to back up GitBucket's data, copy this directory to the backup location."
+https://github.com/gitbucket/gitbucket,Rosna Thomas,Plugins
+https://github.com/gitbucket/gitbucket,Rosna Thomas,GitBucket has a plug-in system that allows extra functionality. Officially the following plug-ins are provided:
+https://github.com/gitbucket/gitbucket,Rosna Thomas,gitbucket-gist-plugin
+https://github.com/gitbucket/gitbucket,Rosna Thomas,gitbucket-emoji-plugin
+https://github.com/gitbucket/gitbucket,Rosna Thomas,gitbucket-pages-plugin
+https://github.com/gitbucket/gitbucket,Rosna Thomas,gitbucket-notifications-plugin
+https://github.com/gitbucket/gitbucket,Rosna Thomas,You can find more plugins made by the community at GitBucket community plugins.
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,"You will need to install latest version of Google Chrome. Moreover, you need to install selenium module as well using"
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,pip install selenium
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,"Run the code using Python 3. Also, the code is multi-platform and is tested on both Windows and Linux."
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,The tool uses latest version of Chrome Web Driver. I have placed the webdriver along with the code but if that version doesn't work then replace the chrome web driver with the latest one.
+https://github.com/nextflow-io/nextflow,Rosna Thomas,Download the package
+https://github.com/nextflow-io/nextflow,Rosna Thomas,"Nextflow does not require any installation procedure, just download the distribution package by copying and pasting"
+https://github.com/nextflow-io/nextflow,Rosna Thomas,this command in your terminal:
+https://github.com/nextflow-io/nextflow,Rosna Thomas,curl -fsSL https://get.nextflow.io | bash
+https://github.com/nextflow-io/nextflow,Rosna Thomas,It creates the nextflow executable file in the current directory. You may want to move it to a folder accessible from your $PATH.
+https://github.com/nextflow-io/nextflow,Rosna Thomas,Download from Conda
+https://github.com/nextflow-io/nextflow,Rosna Thomas,Nextflow can also be installed from Bioconda
+https://github.com/nextflow-io/nextflow,Rosna Thomas,conda install -c bioconda nextflow
+https://github.com/nextflow-io/nextflow,Rosna Thomas,make compile
+https://github.com/nextflow-io/nextflow,Rosna Thomas,"The very first time you run it, it will automatically download all the libraries required by the build process."
+https://github.com/nextflow-io/nextflow,Rosna Thomas,It may take some minutes to complete.
+https://github.com/nextflow-io/nextflow,Rosna Thomas,"When complete, execute the program by using the launch.sh script in the project directory."
+https://github.com/nextflow-io/nextflow,Rosna Thomas,The self-contained runnable Nextflow packages can be created by using the following command:
+https://github.com/nextflow-io/nextflow,Rosna Thomas,make pack
+https://github.com/nextflow-io/nextflow,Rosna Thomas,In order to install the compiled packages use the following command:
+https://github.com/nextflow-io/nextflow,Rosna Thomas,Then you will be able to run nextflow using the nextflow launcher script in the project root folder.
+https://github.com/nextflow-io/nextflow,Rosna Thomas,Known compilation problems
+https://github.com/nextflow-io/nextflow,Rosna Thomas,Nextflow required JDK 8 to be compiled. The Java compiler used by the build process can be choose by setting the
+https://github.com/nextflow-io/nextflow,Rosna Thomas,JAVA_HOME environment variable accordingly.
+https://github.com/nextflow-io/nextflow,Rosna Thomas,"If the compilation stops reporting the error: java.lang.VerifyError: Bad &lt;init&gt; method call from inside of a branch,"
+https://github.com/nextflow-io/nextflow,Rosna Thomas,this is due to a bug affecting the following Java JDK:
+https://github.com/nextflow-io/nextflow,Rosna Thomas,1.8.0 update 11
+https://github.com/nextflow-io/nextflow,Rosna Thomas,1.8.0 update 20
+https://github.com/nextflow-io/nextflow,Rosna Thomas,Upgrade to a newer JDK to avoid to this issue. Alternatively a possible workaround is to define the following variable
+https://github.com/nextflow-io/nextflow,Rosna Thomas,in your environment:
+https://github.com/nextflow-io/nextflow,Rosna Thomas,_JAVA_OPTIONS='-Xverify:none'
+https://github.com/nextflow-io/nextflow,Rosna Thomas,Read more at these links:
+https://github.com/nextflow-io/nextflow,Rosna Thomas,https://bugs.openjdk.java.net/browse/JDK-8051012
+https://github.com/nextflow-io/nextflow,Rosna Thomas,https://jira.codehaus.org/browse/GROOVY-6951
+https://github.com/nextflow-io/nextflow,Rosna Thomas,IntelliJ IDEA
+https://github.com/nextflow-io/nextflow,Rosna Thomas,Nextflow development with IntelliJ IDEA requires the latest version of the IDE (2019.1.2 or later).
+https://github.com/nextflow-io/nextflow,Rosna Thomas,"If you have it installed in your computer, follow the steps below in order to use it with Nextflow:"
+https://github.com/pyro-ppl/pyro,Rosna Thomas,Installing a stable Pyro release
+https://github.com/pyro-ppl/pyro,Rosna Thomas,Install using pip:
+https://github.com/pyro-ppl/pyro,Rosna Thomas,Pyro supports Python 3.4+.
+https://github.com/pyro-ppl/pyro,Rosna Thomas,sh
+https://github.com/pyro-ppl/pyro,Rosna Thomas,pip install pyro-ppl
+https://github.com/pyro-ppl/pyro,Rosna Thomas,Install from source:
+https://github.com/pyro-ppl/pyro,Rosna Thomas,git clone git@github.com:pyro-ppl/pyro.git
+https://github.com/pyro-ppl/pyro,Rosna Thomas,cd pyro
+https://github.com/pyro-ppl/pyro,Rosna Thomas,git checkout master  # master is pinned to the latest release
+https://github.com/pyro-ppl/pyro,Rosna Thomas,Install with extra packages:
+https://github.com/pyro-ppl/pyro,Rosna Thomas,"To install the dependencies required to run the probabilistic models included in the examples/tutorials directories, please use the following command:"
+https://github.com/pyro-ppl/pyro,Rosna Thomas,pip install pyro-ppl[extras]
+https://github.com/pyro-ppl/pyro,Rosna Thomas,Make sure that the models come from the same release version of the Pyro source code as you have installed.
+https://github.com/pyro-ppl/pyro,Rosna Thomas,Installing Pyro dev branch
+https://github.com/pyro-ppl/pyro,Rosna Thomas,For recent features you can install Pyro from source.
+https://github.com/pyro-ppl/pyro,Rosna Thomas,pip install git+https://github.com/pyro-ppl/pyro.git
+https://github.com/pyro-ppl/pyro,Rosna Thomas,"or, with the extras dependency to run the probabilistic models included in the examples/tutorials directories:"
+https://github.com/pyro-ppl/pyro,Rosna Thomas,pip install git+https://github.com/pyro-ppl/pyro.git#egg=project[extras]
+https://github.com/pyro-ppl/pyro,Rosna Thomas,git clone https://github.com/pyro-ppl/pyro
+https://github.com/pyro-ppl/pyro,Rosna Thomas,pip install .  # pip install .[extras] for running models in examples/tutorials
+https://github.com/reduxjs/react-redux,Rosna Thomas,React Redux requires React 16.8.3 or later.
+https://github.com/reduxjs/react-redux,Rosna Thomas,npm install --save react-redux
+https://github.com/reduxjs/react-redux,Rosna Thomas,This assumes that you’re using npm package manager 
+https://github.com/reduxjs/react-redux,Rosna Thomas,with a module bundler like Webpack or 
+https://github.com/reduxjs/react-redux,Rosna Thomas,Browserify to consume CommonJS 
+https://github.com/reduxjs/react-redux,Rosna Thomas,modules.
+https://github.com/reduxjs/react-redux,Rosna Thomas,"If you don’t yet use npm or a modern module bundler, and would rather prefer a single-file UMD build that makes ReactRedux available as a global object, you can grab a pre-built version from cdnjs. We don’t recommend this approach for any serious application, as most of the libraries complementary to Redux are only available on npm."
+https://github.com/reduxjs/react-redux,Rosna Thomas,React Native
+https://github.com/reduxjs/react-redux,Rosna Thomas,"As of React Native 0.18, React Redux 5.x should work with React Native. If you have any issues with React Redux 5.x on React Native, run npm ls react and make sure you don’t have a duplicate React installation in your node_modules. We recommend that you use npm@3.x which is better at avoiding these kinds of issues."
+https://github.com/scikit-image/scikit-image,Rosna Thomas,Installation from binaries
+https://github.com/scikit-image/scikit-image,Rosna Thomas,Debian/Ubuntu: sudo apt-get install python-skimage
+https://github.com/scikit-image/scikit-image,Rosna Thomas,OSX: pip install scikit-image
+https://github.com/scikit-image/scikit-image,Rosna Thomas,Anaconda: conda install -c conda-forge scikit-image
+https://github.com/scikit-image/scikit-image,Rosna Thomas,Windows: Download Windows binaries
+https://github.com/scikit-image/scikit-image,Rosna Thomas,Also see installing scikit-image.
+https://github.com/scikit-image/scikit-image,Rosna Thomas,Installation from source
+https://github.com/scikit-image/scikit-image,Rosna Thomas,Install dependencies using:
+https://github.com/scikit-image/scikit-image,Rosna Thomas,"Then, install scikit-image using:"
+https://github.com/scikit-image/scikit-image,Rosna Thomas,$ pip install .
+https://github.com/scikit-image/scikit-image,Rosna Thomas,"If you plan to develop the package, you may run it directly from source:"
+https://github.com/scikit-image/scikit-image,Rosna Thomas,$ pip install -e .  # Do this once to add package to Python path
+https://github.com/scikit-image/scikit-image,Rosna Thomas,"Every time you modify Cython files, also run:"
+https://github.com/scikit-image/scikit-image,Rosna Thomas,$ python setup.py build_ext -i  # Build binary extensions
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,~~~~~~~~~~~~
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,scikit-learn requires:
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,Python (>= 3.5)
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,NumPy (>= 1.11.0)
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,SciPy (>= 0.17.0)
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,joblib (>= 0.11)
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,Scikit-learn 0.20 was the last version to support Python 2.7 and Python 3.4.
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,scikit-learn 0.21 and later require Python 3.5 or newer.
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,"Scikit-learn plotting capabilities (i.e., functions start with ""plot_"") require"
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,Matplotlib (>= 1.5.1). For running the examples Matplotlib >= 1.5.1 is
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,"required. A few examples require scikit-image >= 0.12.3, a few examples require"
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,pandas >= 0.18.0.
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,User installation
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,~~~~~~~~~~~~~~~~~
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,"If you already have a working installation of numpy and scipy,"
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,the easiest way to install scikit-learn is using pip   ::
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,pip install -U scikit-learn
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,or conda::
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,conda install scikit-learn
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,The documentation includes more detailed installation instructions &lt;http://scikit-learn.org/stable/install.html&gt;_.
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,Changelog
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,See the changelog &lt;http://scikit-learn.org/dev/whats_new.html&gt;__
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,for a history of notable changes to scikit-learn.
+https://github.com/sequelize/sequelize,Rosna Thomas,```bash
+https://github.com/sequelize/sequelize,Rosna Thomas,$ npm install --save sequelize # This will install v5
+https://github.com/sequelize/sequelize,Rosna Thomas,And one of the following:
+https://github.com/sequelize/sequelize,Rosna Thomas,$ npm install --save pg pg-hstore # Postgres
+https://github.com/sequelize/sequelize,Rosna Thomas,$ npm install --save mysql2
+https://github.com/sequelize/sequelize,Rosna Thomas,$ npm install --save mariadb
+https://github.com/sequelize/sequelize,Rosna Thomas,$ npm install --save sqlite3
+https://github.com/sequelize/sequelize,Rosna Thomas,$ npm install --save tedious # Microsoft SQL Server
+https://github.com/tensorflow/magenta,Rosna Thomas,Magenta maintains a pip package for easy
+https://github.com/tensorflow/magenta,Rosna Thomas,"installation. We recommend using Anaconda to install it, but it can work in any"
+https://github.com/tensorflow/magenta,Rosna Thomas,standard Python environment. We support both Python 2 (>= 2.7) and Python 3 (>= 3.5).
+https://github.com/tensorflow/magenta,Rosna Thomas,These instructions will assume you are using Anaconda.
+https://github.com/tensorflow/magenta,Rosna Thomas,"Note that if you want to enable GPU support, you should follow the GPU Installation instructions below."
+https://github.com/tensorflow/magenta,Rosna Thomas,Automated Install (w/ Anaconda)
+https://github.com/tensorflow/magenta,Rosna Thomas,"If you are running Mac OS X or Ubuntu, you can try using our automated"
+https://github.com/tensorflow/magenta,Rosna Thomas,installation script. Just paste the following command into your terminal.
+https://github.com/tensorflow/magenta,Rosna Thomas,curl https://raw.githubusercontent.com/tensorflow/magenta/master/magenta/tools/magenta-install.sh &gt; /tmp/magenta-install.sh
+https://github.com/tensorflow/magenta,Rosna Thomas,bash /tmp/magenta-install.sh
+https://github.com/tensorflow/magenta,Rosna Thomas,"After the script completes, open a new terminal window so the environment"
+https://github.com/tensorflow/magenta,Rosna Thomas,variable changes take effect.
+https://github.com/tensorflow/magenta,Rosna Thomas,The Magenta libraries are now available for use within Python programs and
+https://github.com/tensorflow/magenta,Rosna Thomas,"Jupyter notebooks, and the Magenta scripts are installed in your path!"
+https://github.com/tensorflow/magenta,Rosna Thomas,Note that you will need to run source activate magenta to use Magenta every
+https://github.com/tensorflow/magenta,Rosna Thomas,time you open a new terminal window.
+https://github.com/tensorflow/magenta,Rosna Thomas,Manual Install (w/o Anaconda)
+https://github.com/tensorflow/magenta,Rosna Thomas,"If the automated script fails for any reason, or you'd prefer to install by"
+https://github.com/tensorflow/magenta,Rosna Thomas,"hand, do the following steps."
+https://github.com/tensorflow/magenta,Rosna Thomas,Install the Magenta pip package:
+https://github.com/tensorflow/magenta,Rosna Thomas,pip install magenta
+https://github.com/tensorflow/magenta,Rosna Thomas,"NOTE: In order to install the rtmidi package that we depend on, you may need to install headers for some sound libraries. On Linux, this command should install the necessary packages:"
+https://github.com/tensorflow/magenta,Rosna Thomas,sudo apt-get install build-essential libasound2-dev libjack-dev
+https://github.com/tensorflow/magenta,Rosna Thomas,GPU Installation
+https://github.com/tensorflow/magenta,Rosna Thomas,"If you have a GPU installed and you want Magenta to use it, you will need to"
+https://github.com/tensorflow/magenta,Rosna Thomas,"follow the Manual Install instructions, but with a few"
+https://github.com/tensorflow/magenta,Rosna Thomas,modifications.
+https://github.com/tensorflow/magenta,Rosna Thomas,"First, make sure your system meets the requirements to run tensorflow with GPU support."
+https://github.com/tensorflow/magenta,Rosna Thomas,"Next, follow the Manual Install instructions, but install the"
+https://github.com/tensorflow/magenta,Rosna Thomas,magenta-gpu package instead of the magenta package:
+https://github.com/tensorflow/magenta,Rosna Thomas,pip install magenta-gpu
+https://github.com/tensorflow/magenta,Rosna Thomas,The only difference between the two packages is that magenta-gpu depends on
+https://github.com/tensorflow/magenta,Rosna Thomas,tensorflow-gpu instead of tensorflow.
+https://github.com/tensorflow/magenta,Rosna Thomas,Magenta should now have access to your GPU.
+https://github.com/tensorflow/magenta,Rosna Thomas,Using Magenta
+https://github.com/tensorflow/magenta,Rosna Thomas,"You can now train our various models and use them to generate music, audio, and images. You can"
+https://github.com/tensorflow/magenta,Rosna Thomas,find instructions for each of the models by exploring the models directory.
+https://github.com/tensorflow/magenta,Rosna Thomas,"To get started, create your own melodies with TensorFlow using one of the various configurations of our Melody RNN model; a recurrent neural network for predicting melodies."
+https://github.com/tensorflow/magenta,Rosna Thomas,Playing a MIDI Instrument
+https://github.com/tensorflow/magenta,Rosna Thomas,"After you've trained one of the models above, you can use our MIDI interface to play with it interactively."
+https://github.com/tensorflow/magenta,Rosna Thomas,"We also have created several demos that provide a UI for this interface, making it easier to use (e.g., the browser-based AI Jam)."
+https://github.com/tensorflow/magenta,Rosna Thomas,Development Environment

@@ -1,0 +1,1156 @@
+URL,contributor,excerpt
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,Usage
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,"We have placed some example config files in experiments folder, and you can use them straight forward. Don't modify them unless you know exactly what it means."
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,Train
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,"For Integral Human Pose Regression, cd to pytorch_projects/integral_human_pose"
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,Integral Regression
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,python train.py --cfg=experiments/hm36/resnet50v1_ft/d-mh_ps-256_deconv256x3_min-int-l1_adam_bs32-4gpus_x300-270-290/lr1e-3.yaml --dataroot=../../data/
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,Direct Joint Regression
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,python train.py --cfg=experiments/hm36/resnet50v1_ft/d-mh_ps-256_dj_l1_adam_bs32-4gpus_x140-90-120/lr1e-3.yaml --dataroot=../../data/
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,"For 3D pose estimation system of ECCV18 Challenge, cd to pytorch_projects/hm36_challenge"
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,python train.py --cfg=experiments/hm36/resnet152v1_ft/d-mh_ps-256_deconv256x3_min-int-l1_adam_bs24-4gpus_x300-270-290/lr1e-3.yaml --dataroot=../../data/
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,"By default, logging and model will be saved to log and output folder respectively."
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,Test
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,To run evaluation on CHALL_H80K Val dataset
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,Download model
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,Place it under $project_root/model/hm36_challenge
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,cd to $project_root/pytorch_projects/hm36_challenge
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,execute command below
+https://github.com/JimmySuen/integral-human-pose,Allen Mao,python test.py --cfg experiments/hm36/resnet152v1_ft/d-mch_384x288_deconv256x3_min-int-l1_adam_bs12-4gpus/lr1e-4_x300-27
+https://github.com/JuliaGeo/LibGEOS.jl,Allen Mao,"p1 = readgeom(""POLYGON((0 0,1 0,1 1,0 0))"")"
+https://github.com/JuliaGeo/LibGEOS.jl,Allen Mao,"p2 = readgeom(""POLYGON((0 0,1 0,1 1,0 1,0 0))"")"
+https://github.com/JuliaGeo/LibGEOS.jl,Allen Mao,"p3 = readgeom(""POLYGON((2 0,3 0,3 1,2 1,2 0))"")"
+https://github.com/JuliaGeo/LibGEOS.jl,Allen Mao,"g1 = buffer(p1, 0.5)"
+https://github.com/JuliaGeo/LibGEOS.jl,Allen Mao,"g2 = buffer(p2, 0.5)"
+https://github.com/JuliaGeo/LibGEOS.jl,Allen Mao,"g3 = buffer(p3, 0.5)"
+https://github.com/JuliaGeo/LibGEOS.jl,Allen Mao,"polygon = LibGEOS.union(g1, g3)"
+https://github.com/LMescheder/GAN_stability,Allen Mao,First download your data and put it into the ./data folder.
+https://github.com/LMescheder/GAN_stability,Allen Mao,"To train a new model, first create a config script similar to the ones provided in the ./configs folder. You can then train you model using"
+https://github.com/LMescheder/GAN_stability,Allen Mao,python train.py PATH_TO_CONFIG
+https://github.com/LMescheder/GAN_stability,Allen Mao,"To compute the inception score for your model and generate samples, use"
+https://github.com/LMescheder/GAN_stability,Allen Mao,python test.py PATH_TO_CONIFG
+https://github.com/LMescheder/GAN_stability,Allen Mao,"Finally, you can create nice latent space interpolations using"
+https://github.com/LMescheder/GAN_stability,Allen Mao,python interpolate.py PATH_TO_CONFIG
+https://github.com/LMescheder/GAN_stability,Allen Mao,or
+https://github.com/LMescheder/GAN_stability,Allen Mao,python interpolate_class.py PATH_TO_CONFIG
+https://github.com/NSGeophysics/GPRPy,Allen Mao,Running the software
+https://github.com/NSGeophysics/GPRPy,Allen Mao,"After installation, you can run the script from the Anaconda Prompt (or your Python-enabled prompt) by running either"
+https://github.com/NSGeophysics/GPRPy,Allen Mao,gprpy
+https://github.com/NSGeophysics/GPRPy,Allen Mao,python -m gprpy
+https://github.com/NSGeophysics/GPRPy,Allen Mao,The first time you run GPRPy it could take a while to initialize. GPRPy will ask you if you want to run the profile [p] or WARR / CMP [c] user interface. Type
+https://github.com/NSGeophysics/GPRPy,Allen Mao,p
+https://github.com/NSGeophysics/GPRPy,Allen Mao,"and then enter for profile, or"
+https://github.com/NSGeophysics/GPRPy,Allen Mao,c
+https://github.com/NSGeophysics/GPRPy,Allen Mao,and then enter for CMP / WARR.
+https://github.com/NSGeophysics/GPRPy,Allen Mao,You can also directly select one by running either
+https://github.com/NSGeophysics/GPRPy,Allen Mao,gprpy p
+https://github.com/NSGeophysics/GPRPy,Allen Mao,gprpy c
+https://github.com/NSGeophysics/GPRPy,Allen Mao,python -m gprpy p
+https://github.com/NSGeophysics/GPRPy,Allen Mao,python -m gprpy c
+https://github.com/OpenGeoVis/PVGeo,Allen Mao,Now PVGeo is ready for use in your standard Python environment (2.7 or >=3.6) with all dependencies installed! Go ahead and test your install:
+https://github.com/OpenGeoVis/PVGeo,Allen Mao,"python -c ""import PVGeo; print(PVGeo.__version__)"""
+https://github.com/OpenGeoVis/omfvista,Allen Mao,Example Use
+https://github.com/OpenGeoVis/omfvista,Allen Mao,Be sure to check out the Example Notebook that demos omfvista or our Example Gallery in the documentation! Here's an example using the sample data hosted in the OMF repository.
+https://github.com/OpenGeoVis/omfvista,Allen Mao,import pyvista as pv
+https://github.com/OpenGeoVis/omfvista,Allen Mao,import omfvista
+https://github.com/OpenGeoVis/omfvista,Allen Mao,project = omfvista.load_project('test_file.omf')
+https://github.com/OpenGeoVis/omfvista,Allen Mao,project
+https://github.com/OpenGeoVis/omfvista,Allen Mao,"Once the data is loaded as a pyvista.MultiBlock dataset from omfvista, then that object can be directly used for interactive 3D visualization from PyVista:"
+https://github.com/OpenGeoVis/omfvista,Allen Mao,project.plot(notebook=False)
+https://github.com/OpenGeoVis/omfvista,Allen Mao,"Or an interactive scene can be created and manipulated to create a compelling figure directly in a Jupyter notebook. First, grab the elements from the project:"
+https://github.com/OpenGeoVis/omfvista,Allen Mao,# Grab a few elements of interest and plot em up!
+https://github.com/OpenGeoVis/omfvista,Allen Mao,vol = project['Block Model']
+https://github.com/OpenGeoVis/omfvista,Allen Mao,assay = project['wolfpass_WP_assay']
+https://github.com/OpenGeoVis/omfvista,Allen Mao,topo = project['Topography']
+https://github.com/OpenGeoVis/omfvista,Allen Mao,dacite = project['Dacite']
+https://github.com/OpenGeoVis/omfvista,Allen Mao,Then apply a filtering tool from PyVista to the volumetric data:
+https://github.com/OpenGeoVis/omfvista,Allen Mao,thresher = pv.Threshold(vol)
+https://github.com/OpenGeoVis/omfvista,Allen Mao,Then you can put it all in one environment!
+https://github.com/OpenGeoVis/omfvista,Allen Mao,# Grab the active plotting window
+https://github.com/OpenGeoVis/omfvista,Allen Mao,#  from the thresher tool
+https://github.com/OpenGeoVis/omfvista,Allen Mao,p = thresher.plotter
+https://github.com/OpenGeoVis/omfvista,Allen Mao,# Add our datasets
+https://github.com/OpenGeoVis/omfvista,Allen Mao,"p.add_mesh(topo, cmap='gist_earth', opacity=0.5)"
+https://github.com/OpenGeoVis/omfvista,Allen Mao,"p.add_mesh(assay, color='blue', line_width=3)"
+https://github.com/OpenGeoVis/omfvista,Allen Mao,"p.add_mesh(dacite, color='yellow', opacity=0.6)"
+https://github.com/OpenGeoVis/omfvista,Allen Mao,# Add the bounds axis
+https://github.com/OpenGeoVis/omfvista,Allen Mao,p.show_bounds()
+https://github.com/OpenGeoVis/omfvista,Allen Mao,"And once you like what the render view displays, you can save a screenshot:"
+https://github.com/OpenGeoVis/omfvista,Allen Mao,p.screenshot('wolfpass.png')
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,Run the notebook:
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,cd notebooks/
+https://github.com/OpenGeoscience/geonotebook/,Allen Mao,jupyter notebook
+https://github.com/Toblerity/Fiona/,Allen Mao,Collections
+https://github.com/Toblerity/Fiona/,Allen Mao,"Records are read from and written to file-like Collection objects returned from the fiona.open() function. Records are mappings modeled on the GeoJSON format. They don't have any spatial methods of their own, so if you want to do anything fancy with them you will probably need Shapely or something like it. Here is an example of using Fiona to read some records from one data file, change their geometry attributes, and write them to a new data file."
+https://github.com/Toblerity/Fiona/,Allen Mao,import fiona
+https://github.com/Toblerity/Fiona/,Allen Mao,"# Open a file for reading. We'll call this the ""source."""
+https://github.com/Toblerity/Fiona/,Allen Mao,with fiona.open('tests/data/coutwildrnp.shp') as src:
+https://github.com/Toblerity/Fiona/,Allen Mao,"# The file we'll write to, the ""destination"", must be initialized"
+https://github.com/Toblerity/Fiona/,Allen Mao,"# with a coordinate system, a format driver name, and"
+https://github.com/Toblerity/Fiona/,Allen Mao,# a record schema.  We can get initial values from the open
+https://github.com/Toblerity/Fiona/,Allen Mao,# collection's ``meta`` property and then modify them as
+https://github.com/Toblerity/Fiona/,Allen Mao,# desired.
+https://github.com/Toblerity/Fiona/,Allen Mao,meta = src.meta
+https://github.com/Toblerity/Fiona/,Allen Mao,meta['schema']['geometry'] = 'Point'
+https://github.com/Toblerity/Fiona/,Allen Mao,"# Open an output file, using the same format driver and"
+https://github.com/Toblerity/Fiona/,Allen Mao,# coordinate reference system as the source. The ``meta``
+https://github.com/Toblerity/Fiona/,Allen Mao,# mapping fills in the keyword parameters of fiona.open().
+https://github.com/Toblerity/Fiona/,Allen Mao,"with fiona.open('test_write.shp', 'w', **meta) as dst:"
+https://github.com/Toblerity/Fiona/,Allen Mao,# Process only the records intersecting a box.
+https://github.com/Toblerity/Fiona/,Allen Mao,"for f in src.filter(bbox=(-107.0, 37.0, -105.0, 39.0)):"
+https://github.com/Toblerity/Fiona/,Allen Mao,# Get a point on the boundary of the record's
+https://github.com/Toblerity/Fiona/,Allen Mao,# geometry.
+https://github.com/Toblerity/Fiona/,Allen Mao,f['geometry'] = {
+https://github.com/Toblerity/Fiona/,Allen Mao,"'type': 'Point',"
+https://github.com/Toblerity/Fiona/,Allen Mao,'coordinates': f['geometry']['coordinates'][0][0]}
+https://github.com/Toblerity/Fiona/,Allen Mao,# Write the record out.
+https://github.com/Toblerity/Fiona/,Allen Mao,dst.write(f)
+https://github.com/Toblerity/Fiona/,Allen Mao,# The destination's contents are flushed to disk and the file is
+https://github.com/Toblerity/Fiona/,Allen Mao,# closed when its ``with`` block ends. This effectively
+https://github.com/Toblerity/Fiona/,Allen Mao,# executes ``dst.flush(); dst.close()``.
+https://github.com/Toblerity/Fiona/,Allen Mao,Reading Multilayer data
+https://github.com/Toblerity/Fiona/,Allen Mao,Collections can also be made from single layers within multilayer files or directories of data. The target layer is specified by name or by its integer index within the file or directory. The fiona.listlayers() function provides an index ordered list of layer names.
+https://github.com/Toblerity/Fiona/,Allen Mao,for layername in fiona.listlayers('tests/data'):
+https://github.com/Toblerity/Fiona/,Allen Mao,"with fiona.open('tests/data', layer=layername) as src:"
+https://github.com/Toblerity/Fiona/,Allen Mao,"print(layername, len(src))"
+https://github.com/Toblerity/Fiona/,Allen Mao,# Output:
+https://github.com/Toblerity/Fiona/,Allen Mao,"# (u'coutwildrnp', 67)"
+https://github.com/Toblerity/Fiona/,Allen Mao,"Layer can also be specified by index. In this case, layer=0 and layer='test_uk' specify the same layer in the data file or directory."
+https://github.com/Toblerity/Fiona/,Allen Mao,"for i, layername in enumerate(fiona.listlayers('tests/data')):"
+https://github.com/Toblerity/Fiona/,Allen Mao,"with fiona.open('tests/data', layer=i) as src:"
+https://github.com/Toblerity/Fiona/,Allen Mao,"print(i, layername, len(src))"
+https://github.com/Toblerity/Fiona/,Allen Mao,"# (0, u'coutwildrnp', 67)"
+https://github.com/Toblerity/Fiona/,Allen Mao,Writing Multilayer data
+https://github.com/Toblerity/Fiona/,Allen Mao,Multilayer data can be written as well. Layers must be specified by name when writing.
+https://github.com/Toblerity/Fiona/,Allen Mao,with open('tests/data/cowildrnp.shp') as src:
+https://github.com/Toblerity/Fiona/,Allen Mao,f = next(src)
+https://github.com/Toblerity/Fiona/,Allen Mao,"with fiona.open('/tmp/foo', 'w', layer='bar', **meta) as dst:"
+https://github.com/Toblerity/Fiona/,Allen Mao,print(fiona.listlayers('/tmp/foo'))
+https://github.com/Toblerity/Fiona/,Allen Mao,"with fiona.open('/tmp/foo', layer='bar') as src:"
+https://github.com/Toblerity/Fiona/,Allen Mao,print(len(src))
+https://github.com/Toblerity/Fiona/,Allen Mao,print(f['geometry']['type'])
+https://github.com/Toblerity/Fiona/,Allen Mao,print(f['properties'])
+https://github.com/Toblerity/Fiona/,Allen Mao,# [u'bar']
+https://github.com/Toblerity/Fiona/,Allen Mao,# 1
+https://github.com/Toblerity/Fiona/,Allen Mao,# Polygon
+https://github.com/Toblerity/Fiona/,Allen Mao,"# OrderedDict([(u'PERIMETER', 1.22107), (u'FEATURE2', None), (u'NAME', u'Mount Naomi Wilderness'), (u'FEATURE1', u'Wilderness'), (u'URL', u'http://www.wilderness.net/index.cfm?fuse=NWPS&sec=wildView&wname=Mount%20Naomi'), (u'AGBUR', u'FS'), (u'AREA', 0.0179264), (u'STATE_FIPS', u'49'), (u'WILDRNP020', 332), (u'STATE', u'UT')])"
+https://github.com/Toblerity/Fiona/,Allen Mao,A view of the /tmp/foo directory will confirm the creation of the new files.
+https://github.com/Toblerity/Fiona/,Allen Mao,$ ls /tmp/foo
+https://github.com/Toblerity/Fiona/,Allen Mao,bar.cpg bar.dbf bar.prj bar.shp bar.shx
+https://github.com/Toblerity/Fiona/,Allen Mao,Collections from archives and virtual file systems
+https://github.com/Toblerity/Fiona/,Allen Mao,"Zip and Tar archives can be treated as virtual filesystems and Collections can be made from paths and layers within them. In other words, Fiona lets you read and write zipped Shapefiles."
+https://github.com/Toblerity/Fiona/,Allen Mao,"for i, layername in enumerate("
+https://github.com/Toblerity/Fiona/,Allen Mao,fiona.listlayers('zip://tests/data/coutwildrnp.zip'):
+https://github.com/Toblerity/Fiona/,Allen Mao,"with fiona.open('zip://tests/data/coutwildrnp.zip', layer=i) as src:"
+https://github.com/Toblerity/Fiona/,Allen Mao,"Fiona can also read from more exotic file systems. For instance, a zipped shape file in S3 can be accessed like so:"
+https://github.com/Toblerity/Fiona/,Allen Mao,with fiona.open('zip+s3://mapbox/rasterio/coutwildrnp.zip') as src:
+https://github.com/Toblerity/Fiona/,Allen Mao,# 67
+https://github.com/Toblerity/Fiona/,Allen Mao,Fiona CLI
+https://github.com/Toblerity/Fiona/,Allen Mao,"Fiona's command line interface, named ""fio"", is documented at docs/cli.rst. Its fio info pretty prints information about a data file."
+https://github.com/Toblerity/Fiona/,Allen Mao,$ fio info --indent 2 tests/data/coutwildrnp.shp
+https://github.com/Toblerity/Fiona/,Allen Mao,"{count"": 67,
+  ""crs"": ""EPSG:4326"",
+  ""driver"": ""ESRI Shapefile"",
+  ""bounds"": [
+    -113.56424713134766,
+    37.0689811706543,
+    -104.97087097167969,
+    41.99627685546875
+  ],
+  ""schema"": {
+    ""geometry"": ""Polygon"",
+    ""properties"": {
+      ""PERIMETER"": ""float:24.15"",
+      ""FEATURE2"": ""str:80"",
+      ""NAME"": ""str:80"",
+      ""FEATURE1"": ""str:80"",
+      ""URL"": ""str:101"",
+      ""AGBUR"": ""str:80"",
+      ""AREA"": ""float:24.15"",
+      ""STATE_FIPS"": ""str:80"",
+      ""WILDRNP020"": ""int:10"",
+      ""STATE"": ""str:80}}}"
+https://github.com/Toblerity/Shapely,Allen Mao,Here is the canonical example of building an approximately circular patch by buffering a point.
+https://github.com/Toblerity/Shapely,Allen Mao,>>> from shapely.geometry import Point
+https://github.com/Toblerity/Shapely,Allen Mao,">>> patch = Point(0.0, 0.0).buffer(10.0)"
+https://github.com/Toblerity/Shapely,Allen Mao,>>> patch
+https://github.com/Toblerity/Shapely,Allen Mao,<shapely.geometry.polygon.Polygon object at 0x...>
+https://github.com/Toblerity/Shapely,Allen Mao,>>> patch.area
+https://github.com/Toblerity/Shapely,Allen Mao,See the manual for comprehensive usage snippets and the dissolve.py and intersect.py examples.
+https://github.com/Toblerity/Shapely,Allen Mao,Integration
+https://github.com/Toblerity/Shapely,Allen Mao,"Shapely does not read or write data files, but it can serialize and deserialize using several well known formats and protocols. The shapely.wkb and shapely.wkt modules provide dumpers and loaders inspired by Python's pickle module."
+https://github.com/Toblerity/Shapely,Allen Mao,">>> from shapely.wkt import dumps, loads"
+https://github.com/Toblerity/Shapely,Allen Mao,>>> dumps(loads('POINT (0 0)'))
+https://github.com/Toblerity/Shapely,Allen Mao,'POINT (0.0000000000000000 0.0000000000000000)'
+https://github.com/Toblerity/Shapely,Allen Mao,Shapely can also integrate with other Python GIS packages using GeoJSON-like dicts.
+https://github.com/Toblerity/Shapely,Allen Mao,>>> import json
+https://github.com/Toblerity/Shapely,Allen Mao,">>> from shapely.geometry import mapping, shape"
+https://github.com/Toblerity/Shapely,Allen Mao,">>> s = shape(json.loads('{""type"": ""Point"", ""coordinates"": [0.0, 0.0]}'))"
+https://github.com/Toblerity/Shapely,Allen Mao,>>> s
+https://github.com/Toblerity/Shapely,Allen Mao,<shapely.geometry.point.Point object at 0x...>
+https://github.com/Toblerity/Shapely,Allen Mao,>>> print(json.dumps(mapping(s)))
+https://github.com/Toblerity/Shapely,Allen Mao,"{""type"": ""Point"", ""coordinates"": [0.0, 0.0]}"
+https://github.com/XiaLiPKU/RESCAN,Allen Mao,"Train, Test and Show"
+https://github.com/XiaLiPKU/RESCAN,Allen Mao,python train.py
+https://github.com/XiaLiPKU/RESCAN,Allen Mao,python eval.py
+https://github.com/XiaLiPKU/RESCAN,Allen Mao,python show.py
+https://github.com/ZhouYanzhao/PRM,Allen Mao,Run demo
+https://github.com/ZhouYanzhao/PRM,Allen Mao,Install Nest's build-in Pytorch modules:
+https://github.com/ZhouYanzhao/PRM,Allen Mao,"To increase reusability, I abstracted some features from the original code, such as network trainer, to build Nest's built-in pytorch module set."
+https://github.com/ZhouYanzhao/PRM,Allen Mao,$ nest module install github@ZhouYanzhao/Nest:pytorch pytorch
+https://github.com/ZhouYanzhao/PRM,Allen Mao,Download the PASCAL-VOC2012 dataset:
+https://github.com/ZhouYanzhao/PRM,Allen Mao,mkdir ./PRM/demo/datasets
+https://github.com/ZhouYanzhao/PRM,Allen Mao,cd ./PRM/demo/datasets
+https://github.com/ZhouYanzhao/PRM,Allen Mao,# download and extract data
+https://github.com/ZhouYanzhao/PRM,Allen Mao,wget http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
+https://github.com/ZhouYanzhao/PRM,Allen Mao,tar xvf VOCtrainval_11-May-2012.tar
+https://github.com/ZhouYanzhao/PRM,Allen Mao,Run the demo experiment via demo/main.ipynb
+https://github.com/agile-geoscience/striplog/,Allen Mao,Development: setting up for testing
+https://github.com/agile-geoscience/striplog/,Allen Mao,"There are other requirements for testing, as listed in setup.py. They should install with:"
+https://github.com/agile-geoscience/striplog/,Allen Mao,python setup.py test
+https://github.com/agile-geoscience/striplog/,Allen Mao,But I had better luck doing conda install pytest first.
+https://github.com/agile-geoscience/striplog/,Allen Mao,The tests can be run with:
+https://github.com/agile-geoscience/striplog/,Allen Mao,python run_tests.py
+https://github.com/akaszynski/pyansys,Allen Mao,Quick Examples
+https://github.com/akaszynski/pyansys,Allen Mao,"Many of the following examples are built in and can be run from the build-in examples module. For a quick demo, run:"
+https://github.com/akaszynski/pyansys,Allen Mao,from pyansys import examples
+https://github.com/akaszynski/pyansys,Allen Mao,examples.run_all()
+https://github.com/akaszynski/pyansys,Allen Mao,Controlling ANSYS
+https://github.com/akaszynski/pyansys,Allen Mao,Create an instance of ANSYS and interactively send commands to it. This is a direct interface and does not rely on writing a temporary script file. You can also generate plots using matplotlib.
+https://github.com/akaszynski/pyansys,Allen Mao,import os
+https://github.com/akaszynski/pyansys,Allen Mao,import pyansys
+https://github.com/akaszynski/pyansys,Allen Mao,path = os.getcwd()
+https://github.com/akaszynski/pyansys,Allen Mao,"ansys = pyansys.ANSYS(run_location=path, interactive_plotting=True)"
+https://github.com/akaszynski/pyansys,Allen Mao,# create a square area using keypoints
+https://github.com/akaszynski/pyansys,Allen Mao,ansys.Prep7()
+https://github.com/akaszynski/pyansys,Allen Mao,"ansys.K(1, 0, 0, 0)"
+https://github.com/akaszynski/pyansys,Allen Mao,"ansys.K(2, 1, 0, 0)"
+https://github.com/akaszynski/pyansys,Allen Mao,"ansys.K(3, 1, 1, 0)"
+https://github.com/akaszynski/pyansys,Allen Mao,"ansys.K(4, 0, 1, 0)"
+https://github.com/akaszynski/pyansys,Allen Mao,"ansys.L(1, 2)"
+https://github.com/akaszynski/pyansys,Allen Mao,"ansys.L(2, 3)"
+https://github.com/akaszynski/pyansys,Allen Mao,"ansys.L(3, 4)"
+https://github.com/akaszynski/pyansys,Allen Mao,"ansys.L(4, 1)"
+https://github.com/akaszynski/pyansys,Allen Mao,"ansys.Al(1, 2, 3, 4)"
+https://github.com/akaszynski/pyansys,Allen Mao,ansys.Aplot()
+https://github.com/akaszynski/pyansys,Allen Mao,ansys.Save()
+https://github.com/akaszynski/pyansys,Allen Mao,ansys.Exit()
+https://github.com/akaszynski/pyansys,Allen Mao,Loading and Plotting an ANSYS Archive File
+https://github.com/akaszynski/pyansys,Allen Mao,"ANSYS archive files containing solid elements (both legacy and current), can be loaded using Archive and then converted to a vtk object."
+https://github.com/akaszynski/pyansys,Allen Mao,# Sample *.cdb
+https://github.com/akaszynski/pyansys,Allen Mao,filename = examples.hexarchivefile
+https://github.com/akaszynski/pyansys,Allen Mao,# Read ansys archive file
+https://github.com/akaszynski/pyansys,Allen Mao,archive = pyansys.Archive(filename)
+https://github.com/akaszynski/pyansys,Allen Mao,# Print raw data from cdb
+https://github.com/akaszynski/pyansys,Allen Mao,for key in archive.raw:
+https://github.com/akaszynski/pyansys,Allen Mao,"print(""%s : %s"" % (key, archive.raw[key]))"
+https://github.com/akaszynski/pyansys,Allen Mao,# Create a vtk unstructured grid from the raw data and plot it
+https://github.com/akaszynski/pyansys,Allen Mao,grid = archive.parse_vtk()
+https://github.com/akaszynski/pyansys,Allen Mao,grid.plot()
+https://github.com/akaszynski/pyansys,Allen Mao,# write this as a vtk xml file
+https://github.com/akaszynski/pyansys,Allen Mao,grid.Write('hex.vtu')
+https://github.com/akaszynski/pyansys,Allen Mao,grid = pv.UnstructuredGrid('hex.vtu')
+https://github.com/akaszynski/pyansys,Allen Mao,Loading the Result File
+https://github.com/akaszynski/pyansys,Allen Mao,This example reads in binary results from a modal analysis of a beam from ANSYS.
+https://github.com/akaszynski/pyansys,Allen Mao,# Load the reader from pyansys
+https://github.com/akaszynski/pyansys,Allen Mao,# Sample result file
+https://github.com/akaszynski/pyansys,Allen Mao,rstfile = examples.rstfile
+https://github.com/akaszynski/pyansys,Allen Mao,# Create result object by loading the result file
+https://github.com/akaszynski/pyansys,Allen Mao,result = pyansys.read_binary(rstfile)
+https://github.com/akaszynski/pyansys,Allen Mao,# Beam natural frequencies
+https://github.com/akaszynski/pyansys,Allen Mao,freqs = result.time_values
+https://github.com/akaszynski/pyansys,Allen Mao,>>> print(freq)
+https://github.com/akaszynski/pyansys,Allen Mao,[ 7366.49503969  7366.49503969 11504.89523664 17285.70459456
+https://github.com/akaszynski/pyansys,Allen Mao,17285.70459457 20137.19299035]
+https://github.com/akaszynski/pyansys,Allen Mao,# Get the 1st bending mode shape.  Results are ordered based on the sorted
+https://github.com/akaszynski/pyansys,Allen Mao,# node numbering.  Note that results are zero indexed
+https://github.com/akaszynski/pyansys,Allen Mao,"nnum, disp = result.nodal_solution(0)"
+https://github.com/akaszynski/pyansys,Allen Mao,>>> print(disp)
+https://github.com/akaszynski/pyansys,Allen Mao,[[ 2.89623914e+01 -2.82480489e+01 -3.09226692e-01]
+https://github.com/akaszynski/pyansys,Allen Mao,[ 2.89489249e+01 -2.82342416e+01  2.47536161e+01]
+https://github.com/akaszynski/pyansys,Allen Mao,[ 2.89177130e+01 -2.82745126e+01  6.05151053e+00]
+https://github.com/akaszynski/pyansys,Allen Mao,[ 2.88715048e+01 -2.82764960e+01  1.22913304e+01]
+https://github.com/akaszynski/pyansys,Allen Mao,[ 2.89221536e+01 -2.82479511e+01  1.84965333e+01]
+https://github.com/akaszynski/pyansys,Allen Mao,[ 2.89623914e+01 -2.82480489e+01  3.09226692e-01]
+https://github.com/akaszynski/pyansys,Allen Mao,"result.plot_nodal_solution(0, 'x', label='Displacement')"
+https://github.com/akaszynski/pyansys,Allen Mao,Reading a Full File
+https://github.com/akaszynski/pyansys,Allen Mao,This example reads in the mass and stiffness matrices associated with the above example.
+https://github.com/akaszynski/pyansys,Allen Mao,from scipy import sparse
+https://github.com/akaszynski/pyansys,Allen Mao,# load the full file
+https://github.com/akaszynski/pyansys,Allen Mao,fobj = pyansys.FullReader('file.full')
+https://github.com/akaszynski/pyansys,Allen Mao,"dofref, k, m = fobj.load_km()  # returns upper triangle only"
+https://github.com/akaszynski/pyansys,Allen Mao,"# make k, m full, symmetric matricies"
+https://github.com/akaszynski/pyansys,Allen Mao,"k += sparse.triu(k, 1).T"
+https://github.com/akaszynski/pyansys,Allen Mao,"m += sparse.triu(m, 1).T"
+https://github.com/akaszynski/pyansys,Allen Mao,"If you have scipy installed, you can solve the eigensystem for its natural frequencies and mode shapes."
+https://github.com/akaszynski/pyansys,Allen Mao,from scipy.sparse import linalg
+https://github.com/akaszynski/pyansys,Allen Mao,# condition the k matrix
+https://github.com/akaszynski/pyansys,Allen Mao,"# to avoid getting the ""Factor is exactly singular"" error"
+https://github.com/akaszynski/pyansys,Allen Mao,"k += sparse.diags(np.random.random(k.shape[0])/1E20, shape=k.shape)"
+https://github.com/akaszynski/pyansys,Allen Mao,# Solve
+https://github.com/akaszynski/pyansys,Allen Mao,"w, v = linalg.eigsh(k, k=20, M=m, sigma=10000)"
+https://github.com/akaszynski/pyansys,Allen Mao,# System natural frequencies
+https://github.com/akaszynski/pyansys,Allen Mao,f = (np.real(w))**0.5/(2*np.pi)
+https://github.com/akaszynski/pyansys,Allen Mao,print('First four natural frequencies')
+https://github.com/akaszynski/pyansys,Allen Mao,for i in range(4):
+https://github.com/akaszynski/pyansys,Allen Mao,print '{:.3f} Hz'.format(f[i])
+https://github.com/albertpumarola/GANimation,Allen Mao,Data Preparation
+https://github.com/albertpumarola/GANimation,Allen Mao,The code requires a directory containing the following files:
+https://github.com/albertpumarola/GANimation,Allen Mao,imgs/: folder with all image
+https://github.com/albertpumarola/GANimation,Allen Mao,aus_openface.pkl: dictionary containing the images action units.
+https://github.com/albertpumarola/GANimation,Allen Mao,train_ids.csv: file containing the images names to be used to train.
+https://github.com/albertpumarola/GANimation,Allen Mao,test_ids.csv: file containing the images names to be used to test.
+https://github.com/albertpumarola/GANimation,Allen Mao,An example of this directory is shown in sample_dataset/.
+https://github.com/albertpumarola/GANimation,Allen Mao,To generate the aus_openface.pkl extract each image Action Units with OpenFace and store each output in a csv file the same name as the image. Then run:
+https://github.com/albertpumarola/GANimation,Allen Mao,python data/prepare_au_annotations.py
+https://github.com/albertpumarola/GANimation,Allen Mao,Run
+https://github.com/albertpumarola/GANimation,Allen Mao,To train:
+https://github.com/albertpumarola/GANimation,Allen Mao,bash launch/run_train.sh
+https://github.com/albertpumarola/GANimation,Allen Mao,To test:
+https://github.com/albertpumarola/GANimation,Allen Mao,python test --input_path path/to/img
+https://github.com/cgre-aachen/gempy,Allen Mao,Pull Docker image from DockerHub
+https://github.com/cgre-aachen/gempy,Allen Mao,The easiest way to get remote-geomod running is by running the pre-compiled Docker image (containing everything you need) directly from the cloud service Docker Hub to get a locally running Docker container. Make sure to set your Docker daemon to Linux containers in Docker's context menu.
+https://github.com/cgre-aachen/gempy,Allen Mao,$ docker run -it -p 8899:8899 leguark/gempy
+https://github.com/cgre-aachen/gempy,Allen Mao,"This will automatically pull the Docker image from Docker Hub and run it, opening a command line shell inside of the running Docker container. There you have access to the file system inside of the container. Note that this pre-compiled Docker image already contains the GemPy repository."
+https://github.com/cgre-aachen/gempy,Allen Mao,Once you are in the docker console if you want to open the tutorials you will need to run:
+https://github.com/cgre-aachen/gempy,Allen Mao,$ jupyter notebook --ip 0.0.0.0 --port 8899 --no-browser --allow-root
+https://github.com/cgre-aachen/gempy,Allen Mao,"Notice that we are running the notebook on the port 8899 to try to avoid conflicts with jupyter servers running in your system. If everything worked fine, the address to the jupyter notebook will be display on the console. It has to look something like this (Just be aware of the brackets):"
+https://github.com/cgre-aachen/gempy,Allen Mao,"To access the notebook, open this file in a browser:"
+https://github.com/cgre-aachen/gempy,Allen Mao,file:///root/.local/share/jupyter/runtime/nbserver-286-open.html
+https://github.com/cgre-aachen/gempy,Allen Mao,Or copy and paste one of these URLs:
+https://github.com/cgre-aachen/gempy,Allen Mao,http://(ce2cdcc55bb0 or 127.0.0.1):8899/?token=97d52c1dc321c42083d8c1b4d
+https://github.com/d3/d3,Allen Mao,"To import D3 into an ES2015 application, either import specific symbols from specific D3 modules:"
+https://github.com/d3/d3,Allen Mao,"import {scaleLinear} from ""d3-scale"";"
+https://github.com/d3/d3,Allen Mao,"Or import everything into a namespace (here, d3):"
+https://github.com/d3/d3,Allen Mao,"import * as d3 from ""d3"";"
+https://github.com/d3/d3,Allen Mao,In Node:
+https://github.com/d3/d3,Allen Mao,"var d3 = require(""d3"");"
+https://github.com/d3/d3,Allen Mao,You can also require individual modules and combine them into a d3 object using Object.assign:
+https://github.com/d3/d3,Allen Mao,"var d3 = Object.assign({}, require(""d3-format""), require(""d3-geo""), require(""d3-geo-projection""));"
+https://github.com/driftingtides/hyvr,Allen Mao,To use HyVR you have to create a configuration file with your settings. You can then run HyVR the following way:
+https://github.com/driftingtides/hyvr,Allen Mao,(hyvr_env) $ python -m hyvr my_configfile.ini
+https://github.com/driftingtides/hyvr,Allen Mao,"HyVR will then run and store all results in a subdirectory. If no configfile is given, it will run a test case instead:"
+https://github.com/driftingtides/hyvr,Allen Mao,(hyvr_env) $ python -m hyvr
+https://github.com/driftingtides/hyvr,Allen Mao,"If you want to use HyVR in a script, you can import it and use the run function:"
+https://github.com/driftingtides/hyvr,Allen Mao,import hyvr
+https://github.com/driftingtides/hyvr,Allen Mao,hyvr.run('my_configfile.ini')
+https://github.com/driftingtides/hyvr,Allen Mao,"Examples can be found in the testcases directory of the github repository, the general setup and possible options of the config-file are described in the documentation. Currently only made.ini is ported to version 1.0.0."
+https://github.com/driving-behavior/DBNet,Allen Mao,Quick Start
+https://github.com/driving-behavior/DBNet,Allen Mao,Training
+https://github.com/driving-behavior/DBNet,Allen Mao,To train a model to predict vehicle speeds and steering angles:
+https://github.com/driving-behavior/DBNet,Allen Mao,python train.py --model nvidia_pn --batch_size 16 --max_epoch 125 --gpu 0
+https://github.com/driving-behavior/DBNet,Allen Mao,The names of the models are consistent with our paper. Log files and network parameters will be saved to logs folder in default.
+https://github.com/driving-behavior/DBNet,Allen Mao,To see HELP for the training script:
+https://github.com/driving-behavior/DBNet,Allen Mao,python train.py -h
+https://github.com/driving-behavior/DBNet,Allen Mao,We can use TensorBoard to view the network architecture and monitor the training progress.
+https://github.com/driving-behavior/DBNet,Allen Mao,tensorboard --logdir logs
+https://github.com/driving-behavior/DBNet,Allen Mao,Evaluation
+https://github.com/driving-behavior/DBNet,Allen Mao,"After training, you could evaluate the performance of models using evaluate.py. To plot the figures or calculate AUC, you may need to have matplotlib library installed."
+https://github.com/driving-behavior/DBNet,Allen Mao,python evaluate.py --model_path logs/nvidia_pn/model.ckpt
+https://github.com/driving-behavior/DBNet,Allen Mao,Prediction
+https://github.com/driving-behavior/DBNet,Allen Mao,To get the predictions of test data:
+https://github.com/driving-behavior/DBNet,Allen Mao,python predict.py
+https://github.com/driving-behavior/DBNet,Allen Mao,The results are saved in results/results (every segment) and results/behavior_pred.txt (merged) by default. To change the storation location:
+https://github.com/driving-behavior/DBNet,Allen Mao,python predict.py --result_dir specified_dir
+https://github.com/driving-behavior/DBNet,Allen Mao,The result directory will be created automatically if it doesn't exist.
+https://github.com/equinor/pylops,Allen Mao,from pylops import FirstDerivative
+https://github.com/equinor/pylops,Allen Mao,"Dlop = FirstDerivative(nx, dtype='float64')"
+https://github.com/equinor/pylops,Allen Mao,# y = Dx
+https://github.com/equinor/pylops,Allen Mao,y = Dlop*x
+https://github.com/equinor/pylops,Allen Mao,# x = D'y
+https://github.com/equinor/pylops,Allen Mao,xadj = Dlop.H*y
+https://github.com/equinor/pylops,Allen Mao,# xinv = D^-1 y
+https://github.com/equinor/pylops,Allen Mao,xinv = Dlop / y
+https://github.com/equinor/segyio,Allen Mao,import segyio
+https://github.com/equinor/segyio,Allen Mao,import numpy as np
+https://github.com/equinor/segyio,Allen Mao,with segyio.open('file.sgy') as f:
+https://github.com/equinor/segyio,Allen Mao,for trace in f.trace:
+https://github.com/equinor/segyio,Allen Mao,filtered = trace[np.where(trace < 1e-2)]
+https://github.com/equinor/segyio,Allen Mao,"All code in this tutorial assumes segyio is imported, and that numpy is available as np."
+https://github.com/equinor/segyio,Allen Mao,"This tutorial assumes you're familiar with Python and numpy. For a refresh, check out the python tutorial and numpy quickstart"
+https://github.com/equinor/segyio,Allen Mao,Basics
+https://github.com/equinor/segyio,Allen Mao,"Opening a file for reading is done with the segyio.open function, and idiomatically used with context managers. Using the with statement, files are properly closed even in the case of exceptions. By default, files are opened read-only."
+https://github.com/equinor/segyio,Allen Mao,with segyio.open(filename) as f:
+https://github.com/equinor/segyio,Allen Mao,...
+https://github.com/equinor/segyio,Allen Mao,"Open accepts several options (for more a more comprehensive reference, check the open function's docstring with help(segyio.open). The most important option is the second (optional) positional argument. To open a file for writing, do segyio.open(filename, 'r+'), from the C fopen function."
+https://github.com/equinor/segyio,Allen Mao,"Files can be opened in unstructured mode, either by passing segyio.open the optional arguments strict=False, in which case not establishing structure (inline numbers, crossline numbers etc.) is not an error, and ignore_geometry=True, in which case segyio won't even try to set these internal attributes."
+https://github.com/equinor/segyio,Allen Mao,The segy file object has several public attributes describing this structure:
+https://github.com/equinor/segyio,Allen Mao,f.ilines Inferred inline numbers
+https://github.com/equinor/segyio,Allen Mao,f.xlines Inferred crossline numbers
+https://github.com/equinor/segyio,Allen Mao,f.offsets Inferred offsets numbers
+https://github.com/equinor/segyio,Allen Mao,f.samples Inferred sample offsets (frequency and recording time delay)
+https://github.com/equinor/segyio,Allen Mao,"f.unstructured True if unstructured, False if structured"
+https://github.com/equinor/segyio,Allen Mao,f.ext_headers The number of extended textual headers
+https://github.com/equinor/segyio,Allen Mao,"If the file is opened unstructured, all the line properties will will be None."
+https://github.com/equinor/segyio,Allen Mao,Modes
+https://github.com/equinor/segyio,Allen Mao,"In segyio, data is retrieved and written through so-called modes. Modes are abstract arrays, or addressing schemes, and change what names and indices mean. All modes are properties on the file handle object, support the len function, and reads and writes are done through f.mode[]. Writes are done with assignment. Modes support array slicing inspired by numpy. The following modes are available:"
+https://github.com/equinor/segyio,Allen Mao,trace
+https://github.com/equinor/segyio,Allen Mao,"The trace mode offers raw addressing of traces as they are laid out in the file. This, along with header, is the only mode available for unstructured files. Traces are enumerated 0..len(f.trace)."
+https://github.com/equinor/segyio,Allen Mao,"Reading a trace yields a numpy ndarray, and reading multiple traces yields a generator of ndarrays. Generator semantics are used and the same object is reused, so if you want to cache or address trace data later, you must explicitly copy."
+https://github.com/equinor/segyio,Allen Mao,>>> f.trace[10]
+https://github.com/equinor/segyio,Allen Mao,>>> f.trace[-2]
+https://github.com/equinor/segyio,Allen Mao,>>> f.trace[15:45]
+https://github.com/equinor/segyio,Allen Mao,>>> f.trace[:45:3]
+https://github.com/equinor/segyio,Allen Mao,header
+https://github.com/equinor/segyio,Allen Mao,"With addressing behaviour similar to trace, accessing items yield header objects instead of numpy ndarrays. Headers are dict-like objects, where keys are integers, seismic unix-style keys (in segyio.su module) and segyio enums (segyio.TraceField)."
+https://github.com/equinor/segyio,Allen Mao,"Header values can be updated by assigning a dict-like to it, and keys not present on the right-hand-side of the assignment are unmodified."
+https://github.com/equinor/segyio,Allen Mao,>>> f.header[5] = { segyio.su.tracl: 10 }
+https://github.com/equinor/segyio,Allen Mao,>>> f.header[5].items()
+https://github.com/equinor/segyio,Allen Mao,">>> f.header[5][25, 37] # read multiple values at once"
+https://github.com/equinor/segyio,Allen Mao,"iline, xline"
+https://github.com/equinor/segyio,Allen Mao,"These modes will raise an error if the file is unstructured. They consider arguments to [] as the keys of the respective lines. Line numbers are always increasing, but can have arbitrary, uneven spacing. The valid names can be found in the ilines and xlines properties."
+https://github.com/equinor/segyio,Allen Mao,"As with traces, getting one line yields an ndarray, and a slice of lines yields a generator of ndarrays. When using slices with a step, some intermediate items might be skipped if it is not matched by the step, i.e. doing f.line[1:10:3] on a file with lines [1,2,3,4,5] is equivalent of looking up 1, 4, 7, and finding [1,4]."
+https://github.com/equinor/segyio,Allen Mao,"When working with a 4D pre-stack file, the first offset is implicitly read. To access a different or a range of offsets, use comma separated indices or ranges, as such: f.iline[120, 4]."
+https://github.com/equinor/segyio,Allen Mao,"fast, slow"
+https://github.com/equinor/segyio,Allen Mao,"These are aliases for iline and xline, determined by how the traces are laid out. For inline sorted files, fast would yield iline."
+https://github.com/equinor/segyio,Allen Mao,depth_slice
+https://github.com/equinor/segyio,Allen Mao,"The depth slice is a horizontal, file-wide cut at a depth. The yielded values are ndarrays and generators-of-arrays."
+https://github.com/equinor/segyio,Allen Mao,gather
+https://github.com/equinor/segyio,Allen Mao,"The gather is the intersection of an inline and crossline, a vertical column of the survey, and unless a single offset is specified returns an offset x samples ndarray. In the presence of ranges, it returns a generator of such ndarrays."
+https://github.com/equinor/segyio,Allen Mao,text
+https://github.com/equinor/segyio,Allen Mao,"The text mode is an array of the textual headers, where text[0] is the standard-mandated textual header, and 1..n are the optional extended headers."
+https://github.com/equinor/segyio,Allen Mao,"The text headers are returned as 3200-byte string-like blobs (bytes in Python 3, str in Python 2), as it is in the file. The segyio.tools.wrap function can create a line-oriented version of this string."
+https://github.com/equinor/segyio,Allen Mao,bin
+https://github.com/equinor/segyio,Allen Mao,"The values of the file-wide binary header with a dict-like interface. Behaves like the header mode, but without the indexing."
+https://github.com/equinor/segyio,Allen Mao,Mode examples
+https://github.com/equinor/segyio,Allen Mao,>>> for line in f.iline[:2430]:
+https://github.com/equinor/segyio,Allen Mao,...     print(np.average(line))
+https://github.com/equinor/segyio,Allen Mao,>>> for line in f.xline[2:10]:
+https://github.com/equinor/segyio,Allen Mao,...     print(line)
+https://github.com/equinor/segyio,Allen Mao,>>> for line in f.fast[::2]:
+https://github.com/equinor/segyio,Allen Mao,...     print(np.min(line))
+https://github.com/equinor/segyio,Allen Mao,">>> for factor, offset in enumerate(f.iline[10, :]):"
+https://github.com/equinor/segyio,Allen Mao,...     offset *= factor
+https://github.com/equinor/segyio,Allen Mao,print(offset)
+https://github.com/equinor/segyio,Allen Mao,">>> f.gather[200, 241, :].shape"
+https://github.com/equinor/segyio,Allen Mao,>>> text = f.text[0]
+https://github.com/equinor/segyio,Allen Mao,>>> type(text)
+https://github.com/equinor/segyio,Allen Mao,<type 'bytes'> # 'str' in Python 2
+https://github.com/equinor/segyio,Allen Mao,>>> f.trace[10] = np.zeros(len(f.samples))
+https://github.com/equinor/segyio,Allen Mao,More examples and recipes can be found in the docstrings help(segyio) and the examples section.
+https://github.com/equinor/segyio,Allen Mao,Examples
+https://github.com/equinor/segyio,Allen Mao,Python
+https://github.com/equinor/segyio,Allen Mao,Import useful libraries:
+https://github.com/equinor/segyio,Allen Mao,from shutil import copyfile
+https://github.com/equinor/segyio,Allen Mao,Open segy file and inspect it:
+https://github.com/equinor/segyio,Allen Mao,filename = 'name_of_your_file.sgy'
+https://github.com/equinor/segyio,Allen Mao,with segyio.open(filename) as segyfile:
+https://github.com/equinor/segyio,Allen Mao,# Memory map file for faster reading (especially if file is big...)
+https://github.com/equinor/segyio,Allen Mao,segyfile.mmap()
+https://github.com/equinor/segyio,Allen Mao,# Print binary header info
+https://github.com/equinor/segyio,Allen Mao,print(segyfile.bin)
+https://github.com/equinor/segyio,Allen Mao,print(segyfile.bin[segyio.BinField.Traces])
+https://github.com/equinor/segyio,Allen Mao,# Read headerword inline for trace 10
+https://github.com/equinor/segyio,Allen Mao,print(segyfile.header[10][segyio.TraceField.INLINE_3D])
+https://github.com/equinor/segyio,Allen Mao,# Print inline and crossline axis
+https://github.com/equinor/segyio,Allen Mao,print(segyfile.xlines)
+https://github.com/equinor/segyio,Allen Mao,print(segyfile.ilines)
+https://github.com/equinor/segyio,Allen Mao,Read post-stack data cube contained in segy file:
+https://github.com/equinor/segyio,Allen Mao,# Read data along first xline
+https://github.com/equinor/segyio,Allen Mao,data = segyfile.xline[segyfile.xlines[1]]
+https://github.com/equinor/segyio,Allen Mao,# Read data along last iline
+https://github.com/equinor/segyio,Allen Mao,data = segyfile.iline[segyfile.ilines[-1]]
+https://github.com/equinor/segyio,Allen Mao,# Read data along 100th time slice
+https://github.com/equinor/segyio,Allen Mao,data = segyfile.depth_slice[100]
+https://github.com/equinor/segyio,Allen Mao,# Read data cube
+https://github.com/equinor/segyio,Allen Mao,data = segyio.tools.cube(filename)
+https://github.com/equinor/segyio,Allen Mao,Read pre-stack data cube contained in segy file:
+https://github.com/equinor/segyio,Allen Mao,filename = 'name_of_your_prestack_file.sgy'
+https://github.com/equinor/segyio,Allen Mao,# Print offsets
+https://github.com/equinor/segyio,Allen Mao,print(segyfile.offset)
+https://github.com/equinor/segyio,Allen Mao,# Read data along first iline and offset 100:  data [nxl x nt]
+https://github.com/equinor/segyio,Allen Mao,"data = segyfile.iline[0, 100]"
+https://github.com/equinor/segyio,Allen Mao,# Read data along first iline and all offsets gath:  data [noff x nxl x nt]
+https://github.com/equinor/segyio,Allen Mao,"data = np.asarray([np.copy(x) for x in segyfile.iline[0:1, :]])"
+https://github.com/equinor/segyio,Allen Mao,# Read data along first 5 ilines and all offsets gath:  data [noff nil x nxl x nt]
+https://github.com/equinor/segyio,Allen Mao,"data = np.asarray([np.copy(x) for x in segyfile.iline[0:5, :]])"
+https://github.com/equinor/segyio,Allen Mao,# Read data along first xline and all offsets gath:  data [noff x nil x nt]
+https://github.com/equinor/segyio,Allen Mao,"data = np.asarray([np.copy(x) for x in segyfile.xline[0:1, :]])"
+https://github.com/equinor/segyio,Allen Mao,"Read and understand fairly 'unstructured' data (e.g., data sorted in common shot gathers):"
+https://github.com/equinor/segyio,Allen Mao,"with segyio.open(filename, ignore_geometry=True) as segyfile:"
+https://github.com/equinor/segyio,Allen Mao,# Extract header word for all traces
+https://github.com/equinor/segyio,Allen Mao,sourceX = segyfile.attributes(segyio.TraceField.SourceX)[:]
+https://github.com/equinor/segyio,Allen Mao,# Scatter plot sources and receivers color-coded on their number
+https://github.com/equinor/segyio,Allen Mao,plt.figure()
+https://github.com/equinor/segyio,Allen Mao,sourceY = segyfile.attributes(segyio.TraceField.SourceY)[:]
+https://github.com/equinor/segyio,Allen Mao,nsum = segyfile.attributes(segyio.TraceField.NSummedTraces)[:]
+https://github.com/equinor/segyio,Allen Mao,"plt.scatter(sourceX, sourceY, c=nsum, edgecolor='none')"
+https://github.com/equinor/segyio,Allen Mao,groupX = segyfile.attributes(segyio.TraceField.GroupX)[:]
+https://github.com/equinor/segyio,Allen Mao,groupY = segyfile.attributes(segyio.TraceField.GroupY)[:]
+https://github.com/equinor/segyio,Allen Mao,nstack = segyfile.attributes(segyio.TraceField.NStackedTraces)[:]
+https://github.com/equinor/segyio,Allen Mao,"plt.scatter(groupX, groupY, c=nstack, edgecolor='none')"
+https://github.com/equinor/segyio,Allen Mao,Write segy file using same header of another file but multiply data by *2
+https://github.com/equinor/segyio,Allen Mao,input_file = 'name_of_your_input_file.sgy'
+https://github.com/equinor/segyio,Allen Mao,output_file = 'name_of_your_output_file.sgy'
+https://github.com/equinor/segyio,Allen Mao,"copyfile(input_file, output_file)"
+https://github.com/equinor/segyio,Allen Mao,"with segyio.open(output_file, ""r+"") as src:"
+https://github.com/equinor/segyio,Allen Mao,# multiply data by 2
+https://github.com/equinor/segyio,Allen Mao,for i in src.ilines:
+https://github.com/equinor/segyio,Allen Mao,src.iline[i] = 2 * src.iline[i]
+https://github.com/equinor/segyio,Allen Mao,Make segy file from sctrach
+https://github.com/equinor/segyio,Allen Mao,MATLAB
+https://github.com/equinor/segyio,Allen Mao,filename='name_of_your_file.sgy'
+https://github.com/equinor/segyio,Allen Mao,% Inspect segy
+https://github.com/equinor/segyio,Allen Mao,"Segy_struct=SegySpec(filename,189,193,1);"
+https://github.com/equinor/segyio,Allen Mao,% Read headerword inline for each trace
+https://github.com/equinor/segyio,Allen Mao,"Segy.get_header(filename,'Inline3D')"
+https://github.com/equinor/segyio,Allen Mao,%Read data along first xline
+https://github.com/equinor/segyio,Allen Mao,"data= Segy.readCrossLine(Segy_struct,Segy_struct.crossline_indexes(1));"
+https://github.com/equinor/segyio,Allen Mao,%Read cube
+https://github.com/equinor/segyio,Allen Mao,data=Segy.get_cube(Segy_struct);
+https://github.com/equinor/segyio,Allen Mao,"%Write segy, use same header but multiply data by *2"
+https://github.com/equinor/segyio,Allen Mao,input_file='input_file.sgy';
+https://github.com/equinor/segyio,Allen Mao,output_file='output_file.sgy';
+https://github.com/equinor/segyio,Allen Mao,"copyfile(input_file,output_file)"
+https://github.com/equinor/segyio,Allen Mao,data = Segy.get_traces(input_file);
+https://github.com/equinor/segyio,Allen Mao,data1 = 2*data;
+https://github.com/equinor/segyio,Allen Mao,"Segy.put_traces(output_file, data1);"
+https://github.com/facebook/react,Allen Mao,We have several examples on the website. Here is the first one to get you started:
+https://github.com/facebook/react,Allen Mao,function HelloMessage({ name }) {
+https://github.com/facebook/react,Allen Mao,return <div>Hello {name}</div>;
+https://github.com/facebook/react,Allen Mao,}
+https://github.com/facebook/react,Allen Mao,ReactDOM.render(
+https://github.com/facebook/react,Allen Mao,"<HelloMessage name=""Taylor"" />,"
+https://github.com/facebook/react,Allen Mao,document.getElementById('container')
+https://github.com/facebook/react,Allen Mao,);
+https://github.com/facebook/react,Allen Mao,"This example will render ""Hello Taylor"" into a container on the page."
+https://github.com/geo-data/gdal-docker,Allen Mao,Running the container without any arguments will by default output the GDAL version string as well as the supported raster and vector formats:
+https://github.com/geo-data/gdal-docker,Allen Mao,docker run geodata/gdal
+https://github.com/geo-data/gdal-docker,Allen Mao,The following command will open a bash shell in an Ubuntu based environment with GDAL available:
+https://github.com/geo-data/gdal-docker,Allen Mao,docker run -t -i geodata/gdal /bin/bash
+https://github.com/geo-data/gdal-docker,Allen Mao,"You will most likely want to work with data on the host system from within the docker container, in which case run the container with the -v option. Assuming you have a raster called test.tif in your current working directory on your host system, running the following command should invoke gdalinfo on test.tif:"
+https://github.com/geo-data/gdal-docker,Allen Mao,docker run -v $(pwd):/data geodata/gdal gdalinfo test.tif
+https://github.com/geo-data/gdal-docker,Allen Mao,"This works because the current working directory is set to /data in the container, and you have mapped the current working directory on your host to /data."
+https://github.com/geo-data/gdal-docker,Allen Mao,"Note that the image tagged latest, GDAL represents the latest code at the time the image was built. If you want to include the most up-to-date commits then you need to build the docker image yourself locally along these lines:"
+https://github.com/geo-data/gdal-docker,Allen Mao,docker build -t geodata/gdal:local git://github.com/geo-data/gdal-docker/
+https://github.com/gprMax/gprMax,Allen Mao,Running gprMax
+https://github.com/gprMax/gprMax,Allen Mao,"gprMax is designed as a Python package, i.e. a namespace which can contain multiple packages and modules, much like a directory."
+https://github.com/gprMax/gprMax,Allen Mao,"Open a Terminal (Linux/macOS) or Command Prompt (Windows), navigate into the top-level gprMax directory, and if it is not already active, activate the gprMax conda environment conda activate gprMax."
+https://github.com/gprMax/gprMax,Allen Mao,Basic usage of gprMax is:
+https://github.com/gprMax/gprMax,Allen Mao,(gprMax)$ python -m gprMax path_to/name_of_input_file
+https://github.com/gprMax/gprMax,Allen Mao,For example to run one of the test models:
+https://github.com/gprMax/gprMax,Allen Mao,(gprMax)$ python -m gprMax user_models/cylinder_Ascan_2D.in
+https://github.com/gprMax/gprMax,Allen Mao,When the simulation is complete you can plot the A-scan using:
+https://github.com/gprMax/gprMax,Allen Mao,(gprMax)$ python -m tools.plot_Ascan user_models/cylinder_Ascan_2D.out
+https://github.com/gprMax/gprMax,Allen Mao,Your results should like those from the A-scan from the metal cylinder example in introductory/basic 2D models section
+https://github.com/gprMax/gprMax,Allen Mao,"When you are finished using gprMax, the conda environment can be deactivated using conda deactivate."
+https://github.com/haoliangyu/node-qa-masker,Allen Mao,var qm = require('qa-masker');
+https://github.com/haoliangyu/node-qa-masker,Allen Mao,var Masker = qm.LandsatMasker;
+https://github.com/haoliangyu/node-qa-masker,Allen Mao,var Confidence = qm.LandsatConfidence;
+https://github.com/haoliangyu/node-qa-masker,Allen Mao,// read the band file to initialize
+https://github.com/haoliangyu/node-qa-masker,Allen Mao,var masker = new Masker('LC80170302016198LGN00_BQA.TIF');
+https://github.com/haoliangyu/node-qa-masker,Allen Mao,// generate mask in ndarray format
+https://github.com/haoliangyu/node-qa-masker,Allen Mao,var mask = masker.getWaterMask(Confidence.high);
+https://github.com/haoliangyu/node-qa-masker,Allen Mao,// save the mask as GeoTIFF
+https://github.com/haoliangyu/node-qa-masker,Allen Mao,"masker.saveAsTif(mask, 'test.tif');"
+https://github.com/haoliangyu/node-qa-masker,Allen Mao,var masker = new Masker('modis_qa_band.tif');
+https://github.com/haoliangyu/node-qa-masker,Allen Mao,"var mask = masker.getMask(0, 2, 2);"
+https://github.com/hezhangsprinter/DCPDN,Allen Mao,python demo.py --dataroot ./facades/nat_new4 --valDataroot ./facades/nat_new4 --netG ./demo_model/netG_epoch_8.pth   
+https://github.com/hezhangsprinter/DCPDN,Allen Mao,python train.py --dataroot ./facades/train512 --valDataroot ./facades/test512 --exp ./checkpoints_new --netG ./demo_model/netG_epoch_8.pth
+https://github.com/hezhangsprinter/DCPDN,Allen Mao,python demo.py --dataroot ./your_dataroot --valDataroot ./your_dataroot --netG ./pre_trained/netG_epoch_9.pth   
+https://github.com/hezhangsprinter/DID-MDN,Allen Mao,python test.py --dataroot ./facades/github --valDataroot ./facades/github --netG ./pre_trained/netG_epoch_9.pth   
+https://github.com/hezhangsprinter/DID-MDN,Allen Mao,python derain_train_2018.py  --dataroot ./facades/DID-MDN-training/Rain_Medium/train2018new  --valDataroot ./facades/github --exp ./check --netG ./pre_trained/netG_epoch_9.pth.
+https://github.com/hezhangsprinter/DID-MDN,Allen Mao,Make sure you download the training sample and put in the right folder
+https://github.com/hezhangsprinter/DID-MDN,Allen Mao,python train_rain_class.py  --dataroot ./facades/DID-MDN-training/Rain_Medium/train2018new  --exp ./check_class
+https://github.com/hiroharu-kato/neural_renderer,Allen Mao,Running examples
+https://github.com/hiroharu-kato/neural_renderer,Allen Mao,python ./examples/example1.py
+https://github.com/hiroharu-kato/neural_renderer,Allen Mao,python ./examples/example2.py
+https://github.com/hiroharu-kato/neural_renderer,Allen Mao,python ./examples/example3.py
+https://github.com/hiroharu-kato/neural_renderer,Allen Mao,python ./examples/example4.py
+https://github.com/iannesbitt/readgssi,Allen Mao,usage
+https://github.com/iannesbitt/readgssi,Allen Mao,To display the help text:
+https://github.com/iannesbitt/readgssi,Allen Mao,$ readgssi -h
+https://github.com/iannesbitt/readgssi,Allen Mao,readgssi -i DZT__001.DZT
+https://github.com/iannesbitt/readgssi,Allen Mao,Simply specifying an input DZT file like in the above command (-i file) will display a host of data about the file including:
+https://github.com/iannesbitt/readgssi,Allen Mao,name of GSSI control unit
+https://github.com/iannesbitt/readgssi,Allen Mao,antenna model
+https://github.com/iannesbitt/readgssi,Allen Mao,antenna frequency
+https://github.com/iannesbitt/readgssi,Allen Mao,samples per trace
+https://github.com/iannesbitt/readgssi,Allen Mao,bits per sample
+https://github.com/iannesbitt/readgssi,Allen Mao,traces per second
+https://github.com/iannesbitt/readgssi,Allen Mao,L1 dielectric as entered during survey
+https://github.com/iannesbitt/readgssi,Allen Mao,sampling depth
+https://github.com/iannesbitt/readgssi,Allen Mao,speed of light at given dielectric
+https://github.com/iannesbitt/readgssi,Allen Mao,number of traces
+https://github.com/iannesbitt/readgssi,Allen Mao,number of seconds
+https://github.com/iannesbitt/readgssi,Allen Mao,basic functionality
+https://github.com/iannesbitt/readgssi,Allen Mao,CSV output
+https://github.com/iannesbitt/readgssi,Allen Mao,readgssi -i DZT__001.DZT -o test.csv -f CSV
+https://github.com/iannesbitt/readgssi,Allen Mao,"Translates radar data array to CSV format, if that's your cup of tea. One might use this to export to Matlab. One CSV will be written per channel. The script will rename the output to 'test_100MHz.csv' automatically. No header information is included in the CSV."
+https://github.com/iannesbitt/readgssi,Allen Mao,readgssi -i DZT__001.DZT -s 8 -w -r -o test.csv -f CSV
+https://github.com/iannesbitt/readgssi,Allen Mao,"Applies 8x stacking, dewow, and background removal filters before exporting to CSV."
+https://github.com/iannesbitt/readgssi,Allen Mao,plotting
+https://github.com/iannesbitt/readgssi,Allen Mao,example 1A
+https://github.com/iannesbitt/readgssi,Allen Mao,readgssi -i DZT__001.DZT -p 5 -s auto -c viridis -m
+https://github.com/iannesbitt/readgssi,Allen Mao,"The above command will cause readgssi to save and show a plot named ""DZT__001_100MHz.png"" with a y-size of 6 inches at 150 dpi (-p 6) and the autostacking algorithm will stack the x-axis to some multiple of times shorter than the original data array for optimal viewing on a monitor, approximately 2.5*y (-s auto). The plot will be rendered in the viridis color scheme, which is the default for matplotlib. The -m flag will draw a histogram for each data channel. Example 1a Example 1a histogram"
+https://github.com/iannesbitt/readgssi,Allen Mao,example 1B
+https://github.com/iannesbitt/readgssi,Allen Mao,readgssi -i DZT__001.DZT -o 1b.png -p 5 -s auto -c viridis -g 50 -m -r -w
+https://github.com/iannesbitt/readgssi,Allen Mao,"This will cause readgssi to create a plot from the same file, but matplotlib will save the plot as ""1b.png"" (-o 1b.png). The script will plot the y-axis size (-p 5) and automatically stack the x-axis to (-s auto). The script will plot the data with a gain value of 50 (-g 50), which will increase the plot contrast by a factor of 50. Next readgssi will run the background removal (-r) and dewow (-w) filters. Finally, the -m flag will draw a histogram for each data channel. Note how the histogram changes when filters are applied. Example 1b Example 1b histogram"
+https://github.com/iannesbitt/readgssi,Allen Mao,example 1C: gain can be tricky depending on your colormap
+https://github.com/iannesbitt/readgssi,Allen Mao,readgssi -i DZT__001.DZT -o 1c.png -p 5 -s auto -r -w -c seismic
+https://github.com/iannesbitt/readgssi,Allen Mao,"Here, background removal and dewow filters are applied, but no gain adjustments are made (equivalent to -g 1). The script uses matplotlib's ""seismic"" colormap (-c seismic) which is specifically designed for this type of waterfall array plotting. Even without gain, you will often be able to easily see very slight signal perturbations. It is not colorblind-friendly for either of the two most common types of human colorblindness, however, which is why it is not the default colormap. Example 1c"
+https://github.com/iannesbitt/readgssi,Allen Mao,example 2A: no background removal
+https://github.com/iannesbitt/readgssi,Allen Mao,readgssi -i DZT__002.DZT -o 2a.png -p 10 -s 3 -n
+https://github.com/iannesbitt/readgssi,Allen Mao,"Here readgssi will create a plot of size 10 and stack 3x (-p 10 -s 3). Matplotlib will use the default ""Greys"" colormap and save a PNG of the figure, but the script will suppress the matplotlib window (-n, useful for processing an entire directory full of DZTs at once). Example 2a"
+https://github.com/iannesbitt/readgssi,Allen Mao,example 2B: horizontal mean BGR algorithm applied
+https://github.com/iannesbitt/readgssi,Allen Mao,readgssi -i DZT__002.DZT -o 2b.png -p 10 -s 3 -n -r
+https://github.com/iannesbitt/readgssi,Allen Mao,"The script does the same thing, except it applies horizontal mean background removal -r. Note the difference in ringing artifacts between examples 2a and 2b."
+https://github.com/imfunniee/gitfolio,Allen Mao,Forks
+https://github.com/imfunniee/gitfolio,Allen Mao,To include forks on your personal website just provide -f or --fork argument while building
+https://github.com/imfunniee/gitfolio,Allen Mao,$ gitfolio build <username> -f
+https://github.com/imfunniee/gitfolio,Allen Mao,Sorting Repos
+https://github.com/imfunniee/gitfolio,Allen Mao,"To sort repos provide --sort [sortBy] argument while building. Where [sortBy] can be star, created, updated, pushed,full_name. Default: created"
+https://github.com/imfunniee/gitfolio,Allen Mao,$ gitfolio build <username> --sort star
+https://github.com/imfunniee/gitfolio,Allen Mao,Ordering Repos
+https://github.com/imfunniee/gitfolio,Allen Mao,To order the sorted repos provide --order [orderBy] argument while building. Where [orderBy] can be asc or desc. Default: asc
+https://github.com/imfunniee/gitfolio,Allen Mao,$ gitfolio build <username> --sort star --order desc
+https://github.com/imfunniee/gitfolio,Allen Mao,Customize Themes
+https://github.com/imfunniee/gitfolio,Allen Mao,Themes are specified using the --theme [theme-name] flag when running the build command. The available themes are
+https://github.com/imfunniee/gitfolio,Allen Mao,light
+https://github.com/imfunniee/gitfolio,Allen Mao,dark
+https://github.com/imfunniee/gitfolio,Allen Mao,"For example, the following command will build the website with the dark theme"
+https://github.com/imfunniee/gitfolio,Allen Mao,$ gitfolio build <username> --theme dark
+https://github.com/imfunniee/gitfolio,Allen Mao,Customize background image
+https://github.com/imfunniee/gitfolio,Allen Mao,To customize the background image just provide --background [url] argument while building
+https://github.com/imfunniee/gitfolio,Allen Mao,$ gitfolio build <username> --background https://images.unsplash.com/photo-1557277770-baf0ca74f908?w=1634
+https://github.com/imfunniee/gitfolio,Allen Mao,You could also add in your custom CSS inside index.css to give it a more personal feel.
+https://github.com/imfunniee/gitfolio,Allen Mao,Let's Publish
+https://github.com/imfunniee/gitfolio,Allen Mao,"Head over to GitHub and create a new repository named username.github.io, where username is your username. Push the files inside/dist folder to repo you just created."
+https://github.com/imfunniee/gitfolio,Allen Mao,Go To username.github.io your site should be up!!
+https://github.com/imfunniee/gitfolio,Allen Mao,Updating
+https://github.com/imfunniee/gitfolio,Allen Mao,"To update your info, simply run"
+https://github.com/imfunniee/gitfolio,Allen Mao,$ gitfolio update
+https://github.com/imfunniee/gitfolio,Allen Mao,This will update your info and your repository info.
+https://github.com/imfunniee/gitfolio,Allen Mao,To Update background or theme you need to run build command again.
+https://github.com/imfunniee/gitfolio,Allen Mao,Add a Blog
+https://github.com/imfunniee/gitfolio,Allen Mao,To add your first blog run this command.
+https://github.com/imfunniee/gitfolio,Allen Mao,$ gitfolio blog my-first-blog
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,Testing
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,Download pretrained models through: download_model.sh inside checkpoints/.
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,"To test blur images in a folder, just use arguments --input_path=<TEST_FOLDER> and save the outputs to --output_path=<OUTPUT_FOLDER>. For example:"
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,python run_model.py --input_path=./testing_set --output_path=./testing_res
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,"If you have a GPU, please include --gpu argument, and add your gpu id to your command. Otherwise, use --gpu=-1 for CPU."
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,python run_model.py --gpu=0
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,"To test the model, pre-defined height and width of tensorflow placeholder should be assigned. Our network requires the height and width be multiples of 16. When the gpu memory is enough, the height and width could be assigned to the maximum to accommodate all the images."
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,"Otherwise, the images will be downsampled by the largest scale factor to be fed into the placeholder. And results will be upsampled to the original size."
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,"According to our experience, --height=720 and --width=1280 work well on a Gefore GTX 1050 TI with 4GB memory. For example,"
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,python run_model.py --height=720 --width=1280
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,The quantitative results of PSNR and SSIM in the paper is calculated using MATLAB built-in function psnr() and ssim() based on the generated color results.
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,We trained our model using the dataset from DeepDeblur_release. Please put the dataset into training_set/. And the provided datalist_gopro.txt can be used to train the model.
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,"Hyper parameters such as batch size, learning rate, epoch number can be tuned through command line:"
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,python run_model.py --phase=train --batch=16 --lr=1e-4 --epoch=4000
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,Models
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,We provided 3 models (training settings) for testing:
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,"--model=lstm: This model implements exactly the same structure in our paper. Current released model weights should produce PSNR=30.19, SSIM=0.9334 on GOPRO testing dataset."
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,#NAME?
+https://github.com/jiangsutx/SRN-Deblur,Allen Mao,#NAME?
+https://github.com/joferkington/mplstereonet,Allen Mao,Basic Usage
+https://github.com/joferkington/mplstereonet,Allen Mao,"In most cases, you'll want to import mplstereonet and then make an axes with projection=""stereonet"" (By default, this is an equal-area stereonet). Alternately, you can use mplstereonet.subplots, which functions identically to matplotlib.pyplot.subplots, but creates stereonet axes."
+https://github.com/joferkington/mplstereonet,Allen Mao,As an example:
+https://github.com/joferkington/mplstereonet,Allen Mao,import matplotlib.pyplot as plt
+https://github.com/joferkington/mplstereonet,Allen Mao,import mplstereonet
+https://github.com/joferkington/mplstereonet,Allen Mao,fig = plt.figure()
+https://github.com/joferkington/mplstereonet,Allen Mao,"ax = fig.add_subplot(111, projection='stereonet')"
+https://github.com/joferkington/mplstereonet,Allen Mao,"strike, dip = 315, 30"
+https://github.com/joferkington/mplstereonet,Allen Mao,"ax.plane(strike, dip, 'g-', linewidth=2)"
+https://github.com/joferkington/mplstereonet,Allen Mao,"ax.pole(strike, dip, 'g^', markersize=18)"
+https://github.com/joferkington/mplstereonet,Allen Mao,"ax.rake(strike, dip, -25)"
+https://github.com/joferkington/mplstereonet,Allen Mao,ax.grid()
+https://github.com/joferkington/mplstereonet,Allen Mao,plt.show()
+https://github.com/joferkington/mplstereonet,Allen Mao,"fig, ax = mplstereonet.subplots()"
+https://github.com/joferkington/mplstereonet,Allen Mao,"strike, dip = 90, 80"
+https://github.com/joferkington/mplstereonet,Allen Mao,num = 10
+https://github.com/joferkington/mplstereonet,Allen Mao,strikes = strike + 10 * np.random.randn(num)
+https://github.com/joferkington/mplstereonet,Allen Mao,dips = dip + 10 * np.random.randn(num)
+https://github.com/joferkington/mplstereonet,Allen Mao,"cax = ax.density_contourf(strikes, dips, measurement='poles')"
+https://github.com/joferkington/mplstereonet,Allen Mao,"ax.pole(strikes, dips)"
+https://github.com/joferkington/mplstereonet,Allen Mao,ax.grid(True)
+https://github.com/joferkington/mplstereonet,Allen Mao,fig.colorbar(cax)
+https://github.com/jwass/mplleaflet,Allen Mao,The simplest use is to just create your plot using matplotlib commands and call mplleaflet.show().
+https://github.com/jwass/mplleaflet,Allen Mao,>>> import matplotlib.pyplot as plt
+https://github.com/jwass/mplleaflet,Allen Mao,"... # Load longitude, latitude data"
+https://github.com/jwass/mplleaflet,Allen Mao,>>> plt.hold(True)
+https://github.com/jwass/mplleaflet,Allen Mao,# Plot the data as a blue line with red squares on top
+https://github.com/jwass/mplleaflet,Allen Mao,# Just plot longitude vs. latitude
+https://github.com/jwass/mplleaflet,Allen Mao,">>> plt.plot(longitude, latitude, 'b') # Draw blue line"
+https://github.com/jwass/mplleaflet,Allen Mao,">>> plt.plot(longitude, latitude, 'rs') # Draw red squares"
+https://github.com/jwass/mplleaflet,Allen Mao,# Convert to interactive Leaflet map
+https://github.com/jwass/mplleaflet,Allen Mao,>>> import mplleaflet
+https://github.com/jwass/mplleaflet,Allen Mao,>>> mplleaflet.show()
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,ActivityNet
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Download videos using the official crawler.
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Convert from avi to jpg files using utils/video_jpg.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,python utils/video_jpg.py avi_video_directory jpg_video_directory
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Generate fps files using utils/fps.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,python utils/fps.py avi_video_directory jpg_video_directory
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Kinetics
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Locate test set in video_directory/test.
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Convert from avi to jpg files using utils/video_jpg_kinetics.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,python utils/video_jpg_kinetics.py avi_video_directory jpg_video_directory
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Generate n_frames files using utils/n_frames_kinetics.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,python utils/n_frames_kinetics.py jpg_video_directory
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Generate annotation file in json format similar to ActivityNet using utils/kinetics_json.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,"The CSV files (kinetics_{train, val, test}.csv) are included in the crawler."
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,python utils/kinetics_json.py train_csv_path val_csv_path test_csv_path dst_json_path
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,UCF-101
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Download videos and train/test splits here.
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Convert from avi to jpg files using utils/video_jpg_ucf101_hmdb51.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,python utils/video_jpg_ucf101_hmdb51.py avi_video_directory jpg_video_directory
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Generate n_frames files using utils/n_frames_ucf101_hmdb51.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,python utils/n_frames_ucf101_hmdb51.py jpg_video_directory
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Generate annotation file in json format similar to ActivityNet using utils/ucf101_json.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,"annotation_dir_path includes classInd.txt, trainlist0{1, 2, 3}.txt, testlist0{1, 2, 3}.txt"
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,python utils/ucf101_json.py annotation_dir_path
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,HMDB-51
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Generate annotation file in json format similar to ActivityNet using utils/hmdb51_json.py
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,"annotation_dir_path includes brush_hair_test_split1.txt, ..."
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,python utils/hmdb51_json.py annotation_dir_path
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Running the code
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Assume the structure of data directories is the following:
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,~/
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,data/
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,kinetics_videos/
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,jpg/
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,.../ (directories of class names)
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,.../ (directories of video names)
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,... (jpg files)
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,results/
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,save_100.pth
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,kinetics.json
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Confirm all options.
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,python main.lua -h
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Train ResNets-34 on the Kinetics dataset (400 classes) with 4 CPU threads (for data loading).
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Batch size is 128.
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,"Save models at every 5 epochs. All GPUs is used for the training. If you want a part of GPUs, use CUDA_VISIBLE_DEVICES=...."
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,python main.py --root_path ~/data --video_path kinetics_videos/jpg --annotation_path kinetics.json \
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,#NAME?
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,--model_depth 34 --n_classes 400 --batch_size 128 --n_threads 4 --checkpoint 5
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Continue Training from epoch 101. (~/data/results/save_100.pth is loaded.)
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,#NAME?
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,Fine-tuning conv5_x and fc layers of a pretrained model (~/data/models/resnet-34-kinetics.pth) on UCF-101.
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,python main.py --root_path ~/data --video_path ucf101_videos/jpg --annotation_path ucf101_01.json \
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,--result_path results --dataset ucf101 --n_classes 400 --n_finetune_classes 101 \
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,--pretrain_path models/resnet-34-kinetics.pth --ft_begin_index 4 \
+https://github.com/kenshohara/3D-ResNets-PyTorch,Allen Mao,--model resnet --model_depth 34 --resnet_shortcut A --batch_size 128 --n_threads 4 --checkpoint 5
+https://github.com/kinverarity1/lasio/,Allen Mao,Very quick example session:
+https://github.com/kinverarity1/lasio/,Allen Mao,>>> import lasio
+https://github.com/kinverarity1/lasio/,Allen Mao,">>> las = lasio.read(""sample_big.las"")"
+https://github.com/kinverarity1/lasio/,Allen Mao,Data is accessible both directly as numpy arrays
+https://github.com/kinverarity1/lasio/,Allen Mao,>>> las.keys()
+https://github.com/kinverarity1/lasio/,Allen Mao,"['DEPT', 'DT', 'RHOB', 'NPHI', 'SFLU', 'SFLA', 'ILM', 'ILD']"
+https://github.com/kinverarity1/lasio/,Allen Mao,>>> las['SFLU']
+https://github.com/kinverarity1/lasio/,Allen Mao,"array([ 123.45,  123.45,  123.45, ...,  123.45,  123.45,  123.45])"
+https://github.com/kinverarity1/lasio/,Allen Mao,>>> las['DEPT']
+https://github.com/kinverarity1/lasio/,Allen Mao,"array([ 1670.   ,  1669.875,  1669.75 , ...,  1669.75 ,  1670.   ,"
+https://github.com/kinverarity1/lasio/,Allen Mao,1669.875])
+https://github.com/kinverarity1/lasio/,Allen Mao,and as CurveItem objects with associated metadata:
+https://github.com/kinverarity1/lasio/,Allen Mao,>>> las.curves
+https://github.com/kinverarity1/lasio/,Allen Mao,"[CurveItem(mnemonic=DEPT, unit=M, value=, descr=1  DEPTH, original_mnemonic=DEPT, data.shape=(29897,)),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"CurveItem(mnemonic=DT, unit=US/M, value=, descr=2  SONIC TRANSIT TIME, original_mnemonic=DT, data.shape=(29897,)),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"CurveItem(mnemonic=RHOB, unit=K/M3, value=, descr=3  BULK DENSITY, original_mnemonic=RHOB, data.shape=(29897,)),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"CurveItem(mnemonic=NPHI, unit=V/V, value=, descr=4   NEUTRON POROSITY, original_mnemonic=NPHI, data.shape=(29897,)),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"CurveItem(mnemonic=SFLU, unit=OHMM, value=, descr=5  RXO RESISTIVITY, original_mnemonic=SFLU, data.shape=(29897,)),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"CurveItem(mnemonic=SFLA, unit=OHMM, value=, descr=6  SHALLOW RESISTIVITY, original_mnemonic=SFLA, data.shape=(29897,)),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"CurveItem(mnemonic=ILM, unit=OHMM, value=, descr=7  MEDIUM RESISTIVITY, original_mnemonic=ILM, data.shape=(29897,)),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"CurveItem(mnemonic=ILD, unit=OHMM, value=, descr=8  DEEP RESISTIVITY, original_mnemonic=ILD, data.shape=(29897,))]"
+https://github.com/kinverarity1/lasio/,Allen Mao,"Header information is parsed into simple HeaderItem objects, and stored in a dictionary for each section of the header:"
+https://github.com/kinverarity1/lasio/,Allen Mao,>>> las.version
+https://github.com/kinverarity1/lasio/,Allen Mao,"[HeaderItem(mnemonic=VERS, unit=, value=1.2, descr=CWLS LOG ASCII STANDARD -VERSION 1.2, original_mnemonic=VERS),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=WRAP, unit=, value=NO, descr=ONE LINE PER DEPTH STEP, original_mnemonic=WRAP)]"
+https://github.com/kinverarity1/lasio/,Allen Mao,>>> las.well
+https://github.com/kinverarity1/lasio/,Allen Mao,"[HeaderItem(mnemonic=STRT, unit=M, value=1670.0, descr=, original_mnemonic=STRT),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=STOP, unit=M, value=1660.0, descr=, original_mnemonic=STOP),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=STEP, unit=M, value=-0.125, descr=, original_mnemonic=STEP),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=NULL, unit=, value=-999.25, descr=, original_mnemonic=NULL),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=COMP, unit=, value=ANY OIL COMPANY LTD., descr=COMPANY, original_mnemonic=COMP),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=WELL, unit=, value=ANY ET AL OIL WELL #12, descr=WELL, original_mnemonic=WELL),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=FLD, unit=, value=EDAM, descr=FIELD, original_mnemonic=FLD),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=LOC, unit=, value=A9-16-49, descr=LOCATION, original_mnemonic=LOC),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=PROV, unit=, value=SASKATCHEWAN, descr=PROVINCE, original_mnemonic=PROV),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=SRVC, unit=, value=ANY LOGGING COMPANY LTD., descr=SERVICE COMPANY, original_mnemonic=SRVC),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=DATE, unit=, value=25-DEC-1988, descr=LOG DATE, original_mnemonic=DATE),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=UWI, unit=, value=100091604920, descr=UNIQUE WELL ID, original_mnemonic=UWI)]"
+https://github.com/kinverarity1/lasio/,Allen Mao,>>> las.params
+https://github.com/kinverarity1/lasio/,Allen Mao,"[HeaderItem(mnemonic=BHT, unit=DEGC, value=35.5, descr=BOTTOM HOLE TEMPERATURE, original_mnemonic=BHT),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=BS, unit=MM, value=200.0, descr=BIT SIZE, original_mnemonic=BS),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=FD, unit=K/M3, value=1000.0, descr=FLUID DENSITY, original_mnemonic=FD),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=MATR, unit=, value=0.0, descr=NEUTRON MATRIX(0=LIME,1=SAND,2=DOLO), original_mnemonic=MATR),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=MDEN, unit=, value=2710.0, descr=LOGGING MATRIX DENSITY, original_mnemonic=MDEN),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=RMF, unit=OHMM, value=0.216, descr=MUD FILTRATE RESISTIVITY, original_mnemonic=RMF),"
+https://github.com/kinverarity1/lasio/,Allen Mao,"HeaderItem(mnemonic=DFD, unit=K/M3, value=1525.0, descr=DRILL FLUID DENSITY, original_mnemonic=DFD)]"
+https://github.com/kinverarity1/lasio/,Allen Mao,The data is stored as a 2D numpy array:
+https://github.com/kinverarity1/lasio/,Allen Mao,>>> las.data
+https://github.com/kinverarity1/lasio/,Allen Mao,"array([[ 1670.   ,   123.45 ,  2550.   , ...,   123.45 ,   110.2  ,   105.6  ],"
+https://github.com/kinverarity1/lasio/,Allen Mao,"[ 1669.875,   123.45 ,  2550.   , ...,   123.45 ,   110.2  ,   105.6  ],"
+https://github.com/kinverarity1/lasio/,Allen Mao,"[ 1669.75 ,   123.45 ,  2550.   , ...,   123.45 ,   110.2  ,   105.6  ],"
+https://github.com/kinverarity1/lasio/,Allen Mao,"...,"
+https://github.com/kinverarity1/lasio/,Allen Mao,"[ 1670.   ,   123.45 ,  2550.   , ...,   123.45 ,   110.2  ,   105.6  ],"
+https://github.com/kinverarity1/lasio/,Allen Mao,"[ 1669.875,   123.45 ,  2550.   , ...,   123.45 ,   110.2  ,   105.6  ]])"
+https://github.com/kinverarity1/lasio/,Allen Mao,"You can also retrieve and load data as a pandas DataFrame, build LAS files from scratch, write them back to disc, and export to Excel, amongst other things."
+https://github.com/kosmtik/kosmtik,Allen Mao,"To get command line help, run:"
+https://github.com/kosmtik/kosmtik,Allen Mao,kosmtik -h
+https://github.com/kosmtik/kosmtik,Allen Mao,"To run a Carto project (or .yml, .yaml):"
+https://github.com/kosmtik/kosmtik,Allen Mao,kosmtik serve <path/to/your/project.mml>
+https://github.com/kosmtik/kosmtik,Allen Mao,Then open your browser at http://127.0.0.1:6789/.
+https://github.com/kosmtik/kosmtik,Allen Mao,"You may also want to install plugins. To see the list of available ones, type:"
+https://github.com/kosmtik/kosmtik,Allen Mao,kosmtik plugins --available
+https://github.com/kosmtik/kosmtik,Allen Mao,And then pick one and install it like this:
+https://github.com/kosmtik/kosmtik,Allen Mao,kosmtik plugins --install pluginname
+https://github.com/kosmtik/kosmtik,Allen Mao,For example:
+https://github.com/kosmtik/kosmtik,Allen Mao,kosmtik plugins --install kosmtik-map-compare [--install kosmtik-overlay…]
+https://github.com/mapbox/geojson-vt,Allen Mao,// build an initial index of tiles
+https://github.com/mapbox/geojson-vt,Allen Mao,var tileIndex = geojsonvt(geoJSON);
+https://github.com/mapbox/geojson-vt,Allen Mao,// request a particular tile
+https://github.com/mapbox/geojson-vt,Allen Mao,"var features = tileIndex.getTile(z, x, y).features;"
+https://github.com/mapbox/geojson-vt,Allen Mao,// show an array of tile coordinates created so far
+https://github.com/mapbox/geojson-vt,Allen Mao,"console.log(tileIndex.tileCoords); // [{z: 0, x: 0, y: 0}, ...]"
+https://github.com/mapbox/rasterio,Allen Mao,import rasterio
+https://github.com/mapbox/rasterio,Allen Mao,# Read raster bands directly to Numpy arrays.
+https://github.com/mapbox/rasterio,Allen Mao,#
+https://github.com/mapbox/rasterio,Allen Mao,with rasterio.open('tests/data/RGB.byte.tif') as src:
+https://github.com/mapbox/rasterio,Allen Mao,"r, g, b = src.read()"
+https://github.com/mapbox/rasterio,Allen Mao,# Combine arrays in place. Expecting that the sum will
+https://github.com/mapbox/rasterio,Allen Mao,"# temporarily exceed the 8-bit integer range, initialize it as"
+https://github.com/mapbox/rasterio,Allen Mao,# a 64-bit float (the numpy default) array. Adding other
+https://github.com/mapbox/rasterio,Allen Mao,"# arrays to it in-place converts those arrays ""up"" and"
+https://github.com/mapbox/rasterio,Allen Mao,# preserves the type of the total array.
+https://github.com/mapbox/rasterio,Allen Mao,total = np.zeros(r.shape)
+https://github.com/mapbox/rasterio,Allen Mao,"for band in r, g, b:"
+https://github.com/mapbox/rasterio,Allen Mao,total += band
+https://github.com/mapbox/rasterio,Allen Mao,total /= 3
+https://github.com/mapbox/rasterio,Allen Mao,# Write the product as a raster band to a new 8-bit file. For
+https://github.com/mapbox/rasterio,Allen Mao,"# the new file's profile, we start with the meta attributes of"
+https://github.com/mapbox/rasterio,Allen Mao,"# the source file, but then change the band count to 1, set the"
+https://github.com/mapbox/rasterio,Allen Mao,"# dtype to uint8, and specify LZW compression."
+https://github.com/mapbox/rasterio,Allen Mao,profile = src.profile
+https://github.com/mapbox/rasterio,Allen Mao,"profile.update(dtype=rasterio.uint8, count=1, compress='lzw')"
+https://github.com/mapbox/rasterio,Allen Mao,"with rasterio.open('example-total.tif', 'w', **profile) as dst:"
+https://github.com/mapbox/rasterio,Allen Mao,"dst.write(total.astype(rasterio.uint8), 1)"
+https://github.com/mapbox/tilelive-mapnik,Allen Mao,var tilelive = require('tilelive');
+https://github.com/mapbox/tilelive-mapnik,Allen Mao,require('tilelive-mapnik').registerProtocols(tilelive);
+https://github.com/mapbox/tilelive-mapnik,Allen Mao,"tilelive.load('mapnik:///path/to/file.xml', function(err, source) {"
+https://github.com/mapbox/tilelive-mapnik,Allen Mao,if (err) throw err;
+https://github.com/mapbox/tilelive-mapnik,Allen Mao,// Interface is in XYZ/Google coordinates.
+https://github.com/mapbox/tilelive-mapnik,Allen Mao,// Use `y = (1 << z) - 1 - y` to flip TMS coordinates.
+https://github.com/mapbox/tilelive-mapnik,Allen Mao,"source.getTile(0, 0, 0, function(err, tile, headers) {"
+https://github.com/mapbox/tilelive-mapnik,Allen Mao,"// `err` is an error object when generation failed, otherwise null."
+https://github.com/mapbox/tilelive-mapnik,Allen Mao,// `tile` contains the compressed image file as a Buffer
+https://github.com/mapbox/tilelive-mapnik,Allen Mao,// `headers` is a hash with HTTP headers for the image.
+https://github.com/mapbox/tilelive-mapnik,Allen Mao,});
+https://github.com/mapbox/tilelive-mapnik,Allen Mao,// The `.getGrid` is implemented accordingly.
+https://github.com/mapbox/tippecanoe,Allen Mao,$ tippecanoe -o file.mbtiles [options] [file.json file.json.gz file.geobuf ...]
+https://github.com/mapbox/tippecanoe,Allen Mao,$ tippecanoe -o out.mbtiles -zg --drop-densest-as-needed in.geojson
+https://github.com/mapbox/tippecanoe,Allen Mao,"The -zg option will make Tippecanoe choose a maximum zoom level that should be high enough to reflect the precision of the original data. (If it turns out still not to be as detailed as you want, use -z manually with a higher number.)"
+https://github.com/mapbox/tippecanoe,Allen Mao,"If the tiles come out too big, the --drop-densest-as-needed option will make Tippecanoe try dropping what should be the least visible features at each zoom level. (If it drops too many features, use -x to leave out some feature attributes that you didn't really need.)"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,Demo
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,"To run the demo with our trained model (on ImageNet DET + VID train), please download the model manually from OneDrive, and put it under folder model/."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,Make sure it looks like this:
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,./model/rfcn_fgfa_flownet_vid-0000.params
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,python ./fgfa_rfcn/demo.py
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,Preparation for Training & Testing
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,"Please download ILSVRC2015 DET and ILSVRC2015 VID dataset, and make sure it looks like this:"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,./data/ILSVRC2015/
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,./data/ILSVRC2015/Annotations/DET
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,./data/ILSVRC2015/Annotations/VID
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,./data/ILSVRC2015/Data/DET
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,./data/ILSVRC2015/Data/VID
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,./data/ILSVRC2015/ImageSets
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,"Please download ImageNet pre-trained ResNet-v1-101 model and Flying-Chairs pre-trained FlowNet model manually from OneDrive, and put it under folder ./model. Make sure it looks like this:"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,./model/pretrained_model/resnet_v1_101-0000.params
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,./model/pretrained_model/flownet-0000.params
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,"All of our experiment settings (GPU #, dataset, etc.) are kept in yaml config files at folder ./experiments/fgfa_rfcn/cfgs."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,"Two config files have been provided so far, namely, frame baseline (R-FCN) and the proposed FGFA for ImageNet VID. We use 4 GPUs to train models on ImageNet VID."
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,"To perform experiments, run the python script with the corresponding config file as input. For example, to train and test FGFA with R-FCN, use the following command"
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,python experiments/fgfa_rfcn/fgfa_rfcn_end2end_train_test.py --cfg experiments/fgfa_rfcn/cfgs/resnet_v1_101_flownet_imagenet_vid_rfcn_end2end_ohem.yaml
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,A cache folder would be created automatically to save the model and the log under output/fgfa_rfcn/imagenet_vid/.
+https://github.com/msracver/Flow-Guided-Feature-Aggregation,Allen Mao,Please find more details in config files and in our code.
+https://github.com/nypl-spacetime/map-vectorizer,Allen Mao,Run the script on the provided test GeoTIFF: python vectorize_map.py test.tif
+https://github.com/nypl-spacetime/map-vectorizer,Allen Mao,usage: vectorize_map.py [-h] --gimp-path GIMP_PATH [--chunksize CHUNKSIZE]
+https://github.com/nypl-spacetime/map-vectorizer,Allen Mao,[--image-processing-configuration-file VECTORIZE_CONFIG]
+https://github.com/nypl-spacetime/map-vectorizer,Allen Mao,<input file or dir>
+https://github.com/odoe/generator-arcgis-js-app,Allen Mao,"grunt - default task, will output code to a dist folder with sourcemaps."
+https://github.com/odoe/generator-arcgis-js-app,Allen Mao,grunt dev - will start a local server on at http://localhost:8282/ and watch for changes. Uses livereload to refresh browser with each update.
+https://github.com/odoe/generator-arcgis-js-app,Allen Mao,http://localhost:8282/dist/ - application
+https://github.com/odoe/generator-arcgis-js-app,Allen Mao,http://localhost:8282/node_modules/intern/client.html?config=tests/intern - test suites
+https://github.com/odoe/generator-arcgis-js-app,Allen Mao,grunt build - build the application and output to a release folder.
+https://github.com/odoe/generator-arcgis-js-app,Allen Mao,grunt e2e - runs all tests using local chromedriver.
+https://github.com/phoenix104104/LapSRN,Allen Mao,Test Pre-trained Models
+https://github.com/phoenix104104/LapSRN,Allen Mao,To test LapSRN / MS-LapSRN on a single-image:
+https://github.com/phoenix104104/LapSRN,Allen Mao,>> demo_LapSRN
+https://github.com/phoenix104104/LapSRN,Allen Mao,>> demo_MSLapSRN
+https://github.com/phoenix104104/LapSRN,Allen Mao,This script will load the pretrained LapSRN / MS-LapSRN model and apply SR on emma.jpg.
+https://github.com/phoenix104104/LapSRN,Allen Mao,"To test LapSRN / MS-LapSRN on benchmark datasets, first download the testing datasets:"
+https://github.com/phoenix104104/LapSRN,Allen Mao,$ cd datasets
+https://github.com/phoenix104104/LapSRN,Allen Mao,$ wget http://vllab1.ucmerced.edu/~wlai24/LapSRN/results/SR_testing_datasets.zip
+https://github.com/phoenix104104/LapSRN,Allen Mao,$ unzip SR_testing_datasets.zip
+https://github.com/phoenix104104/LapSRN,Allen Mao,$ cd ..
+https://github.com/phoenix104104/LapSRN,Allen Mao,"Then choose the evaluated dataset and upsampling scale in evaluate_LapSRN_dataset.m and evaluate_MSLapSRN_dataset.m, and run:"
+https://github.com/phoenix104104/LapSRN,Allen Mao,>> evaluate_LapSRN_dataset
+https://github.com/phoenix104104/LapSRN,Allen Mao,>> evaluate_MSLapSRN_dataset
+https://github.com/phoenix104104/LapSRN,Allen Mao,which can reproduce the results in our paper.
+https://github.com/phoenix104104/LapSRN,Allen Mao,Training LapSRN
+https://github.com/phoenix104104/LapSRN,Allen Mao,"To train LapSRN from scratch, first download the training datasets:"
+https://github.com/phoenix104104/LapSRN,Allen Mao,$ wget http://vllab1.ucmerced.edu/~wlai24/LapSRN/results/SR_training_datasets.zip
+https://github.com/phoenix104104/LapSRN,Allen Mao,$ unzip SR_train_datasets.zip
+https://github.com/phoenix104104/LapSRN,Allen Mao,or use the provided bash script to download all datasets and unzip at once:
+https://github.com/phoenix104104/LapSRN,Allen Mao,$ ./download_SR_datasets.sh
+https://github.com/phoenix104104/LapSRN,Allen Mao,"Then, setup training options in init_LapSRN_opts.m, and run train_LapSRN(scale, depth, gpuID). For example, to train LapSRN with depth = 10 for 4x SR using GPU ID = 1:"
+https://github.com/phoenix104104/LapSRN,Allen Mao,">> train_LapSRN(4, 10, 1)"
+https://github.com/phoenix104104/LapSRN,Allen Mao,"Note that we only test our code on single-GPU mode. MatConvNet supports training with multiple GPUs but you may need to modify our script and options (e.g., opts.gpu)."
+https://github.com/phoenix104104/LapSRN,Allen Mao,"To test your trained LapSRN model, use test_LapSRN(model_name, epoch, dataset, test_scale, gpu). For example, test LapSRN with depth = 10, scale = 4, epoch = 10 on Set5:"
+https://github.com/phoenix104104/LapSRN,Allen Mao,">> test_LapSRN('LapSRN_x4_depth10_L1_train_T91_BSDS200_pw128_lr1e-05_step50_drop0.5_min1e-06_bs64', 10, 'Set5', 4, 1)"
+https://github.com/phoenix104104/LapSRN,Allen Mao,which will report the PSNR and SSIM.
+https://github.com/phoenix104104/LapSRN,Allen Mao,Training MS-LapSRN
+https://github.com/phoenix104104/LapSRN,Allen Mao,"Setup training options in init_MSLapSRN_opts.m, and run train_MSLapSRN(scales, depth, recursive, gpuID), where scales should be a vector, e.g., [2, 4, 8]. For example, to train MS-LapSRN with D = 5, R = 2 for 2x, 4x and 8x SR:"
+https://github.com/phoenix104104/LapSRN,Allen Mao,">> train_MSLapSRN([2, 4, 8], 5, 2, 1)"
+https://github.com/phoenix104104/LapSRN,Allen Mao,"To test your trained MS-LapSRN model, use test_MS-LapSRN(model_name, model_scale, epoch, dataset, test_scale, gpu), where model_scale is used to define the number of pyramid levels. test_scale could be different from model_scale. For example, test MS-LapSRN-D5R2 with two pyramid levels (model_scale = 4), epoch = 10, on Set5 for 3x SR:"
+https://github.com/phoenix104104/LapSRN,Allen Mao,">> test_MSLapSRN('MSLapSRN_x248_SS_D5_R2_fn64_L1_train_T91_BSDS200_pw128_lr5e-06_step100_drop0.5_min1e-06_bs64', 4, 10, 'Set5', 3, 1)"
+https://github.com/phuang17/DeepMVS,Allen Mao,Download the training datasets.
+https://github.com/phuang17/DeepMVS,Allen Mao,python python/download_training_datasets.py # This may take up to 1-2 days to complete.
+https://github.com/phuang17/DeepMVS,Allen Mao,Train the network.
+https://github.com/phuang17/DeepMVS,Allen Mao,Download the trained model.
+https://github.com/phuang17/DeepMVS,Allen Mao,python python/download_trained_model.py
+https://github.com/phuang17/DeepMVS,Allen Mao,Run the sparse reconstruction and the image_undistorter using COLMAP. The image_undistorter will generate a images folder which contains undistorted images and a sparse folder which contains three .bin files.
+https://github.com/phuang17/DeepMVS,Allen Mao,Run the testing script with the paths to the undistorted images and the sparse construction model.
+https://github.com/phuang17/DeepMVS,Allen Mao,python python/test.py --load_bin --image_path path/to/images --sparse_path path/to/sparse --output_path path/to/output/directory
+https://github.com/phuang17/DeepMVS,Allen Mao,"By default, the script resizes the images to be 540px in height to reduce the running time. If you would like to run the model with other resolutions, please pass the arguments --image_width XXX and --image_height XXX. If your COLMAP outputs .txt files instead of .bin files for the sparse reconstruction, simply remove the --load_bin flag."
+https://github.com/phuang17/DeepMVS,Allen Mao,"To evaluate the predicted results, run"
+https://github.com/phuang17/DeepMVS,Allen Mao,python python/eval.py --load_bin --image_path path/to/images --sparse_path path/to/sparse --output_path path/to/output/directory --gt_path path/to/gt/directory --image_width 810 --image_height 540 --size_mismatch crop_pad
+https://github.com/phuang17/DeepMVS,Allen Mao,"In gt_path, the ground truth disparity maps should be stored in npy format with filenames being <image_name>.depth.npy. If the ground truths are depth maps instead of disparity maps, please add --gt_type depth flag."
+https://github.com/pyvista/pymeshfix,Allen Mao,Test installation with the following from Python:
+https://github.com/pyvista/pymeshfix,Allen Mao,from pymeshfix import examples
+https://github.com/pyvista/pymeshfix,Allen Mao,# Test of pymeshfix without VTK module
+https://github.com/pyvista/pymeshfix,Allen Mao,examples.native()
+https://github.com/pyvista/pymeshfix,Allen Mao,# Performs same mesh repair while leveraging VTK's plotting/mesh loading
+https://github.com/pyvista/pymeshfix,Allen Mao,examples.with_vtk()
+https://github.com/pyvista/pymeshfix,Allen Mao,Easy Example
+https://github.com/pyvista/pymeshfix,Allen Mao,This example uses the Cython wrapper directly. No bells or whistles here:
+https://github.com/pyvista/pymeshfix,Allen Mao,from pymeshfix import _meshfix
+https://github.com/pyvista/pymeshfix,Allen Mao,# Read mesh from infile and output cleaned mesh to outfile
+https://github.com/pyvista/pymeshfix,Allen Mao,"_meshfix.clean_from_file(infile, outfile)"
+https://github.com/pyvista/pymeshfix,Allen Mao,This example assumes the user has vertex and faces arrays in Python.
+https://github.com/pyvista/pymeshfix,Allen Mao,# Generate vertex and face arrays of cleaned mesh
+https://github.com/pyvista/pymeshfix,Allen Mao,# where v and f are numpy arrays or python lists
+https://github.com/pyvista/pymeshfix,Allen Mao,"vclean, fclean = _meshfix.clean_from_arrays(v, f)"
+https://github.com/pyvista/pymeshfix,Allen Mao,import pymeshfix
+https://github.com/pyvista/pymeshfix,Allen Mao,# Create object from vertex and face arrays
+https://github.com/pyvista/pymeshfix,Allen Mao,"meshfix = pymeshfix.MeshFix(v, f)"
+https://github.com/pyvista/pymeshfix,Allen Mao,# Plot input
+https://github.com/pyvista/pymeshfix,Allen Mao,meshfix.plot()
+https://github.com/pyvista/pymeshfix,Allen Mao,# Repair input mesh
+https://github.com/pyvista/pymeshfix,Allen Mao,meshfix.repair()
+https://github.com/pyvista/pymeshfix,Allen Mao,# Access the repaired mesh with vtk
+https://github.com/pyvista/pymeshfix,Allen Mao,mesh = meshfix.mesh
+https://github.com/pyvista/pymeshfix,Allen Mao,"# Or, access the resulting arrays directly from the object"
+https://github.com/pyvista/pymeshfix,Allen Mao,meshfix.v # numpy np.float array
+https://github.com/pyvista/pymeshfix,Allen Mao,meshfix.f # numpy np.int32 array
+https://github.com/pyvista/pymeshfix,Allen Mao,# View the repaired mesh (requires vtkInterface)
+https://github.com/pyvista/pymeshfix,Allen Mao,# Save the mesh
+https://github.com/pyvista/pymeshfix,Allen Mao,meshfix.write('out.ply')
+https://github.com/pyvista/pymeshfix,Allen Mao,"Alternatively, the user could use the Cython wrapper of MeshFix directly if vtk is unavailable or they wish to have more control over the cleaning algorithm."
+https://github.com/pyvista/pymeshfix,Allen Mao,# Create TMesh object
+https://github.com/pyvista/pymeshfix,Allen Mao,tin = _meshfix.PyTMesh()
+https://github.com/pyvista/pymeshfix,Allen Mao,tin.LoadFile(infile)
+https://github.com/pyvista/pymeshfix,Allen Mao,"# tin.load_array(v, f) # or read arrays from memory"
+https://github.com/pyvista/pymeshfix,Allen Mao,# Attempt to join nearby components
+https://github.com/pyvista/pymeshfix,Allen Mao,# tin.join_closest_components()
+https://github.com/pyvista/pymeshfix,Allen Mao,# Fill holes
+https://github.com/pyvista/pymeshfix,Allen Mao,tin.fill_small_boundaries()
+https://github.com/pyvista/pymeshfix,Allen Mao,print('There are {:d} boundaries'.format(tin.boundaries())
+https://github.com/pyvista/pymeshfix,Allen Mao,# Clean (removes self intersections)
+https://github.com/pyvista/pymeshfix,Allen Mao,"tin.clean(max_iters=10, inner_loops=3)"
+https://github.com/pyvista/pymeshfix,Allen Mao,# Check mesh for holes again
+https://github.com/pyvista/pymeshfix,Allen Mao,# Clean again if necessary...
+https://github.com/pyvista/pymeshfix,Allen Mao,# Output mesh
+https://github.com/pyvista/pymeshfix,Allen Mao,tin.save_file(outfile)
+https://github.com/pyvista/pymeshfix,Allen Mao,# or return numpy arrays
+https://github.com/pyvista/pymeshfix,Allen Mao,"vclean, fclean = tin.return_arrays()"
+https://github.com/pyvista/tetgen,Allen Mao,import tetgen
+https://github.com/pyvista/tetgen,Allen Mao,sphere = pv.Sphere()
+https://github.com/pyvista/tetgen,Allen Mao,tet = tetgen.TetGen(sphere)
+https://github.com/pyvista/tetgen,Allen Mao,"tet.tetrahedralize(order=1, mindihedral=20, minratio=1.5)"
+https://github.com/pyvista/tetgen,Allen Mao,grid = tet.grid
+https://github.com/pyvista/tetgen,Allen Mao,# get cell centroids
+https://github.com/pyvista/tetgen,Allen Mao,"cells = grid.cells.reshape(-1, 5)[:, 1:]"
+https://github.com/pyvista/tetgen,Allen Mao,cell_center = grid.points[cells].mean(1)
+https://github.com/pyvista/tetgen,Allen Mao,# extract cells below the 0 xy plane
+https://github.com/pyvista/tetgen,Allen Mao,"mask = cell_center[:, 2] < 0"
+https://github.com/pyvista/tetgen,Allen Mao,cell_ind = mask.nonzero()[0]
+https://github.com/pyvista/tetgen,Allen Mao,subgrid = grid.extract_cells(cell_ind)
+https://github.com/pyvista/tetgen,Allen Mao,# advanced plotting
+https://github.com/pyvista/tetgen,Allen Mao,plotter = pv.Plotter()
+https://github.com/pyvista/tetgen,Allen Mao,plotter.set_background('w')
+https://github.com/pyvista/tetgen,Allen Mao,"plotter.add_mesh(subgrid, 'lightgrey', lighting=True)"
+https://github.com/pyvista/tetgen,Allen Mao,"plotter.add_mesh(sphere, 'r', 'wireframe')"
+https://github.com/pyvista/tetgen,Allen Mao,"plotter.add_legend([[' Input Mesh ', 'r'],"
+https://github.com/pyvista/tetgen,Allen Mao,"[' Tesselated Mesh ', 'black']])"
+https://github.com/pyvista/tetgen,Allen Mao,plotter.plot()
+https://github.com/pyvista/tetgen,Allen Mao,Cell quality scalars can be obtained and plotted with:
+https://github.com/pyvista/tetgen,Allen Mao,cell_qual = subgrid.quality
+https://github.com/pyvista/tetgen,Allen Mao,# plot quality
+https://github.com/pyvista/tetgen,Allen Mao,"subgrid.plot(scalars=cell_qual, stitle='quality', cmap='bwr', flip_scalars=True)"
+https://github.com/rowanz/neural-motifs,Allen Mao,"Pretrain VG detection. The old version involved pretraining COCO as well, but we got rid of that for simplicity. Run ./scripts/pretrain_detector.sh Note: You might have to modify the learning rate and batch size, particularly if you don't have 3 Titan X GPUs (which is what I used). You can also download the pretrained detector checkpoint here."
+https://github.com/rowanz/neural-motifs,Allen Mao,"Train VG scene graph classification: run ./scripts/train_models_sgcls.sh 2 (will run on GPU 2). OR, download the MotifNet-cls checkpoint here: Motifnet-SGCls/PredCls."
+https://github.com/rowanz/neural-motifs,Allen Mao,Refine for detection: run ./scripts/refine_for_detection.sh 2 or download the Motifnet-SGDet checkpoint.
+https://github.com/rowanz/neural-motifs,Allen Mao,Evaluate: Refer to the scripts ./scripts/eval_models_sg[cls/det].sh.
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Dynamic texture synthesis
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,python synthesize.py --type=dts --gpu=<NUMBER> --runid=<NAME> --dynamics_target=data/dynamic_textures/<FOLDER> --dynamics_model=models/<TFMODEL>
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Store your chosen dynamic texture image sequence in a folder in /data/dynamic_textures. This folder is your --dynamics_target path.
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Example usage
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,"python synthesize.py --type=dts --gpu=0 --runid=""my_cool_fish"" --dynamics_target=data/dynamic_textures/fish --dynamics_model=models/MSOEnet_ucf101train01_6e-4_allaug_exceptscale_randorder.tfmodel"
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Dynamics style transfer
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,python synthesize.py --type=dst --gpu=<NUMBER> --runid=<NAME> --dynamics_target=data/dynamic_textures/<FOLDER> --dynamics_model=models/<TFMODEL> --appearance_target=data/textures/<IMAGE>
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Store your chosen static texture in ./data/textures. The filepath to this texture is your --appearance_target path.
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,"python synthesize.py --type=dst --gpu=0 --runid=""whoa_water!"" --dynamics_target=data/dynamic_textures/water_4 --appearance_target=data/textures/water_paint_cropped.jpeg --dynamics_model=models/MSOEnet_ucf101train01_6e-4_allaug_exceptscale_randorder.tfmodel"
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Temporally-endless dynamic texture synthesis
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,python synthesize.py --type=inf --gpu=<NUMBER> --runid=<NAME> --dynamics_target=data/dynamic_textures/<FOLDER> --dynamics_model=models/<TFMODEL>
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Incremental dynamic texture synthesis
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,python synthesize.py --type=inc --gpu=<NUMBER> --runid=<NAME> --dynamics_target=data/dynamic_textures/<FOLDER> --dynamics_model=models/<TFMODEL> --appearance_target=data/textures/<IMAGE>
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Store your chosen static texture in /data/textures. The filepath to this texture is your --appearance_target path. This texture should be the last frame of a previously generated sequence.
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,Static texture synthesis
+https://github.com/ryersonvisionlab/two-stream-dyntex-synth,Allen Mao,python synthesize.py --type=sta --gpu=<NUMBER> --runid=<NAME> --appearance_target=data/textures/<IMAGE>
+https://github.com/salihkaragoz/pose-residual-network-pytorch,Allen Mao,For more options look at opt.py
+https://github.com/salihkaragoz/pose-residual-network-pytorch,Allen Mao,Download pre-train model
+https://github.com/salihkaragoz/pose-residual-network-pytorch,Allen Mao,python test.py --test_cp=PathToPreTrainModel/PRN.pth.tar
+https://github.com/sentinelsat/sentinelsat,Allen Mao,sentinelsat -u <user> -p <password> -g <search_polygon.geojson> --sentinel 2 --cloud 30
+https://github.com/tensorflow/tensorflow,Allen Mao,Try your first TensorFlow program
+https://github.com/tensorflow/tensorflow,Allen Mao,$ python
+https://github.com/tensorflow/tensorflow,Allen Mao,>>> import tensorflow as tf
+https://github.com/tensorflow/tensorflow,Allen Mao,>>> tf.enable_eager_execution()
+https://github.com/tensorflow/tensorflow,Allen Mao,">>> tf.add(1, 2).numpy()"
+https://github.com/tensorflow/tensorflow,Allen Mao,3
+https://github.com/tensorflow/tensorflow,Allen Mao,">>> hello = tf.constant('Hello, TensorFlow!')"
+https://github.com/tensorflow/tensorflow,Allen Mao,>>> hello.numpy()
+https://github.com/tensorflow/tensorflow,Allen Mao,"'Hello, TensorFlow!'"
+https://github.com/tensorflow/tensorflow,Allen Mao,Learn more examples about how to do specific tasks in TensorFlow at the tutorials page of tensorflow.org.
+https://github.com/ungarj/tilematrix,Allen Mao,$ tmx -f GeoJSON tiles -- 1 -180 -90 180 90
+https://github.com/ungarj/tilematrix,Allen Mao,Print WKT representation of tile 4 15 23:
+https://github.com/ungarj/tilematrix,Allen Mao,$ tmx bbox 4 15 23
+https://github.com/ungarj/tilematrix,Allen Mao,"Also, tiles can have buffers around called pixelbuffer:"
+https://github.com/ungarj/tilematrix,Allen Mao,$ tmx --pixelbuffer 10 bbox 4 15 23
+https://github.com/ungarj/tilematrix,Allen Mao,Print GeoJSON representation of tile 4 15 23 on a mercator tile pyramid:
+https://github.com/ungarj/tilematrix,Allen Mao,$ tmx -output_format GeoJSON -grid mercator bbox 4 15 15
+https://github.com/vuejs/vue-devtools/,Allen Mao,Quick Start in chrome
+https://github.com/vuejs/vue-devtools/,Allen Mao,// Before you create app
+https://github.com/vuejs/vue-devtools/,Allen Mao,Vue.config.devtools = process.env.NODE_ENV === 'development'
+https://github.com/vuejs/vue-devtools/,Allen Mao,// After you create app
+https://github.com/vuejs/vue-devtools/,Allen Mao,window.__VUE_DEVTOOLS_GLOBAL_HOOK__.Vue = app.constructor;
+https://github.com/vuejs/vue-devtools/,Allen Mao,// then had to add in ./store.js as well.
+https://github.com/whimian/pyGeoPressure,Allen Mao,Example
+https://github.com/whimian/pyGeoPressure,Allen Mao,Pore Pressure Prediction using well log data
+https://github.com/whimian/pyGeoPressure,Allen Mao,import pygeopressure as ppp
+https://github.com/whimian/pyGeoPressure,Allen Mao,"survey = ppp.Survey(""CUG"")"
+https://github.com/whimian/pyGeoPressure,Allen Mao,well = survey.wells['CUG1']
+https://github.com/whimian/pyGeoPressure,Allen Mao,"a, b = ppp.optimize_nct(well.get_log(""Velocity""),"
+https://github.com/whimian/pyGeoPressure,Allen Mao,"well.params['horizon'][""T16""],"
+https://github.com/whimian/pyGeoPressure,Allen Mao,"well.params['horizon'][""T20""])"
+https://github.com/whimian/pyGeoPressure,Allen Mao,"n = ppp.optimize_eaton(well, ""Velocity"", ""Overburden_Pressure"", a, b)"
+https://github.com/whimian/pyGeoPressure,Allen Mao,"pres_eaton_log = well.eaton(np.array(well.get_log(""Velocity"").data), n)"
+https://github.com/whimian/pyGeoPressure,Allen Mao,"fig, ax = plt.subplots()"
+https://github.com/whimian/pyGeoPressure,Allen Mao,ax.invert_yaxis()
+https://github.com/whimian/pyGeoPressure,Allen Mao,"pres_eaton_log.plot(ax, color='blue')"
+https://github.com/whimian/pyGeoPressure,Allen Mao,"well.get_log(""Overburden_Pressure"").plot(ax, 'g')"
+https://github.com/whimian/pyGeoPressure,Allen Mao,"ax.plot(well.hydrostatic, well.depth, 'g', linestyle='--')"
+https://github.com/whimian/pyGeoPressure,Allen Mao,well.plot_horizons(ax)
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,cd ImageProcessing/DeepGuidedFilteringNetwork
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,python predict.py  --task auto_ps \
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,--img_path ../../images/auto_ps.jpg \
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,--save_folder . \
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,#NAME?
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,--low_size 64 \
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,--gpu 0
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,See Here or python predict.py -h for more details.
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Semantic Segmentation with Deeplab-Resnet
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Enter the directory.
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,cd ComputerVision/Deeplab-Resnet
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Download the pretrained model [Google Drive|BaiduYunPan].
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Run it now !
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,python predict_dgf.py --img_path ../../images/segmentation.jpg --snapshots [MODEL_PATH]
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Note:
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Result is in ../../images.
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Run python predict_dgf.py -h for more details.
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Saliency Detection with DSS
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,cd ComputerVision/Saliency_DSS
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Try it now !
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,python predict.py --im_path ../../images/saliency.jpg \
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,--netG [MODEL_PATH] \
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,--thres 161 \
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,#NAME?
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,#NAME?
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Monocular Depth Estimation (TensorFlow version)
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,cd ComputerVision/MonoDepth
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Download and Unzip Pretrained Model [Google Drive|BaiduYunPan]
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Run on an Image !
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,python monodepth_simple.py --image_path ../../images/depth.jpg --checkpoint_path [MODEL_PATH] --guided_filter
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,See Here or python monodepth_simple.py -h for more details.
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,PyTorch Version
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,from guided_filter_pytorch.guided_filter import FastGuidedFilter
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,"hr_y = FastGuidedFilter(r, eps)(lr_x, lr_y, hr_x)"
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,from guided_filter_pytorch.guided_filter import GuidedFilter
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,"hr_y = GuidedFilter(r, eps)(hr_x, init_hr_y)"
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Tensorflow Version
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,from guided_filter_tf.guided_filter import fast_guided_filter
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,"hr_y = fast_guided_filter(lr_x, lr_y, hr_x, r, eps, nhwc)"
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,from guided_filter_tf.guided_filter import guided_filter
+https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,"hr_y = guided_filter(hr_x, init_hr_y, r, eps, nhwc)"
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,Follow the instrutions of rbgirshick/py-faster-rcnn to download related data.
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,"Prepare the dataset, source domain data should start with the filename 'source_', and target domain data with 'target_'."
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,To train the Domain Adaptive Faster R-CNN:
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,cd $FRCN_ROOT
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,./tools/train_net.py --gpu {GPU_ID} --solver models/da_faster_rcnn/solver.prototxt --weights data/imagenet_models/VGG16.v2.caffemodel --imdb voc_2007_trainval --iters  {NUM_ITER}  --cfg  {CONFIGURATION_FILE}
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,An example of adapting from Cityscapes dataset to Foggy Cityscapes dataset is provided:
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,"Download the datasets from here. Specifically, we will use gtFine_trainvaltest.zip, leftImg8bit_trainvaltest.zip and leftImg8bit_trainvaltest_foggy.zip."
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,Prepare the data using the scripts in 'prepare_data/prepare_data.m'.
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,Train the Domain Adaptive Faster R-CNN:
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,./tools/train_net.py --gpu {GPU_ID} --solver models/da_faster_rcnn/solver.prototxt --weights data/imagenet_models/VGG16.v2.caffemodel --imdb voc_2007_trainval --iters  70000  --cfg  models/da_faster_rcnn/faster_rcnn_end2end.yml
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,Test the trained model:
+https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,./tools/test_net.py --gpu {GPU_ID} --def models/da_faster_rcnn/test.prototxt --net output/faster_rcnn_end2end/voc_2007_trainval/vgg16_da_faster_rcnn_iter_70000.caffemodel --imdb voc_2007_test --cfg models/da_faster_rcnn/faster_rcnn_end2end.yml
+https://github.com/zhiqiangdon/CU-Net,Allen Mao,python cu-net.py --gpu_id 0 --exp_id cu-net-2 --layer_num 2 --order 1 --loss_num 2 --is_train true --bs 24
+https://github.com/zhiqiangdon/CU-Net,Allen Mao,Validation
+https://github.com/zhiqiangdon/CU-Net,Allen Mao,python cu-net.py --gpu_id 0 --exp_id cu-net-2 --layer_num 2 --order 1 --loss_num 2 --resume_prefix your_pretrained_model.pth.tar --is_train false --bs 24
+https://github.com/zhiqiangdon/CU-Net,Allen Mao,Model Options
+https://github.com/zhiqiangdon/CU-Net,Allen Mao,layer_num     # number of coupled U-Nets
+https://github.com/zhiqiangdon/CU-Net,Allen Mao,order         # the order of coupling
+https://github.com/zhiqiangdon/CU-Net,Allen Mao,loss_num      # number of losses. Losses are uniformly distributed along the CU-Net. Each U-Net at most has one loss. (loss_num <= layer_num)
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,"Please follow fb.resnet.torch for the general usage of the code, including how to use pretrained ResNeXt models for your own task."
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,There are two new hyperparameters need to be specified to determine the bottleneck template:
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,#NAME?
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,To train ResNeXt-50 (32x4d) on 8 GPUs for ImageNet:
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,bash
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,th main.lua -dataset imagenet -bottleneckType resnext_C -depth 50 -baseWidth 4 -cardinality 32 -batchSize 256 -nGPU 8 -nThreads 8 -shareGradInput true -data [imagenet-folder]
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,To reproduce CIFAR results (e.g. ResNeXt 16x64d for cifar10) on 8 GPUs:
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,th main.lua -dataset cifar10 -bottleneckType resnext_C -depth 29 -baseWidth 64 -cardinality 16 -weightDecay 5e-4 -batchSize 128 -nGPU 8 -nThreads 8 -shareGradInput true
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,"To get comparable results using 2/4 GPUs, you should change the batch size and the corresponding learning rate:"
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,th main.lua -dataset cifar10 -bottleneckType resnext_C -depth 29 -baseWidth 64 -cardinality 16 -weightDecay 5e-4 -batchSize 64 -nGPU 4 -LR 0.05 -nThreads 8 -shareGradInput true
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,th main.lua -dataset cifar10 -bottleneckType resnext_C -depth 29 -baseWidth 64 -cardinality 16 -weightDecay 5e-4 -batchSize 32 -nGPU 2 -LR 0.025 -nThreads 8 -shareGradInput true
+https://github.com/facebookresearch/ResNeXt,Rosna Thomas,Note: CIFAR datasets will be automatically downloaded and processed for the first time. Note that in the arXiv paper CIFAR results are based on pre-activated bottleneck blocks and a batch size of 256. We found that better CIFAR test acurracy can be achieved using original bottleneck blocks and a batch size of 128.
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,How to Run
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,"There's a file named ""input.txt"". You can add as many profiles as you want in the following format with each link on a new line:"
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,https://www.facebook.com/andrew.ng.96
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,https://www.facebook.com/zuck
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,Make sure the link only contains the username or id number at the end and not any other stuff. Make sure its in the format mentioned above.
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,Note: There are two modes to download Friends Profile Pics and the user's Photos: Large Size and Small Size. You can change the following variables. By default they are set to Small Sized Pics because its really quick while Large Size Mode takes time depending on the number of pictures to download
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,whether to download the full image or its thumbnail (small size)
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,if small size is True then it will be very quick else if its False then it will open each photo to download it
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,and it will take much more time
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,friends_small_size = True
+https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,photos_small_size = True
+https://github.com/microsoft/malmo,Rosna Thomas,cd CSharp_Examples
+https://github.com/microsoft/malmo,Rosna Thomas,CSharpExamples_RunMission.exe
+https://github.com/microsoft/malmo,Rosna Thomas,"To build the sample yourself, open CSharp_Examples/RunMission.csproj in Visual Studio."
+https://github.com/microsoft/malmo,Rosna Thomas,Or from the command-line:
+https://github.com/microsoft/malmo,Rosna Thomas,"Then, on Windows:"
+https://github.com/microsoft/malmo,Rosna Thomas,msbuild RunMission.csproj /p:Platform=x64
+https://github.com/microsoft/malmo,Rosna Thomas,bin\x64\Debug\CSharpExamples_RunMission.exe
+https://github.com/microsoft/malmo,Rosna Thomas,Running a Java agent:
+https://github.com/microsoft/malmo,Rosna Thomas,cd Java_Examples
+https://github.com/microsoft/malmo,Rosna Thomas,java -cp MalmoJavaJar.jar:JavaExamples_run_mission.jar -Djava.library.path=. JavaExamples_run_mission (on Linux or MacOSX)
+https://github.com/microsoft/malmo,Rosna Thomas,java -cp MalmoJavaJar.jar;JavaExamples_run_mission.jar -Djava.library.path=. JavaExamples_run_mission (on Windows)
+https://github.com/microsoft/malmo,Rosna Thomas,Running an Atari agent: (Linux only)
+https://github.com/microsoft/malmo,Rosna Thomas,cd Python_Examples
+https://github.com/microsoft/malmo,Rosna Thomas,python3 ALE_HAC.py
+https://github.com/pyro-ppl/pyro,Rosna Thomas,Running Pyro from a Docker Container
+https://github.com/pyro-ppl/pyro,Rosna Thomas,Refer to the instructions here.
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,"After installation, you can launch the test suite from outside the"
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,source directory (you will need to have pytest >= 3.3.0 installed)::
+https://github.com/scikit-learn/scikit-learn,Rosna Thomas,pytest sklearn

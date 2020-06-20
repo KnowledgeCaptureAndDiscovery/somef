@@ -1,7 +1,9 @@
-# SM2KG
-Software Metadata 2 Knowledge Graphs: A tool for automatically extracting relevant information from readme files
+# SOMEF
+Software Metadata Extraction Framework: A command line interface for automatically extracting relevant information from readme files.
 
-#### Installation Instructions - 
+**Authors:** Daniel Garijo, Allen Mao, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
+
+## Installation Instructions 
 
 `pip3 install -r requirements.txt`
 
@@ -104,5 +106,18 @@ In addition to the classified readme file, the metadata from the repository to b
 
 #### Example: 
 
-- `somef describe -r https://github.com/{owner}/{repo_name} -t 0.8 -o output.json`
+```bash
+somef describe -r https://github.com/{owner}/{repo_name} -t 0.8 -o output.json
+```
 
+## Cite SOMEF:
+```
+@INPROCEEDINGS{9006447, 
+author={A. {Mao} and D. {Garijo} and S. {Fakhraei}}, 
+booktitle={2019 IEEE International Conference on Big Data (Big Data)}, 
+title={SoMEF: A Framework for Capturing Scientific Software Metadata from its Documentation}, 
+year={2019}, 
+url={http://dgarijo.com/papers/SoMEF.pdf},
+pages={3032-3037}
+} 
+```
