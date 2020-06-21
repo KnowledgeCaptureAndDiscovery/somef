@@ -6,6 +6,7 @@ src/somef/__main__.py
 src/somef/cli.py
 src/somef/configuration.py
 src/somef/createExcerpts.py
+src/somef/data_to_graph.py
 src/somef/header_analysis.py
 src/somef.egg-info/PKG-INFO
 src/somef.egg-info/SOURCES.txt
@@ -18,3 +19,5 @@ src/somef/models/citation.sk
 src/somef/models/description.sk
 src/somef/models/installation.sk
 src/somef/models/invocation.sk
+src/somef/schema/__init__.py
+src/somef/schema/software_schema.py

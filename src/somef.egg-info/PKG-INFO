@@ -6,10 +6,12 @@ Home-page: https://github.com/KnowledgeCaptureAndDiscovery/somef
 Author: Vedant Diwanji
 Author-email: vedant.diwanji@gmail.com
 License: UNKNOWN
-Description: # SM2KG
-        Software Metadata 2 Knowledge Graphs: A tool for automatically extracting relevant information from readme files
+Description: # SOMEF
+        Software Metadata Extraction Framework: A command line interface for automatically extracting relevant information from readme files.
         
-        #### Installation Instructions - 
+        **Authors:** Daniel Garijo, Allen Mao, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
+        
+        ## Installation Instructions 
         
         `pip3 install -r requirements.txt`
         
@@ -46,6 +48,9 @@ Description: # SM2KG
         -t / --threshold: Threshold to classify the content of the readme file
         
         -d / --doc_src: Path of documentation file
+        
+        -g / --graph_out: (Optional) If given, the CLI will turn the SoMEF output into a Knowledge Graph and save it to the
+        turtle (.ttl) file given after this argument
         
         ### Add/Remove a Category:
         
@@ -109,8 +114,21 @@ Description: # SM2KG
         
         #### Example: 
         
-        - `somef describe -r https://github.com/{owner}/{repo_name} -t 0.8 -o output.json`
+        ```bash
+        somef describe -r https://github.com/{owner}/{repo_name} -t 0.8 -o output.json
+        ```
         
+        ## Cite SOMEF:
+        ```
+        @INPROCEEDINGS{9006447, 
+        author={A. {Mao} and D. {Garijo} and S. {Fakhraei}}, 
+        booktitle={2019 IEEE International Conference on Big Data (Big Data)}, 
+        title={SoMEF: A Framework for Capturing Scientific Software Metadata from its Documentation}, 
+        year={2019}, 
+        url={http://dgarijo.com/papers/SoMEF.pdf},
+        pages={3032-3037}
+        } 
+        ```
         
 Platform: UNKNOWN
 Classifier: License :: OSI Approved :: Apache Software License
