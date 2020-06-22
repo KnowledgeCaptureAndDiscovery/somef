@@ -4,19 +4,52 @@ Software Metadata Extraction Framework: A command line interface for automatical
 **Authors:** Daniel Garijo, Allen Mao, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
 
 ## Documentation
-See full documentation at 
+See full documentation at [https://somef.readthedocs.io/en/latest/](https://somef.readthedocs.io/en/latest/)
 
-## Installation Instructions 
+## Requirements
 
-`pip3 install -r requirements.txt`
+- Python 3.6
 
-Open a python3 instance and run the following commands -
+!!! warning
+    SOMEF has not been tested on Python 3.8.
 
-`import nltk`
+## Install from GitHub
+To run SOMEF, please follow the next steps:
 
-`nltk.download('wordnet')`
+Clone this GitHub repository
 
-Configuration:
+```
+git clone https://github.com/KnowledgeCaptureAndDiscovery/somef.git
+```
+
+Install somef (note that you should be in the folder that you just cloned)
+
+```
+cd somef
+pip install -e .
+```
+
+Run SOMEF
+
+```bash
+somef --help
+```
+
+If everything goes fine, you should see:
+
+```bash
+Usage: somef [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  -h, --help  Show this message and exit.
+
+Commands:
+  configure  Configure credentials
+  describe   Running the Command Line Interface
+  version    Show somef version.
+```
+
+## Configure SOMEF
 
 Create a config.json file using the sample file in the repository and store it at `~/.somef/config.json`.
 
@@ -30,71 +63,63 @@ Add the following line to the config.json to add Authentication for requests to 
 
 Information on generating Personal Access Token - https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
 
-## Command Line Interface - 
+## Usage 
 
-cli.py generates a JSON object after extracting useful information from the github repository. It classifies the readme file into one of four categories - description, invocation, installation, citation depending on confidence above a given threshold.
+### Configure
+Before running SOMEF, you must configure it appropriately. Run
 
-The cli.py file takes as input the following parameters:
+```bash
+somef configure
+```
 
--r / --repo_url: Link to the github repository for extracting information
+And you will be asked to provide the following: 
 
--o / --output: Output file name
+- A GitHub authentication token [**optional, leave blank if not used**], which SOMEF uses to retrieve metadata from GitHub. If you don't include an authentication token, you can still use SOMEF. However, you may be limited to a series of requests per hour. For more information, see [https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) 
+- The path to the trained classifiers (pickle files). If you have your own classifiers, you can provide them here. Otherwise, you can leave it blank
 
--t / --threshold: Threshold to classify the content of the readme file
+### Run SOMEF
 
--d / --doc_src: Path of documentation file
+```bash
+$ somef describe --help
+  SOMEF Command Line Interface
+Usage: somef describe [OPTIONS]
 
--g / --graph_out: (Optional) If given, the CLI will turn the SoMEF output into a Knowledge Graph and save it to the
-turtle (.ttl) file given after this argument
+  Running the Command Line Interface
+
+Options:
+  -t, --threshold FLOAT           Threshold to classify the text  [required]
+  Input: [mutually_exclusive, required]
+    -r, --repo_url URL            Github Repository URL
+    -d, --doc_src PATH            Path to the README file source
+    -i, --in_file PATH            A file of newline separated links to GitHub
+                                  repositories
+
+  Output: [required_any]
+    -o, --output PATH             Path to the output file. If supplied, the
+                                  output will be in JSON
+
+    -g, --graph_out PATH          Path to the output Knowledge Graph file. If
+                                  supplied, the output will be a Knowledge
+                                  Graph, in the format given in the --format
+                                  option
+
+  -f, --graph_format [turtle|json-ld]
+                                  If the --graph_out option is given, this is
+                                  the format that the graph will be stored in
+
+  -h, --help                      Show this message and exit.
+```
+
+## Usage example:
+The following command extracts all metadata available from [https://github.com/dgarijo/Widoco/](https://github.com/dgarijo/Widoco/). 
+
+```bash
+somef describe -r https://github.com/dgarijo/Widoco/ -o test.json -t 0.8
+```
 
 ### Add/Remove a Category:
 
 If the user wants to run the classifier for an additional category or wants to remove an existing category, corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in cli.py
-
-### Github Repository Metadata:
-
-In addition to the classified readme file, the metadata from the repository to be shown in the application is part of the keep_keys variable. If more information is to be added/removed then it should be added/removed to the keep_keys variable. 
-
-### Example:
-
-`python3 cli.py -r https://github.com/{owner}/{repository_name} -o output.json -t 0.5`
-
-### Instructions: 
-
-`somef --help ` 
-
-- will provide information on the different commands available in the package.
-
-`somef version`
-
-- will provide the current version of the package in the system.
-
-`somef configure`
-
-- user will be prompted to enter the following details:
-
-- Authorization(optional): Users can generate a Personal Access Token from github using the link provided above.
-
-- Description: Absolute path to the description model file. 
-
-- Invocation: Absolute path to the description model file.
-
-- Citation: Absolute path to the citation model file.
-
-- Installation: Absolute path to the installation model file.
-
-- A default model is provided with the package and will be chosen if no path is provided
-
-
-`somef describe -r repository_url -t threshold -o output file`
-
-- will run the classifier on the given repository and save it to the output file
-
-#### Example: 
-
-```bash
-somef describe -r https://github.com/{owner}/{repo_name} -t 0.8 -o output.json
-```
 
 ## Cite SOMEF:
 ```

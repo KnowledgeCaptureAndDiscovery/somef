@@ -1,4 +1,4 @@
-site_name: OBA documentation
+site_name: SOMEF documentation
 nav:
   - Home: index.md
   - Install: install.md

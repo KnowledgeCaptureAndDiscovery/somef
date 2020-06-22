@@ -1,6 +1,4 @@
-## SOMEF Options
-
-Type:
+To see the available options for SOMEF:
 
 ```bash
 somef --help
@@ -17,10 +15,10 @@ Commands:
   configure  Configure credentials
   describe   Running the Command Line Interface
   version    Show somef version.
-  ```
-  The options to run somef are through the `describe` command:
+```
+The options to run somef are through the `describe` command:
 
-  ```bash
+```bash
   somef describe --help
   SOMEF Command Line Interface
 Usage: somef describe [OPTIONS]
@@ -49,7 +47,7 @@ Options:
                                   the format that the graph will be stored in
 
   -h, --help                      Show this message and exit.
-  ```
+```
 
 ## Usage example:
 The following command extracts all metadata available from [https://github.com/dgarijo/Widoco/](https://github.com/dgarijo/Widoco/). 
