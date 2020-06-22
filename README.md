@@ -28,7 +28,7 @@ cd somef
 pip install -e .
 ```
 
-Run SOMEF
+Test SOMEF installation
 
 ```bash
 somef --help
@@ -48,19 +48,6 @@ Commands:
   version    Show somef version.
 ```
 
-## Configure SOMEF
-
-Create a config.json file using the sample file in the repository and store it at `~/.somef/config.json`.
-
-Path to the corresponding Model files are provided as shown in the sample config file.
-
-Optional Authentication:
-
-Add the following line to the config.json to add Authentication for requests to github repository:
-
-`"Authorization": "token PersonalAccessToken"`
-
-Information on generating Personal Access Token - https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
 
 ## Usage 
 
