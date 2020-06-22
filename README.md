@@ -121,6 +121,10 @@ somef describe -r https://github.com/dgarijo/Widoco/ -o test.json -t 0.8
 
 If the user wants to run the classifier for an additional category or wants to remove an existing category, corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in cli.py
 
+## Contribute:
+
+If you want to contribute with a pull request, please do so by submitting it to the `dev` branch.
+
 ## Cite SOMEF:
 ```
 @INPROCEEDINGS{9006447, 
