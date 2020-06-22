@@ -10,8 +10,7 @@ See full documentation at [https://somef.readthedocs.io/en/latest/](https://some
 
 - Python 3.6
 
-!!! warning
-    SOMEF has not been tested on Python 3.8.
+Note: SOMEF has not been tested on Python 3.8.
 
 ## Install from GitHub
 To run SOMEF, please follow the next steps:
