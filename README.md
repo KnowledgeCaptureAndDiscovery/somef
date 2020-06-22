@@ -1,7 +1,10 @@
-# SOMEF
+# SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675)
 Software Metadata Extraction Framework: A command line interface for automatically extracting relevant information from readme files.
 
 **Authors:** Daniel Garijo, Allen Mao, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
+
+## Documentation
+See full documentation at 
 
 ## Installation Instructions 
 
@@ -55,23 +58,6 @@ In addition to the classified readme file, the metadata from the repository to b
 ### Example:
 
 `python3 cli.py -r https://github.com/{owner}/{repository_name} -o output.json -t 0.5`
-
-## Pip Package - somef:
-
-### Temporary Installation:
-
-- Download the requirements.txt from the repository and run 
-`pip3 install -r requirements.txt`
-
-- Open a python3 instance and run the following commands -
-
-   `import nltk`
-
-   `nltk.download('wordnet')`
-
-- Run the following command
-
-   `python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps somef`
 
 ### Instructions: 
 
