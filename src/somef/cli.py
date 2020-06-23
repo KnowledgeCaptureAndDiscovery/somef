@@ -75,7 +75,7 @@ github_crosswalk_table = {
     "license": "license",
     "description": "description",
     "name": "name",
-    "fullName": "name",
+    "fullName": "full_name",
     "issueTracker": "issues_url",
     "forks_url": "forks_url"
 }
