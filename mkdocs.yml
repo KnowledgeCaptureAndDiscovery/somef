@@ -1,0 +1,14 @@
+site_name: SOMEF documentation
+nav:
+  - Home: index.md
+  - Install: install.md
+  - Usage: usage.md
+theme:
+  name: material
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
