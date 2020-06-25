@@ -134,7 +134,7 @@ def load_repository_metadata(repository_url, header):
         return " ", {}
     _, owner, repo_name = url.path.split('/')
 
-    general_resp = rate_limit_get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header).json()
+    general_resp = rate_limit_get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header)
 
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
