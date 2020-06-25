@@ -26,6 +26,7 @@ from somef.data_to_graph import DataGraph
 from . import createExcerpts
 from . import header_analysis
 
+import time
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
@@ -74,7 +75,7 @@ github_crosswalk_table = {
     "license": "license",
     "description": "description",
     "name": "name",
-    "fullName": "name",
+    "fullName": "full_name",
     "issueTracker": "issues_url",
     "forks_url": "forks_url"
 }
@@ -114,7 +115,21 @@ def load_repository_metadata(repository_url, header):
         print("Github link is not correct. \nThe correct format is https://github.com/owner/repo_name.")
         return " ", {}
     _, owner, repo_name = url.path.split('/')
-    general_resp = requests.get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header).json()
+
+    backoff_rate = 2
+    backoff = 1
+    rate_limited = True
+    while rate_limited:
+        general_resp = requests.get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header).json()
+        if 'message' in general_resp and 'API rate limit exceeded' in general_resp['message']:
+            rate_limited = True
+            print(f"rate limited. Backing off for {backoff} seconds")
+            time.sleep(backoff)
+
+            # increase the backoff for next time
+            backoff *= backoff_rate
+        else:
+            rate_limited = False
 
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
