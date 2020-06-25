@@ -95,6 +95,24 @@ release_crosswalk_table = {
 }
 
 
+# the same as requests.get(args).json(), but protects against rate limiting
+def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
+    rate_limited = True
+    response = {}
+    while rate_limited:
+        response = requests.get(*args, **kwargs).json()
+        if 'message' in response and 'API rate limit exceeded' in response['message']:
+            rate_limited = True
+            print(f"rate limited. Backing off for {initial_backoff} seconds")
+            time.sleep(initial_backoff)
+
+            # increase the backoff for next time
+            initial_backoff *= backoff_rate
+        else:
+            rate_limited = False
+
+    return response
+
 # error when github url is wrong
 class GithubUrlError(Exception):
     pass
@@ -116,20 +134,7 @@ def load_repository_metadata(repository_url, header):
         return " ", {}
     _, owner, repo_name = url.path.split('/')
 
-    backoff_rate = 2
-    backoff = 1
-    rate_limited = True
-    while rate_limited:
-        general_resp = requests.get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header).json()
-        if 'message' in general_resp and 'API rate limit exceeded' in general_resp['message']:
-            rate_limited = True
-            print(f"rate limited. Backing off for {backoff} seconds")
-            time.sleep(backoff)
-
-            # increase the backoff for next time
-            backoff *= backoff_rate
-        else:
-            rate_limited = False
+    general_resp = rate_limit_get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header)
 
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
@@ -177,20 +182,26 @@ def load_repository_metadata(repository_url, header):
     # get keywords / topics
     topics_headers = header
     topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
-    topics_resp = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/topics',
-                               headers=topics_headers).json()
+    topics_resp = rate_limit_get('https://api.github.com/repos/' + owner + "/" + repo_name + '/topics',
+                                 headers=topics_headers)
+
     if 'message' in topics_resp.keys():
         print("Topics Error: " + topics_resp['message'])
     elif topics_resp and 'names' in topics_resp.keys():
         filtered_resp['topics'] = topics_resp['names']
 
     ## get languages
-    filtered_resp['languages'] = list(requests.get(filtered_resp['languages_url']).json().keys())
+    languages = rate_limit_get(filtered_resp['languages_url'])
+    if "message" in languages:
+        print("Languages Error: " + languages["message"])
+    else:
+        filtered_resp['languages'] = list(languages.keys())
+
     del filtered_resp['languages_url']
 
     ## get default README
-    readme_info = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/readme',
-                               headers=topics_headers).json()
+    readme_info = rate_limit_get('https://api.github.com/repos/' + owner + "/" + repo_name + '/readme',
+                               headers=topics_headers)
     if 'message' in readme_info.keys():
         print("README Error: " + readme_info['message'])
         text = ""
@@ -200,14 +211,13 @@ def load_repository_metadata(repository_url, header):
         filtered_resp['readme_url'] = readme_info['html_url']
 
     ## get releases
-    releases_list = requests.get('https://api.github.com/repos/' + owner + "/" + repo_name + '/releases',
-                                 headers=header).json()
+    releases_list = rate_limit_get('https://api.github.com/repos/' + owner + "/" + repo_name + '/releases',
+                                 headers=header)
 
     if isinstance(releases_list, dict) and 'message' in releases_list.keys():
-        print("Releases Error: " + general_resp['message'])
-    
-    releases_list = [do_crosswalk(release, release_crosswalk_table) for release in releases_list]
-    filtered_resp['releases'] = list(releases_list)
+        print("Releases Error: " + releases_list['message'])
+    else:
+        filtered_resp['releases'] = [do_crosswalk(release, release_crosswalk_table) for release in releases_list]
 
     print("Repository Information Successfully Loaded. \n")
     return text, filtered_resp
