@@ -41,7 +41,7 @@ We use the [Github's API](https://developer.github.com/v3/) to retrieve some of 
 [Scikit Learn](https://scikit-learn.org/stable/about.html) is a powerful machine learning framework that provides a variety of methods for supervised and unsupervised learning. We use some of these classifiers to train sentence-based models to detect software description, citation, installation instructions and invocation commands.
 
 ### Wordnet
-[Wordnet](https://wordnet.princeton.edu/) is a public lexical database which we use to find synonims of common headers used when describe software. 
+[Wordnet](https://wordnet.princeton.edu/) is a public lexical database which we use to find synonyms of common headers used when describe software. 
 
 ### JSON
 The JavaScript Object Notation (JSON) is a syntax for storing and exchanging data commonly used by Web developers. We use JSON to serialize  our results.
