@@ -77,7 +77,8 @@ github_crosswalk_table = {
     "name": "name",
     "fullName": "full_name",
     "issueTracker": "issues_url",
-    "forks_url": "forks_url"
+    "forks_url": "forks_url",
+    "stargazers_count": "stargazers_count"
 }
 
 release_crosswalk_table = {
