@@ -28,7 +28,6 @@ from . import header_analysis
 
 import time
 
-date = ""
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
@@ -103,11 +102,11 @@ release_crosswalk_table = {
 def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
     rate_limited = True
     response = {}
+    date = ""
     while rate_limited:
         response = requests.get(*args, **kwargs)
         data = response
         date = data.headers["date"]
-        print(date)
         response = response.json()
         if 'message' in response and 'API rate limit exceeded' in response['message']:
             rate_limited = True
