@@ -28,6 +28,7 @@ from . import header_analysis
 
 import time
 
+
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
 def unmark_element(element, stream=None):
@@ -77,7 +78,9 @@ github_crosswalk_table = {
     "name": "name",
     "fullName": "full_name",
     "issueTracker": "issues_url",
-    "forks_url": "forks_url"
+    "forks_url": "forks_url",
+    "stargazers_count": "stargazers_count",
+    "forks_count": "forks_count"
 }
 
 release_crosswalk_table = {
@@ -99,8 +102,12 @@ release_crosswalk_table = {
 def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
     rate_limited = True
     response = {}
+    date = ""
     while rate_limited:
-        response = requests.get(*args, **kwargs).json()
+        response = requests.get(*args, **kwargs)
+        data = response
+        date = data.headers["date"]
+        response = response.json()
         if 'message' in response and 'API rate limit exceeded' in response['message']:
             rate_limited = True
             print(f"rate limited. Backing off for {initial_backoff} seconds")
@@ -111,7 +118,7 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
         else:
             rate_limited = False
 
-    return response
+    return response,date
 
 # error when github url is wrong
 class GithubUrlError(Exception):
@@ -134,7 +141,7 @@ def load_repository_metadata(repository_url, header):
         return " ", {}
     _, owner, repo_name = url.path.split('/')
 
-    general_resp = rate_limit_get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header)
+    general_resp,date = rate_limit_get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header)
 
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
@@ -182,7 +189,7 @@ def load_repository_metadata(repository_url, header):
     # get keywords / topics
     topics_headers = header
     topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
-    topics_resp = rate_limit_get('https://api.github.com/repos/' + owner + "/" + repo_name + '/topics',
+    topics_resp,date = rate_limit_get('https://api.github.com/repos/' + owner + "/" + repo_name + '/topics',
                                  headers=topics_headers)
 
     if 'message' in topics_resp.keys():
@@ -190,8 +197,23 @@ def load_repository_metadata(repository_url, header):
     elif topics_resp and 'names' in topics_resp.keys():
         filtered_resp['topics'] = topics_resp['names']
 
+    #get social features: stargazers_count
+    stargazers_info = {}
+    if 'stargazers_count' in filtered_resp:
+            stargazers_info['count'] = filtered_resp['stargazers_count']
+            stargazers_info['date'] = date        
+    filtered_resp['stargazers_count'] = stargazers_info
+
+    #get social features: forks_count
+    forks_info = {}
+    if 'forks_count' in filtered_resp:
+            forks_info['count'] = filtered_resp['forks_count']
+            forks_info['date'] = date        
+    filtered_resp['forks_count'] = forks_info
+
+
     ## get languages
-    languages = rate_limit_get(filtered_resp['languages_url'])
+    languages,date = rate_limit_get(filtered_resp['languages_url'])
     if "message" in languages:
         print("Languages Error: " + languages["message"])
     else:
@@ -200,7 +222,7 @@ def load_repository_metadata(repository_url, header):
     del filtered_resp['languages_url']
 
     ## get default README
-    readme_info = rate_limit_get('https://api.github.com/repos/' + owner + "/" + repo_name + '/readme',
+    readme_info,date = rate_limit_get('https://api.github.com/repos/' + owner + "/" + repo_name + '/readme',
                                headers=topics_headers)
     if 'message' in readme_info.keys():
         print("README Error: " + readme_info['message'])
@@ -211,7 +233,7 @@ def load_repository_metadata(repository_url, header):
         filtered_resp['readme_url'] = readme_info['html_url']
 
     ## get releases
-    releases_list = rate_limit_get('https://api.github.com/repos/' + owner + "/" + repo_name + '/releases',
+    releases_list,date = rate_limit_get('https://api.github.com/repos/' + owner + "/" + repo_name + '/releases',
                                  headers=header)
 
     if isinstance(releases_list, dict) and 'message' in releases_list.keys():
