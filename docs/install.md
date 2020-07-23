@@ -42,7 +42,7 @@ Commands:
 ```
 
 
-## Install from Pypi 
+<!--## Install from Pypi 
 Just type:
 
 ```bash
@@ -51,7 +51,7 @@ pip install somef
 
 !!! info
     Feature under development
-
+-->
 
 ## Configure
 Before running SOMEF, you must configure it appropriately. Run
