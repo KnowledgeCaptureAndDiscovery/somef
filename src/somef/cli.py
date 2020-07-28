@@ -227,7 +227,7 @@ def load_repository_metadata(repository_url, header):
     ## condense license information
     license_info = {}
     for k in ('name', 'url'):
-        if 'license' in filtered_resp and k in fil tered_resp['license']:
+        if 'license' in filtered_resp and k in filtered_resp['license']:
             license_info[k] = filtered_resp['license'][k]
     filtered_resp['license'] = license_info
 
