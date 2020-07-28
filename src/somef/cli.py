@@ -168,6 +168,9 @@ def load_repository_metadata(repository_url, header):
                 print(f"Error: key {path} not present in github repository")
         return output
 
+        ## Function takes readme text as input and runs a regex parser on it
+    
+
     filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
     # add download URL
     filtered_resp["downloadUrl"] = f"https://github.com/{owner}/{repo_name}/releases"
@@ -178,6 +181,7 @@ def load_repository_metadata(repository_url, header):
         if 'license' in filtered_resp and k in filtered_resp['license']:
             license_info[k] = filtered_resp['license'][k]
     filtered_resp['license'] = license_info
+
 
     # get keywords / topics
     topics_headers = header
@@ -209,6 +213,23 @@ def load_repository_metadata(repository_url, header):
         readme = base64.b64decode(readme_info['content']).decode("utf-8")
         text = readme
         filtered_resp['readme_url'] = readme_info['html_url']
+
+    #extracts the title of the repository from the readme, starts with "#"
+    regex = r'\A#.*'
+    excerpts = text
+    title = re.findall(regex, excerpts)
+    if title:
+        filtered_resp['repo_extended_name'] = title[0][2:]
+    else:
+        print("Error: Extended name for the repository not found in the readme file")
+        
+
+    ## condense license information
+    license_info = {}
+    for k in ('name', 'url'):
+        if 'license' in filtered_resp and k in fil tered_resp['license']:
+            license_info[k] = filtered_resp['license'][k]
+    filtered_resp['license'] = license_info
 
     ## get releases
     releases_list = rate_limit_get('https://api.github.com/repos/' + owner + "/" + repo_name + '/releases',
