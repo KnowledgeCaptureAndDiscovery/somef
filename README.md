@@ -127,5 +127,5 @@ pages={3032-3037}
 We are improving SOMEF to incorporate the following features:
 - Automated detection of other documentations sources, besides the readme.md file.
 - Automated detection and annotation of Docker files.
-- Automated detection and annotation of notebooks.
+- Automated detection and annotation of notebooks and their metadata.
 - Automated detection of examples associated with a software component.
