@@ -136,12 +136,35 @@ def load_repository_metadata(repository_url, header):
     if url.netloc != 'github.com':
         print("Error: repository must come from github")
         return " ", {}
-    if len(url.path.split('/')) != 3:
-        print("Github link is not correct. \nThe correct format is https://github.com/owner/repo_name.")
-        return " ", {}
-    _, owner, repo_name = url.path.split('/')
 
-    general_resp,date = rate_limit_get(f"https://api.github.com/repos/{owner}/{repo_name}", headers=header)
+    path_components = url.path.split('/')
+
+    if len(path_components) <3:
+        print("Github link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}.")
+        return " ", {}
+
+    owner = path_components[1]
+    repo_name = path_components[2]
+
+    repo_api_base_url = f"https://api.github.com/repos/{owner}/{repo_name}"
+
+    repo_ref = None
+    ref_param = None
+
+    if len(path_components) >= 5:
+        if not path_components[3] == "tree":
+            print("Github link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}/tree/{ref}.")
+
+            return " ", {}
+
+
+        # we must join all after 4, as sometimes tags have "/" in them.
+        repo_ref = "/".join(path_components[4:])
+        ref_param = {"ref": repo_ref}
+
+    print(repo_api_base_url)
+
+    general_resp,date = rate_limit_get(repo_api_base_url, headers=header)
 
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
@@ -189,7 +212,7 @@ def load_repository_metadata(repository_url, header):
     # get keywords / topics
     topics_headers = header
     topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
-    topics_resp,date = rate_limit_get('https://api.github.com/repos/' + owner + "/" + repo_name + '/topics',
+    topics_resp,date = rate_limit_get(repo_api_base_url + "/topics",
                                  headers=topics_headers)
 
     if 'message' in topics_resp.keys():
@@ -222,8 +245,9 @@ def load_repository_metadata(repository_url, header):
     del filtered_resp['languages_url']
 
     ## get default README
-    readme_info,date = rate_limit_get('https://api.github.com/repos/' + owner + "/" + repo_name + '/readme',
-                               headers=topics_headers)
+    readme_info,date = rate_limit_get(repo_api_base_url + "/readme",
+                               headers=topics_headers,
+                               params=ref_param)
     if 'message' in readme_info.keys():
         print("README Error: " + readme_info['message'])
         text = ""
@@ -233,7 +257,7 @@ def load_repository_metadata(repository_url, header):
         filtered_resp['readme_url'] = readme_info['html_url']
 
     ## get releases
-    releases_list,date = rate_limit_get('https://api.github.com/repos/' + owner + "/" + repo_name + '/releases',
+    releases_list,date = rate_limit_get(repo_api_base_url + "/releases",
                                  headers=header)
 
     if isinstance(releases_list, dict) and 'message' in releases_list.keys():
@@ -370,6 +394,7 @@ def merge(header_predictions, predictions, citations):
 ## Function takes metadata, readme text predictions, bibtex citations and path to the output file
 ## Performs some combinations
 def format_output(git_data, repo_data):
+    print("formatting output")
     for i in git_data.keys():
         if i == 'description':
             if 'description' not in repo_data.keys():
