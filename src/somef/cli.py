@@ -175,6 +175,9 @@ def load_repository_metadata(repository_url, header):
 
         raise GithubUrlError
 
+    if repo_ref is None:
+        repo_ref = general_resp['default_branch']
+
     ## get only the fields that we want
     def do_crosswalk(data, crosswalk_table):
         def get_path(obj, path):
@@ -204,9 +207,22 @@ def load_repository_metadata(repository_url, header):
 
     ## condense license information
     license_info = {}
-    for k in ('name', 'url'):
-        if 'license' in filtered_resp and k in filtered_resp['license']:
-            license_info[k] = filtered_resp['license'][k]
+    if 'license' in filtered_resp:
+        for k in ('name', 'url'):
+             if k in filtered_resp['license']:
+                license_info[k] = filtered_resp['license'][k]
+
+    ## If we didn't find it, look for the license
+    if 'url' not in license_info or license_info['url'] is None:
+
+        possible_license_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/LICENSE"
+        license_text_resp = requests.get(possible_license_url)
+
+        # todo: It's possible that this request will get rate limited. Figure out how to detect that.
+        if license_text_resp.status_code == 200:
+            # license_text = license_text_resp.text
+            license_info['url'] = possible_license_url
+
     filtered_resp['license'] = license_info
 
     # get keywords / topics
