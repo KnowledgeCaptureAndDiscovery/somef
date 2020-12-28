@@ -407,10 +407,13 @@ def format_output(git_data, repo_data):
 
 
 # saves the final json Object in the file
-def save_json_output(repo_data, outfile):
+def save_json_output(repo_data, outfile, pretty=False):
     print("Saving json data to", outfile)
     with open(outfile, 'w') as output:
-        json.dump(repo_data, output)
+        if pretty:
+            json.dump(repo_data, output, sort_keys=True, indent=2)
+        else:
+            json.dump(repo_data, output)
 
     ## Function takes metadata, readme text predictions, bibtex citations and path to the output file
 
@@ -473,6 +476,7 @@ def run_cli(*,
             output=None,
             graph_out=None,
             graph_format="turtle",
+            pretty=False
             ):
     multiple_repos = in_file is not None
     if multiple_repos:
@@ -492,7 +496,7 @@ def run_cli(*,
             repo_data = cli_get_data(threshold, doc_src=doc_src)
 
     if output is not None:
-        save_json_output(repo_data, output)
+        save_json_output(repo_data, output, pretty=pretty)
 
     if graph_out is not None:
         print("Generating Knowledge Graph")

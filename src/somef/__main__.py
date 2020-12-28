@@ -85,6 +85,13 @@ class URLParamType(click.types.StringParamType):
     default="turtle",
     help="""If the --graph_out option is given, this is the format that the graph will be stored in"""
 )
+@click.option(
+    "--pretty",
+    "-p",
+    is_flag=True,
+    default=False,
+    help="""Pretty print the JSON output file so that it is easy to compare to another JSON output file."""
+)
 def describe(**kwargs):
     from somef import cli
     cli.run_cli(**kwargs)
