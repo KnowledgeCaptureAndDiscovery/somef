@@ -95,7 +95,7 @@ def extract_header_content(text):  # extract the header and content of text to d
     # into dataframe
     df = pd.DataFrame(columns=['Header', 'Content'])
     for i, j in zip(header, content):
-        df = df.append({'Header': i, 'content': j}, ignore_index=True)
+        df = df.append({'Header': i, 'Content': j}, ignore_index=True)
     df['Content'].replace('', np.nan, inplace=True)
     df.dropna(subset=['Content'], inplace=True)
     print('Extracting headers and content.')
@@ -114,12 +114,12 @@ def find_sim(wordlist, wd):
     -------
 
     """
-    simvalue = []
+    sim_value = []
     for sense in wordlist:
         if (wd.path_similarity(sense) != None):
-            simvalue.append(wd.path_similarity(sense))
-    if (len(simvalue) != 0):
-        return max(simvalue)
+            sim_value.append(wd.path_similarity(sense))
+    if (len(sim_value) != 0):
+        return max(sim_value)
     else:
         return 0
 
@@ -163,6 +163,7 @@ def extract_categories_using_headers(text):  # main function
     data = extract_header_content(text)
     print('Labeling headers.')
     if data.empty:
+        print("File to analyze has no headers")
         return {}, []
     data['Group'] = data['Header'].apply(lambda row: label_header(row))
     if len(data['Group'].iloc[0]) == 0:
@@ -185,7 +186,7 @@ def extract_categories_using_headers(text):  # main function
             del group_json[key][ind]['Group']
     print('Converting to json files.')
 
-    # strings without tag
+    # strings without tag (they will be classified)
     str_list = data.loc[data['Group'].isna(), ['Content']].values.squeeze().tolist()
     if type(str_list) != list:
         str_list = [str_list]

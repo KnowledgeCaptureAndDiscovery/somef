@@ -1,4 +1,5 @@
-from somef.header_analysis import extract_header_content
+from somef.header_analysis import extract_header_content,extract_categories_using_headers
+
 
 def test_extract_header_content_hash():
     text = """
@@ -21,7 +22,7 @@ Content sixth header
     assert len(result.index) == 6
 
 
-#Example: Taguette
+# Example: Taguette
 def test_extract_header_content_underline():
     text = """
 Heading level 1
@@ -46,3 +47,12 @@ Content from incomplete
     result = extract_header_content(text)
     print(result)
     assert len(result.index) == 3
+
+
+def test_extract_categories_using_headers():
+    with open("widoco_readme.md", "r") as data_file:
+        file_text = data_file.read()
+        json,results = extract_categories_using_headers(file_text)
+        # At least 6 sections are extracted from the header analysis
+        assert len(json) == 6
+
