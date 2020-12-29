@@ -361,9 +361,11 @@ def extract_categories_using_header(repo_data):
     return header_info, string_list
 
 
-## Function takes readme text as input and runs a regex parser on it
-## Returns a list of bibtex citations
-def extract_bibtex(readme_text):
+def extract_bibtex(readme_text) -> object:
+    """
+    Function takes readme text as input (cleaned from markdown notation) and runs a regex expression on top of it.
+    Returns list of bibtex citations
+    """
     print("Extracting bibtex citation from readme")
     regex = r'\@[a-zA-z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title][.\n\S\s]+?\n\}'
     excerpts = readme_text
