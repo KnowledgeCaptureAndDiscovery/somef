@@ -1,6 +1,6 @@
 import unittest
 
-from utils_for_tests import almost_equal
+from somef.test.utils_for_tests import almost_equal
 
 class TestAlmostEqual(unittest.TestCase):
 
