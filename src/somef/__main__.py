@@ -80,7 +80,7 @@ class URLParamType(click.types.StringParamType):
     "--graph_out",
     "-g",
     type=click.Path(),
-    help="""Path to the output Knowledge Graph file. If supplied, the output will be a Knowledge Graph,
+    help="""Path to the output Knowledge Graph export file. If supplied, the output will be a Knowledge Graph,
             in the format given in the --format option chosen (turtle, json-ld)"""
 )
 @click.option(
