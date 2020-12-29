@@ -1,6 +1,6 @@
 import unittest
 import json
-from utils import almost_equal
+from somef.test.utils_for_tests import  almost_equal
 
 from somef.cli import cli_get_data
 class CliGetData(unittest.TestCase):

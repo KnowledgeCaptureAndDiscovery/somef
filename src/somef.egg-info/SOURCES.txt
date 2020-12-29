@@ -21,3 +21,12 @@ src/somef/models/installation.sk
 src/somef/models/invocation.sk
 src/somef/schema/__init__.py
 src/somef/schema/software_schema.py
+src/somef/test/__init__.py
+src/somef/test/test_cli.py
+src/somef/test/test_data_to_graph.py
+src/somef/test/test_get_data.py
+src/somef/test/test_utils.py
+src/somef/test/utils_for_tests.py
+src/somef/test/widoco_readme.md
+src/somef/test/widoco_readme_reference.json
+src/somef/test/widoco_reference.json
