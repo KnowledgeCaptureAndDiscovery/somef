@@ -62,13 +62,14 @@ def extract_header_content(text): # extract the header and content of text to da
     # check the format of header
     underline_header = re.findall('.+[\n]={3,}[\n]', text)
 
+
     # header declared with ==== and ---
     if len(underline_header) != 0:
-        Header = re.findall('(.+[\n]={3,}[\n])|(.+[\n]-{3,}[\n])', text)
-        Header = [i[0] for i in Header]
-        Header = [re.sub('([\n]={3,}[\n])|([\n]-{3,}[\n])', '', i) for i in Header]
-        Header.insert(0, '*extra content')
-        Content = re.split('.+[\n]={3,}[\n]', text)
+        header = re.findall('.+[\n][=-]+[\n]+', text)
+        header = [re.sub('[\n][=-]+[\n]', '', i) for i in header]
+        content = re.split('.+[\n][=-]+[\n]+', text)
+        # Remove the first entry, as it is always empty
+        content = content[1:]
 
     # header declared with ##
     else:
@@ -76,19 +77,21 @@ def extract_header_content(text): # extract the header and content of text to da
         a_sub = [re.sub('#', '#notes:', i) for i in a]
         for i, j in zip(a, a_sub):
             text = text.replace(i, j)
-        Header = re.findall('#{1,5} .*', text)
-        Header = [re.sub('#', '', i) for i in Header]
-        Header.insert(0, '*extra content')
-        Content = re.split('#{1,5} .*', text)
-        Content = [re.sub('#notes', '#', i) for i in Content]
-        Content = [re.sub("[\n]+", '', i, 1) for i in Content]
+        header = re.findall('#{1,5} .*', text)
+        header = [re.sub('#', '', i) for i in header]
+        content = re.split('#{1,6} .*', text)
+        content = [re.sub('#notes', '#', i) for i in content]
+        content = [re.sub("[\n]+", '', i, 1) for i in content]
+        #Remove the first entry, as it is always empty
+        content = content[1:]
+
 
     # into dataframe
-    df = pd.DataFrame(columns=['Header', 'Content'])
-    for i, j in zip(Header, Content):
-        df = df.append({'Header': i, 'Content': j}, ignore_index=True)
-    df['Content'].replace('', np.nan, inplace=True)
-    df.dropna(subset=['Content'], inplace=True)
+    df = pd.DataFrame(columns=['Header', 'content'])
+    for i, j in zip(header, content):
+        df = df.append({'Header': i, 'content': j}, ignore_index=True)
+    df['content'].replace('', np.nan, inplace=True)
+    df.dropna(subset=['content'], inplace=True)
     print('Extracting headers and content.')
     return df
 
@@ -138,6 +141,7 @@ def extract_categories_using_headers(text): # main function
     text = cleanhtml(text)
     data = extract_header_content(text)
     print('Labeling headers.')
+    print(data)
     if data.empty:
         return {}, [] 
     data['Group'] = data['Header'].apply(lambda row: label_header(row))
