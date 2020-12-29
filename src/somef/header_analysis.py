@@ -2,14 +2,10 @@
 ## input file: readme files text data
 ## output file: json files with categories extracted using header analysis; other text data cannot be extracted
 
-import os
-import glob
+
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import re
-import string
-import collections
 from textblob import Word
 import json
 
@@ -17,51 +13,62 @@ import json
 group = dict()
 
 citation = [Word("citation").synsets[2], Word("reference").synsets[1], Word("cite").synsets[3]]
-group.update({"citation":citation})
+group.update({"citation": citation})
 
-run = [Word("run").synsets[9],Word("run").synsets[34],Word("execute").synsets[4]]
-group.update({"run":run})
+run = [Word("run").synsets[9], Word("run").synsets[34], Word("execute").synsets[4]]
+group.update({"run": run})
 
-install = [Word("installation").synsets[0],Word("install").synsets[0],Word("setup").synsets[1],Word("prepare").synsets[0],Word("preparation").synsets[0],Word("manual").synsets[0],Word("guide").synsets[2],Word("guide").synsets[9]]
-group.update({"installation":install})
+install = [Word("installation").synsets[0], Word("install").synsets[0], Word("setup").synsets[1],
+           Word("prepare").synsets[0], Word("preparation").synsets[0], Word("manual").synsets[0],
+           Word("guide").synsets[2], Word("guide").synsets[9]]
+group.update({"installation": install})
 
 download = [Word("download").synsets[0]]
-group.update({"download":download})
+group.update({"download": download})
 
-requirement = [Word("requirement").synsets[2],Word("prerequisite").synsets[0],Word("prerequisite").synsets[1],Word("dependency").synsets[0],Word("dependent").synsets[0]]
-group.update({"requirement":requirement})
+requirement = [Word("requirement").synsets[2], Word("prerequisite").synsets[0], Word("prerequisite").synsets[1],
+               Word("dependency").synsets[0], Word("dependent").synsets[0]]
+group.update({"requirement": requirement})
 
 contact = [Word("contact").synsets[9]]
-group.update({"contact":contact})
+group.update({"contact": contact})
 
-description = [Word("description").synsets[0],Word("description").synsets[1],Word("introduction").synsets[3],Word("introduction").synsets[6],Word("basics").synsets[0],Word("initiation").synsets[1],Word("start").synsets[0],Word("start").synsets[4],Word("started").synsets[0],Word("started").synsets[1],Word("started").synsets[7],Word("started").synsets[8],Word("overview").synsets[0],Word("summary").synsets[0],Word("summary").synsets[2]]
-group.update({"description":description})
+description = [Word("description").synsets[0], Word("description").synsets[1], Word("introduction").synsets[3],
+               Word("introduction").synsets[6], Word("basics").synsets[0], Word("initiation").synsets[1],
+               Word("start").synsets[0], Word("start").synsets[4], Word("started").synsets[0],
+               Word("started").synsets[1], Word("started").synsets[7], Word("started").synsets[8],
+               Word("overview").synsets[0], Word("summary").synsets[0], Word("summary").synsets[2]]
+group.update({"description": description})
 
 contributor = [Word("contributor").synsets[0]]
-group.update({"contributor":contributor})
+group.update({"contributor": contributor})
 
 documentation = [Word("documentation").synsets[1]]
-group.update({"documentation":documentation})
+group.update({"documentation": documentation})
 
-license = [Word("license").synsets[3],Word("license").synsets[0]]
-group.update({"license":license})
+license = [Word("license").synsets[3], Word("license").synsets[0]]
+group.update({"license": license})
 
-usage = [Word("usage").synsets[0],Word("example").synsets[0],Word("example").synsets[5],Word("implement").synsets[1],Word("implementation").synsets[1],Word("demo").synsets[1],Word("tutorial").synsets[0],Word("tutorial").synsets[1]]
-group.update({"usage":usage})
+usage = [Word("usage").synsets[0], Word("example").synsets[0], Word("example").synsets[5], Word("implement").synsets[1],
+         Word("implementation").synsets[1], Word("demo").synsets[1], Word("tutorial").synsets[0],
+         Word("tutorial").synsets[1]]
+group.update({"usage": usage})
 
-update = [Word("updating").synsets[0],Word("updating").synsets[3]]
-group.update({"update":update})
+update = [Word("updating").synsets[0], Word("updating").synsets[3]]
+group.update({"update": update})
 
-issues = [Word("issues").synsets[0],Word("errors").synsets[5],Word("problems").synsets[0],Word("problems").synsets[2]]
-group.update({"issues":issues})
+issues = [Word("issues").synsets[0], Word("errors").synsets[5], Word("problems").synsets[0],
+          Word("problems").synsets[2]]
+group.update({"issues": issues})
 
-support = [Word("support").synsets[7],Word("help").synsets[0],Word("help").synsets[9],Word("report").synsets[0],Word("report").synsets[6]]
-group.update({"support":support})
+support = [Word("support").synsets[7], Word("help").synsets[0], Word("help").synsets[9], Word("report").synsets[0],
+           Word("report").synsets[6]]
+group.update({"support": support})
 
-def extract_header_content(text): # extract the header and content of text to dataframe
+
+def extract_header_content(text):  # extract the header and content of text to dataframe
     # check the format of header
     underline_header = re.findall('.+[\n]={3,}[\n]', text)
-
 
     # header declared with ==== and ---
     if len(underline_header) != 0:
@@ -82,20 +89,31 @@ def extract_header_content(text): # extract the header and content of text to da
         content = re.split('#{1,6} .*', text)
         content = [re.sub('#notes', '#', i) for i in content]
         content = [re.sub("[\n]+", '', i, 1) for i in content]
-        #Remove the first entry, as it is always empty
+        # Remove the first entry, as it is always empty
         content = content[1:]
 
-
     # into dataframe
-    df = pd.DataFrame(columns=['Header', 'content'])
+    df = pd.DataFrame(columns=['Header', 'Content'])
     for i, j in zip(header, content):
         df = df.append({'Header': i, 'content': j}, ignore_index=True)
-    df['content'].replace('', np.nan, inplace=True)
-    df.dropna(subset=['content'], inplace=True)
+    df['Content'].replace('', np.nan, inplace=True)
+    df.dropna(subset=['Content'], inplace=True)
     print('Extracting headers and content.')
     return df
 
-def find_sim(wordlist, wd):  # returns the max probability between a word and subgroup
+
+def find_sim(wordlist, wd):
+    """
+    Function that returns the max probability between a word and subgroup
+    Parameters
+    ----------
+    wordlist
+    wd
+
+    Returns
+    -------
+
+    """
     simvalue = []
     for sense in wordlist:
         if (wd.path_similarity(sense) != None):
@@ -106,7 +124,7 @@ def find_sim(wordlist, wd):  # returns the max probability between a word and su
         return 0
 
 
-def match_group(word_syn, group, threshold): # match a word with a subgroup
+def match_group(word_syn, group, threshold):  # match a word with a subgroup
     currmax = 0
     maxgroup = ""
     simvalues = dict()
@@ -121,29 +139,31 @@ def match_group(word_syn, group, threshold): # match a word with a subgroup
                     currmax = path_sim
     return maxgroup
 
-def label_header(header): # label the header with a subgroup
+
+def label_header(header):  # label the header with a subgroup
     sentence = header.lstrip().split(" ")
     label = []
     for s in sentence:
         synn = Word(s).synsets
-        if(len(synn)>0):
-            bestgroup = match_group(synn,group,0.8)
-            if(bestgroup !=""):
+        if (len(synn) > 0):
+            bestgroup = match_group(synn, group, 0.8)
+            if (bestgroup != ""):
                 label.append(bestgroup)
     return label
 
-def cleanhtml(text):
-  cleanr = re.compile('<.*?>')
-  cleantext = re.sub(cleanr, '', text)
-  return cleantext
 
-def extract_categories_using_headers(text): # main function
+def cleanhtml(text):
+    cleanr = re.compile('<.*?>')
+    cleantext = re.sub(cleanr, '', text)
+    return cleantext
+
+
+def extract_categories_using_headers(text):  # main function
     text = cleanhtml(text)
     data = extract_header_content(text)
     print('Labeling headers.')
-    print(data)
     if data.empty:
-        return {}, [] 
+        return {}, []
     data['Group'] = data['Header'].apply(lambda row: label_header(row))
     if len(data['Group'].iloc[0]) == 0:
         data['Group'].iloc[0] = ['unknown']
@@ -154,7 +174,8 @@ def extract_categories_using_headers(text): # main function
         data['Group'].iloc[0] = np.NaN
 
     # to json
-    group = data.loc[(data['Group'] != 'None') & pd.notna(data['Group']), ['Content', 'Group']]
+    group = data.loc[(data['Group'] != 'None') & pd.notna(data['Group'])]
+    group = group.reindex(columns=['Content', 'Group'])
     group['confidence'] = [[1]] * len(group)
     group.rename(columns={'Content': 'excerpt'}, inplace=True)
     group['technique'] = 'wordnet'
