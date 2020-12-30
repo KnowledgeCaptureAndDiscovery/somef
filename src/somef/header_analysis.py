@@ -152,14 +152,14 @@ def label_header(header):  # label the header with a subgroup
     return label
 
 
-def cleanhtml(text):
+def clean_html(text):
     cleanr = re.compile('<.*?>')
     cleantext = re.sub(cleanr, '', text)
     return cleantext
 
 
 def extract_categories_using_headers(text):  # main function
-    text = cleanhtml(text)
+    text = clean_html(text)
     data = extract_header_content(text)
     print('Labeling headers.')
     if data.empty:
@@ -179,7 +179,7 @@ def extract_categories_using_headers(text):  # main function
     group = group.reindex(columns=['Content', 'Group'])
     group['confidence'] = [[1]] * len(group)
     group.rename(columns={'Content': 'excerpt'}, inplace=True)
-    group['technique'] = 'wordnet'
+    group['technique'] = 'Header extraction'
     group_json = group.groupby('Group').apply(lambda x: x.to_dict('r')).to_dict()
     for key in group_json.keys():
         for ind in range(len(group_json[key])):
