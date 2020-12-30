@@ -46,3 +46,30 @@ def test_extract_binder_links():
     c = extract_binder_links(test_text)
     print(c)
     assert len(c) == 2
+
+
+def test_extract_title_underline():
+    test_text = """
+Taguette
+========
+Some text goes here
+
+Other header
+------------
+    """
+    c = extract_title(test_text)
+    assert "Taguette" == c
+
+
+def test_extract_title_hash():
+    test_text = """
+# T2WML: A Cell-Based Language To Map Tables Into Wikidata Records
+
+[![Coverage Status](https://coveralls.io/repos/github/usc-isi-i2/t2wml/badge.svg?branch=master&service=github)](https://coveralls.io/github/usc-isi-i2/t2wml)
+
+* [Running T2WML for Development](#development)
+## Wrong header
+    """
+    c = extract_title(test_text)
+    print(c)
+    assert "T2WML: A Cell-Based Language To Map Tables Into Wikidata Records" == c

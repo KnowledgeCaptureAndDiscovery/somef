@@ -127,10 +127,19 @@ class GithubUrlError(Exception):
     pass
 
 
-## Function uses the repository_url provided to load required information from github.
-## Information kept from the repository is written in keep_keys.
-## Returns the readme text and required metadata
 def load_repository_metadata(repository_url, header):
+    """
+    Function uses the repository_url provided to load required information from github.
+    Information kept from the repository is written in keep_keys.
+    Parameters
+    ----------
+    repository_url
+    header
+
+    Returns
+    -------
+    Returns the readme text and required metadata
+    """
     print(f"Loading Repository {repository_url} Information....")
     ## load general response of the repository
     if repository_url[-1] == '/':
@@ -246,7 +255,7 @@ def load_repository_metadata(repository_url, header):
 
     del filtered_resp['languages_url']
 
-    ## get default README
+    # get default README
     readme_info, date = rate_limit_get(repo_api_base_url + "/readme",
                                        headers=topics_headers,
                                        params=ref_param)
@@ -421,7 +430,30 @@ def extract_binder_links(readme_text) -> object:
     return binder_links
 
 
-def merge(header_predictions, predictions, citations, dois, binder_links):
+def extract_title(unfiltered_text):
+    """
+    Function to extract a title based on the first header in the readme file
+    Parameters
+    ----------
+    unfiltered_text
+
+    Returns
+    -------
+    Full title of the repo (if found)
+    """
+    underline_header = re.findall('.+[\n]={3,}[\n]', unfiltered_text)
+    # header declared with ====
+    if len(underline_header) != 0:
+        title = re.split('.+[=]+[\n]+', unfiltered_text)[0].strip()
+    else:
+        # The first occurrence is assumed to be the title.
+        title = re.findall(r'#.+', unfiltered_text)[0]
+        # Remove initial #
+        title = title[1:].strip()
+    return title
+
+
+def merge(header_predictions, predictions, citations, dois, binder_links, long_title):
     """
     Function that takes the predictions using header information, classifier and bibtex/doi parser
     Parameters
@@ -436,6 +468,9 @@ def merge(header_predictions, predictions, citations, dois, binder_links):
     Combined predictions and results of the extraction process
     """
     print("Merge prediction using header information, classifier and bibtex and doi parsers")
+    if long_title:
+        predictions['long_title'] = {'excerpt': long_title, 'confidence': [1.0],
+                                           'technique': 'Regular expression'}
     for i in range(len(citations)):
         if 'citation' not in predictions.keys():
             predictions['citation'] = []
@@ -493,6 +528,7 @@ def save_json(git_data, repo_data, outfile):
     save_json_output(repo_data, outfile)
 
 
+
 def cli_get_data(threshold, repo_url=None, doc_src=None):
     credentials_file = Path(
         os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
@@ -529,7 +565,8 @@ def cli_get_data(threshold, repo_url=None, doc_src=None):
     citations = extract_bibtex(text)
     dois = extract_dois(unfiltered_text)
     binder_links = extract_binder_links(unfiltered_text)
-    predictions = merge(header_predictions, predictions, citations, dois, binder_links)
+    title = extract_title(unfiltered_text)
+    predictions = merge(header_predictions, predictions, citations, dois, binder_links, title)
     return format_output(github_data, predictions)
 
 
