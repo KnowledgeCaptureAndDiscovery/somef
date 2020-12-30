@@ -109,6 +109,8 @@ The following command extracts all metadata available from [https://github.com/d
 somef describe -r https://github.com/dgarijo/Widoco/ -o test.json -t 0.8
 ```
 
+Try SOMEF in Binder with our sample notebook: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)
+
 ### Add/Remove a Category:
 
 If the user wants to run the classifier for an additional category or wants to remove an existing category, corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in cli.py
