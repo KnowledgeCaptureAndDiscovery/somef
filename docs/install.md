@@ -1,9 +1,7 @@
 ## Requirements
 
-- Python 3.6
+- Python 3.6 or above (tested on Python 3.8.6)
 
-!!! warning
-    SOMEF has not been tested on Python 3.8.
 
 ## Install from GitHub
 To run SOMEF, please follow the next steps:
@@ -64,3 +62,9 @@ And you will be asked to provide the following:
 
 - A GitHub authentication token [**optional, leave blank if not used**], which SOMEF uses to retrieve metadata from GitHub. If you don't include an authentication token, you can still use SOMEF. However, you may be limited to a series of requests per hour. For more information, see [https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) 
 - The path to the trained classifiers (pickle files). If you have your own classifiers, you can provide them here. Otherwise, you can leave it blank
+
+If you want to configure SOMEF with the default parameters, just type:
+
+```bash
+somef configure -a
+```

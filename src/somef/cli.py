@@ -118,16 +118,28 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
         else:
             rate_limited = False
 
-    return response,date
+    return response, date
+
 
 # error when github url is wrong
 class GithubUrlError(Exception):
+    # print("The URL provided seems to be incorrect")
     pass
 
-## Function uses the repository_url provided to load required information from github.
-## Information kept from the repository is written in keep_keys.
-## Returns the readme text and required metadata
+
 def load_repository_metadata(repository_url, header):
+    """
+    Function uses the repository_url provided to load required information from github.
+    Information kept from the repository is written in keep_keys.
+    Parameters
+    ----------
+    repository_url
+    header
+
+    Returns
+    -------
+    Returns the readme text and required metadata
+    """
     print(f"Loading Repository {repository_url} Information....")
     ## load general response of the repository
     if repository_url[-1] == '/':
@@ -139,7 +151,7 @@ def load_repository_metadata(repository_url, header):
 
     path_components = url.path.split('/')
 
-    if len(path_components) <3:
+    if len(path_components) < 3:
         print("Github link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}.")
         return " ", {}
 
@@ -153,10 +165,10 @@ def load_repository_metadata(repository_url, header):
 
     if len(path_components) >= 5:
         if not path_components[3] == "tree":
-            print("Github link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}/tree/{ref}.")
+            print(
+                "Github link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}/tree/{ref}.")
 
             return " ", {}
-
 
         # we must join all after 4, as sometimes tags have "/" in them.
         repo_ref = "/".join(path_components[4:])
@@ -164,7 +176,7 @@ def load_repository_metadata(repository_url, header):
 
     print(repo_api_base_url)
 
-    general_resp,date = rate_limit_get(repo_api_base_url, headers=header)
+    general_resp, date = rate_limit_get(repo_api_base_url, headers=header)
 
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
@@ -212,31 +224,30 @@ def load_repository_metadata(repository_url, header):
     # get keywords / topics
     topics_headers = header
     topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
-    topics_resp,date = rate_limit_get(repo_api_base_url + "/topics",
-                                 headers=topics_headers)
+    topics_resp, date = rate_limit_get(repo_api_base_url + "/topics",
+                                       headers=topics_headers)
 
     if 'message' in topics_resp.keys():
         print("Topics Error: " + topics_resp['message'])
     elif topics_resp and 'names' in topics_resp.keys():
         filtered_resp['topics'] = topics_resp['names']
 
-    #get social features: stargazers_count
+    # get social features: stargazers_count
     stargazers_info = {}
     if 'stargazers_count' in filtered_resp:
-            stargazers_info['count'] = filtered_resp['stargazers_count']
-            stargazers_info['date'] = date        
+        stargazers_info['count'] = filtered_resp['stargazers_count']
+        stargazers_info['date'] = date
     filtered_resp['stargazers_count'] = stargazers_info
 
-    #get social features: forks_count
+    # get social features: forks_count
     forks_info = {}
     if 'forks_count' in filtered_resp:
-            forks_info['count'] = filtered_resp['forks_count']
-            forks_info['date'] = date        
+        forks_info['count'] = filtered_resp['forks_count']
+        forks_info['date'] = date
     filtered_resp['forks_count'] = forks_info
 
-
     ## get languages
-    languages,date = rate_limit_get(filtered_resp['languages_url'])
+    languages, date = rate_limit_get(filtered_resp['languages_url'])
     if "message" in languages:
         print("Languages Error: " + languages["message"])
     else:
@@ -244,10 +255,10 @@ def load_repository_metadata(repository_url, header):
 
     del filtered_resp['languages_url']
 
-    ## get default README
-    readme_info,date = rate_limit_get(repo_api_base_url + "/readme",
-                               headers=topics_headers,
-                               params=ref_param)
+    # get default README
+    readme_info, date = rate_limit_get(repo_api_base_url + "/readme",
+                                       headers=topics_headers,
+                                       params=ref_param)
     if 'message' in readme_info.keys():
         print("README Error: " + readme_info['message'])
         text = ""
@@ -257,8 +268,8 @@ def load_repository_metadata(repository_url, header):
         filtered_resp['readme_url'] = readme_info['html_url']
 
     ## get releases
-    releases_list,date = rate_limit_get(repo_api_base_url + "/releases",
-                                 headers=header)
+    releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
+                                         headers=header)
 
     if isinstance(releases_list, dict) and 'message' in releases_list.keys():
         print("Releases Error: " + releases_list['message'])
@@ -348,9 +359,17 @@ def classify(scores, threshold):
     return predictions
 
 
-## Function adds category information extracted using header information
-## Returns json with the information added.
 def extract_categories_using_header(repo_data):
+    """
+    Function that adds category information extracted using header information
+    Parameters
+    ----------
+    repo_data data to use the header analysis
+
+    Returns
+    -------
+    Returns json with the information added.
+    """
     print("Extracting information using headers")
     # this is a hack because if repo_data is "" this errors out
     if len(repo_data) == 0:
@@ -370,6 +389,7 @@ def extract_bibtex(readme_text) -> object:
     citations = re.findall(regex, readme_text)
     print("Extraction of bibtex citation from readme completed. \n")
     return citations
+
 
 def extract_dois(readme_text) -> object:
     """
@@ -391,7 +411,49 @@ def extract_dois(readme_text) -> object:
     return dois
 
 
-def merge(header_predictions, predictions, citations, dois):
+def extract_binder_links(readme_text) -> object:
+    """
+    Function that does a regex to extract binder links used as reference in the readme.
+    There could be multiple binder links for one reprository
+    Parameters
+    ----------
+    readme_text
+
+    Returns
+    -------
+    Links with binder notebooks/scripts that are ready to be executed.
+    """
+    regex = r'\[\!\[Binder\]([^\]]+)\]\(([^)]+)\)'
+    binder_links = re.findall(regex, readme_text)
+    print("Extraction of Binder links from readme completed.\n")
+    # print(dois)
+    return binder_links
+
+
+def extract_title(unfiltered_text):
+    """
+    Function to extract a title based on the first header in the readme file
+    Parameters
+    ----------
+    unfiltered_text
+
+    Returns
+    -------
+    Full title of the repo (if found)
+    """
+    underline_header = re.findall('.+[\n]={3,}[\n]', unfiltered_text)
+    # header declared with ====
+    if len(underline_header) != 0:
+        title = re.split('.+[=]+[\n]+', unfiltered_text)[0].strip()
+    else:
+        # The first occurrence is assumed to be the title.
+        title = re.findall(r'#.+', unfiltered_text)[0]
+        # Remove initial #
+        title = title[1:].strip()
+    return title
+
+
+def merge(header_predictions, predictions, citations, dois, binder_links, long_title):
     """
     Function that takes the predictions using header information, classifier and bibtex/doi parser
     Parameters
@@ -406,15 +468,26 @@ def merge(header_predictions, predictions, citations, dois):
     Combined predictions and results of the extraction process
     """
     print("Merge prediction using header information, classifier and bibtex and doi parsers")
+    if long_title:
+        predictions['long_title'] = {'excerpt': long_title, 'confidence': [1.0],
+                                           'technique': 'Regular expression'}
     for i in range(len(citations)):
         if 'citation' not in predictions.keys():
             predictions['citation'] = []
-        predictions['citation'].insert(0, {'excerpt': citations[i], 'confidence': [1.0], 'technique': 'Regular expression'})
+        predictions['citation'].insert(0, {'excerpt': citations[i], 'confidence': [1.0],
+                                           'technique': 'Regular expression'})
     if len(dois) != 0:
         predictions['identifier'] = []
         for identifier in dois:
-            #The identifier is in position 1. Position 0 is the badge id, which we don't want to export
-            predictions['identifier'].insert(0, {'excerpt': identifier[1], 'confidence': [1.0], 'technique': 'Regular expression'})
+            # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
+            predictions['identifier'].insert(0, {'excerpt': identifier[1], 'confidence': [1.0],
+                                                 'technique': 'Regular expression'})
+    if len(binder_links) != 0:
+        predictions['executable_example'] = []
+        for notebook in binder_links:
+            # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
+            predictions['executable_example'].insert(0, {'excerpt': notebook[1], 'confidence': [1.0],
+                                                 'technique': 'Regular expression'})
     for headers in header_predictions:
         if headers not in predictions.keys():
             predictions[headers] = header_predictions[headers]
@@ -455,6 +528,7 @@ def save_json(git_data, repo_data, outfile):
     save_json_output(repo_data, outfile)
 
 
+
 def cli_get_data(threshold, repo_url=None, doc_src=None):
     credentials_file = Path(
         os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
@@ -490,7 +564,9 @@ def cli_get_data(threshold, repo_url=None, doc_src=None):
     predictions = classify(score_dict, threshold)
     citations = extract_bibtex(text)
     dois = extract_dois(unfiltered_text)
-    predictions = merge(header_predictions, predictions, citations, dois)
+    binder_links = extract_binder_links(unfiltered_text)
+    title = extract_title(unfiltered_text)
+    predictions = merge(header_predictions, predictions, citations, dois, binder_links, title)
     return format_output(github_data, predictions)
 
 

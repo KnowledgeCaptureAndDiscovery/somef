@@ -80,7 +80,7 @@ def extract_header_content(text):  # extract the header and content of text to d
 
     # header declared with ##
     else:
-        a = re.findall('\`\`\`[^\`]+\`\`\`', text, flags=re.DOTALL)
+        a = re.findall(r'\`\`\`[^\`]+\`\`\`', text, flags=re.DOTALL)
         a_sub = [re.sub('#', '#notes:', i) for i in a]
         for i, j in zip(a, a_sub):
             text = text.replace(i, j)
