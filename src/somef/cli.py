@@ -305,7 +305,7 @@ def remove_unimportant_excerpts(excerpt_element):
     excerpt_info = excerpt_element['excerpt']
     excerpt_confidence = excerpt_element['confidence']
     excerpt_lines = excerpt_info.split('\n')
-    final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'classifier'}
+    final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification'}
     for i in range(len(excerpt_lines) - 1):
         words = excerpt_lines[i].split(' ')
         if len(words) == 2:
@@ -366,23 +366,55 @@ def extract_bibtex(readme_text) -> object:
     Function takes readme text as input (cleaned from markdown notation) and runs a regex expression on top of it.
     Returns list of bibtex citations
     """
-    print("Extracting bibtex citation from readme")
-    regex = r'\@[a-zA-z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title][.\n\S\s]+?\n\}'
-    excerpts = readme_text
-    citations = re.findall(regex, excerpts)
-    print("Extracting bibtex citation from readme completed. \n")
+    regex = r'\@[a-zA-Z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title][.\n\S\s]+?\n\}'
+    citations = re.findall(regex, readme_text)
+    print("Extraction of bibtex citation from readme completed. \n")
     return citations
 
+def extract_dois(readme_text) -> object:
+    """
+    Function that takes the text of a readme file and searches if there are any DOIs badges.
+    Parameters
+    ----------
+    readme_text Text of the readme
 
-## Function takes the predictions using header information, classifier and bibtek parser
-## Returns a combined predictions
-def merge(header_predictions, predictions, citations):
-    print("Merge prediction using header information, classifier and bibtek parser")
+    Returns
+    -------
+    DOIs/identifiers associated with this software component
+    """
+    # regex = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
+    # regex = r'\[\!\[DOI\]\(.+\)\]\(([^)]+)\)'
+    regex = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
+    dois = re.findall(regex, readme_text)
+    print("Extraction of DOIS from readme completed.\n")
+    # print(dois)
+    return dois
+
+
+def merge(header_predictions, predictions, citations, dois):
+    """
+    Function that takes the predictions using header information, classifier and bibtex/doi parser
+    Parameters
+    ----------
+    header_predictions extraction of common headers and their contents
+    predictions predictions from classifiers (description, installation instructions, invocation, citation)
+    citations (bibtex citations)
+    dois identifiers found in readme (Zenodo DOIs)
+
+    Returns
+    -------
+    Combined predictions and results of the extraction process
+    """
+    print("Merge prediction using header information, classifier and bibtex and doi parsers")
     for i in range(len(citations)):
         if 'citation' not in predictions.keys():
             predictions['citation'] = []
-        predictions['citation'].insert(0, {'excerpt': citations[i], 'confidence': [1.0], 'technique': 'classifier'})
-
+        predictions['citation'].insert(0, {'excerpt': citations[i], 'confidence': [1.0], 'technique': 'Regular expression'})
+    if len(dois) != 0:
+        predictions['identifier'] = []
+        for identifier in dois:
+            #The identifier is in position 1. Position 0 is the badge id, which we don't want to export
+            predictions['identifier'].insert(0, {'excerpt': identifier[1], 'confidence': [1.0], 'technique': 'Regular expression'})
     for headers in header_predictions:
         if headers not in predictions.keys():
             predictions[headers] = header_predictions[headers]
@@ -401,9 +433,9 @@ def format_output(git_data, repo_data):
         if i == 'description':
             if 'description' not in repo_data.keys():
                 repo_data['description'] = []
-            repo_data['description'].append({'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'metadata'})
+            repo_data['description'].append({'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'})
         else:
-            repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'metadata'}
+            repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'}
 
     return repo_data
 
@@ -457,7 +489,8 @@ def cli_get_data(threshold, repo_url=None, doc_src=None):
     score_dict = run_classifiers(excerpts, file_paths)
     predictions = classify(score_dict, threshold)
     citations = extract_bibtex(text)
-    predictions = merge(header_predictions, predictions, citations)
+    dois = extract_dois(unfiltered_text)
+    predictions = merge(header_predictions, predictions, citations, dois)
     return format_output(github_data, predictions)
 
 

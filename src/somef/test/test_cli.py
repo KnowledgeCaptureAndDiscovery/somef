@@ -1,4 +1,5 @@
-from somef.cli import extract_bibtex
+from somef.cli import *
+
 
 def test_extract_bibtex():
     test_txt = """
@@ -22,3 +23,15 @@ If you want to cite the latest version of the software, you can do so by using: 
     c = extract_bibtex(test_txt)
     # Only one element is returned.
     assert "@inproceedings" in c[0]
+
+
+def test_extract_dois():
+    test_text = """
+    Title goes here (with another undesired link)
+    [![DOI](https://zenodo.org/badge/11427075.svg)](https://zenodo.org/badge/latestdoi/11427075)[![](https://jitpack.io/v/dgarijo/Widoco.svg)](https://jitpack.io/#dgarijo/Widoco)
+    Some text. Another DOI below:
+    [![DOI](https://zenodo.org/badge/11427077.svg)](https://zenodo.org/badge/latestdoi/11427077)
+    """
+    c = extract_dois(test_text)
+    print(c)
+    assert len(c) == 2
