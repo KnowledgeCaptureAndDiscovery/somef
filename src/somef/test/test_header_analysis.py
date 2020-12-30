@@ -21,6 +21,20 @@ Content sixth header
     print(result)
     assert len(result.index) == 6
 
+def test_extract_header_content_hash_complex():
+    text = """
+First level header
+==================
+Content first header
+## Second level header ##
+Content second header
+### Third level header ###
+Content third header
+"""
+    result = extract_header_content(text)
+    print(result)
+    #Should return 2: we select the maximum amount of headers we can match
+    assert len(result.index) == 2
 
 # Example: Taguette
 def test_extract_header_content_underline():

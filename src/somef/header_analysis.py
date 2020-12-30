@@ -67,11 +67,14 @@ group.update({"support": support})
 
 
 def extract_header_content(text):  # extract the header and content of text to dataframe
+    print('Extracting headers and content.')
     # check the format of header
     underline_header = re.findall('.+[\n]={3,}[\n]', text)
+    hash_header = re.findall('#{1,5} .*', text)
 
-    # header declared with ==== and ---
-    if len(underline_header) != 0:
+    # header declared with ==== and --- Since creating a single regex for both is complicated,
+    # We select the maximum number of headers we can match
+    if len(underline_header) != 0 and len(underline_header) > len(hash_header):
         header = re.findall('.+[\n][=-]+[\n]+', text)
         header = [re.sub('[\n][=-]+[\n]', '', i) for i in header]
         content = re.split('.+[\n][=-]+[\n]+', text)
@@ -98,7 +101,6 @@ def extract_header_content(text):  # extract the header and content of text to d
         df = df.append({'Header': i, 'Content': j}, ignore_index=True)
     df['Content'].replace('', np.nan, inplace=True)
     df.dropna(subset=['Content'], inplace=True)
-    print('Extracting headers and content.')
     return df
 
 
@@ -164,7 +166,7 @@ def extract_categories_using_headers(text):  # main function
     print('Labeling headers.')
     if data.empty:
         print("File to analyze has no headers")
-        return {}, []
+        return {}, [text]
     data['Group'] = data['Header'].apply(lambda row: label_header(row))
     if len(data['Group'].iloc[0]) == 0:
         data['Group'].iloc[0] = ['unknown']

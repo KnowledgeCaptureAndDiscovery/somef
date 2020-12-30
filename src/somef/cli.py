@@ -374,10 +374,13 @@ def extract_categories_using_header(repo_data):
     # this is a hack because if repo_data is "" this errors out
     if len(repo_data) == 0:
         return {}, []
-
-    header_info, string_list = header_analysis.extract_categories_using_headers(repo_data)
-    print("Information extracted. \n")
-    return header_info, string_list
+    try:
+        header_info, string_list = header_analysis.extract_categories_using_headers(repo_data)
+        print("Information extracted. \n")
+        return header_info, string_list
+    except:
+        print("Error while extracting headers: ", sys.exc_info()[0])
+        return {}, [repo_data]
 
 
 def extract_bibtex(readme_text) -> object:
