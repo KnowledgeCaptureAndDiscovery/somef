@@ -35,8 +35,6 @@ group.update({"contact": contact})
 
 description = [Word("description").synsets[0], Word("description").synsets[1], Word("introduction").synsets[3],
                Word("introduction").synsets[6], Word("basics").synsets[0], Word("initiation").synsets[1],
-               Word("start").synsets[0], Word("start").synsets[4], Word("started").synsets[0],
-               Word("started").synsets[1], Word("started").synsets[7], Word("started").synsets[8],
                Word("overview").synsets[0], Word("summary").synsets[0], Word("summary").synsets[2]]
 group.update({"description": description})
 
@@ -51,7 +49,9 @@ group.update({"license": license})
 
 usage = [Word("usage").synsets[0], Word("example").synsets[0], Word("example").synsets[5], Word("implement").synsets[1],
          Word("implementation").synsets[1], Word("demo").synsets[1], Word("tutorial").synsets[0],
-         Word("tutorial").synsets[1]]
+         Word("tutorial").synsets[1],
+         Word("start").synsets[0], Word("start").synsets[4], Word("started").synsets[0],
+         Word("started").synsets[1], Word("started").synsets[7], Word("started").synsets[8]]
 group.update({"usage": usage})
 
 update = [Word("updating").synsets[0], Word("updating").synsets[3]]
