@@ -46,12 +46,12 @@ version = {}
 with open("src/somef/__init__.py") as fp:
     exec(fp.read(), version)
 
-
+# Original setup created by Vedant Diwanji
 setup(
     name="somef",
     version=version["__version__"],
-    author="Vedant Diwanji",
-    author_email="vedant.diwanji@gmail.com",
+    author="Daniel Garijo",
+    author_email="dgarijo@isi.edu",
     description=__doc__,
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
@@ -70,7 +70,7 @@ setup(
     package_dir={"": "src"},
     packages=find_packages(where="src", exclude=["somef.tests*"]),
     package_data={"somef": find_package_data("src/somef")},
-    exclude_package_data={"somef": ["tests/*"]},
+    exclude_package_data={"somef": ["test/*"]},
     zip_safe=False,
     install_requires=install_requires,
     python_requires=">=3.6.0",
