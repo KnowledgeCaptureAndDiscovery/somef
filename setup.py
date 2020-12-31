@@ -6,7 +6,6 @@ from setuptools import find_packages, setup
 
 install_requires = [
     "Click",
-    "Cython",
     "click-option-group",
     "requests",
     "markdown",
