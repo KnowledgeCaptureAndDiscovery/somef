@@ -16,7 +16,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Citation**: Preferred citation (usually in `.bib` form) as the authors have stated in their readme file.
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component
-- **Usage notes**: Assumptions and considerations recorded by the authors when executing a software component.
+- **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it.
 - **Download URL**: URL where to download the target software (typically the installer, package or a tarball to a stable version)
 - **Requirements**: Pre-requisites and dependencies needed to execute a software component.
 - **Contact**: Contact person responsible for maintaining a software component
@@ -41,7 +41,7 @@ We use the [Github's API](https://developer.github.com/v3/) to retrieve some of 
 [Scikit Learn](https://scikit-learn.org/stable/about.html) is a powerful machine learning framework that provides a variety of methods for supervised and unsupervised learning. We use some of these classifiers to train sentence-based models to detect software description, citation, installation instructions and invocation commands.
 
 ### Wordnet
-[Wordnet](https://wordnet.princeton.edu/) is a public lexical database which we use to find synonims of common headers used when describe software. 
+[Wordnet](https://wordnet.princeton.edu/) is a public lexical database which we use to find synonyms of common headers used when describe software. 
 
 ### JSON
 The JavaScript Object Notation (JSON) is a syntax for storing and exchanging data commonly used by Web developers. We use JSON to serialize  our results.

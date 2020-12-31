@@ -10,8 +10,7 @@ See full documentation at [https://somef.readthedocs.io/en/latest/](https://some
 
 - Python 3.6
 
-!!! warning
-    SOMEF has not been tested on Python 3.8.
+SOMEF has also been tested on Python 3.7 and 3.8.
 
 ## Install from GitHub
 To run SOMEF, please follow the next steps:
@@ -22,14 +21,14 @@ Clone this GitHub repository
 git clone https://github.com/KnowledgeCaptureAndDiscovery/somef.git
 ```
 
-Install somef (note that you should be in the folder that you just cloned)
+Install somef (you should be in the folder that you just cloned). Note that for Python 3.7 and 3.8 the module Cython should be installed in advanced (through the command: `pip install Cython`). 
 
 ```
 cd somef
 pip install -e .
 ```
 
-Run SOMEF
+Test SOMEF installation
 
 ```bash
 somef --help
@@ -49,19 +48,31 @@ Commands:
   version    Show somef version.
 ```
 
-## Configure SOMEF
+## Installing Through Docker
+We provide a Docker image with SOMEF already installed. To run through Docker, you may build the Dockerfile provided in the repository by running:
 
-Create a config.json file using the sample file in the repository and store it at `~/.somef/config.json`.
+```bash
+docker build -t somef .
+```
+Or just use the Docker image already built in [DockerHub](https://hub.docker.com/r/kcapd/somef):
 
-Path to the corresponding Model files are provided as shown in the sample config file.
+```bash
+docker pull kcapd/somef
+```
 
-Optional Authentication:
+Then, to run your image just type:
 
-Add the following line to the config.json to add Authentication for requests to github repository:
+```bash
+docker run -it kcapd/somef /bin/bash
+```
 
-`"Authorization": "token PersonalAccessToken"`
+And you will be ready to use SOMEF (see section below). If you want to have access to the results we recommend [mounting a volume](https://docs.docker.com/storage/volumes/). For example, the following command will mount the current directory as the `out` folder in the Docker image:
 
-Information on generating Personal Access Token - https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
+```bash 
+docker run -it --rm -v $PWD/:/out kcapd/somef /bin/bash
+```
+If you move any files produced by somef into `/out`, then you will be able to see them in your current directory.
+
 
 ## Usage 
 
@@ -76,6 +87,12 @@ And you will be asked to provide the following:
 
 - A GitHub authentication token [**optional, leave blank if not used**], which SOMEF uses to retrieve metadata from GitHub. If you don't include an authentication token, you can still use SOMEF. However, you may be limited to a series of requests per hour. For more information, see [https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) 
 - The path to the trained classifiers (pickle files). If you have your own classifiers, you can provide them here. Otherwise, you can leave it blank
+
+If you want somef to be automatically configured (without GitHUb authentication key and using the default classifiers) just type:
+
+```bash
+somef configure -a
+```
 
 ### Run SOMEF
 
@@ -117,9 +134,15 @@ The following command extracts all metadata available from [https://github.com/d
 somef describe -r https://github.com/dgarijo/Widoco/ -o test.json -t 0.8
 ```
 
+Try SOMEF in Binder with our sample notebook: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)
+
 ### Add/Remove a Category:
 
 If the user wants to run the classifier for an additional category or wants to remove an existing category, corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in cli.py
+
+## Contribute:
+
+If you want to contribute with a pull request, please do so by submitting it to the `dev` branch.
 
 ## Cite SOMEF:
 ```
@@ -132,3 +155,10 @@ url={http://dgarijo.com/papers/SoMEF.pdf},
 pages={3032-3037}
 } 
 ```
+
+## Next features:
+We are improving SOMEF to incorporate the following features:
+- Automated detection of other documentations sources, besides the readme.md file.
+- Automated detection and annotation of Docker files.
+- Automated detection and annotation of notebooks and their metadata.
+- Automated detection of examples associated with a software component.
