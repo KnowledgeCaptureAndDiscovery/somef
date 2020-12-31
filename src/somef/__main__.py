@@ -15,7 +15,7 @@ from . import configuration
 
 @click.group(context_settings={'help_option_names':['-h','--help']})
 def trycli():
-    print("SOftware MEtadata Extraction Framework (SOMEF) Command Line Interface")
+    print("SOftware Metadata Extraction Framework (SOMEF) Command Line Interface")
 
 @trycli.command(help="Configure GitHub credentials and classifiers file path")
 @click.option('-a', '--auto', help="Automatically configure SOMEF", is_flag=True, default=False)

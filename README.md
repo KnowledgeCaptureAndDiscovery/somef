@@ -10,7 +10,7 @@ See full documentation at [https://somef.readthedocs.io/en/latest/](https://some
 
 - Python 3.6
 
-Note: SOMEF has not been tested on Python 3.8.
+SOMEF has also been tested on Python 3.7 and 3.8.
 
 ## Install from GitHub
 To run SOMEF, please follow the next steps:
@@ -21,7 +21,7 @@ Clone this GitHub repository
 git clone https://github.com/KnowledgeCaptureAndDiscovery/somef.git
 ```
 
-Install somef (note that you should be in the folder that you just cloned)
+Install somef (you should be in the folder that you just cloned). Note that for Python 3.7 and 3.8 the module Cython should be installed in advanced (through the command: `pip install Cython`). 
 
 ```
 cd somef
