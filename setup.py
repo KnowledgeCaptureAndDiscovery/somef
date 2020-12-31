@@ -6,6 +6,7 @@ from setuptools import find_packages, setup
 
 install_requires = [
     "Click",
+    "Cython",
     "click-option-group",
     "requests",
     "markdown",
@@ -13,9 +14,9 @@ install_requires = [
     "bs4",
     "matplotlib",
     "nltk",
+    "numpy",
     "scikit-learn==0.21.2",
     "pandas",
-    "numpy",
     "textblob",
     "rdflib",
     "rdflib-jsonld"
