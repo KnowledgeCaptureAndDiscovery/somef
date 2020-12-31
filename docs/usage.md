@@ -62,4 +62,6 @@ To obtain the same information as a JSON-LD file:
 somef describe -r https://github.com/dgarijo/Widoco/ -g test.jsonld -f json-ld -t 0.8
 ```
 
-We recommend having a high value for the `threshold` parameter, 0.8 or above.
+We recommend having a high value for the `threshold` parameter, 0.8 (default) or above.
+
+To see a live usage example, try our Binder Notebook: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)
