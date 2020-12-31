@@ -24,8 +24,8 @@ class CliGetData(unittest.TestCase):
 
 
         current_data = cli_get_data(thresh, repo_url=repo_url)
-        print(current_data)
-        print(widoco_reference)
+        # print(current_data)
+        # print(widoco_reference)
 
         self.assertTrue(almost_equal(current_data, widoco_reference, exclude_paths=self.exclude_paths))
 
