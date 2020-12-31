@@ -187,6 +187,9 @@ def load_repository_metadata(repository_url, header):
 
         raise GithubUrlError
 
+    if repo_ref is None:
+        repo_ref = general_resp['default_branch']
+
     ## get only the fields that we want
     def do_crosswalk(data, crosswalk_table):
         def get_path(obj, path):
@@ -216,9 +219,22 @@ def load_repository_metadata(repository_url, header):
 
     ## condense license information
     license_info = {}
-    for k in ('name', 'url'):
-        if 'license' in filtered_resp and k in filtered_resp['license']:
-            license_info[k] = filtered_resp['license'][k]
+    if 'license' in filtered_resp:
+        for k in ('name', 'url'):
+             if k in filtered_resp['license']:
+                license_info[k] = filtered_resp['license'][k]
+
+    ## If we didn't find it, look for the license
+    if 'url' not in license_info or license_info['url'] is None:
+
+        possible_license_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/LICENSE"
+        license_text_resp = requests.get(possible_license_url)
+
+        # todo: It's possible that this request will get rate limited. Figure out how to detect that.
+        if license_text_resp.status_code == 200:
+            # license_text = license_text_resp.text
+            license_info['url'] = possible_license_url
+
     filtered_resp['license'] = license_info
 
     # get keywords / topics
@@ -517,10 +533,13 @@ def format_output(git_data, repo_data):
 
 
 # saves the final json Object in the file
-def save_json_output(repo_data, outfile):
+def save_json_output(repo_data, outfile, pretty=False):
     print("Saving json data to", outfile)
     with open(outfile, 'w') as output:
-        json.dump(repo_data, output)
+        if pretty:
+            json.dump(repo_data, output, sort_keys=True, indent=2)
+        else:
+            json.dump(repo_data, output)
 
     ## Function takes metadata, readme text predictions, bibtex citations and path to the output file
 
@@ -587,6 +606,7 @@ def run_cli(*,
             output=None,
             graph_out=None,
             graph_format="turtle",
+            pretty=False
             ):
     multiple_repos = in_file is not None
     if multiple_repos:
@@ -606,7 +626,7 @@ def run_cli(*,
             repo_data = cli_get_data(threshold, doc_src=doc_src)
 
     if output is not None:
-        save_json_output(repo_data, output)
+        save_json_output(repo_data, output, pretty=pretty)
 
     if graph_out is not None:
         print("Generating Knowledge Graph")
