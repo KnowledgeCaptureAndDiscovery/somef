@@ -20,6 +20,7 @@ import pprint
 import pandas as pd
 import numpy as np
 import re
+from dateutil import parser as date_parser
 
 from somef.data_to_graph import DataGraph
 
@@ -549,6 +550,40 @@ def save_json(git_data, repo_data, outfile):
     repo_data = format_output(git_data, repo_data)
     save_json_output(repo_data, outfile)
 
+def save_codemeta_output(repo_data, outfile, pretty=False):
+
+    def data_path(path):
+        return DataGraph.resolve_path(repo_data, path)
+
+    latest_release = None
+    releases = data_path(["releases, excerpt"])
+
+    if releases is not None and len(releases) > 0:
+        latest_release = releases[0]
+        latest_pub_date = date_parser.parse(latest_release["datePublished"])
+        for index in range(1, len(releases)):
+            release = releases[index]
+            pub_date = date_parser.parse(release["datePublished"])
+
+            if pub_date > latest_pub_date:
+                latest_release = release
+                latest_pub_date = pub_date
+
+    def release_path(path):
+        return DataGraph.resolve_path(release, path)
+
+    codemeta_output = {
+        "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+        "@type": "SoftwareSourceCode",
+        "license": data_path(["license", "excerpt", "url"]),
+        "codeRepository": "git+" + data_path(["codeRepository", "excerpt"]) + ".git",
+        "dateCreated": data_path(["dateCreated", "excerpt"]),
+        "datePublished": release_path(["datePublished"]),
+        "dateModified": data_path(["dateModified", "excerpt"]),
+        "downloadUrl": data_path(["downloadUrl", "excerpt"]),
+        "issueTracker":
+    }
+
 
 
 def cli_get_data(threshold, repo_url=None, doc_src=None):
@@ -606,6 +641,7 @@ def run_cli(*,
             output=None,
             graph_out=None,
             graph_format="turtle",
+            codemeta_out=None,
             pretty=False
             ):
     multiple_repos = in_file is not None
@@ -640,3 +676,6 @@ def run_cli(*,
         print("Saving Knowledge Graph ttl data to", graph_out)
         with open(graph_out, "wb") as out_file:
             out_file.write(data_graph.g.serialize(format=graph_format))
+
+    if codemeta_out is not None:
+        save_codemeta_output(repo_data, output, pretty=pretty)
