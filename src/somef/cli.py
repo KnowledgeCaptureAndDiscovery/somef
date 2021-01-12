@@ -20,6 +20,7 @@ import pprint
 import pandas as pd
 import numpy as np
 import re
+from dateutil import parser as date_parser
 
 from somef.data_to_graph import DataGraph
 
@@ -549,6 +550,86 @@ def save_json(git_data, repo_data, outfile):
     repo_data = format_output(git_data, repo_data)
     save_json_output(repo_data, outfile)
 
+def save_codemeta_output(repo_data, outfile, pretty=False):
+
+    def data_path(path):
+        return DataGraph.resolve_path(repo_data, path)
+
+    def format_date(date_string):
+        date_object = date_parser.parse(date_string)
+        return date_object.strftime("%Y-%m-%d")
+
+
+    latest_release = None
+    releases = data_path(["releases", "excerpt"])
+
+    if releases is not None and len(releases) > 0:
+        latest_release = releases[0]
+        latest_pub_date = date_parser.parse(latest_release["datePublished"])
+        for index in range(1, len(releases)):
+            release = releases[index]
+            pub_date = date_parser.parse(release["datePublished"])
+
+            if pub_date > latest_pub_date:
+                latest_release = release
+                latest_pub_date = pub_date
+
+    def release_path(path):
+        return DataGraph.resolve_path(latest_release, path)
+
+    code_repository = data_path(["codeRepository", "excerpt"])
+
+    author_name = data_path(["owner", "excerpt"])
+
+    # do the descriptions
+
+    def average_confidence(x):
+        confs = x["confidence"]
+
+        if len(confs) > 0:
+            return sum(confs) / len(confs)
+        else:
+            return 0
+
+
+    descriptions = data_path(["description"])
+    descriptions.sort(key=lambda x: (average_confidence(x) + (1 if x["technique"] == "GitHub API" else 0)), reverse=True)
+    descriptions_text = [x["excerpt"] for x in descriptions]
+
+    codemeta_output = {
+        "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+        "@type": "SoftwareSourceCode",
+        "license": data_path(["license", "excerpt", "url"]),
+        "codeRepository": "git+" + code_repository + ".git",
+        "dateCreated": format_date(data_path(["dateCreated", "excerpt"])),
+        "datePublished": format_date(release_path(["datePublished"])),
+        "dateModified": format_date(data_path(["dateModified", "excerpt"])),
+        "downloadUrl": data_path(["downloadUrl", "excerpt"]),
+        "issueTracker": code_repository + "/issues",
+        "name": data_path(["name", "excerpt"]),
+        "version": release_path(["tag_name"]),
+        "description": descriptions_text,
+        "releaseNotes": release_path(["body"]),
+        "keywords": data_path(["topics", "excerpt"]),
+        "programmingLanguage": data_path(["languages", "excerpt"]),
+        "softwareRequirements": data_path(["requirement", "excerpt"]),
+        "author": [
+            {
+                "@type": "Person",
+                "@id": "https://github.com/" + author_name
+            }
+        ]
+    }
+
+    pruned_output = {}
+
+    for key, value in codemeta_output.items():
+        if not (value is None or ((isinstance(value, list) or isinstance(value, tuple)) and len(value) == 0)):
+            pruned_output[key] = value
+
+    # now, prune out the variables that are None
+
+    save_json_output(pruned_output, outfile, pretty=pretty)
 
 
 def cli_get_data(threshold, repo_url=None, doc_src=None):
@@ -606,6 +687,7 @@ def run_cli(*,
             output=None,
             graph_out=None,
             graph_format="turtle",
+            codemeta_out=None,
             pretty=False
             ):
     multiple_repos = in_file is not None
@@ -640,3 +722,6 @@ def run_cli(*,
         print("Saving Knowledge Graph ttl data to", graph_out)
         with open(graph_out, "wb") as out_file:
             out_file.write(data_graph.g.serialize(format=graph_format))
+
+    if codemeta_out is not None:
+        save_codemeta_output(repo_data, codemeta_out, pretty=pretty)

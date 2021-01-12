@@ -77,6 +77,12 @@ class URLParamType(click.types.StringParamType):
     help="Path to the output file. If supplied, the output will be in JSON",
 )
 @optgroup.option(
+    "--codemeta_out",
+    "-c",
+    type=click.Path(),
+    help="Path to an output codemeta file"
+)
+@optgroup.option(
     "--graph_out",
     "-g",
     type=click.Path(),

@@ -7,8 +7,10 @@ class CliGetData(unittest.TestCase):
 
     exclude_paths = [
             ['stargazers_count', 'excerpt', 'date'],
+            ['stargazers_count', 'excerpt', 'count'],
             ['forks_count', 'excerpt', 'date'],
-            ['readme_url', 'excerpt']
+            ['readme_url', 'excerpt'],
+            ['dateModified', 'excerpt']
         ]
 
     def setUp(self):
