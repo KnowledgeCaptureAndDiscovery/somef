@@ -595,7 +595,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     descriptions = data_path(["description"])
     descriptions.sort(key=lambda x: (average_confidence(x) + (1 if x["technique"] == "GitHub API" else 0)), reverse=True)
     descriptions_text = [x["excerpt"] for x in descriptions]
-    description_cat = "\n".join(descriptions_text)
 
     codemeta_output = {
         "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
@@ -609,7 +608,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         "issueTracker": code_repository + "/issues",
         "name": data_path(["name", "excerpt"]),
         "version": release_path(["tag_name"]),
-        "description": description_cat,
+        "description": descriptions_text,
         "releaseNotes": release_path(["body"]),
         "keywords": data_path(["topics", "excerpt"]),
         "programmingLanguage": data_path(["languages", "excerpt"]),
