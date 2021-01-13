@@ -30,7 +30,6 @@ from . import header_analysis
 
 import time
 
-from dulwich import porcelain
 import tempfile
 
 ## Markdown to plain text conversion: begin ##
