@@ -332,34 +332,6 @@ def load_repository_metadata(repository_url, header):
         print("DOCKERFILES:")
         print(dockerfiles)
 
-
-    # download it into a tempfile.TemporaryDirectory()
-    # scan the temporary directory
-
-    # with tempfile.TemporaryDirectory() as repo_dir:
-    #     if 'Authorization' in header:
-    #         git_token = header['Authorization']
-    #     else:
-    #         git_token = None
-    #
-    #     print("Cloning repository")
-    #     git_repo = porcelain.clone(
-    #         f"https://github.com/{owner}/{repo_name}",
-    #         password=git_token,
-    #         target=repo_dir,
-    #         checkout=True
-    #     )
-    #     print("Repository cloned")
-    #
-    #     for file in os.listdir(repo_dir):
-    #         filename = os.fsdecode(file)
-    #         print(filename)
-    #
-    #     branch_list = porcelain.branch_list(git_repo)
-    #     print(branch_list)
-
-
-
     ## get releases
     releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
                                          headers=header)
