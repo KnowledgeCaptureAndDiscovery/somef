@@ -1,0 +1,15 @@
+property,total correct,total present,proportion
+requirement,21,22,0.955
+issues,4,9,0.444
+documentation,13,13,1.000
+contact,1,1,1.000
+citation,30,38,0.789
+usage,33,49,0.673
+installation,42,53,0.792
+run,14,17,0.824
+description,14,18,0.778
+license,28,28,1.000
+update,3,6,0.500
+support,5,8,0.625
+download,1,2,0.500
+contributor,3,3,1.000

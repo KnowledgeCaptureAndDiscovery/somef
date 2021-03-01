@@ -1,6 +1,3 @@
-full_out_csv = "header_evalution.csv"
-summary_csv = "header_evaluation_summary.csv"
-
 tmp_json = "header_evaluation_tmp.json"
 
 input_dir = "../../experiments/training_corpus/repos"

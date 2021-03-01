@@ -1,0 +1,3425 @@
+repository,requirement,requirement correct,issues,issues correct,documentation,documentation correct,contact,contact correct,citation,citation correct,usage,usage correct,installation,installation correct,run,run correct,description,description correct,license,license correct,update,update correct,support,support correct,download,download correct,contributor,contributor correct
+GPRPy-README.md,,,"If you have several versions of python installed, for example on a Mac or Linux system, replace, in the commands shown earlier,
+`python` with `python3`
+and
+`pip` with `pip3`
+
+If you have any troubles getting the software running, please send me an email or open an issue on GitHub and I will help you getting it running.
+
+
+",n,,,,,,,,,"**In the following instructions, if you use Windows, use the comands `python` and `pip`. If you use Mac or Linux, use the commands `python3` and `pip3` instead.**
+
+1) Download the GPRPy software from 
+   [https://github.com/NSGeophysics/GPRPy/archive/master.zip](https://github.com/NSGeophysics/GPRPy/archive/master.zip). 
+   Save the file somewhere on your computer and extract the zip folder. 
+   As an **alternative**, you can install git from [https://git-scm.com/](https://git-scm.com/), then run in a command prompt:
+   `git clone https://github.com/NSGeophysics/GPRPy.git`
+   The advantage of the latter is that you can easily update your software by running from the GPRPy folder in a command prompt:
+   `git pull origin master`
+
+2) Install Python 3.7 for example from [https://conda.io/miniconda.html](https://conda.io/miniconda.html)
+
+3) Once the installation finished, open a command prompt that can run Python 
+   On Windows: click on Start, then enter ""Anaconda Prompt"", without the quotation marks into the ""Search programs and files"" field. On Mac or Linux, open the regular terminal.
+
+4) In the command prompt, change to the directory  where you downloaded the GPRPy files.
+   This is usually through a command like for example
+   `cd Desktop\GPRPy`
+   if you downloaded GPRPy directly onto your desktop. Then type the following and press enter afterward:
+   `python installMigration.py`
+   Then type the following and press enter afterward:
+   `pip install .`
+   **don't forget the period ""."" at the end of the `pip install` command**
+
+
+",y,"After installation, you can run the script from the Anaconda Prompt (or your Python-enabled prompt) by running either
+`gprpy`
+or
+`python -m gprpy`
+
+The first time you run GPRPy it could take a while to initialize. GPRPy will ask you if you want to run the profile [p] or WARR / CMP [c] user interface. Type
+`p`
+and then enter for profile, or
+`c`
+and then enter for CMP / WARR.
+
+You can also directly select one by running either
+`gprpy p`
+or
+`gprpy c`
+or
+`python -m gprpy p`
+or
+`python -m gprpy c`
+
+
+",y,,,,,,,,,,,,
+SRN-Deblur-README.md,"- Python2.7
+- Scipy
+- Scikit-image
+- numpy
+- Tensorflow 1.4 with NVIDIA GPU or CPU (cpu testing is very slow)
+
+",y,,,,,"We are glad to hear if you have any suggestions and questions.
+
+Please send email to xtao@cse.cuhk.edu.hk
+
+",y,"[1] `Sun et al.` J. Sun, W. Cao, Z. Xu, and J. Ponce. *Learning a convolutional
+neural network for non-uniform motion blur removal.* In CVPR, pages 769–777. IEEE, 2015.
+
+[2] `Nah et al.` S. Nah, T. H. Kim, and K. M. Lee. *Deep multi-scale convolutional
+neural network for dynamic scene deblurring.* pages 3883–3891, 2017.
+
+[3] `Whyte et al.` O. Whyte, J. Sivic, A. Zisserman, and J. Ponce. *Nonuniform
+deblurring for shaken images.* International Journal on Computer Vision, 98(2):168–186, 2012.",y,,,"Clone this project to your machine. 
+
+```bash
+git clone https://github.com/jiangsutx/SRN-Deblur.git
+cd SRN-Deblur
+```
+
+",n,,,,,,,,,,,,,,
+sentinelsat-README.md,,,,,,,,,,,  ,n,,,,,,,,,,,,,"  api.download()
+
+  ",n,,
+RDN-README.md,,,,,,,,,"If you find the code helpful in your resarch or work, please cite the following papers.
+```
+@InProceedings{Lim_2017_CVPR_Workshops,
+  author = {Lim, Bee and Son, Sanghyun and Kim, Heewon and Nah, Seungjun and Lee, Kyoung Mu},
+  title = {Enhanced Deep Residual Networks for Single Image Super-Resolution},
+  booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
+  month = {July},
+  year = {2017}
+}
+
+@inproceedings{zhang2018residual,
+    title={Residual Dense Network for Image Super-Resolution},
+    author={Zhang, Yulun and Tian, Yapeng and Kong, Yu and Zhong, Bineng and Fu, Yun},
+    booktitle={CVPR},
+    year={2018}
+}
+
+@article{zhang2018rdnir,
+    title={Residual Dense Network for Image Restoration},
+    author={Zhang, Yulun and Tian, Yapeng and Kong, Yu and Zhong, Bineng and Fu, Yun},
+    booktitle={arXiv},
+    year={2018}
+}
+
+```
+",y,"1. (optional) Download models for our paper and place them in '/RDN_TrainCode/experiment/model'.
+
+    All the models can be downloaded from [Dropbox](https://www.dropbox.com/sh/ngcvqdas167gol2/AAAdJe9w6s2fpo_KEGZe7d4Ra?dl=0) or [Baidu](https://pan.baidu.com/s/116FAzKnaJnAdxY_B6ENp_A).
+
+2. Cd to 'RDN_TrainCode/code', run the following scripts to train models.
+
+    **You can use scripts in file 'TrainRDN_scripts' to train models for our paper.**
+
+    ```bash
+    #: BI, scale 2, 3, 4
+    #: BIX2F64D18C6G64P48, input=48x48, output=96x96
+    th main.lua -scale 2 -netType RDN -nFeat 64 -nFeaSDB 64 -nDenseBlock 16 -nDenseConv 8 -growthRate 64 -patchSize 96 -dataset div2k -datatype t7  -DownKernel BI -splitBatch 4 -trainOnly true
+
+    #: BIX3F64D18C6G64P32, input=32x32, output=96x96, fine-tune on RDN_BIX2.t7
+    th main.lua -scale 3 -netType resnet_cu -nFeat 64 -nFeaSDB 64 -nDenseBlock 16 -nDenseConv 8 -growthRate 64 -patchSize 96 -dataset div2k -datatype t7  -DownKernel BI -splitBatch 4 -trainOnly true  -preTrained ../experiment/model/RDN_BIX2.t7
+
+    #: BIX4F64D18C6G64P32, input=32x32, output=128x128, fine-tune on RDN_BIX2.t7
+    th main.lua -scale 4 -nGPU 1 -netType resnet_cu -nFeat 64 -nFeaSDB 64 -nDenseBlock 16 -nDenseConv 8 -growthRate 64 -patchSize 128 -dataset div2k -datatype t7  -DownKernel BI -splitBatch 4 -trainOnly true -nEpochs 1000 -preTrained ../experiment/model/RDN_BIX2.t7 
+
+    #: BD, scale 3
+    #: BDX3F64D18C6G64P32, input=32x32, output=96x96, fine-tune on RDN_BIX3.t7
+    th main.lua -scale 3 -nGPU 1 -netType resnet_cu -nFeat 64 -nFeaSDB 64 -nDenseBlock 16 -nDenseConv 8 -growthRate 64 -patchSize 96 -dataset div2k -datatype t7  -DownKernel BD -splitBatch 4 -trainOnly true -nEpochs 200 -preTrained ../experiment/model/RDN_BIX3.t7
+
+    #: DN, scale 3
+    #: DNX3F64D18C6G64P32, input=32x32, output=96x96, fine-tune on RDN_BIX3.t7
+    th main.lua -scale 3 -nGPU 1 -netType resnet_cu -nFeat 64 -nFeaSDB 64 -nDenseBlock 16 -nDenseConv 8 -growthRate 64 -patchSize 96 -dataset div2k -datatype t7  -DownKernel DN -splitBatch 4 -trainOnly true  -nEpochs 200 -preTrained ../experiment/model/RDN_BIX3.t7
+    ```
+    Only RDN_BIX2.t7 was trained using 48x48 input patches. All other models were trained using 32x32 input patches in order to save training time.
+    However, smaller input patch size in training would lower the performance to some degree. We also set '-trainOnly true' to save GPU memory.
+",y,"1. Download DIV2K training data (800 training + 100 validtion images) from [DIV2K dataset](https://data.vision.ee.ethz.ch/cvl/DIV2K/) or [SNU_CVLab](https://cv.snu.ac.kr/research/EDSR/DIV2K.tar).
+
+2. Place all the HR images in 'Prepare_TrainData/DIV2K/DIV2K_HR'.
+
+3. Run 'Prepare_TrainData_HR_LR_BI/BD/DN.m' in matlab to generate LR images for BI, BD, and DN models respectively.
+
+4. Run 'th png_to_t7.lua' to convert each .png image to .t7 file in new folder 'DIV2K_decoded'.
+
+5. Specify the path of 'DIV2K_decoded' to '-datadir' in 'RDN_TrainCode/code/opts.lua'.
+
+For more informaiton, please refer to [EDSR(Torch)](https://github.com/LimBee/NTIRE2017).
+
+",y,,,"A very deep convolutional neural network (CNN) has recently achieved great success for image super-resolution (SR) and offered hierarchical features as well. However, most deep CNN based SR models do not make full use of the hierarchical features from the original low-resolution (LR) images, thereby achieving relatively-low performance. In this paper, we propose a novel residual dense network (RDN) to address this problem in image SR. We fully exploit the hierarchical features from all the convolutional layers. Speciﬁcally, we propose residual dense block (RDB) to extract abundant local features via dense connected convolutional layers. RDB further allows direct connections from the state of preceding RDB to all the layers of current RDB, leading to a contiguous memory (CM) mechanism. Local feature fusion in RDB is then used to adaptively learn more effective features from preceding and current local features and stabilizes the training of wider network. After fully obtaining dense local features, we use global feature fusion to jointly and adaptively learn global hierarchical features in a holistic way. Experiments on benchmark datasets with different degradation models show that our RDN achieves favorable performance against state-of-the-art methods.
+
+![RDB](/Figs/RDB.png)
+Figure 1. Residual dense block (RDB) architecture.
+![RDN](/Figs/RDN.png)
+Figure 2. The architecture of our proposed residual dense network (RDN).
+
+",y,,,,,,,,,,
+Fiona-README.md,,,,,,,,,        ,n,        ,n,,,"Reading Multilayer data
+-----------------------
+
+Collections can also be made from single layers within multilayer files or
+directories of data. The target layer is specified by name or by its integer
+index within the file or directory. The ``fiona.listlayers()`` function
+provides an index ordered list of layer names.
+
+.. code-block:: python
+
+    for layername in fiona.listlayers('tests/data'):
+        with fiona.open('tests/data', layer=layername) as src:
+            print(layername, len(src))
+
+    ",n,,,,,,,,,,,,
+hmr-README.md,"- Python 2.7
+- [TensorFlow](https://www.tensorflow.org/) tested on version 1.3, demo alone runs with TF 1.12
+
+",y,,,,,,,"If you use this code for your research, please consider citing:
+```
+@inProceedings{kanazawaHMR18,
+  title={End-to-end Recovery of Human Shape and Pose},
+  author = {Angjoo Kanazawa
+  and Michael J. Black
+  and David W. Jacobs
+  and Jitendra Malik},
+  booktitle={Computer Vision and Pattern Regognition (CVPR)},
+  year={2018}
+}
+```
+
+",y,"https://github.com/mattloper/chumpy/tree/db6eaf8c93eb5ae571eb054575fb6ecec62fd86d
+
+
+",n,"This is only partialy tested.
+```
+conda env create -f hmr.yml
+```
+",n,,,,,,,,,,,,,,
+apsg-README.md,,,,,"Explore the full features of APSG. You can find detailed documentation [here](https://apsg.readthedocs.org).
+
+",y,,,,,"You can see APSG in action in accompanied Jupyter notebook [http://nbviewer.jupyter.org/github/ondrolexa/apsg/blob/master/examples/apsg_tutorial.ipynb](http://nbviewer.jupyter.org/github/ondrolexa/apsg/blob/master/examples/apsg_tutorial.ipynb)
+
+And for fun check how simply you can animate stereonets
+[http://nbviewer.jupyter.org/github/ondrolexa/apsg/blob/master/examples/animation_example.ipynb](http://nbviewer.jupyter.org/github/ondrolexa/apsg/blob/master/examples/animation_example.ipynb)
+
+",y,"Installing `apsg` from the `conda-forge` channel can be achieved by adding `conda-forge` to your channels with:
+
+```
+conda config --add channels conda-forge
+```
+
+Once the `conda-forge` channel has been enabled, `apsg` can be installed with:
+
+```
+conda install apsg
+```
+
+It is possible to list all of the versions of `apsg` available on your platform with:
+
+```
+conda search apsg --channel conda-forge
+```
+
+",y,,,,,"APSG is free software: you can redistribute it and/or modify it under the terms of the MIT License. A copy of this license is provided in ``LICENSE`` file.
+",y,,,,,,,,
+mplleaflet-README.md,"* [jinja2](http://jinja.pocoo.org/)
+
+Optional
+* [pyproj](https://code.google.com/p/pyproj/) Only needed if you only use non-WGS-84 projections.
+* [GeoPandas](https://github.com/kjordahl/geopandas) To make your life easier.
+",y,,,,,,,,,"The simplest use is to just create your plot using matplotlib commands and call `mplleaflet.show()`.
+
+```
+>>> import matplotlib.pyplot as plt
+... #: Load longitude, latitude data
+>>> plt.hold(True)
+#: Plot the data as a blue line with red squares on top
+#: Just plot longitude vs. latitude
+>>> plt.plot(longitude, latitude, 'b') #: Draw blue line
+>>> plt.plot(longitude, latitude, 'rs') #: Draw red squares
+```
+![matplotlib x,y plot](examples/images/simple_plot.png)
+
+Normally, displaying data as longitude, latitude will cause a cartographer to cry. That's totally fine with mplleaflet, Leaflet will project your data properly.
+
+```
+#: Convert to interactive Leaflet map
+>>> import mplleaflet
+>>> mplleaflet.show()
+```
+
+[Click to view final web page](http://htmlpreview.github.io/?https://github.com/jwass/mplleaflet/master/examples/readme_example.html)
+
+![Leaflet map preview](examples/images/simple_plot_map_preview.jpg)
+
+Disclaimer: Displaying data in spherical mercator might also cause a cartographer to cry.
+
+`show()` allows you to specify different tile layer URLs, CRS/EPSG codes, output files, etc. 
+
+",y,"Install `mplleaflet` from PyPI using `$ pip install mplleaflet`.
+
+",y,,,,,,,,,,,,,,
+pylops-README.md,,,,,"The official documentation of PyLops is available [here](https://pylops.readthedocs.io/).
+
+Visit this page to get started learning about different operators and their applications as well as how to
+create new operators yourself and make it to the ``Contributors`` list.
+
+Moreover, if you have installed PyLops using the *developer environment* you can also build the documentation locally by
+typing the following command:
+```
+make doc
+```
+Once the documentation is created, you can make any change to the source code and rebuild the documentation by
+simply typing
+```
+make docupdate
+```
+Note that if a new example or tutorial is created (and if any change is made to a previously available example or tutorial)
+you are required to rebuild the entire documentation before your changes will be visible.
+
+
+",y,,,,,"You need **Python 3.6.4 or greater**.
+
+",n,"To ensure that further development of PyLops is performed within the same environment (i.e., same dependencies) as
+that defined by ``requirements-dev.txt`` or ``environment-dev.yml`` files, we suggest to work off a new Conda enviroment.
+
+The first time you clone the repository run the following command:
+```
+make dev-install_conda
+```
+To ensure that everything has been setup correctly, run tests:
+```
+make tests
+```
+Make sure no tests fail, this guarantees that the installation has been successfull.
+
+Remember to always activate the conda environment every time you open a new terminal by typing:
+```
+source activate pylops
+```
+
+",y,,,,,,,,,,,,,"* Matteo Ravasi, mrava87
+* Carlos da Costa, cako
+* Dieter Werthmüller, prisae
+* Tristan van Leeuwen, TristanvanLeeuwen
+",y
+tensorflow-magenta-README.md,,,,,,,,,,,"* [Installation](#installation)
+* [Using Magenta](#using-magenta)
+* [Playing a MIDI Instrument](#playing-a-midi-instrument)
+* [Development Environment (Advanced)](#development-environment)
+
+",n,"If you have a GPU installed and you want Magenta to use it, you will need to
+follow the [Manual Install](#manual-install) instructions, but with a few
+modifications.
+
+First, make sure your system meets the [requirements to run tensorflow with GPU support](
+https://www.tensorflow.org/install/install_linux#nvidia_requirements_to_run_tensorflow_with_gpu_support).
+
+Next, follow the [Manual Install](#manual-install) instructions, but install the
+`magenta-gpu` package instead of the `magenta` package:
+
+```bash
+pip install magenta-gpu
+```
+
+The only difference between the two packages is that `magenta-gpu` depends on
+`tensorflow-gpu` instead of `tensorflow`.
+
+Magenta should now have access to your GPU.
+
+",y,,,,,,,,,,,,,,
+facebookresearch-wav2letter-README.md,,,,,"- [Data Preparation](docs/data_prep.md)
+- [Training](docs/train.md)
+- [Testing / Decoding](docs/decoder.md)
+
+To get started with wav2letter++, checkout the [tutorials](tutorials) section.
+
+We also provide complete recipes for WSJ, Timit and Librispeech and they can be found in [recipes](recipes) folder.
+
+",y,,,"If you use the code in your paper, then please cite it as:
+
+```
+@article{pratap2018w2l,
+  author          = {Vineel Pratap, Awni Hannun, Qiantong Xu, Jeff Cai, Jacob Kahn, Gabriel Synnaeve, Vitaliy Liptchinsky, Ronan Collobert},
+  title           = {wav2letter++: The Fastest Open-source Speech Recognition System},
+  journal         = {CoRR},
+  volume          = {abs/1812.07625},
+  year            = {2018},
+  url             = {https://arxiv.org/abs/1812.07625},
+}
+```
+
+",y,,,,,,,,,"wav2letter++ is BSD-licensed, as found in the [LICENSE](LICENSE) file.
+",y,,,,,,,,
+tilematrix-README.md,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+omfvista-README.md,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PRM-README.md,"* System (tested on Ubuntu 14.04LTS and Win10)
+* NVIDIA GPU + CUDA CuDNN (CPU mode is also supported but significantly slower)
+* [Python>=3.5](https://www.python.org)
+* [PyTorch>=0.4](https://pytorch.org)
+* [Jupyter Notebook](https://jupyter.org/install.html) and [ipywidgets](https://github.com/jupyter-widgets/ipywidgets) (required by the demo):
+
+    ```bash
+    #: enable the widgetsnbextension before you start the notebook server
+    jupyter nbextension enable --py --sys-prefix widgetsnbextension
+    ```
+
+",y,,,,,,,"If you find the code useful for your research, please cite:
+```bibtex
+@INPROCEEDINGS{Zhou2018PRM,
+    author = {Zhou, Yanzhao and Zhu, Yi and Ye, Qixiang and Qiu, Qiang and Jiao, Jianbin},
+    title = {Weakly Supervised Instance Segmentation using Class Peak Response},
+    booktitle = {CVPR},
+    year = {2018}
+}
+```
+",y,"The [pytorch branch](https://github.com/ZhouYanzhao/PRM/tree/pytorch) contains:
+
+* the **pytorch** implementation of Peak Response Mapping (Stimulation and Backprop).
+* the PASCAL-VOC demo (training, inference, and visualization).
+
+Please follow the instruction below to install it and run the experiment demo.
+
+",y,"1. Install [Nest](https://github.com/ZhouYanzhao/Nest), a flexible tool for building and sharing deep learning modules:
+    
+    > I created Nest in the process of refactoring PRM's pytorch implementation. It aims at encouraging code reuse and ships with a bunch of useful features. PRM is now implemented as a set of Nest modules; thus you can easily install and use it as demonstrated below.
+
+    ```bash
+    $ pip install git+https://github.com/ZhouYanzhao/Nest.git
+    ```
+    
+
+2. Install PRM via Nest's CLI tool:
+
+    ```bash
+    #: note that data will be saved under your current path
+    $ nest module install github@ZhouYanzhao/PRM:pytorch prm
+    #: verify the installation
+    $ nest module list --filter prm
+    #: Output:
+    #:
+    #: 3 Nest modules found.
+    #: [0] prm.fc_resnet50 (1.0.0)
+    #: [1] prm.peak_response_mapping (1.0.0)
+    #: [2] prm.prm_visualize (1.0.0)
+    ```
+
+",y,"1. Install Nest's build-in Pytorch modules:
+
+    > To increase reusability, I abstracted some features from the original code, such as network trainer, to build Nest's built-in pytorch module set.
+    
+    ```bash
+    $ nest module install github@ZhouYanzhao/Nest:pytorch pytorch
+    ```
+
+2. Download the PASCAL-VOC2012 dataset:
+
+    ```bash
+    mkdir ./PRM/demo/datasets
+    cd ./PRM/demo/datasets
+    #: download and extract data
+    wget http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
+    tar xvf VOCtrainval_11-May-2012.tar
+    ```
+
+3. Run the demo experiment via [demo/main.ipynb](https://github.com/ZhouYanzhao/PRM/tree/pytorch/demo/main.ipynb)
+
+    ![PRM Segmentation](samples.png)
+
+",y,,,,,,,,,,,,
+GAN_stability-README.md,,,,,,,,,,,"First download your data and put it into the `./data` folder.
+
+To train a new model, first create a config script similar to the ones provided in the `./configs` folder.  You can then train you model using
+```
+python train.py PATH_TO_CONFIG
+```
+
+To compute the inception score for your model and generate samples, use
+```
+python test.py PATH_TO_CONIFG
+```
+
+Finally, you can create nice latent space interpolations using
+```
+python interpolate.py PATH_TO_CONFIG
+```
+or
+```
+python interpolate_class.py PATH_TO_CONFIG
+```
+
+",y,,,,,,,,,,,,,,,,
+d3-README.md,,,,,,,,,,,,,"If you use npm, `npm install d3`. Otherwise, download the [latest release](https://github.com/d3/d3/releases/latest). The released bundle supports anonymous AMD, CommonJS, and vanilla environments. You can load directly from [d3js.org](https://d3js.org), [CDNJS](https://cdnjs.com/libraries/d3), or [unpkg](https://unpkg.com/d3/). For example:
+
+```html
+
+```
+
+For the minified version:
+
+```html
+
+```
+
+You can also use the standalone D3 microlibraries. For example, [d3-selection](https://github.com/d3/d3-selection):
+
+```html
+
+```
+
+D3 is written using [ES2015 modules](http://www.2ality.com/2014/09/es6-modules-final.html). Create a [custom bundle using Rollup](https://bl.ocks.org/mbostock/bb09af4c39c79cffcde4), Webpack, or your preferred bundler. To import D3 into an ES2015 application, either import specific symbols from specific D3 modules:
+
+```js
+import {scaleLinear} from ""d3-scale"";
+```
+
+Or import everything into a namespace (here, `d3`):
+
+```js
+import * as d3 from ""d3"";
+```
+
+In Node:
+
+```js
+var d3 = require(""d3"");
+```
+
+You can also require individual modules and combine them into a `d3` object using [Object.assign](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign):
+
+```js
+var d3 = Object.assign({}, require(""d3-format""), require(""d3-geo""), require(""d3-geo-projection""));
+```
+",y,,,,,,,,,,,,,,
+microsoft-malmo-README.md,,,,,,,,,"Please cite Malmo as:
+
+Johnson M., Hofmann K., Hutton T., Bignell D. (2016) [_The Malmo Platform for Artificial Intelligence Experimentation._](http://www.ijcai.org/Proceedings/16/Papers/643.pdf) [Proc. 25th International Joint Conference on Artificial Intelligence](http://www.ijcai.org/Proceedings/2016), Ed. Kambhampati S., p. 4246. AAAI Press, Palo Alto, California USA. https://github.com/Microsoft/malmo
+
+----
+
+",y,,,,,"```
+cd Python_Examples
+python3 run_mission.py
+``` 
+
+",y,,,,,,,,,,,,
+da-faster-rcnn-README.md,,,,,,,,,"The implementation is built on the python implementation of Faster RCNN [rbgirshick/py-faster-rcnn](https://github.com/rbgirshick/py-faster-rcnn)
+
+",n,"1. Build Caffe and pycaffe (see: [Caffe installation instructions](http://caffe.berkeleyvision.org/installation.html))
+
+2. Build the Cython modules
+    ```Shell
+    cd $FRCN_ROOT/lib
+    make
+    
+3. Follow the instrutions of [rbgirshick/py-faster-rcnn](https://github.com/rbgirshick/py-faster-rcnn) to download related data.
+    
+4. Prepare the dataset, source domain data should start with the filename 'source_', and target domain data with 'target_'.
+
+5. To train the Domain Adaptive Faster R-CNN:
+    ```Shell
+    cd $FRCN_ROOT
+    ./tools/train_net.py --gpu {GPU_ID} --solver models/da_faster_rcnn/solver.prototxt --weights data/imagenet_models/VGG16.v2.caffemodel --imdb voc_2007_trainval --iters  {NUM_ITER}  --cfg  {CONFIGURATION_FILE}
+    
+",y,,,,,,,,,,,,,,,,
+facebookresearch-ResNeXt-README.md,"See the fb.resnet.torch [installation instructions](https://github.com/facebook/fb.resnet.torch/blob/master/INSTALL.md) for a step-by-step guide.
+- Install [Torch](http://torch.ch/docs/getting-started.html) on a machine with CUDA GPU
+- Install [cuDNN v4 or v5](https://developer.nvidia.com/cudnn) and the Torch [cuDNN bindings](https://github.com/soumith/cudnn.torch/tree/R4)
+- Download the [ImageNet](http://image-net.org/download-images) dataset and [move validation images](https://github.com/facebook/fb.resnet.torch/blob/master/INSTALL.md#download-the-imagenet-dataset) to labeled subfolders
+
+",y,"| Network             | GFLOPS | Top-1 Error |  Download   |
+| ------------------- | ------ | ----------- | ------------|
+| ResNet-50 (1x64d)   |  ~4.1  |  23.9        | [Original ResNet-50](https://github.com/facebook/fb.resnet.torch/tree/master/pretrained)       |
+| ResNeXt-50 (32x4d)  |  ~4.1  |  22.2        | [Download (191MB)](https://dl.fbaipublicfiles.com/resnext/imagenet_models/resnext_50_32x4d.t7)       |
+| ResNet-101 (1x64d)  |  ~7.8  |  22.0        | [Original ResNet-101](https://github.com/facebook/fb.resnet.torch/tree/master/pretrained)      |
+| ResNeXt-101 (32x4d) |  ~7.8  |  21.2        | [Download (338MB)](https://dl.fbaipublicfiles.com/resnext/imagenet_models/resnext_101_32x4d.t7)      |
+| ResNeXt-101 (64x4d) |  ~15.6 |  20.4        | [Download (638MB)](https://dl.fbaipublicfiles.com/resnext/imagenet_models/resnext_101_64x4d.t7)       |
+
+",n,,,,,"| baseWidth | cardinality |
+|---------- | ----------- |
+| 64        | 1           |
+| 40        | 2           |
+| 24        | 4           |
+| 14        | 8           |
+| 4         | 32          |
+
+
+To train ResNeXt-50 (32x4d) on 8 GPUs for ImageNet:
+```bash
+th main.lua -dataset imagenet -bottleneckType resnext_C -depth 50 -baseWidth 4 -cardinality 32 -batchSize 256 -nGPU 8 -nThreads 8 -shareGradInput true -data [imagenet-folder]
+```
+
+To reproduce CIFAR results (e.g. ResNeXt 16x64d for cifar10) on 8 GPUs:
+```bash
+th main.lua -dataset cifar10 -bottleneckType resnext_C -depth 29 -baseWidth 64 -cardinality 16 -weightDecay 5e-4 -batchSize 128 -nGPU 8 -nThreads 8 -shareGradInput true
+```
+To get comparable results using 2/4 GPUs, you should change the batch size and the corresponding learning rate:
+```bash
+th main.lua -dataset cifar10 -bottleneckType resnext_C -depth 29 -baseWidth 64 -cardinality 16 -weightDecay 5e-4 -batchSize 64 -nGPU 4 -LR 0.05 -nThreads 8 -shareGradInput true
+th main.lua -dataset cifar10 -bottleneckType resnext_C -depth 29 -baseWidth 64 -cardinality 16 -weightDecay 5e-4 -batchSize 32 -nGPU 2 -LR 0.025 -nThreads 8 -shareGradInput true
+```
+Note: CIFAR datasets will be automatically downloaded and processed for the first time. Note that in the arXiv paper CIFAR results are based on pre-activated bottleneck blocks and a batch size of 256. We found that better CIFAR test acurracy can be achieved using original bottleneck blocks and a batch size of 128.
+
+",n,,,,,,,"This repository contains a [Torch](http://torch.ch) implementation for the [ResNeXt](https://arxiv.org/abs/1611.05431) algorithm for image classification. The code is based on [fb.resnet.torch](https://github.com/facebook/fb.resnet.torch).
+
+[ResNeXt](https://arxiv.org/abs/1611.05431) is a simple, highly modularized network architecture for image classification. Our network is constructed by repeating a building block that aggregates a set of transformations with the same topology. Our simple design results in a homogeneous, multi-branch architecture that has only a few hyper-parameters to set. This strategy exposes a new dimension, which we call “cardinality” (the size of the set of transformations), as an essential factor in addition to the dimensions of depth and width.
+
+
+![teaser](http://vcl.ucsd.edu/resnext/teaser.png)
+",y,,,,,,,,,,
+vue-devtools-README.md,,,"1. Fixing ""Download the Vue Devtools for a better development experience"" console message when working locally over `file://` protocol:
+  1.1 - Google Chrome: Right click on vue-devtools icon and click ""Manage Extensions"" then search for vue-devtools on the extensions list. Check the ""Allow access to file URLs"" box.
+
+2. How to use the devtools in IE/Edge/Safari or any other browser? [Get the standalone Electron app (works with any environment!)](https://github.com/vuejs/vue-devtools/blob/master/shells/electron/README.md)
+
+
+",n,,,,,,,"1. If the page uses a production/minified build of Vue.js, devtools inspection is disabled by default so the Vue pane won't show up.
+
+2. To make it work for pages opened via `file://` protocol, you need to check ""Allow access to file URLs"" for this extension in Chrome's extension management panel.
+
+",n,"1. Fixing ""Download the Vue Devtools for a better development experience"" console message when working locally over `file://` protocol:
+  1.1 - Google Chrome: Right click on vue-devtools icon and click ""Manage Extensions"" then search for vue-devtools on the extensions list. Check the ""Allow access to file URLs"" box.
+
+2. How to use the devtools in IE/Edge/Safari or any other browser? [Get the standalone Electron app (works with any environment!)](https://github.com/vuejs/vue-devtools/blob/master/shells/electron/README.md)
+
+
+",n,,,,,"[MIT](http://opensource.org/licenses/MIT)
+",y,,,,,,,,
+tippecanoe-README.md,,,,,,,,,,,"```
+curl -L -O https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_0_countries.zip
+unzip ne_10m_admin_0_countries.zip
+ogr2ogr -f GeoJSON ne_10m_admin_0_countries.geojson ne_10m_admin_0_countries.shp
+
+curl -L -O https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_1_states_provinces.zip
+unzip -o ne_10m_admin_1_states_provinces.zip
+ogr2ogr -f GeoJSON ne_10m_admin_1_states_provinces.geojson ne_10m_admin_1_states_provinces.shp
+
+tippecanoe -z3 -o countries-z3.mbtiles --coalesce-densest-as-needed ne_10m_admin_0_countries.geojson
+tippecanoe -zg -Z4 -o states-Z4.mbtiles --coalesce-densest-as-needed --extend-zooms-if-still-dropping ne_10m_admin_1_states_provinces.geojson
+tile-join -o states-countries.mbtiles countries-z3.mbtiles states-Z4.mbtiles
+```
+
+Countries:
+
+* `-z3`: Only generate zoom levels 0 through 3
+* `--coalesce-densest-as-needed`: If the tiles are too big at low or medium zoom levels, merge as many features together as are necessary to allow tiles to be created with those features that are still distinguished
+
+States and Provinces:
+
+* `-Z4`: Only generate zoom levels 4 and beyond
+* `-zg`: Automatically choose a maxzoom that should be sufficient to clearly distinguish the features and the detail within each feature
+* `--coalesce-densest-as-needed`: If the tiles are too big at low or medium zoom levels, merge as many features together as are necessary to allow tiles to be created with those features that are still distinguished
+* `--extend-zooms-if-still-dropping`: If even the tiles at high zoom levels are too big, keep adding zoom levels until one is reached that can represent all the features
+
+",y," * `-pk` or `--no-tile-size-limit`: Don't skip tiles larger than 500K.
+ * `-pC` or `--no-tile-compression`: Don't compress the PBF vector tile data.
+ * `-pg` or `--no-tile-stats`: Don't generate the `tilestats` row in the tileset metadata. Uploads without [tilestats](https://github.com/mapbox/mapbox-geostats) will take longer to process.
+
+Because tile-join just copies the geometries to the new .mbtiles without processing them
+(except to rescale the extents if necessary),
+it doesn't have any of tippecanoe's recourses if the new tiles are bigger than the 500K tile limit.
+If a tile is too big and you haven't specified `-pk`, it is just left out of the new tileset.
+
+Example
+-------
+
+Imagine you have a tileset of census blocks:
+
+```sh
+curl -O http://www2.census.gov/geo/tiger/TIGER2010/TABBLOCK/2010/tl_2010_06001_tabblock10.zip
+unzip tl_2010_06001_tabblock10.zip
+ogr2ogr -f GeoJSON tl_2010_06001_tabblock10.json tl_2010_06001_tabblock10.shp
+./tippecanoe -o tl_2010_06001_tabblock10.mbtiles tl_2010_06001_tabblock10.json
+```
+
+and a CSV of their populations:
+
+```sh
+curl -O http://www2.census.gov/census_2010/01-Redistricting_File--PL_94-171/California/ca2010.pl.zip
+unzip -p ca2010.pl.zip cageo2010.pl |
+awk 'BEGIN {
+    print ""GEOID10,population""
+}
+(substr($0, 9, 3) == ""750"") {
+    print ""\"""" substr($0, 28, 2) substr($0, 30, 3) substr($0, 55, 6) substr($0, 62, 4) ""\"","" (0 + substr($0, 328, 9))
+}' > population.csv
+```
+
+which looks like this:
+
+```
+GEOID10,population
+""060014277003018"",0
+""060014283014046"",0
+""060014284001020"",0
+...
+""060014507501001"",202
+""060014507501002"",119
+""060014507501003"",193
+""060014507501004"",85
+...
+```
+
+Then you can join those populations to the geometries and discard the no-longer-needed ID field:
+
+```sh
+./tile-join -o population.mbtiles -x GEOID10 -c population.csv tl_2010_06001_tabblock10.mbtiles
+```
+
+tippecanoe-enumerate
+====================
+
+The `tippecanoe-enumerate` utility lists the tiles that an `mbtiles` file defines.
+Each line of the output lists the name of the `mbtiles` file and the zoom, x, and y
+coordinates of one of the tiles. It does basically the same thing as
+
+    select zoom_level, tile_column, (1 << zoom_level) - 1 - tile_row from tiles;
+
+on the file in sqlite3.
+
+tippecanoe-decode
+=================
+
+The `tippecanoe-decode` utility turns vector mbtiles back to GeoJSON. You can use it either
+on an entire file:
+
+    tippecanoe-decode file.mbtiles
+
+or on an individual tile:
+
+    tippecanoe-decode file.mbtiles zoom x y
+    tippecanoe-decode file.vector.pbf zoom x y
+
+Unless you use `-c`, the output is a set of nested FeatureCollections identifying each
+tile and layer separately. Note that the same features generally appear at all zooms,
+so the output for the file will have many copies of the same features at different
+resolutions.
+
+",n,,," * `-A` *attribution* or `--attribution=`*attribution*: Set the attribution string.
+ * `-n` *name* or `--name=`*name*: Set the tileset name.
+ * `-N` *description* or `--description=`*description*: Set the tileset description.
+
+",n,,,"```
+#: Retrieve and tile California 2000 Census tracts
+curl -L -O https://www2.census.gov/geo/tiger/TIGER2010/TRACT/2000/tl_2010_06_tract00.zip
+unzip tl_2010_06_tract00.zip
+ogr2ogr -f GeoJSON tl_2010_06_tract00.shp.json tl_2010_06_tract00.shp
+tippecanoe -z11 -o tracts.mbtiles -l tracts tl_2010_06_tract00.shp.json
+
+#: Create a copy of the tileset, minus Alameda County (FIPS code 001)
+tile-join -j '{""*"":[""none"",[""=="",""COUNTYFP00"",""001""]]}' -f -o tracts-filtered.mbtiles tracts.mbtiles
+
+#: Retrieve and tile Alameda County Census tracts for 2010
+curl -L -O https://www2.census.gov/geo/tiger/TIGER2010/TRACT/2010/tl_2010_06001_tract10.zip
+unzip tl_2010_06001_tract10.zip
+ogr2ogr -f GeoJSON tl_2010_06001_tract10.shp.json tl_2010_06001_tract10.shp
+tippecanoe -z11 -o tracts-added.mbtiles -l tracts tl_2010_06001_tract10.shp.json
+
+#: Merge the filtered tileset and the tileset of new tracts into a final tileset
+tile-join -o tracts-final.mbtiles tracts-filtered.mbtiles tracts-added.mbtiles
+```
+
+The `-z11` option explicitly specifies the maxzoom, to make sure both the old and new tilesets have the same zoom range.
+
+The `-j` option to `tile-join` specifies a filter, so that only the desired features will be copied to the new tileset.
+This filter excludes (using `none`) any features whose FIPS code (`COUNTYFP00`) is the code for Alameda County (`001`).
+
+Options
+-------
+
+There are a lot of options. A lot of the time you won't want to use any of them
+other than `-o` _output_`.mbtiles` to name the output file, and probably `-f` to
+delete the file that already exists with that name.
+
+If you aren't sure what the right maxzoom is for your data, `-zg` will guess one for you
+based on the density of features.
+
+Tippecanoe will normally drop a fraction of point features at zooms below the maxzoom,
+to keep the low-zoom tiles from getting too big. If you have a smaller data set where
+all the points would fit without dropping any of them, use `-r1` to keep them all.
+If you do want point dropping, but you still want the tiles to be denser than `-zg`
+thinks they should be, use `-B` to set a basezoom lower than the maxzoom.
+
+If some of your tiles are coming out too big in spite of the settings above, you will
+often want to use `--drop-densest-as-needed` to drop whatever fraction of the features
+is necessary at each zoom level to make that zoom level's tiles work.
+
+If your features have a lot of attributes, use `-y` to keep only the ones you really need.
+
+If your input is formatted as newline-delimited GeoJSON, use `-P` to make input parsing a lot faster.
+
+",n,,,,,,
+lasio-README.md,,,,,"See here for the [complete lasio package documentation](https://lasio.readthedocs.io/en/latest/).
+
+",y,,,,,"Install the usual way:
+
+```bash
+$ pip install lasio
+```
+
+Very quick example session:
+
+```python
+>>> import lasio
+>>> las = lasio.read(""sample_big.las"")
+```
+
+Data is accessible both directly as numpy arrays
+
+```python
+>>> las.keys()
+['DEPT', 'DT', 'RHOB', 'NPHI', 'SFLU', 'SFLA', 'ILM', 'ILD']
+>>> las['SFLU']
+array([ 123.45,  123.45,  123.45, ...,  123.45,  123.45,  123.45])
+>>> las['DEPT']
+array([ 1670.   ,  1669.875,  1669.75 , ...,  1669.75 ,  1670.   ,
+        1669.875])
+```
+
+and as ``CurveItem`` objects with associated metadata:
+
+```python
+>>> las.curves
+[CurveItem(mnemonic=DEPT, unit=M, value=, descr=1  DEPTH, original_mnemonic=DEPT, data.shape=(29897,)), 
+CurveItem(mnemonic=DT, unit=US/M, value=, descr=2  SONIC TRANSIT TIME, original_mnemonic=DT, data.shape=(29897,)), 
+CurveItem(mnemonic=RHOB, unit=K/M3, value=, descr=3  BULK DENSITY, original_mnemonic=RHOB, data.shape=(29897,)), 
+CurveItem(mnemonic=NPHI, unit=V/V, value=, descr=4   NEUTRON POROSITY, original_mnemonic=NPHI, data.shape=(29897,)), 
+CurveItem(mnemonic=SFLU, unit=OHMM, value=, descr=5  RXO RESISTIVITY, original_mnemonic=SFLU, data.shape=(29897,)), 
+CurveItem(mnemonic=SFLA, unit=OHMM, value=, descr=6  SHALLOW RESISTIVITY, original_mnemonic=SFLA, data.shape=(29897,)), 
+CurveItem(mnemonic=ILM, unit=OHMM, value=, descr=7  MEDIUM RESISTIVITY, original_mnemonic=ILM, data.shape=(29897,)), 
+CurveItem(mnemonic=ILD, unit=OHMM, value=, descr=8  DEEP RESISTIVITY, original_mnemonic=ILD, data.shape=(29897,))]
+```
+
+Header information is parsed into simple HeaderItem objects, and stored in a dictionary for each section of the header:
+
+```python
+>>> las.version
+[HeaderItem(mnemonic=VERS, unit=, value=1.2, descr=CWLS LOG ASCII STANDARD -VERSION 1.2, original_mnemonic=VERS), 
+HeaderItem(mnemonic=WRAP, unit=, value=NO, descr=ONE LINE PER DEPTH STEP, original_mnemonic=WRAP)]
+>>> las.well
+[HeaderItem(mnemonic=STRT, unit=M, value=1670.0, descr=, original_mnemonic=STRT), 
+HeaderItem(mnemonic=STOP, unit=M, value=1660.0, descr=, original_mnemonic=STOP), 
+HeaderItem(mnemonic=STEP, unit=M, value=-0.125, descr=, original_mnemonic=STEP), 
+HeaderItem(mnemonic=NULL, unit=, value=-999.25, descr=, original_mnemonic=NULL), 
+HeaderItem(mnemonic=COMP, unit=, value=ANY OIL COMPANY LTD., descr=COMPANY, original_mnemonic=COMP), 
+HeaderItem(mnemonic=WELL, unit=, value=ANY ET AL OIL WELL #:12, descr=WELL, original_mnemonic=WELL), 
+HeaderItem(mnemonic=FLD, unit=, value=EDAM, descr=FIELD, original_mnemonic=FLD), 
+HeaderItem(mnemonic=LOC, unit=, value=A9-16-49, descr=LOCATION, original_mnemonic=LOC), 
+HeaderItem(mnemonic=PROV, unit=, value=SASKATCHEWAN, descr=PROVINCE, original_mnemonic=PROV), 
+HeaderItem(mnemonic=SRVC, unit=, value=ANY LOGGING COMPANY LTD., descr=SERVICE COMPANY, original_mnemonic=SRVC), 
+HeaderItem(mnemonic=DATE, unit=, value=25-DEC-1988, descr=LOG DATE, original_mnemonic=DATE), 
+HeaderItem(mnemonic=UWI, unit=, value=100091604920, descr=UNIQUE WELL ID, original_mnemonic=UWI)]
+>>> las.params
+[HeaderItem(mnemonic=BHT, unit=DEGC, value=35.5, descr=BOTTOM HOLE TEMPERATURE, original_mnemonic=BHT), 
+HeaderItem(mnemonic=BS, unit=MM, value=200.0, descr=BIT SIZE, original_mnemonic=BS), 
+HeaderItem(mnemonic=FD, unit=K/M3, value=1000.0, descr=FLUID DENSITY, original_mnemonic=FD), 
+HeaderItem(mnemonic=MATR, unit=, value=0.0, descr=NEUTRON MATRIX(0=LIME,1=SAND,2=DOLO), original_mnemonic=MATR), 
+HeaderItem(mnemonic=MDEN, unit=, value=2710.0, descr=LOGGING MATRIX DENSITY, original_mnemonic=MDEN), 
+HeaderItem(mnemonic=RMF, unit=OHMM, value=0.216, descr=MUD FILTRATE RESISTIVITY, original_mnemonic=RMF), 
+HeaderItem(mnemonic=DFD, unit=K/M3, value=1525.0, descr=DRILL FLUID DENSITY, original_mnemonic=DFD)]
+```
+
+The data is stored as a 2D numpy array:
+
+```python
+>>> las.data
+array([[ 1670.   ,   123.45 ,  2550.   , ...,   123.45 ,   110.2  ,   105.6  ],
+       [ 1669.875,   123.45 ,  2550.   , ...,   123.45 ,   110.2  ,   105.6  ],
+       [ 1669.75 ,   123.45 ,  2550.   , ...,   123.45 ,   110.2  ,   105.6  ],
+       ...,
+       [ 1669.75 ,   123.45 ,  2550.   , ...,   123.45 ,   110.2  ,   105.6  ],
+       [ 1670.   ,   123.45 ,  2550.   , ...,   123.45 ,   110.2  ,   105.6  ],
+       [ 1669.875,   123.45 ,  2550.   , ...,   123.45 ,   110.2  ,   105.6  ]])
+```
+
+You can also retrieve and load data as a ``pandas`` DataFrame, build LAS files from scratch, 
+write them back to disc, and export to Excel, amongst other things.
+
+See the [documentation](https://lasio.readthedocs.io/en/latest/) for more details.
+
+",y,,,,,,,"MIT
+",y,,,,,,,,
+LibGEOS.jl-README.md,,,,,,,,,,,,,"1. At the Julia prompt, run 
+  ```julia
+  julia> Pkg.add(""LibGEOS"")
+  ```
+  This will install both the Julia package and GEOS shared libraries together. To just reinstall the GEOS shared libraries, run `Pkg.build(""LibGEOS"")`.
+
+2. Test that `LibGEOS` works by runnning
+  ```julia
+  julia> Pkg.test(""LibGEOS"")
+  ```
+",y,,,,,,,,,,,,,,
+DID-MDN-README.md,,,,,,,,,"Great thanks for the insight discussion with [Vishwanath Sindagi](http://www.vishwanathsindagi.com/) and help from [Hang Zhang](http://hangzh.com/)
+",n,"	python test.py --dataroot ./facades/github --valDataroot ./facades/github --netG ./pre_trained/netG_epoch_9.pth   
+Pre-trained model can be downloaded at (put it in the folder 'pre_trained'): https://drive.google.com/drive/folders/1VRUkemynOwWH70bX9FXL4KMWa4s_PSg2?usp=sharing
+
+Pre-trained density-aware model can be downloaded at (Put it in the folder 'classification'): https://drive.google.com/drive/folders/1-G86JTvv7o1iTyfB2YZAQTEHDtSlEUKk?usp=sharing
+
+Pre-trained residule-aware model can be downloaded at (Put it in the folder 'residual_heavy'): https://drive.google.com/drive/folders/1bomrCJ66QVnh-WduLuGQhBC-aSWJxPmI?usp=sharing
+
+",y,,,,,,,,,,,,,,,,
+bootstrap-README.md,,,,,"Bootstrap's documentation, included in this repo in the root directory, is built with [Hugo](https://gohugo.io/) and publicly hosted on GitHub Pages at . The docs may also be run locally.
+
+Documentation search is powered by [Algolia's DocSearch](https://community.algolia.com/docsearch/). Working on our search? Be sure to set `debug: true` in `site/static/docs/4.3/assets/js/src/search.js` file.
+
+",y,,,,,"Several quick start options are available:
+
+- [Download the latest release.](https://github.com/twbs/bootstrap/archive/v4.3.1.zip)
+- Clone the repo: `git clone https://github.com/twbs/bootstrap.git`
+- Install with [npm](https://www.npmjs.com/): `npm install bootstrap`
+- Install with [yarn](https://yarnpkg.com/): `yarn add bootstrap@4.3.1`
+- Install with [Composer](https://getcomposer.org/): `composer require twbs/bootstrap:4.3.1`
+- Install with [NuGet](https://www.nuget.org/): CSS: `Install-Package bootstrap` Sass: `Install-Package bootstrap.sass`
+
+Read the [Getting started page](https://getbootstrap.com/docs/4.3/getting-started/introduction/) for information on the framework contents, templates and examples, and more.
+
+
+",y,,,"1. Run `npm install` to install the Node.js dependencies, including Hugo (the site builder).
+2. Run `npm run test` (or a specific npm script) to rebuild distributed CSS and JavaScript files, as well as our docs assets.
+3. From the root `/bootstrap` directory, run `npm run docs-serve` in the command line.
+4. Open `http://localhost:9001/` in your browser, and voilà.
+
+Learn more about using Hugo by reading its [documentation](https://gohugo.io/documentation/).
+
+",y,,,"Code and documentation copyright 2011-2019 the [Bootstrap Authors](https://github.com/twbs/bootstrap/graphs/contributors) and [Twitter, Inc.](https://twitter.com) Code released under the [MIT License](https://github.com/twbs/bootstrap/blob/master/LICENSE). Docs released under [Creative Commons](https://github.com/twbs/bootstrap/blob/master/docs/LICENSE).
+",y,,,,,,,,
+pyvista-README.md,,,,,,,,,"There is a `paper about PyVista `_!
+
+If you are using PyVista in your scientific research, please help our scientific
+visibility by citing our work!
+
+
+    Sullivan et al., (2019). PyVista: 3D plotting and mesh analysis through a streamlined interface for the Visualization Toolkit (VTK). Journal of Open Source Software, 4(37), 1450, https://doi.org/10.21105/joss.01450
+
+
+BibTex:
+
+.. code::
+
+    @article{sullivan2019pyvista,
+      doi = {10.21105/joss.01450},
+      url = {https://doi.org/10.21105/joss.01450},
+      year = {2019},
+      month = {may},
+      publisher = {The Open Journal},
+      volume = {4},
+      number = {37},
+      pages = {1450},
+      author = {C. Bane Sullivan and Alexander Kaszynski},
+      title = {{PyVista}: 3D plotting and mesh analysis through a streamlined interface for the Visualization Toolkit ({VTK})},
+      journal = {Journal of Open Source Software}
+    }
+",y,,,,,,,"* Embeddable rendering in Jupyter Notebooks
+* Filtering/plotting tools built for interactivity in Jupyter notebooks (see `IPython Tools`_)
+* Direct access to mesh analysis and transformation routines (see Filters_)
+* Intuitive plotting routines with ``matplotlib`` similar syntax (see Plotting_)
+* Import meshes from many common formats (use ``pyvista.read()``)
+* Export meshes as VTK, STL, OBJ, or PLY file types
+
+
+.. _IPython Tools: http://docs.pyvista.org/tools/ipy_tools.html
+.. _Filters: http://docs.pyvista.org/tools/filters.html
+.. _Plotting: http://docs.pyvista.org/tools/plotting.html
+
+
+",y,,,,,,,,,,
+sequelize-sequelize-README.md,,,,,"- [v5 Documentation](https://sequelize.org/master)
+- [v4 Documentation](https://sequelize.org/v4)
+- [v3 Documentation](https://sequelize.org/v3)
+- [Contributing](https://github.com/sequelize/sequelize/blob/master/CONTRIBUTING.md)
+
+",y,,,,,,,"```bash
+$ npm install --save sequelize #: This will install v5
+
+#: And one of the following:
+$ npm install --save pg pg-hstore #: Postgres
+$ npm install --save mysql2
+$ npm install --save mariadb
+$ npm install --save sqlite3
+$ npm install --save tedious #: Microsoft SQL Server
+```
+
+",y,,,,,,,,,,,,,,
+DCPDN-README.md,,,,,,,,,"Great thanks for the insight discussion with [Vishwanath Sindagi](http://www.vishwanathsindagi.com/) and initial discussion with [Dr. Kevin S. Zhou](https://sites.google.com/site/skevinzhou/home)
+
+This work is under MIT license.
+",n,"	python demo.py --dataroot ./facades/nat_new4 --valDataroot ./facades/nat_new4 --netG ./demo_model/netG_epoch_8.pth   
+Pre-trained dehazing model can be downloaded at (put it in the folder 'demo_model'): https://drive.google.com/drive/folders/1BmNP5ZUWEFeGGEL1NsZSRbYPyjBQ7-nn?usp=sharing
+
+Testing images (nature)  can be downloaded at (put it in the folder 'facades'):
+https://drive.google.com/drive/folders/1q5bRQGgS8SFEGqMwrLlku4Ad-0Tn3va7?usp=sharing
+
+Testing images (syn (Test A in the paper))  can be downloaded at (put it in the folder 'facades'):
+https://drive.google.com/drive/folders/1hbwYCzoI3R3o2Gj_kfT6GHG7RmYEOA-P?usp=sharing
+
+
+",y,,,,,,,,,,,,,,,,
+Shapely-README.md,,,,,,,,,,,,,"Shapely may be installed from a source distribution or one of several kinds
+of built distribution.
+
+",n,,,,,,,,,,,,,,
+react-README.md,,,"To help you get your feet wet and get you familiar with our contribution process, we have a list of [good first issues](https://github.com/facebook/react/labels/good%20first%20issue) that contain bugs which have a relatively limited scope. This is a great place to get started.
+
+",n,"You can find the React documentation [on the website](https://reactjs.org/docs).  
+
+Check out the [Getting Started](https://reactjs.org/docs/getting-started.html) page for a quick overview.
+
+The documentation is divided into several sections:
+
+* [Tutorial](https://reactjs.org/tutorial/tutorial.html)
+* [Main Concepts](https://reactjs.org/docs/hello-world.html)
+* [Advanced Guides](https://reactjs.org/docs/jsx-in-depth.html)
+* [API Reference](https://reactjs.org/docs/react-api.html)
+* [Where to Get Support](https://reactjs.org/community/support.html)
+* [Contributing Guide](https://reactjs.org/docs/how-to-contribute.html)
+
+You can improve it by sending pull requests to [this repository](https://github.com/reactjs/reactjs.org).
+
+",y,,,,,"We have several examples [on the website](https://reactjs.org/). Here is the first one to get you started:
+
+```jsx
+function HelloMessage({ name }) {
+  return Hello {name};
+}
+
+ReactDOM.render(
+  ,
+  document.getElementById('container')
+);
+```
+
+This example will render ""Hello Taylor"" into a container on the page.
+
+You'll notice that we used an HTML-like syntax; [we call it JSX](https://reactjs.org/docs/introducing-jsx.html). JSX is not required to use React, but it makes code more readable, and writing it feels like writing HTML. If you're using React as a `` tag, read [this section](https://reactjs.org/docs/add-react-to-a-website.html#optional-try-react-with-jsx) on integrating JSX; otherwise, the [recommended JavaScript toolchains](https://reactjs.org/docs/create-a-new-react-app.html) handle it automatically.
+
+",y,"React has been designed for gradual adoption from the start, and **you can use as little or as much React as you need**:
+
+* Use [Online Playgrounds](https://reactjs.org/docs/getting-started.html#online-playgrounds) to get a taste of React.
+* [Add React to a Website](https://reactjs.org/docs/add-react-to-a-website.html) as a `` tag in one minute.
+* [Create a New React App](https://reactjs.org/docs/create-a-new-react-app.html) if you're looking for a powerful JavaScript toolchain.
+
+You can use React as a `` tag from a [CDN](https://reactjs.org/docs/cdn-links.html), or as a `react` package on [npm](https://www.npmjs.com/).
+
+",n,,,,,"React is [MIT licensed](./LICENSE).
+",y,,,,,,,,
+pose-residual-network-pytorch-README.md,"```
+python
+pytorch
+numpy
+tqdm
+pycocotools
+progress
+scikit-image
+```
+
+",y,,,,,,,"If you find this code useful for your research, please consider citing our paper:
+```
+@Inproceedings{kocabas18prn,
+  Title          = {Multi{P}ose{N}et: Fast Multi-Person Pose Estimation using Pose Residual Network},
+  Author         = {Kocabas, Muhammed and Karagoz, Salih and Akbas, Emre},
+  Booktitle      = {European Conference on Computer Vision (ECCV)},
+  Year           = {2018}
+}
+```
+",y,"We have tested our method on [Coco Dataset](http://cocodataset.org)
+
+",n,"1. Clone this repository 
+`git clone https://github.com/salihkaragoz/pose-residual-network-pytorch.git`
+
+2. Install [Pytorch](https://pytorch.org/)
+
+3. `pip install -r src/requirements.txt`
+
+4. To download COCO dataset train2017 and val2017 annotations run: `bash data/coco.sh`. (data size: ~240Mb)
+
+",y,,,,,,,,,,,,,,
+gempy-README.md,"*GemPy* requires Python 3 and makes use of numerous open-source libraries:
+
+* pandas>=0.21.0
+* cython
+* Theano
+* matplotlib
+* numpy
+* pytest
+* nbsphinx
+* seaborn
+* networkx
+* ipywidgets
+
+Optional:
+
+* git+git://github.com/Leguark/scikit-image@master
+* steno3d
+* vtk
+* gdal
+* qgrid
+* pymc
+* pymc3
+
+* `vtk>=7` for interactive 3-D visualization 
+* `pymc` or `pymc3`
+* `steno3d` 
+
+Overall we recommend the use of a dedicated Python distribution, such as 
+[Anaconda](https://www.continuum.io/what-is-anaconda), for hassle-free package installation. 
+We are currently working on providing GemPy also via Anaconda Cloud, for easier installation of
+its dependencies.
+
+",y,,,"Extensive documentation for *GemPy* is hosted at [gempy.readthedocs.io](http://gempy.readthedocs.io/),
+explaining its capabilities, [the theory behind it](http://gempy.readthedocs.io/Kriging.html) and 
+providing detailed [tutorials](http://gempy.readthedocs.io/tutorial.html) on how to use it.
+
+
+",y,,,"* de la Varga, M., Schaaf, A., and Wellmann, F.: GemPy 1.0: open-source stochastic geological modeling and inversion, Geosci. Model Dev., 12, 1-32, https://doi.org/10.5194/gmd-12-1-2019, 2019
+* Calcagno, P., Chilès, J. P., Courrioux, G., & Guillen, A. (2008). Geological modelling from field data and geological knowledge: Part I. Modelling method coupling 3D potential-field interpolation and geological rules. Physics of the Earth and Planetary Interiors, 171(1-4), 147-157.
+* Lajaunie, C., Courrioux, G., & Manuel, L. (1997). Foliation fields and 3D cartography in geology: principles of a method based on potential interpolation. Mathematical Geology, 29(4), 571-584.
+",n,,,"1) Install CUDA if you do not have it already.
+
+2) Install Anaconda3 2019.03 with Python 3.7 (this is the last release).
+
+3) Install Theano and associated packages from the Anaconda prompt as administrator, and finally install GemPy 2.0:
+
+- conda update --all
+- conda install libpython
+- conda install m2w64-toolchain
+- conda install git
+- conda install pygpu
+- pip install theano==1.0.4
+- pip install gempy==2.0b0.dev2
+
+Note that:
+
+a) some other packages required by Theano are already included in Anaconda: numpy, scipy, mkl-service, nose, and sphinx.
+
+b) pydot-ng (suggested on Theano web site) yields a lot of errors. I dropped this. It is needed to handle large picture for gif/images and probably it is not needed by GemPy.
+
+c) Trying to install all the packages in one go but it does not work, as well as doing the same in Anaconda Navigator, or installing an older Anaconda release with Python 3.5 (Anaconda3 4.2.0) as indicated in some tutorial on Theano.
+
+
+
+",y,,,,,,,,,,,,,,
+iter-reason-README.md,"1. Tensorflow, tested with version 1.6 with Ubuntu 16.04, installed with:
+  ```Shell
+  pip install --ignore-installed --upgrade https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.6.0-cp27-none-linux_x86_64.whl
+  ```
+
+2. Other packages needed can be installed with `pip`:
+  ```Shell
+  pip install Cython easydict matplotlib opencv-python Pillow pyyaml scipy
+  ```
+
+3. For running COCO, the API can be installed globally:
+  ```Shell
+  #: any path is okay
+  mkdir ~/install && cd ~/install
+  git clone https://github.com/cocodataset/cocoapi.git cocoapi
+  cd cocoapi/PythonAPI
+  python setup.py install --user
+  ```
+
+",y,,,,,,,"```
+@inproceedings{chen18iterative,
+    author = {Xinlei Chen and Li-Jia Li and Li Fei-Fei and Abhinav Gupta},
+    title = {Iterative Visual Reasoning Beyond Convolutions},
+    booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
+    Year = {2018}
+}
+```
+
+The idea of spatial memory was developed in:
+```
+@inproceedings{chen2017spatial,
+    author = {Xinlei Chen and Abhinav Gupta},
+    title = {Spatial Memory for Context Reasoning in Object Detection},
+    booktitle = {Proceedings of the International Conference on Computer Vision},
+    Year = {2017}
+}
+```",y,,,"1. Clone the repository.
+  ```Shell
+  git clone https://github.com/endernewton/iter-reason.git
+  cd iter-reason
+  ```
+
+2. Set up data, here we use [ADE20K](http://groups.csail.mit.edu/vision/datasets/ADE20K/) as an example.
+  ```Shell
+  mkdir -p data/ADE
+  cd data/ADE
+  wget -v http://groups.csail.mit.edu/vision/datasets/ADE20K/ADE20K_2016_07_26.zip
+  tar -xzvf ADE20K_2016_07_26.zip
+  mv ADE20K_2016_07_26/* ./
+  rmdir ADE20K_2016_07_26
+  #: then get the train/val/test split
+  wget -v http://xinleic.xyz/data/ADE_split.tar.gz
+  tar -xzvf ADE_split.tar.gz
+  rm -vf ADE_split.tar.gz
+  cd ../..
+  ```
+
+3. Set up pre-trained ImageNet models. This is similarly done in [tf-faster-rcnn](https://github.com/endernewton/tf-faster-rcnn). Here by default we use ResNet-50 as the backbone:
+  ```Shell
+   mkdir -p data/imagenet_weights
+   cd data/imagenet_weights
+   wget -v http://download.tensorflow.org/models/resnet_v1_50_2016_08_28.tar.gz
+   tar -xzvf resnet_v1_50_2016_08_28.tar.gz
+   mv resnet_v1_50.ckpt res50.ckpt
+   cd ../..
+   ```
+
+4. Compile the library (for computing bounding box overlaps).
+  ```Shell
+  cd lib
+  make
+  cd ..
+  ```
+
+5. Now you are ready to run! For example, to train and test the baseline:
+  ```Shell
+  ./experiments/scripts/train.sh [GPU_ID] [DATASET] [NET] [STEPS] [ITER] 
+  #: GPU_ID is the GPU you want to test on
+  #: DATASET in {ade, coco, vg} is the dataset to train/test on, defined in the script
+  #: NET in {res50, res101} is the backbone networks to choose from
+  #: STEPS (x10K) is the number of iterations before it reduces learning rate, can support multiple steps separated by character 'a'
+  #: ITER (x10K) is the total number of iterations to run
+  #: Examples:
+  #: train on ADE20K for 320K iterations, reducing learning rate at 280K.
+  ./experiments/scripts/train.sh 0 ade 28 32
+  #: train on COCO for 720K iterations, reducing at 320K and 560K.
+  ./experiments/scripts/train.sh 1 coco 32a56 72
+  ```
+
+6. To train and test the reasoning modules (based on ResNet-50):
+  ```Shell
+  ./experiments/scripts/train_memory.sh [GPU_ID] [DATASET] [MEM] [STEPS] [ITER] 
+  #: MEM in {local} is the type of reasoning modules to use 
+  #: Examples:
+  #: train on ADE20K on the local spatial memory.
+  ./experiments/scripts/train_memory.sh 0 ade local 28 32
+  ```
+
+7. Once the training is done, you can test the models separately with `test.sh` and `test_memory.sh`, we also provided a separate set of scripts to test on larger image inputs.
+
+8. You can use tensorboard to visualize and track the progress, for example:
+  ```Shell
+  tensorboard --logdir=tensorboard/res50/ade_train_5/ --port=7002 &
+  ```
+
+",y,"1. Clone the repository.
+  ```Shell
+  git clone https://github.com/endernewton/iter-reason.git
+  cd iter-reason
+  ```
+
+2. Set up data, here we use [ADE20K](http://groups.csail.mit.edu/vision/datasets/ADE20K/) as an example.
+  ```Shell
+  mkdir -p data/ADE
+  cd data/ADE
+  wget -v http://groups.csail.mit.edu/vision/datasets/ADE20K/ADE20K_2016_07_26.zip
+  tar -xzvf ADE20K_2016_07_26.zip
+  mv ADE20K_2016_07_26/* ./
+  rmdir ADE20K_2016_07_26
+  #: then get the train/val/test split
+  wget -v http://xinleic.xyz/data/ADE_split.tar.gz
+  tar -xzvf ADE_split.tar.gz
+  rm -vf ADE_split.tar.gz
+  cd ../..
+  ```
+
+3. Set up pre-trained ImageNet models. This is similarly done in [tf-faster-rcnn](https://github.com/endernewton/tf-faster-rcnn). Here by default we use ResNet-50 as the backbone:
+  ```Shell
+   mkdir -p data/imagenet_weights
+   cd data/imagenet_weights
+   wget -v http://download.tensorflow.org/models/resnet_v1_50_2016_08_28.tar.gz
+   tar -xzvf resnet_v1_50_2016_08_28.tar.gz
+   mv resnet_v1_50.ckpt res50.ckpt
+   cd ../..
+   ```
+
+4. Compile the library (for computing bounding box overlaps).
+  ```Shell
+  cd lib
+  make
+  cd ..
+  ```
+
+5. Now you are ready to run! For example, to train and test the baseline:
+  ```Shell
+  ./experiments/scripts/train.sh [GPU_ID] [DATASET] [NET] [STEPS] [ITER] 
+  #: GPU_ID is the GPU you want to test on
+  #: DATASET in {ade, coco, vg} is the dataset to train/test on, defined in the script
+  #: NET in {res50, res101} is the backbone networks to choose from
+  #: STEPS (x10K) is the number of iterations before it reduces learning rate, can support multiple steps separated by character 'a'
+  #: ITER (x10K) is the total number of iterations to run
+  #: Examples:
+  #: train on ADE20K for 320K iterations, reducing learning rate at 280K.
+  ./experiments/scripts/train.sh 0 ade 28 32
+  #: train on COCO for 720K iterations, reducing at 320K and 560K.
+  ./experiments/scripts/train.sh 1 coco 32a56 72
+  ```
+
+6. To train and test the reasoning modules (based on ResNet-50):
+  ```Shell
+  ./experiments/scripts/train_memory.sh [GPU_ID] [DATASET] [MEM] [STEPS] [ITER] 
+  #: MEM in {local} is the type of reasoning modules to use 
+  #: Examples:
+  #: train on ADE20K on the local spatial memory.
+  ./experiments/scripts/train_memory.sh 0 ade local 28 32
+  ```
+
+7. Once the training is done, you can test the models separately with `test.sh` and `test_memory.sh`, we also provided a separate set of scripts to test on larger image inputs.
+
+8. You can use tensorboard to visualize and track the progress, for example:
+  ```Shell
+  tensorboard --logdir=tensorboard/res50/ade_train_5/ --port=7002 &
+  ```
+
+",y,,,,,,,,,,,,
+DeepGuidedFilter-README.md,,,,,,,,,"```
+@inproceedings{wu2017fast,
+  title     = {Fast End-to-End Trainable Guided Filter},
+  author    = {Wu, Huikai and Zheng, Shuai and Zhang, Junge and Huang, Kaiqi},
+  booktitle = {CVPR},
+  year = {2018}
+}
+```",y,"* PyTorch Version
+    ```python
+    from guided_filter_pytorch.guided_filter import FastGuidedFilter
+    
+    hr_y = FastGuidedFilter(r, eps)(lr_x, lr_y, hr_x)
+    ```
+    ```python
+    from guided_filter_pytorch.guided_filter import GuidedFilter
+    
+    hr_y = GuidedFilter(r, eps)(hr_x, init_hr_y)
+    ``` 
+* Tensorflow Version
+    ```python
+    from guided_filter_tf.guided_filter import fast_guided_filter
+    
+    hr_y = fast_guided_filter(lr_x, lr_y, hr_x, r, eps, nhwc)
+    ```
+    ```python
+    from guided_filter_tf.guided_filter import guided_filter
+    
+    hr_y = guided_filter(hr_x, init_hr_y, r, eps, nhwc)
+    ```
+",n,"```sh
+git checkout master
+
+conda install opencv
+conda install pytorch=0.2.0 cuda80 -c soumith
+    
+pip install -r requirements.txt
+
+#: (Optional) For MonoDepth (TF Version).
+pip install -r ComputerVision/MonoDepth/requirements.txt 
+```
+",y,,,"![](images/results.jpg)
+
+**DeepGuidedFilter** is the author's implementation of the deep learning building block for joint upsampling described in:  
+
+**Fast End-to-End Trainable Guided Filter**     
+Huikai Wu, Shuai Zheng, Junge Zhang, Kaiqi Huang    
+CVPR 2018
+
+Given a reference image pair in high-resolution and low-resolution, our algorithm generates high-resolution target from the low-resolution input. Through joint training with CNNs, our algorithm achieves the state-of-the-art performance while runs **10-100** times faster. 
+
+Contact: Hui-Kai Wu (huikaiwu@icloud.com)
+
+",y,,,,,,,,,,
+gprMax-README.md,,,,,,,,,"If you use gprMax and publish your work we would be grateful if you could cite our work using:
+
+* Warren, C., Giannopoulos, A., & Giannakis I. (2016). gprMax: Open source software to simulate electromagnetic wave propagation for Ground Penetrating Radar, `Computer Physics Communications` (http://dx.doi.org/10.1016/j.cpc.2016.08.020)
+
+For further information on referencing gprMax visit the `Publications section of our website `_.
+
+
+",y,"We recommend using Miniconda to install Python and the required Python packages for gprMax in a self-contained Python environment. Miniconda is a mini version of Anaconda which is a completely free Python distribution (including for commercial use and redistribution). It includes more than 300 of the most popular Python packages for science, math, engineering, and data analysis.
+
+* `Download and install Miniconda `_. Choose the Python 3.x version for your platform. We recommend choosing the installation options to: install Miniconda only for your user account; add Miniconda to your PATH environment variable; and to register Miniconda Python as your default Python. See the `Quick Install page `_ for help installing Miniconda.
+* Open a Terminal (Linux/macOS) or Command Prompt (Windows) and run the following commands:
+
+.. code-block:: bash
+
+    $ conda update conda
+    $ conda install git
+    $ git clone https://github.com/gprMax/gprMax.git
+    $ cd gprMax
+    $ conda env create -f conda_env.yml
+
+This will make sure conda is up-to-date, install Git, get the latest gprMax source code from GitHub, and create an environment for gprMax with all the necessary Python packages.
+
+If you prefer to install Python and the required Python packages manually, i.e. without using Anaconda/Miniconda, look in the ``conda_env.yml`` file for a list of the requirements.
+
+",n,"Once you have installed the aforementioned tools follow these steps to build and install gprMax:
+
+* Open a Terminal (Linux/macOS) or Command Prompt (Windows), navigate into the top-level gprMax directory, and if it is not already active, activate the gprMax conda environment :code:`conda activate gprMax`. Run the following commands:
+
+.. code-block:: bash
+
+    (gprMax)$ python setup.py build
+    (gprMax)$ python setup.py install
+
+**You are now ready to proceed to running gprMax.**
+
+If you have problems with building gprMax on Microsoft Windows, you may need to add :code:`C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin` to your path environment variable.
+
+",y,"gprMax is designed as a Python package, i.e. a namespace which can contain multiple packages and modules, much like a directory.
+
+Open a Terminal (Linux/macOS) or Command Prompt (Windows), navigate into the top-level gprMax directory, and if it is not already active, activate the gprMax conda environment :code:`conda activate gprMax`.
+
+Basic usage of gprMax is:
+
+.. code-block:: bash
+
+    (gprMax)$ python -m gprMax path_to/name_of_input_file
+
+For example to run one of the test models:
+
+.. code-block:: bash
+
+    (gprMax)$ python -m gprMax user_models/cylinder_Ascan_2D.in
+
+When the simulation is complete you can plot the A-scan using:
+
+.. code-block:: bash
+
+    (gprMax)$ python -m tools.plot_Ascan user_models/cylinder_Ascan_2D.out
+
+Your results should like those from the A-scan from the metal cylinder example in `introductory/basic 2D models section `_
+
+When you are finished using gprMax, the conda environment can be deactivated using :code:`conda deactivate`.
+
+",y,,,,,"* Open a Terminal (Linux/macOS) or Command Prompt (Windows), navigate into the top-level gprMax directory, and if it is not already active, activate the gprMax conda environment :code:`conda activate gprMax`. Run the following commands:
+
+.. code-block:: bash
+
+    (gprMax)$ git pull
+    (gprMax)$ python setup.py cleanall
+    (gprMax)$ python setup.py build
+    (gprMax)$ python setup.py install
+
+This will pull the most recent gprMax source code form GitHub, remove/clean previously built modules, and then build and install the latest version of gprMax.
+
+
+",y,"Linux
+^^^^^
+
+* `gcc `_ should be already installed, so no action is required.
+
+
+macOS
+^^^^^
+
+* Xcode (the IDE for macOS) comes with the LLVM (clang) compiler, but it does not currently support OpenMP, so you must install `gcc `_. That said, it is still useful to have Xcode (with command line tools) installed. It can be downloaded from the App Store. Once Xcode is installed, download and install the `Homebrew package manager `_ and then to install gcc, run:
+
+.. code-block:: bash
+
+    $ brew install gcc
+
+Microsoft Windows
+^^^^^^^^^^^^^^^^^
+
+* Download and install `Microsoft Visual C++ 2015 Build Tools `_ (currently you must use the 2015 version, not 2017). Use the custom installation option and deselect everything apart from the Windows SDK for your version of Windows.
+
+Alternatively if you are using Windows 10 and feeling adventurous you can install the `Windows Subsystem for Linux `_ and then follow the Linux install instructions for gprMax. Note however that currently WSL does not aim to support GUI desktops or applications, e.g. Gnome, KDE, etc....
+
+
+
+",n,,,,
+gitfolio-README.md,,,,,,,,,,,,,"Install gitfolio
+
+```sh
+npm i gitfolio -g
+```
+
+",y,,,,,"![GitHub](https://img.shields.io/github/license/imfunniee/gitfolio.svg?style=popout-square)
+",y,"To update your info, simply run
+
+```sh
+$ gitfolio update
+```
+This will update your info and your repository info.
+
+To Update background or theme you need to run `build` command again.
+
+
+",y,,,,,,
+gitbucket-gitbucket-README.md,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+neural_renderer-README.md,,,,,,,,,"```
+@InProceedings{kato2018renderer
+    title={Neural 3D Mesh Renderer},
+    author={Kato, Hiroharu and Ushiku, Yoshitaka and Harada, Tatsuya},
+    booktitle={The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+    year={2018}
+}
+```
+",y,"```
+python ./examples/example1.py
+python ./examples/example2.py
+python ./examples/example3.py
+python ./examples/example4.py
+```
+
+
+",n,"```
+sudo python setup.py install
+```
+
+",n,"```
+python ./examples/example1.py
+python ./examples/example2.py
+python ./examples/example3.py
+python ./examples/example4.py
+```
+
+
+",y,,,,,,,,,,,,
+facebookresearch-DensePose-README.md,,,,,,,,,"If you use Densepose, please use the following BibTeX entry.
+
+```
+  @InProceedings{Guler2018DensePose,
+  title={DensePose: Dense Human Pose Estimation In The Wild},
+  author={R\{i}za Alp G\""uler, Natalia Neverova, Iasonas Kokkinos},
+  journal={The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year={2018}
+  }
+```
+
+
+",y,,,"Please find installation instructions for Caffe2 and DensePose in [`INSTALL.md`](INSTALL.md), a document based on the [Detectron](https://github.com/facebookresearch/Detectron) installation instructions.
+
+",y,,,,,"This source code is licensed under the license found in the [`LICENSE`](LICENSE) file in the root directory of this source tree.
+
+",y,,,,,,,,
+node-qa-masker-README.md,,,,,,,,,,,,,"``` bash
+npm install qa-masker
+```
+
+",y,,,,,,,,,,,,,,
+mapshaper-README.md,,,,,,,,,,,"```
+
+",n,,,bin/mapshaper-gui ,n,"Mapshaper is software for editing Shapefile, GeoJSON, [TopoJSON](https://github.com/mbostock/topojson/wiki), CSV and several other data formats, written in JavaScript.
+
+The `mapshaper` command line program supports essential map making tasks like simplifying shapes, editing attribute data, clipping, erasing, dissolving, filtering and more.
+
+The web UI supports interactive simplification, attribute data editing, and running cli commands in a built-in console. Visit the public website at [www.mapshaper.org](http://www.mapshaper.org) or use the web UI locally via the `mapshaper-gui` script.
+
+See the [project wiki](https://github.com/mbloch/mapshaper/wiki) for more documentation on how to use mapshaper.
+
+To suggest improvements, add an [issue](https://github.com/mbloch/mapshaper/issues).
+
+To learn about recent updates, read the [changelog](https://github.com/mbloch/mapshaper/releases).
+
+",y,"This software is licensed under [MPL 2.0](http://www.mozilla.org/MPL/2.0/).
+
+According to Mozilla's [FAQ](http://www.mozilla.org/MPL/2.0/FAQ.html), ""The MPL's ‘file-level’ copyleft is designed to encourage contributors to share modifications they make to your code, while still allowing them to combine your code with code under other licenses (open or proprietary) with minimal restrictions.""
+
+
+
+",y,,,"**Web interface**
+
+Firefox is able to load Shapefiles and GeoJSON files larger than 1GB. Chrome has improved in recent versions, but is still prone to out-of-memory errors when importing files larger than several hundred megabytes.
+
+**Command line interface**
+
+When working with very large files, mapshaper may become unresponsive or crash with the message ""JavaScript heap out of memory.""
+
+One option is to run `mapshaper-xl` (added in v0.4.63), which allocates more memory than the standard `mapshaper` program.
+
+Another solution is to run Node directly with the `--max-old-space-size` option. The following example (Mac or Linux) allocates 8GB of memory:
+```bash
+$ node  --max-old-space-size=8192 `which mapshaper` 
+```
+
+#:#:#: Installation
+
+Mapshaper requires [Node.js](http://nodejs.org).
+
+With Node installed, you can install the latest release version of mapshaper using npm. Install with the ""-g"" flag to make the executable scripts available systemwide.
+
+```bash
+npm install -g mapshaper
+```
+
+To install and run the latest development code from github:
+
+```bash
+git clone git@github.com:mbloch/mapshaper.git
+cd mapshaper
+npm install
+bin/mapshaper     ",n,,,,
+empymod-README.md,,,,,,,,,,,,,,,,,,,"Copyright 2016-2019 Dieter Werthmüller
+
+Licensed under the Apache License, Version 2.0. See the ``LICENSE``- and
+``NOTICE``-files or the documentation for more information.
+",y,,,,,,,,
+segyio-README.md,,,,,,,,,,,"When segyio is built and installed, you're ready to start programming! Check
+out the [tutorial](#tutorial), [examples](#examples), [example
+programs](python/examples), and [example
+notebooks](https://github.com/equinor/segyio-notebooks). For a technical
+reference with examples and small recipes, [read the
+docs](https://segyio.readthedocs.io/). API docs are also available with pydoc -
+start your favourite Python interpreter and type `help(segyio)`, which should
+integrate well with IDLE, pycharm and other Python tools.
+
+",y,,,,,"Opening a file for reading is done with the `segyio.open` function, and
+idiomatically used with context managers. Using the `with` statement, files are
+properly closed even in the case of exceptions. By default, files are opened
+read-only.
+
+```python
+with segyio.open(filename) as f:
+    ...
+```
+
+Open accepts several options (for more a more comprehensive reference, check
+the open function's docstring with `help(segyio.open)`. The most important
+option is the second (optional) positional argument. To open a file for
+writing, do `segyio.open(filename, 'r+')`, from the C `fopen` function.
+
+Files can be opened in *unstructured* mode, either by passing `segyio.open` the
+optional arguments `strict=False`, in which case not establishing structure
+(inline numbers, crossline numbers etc.) is not an error, and
+`ignore_geometry=True`, in which case segyio won't even try to set these
+internal attributes.
+
+The segy file object has several public attributes describing this structure:
+* `f.ilines`
+    Inferred inline numbers
+* `f.xlines`
+    Inferred crossline numbers
+* `f.offsets`
+    Inferred offsets numbers
+* `f.samples`
+    Inferred sample offsets (frequency and recording time delay)
+* `f.unstructured`
+    True if unstructured, False if structured
+* `f.ext_headers`
+    The number of extended textual headers
+
+If the file is opened *unstructured*, all the line properties will will be
+`None`.
+
+",n,,,,,,,,,,
+vid2vid-README.md,"- Linux or macOS
+- Python 3
+- NVIDIA GPU + CUDA cuDNN
+- PyTorch 0.4
+
+
+",y,,,,,,,"We thank Karan Sapra, Fitsum Reda, and Matthieu Le for generating the segmentation maps for us. We also thank Lisa Rhee for allowing us to use her dance videos for training. We thank William S. Peebles for proofreading the paper.
+This code borrows heavily from [pytorch-CycleGAN-and-pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) and [pix2pixHD](https://github.com/NVIDIA/pix2pixHD).
+",n,,,"- Install python libraries [dominate](https://github.com/Knio/dominate) and requests.
+```bash
+pip install dominate requests
+```
+- If you plan to train with face datasets, please install dlib.
+```bash
+pip install dlib
+```
+- If you plan to train with pose datasets, please install [DensePose](https://github.com/facebookresearch/DensePose) and/or [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose).
+- Clone this repo:
+```bash
+git clone https://github.com/NVIDIA/vid2vid
+cd vid2vid
+```
+- Docker Image
+If you have difficulty building the repo, a docker image can be found in the `docker` folder.
+
+",y,,,,,,,,,,,,,,
+PVGeo-README.md,,,"Please feel free to post features you would like to see from this package on the
+[**issues page**](https://github.com/OpenGeoVis/PVGeo/issues) as a feature
+request.
+If you stumble across any bugs or crashes while using code distributed here,
+report them in the issues section so we can promptly address it.
+For other questions, join the [***PVGeo* community on Slack**](http://slack.pvgeo.org).
+
+Interested in contributing to PVGeo? Please see the [contributing guide](https://pvgeo.org/dev-guide/contributing.html)
+
+",y,,,,,,,"To begin using the *PVGeo* Python package, create/activate your Python virtual
+environment (we highly recommend using anaconda) and install *PVGeo* through pip:
+
+```bash
+pip install PVGeo
+```
+
+Now *PVGeo* is ready for use in your standard Python environment (2.7 or >=3.6)
+with all dependencies installed! Go ahead and test your install:
+
+```bash
+python -c ""import PVGeo; print(PVGeo.__version__)""
+```
+
+Note that Windows users must use Python >=3.6 when outside of ParaView.
+Further insight can be found in the [**Getting Started Guide**](http://pvgeo.org/overview/getting-started.html).
+
+
+",y,,,,,,,,,,,"Please feel free to post features you would like to see from this package on the
+[**issues page**](https://github.com/OpenGeoVis/PVGeo/issues) as a feature
+request.
+If you stumble across any bugs or crashes while using code distributed here,
+report them in the issues section so we can promptly address it.
+For other questions, join the [***PVGeo* community on Slack**](http://slack.pvgeo.org).
+
+Interested in contributing to PVGeo? Please see the [contributing guide](https://pvgeo.org/dev-guide/contributing.html)
+
+",y,,,,
+hyvr-README.md,,,,,,,,,,,,,"Installing Python
+^^^^^^^^^^^^^^^^^
+
+
+Windows
+""""""""""""""
+
+If you are using Windows, we recommend installing the `Anaconda distribution
+`_ of Python 3. This distribution has the
+majority of dependencies that HyVR requires.
+
+It is also a good idea to install the HyVR package into a `virtual environment
+`_. Do this by
+opening a command prompt window and typing the following::
+
+    conda create --name hyvr_env
+
+You need to then activate this environment::
+
+    conda activate hyvr_env
+	
+
+Linux
+""""""""""
+
+Depending on your preferences you can either use the Anaconda/Miniconda
+distribution of python, or the version of your package manager. If you choose
+the former, follow the same steps as for Windows.
+
+If you choose the latter, you probably already have Python 3 installed. If not,
+you can install it using your package manager (e.g. ``apt`` on Ubuntu/Debian).
+
+In any way we recommend using a virtual environment. Non-conda users can use
+`virtualenvwrapper `_ or
+`pipenv `_.
+
+
+Installing HyVR
+^^^^^^^^^^^^^^^
+
+Once you have activated your virtual environment, you can install HyVR from PyPI using ``pip``::
+
+    pip install hyvr
+
+The version on PyPI should always be up to date. If it's not, you can also
+install HyVR from github::
+
+    git clone https://github.com/driftingtides/hyvr.git
+    pip install hyvr
+
+To install from source you need a C compiler.
+
+Installation from conda-forge will (hopefully) be coming soon.
+
+
+",y,,,,,,,,,,,,,,
+CU-Net-README.md,"This package has the following requirements:
+
+* `Python 2.7`
+* `Pytorch v0.4.0` or `Pytorch v0.1.12`
+
+Note that the script name with string `prev-version` requires `Pytorch v0.1.12`.
+
+",y,,,,,,,"If you find this code useful in your research, please consider citing:
+
+```
+@inproceedings{tang2018quantized,
+  title={Quantized densely connected U-Nets for efficient landmark localization},
+  author={Tang, Zhiqiang and Peng, Xi and Geng, Shijie and Wu, Lingfei and Zhang, Shaoting and Metaxas, Dimitris},
+  booktitle={ECCV},
+  year={2018}
+}
+@inproceedings{tang2018cu,
+  title={CU-Net: Coupled U-Nets},
+  author={Tang, Zhiqiang and Peng, Xi and Geng, Shijie and Zhu, Yizhe and Metaxas, Dimitris},
+  booktitle={BMVC},
+  year={2018}
+}
+```
+
+",y,,,,,,,"The follwoing figure gives an illustration of naive dense U-Net, stacked U-Nets and coupled U-Nets (CU-Net). The naive dense U-Net and stacked U-Nets have shortcut connections only inside each U-Net. In contrast, the coupled U-Nets also have connections for semantic blocks across U-Nets. The CU-Net is a hybrid of naive dense U-Net and stacked U-Net, integrating the merits of both dense connectivity, intermediate supervisions and multi-stage top-down and bottom-up refinement. The resulted CU-Net could save ~70% parameters of the previous stacked U-Nets but with comparable accuracy.
+
+
+If we couple each U-Net pair in multiple U-Nets, the coupling connections would have quadratic growth with respect to the U-Net number. To make the model more parameter efficient, we propose the order-K coupling to trim off the long-distance coupling connections.
+
+For simplicity, each dot represents one U-Net. The red and blue lines are the shortcut connections of inside semantic blocks and outside inputs. Order-0 connectivity (Top) strings U-Nets together only by their inputs and outputs, i.e. stacked U-Nets. Order-1 connectivity (Middle) has shortcut connections for adjacent U-Nets. Similarly, order-2 connectivity (Bottom) has shortcut connections for 3 nearby U-Nets.
+
+",n,,,,,,,,,,
+cltk-cltk-README.md,,,,,"The docs are at [docs.cltk.org](http://docs.cltk.org).
+
+
+",y,,,"Each major release of the CLTK is given a [DOI](http://en.wikipedia.org/wiki/Digital_object_identifier), a type of unique identity for digital documents. This DOI ought to be included in your citation, as it will allow researchers to reproduce your results should the CLTK's API or codebase change. To find the CLTK's current DOI, observe the blue `DOI` button in the repository's home on GitHub. To the end of your bibliographic entry, append `DOI ` plus the current identifier. You may also add version/release number, located in the `pypi` button at the project's GitHub repository homepage.
+
+Thus, please cite core software as something like:
+```
+Kyle P. Johnson et al.. (2014-2019). CLTK: The Classical Language Toolkit. DOI 10.5281/zenodo.
+```
+
+A style-neutral BibTeX entry would look like this:
+```
+@Misc{johnson2014,
+author = {Kyle P. Johnson et al.},
+title = {CLTK: The Classical Language Toolkit},
+howpublished = {\url{https://github.com/cltk/cltk}},
+note = {{DOI} 10.5281/zenodo.},
+year = {2014--2019},
+}
+```
+
+
+[Many contributors](https://github.com/cltk/cltk/blob/master/contributors.md) have made substantial contributions to the CLTK. For scholarship about particular code, it might be proper to cite these individuals as authors of the work under discussion.
+
+
+",y,"For interactive tutorials, in the form of Jupyter Notebooks, see .
+
+
+",n,"CLTK supports Python versions 3.6 and 3.7. The software only runs on POSIX–compliant operating systems (Linux, Mac OS X, FreeBSD, etc.).
+
+``` bash
+$ pip install cltk
+```
+
+See docs for [complete installation instructions](http://docs.cltk.org/en/latest/installation.html).
+
+The [CLTK organization curates corpora](https://github.com/cltk) which can be downloaded directly or, better, [imported by the toolkit](http://docs.cltk.org/en/latest/importing_corpora.html).
+
+
+",y,,,,,"The CLTK is Copyright (c) 2014-2019 Kyle P. Johnson, under the MIT License. See [LICENSE](https://github.com/cltk/cltk/blob/master/LICENSE) for details.
+",y,,,,,,,,
+pysal-README.md,,,,,,,,,,,"If you are interested in contributing to PySAL please see our
+[development guidelines](https://github.com/pysal/pysal/wiki).
+
+",n,,,,,,,"See the file \""LICENSE.txt\"" for information on the history of this
+software, terms & conditions for usage, and a DISCLAIMER OF ALL
+WARRANTIES.
+",y,,,,,,,,
+ICNet-README.md,,,,,,,,,"If ICNet is useful for your research, please consider citing:
+
+    @article{zhao2017icnet,
+      author = {Hengshuang Zhao and
+                Xiaojuan Qi and
+                Xiaoyong Shen and
+                Jianping Shi and
+                Jiaya Jia},
+      title = {ICNet for Real-Time Semantic Segmentation on High-Resolution Images},
+      journal={arXiv preprint arXiv:1704.08545},
+      year = {2017}
+    }
+",y,"1. Clone the repository recursively:
+
+   ```shell
+   git clone --recursive https://github.com/hszhao/ICNet.git
+   ```
+
+2. Build Caffe and matcaffe:
+
+   ```shell
+   cd $ICNET_ROOT/PSPNet
+   cp Makefile.config.example Makefile.config
+   vim Makefile.config
+   make -j8 && make matcaffe
+   cd ..
+   ```
+
+3. Evaluation mIoU:
+
+   - Evaluation code is in folder 'evaluation'.
+   - Download trained models and put them in folder 'evaluation/model':
+     - icnet_cityscapes_train_30k.caffemodel: [GoogleDrive](https://drive.google.com/open?id=0BzaU285cX7TCRXpXMnVIbXdfaW8) 
+
+       (31M, md5: c7038630c4b6c869afaaadd811bdb539; train on trainset for 30k)
+
+     - icnet_cityscapes_trainval_90k.caffemodel: [GoogleDrive](https://drive.google.com/open?id=0BzaU285cX7TCTFVpZWJINi1Iblk) 
+
+       (31M, md5: 4f4dd9eecd465dd8de7e4cf88ba5d5d5; train on trainvalset for 90k)
+   - Modify the related paths in 'eval_all.m':
+     - Mainly variables 'data_root' and 'eval_list', and your image list for evaluation should be similar to that in folder 'evaluation/samplelist' if you use this evaluation code structure. 
+
+   ```shell
+   cd evaluation
+   vim eval_all.m
+   ```
+
+   - Run the evaluation scripts:
+
+   ```
+   ./run.sh
+   ```
+
+4. Evaluation time:
+
+   - To get inference time as accurate as possible, it's suggested to make sure the GPU card with specified ID in script 'test_time.sh' is empty (without other processes executing)
+
+   - Run the evaluation scripts:
+
+   ```
+   ./test_time.sh
+   ```
+
+5. Results: 
+
+   - Prediction results will show in folder 'evaluation/mc_result' and the expected scores are:
+     - ICNet train on trainset for 30K, evaluated on valset (mIoU/pAcc): 67.7/94.5
+     - ICNet train on trainvalset for 90K, evaluated on testset (mIoU): 69.5
+   - Log information of inference time will be in file 'time.log', approximately 33~36ms on TitanX.
+
+6. Demo video:
+
+   - Video processed by ICNet on cityscapes dataset:
+     - Alpha blending with value as 0.5: [Video](https://youtu.be/qWl9idsCuLQ)
+
+",y,,,,,"Based on [PSPNet](https://github.com/hszhao/PSPNet), this repository is build for evaluation in ICNet. For installation, please follow the description in PSPNet repository (support CUDA 7.0/7.5 + cuDNN v4).
+
+",n,,,,,,,,,,
+tetgen-README.md,,,,,,,,,,,"    cells = grid.cells.reshape(-1, 5)[:, 1:]
+    cell_center = grid.points[cells].mean(1)
+
+    ",n,,,,,,,,,,,,,,,,
+geojson-vt-README.md,,,,,,,,,,,"Here's **geojson-vt** action in [Mapbox GL JS](https://github.com/mapbox/mapbox-gl-js),
+dynamically loading a 100Mb US zip codes GeoJSON with 5.4 million points:
+
+![](https://cloud.githubusercontent.com/assets/25395/5360312/86028d8e-7f91-11e4-811f-87f24acb09ca.gif)
+
+There's a convenient [debug page](http://mapbox.github.io/geojson-vt/debug/) to test out **geojson-vt** on different data.
+Just drag any GeoJSON on the page, watching the console.
+
+![](https://cloud.githubusercontent.com/assets/25395/5363235/41955c6e-7fa8-11e4-9575-a66ef54cb6d9.gif)
+
+",y,"Install using NPM (`npm install geojson-vt`) or Yarn (`yarn add geojson-vt`), then:
+
+```js
+// import as a ES module
+import geojsonvt from 'geojson-vt';
+
+// or require in Node / Browserify
+const geojsonvt = require('geojson-vt');
+```
+
+Or use a browser build directly:
+
+```html
+
+```
+",y,,,,,,,,,,,,,,
+scikit-learn-scikit-learn-README.md,,,,,,,,,,,,,,,,,,,,,,,"Documentation
+~~~~~~~~~~~~~
+
+- HTML documentation (stable release): http://scikit-learn.org
+- HTML documentation (development version): http://scikit-learn.org/dev/
+- FAQ: http://scikit-learn.org/stable/faq.html
+
+Communication
+~~~~~~~~~~~~~
+
+- Mailing list: https://mail.python.org/mailman/listinfo/scikit-learn
+- IRC channel: ``#scikit-learn`` at ``webchat.freenode.net``
+- Stack Overflow: https://stackoverflow.com/questions/tagged/scikit-learn
+- Website: http://scikit-learn.org
+
+Citation
+~~~~~~~~
+
+If you use scikit-learn in a scientific publication, we would appreciate citations: http://scikit-learn.org/stable/about.html#citing-scikit-learn
+",y,,,,
+DaSiamRPN-README.md,"CPU: Intel(R) Core(TM) i7-7700 CPU @ 3.60GHz
+GPU: NVIDIA GTX1060
+
+- python2.7
+- pytorch == 0.3.1
+- numpy
+- opencv
+
+
+",y,,,,,,,"If you find **DaSiamRPN** and **SiamRPN** useful in your research, please consider citing:
+
+```
+@inproceedings{Zhu_2018_ECCV,
+  title={Distractor-aware Siamese Networks for Visual Object Tracking},
+  author={Zhu, Zheng and Wang, Qiang and Bo, Li and Wu, Wei and Yan, Junjie and Hu, Weiming},
+  booktitle={European Conference on Computer Vision},
+  year={2018}
+}
+
+@InProceedings{Li_2018_CVPR,
+  title = {High Performance Visual Tracking With Siamese Region Proposal Network},
+  author = {Li, Bo and Yan, Junjie and Wu, Wei and Zhu, Zheng and Hu, Xiaolin},
+  booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year = {2018}
+}
+```
+",y,"  
+
+
+- To reproduce the reuslts on paper, the pretrained model can be downloaded from [Google Drive](https://drive.google.com/open?id=1BtIkp5pB6aqePQGlMb2_Z7bfPy6XEj6H): `SiamRPNOTB.model`. 
+:zap: :zap: This model is the **fastest** (~200fps) Siamese Tracker with AUC of 0.655 on OTB2015. :zap: :zap: 
+
+- You must download OTB2015 dataset (download [script](code/data/get_otb_data.sh)) at first.
+
+A simple test example.
+
+```
+cd code
+python demo.py
+```
+
+If you want to test the performance on OTB2015, please using the follwing command.
+
+```
+cd code
+python test_otb.py
+python eval_otb.py OTB2015 ""Siam*"" 0 1
+```
+
+
+",y,"- install pytorch, numpy, opencv following the instructions in the `run_install.sh`. Please do **not** use conda to install.
+- you can alternatively modify `/PATH/TO/CODE/FOLDER/` in `tracker_SiamRPN.m` 
+  If the tracker is ready, you will see the tracking results. (EAO: 0.3827)
+
+
+",y,,,"**SiamRPN** formulates the task of visual tracking as a task of localization and identification simultaneously, initially described in an [CVPR2018 spotlight paper](http://openaccess.thecvf.com/content_cvpr_2018/papers/Li_High_Performance_Visual_CVPR_2018_paper.pdf). (Slides at [CVPR 2018 Spotlight](https://drive.google.com/open?id=1OGIOUqANvYfZjRoQfpiDqhPQtOvPCpdq))
+
+**DaSiamRPN** improves the performances of SiamRPN by (1) introducing an effective sampling strategy to control the imbalanced sample distribution, (2) designing a novel distractor-aware module to perform incremental learning, (3) making a long-term tracking extension. [ECCV2018](https://arxiv.org/pdf/1808.06048.pdf). (Slides at [VOT-18 Real-time challenge winners talk](https://drive.google.com/open?id=1dsEI2uYHDfELK0CW2xgv7R4QdCs6lwfr))
+
+
+  
+
+
+",y,"Licensed under an MIT license.
+
+
+",y,,,,,,,,
+scikit-image-scikit-image-README.md,,,,,,,,,"If you find this project useful, please cite:
+
+> Stéfan van der Walt, Johannes L. Schönberger, Juan Nunez-Iglesias,
+> François Boulogne, Joshua D. Warner, Neil Yager, Emmanuelle
+> Gouillart, Tony Yu, and the scikit-image contributors.
+> *scikit-image: Image processing in Python*. PeerJ 2:e453 (2014)
+> https://doi.org/10.7717/peerj.453
+",y,,,"Install dependencies using:
+
+```
+pip install -r requirements.txt
+```
+
+Then, install scikit-image using:
+
+```
+$ pip install .
+```
+
+If you plan to develop the package, you may run it directly from source:
+
+```
+$ pip install -e .  #: Do this once to add package to Python path
+```
+
+Every time you modify Cython files, also run:
+
+```
+$ python setup.py build_ext -i  #: Build binary extensions
+```
+
+",y,,,,,"Copyright (C) 2011, the scikit-image team
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the
+    distribution.
+ 3. Neither the name of skimage nor the names of its contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+",y,,,,,,,,
+geonotebook-README.md,"For default tile serving
+  + GDAL >= 2.1.0
+  + mapnik >= 3.1.0
+  + python-mapnik >= 0.1
+
+",y,,,,,,,,,"First provision the geoserver
+
+```
+cd devops/geoserver/
+vagrant up
+```
+
+Second change the ```vis_server``` configuration to ```geoserver``` in the ```[default]``` section of your configuration. Then include a ```[geoserver]``` section with the pertinent configuration.  E.g.:
+
+```
+[default]
+vis_server=geoserver
+
+...
+
+[geoserver]
+username = admin
+password = geoserver
+url = http://127.0.0.1:8080/geoserver
+```
+",y,"When developing geonotebook, it is often helpful to install packages as a reference to the
+checked out repository rather than copying them to the system `site-packages`.  A ""development
+install"" will allow you to make live changes to python or javascript without reinstalling the
+package.
+```bash
+#: Install the geonotebook python package as ""editable""
+pip install -e .
+
+#: Install the notebook extension as a symlink
+jupyter nbextension install --sys-prefix --symlink --py geonotebook
+
+#: Enable the extension
+jupyter serverextension enable --sys-prefix --py geonotebook
+jupyter nbextension enable --sys-prefix --py geonotebook
+
+#: Start the javascript builder
+cd js
+npm run watch
+```
+
+",y,"```bash
+cd notebooks/
+jupyter notebook
+```
+
+",y,,,,,,,,,,,,
+generator-arcgis-js-app-README.md,,,,,,,,,,,"`grunt` - default task, will output code to a `dist` folder with sourcemaps.
+
+`grunt dev` - will start a local server on at `http://localhost:8282/` and watch for changes. Uses livereload to refresh browser with each update.
+
+`http://localhost:8282/dist/` - application
+
+`http://localhost:8282/node_modules/intern/client.html?config=tests/intern` - test suites
+
+`grunt build` - build the application and output to a `release` folder.
+
+`grunt e2e` - runs all tests using local [chromedriver](https://sites.google.com/a/chromium.org/chromedriver/).
+
+
+",y,,,,,,,"MIT
+",y,,,,,,,,
+tilelive-mapnik-README.md,,,,,,,,,,,"```javascript
+var tilelive = require('tilelive');
+require('tilelive-mapnik').registerProtocols(tilelive);
+
+tilelive.load('mapnik:///path/to/file.xml', function(err, source) {
+    if (err) throw err;
+
+    // Interface is in XYZ/Google coordinates.
+    // Use `y = (1 << z) - 1 - y` to flip TMS coordinates.
+    source.getTile(0, 0, 0, function(err, tile, headers) {
+        // `err` is an error object when generation failed, otherwise null.
+        // `tile` contains the compressed image file as a Buffer
+        // `headers` is a hash with HTTP headers for the image.
+    });
+
+    // The `.getGrid` is implemented accordingly.
+});
+```
+
+Note that grid generation will only work when there's metadata inside a
+`` object in the Mapnik XML.
+
+The key fields are `interactivity_layer` and `interactivity_fields`. See an
+[example in the tests](https://github.com/mapbox/tilelive-mapnik/blob/4e9cbf8347eba7c3c2b7e8fd4270ea39f9cc7af5/test/data/test.xml#L6-L7). These `Parameters` are normally added by the application that creates the XML,
+in this case [CartoCSS](https://github.com/mapbox/carto/blob/55fbafe0d0e8ec00515c5782a3664c15502f0437/lib/carto/renderer.js#L152-L189)
+",y,"    npm install tilelive-mapnik
+
+Though `tilelive` is not a dependency of `tilelive-mapnik` you will want to
+install it to actually make use of `tilelive-mapnik` through a reasonable
+API.
+
+
+",y,,,,,,,,,,,,,,
+map-vectorizer-README.md,"A few things to be installed in your system in order to work properly. So far it has been **tested on Mac OS X Lion** so these instructions apply to that configuration only. I am sure you will be able to adapt it to your current configuration.
+
+* [Python] with [OpenCV] and [PIL] 
+    * If you use [PIP](https://pypi.python.org/pypi) (recommended) you will get the necessary Python packages with: `pip install -r requirements.txt`
+* [R] - Make sure it is in your PATH (so you can run it via command-line by typing `R`).
+* You'll need the following R packages. On OS X simply navigate to `Packages & Data`, choose your CRAN mirror region, then search for and install:
+    * `alphahull` (you will need `tripack`, `sgeostat`, `splancs` as dependencies)
+    * `igraph`
+    * `shapefiles`
+    * `rgdal` (download the [binary for your OS](http://cran.r-project.org/web/packages/rgdal/index.html) then run `R CMD INSTALL --configure-args="""" path/to/rgdal.tar.gz`)
+    * You can also install the requirements by running this in the R CLI (by typing `R` in a terminal window):
+
+```
+    install.packages('rgdal')
+    install.packages('alphahull')
+    install.packages('igraph')
+    install.packages('shapefiles')
+```
+
+* Test that everything in R is installed, on the CLI you should be able to run this with no errors:
+
+```
+    library(rgdal)
+    library(alphahull)
+    library(igraph)
+    library(shapefiles)
+    quit() #: this will quit R
+```
+
+* [GIMP]
+* [GDAL Tools], on OS X try [version 1.9](http://www.kyngchaos.com/files/software/frameworks/GDAL_Complete-1.9.dmg). Per [MapBox](https://www.mapbox.com/tilemill/docs/guides/gdal/): The first time you install the GDAL package there is one additional step to make sure you can access these programs. In Mac OS, Open the Terminal application and run the following commands:
+
+```
+    echo 'export PATH=/Library/Frameworks/GDAL.framework/Programs:$PATH' >> ~/.bash_profile
+    source ~/.bash_profile
+```
+
+* It is also a good idea to install [QGIS] to test your results
+
+",y,,,,,,,,,"![Example input map](https://raw.github.com/NYPL/map-vectorizer/master/example_input.png)
+
+",y,,,"These step by step instructions should work as-is. If not, **check all the above are working** before submitting an issue.
+
+1. Take note of the path where the GIMP executable is installed (the default value in the vectorizer is the Mac OS location: `/Applications/Gimp.app/Contents/MacOS/gimp-2.8`).
+2. Run the script on the provided test GeoTIFF:
+`python vectorize_map.py test.tif`
+3. Accept the GIMP folder location or input a different one and press ENTER.
+
+**NOTE:** The vectorizer has problems with *filenames that contain spaces*. This will be supported eventually.
+
+This should take about 70 seconds to process. **If it takes less there might be an error** (or your machine rulez). Take a look at the console output to find the possible culprit.
+
+If it works, you will see a `test` folder with a `test-traced` set of files (`.shp`, `.dbf`, `.prj` and `.shx`) and two log files.
+
+",y,,,,,,,,,,,,
+LapSRN-README.md,"- MATLAB (we test with MATLAB R2017a on Ubuntu 16.04 and Windows 7)
+- Cuda & Cudnn (we test with Cuda 8.0 and Cudnn 5.1)
+
+",y,,,,,,,"If you find the code and datasets useful in your research, please cite:
+    
+    @inproceedings{LapSRN,
+        author    = {Lai, Wei-Sheng and Huang, Jia-Bin and Ahuja, Narendra and Yang, Ming-Hsuan}, 
+        title     = {Deep Laplacian Pyramid Networks for Fast and Accurate Super-Resolution}, 
+        booktitle = {IEEE Conferene on Computer Vision and Pattern Recognition},
+        year      = {2017}
+    }
+    
+
+",y,"    $ matlab
+    >> install
+   
+If you install MatConvNet in your own path, you need to change the corresponding path in `install.m`, `train_LapSRN.m` and `test_LapSRN.m`.
+
+",y,"Download repository:
+
+    $ git clone https://github.com/phoenix104104/LapSRN.git
+
+Run install.m in MATLAB to compile MatConvNet:
+
+    ",y,,,"The Laplacian Pyramid Super-Resolution Network (LapSRN) is a progressive super-resolution model that super-resolves an low-resolution images in a coarse-to-fine Laplacian pyramid framework.
+Our method is fast and achieves state-of-the-art performance on five benchmark datasets for 4x and 8x SR.
+For more details and evaluation results, please check out our [project webpage](http://vllab.ucmerced.edu/wlai24/LapSRN/) and [paper](http://vllab.ucmerced.edu/wlai24/LapSRN/papers/cvpr17_LapSRN.pdf).
+
+![teaser](http://vllab.ucmerced.edu/wlai24/LapSRN/images/emma_text.gif)
+
+
+
+",y,,,,,,,,,,
+RESCAN-README.md,"- Python>=3.6
+- Pytorch>=4.1.0
+- Opencv>=3.1.0
+- tensorboardX
+
+",y,,,,,,,"If you use our code, please refer this repo.
+If you publish your paper that refer to our paper, please cite:
+
+    @inproceedings{li2018recurrent,  
+        title={Recurrent Squeeze-and-Excitation Context Aggregation Net for Single Image Deraining},  
+        author={Li, Xia and Wu, Jianlong and Lin, Zhouchen and Liu, Hong and Zha, Hongbin},  
+        booktitle={European Conference on Computer Vision},  
+        pages={262--277},  
+        year={2018},  
+        organization={Springer}  
+    }
+
+
+  [2]: http://cis.pku.edu.cn/faculty/vision/zlin/zlin.htm
+  [3]: http://robotics.pkusz.edu.cn/team/leader/
+  [4]: http://cis.pku.edu.cn/vision/Visual&Robot/people/zha/
+  [5]: ethanlee@pku.edu.cn
+  [6]: jlwu1992@pku.edu.cn
+  [7]: zlin@pku.edu.cn
+  [8]: hongliu@pku.edu.cn
+  [9]: http://www.icst.pku.edu.cn/struct/Projects/joint_rain_removal.html
+  [10]: https://drive.google.com/drive/folders/0Bw2e6Q0nQQvGbi1xV1Yxd09rY2s
+  
+",y,"    python train.py
+    python eval.py
+    python show.py
+
+",y,,,,,,,,,,,,,,,,
+sg2im-README.md,,,,,,,,,,,,,"All code was developed and tested on Ubuntu 16.04 with Python 3.5 and PyTorch 0.4.
+
+You can setup a virtual environment to run the code like this:
+
+```bash
+python3 -m venv env               #: Create a virtual environment
+source env/bin/activate           #: Activate virtual environment
+pip install -r requirements.txt   #: Install dependencies
+echo $PWD > env/lib/python3.5/site-packages/sg2im.pth  #: Add current directory to python path
+#: Work for a while ...
+deactivate  #: Exit virtual environment
+```
+
+",y,"You can use the script `scripts/run_model.py` to easily run any of the pretrained models on new scene graphs using a simple human-readable JSON format. For example you can replicate the sheep images above like this:
+
+```bash
+python scripts/run_model.py \
+  --checkpoint sg2im-models/vg128.pt \
+  --scene_graphs scene_graphs/figure_6_sheep.json \
+  --output_dir outputs
+```
+
+The generated images will be saved to the directory specified by the `--output_dir` flag. You can control whether the model runs on CPU or GPU using py passing the flag `--device cpu` or `--device gpu`.
+
+We provide JSON files and pretrained models allowing you to recreate all images from Figures 5 and 6 from the paper.
+
+",y,,,,,,,,,,,,
+pymeshfix-README.md,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+neural-motifs-README.md,,,,,,,,,,,,,"0. Install python3.6 and pytorch 3. I recommend the [Anaconda distribution](https://repo.continuum.io/archive/). To install PyTorch if you haven't already, use
+ ```conda install pytorch=0.3.0 torchvision=0.2.0 cuda90 -c pytorch```.
+ 
+1. Update the config file with the dataset paths. Specifically:
+    - Visual Genome (the VG_100K folder, image_data.json, VG-SGG.h5, and VG-SGG-dicts.json). See data/stanford_filtered/README.md for the steps I used to download these.
+    - You'll also need to fix your PYTHONPATH: ```export PYTHONPATH=/home/rowan/code/scene-graph``` 
+
+2. Compile everything. run ```make``` in the main directory: this compiles the Bilinear Interpolation operation for the RoIs as well as the Highway LSTM.
+
+3. Pretrain VG detection. The old version involved pretraining COCO as well, but we got rid of that for simplicity. Run ./scripts/pretrain_detector.sh
+Note: You might have to modify the learning rate and batch size, particularly if you don't have 3 Titan X GPUs (which is what I used). [You can also download the pretrained detector checkpoint here.](https://drive.google.com/open?id=11zKRr2OF5oclFL47kjFYBOxScotQzArX)
+
+4. Train VG scene graph classification: run ./scripts/train_models_sgcls.sh 2 (will run on GPU 2). OR, download the MotifNet-cls checkpoint here: [Motifnet-SGCls/PredCls](https://drive.google.com/open?id=12qziGKYjFD3LAnoy4zDT3bcg5QLC0qN6).
+5. Refine for detection: run ./scripts/refine_for_detection.sh 2 or download the [Motifnet-SGDet](https://drive.google.com/open?id=1thd_5uSamJQaXAPVGVOUZGAOfGCYZYmb) checkpoint.
+6. Evaluate: Refer to the scripts ./scripts/eval_models_sg[cls/det].sh.
+
+",y,,,,,,,,,"Feel free to open an issue if you encounter trouble getting it to work!
+",y,,,,
+Flow-Guided-Feature-Aggregation-README.md,,,,,,,,,"If you find Flow-Guided Feature Aggregation useful in your research, please consider citing:
+```
+@inproceedings{zhu17fgfa,
+    Author = {Xizhou Zhu, Yujie Wang, Jifeng Dai, Lu Yuan, Yichen Wei},
+    Title = {Flow-Guided Feature Aggregation for Video Object Detection},
+    Conference = {ICCV},
+    Year = {2017}
+}
+
+@inproceedings{dai16rfcn,
+    Author = {Jifeng Dai, Yi Li, Kaiming He, Jian Sun},
+    Title = {{R-FCN}: Object Detection via Region-based Fully Convolutional Networks},
+    Conference = {NIPS},
+    Year = {2016}
+}
+```
+
+",y,"1. To run the demo with our trained model (on ImageNet DET + VID train), please download the model manually from [OneDrive](https://1drv.ms/u/s!AqfHNsil2nOiiwDiKev7DB6L9ay7), and put it under folder `model/`.
+
+	Make sure it looks like this:
+	```
+	./model/rfcn_fgfa_flownet_vid-0000.params
+	```
+2. Run
+	```
+	python ./fgfa_rfcn/demo.py
+	```
+
+",y,"1. Please download ILSVRC2015 DET and ILSVRC2015 VID dataset, and make sure it looks like this:
+
+	```
+	./data/ILSVRC2015/
+	./data/ILSVRC2015/Annotations/DET
+	./data/ILSVRC2015/Annotations/VID
+	./data/ILSVRC2015/Data/DET
+	./data/ILSVRC2015/Data/VID
+	./data/ILSVRC2015/ImageSets
+	```
+
+2. Please download ImageNet pre-trained ResNet-v1-101 model and Flying-Chairs pre-trained FlowNet model manually from [OneDrive](https://1drv.ms/u/s!Am-5JzdW2XHzhqMOBdCBiNaKbcjPrA), and put it under folder `./model`. Make sure it looks like this:
+	```
+	./model/pretrained_model/resnet_v1_101-0000.params
+	./model/pretrained_model/flownet-0000.params
+	```
+
+",y,,,"**Flow-Guided Feature Aggregation (FGFA)** is initially described in an [ICCV 2017 paper](https://arxiv.org/abs/1703.10025). It provides an accurate and end-to-end learning framework for video object detection. The proposed FGFA method, together with our previous work of [Deep Feature Flow](https://github.com/msracver/Deep-Feature-Flow), powered the winning entry of [ImageNet VID 2017](http://image-net.org/challenges/LSVRC/2017/results). It is worth noting that:
+
+* FGFA improves the per-frame features by aggregating nearby frame features along the motion paths. It significantly improves the object detection accuracy in videos, especially for fast moving objects.
+* FGFA is end-to-end trainable for the task of video object detection, which is vital for improving the recognition accuracy.
+* We proposed to evaluate the detection accuracy for slow, medium and fast moving objects respectively, for better understanding and analysis of video object detection. The [motion-specific evaluation code](lib/dataset/imagenet_vid_eval_motion.py) is included in this repository.
+
+***Click image to watch our demo video***
+
+[![Demo Video on YouTube](https://media.giphy.com/media/7D9tmDgzB10HK/giphy.gif)](https://www.youtube.com/watch?v=R2h3DbTPvVg)
+
+***Example object instances with slow, medium and fast motions***
+
+![Instance Motion](instance_motion.png)
+
+",y,"© Microsoft, 2017. Licensed under the [MIT](LICENSE) License.
+
+",y,,,,,,,,
+facebookresearch-pyrobot-README.md,"* Install **Ubuntu 16.04**
+
+* Download the installation script
+```bash
+sudo apt update
+sudo apt-get install curl
+curl 'https://raw.githubusercontent.com/facebookresearch/pyrobot/master/robots/LoCoBot/install/locobot_install_all.sh' > locobot_install_all.sh
+```
+
+* Run the script to install everything (ROS, realsense driver, etc.). **Please connect the nuc machine to a realsense camera before running the following commands**.
+```bash
+chmod +x locobot_install_all.sh 
+./locobot_install_all.sh
+```
+
+",y,,,,,,,"```
+@article{pyrobot2019,
+  title={PyRobot: An Open-source Robotics Framework for Research and Benchmarking},
+  author={Adithyavairavan Murali and Tao Chen and Kalyan Vasudev Alwala and Dhiraj Gandhi and Lerrel Pinto and Saurabh Gupta and Abhinav Gupta},
+  journal={arXiv preprint arXiv:1906.08236},
+  year={2019}
+}
+```
+",y,"Please refer to [pyrobot.org](https://pyrobot.org/) and [locobot.org](http://locobot.org)
+
+",y,"* Install **Ubuntu 16.04** 
+
+* Install [ROS kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu)
+
+* Install KDL
+
+```bash
+sudo apt-get -y install ros-kinetic-orocos-kdl ros-kinetic-kdl-parser-py ros-kinetic-python-orocos-kdl ros-kinetic-trac-ik
+```
+
+* Install Python virtual environment
+
+```bash
+sudo apt-get -y install python-virtualenv
+virtualenv_name=""pyenv_pyrobot""
+VIRTUALENV_FOLDER=~/${virtualenv_name}
+virtualenv --system-site-packages -p python2.7 $VIRTUALENV_FOLDER
+```
+
+* Install PyRobot 
+
+```bash
+cd ~
+mkdir -p low_cost_ws/src
+cd ~/low_cost_ws/src
+source ~/${virtualenv_name}/bin/activate
+git clone --recurse-submodules https://github.com/facebookresearch/pyrobot.git
+cd pyrobot/
+pip install .
+```
+
+**Warning**: As realsense keeps updating, compatibility issues might occur if you accidentally update 
+realsense-related packages from `Software Updater` in ubuntu. Therefore, we recommend you not to update
+any libraries related to realsense. Check the list of updates carefully when ubuntu prompts software udpates.
+
+",y,,,,,"PyRobot is under MIT license, as found in the LICENSE file.
+",y,,,,,,,,
+Detectron-README.md,,,,,,,,,"- [Data Distillation: Towards Omni-Supervised Learning](https://arxiv.org/abs/1712.04440).
+  Ilija Radosavovic, Piotr Dollár, Ross Girshick, Georgia Gkioxari, and Kaiming He.
+  Tech report, arXiv, Dec. 2017.
+- [Learning to Segment Every Thing](https://arxiv.org/abs/1711.10370).
+  Ronghang Hu, Piotr Dollár, Kaiming He, Trevor Darrell, and Ross Girshick.
+  Tech report, arXiv, Nov. 2017.
+- [Non-Local Neural Networks](https://arxiv.org/abs/1711.07971).
+  Xiaolong Wang, Ross Girshick, Abhinav Gupta, and Kaiming He.
+  Tech report, arXiv, Nov. 2017.
+- [Mask R-CNN](https://arxiv.org/abs/1703.06870).
+  Kaiming He, Georgia Gkioxari, Piotr Dollár, and Ross Girshick.
+  IEEE International Conference on Computer Vision (ICCV), 2017.
+- [Focal Loss for Dense Object Detection](https://arxiv.org/abs/1708.02002).
+  Tsung-Yi Lin, Priya Goyal, Ross Girshick, Kaiming He, and Piotr Dollár.
+  IEEE International Conference on Computer Vision (ICCV), 2017.
+- [Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour](https://arxiv.org/abs/1706.02677).
+  Priya Goyal, Piotr Dollár, Ross Girshick, Pieter Noordhuis, Lukasz Wesolowski, Aapo Kyrola, Andrew Tulloch, Yangqing Jia, and Kaiming He.
+  Tech report, arXiv, June 2017.
+- [Detecting and Recognizing Human-Object Interactions](https://arxiv.org/abs/1704.07333).
+  Georgia Gkioxari, Ross Girshick, Piotr Dollár, and Kaiming He.
+  Tech report, arXiv, Apr. 2017.
+- [Feature Pyramid Networks for Object Detection](https://arxiv.org/abs/1612.03144).
+  Tsung-Yi Lin, Piotr Dollár, Ross Girshick, Kaiming He, Bharath Hariharan, and Serge Belongie.
+  IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2017.
+- [Aggregated Residual Transformations for Deep Neural Networks](https://arxiv.org/abs/1611.05431).
+  Saining Xie, Ross Girshick, Piotr Dollár, Zhuowen Tu, and Kaiming He.
+  IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2017.
+- [R-FCN: Object Detection via Region-based Fully Convolutional Networks](http://arxiv.org/abs/1605.06409).
+  Jifeng Dai, Yi Li, Kaiming He, and Jian Sun.
+  Conference on Neural Information Processing Systems (NIPS), 2016.
+- [Deep Residual Learning for Image Recognition](http://arxiv.org/abs/1512.03385).
+  Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun.
+  IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2016.
+- [Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks](http://arxiv.org/abs/1506.01497)
+  Shaoqing Ren, Kaiming He, Ross Girshick, and Jian Sun.
+  Conference on Neural Information Processing Systems (NIPS), 2015.
+- [Fast R-CNN](http://arxiv.org/abs/1504.08083).
+  Ross Girshick.
+  IEEE International Conference on Computer Vision (ICCV), 2015.
+",n,"To start, please check the [troubleshooting](INSTALL.md#troubleshooting) section of our installation instructions as well as our [FAQ](FAQ.md). If you couldn't find help there, try searching our GitHub issues. We intend the issues page to be a forum in which the community collectively troubleshoots problems.
+
+If bugs are found, **we appreciate pull requests** (including adding Q&A's to `FAQ.md` and improving our installation instructions and troubleshooting documents). Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more information about contributing to Detectron.
+
+",y,"Please find installation instructions for Caffe2 and Detectron in [`INSTALL.md`](INSTALL.md).
+
+",y,,,"The goal of Detectron is to provide a high-quality, high-performance
+codebase for object detection *research*. It is designed to be flexible in order
+to support rapid implementation and evaluation of novel research. Detectron
+includes implementations of the following object detection algorithms:
+
+- [Mask R-CNN](https://arxiv.org/abs/1703.06870) -- *Marr Prize at ICCV 2017*
+- [RetinaNet](https://arxiv.org/abs/1708.02002) -- *Best Student Paper Award at ICCV 2017*
+- [Faster R-CNN](https://arxiv.org/abs/1506.01497)
+- [RPN](https://arxiv.org/abs/1506.01497)
+- [Fast R-CNN](https://arxiv.org/abs/1504.08083)
+- [R-FCN](https://arxiv.org/abs/1605.06409)
+
+using the following backbone network architectures:
+
+- [ResNeXt{50,101,152}](https://arxiv.org/abs/1611.05431)
+- [ResNet{50,101,152}](https://arxiv.org/abs/1512.03385)
+- [Feature Pyramid Networks](https://arxiv.org/abs/1612.03144) (with ResNet/ResNeXt)
+- [VGG16](https://arxiv.org/abs/1409.1556)
+
+Additional backbone architectures may be easily implemented. For more details about these models, please see [References](#references) below.
+
+",y,"Detectron is released under the [Apache 2.0 license](https://github.com/facebookresearch/detectron/blob/master/LICENSE). See the [NOTICE](https://github.com/facebookresearch/detectron/blob/master/NOTICE) file for additional details.
+
+",y,"- 4/2018: Support Group Normalization - see [`GN/README.md`](./projects/GN/README.md)
+
+",y,"To start, please check the [troubleshooting](INSTALL.md#troubleshooting) section of our installation instructions as well as our [FAQ](FAQ.md). If you couldn't find help there, try searching our GitHub issues. We intend the issues page to be a forum in which the community collectively troubleshoots problems.
+
+If bugs are found, **we appreciate pull requests** (including adding Q&A's to `FAQ.md` and improving our installation instructions and troubleshooting documents). Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more information about contributing to Detectron.
+
+",y,,,,
+DeepMVS-README.md,"- **python 2.7**
+- **numpy 1.13.1**
+- **pytorch 0.3.0** and **torchvision**: Follow the instructions from [their website](http://pytorch.org/).
+- **opencv 3.1.0**: Run ``conda install -c menpo opencv`` or ``pip install opencv-python``.
+- **imageio 2.2.0** (with freeimage plugin): Run ``conda install -c conda-forge imageio`` or ``pip install imageio``. To install freeimage plugin, run the following Python script once:
+    ```python 
+    import imageio
+    imageio.plugins.freeimage.download()
+    ```
+- **h5py 2.7.0**: Run ``conda install h5py`` or ``pip install h5py``.
+- **lz4 0.23.1**: Run ``pip install lz4``.
+- **cuda 8.0.61** and **16GB GPU RAM** (required for gpu support): The training codes use up to 14GB of the GPU RAM with the default configuration. We train our model with an NVIDIA Tesla P100 GPU. To reduce GPU RAM usage, feel free to try smaller ``--patch_width``, ``--patch_height``, ``--num_depths``, and ``--max_num_neighbors``. However, the resulting model may not show the efficacy as appeared in our paper.
+
+",y,,,,,,,,,,,,,,,,,DeepMVS is licensed under the [BSD 2-Clause License](LICENSE.txt),y,,,,,,,,
+readgssi-README.md,"Strongly recommended to install via [anaconda](https://www.anaconda.com/download):
+- [`obspy`](https://obspy.org/)
+- [`matplotlib`](https://matplotlib.org/)
+- [`numpy`](http://www.numpy.org/)
+- [`pandas`](https://pandas.pydata.org/)
+- [`h5py`](https://www.h5py.org/)
+
+Install via `pip`:
+- [`pynmea2`](https://pypi.org/project/pynmea2/)
+- [`geopy`](https://pypi.org/project/geopy/)
+- [`pytz`](https://pypi.org/project/pytz/)
+
+",y,,,,,,,"Ian M. Nesbitt, François-Xavier Simon, Thomas Paulin, 2018. readgssi - an open-source tool to read and plot GSSI ground-penetrating radar data. [doi:10.5281/zenodo.1439119](https://dx.doi.org/10.5281/zenodo.1439119)
+
+",y,"To display the help text:
+
+```bash
+$ readgssi -h
+
+usage:
+readgssi -i input.DZT [OPTIONS]
+
+optional flags:
+     OPTION     |      ARGUMENT       |       FUNCTIONALITY
+-o, --output    | file:  /dir/f.ext   |  specify an output file
+-f, --format    | string, eg. ""csv""   |  specify output format (csv is the only working format currently)
+-p, --plot      | +integer or ""auto""  |  plot will be x inches high (dpi=150), or ""auto"". default: 10
+-x, --xscale    | string, eg. ""dist""  |  readgssi will attempt to convert the x-axis to distance, time, or traces based on header values
+-z, --zscale    | string, eg. ""time""  |  readgssi will attempt to convert the x-axis to depth, time, or samples based on header values
+-n, --noshow    |                     |  suppress matplotlib popup window and simply save a figure (useful for multiple file processing)
+-c, --colormap  | string, eg. ""Greys"" |  specify the colormap (https://matplotlib.org/users/colormaps.html#:grayscale-conversion)
+-g, --gain      | positive (+)integer |  gain value (higher=greater contrast, default: 1)
+-r, --bgr       |                     |  horizontal background removal algorithm (useful to remove ringing)
+-R, --reverse   |                     |  reverse (flip radargram horizontally)
+-w, --dewow     |                     |  trinomial dewow algorithm
+-t, --bandpass  | +int-+int (MHz)     |  butterworth bandpass filter (positive integer range in megahertz; ex. 100-145)
+-b, --colorbar  |                     |  add a colorbar to the radar figure
+-a, --antfreq   | positive integer    |  specify antenna frequency (read automatically if not given)
+-s, --stack     | +integer or ""auto""  |  specify trace stacking value or ""auto"" to autostack to ~2.5:1 x:y axis ratio
+-N, --normalize |                     |  reads a .DZG NMEA data if it exists; otherwise tries to read a csv file with lat, lon, and time fields to distance normalize with
+-d, --spm       | positive float      |  specify the samples per meter (spm) manually. overrides header value.
+-m, --histogram |                     |  produce a histogram of data values
+-E, --epsr      | float > 1.0         |  user-defined epsilon sub r (sometimes referred to as ""dielectric""; ignores value in DZT header)
+-Z, --zero      | positive integer    |  skip this many samples from the top of the trace downward (useful for removing transceiver delay)
+
+naming scheme for exports:
+   CHARACTERS   |      MEANING
+    c0          |  Profile from channel 0 (can range from 0 - 3)
+    Dn          |  Distance normalization
+    Tz233       |  Time zero at 233 samples
+    S8          |  Stacked 8 times
+    Rv          |  Profile read in reverse (flipped horizontally)
+    Bgr         |  Background removal filter
+    Dw          |  Dewow filter
+    Bp100-145   |  2-corner bandpass filter applied from 100 to 145 MHz
+    G30         |  30x contrast gain
+```
+
+From a unix command line:
+```bash
+readgssi -i DZT__001.DZT
+```
+Simply specifying an input DZT file like in the above command (`-i file`) will display a host of data about the file including:
+- name of GSSI control unit
+- antenna model
+- antenna frequency
+- samples per trace
+- bits per sample
+- traces per second
+- L1 dielectric as entered during survey
+- sampling depth
+- speed of light at given dielectric
+- number of traces
+- number of seconds
+
+",y,"If you choose to install a specific commit rather than the [latest working release of this software](https://pypi.org/project/readgssi), you may download this package, unzip to your home folder, open a command line, then install in the following way:
+
+```bash
+pip install ~/readgssi
+```
+
+",n,,,,,,,,,,,,,"- Ian Nesbitt ([@iannesbitt](https://github.com/iannesbitt), author)
+- François-Xavier Simon ([@fxsimon](https://github.com/fxsimon))
+- Thomas Paulin ([@thomaspaulin](https://github.com/thomaspaulin))
+
+",y
+integral-human-pose-README.md,,,,,,,,,"If you find Integral Regression useful in your research, please consider citing:
+```
+@article{sun2017integral,
+  title={Integral human pose regression},
+  author={Sun, Xiao and Xiao, Bin and Liang, Shuang and Wei, Yichen},
+  journal={arXiv preprint arXiv:1711.08229},
+  year={2017}
+}
+```
+```
+@article{sun2018integral,
+  title={An Integral Pose Regression System for the ECCV2018 PoseTrack Challenge},
+  author={Sun, Xiao and Li, Chuankang and Lin, Stephen},
+  journal={arXiv preprint arXiv:1809.06079},
+  year={2018}
+}
+```
+
+",y,,,"1. Download Human3.6M(ECCV18 Challenge) image from [Human3.6M Dataset](http://vision.imar.ro/human3.6m/description.php) and our processed annotation from [Baidu Disk](https://pan.baidu.com/s/1Qg4dH8PBXm8SzApI-uu0GA) (code: kfsm) or [Google Drive](https://drive.google.com/file/d/1wZynXUq91yECVRTFV8Tetvo271BXzxwI/view?usp=sharing)
+2. Download MPII image from [MPII Human Pose Dataset](http://human-pose.mpi-inf.mpg.de/)
+3. Download COCO2017 image from [COCO Dataset](http://cocodataset.org/#home)
+4. Download cache file from [Dropbox](https://www.dropbox.com/sh/uouev0a1ao84ofd/AADAjJUdr_Fm-eubk7c_s2JTa?dl=0)
+5. Organize data like this
+```
+${PROJECT_ROOT}
+ `-- data
+     `-- coco
+        |-- images
+        |-- annotations
+        |-- COCO_train2017_cache
+     `-- mpii
+        |-- images
+        |-- annot
+        |-- mpii_train_cache
+        |-- mpii_valid_cache
+     `-- hm36
+        |-- images
+        |-- annot
+        |-- HM36_train_cache
+        |-- HM36_validmin_cache
+     `-- hm36_eccv_challenge
+        `-- Train
+            |-- IMG
+            |-- POSE
+        `-- Val
+            |-- IMG
+            |-- POSE
+        `-- Test
+            |-- IMG
+        |-- HM36_eccv_challenge_Train_cache
+        |-- HM36_eccv_challenge_Test_cache
+        |-- HM36_eccv_challenge_Val_cache
+```
+
+#:#: Usage
+We have placed some example config files in *experiments* folder, and you can use them straight forward. Don't modify them unless you know exactly what it means.
+#:#:#: Train 
+For [Integral Human Pose Regression](https://arxiv.org/abs/1711.08229), cd to *pytorch_projects/integral_human_pose* 
+**Integral Regression**
+```bash
+python train.py --cfg=experiments/hm36/resnet50v1_ft/d-mh_ps-256_deconv256x3_min-int-l1_adam_bs32-4gpus_x300-270-290/lr1e-3.yaml --dataroot=../../data/  
+```
+**Direct Joint Regression**
+```bash
+python train.py --cfg=experiments/hm36/resnet50v1_ft/d-mh_ps-256_dj_l1_adam_bs32-4gpus_x140-90-120/lr1e-3.yaml --dataroot=../../data/
+```
+
+For [3D pose estimation system](https://arxiv.org/abs/1809.06079) of ECCV18 Challenge, cd to *pytorch_projects/hm36_challenge*
+```bash
+python train.py --cfg=experiments/hm36/resnet152v1_ft/d-mh_ps-256_deconv256x3_min-int-l1_adam_bs24-4gpus_x300-270-290/lr1e-3.yaml --dataroot=../../data/
+```
+
+By default, logging and model will be saved to *log* and *output* folder respectively.
+
+#:#:#: Test
+To run evaluation on CHALL_H80K Val dataset
+1. Download [model](https://www.dropbox.com/s/hfz5nkd39uisvbr/model_chall_train_152ft_384x288.pth.tar?dl=0)
+2. Place it under $project_root/model/hm36_challenge
+3. cd to *$project_root/pytorch_projects/hm36_challenge*
+4. execute command below
+```bash
+python test.py --cfg experiments/hm36/resnet152v1_ft/d-mch_384x288_deconv256x3_min-int-l1_adam_bs12-4gpus/lr1e-4_x300-270-290.yaml --model=../../model/hm36_challenge/model_chall_train_152ft_384x288.pth.tar
+```
+",y,,,"**Integral Regression** is initially described in an [ECCV 2018 paper](https://arxiv.org/abs/1711.08229). ([Slides](https://jimmysuen.github.io/slides/xiaosun_integral_human_pose_regression.pptx)).
+
+We build a [3D pose estimation system](https://arxiv.org/abs/1809.06079) based mainly on the Integral Regression, placing second in the [ECCV2018 3D Human Pose Estimation Challenge](http://vision.imar.ro/human3.6m/ranking.php). Note that, the winner [Sarandi et al.](https://arxiv.org/pdf/1809.04987.pdf) also uses the Integral Regression (or soft-argmax) with a better [augmented 3D dataset](https://github.com/isarandi/synthetic-occlusion) in their method indicating the Integral Regression is the currently state-of-the-art 3D human pose estimation method.
+
+The Integral Regression is also known as soft-argmax. Please refer to two contemporary works ([Luvizon et al.](https://arxiv.org/abs/1710.02322) and [Nibali et al.](https://arxiv.org/abs/1801.07372)) for a better comparision and more comprehensive understanding.
+
+
+
+
+
+",y,"© Microsoft, 2017. Licensed under an MIT license.
+
+
+",y,,,,,,,,
+gdal-docker-README.md,,,,,,,,,,,"Running the container without any arguments will by default output the GDAL
+version string as well as the supported raster and vector formats:
+
+    docker run geodata/gdal
+
+The following command will open a bash shell in an Ubuntu based environment
+with GDAL available:
+
+    docker run -t -i geodata/gdal /bin/bash
+
+You will most likely want to work with data on the host system from within the
+docker container, in which case run the container with the -v option. Assuming
+you have a raster called `test.tif` in your current working directory on your
+host system, running the following command should invoke `gdalinfo` on
+`test.tif`:
+
+    docker run -v $(pwd):/data geodata/gdal gdalinfo test.tif
+
+This works because the current working directory is set to `/data` in the
+container, and you have mapped the current working directory on your host to
+`/data`.
+
+Note that the image tagged `latest`, GDAL represents the latest code *at the
+time the image was built*. If you want to include the most up-to-date commits
+then you need to build the docker image yourself locally along these lines:
+
+    docker build -t geodata/gdal:local git://github.com/geo-data/gdal-docker/
+",y,,,,,,,,,,,,,,,,
+pyro-ppl-pyro-README.md,,,,,,,,,"If you use Pyro, please consider citing:
+```
+@article{bingham2018pyro,
+  author = {Bingham, Eli and Chen, Jonathan P. and Jankowiak, Martin and Obermeyer, Fritz and
+            Pradhan, Neeraj and Karaletsos, Theofanis and Singh, Rohit and Szerlip, Paul and
+            Horsfall, Paul and Goodman, Noah D.},
+  title = {{Pyro: Deep Universal Probabilistic Programming}},
+  journal = {arXiv preprint arXiv:1810.09538},
+  year = {2018}
+}
+```
+",y,,,"**Install using pip:**
+
+Pyro supports Python 3.4+.
+
+```sh
+pip install pyro-ppl
+```
+
+**Install from source:**
+```sh
+git clone git@github.com:pyro-ppl/pyro.git
+cd pyro
+git checkout master  #: master is pinned to the latest release
+pip install .
+```
+
+**Install with extra packages:**
+
+To install the dependencies required to run the probabilistic models included in the `examples`/`tutorials` directories, please use the following command:
+```sh
+pip install pyro-ppl[extras] 
+```
+Make sure that the models come from the same release version of the [Pyro source code](https://github.com/pyro-ppl/pyro/releases) as you have installed.
+
+",y,"Refer to the instructions [here](docker/README.md).
+
+",y,,,,,,,,,,,,
+3D-ResNets-PyTorch-README.md,"* [PyTorch](http://pytorch.org/)
+
+```bash
+conda install pytorch torchvision cuda80 -c soumith
+```
+
+* FFmpeg, FFprobe
+
+```bash
+wget http://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz
+tar xvf ffmpeg-release-64bit-static.tar.xz
+cd ./ffmpeg-3.3.3-64bit-static/; sudo cp ffmpeg ffprobe /usr/local/bin;
+```
+
+* Python 3
+
+",n,,,,,,,"If you use this code or pre-trained models, please cite the following:
+
+```bibtex
+@inproceedings{hara3dcnns,
+  author={Kensho Hara and Hirokatsu Kataoka and Yutaka Satoh},
+  title={Can Spatiotemporal 3D CNNs Retrace the History of 2D CNNs and ImageNet?},
+  booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  pages={6546--6555},
+  year={2018},
+}
+```
+
+",y,,,,,"Assume the structure of data directories is the following:
+
+```misc
+~/
+  data/
+    kinetics_videos/
+      jpg/
+        .../ (directories of class names)
+          .../ (directories of video names)
+            ... (jpg files)
+    results/
+      save_100.pth
+    kinetics.json
+```
+
+Confirm all options.
+
+```bash
+python main.lua -h
+```
+
+Train ResNets-34 on the Kinetics dataset (400 classes) with 4 CPU threads (for data loading).  
+Batch size is 128.  
+Save models at every 5 epochs.
+All GPUs is used for the training.
+If you want a part of GPUs, use ```CUDA_VISIBLE_DEVICES=...```.
+
+```bash
+python main.py --root_path ~/data --video_path kinetics_videos/jpg --annotation_path kinetics.json \
+--result_path results --dataset kinetics --model resnet \
+--model_depth 34 --n_classes 400 --batch_size 128 --n_threads 4 --checkpoint 5
+```
+
+Continue Training from epoch 101. (~/data/results/save_100.pth is loaded.)
+
+```bash
+python main.py --root_path ~/data --video_path kinetics_videos/jpg --annotation_path kinetics.json \
+--result_path results --dataset kinetics --resume_path results/save_100.pth \
+--model_depth 34 --n_classes 400 --batch_size 128 --n_threads 4 --checkpoint 5
+```
+
+Fine-tuning conv5_x and fc layers of a pretrained model (~/data/models/resnet-34-kinetics.pth) on UCF-101.
+
+```bash
+python main.py --root_path ~/data --video_path ucf101_videos/jpg --annotation_path ucf101_01.json \
+--result_path results --dataset ucf101 --n_classes 400 --n_finetune_classes 101 \
+--pretrain_path models/resnet-34-kinetics.pth --ft_begin_index 4 \
+--model resnet --model_depth 34 --resnet_shortcut A --batch_size 128 --n_threads 4 --checkpoint 5
+```
+",y,"This is the PyTorch code for the following papers:
+
+[
+Kensho Hara, Hirokatsu Kataoka, and Yutaka Satoh,  
+""Can Spatiotemporal 3D CNNs Retrace the History of 2D CNNs and ImageNet?"",  
+Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pp. 6546-6555, 2018.
+](http://openaccess.thecvf.com/content_cvpr_2018/html/Hara_Can_Spatiotemporal_3D_CVPR_2018_paper.html)
+
+[
+Kensho Hara, Hirokatsu Kataoka, and Yutaka Satoh,  
+""Learning Spatio-Temporal Features with 3D Residual Networks for Action Recognition"",  
+Proceedings of the ICCV Workshop on Action, Gesture, and Emotion Recognition, 2017.
+](http://openaccess.thecvf.com/content_ICCV_2017_workshops/papers/w44/Hara_Learning_Spatio-Temporal_Features_ICCV_2017_paper.pdf)
+
+This code includes training, fine-tuning and testing on Kinetics, ActivityNet, UCF-101, and HMDB-51.  
+**If you want to classify your videos or extract video features of them using our pretrained models,
+use [this code](https://github.com/kenshohara/video-classification-3d-cnn-pytorch).**
+
+**The Torch (Lua) version of this code is available [here](https://github.com/kenshohara/3D-ResNets).**  
+Note that the Torch version only includes ResNet-18, 34, 50, 101, and 152.
+
+",y,,,"Our paper ""Can Spatiotemporal 3D CNNs Retrace the History of 2D CNNs and ImageNet?"" is accepted to CVPR2018!  
+We update the paper information.
+
+",n,,,,,,
+mplstereonet-README.md,,,,,,,,,,,"In most cases, you'll want to ``import mplstereonet`` and then make an axes
+with ``projection=""stereonet""`` (By default, this is an equal-area stereonet).
+Alternately, you can use ``mplstereonet.subplots``, which functions identically
+to ``matplotlib.pyplot.subplots``, but creates stereonet axes.
+
+As an example::
+
+    import matplotlib.pyplot as plt
+    import mplstereonet
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='stereonet')
+
+    strike, dip = 315, 30
+    ax.plane(strike, dip, 'g-', linewidth=2)
+    ax.pole(strike, dip, 'g^', markersize=18)
+    ax.rake(strike, dip, -25)
+    ax.grid()
+
+    plt.show()
+
+.. image:: http://joferkington.github.com/mplstereonet/images/basic.png
+    :alt: A basic stereonet with a plane, pole to the plane, and rake along the plane
+    :align: center
+    :target: https://github.com/joferkington/mplstereonet/blob/master/examples/basic.py
+    
+Planes, lines, poles, and rakes can be plotted using axes methods (e.g.
+``ax.line(plunge, bearing)`` or ``ax.rake(strike, dip, rake_angle)``).
+
+All planar measurements are expected to follow the right-hand-rule to indicate
+dip direction. As an example, 315/30S would be 135/30 following the right-hand
+rule.
+
+",y,,,,,,,,,,,,,,,,
+striplog-README.md,,,,,,,,,,,,,"    python setup.py sdist
+    pip install dist/striplog-0.6.1.tar.gz    ",y,,,,,,,,,,,,,,
+harismuneer-Ultimate-Facebook-Scraper-README.md,,,"[![GitHub Issues](https://img.shields.io/github/issues/harismuneer/Ultimate-Facebook-Scraper.svg?style=flat&label=Issues&maxAge=2592000)](https://www.github.com/harismuneer/Ultimate-Facebook-Scraper/issues)
+
+If you face any issue, you can create a new issue in the Issues Tab and I will be glad to help you out.
+
+",y,,,,,"[![DOI](https://zenodo.org/badge/145763277.svg)](https://zenodo.org/badge/latestdoi/145763277)
+
+If you use this tool for your research, then kindly cite it. Click the above badge for more information regarding the complete citation for this tool and diffferent citation formats like IEEE, APA etc.
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+",y,,,"You will need to install latest version of [Google Chrome](https://www.google.com/chrome/). Moreover, you need to install selenium module as well using
+
+```
+pip install selenium
+```
+
+Run the code using Python 3. Also, the code is multi-platform and is tested on both Windows and Linux.
+The tool uses latest version of [Chrome Web Driver](http://chromedriver.chromium.org/downloads). I have placed the webdriver along with the code but if that version doesn't work then replace the chrome web driver with the latest one.
+
+",y,"There's a file named ""input.txt"". You can add as many profiles as you want in the following format with each link on a new line:
+
+```
+https://www.facebook.com/andrew.ng.96
+https://www.facebook.com/zuck
+```
+
+Make sure the link only contains the username or id number at the end and not any other stuff. Make sure its in the format mentioned above.
+
+Note: There are two modes to download Friends Profile Pics and the user's Photos: Large Size and Small Size. You can change the following variables. By default they are set to Small Sized Pics because its really quick while Large Size Mode takes time depending on the number of pictures to download
+
+```
+#: whether to download the full image or its thumbnail (small size)
+#: if small size is True then it will be very quick else if its False then it will open each photo to download it
+#: and it will take much more time
+friends_small_size = True
+photos_small_size = True
+```
+----------------------------------------------------------------------------------------------------------------------------------------
+
+",y,,,"[![MIT](https://img.shields.io/cocoapods/l/AFNetworking.svg?style=style&label=License&maxAge=2592000)](../master/LICENSE)
+
+Copyright (c) 2018-present, harismuneer, Hassaan-Elahi                                                        
+",y,,,,,,,,
+nextflow-io-nextflow-README.md,,,,,,,,,,,,,,,,,"Nextflow is a bioinformatics workflow manager that enables the development of portable and reproducible workflows.
+It supports deploying workflows on a variety of execution platforms including local, HPC schedulers, AWS Batch,
+Google Genomics Pipelines, and Kubernetes. Additionally, it provides support for manage your workflow dependencies
+through built-in support for Conda, Docker, Singularity, and Modules.
+
+## Contents
+- [Rationale](#rationale)
+- [Quick start](#quick-start)
+- [Documentation](#documentation)
+- [Tool Management](#tool-management)
+  - [Conda environments](#conda-environments)
+  - [Docker and Singularity](#containers)
+  - [Environment Modules](#environment-modules)
+- [HPC Schedulers](#hpc-schedulers)
+  - [SGE](#hpc-schedulers)
+  - [Univa Grid Engine](#hpc-schedulers)
+  - [LSF](#hpc-schedulers)
+  - [SLURM](#hpc-schedulers)
+  - [PBS/Torque](#hpc-schedulers)
+  - [HTCondor (experimental)](#hpc-schedulers)
+- [Cloud Support](#cloud-support)
+  - [AWS Batch](#cloud-support)
+  - [AWS EC2](#cloud-support)
+  - [Google Cloud](#cloud-support)
+  - [Google Genomics Pipelines](#cloud-support)
+  - [Kubernetes](#cloud-support)
+- [Community](#community)
+- [Build from source](#build-from-source)
+- [Contributing](#contributing)
+- [License](#license)
+- [Citations](#citations)
+- [Credits](#credits)
+
+
+",y,,,,,"*Nextflow* also supports running workflows across various clouds and cloud technologies. *Nextflow* can create AWS EC2 or Google GCE clusters and deploy your workflow. Managed solutions from both Amazon and Google are also supported through AWS Batch and Google Genomics Pipelines. Additionally, *Nextflow* can run workflows on either on-prem or managed cloud Kubernetes clusters. 
+
+Currently supported cloud platforms:
+  + [AWS Batch](https://www.nextflow.io/docs/latest/awscloud.html#aws-batch)
+  + [AWS EC2](https://www.nextflow.io/docs/latest/awscloud.html)
+  + [Google GCE](https://www.nextflow.io/docs/latest/google.html)
+  + [Google Genomics Pipelines](https://www.nextflow.io/docs/latest/google.html#google-pipelines)
+  + [Kubernetes](https://www.nextflow.io/docs/latest/kubernetes.html)
+
+
+
+",n,"Nextflow does not require any installation procedure, just download the distribution package by copying and pasting
+this command in your terminal:
+
+```
+curl -fsSL https://get.nextflow.io | bash
+```
+
+It creates the ``nextflow`` executable file in the current directory. You may want to move it to a folder accessible from your ``$PATH``.
+
+",y,,
+GANimation-README.md,"- Install PyTorch (version 0.3.1), Torch Vision and dependencies from http://pytorch.org
+- Install requirements.txt (```pip install -r requirements.txt```)
+
+",y,,,,,,,"If you use this code or ideas from the paper for your research, please cite our paper:
+```
+@inproceedings{pumarola2018ganimation,
+    title={GANimation: Anatomically-aware Facial Animation from a Single Image},
+    author={A. Pumarola and A. Agudo and A.M. Martinez and A. Sanfeliu and F. Moreno-Noguer},
+    booktitle={Proceedings of the European Conference on Computer Vision (ECCV)},
+    year={2018}
+}
+```
+",y,,,"The code requires a directory containing the following files:
+- `imgs/`: folder with all image
+- `aus_openface.pkl`: dictionary containing the images action units.
+- `train_ids.csv`: file containing the images names to be used to train.
+- `test_ids.csv`: file containing the images names to be used to test.
+
+An example of this directory is shown in `sample_dataset/`.
+
+To generate the `aus_openface.pkl` extract each image Action Units with [OpenFace](https://github.com/TadasBaltrusaitis/OpenFace/wiki/Action-Units) and store each output in a csv file the same name as the image. Then run:
+```
+python data/prepare_au_annotations.py
+```
+
+",y,"To train:
+```
+bash launch/run_train.sh
+```
+To test:
+```
+python test --input_path path/to/img
+```
+
+",y,,,,,,,,,,,,
+two-stream-dyntex-synth-README.md,"- Tensorflow 1.3 (or latest, although not tested)
+- Preferably a Titan X for synthesizing 12 frames
+- Appearance-stream [tfmodel](https://drive.google.com/open?id=19KkFi92oWLzuOWnGo6Zsqe-2CCXFAoXZ)
+- Dynamics-stream [tfmodel](https://drive.google.com/open?id=1DHnzoNO-iTgMUTbUOLrigEmpPHmn_mT1)
+- [Dynamic textures](https://drive.google.com/open?id=0B5T9jWfa9iDySWJHZnpNZ2dHWUk)
+- [Static textures](https://drive.google.com/open?id=11yMiPXiuYvLCyoLfQf_dEG6kuav8h6_3) (for dynamics style transfer)
+
+",y,,,,,,,"```
+@inproceedings{tesfaldet2018,
+  author = {Matthew Tesfaldet and Marcus A. Brubaker and Konstantinos G. Derpanis},
+  title = {Two-Stream Convolutional Networks for Dynamic Texture Synthesis},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year = {2018}
+}
+```
+
+",y,"```
+python synthesize.py --type=dts --gpu=0 --runid=""my_cool_fish"" --dynamics_target=data/dynamic_textures/fish --dynamics_model=models/MSOEnet_ucf101train01_6e-4_allaug_exceptscale_randorder.tfmodel
+```
+
+",y,"1. Store the appearance-stream tfmodel in `./models`.
+2. Store the dynamics-stream tfmodel in `./models`. The filepath to this model is your `--dynamics_model` path.
+
+",n,,,,,"Two-Stream Convolutional Networks for Dynamic Texture Synthesis
+Copyright (C) 2018  Matthew Tesfaldet
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+
+For questions, please contact Matthew Tesfaldet ([mtesfald@eecs.yorku.ca](mailto:mtesfald@eecs.yorku.ca)).
+",y,,,,,,,,
+ipyleaflet-README.md,,,,,"To get started with using `ipyleaflet`, check out the full documentation
+
+https://ipyleaflet.readthedocs.io/
+
+",y,,,,,"**Selecting a basemap for a leaflet map:**
+
+![Basemap Screencast](basemap.gif)
+
+**Loading a geojson map:**
+
+![GeoJSON Screencast](geojson.gif)
+
+**Making use of leafletjs primitives:**
+
+![Primitives Screencast](primitives.gif)
+
+**Using the splitmap control:**
+
+![Splitmap Screencast](splitmap.gif)
+
+**Displaying velocity data on the top of a map:**
+
+![Velocity Screencast](velocity.gif)
+
+**Choropleth layer:**
+
+![Choropleth Screencast](choropleth.gif)
+
+",y,"For a development installation (requires npm):
+
+```
+$ git clone https://github.com/jupyter-widgets/ipyleaflet.git
+$ cd ipyleaflet
+$ pip install -e .
+$ jupyter nbextension install --py --symlink --sys-prefix ipyleaflet
+$ jupyter nbextension enable --py --sys-prefix ipyleaflet
+$ jupyter labextension install js  #: If you are developing on JupyterLab
+```
+
+Note for developers:
+
+- the ``-e`` pip option allows one to modify the Python code in-place. Restart the kernel in order to see the changes.
+- the ``--symlink`` argument on Linux or OS X allows one to modify the JavaScript code in-place. This feature is not available with Windows.
+
+    For automatically building the JavaScript code every time there is a change, run the following command from the ``ipyleaflet/js/`` directory:
+
+    ```
+    $ npm run watch
+    ```
+
+    If you are on JupyterLab you also need to run the following in a separate terminal:
+
+    ```
+    $ jupyter lab --watch
+    ```
+
+    Every time a JavaScript build has terminated you need to refresh the Notebook page in order to load the JavaScript code again.
+
+",y,,,,,"We use a shared copyright model that enables all contributors to maintain the
+copyright on their contributions.
+
+This software is licensed under the BSD-3-Clause license. See the [LICENSE](LICENSE) file for details.
+
+",y,,,,,,,,
+rasterio-README.md,,,,,,,,,,,    ,n,    ,n,,,,,,,,,,,,,,
+puppeteer-README.md,,,"We have a [troubleshooting](https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md) guide for various operating systems that lists the required dependencies.
+
+",y,,,,,,,"Note: Puppeteer requires at least Node v6.4.0, but the examples below use async/await which is only supported in Node v7.6.0 or greater.
+
+Puppeteer will be familiar to people using other browser testing frameworks. You create an instance
+of `Browser`, open pages, and then manipulate them with [Puppeteer's API](https://github.com/GoogleChrome/puppeteer/blob/v1.18.0/docs/api.md#).
+
+**Example** - navigating to https://example.com and saving a screenshot as *example.png*:
+
+Save file as **example.js**
+
+```js
+const puppeteer = require('puppeteer');
+
+(async () => {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto('https://example.com');
+  await page.screenshot({path: 'example.png'});
+
+  await browser.close();
+})();
+```
+
+Execute script on the command line
+
+```bash
+node example.js
+```
+
+Puppeteer sets an initial page size to 800px x 600px, which defines the screenshot size. The page size can be customized  with [`Page.setViewport()`](https://github.com/GoogleChrome/puppeteer/blob/v1.18.0/docs/api.md#pagesetviewportviewport).
+
+**Example** - create a PDF.
+
+Save file as **hn.js**
+
+```js
+const puppeteer = require('puppeteer');
+
+(async () => {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto('https://news.ycombinator.com', {waitUntil: 'networkidle2'});
+  await page.pdf({path: 'hn.pdf', format: 'A4'});
+
+  await browser.close();
+})();
+```
+
+Execute script on the command line
+
+```bash
+node hn.js
+```
+
+See [`Page.pdf()`](https://github.com/GoogleChrome/puppeteer/blob/v1.18.0/docs/api.md#pagepdfoptions) for more information about creating pdfs.
+
+**Example** - evaluate script in the context of the page
+
+Save file as **get-dimensions.js**
+
+```js
+const puppeteer = require('puppeteer');
+
+(async () => {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto('https://example.com');
+
+  // Get the ""viewport"" of the page, as reported by the page.
+  const dimensions = await page.evaluate(() => {
+    return {
+      width: document.documentElement.clientWidth,
+      height: document.documentElement.clientHeight,
+      deviceScaleFactor: window.devicePixelRatio
+    };
+  });
+
+  console.log('Dimensions:', dimensions);
+
+  await browser.close();
+})();
+```
+
+Execute script on the command line
+
+```bash
+node get-dimensions.js
+```
+
+See [`Page.evaluate()`](https://github.com/GoogleChrome/puppeteer/blob/v1.18.0/docs/api.md#pageevaluatepagefunction-args) for more information on `evaluate` and related methods like `evaluateOnNewDocument` and `exposeFunction`.
+
+
+
+
+",y,"We have a [troubleshooting](https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md) guide for various operating systems that lists the required dependencies.
+
+",n,"We have a [troubleshooting](https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md) guide for various operating systems that lists the required dependencies.
+
+",n,,,,,,,,,,,,
+tensorflow-README.md,,,,,,,,,,,,,"To install the current release for CPU-only:
+
+```
+pip install tensorflow
+```
+
+Use the GPU package for CUDA-enabled GPU cards:
+
+```
+pip install tensorflow-gpu
+```
+
+*See [Installing TensorFlow](https://www.tensorflow.org/install) for detailed
+instructions, and how to build from source.*
+
+People who are a little more adventurous can also try our nightly binaries:
+
+**Nightly pip packages** * We are pleased to announce that TensorFlow now offers
+nightly pip packages under the
+[tf-nightly](https://pypi.python.org/pypi/tf-nightly) and
+[tf-nightly-gpu](https://pypi.python.org/pypi/tf-nightly-gpu) project on PyPi.
+Simply run `pip install tf-nightly` or `pip install tf-nightly-gpu` in a clean
+environment to install the nightly TensorFlow build. We support CPU and GPU
+packages on Linux, Mac, and Windows.
+
+",y,,,,,"[Apache License 2.0](LICENSE)
+",y,,,,,,,,
+vue-README.md,,,"Please make sure to read the [Issue Reporting Checklist](https://github.com/vuejs/vue/blob/dev/.github/CONTRIBUTING.md#issue-reporting-guidelines) before opening an issue. Issues not conforming to the guidelines may be closed immediately.
+
+",y,"To check out [live examples](https://vuejs.org/v2/examples/) and docs, visit [vuejs.org](https://vuejs.org).
+
+",y,,,,,,,,,,,"Vue (pronounced `/vjuː/`, like view) is a **progressive framework** for building user interfaces. It is designed from the ground up to be incrementally adoptable, and can easily scale between a library and a framework depending on different use cases. It consists of an approachable core library that focuses on the view layer only, and an ecosystem of supporting libraries that helps you tackle complexity in large Single-Page Applications.
+
+",y,"[MIT](http://opensource.org/licenses/MIT)
+
+Copyright (c) 2013-present, Yuxi (Evan) You
+",y,,,,,,,,
+reduxjs-react-redux-README.md,,,,,"The React Redux docs are now published at **https://react-redux.js.org** .
+
+We're currently expanding and rewriting our docs content - check back soon for more updates!
+
+",y,,,,,,,"React Redux requires **React 16.8.3 or later.**
+
+```
+npm install --save react-redux
+```
+
+This assumes that you’re using [npm](http://npmjs.com/) package manager 
+with a module bundler like [Webpack](https://webpack.js.org/) or 
+[Browserify](http://browserify.org/) to consume [CommonJS 
+modules](https://webpack.js.org/api/module-methods/#commonjs).
+
+If you don’t yet use [npm](http://npmjs.com/) or a modern module bundler, and would rather prefer a single-file [UMD](https://github.com/umdjs/umd) build that makes `ReactRedux` available as a global object, you can grab a pre-built version from [cdnjs](https://cdnjs.com/libraries/react-redux). We *don’t* recommend this approach for any serious application, as most of the libraries complementary to Redux are only available on [npm](http://npmjs.com/).
+
+",y,,,,,"MIT
+",y,,,,,,,,
+pyansys-README.md,,,"    k += sparse.diags(np.random.random(k.shape[0])/1E20, shape=k.shape)
+
+    ",n,,,,,,,    ,n,,,,,,,,,,,,,,,,
+kosmtik-README.md,,,,,,,,,,,"To get command line help, run:
+
+    kosmtik -h
+
+To run a Carto project (or `.yml`, `.yaml`):
+
+    kosmtik serve 
+
+Then open your browser at http://127.0.0.1:6789/.
+
+
+You may also want to install plugins. To see the list of available ones, type:
+
+    kosmtik plugins --available
+
+And then pick one and install it like this:
+
+    kosmtik plugins --install pluginname
+
+For example:
+
+    kosmtik plugins --install kosmtik-map-compare [--install kosmtik-overlay…]
+
+
+",y,"Note: Node.js versions are moving very fast, and kosmtik or its dependencies are
+hardly totally up to date with latest release. Ideally, you should run the LTS
+version of Node.js. You can use a Node.js version manager (like
+[NVM](https://github.com/creationix/nvm)) to help.
+
+    npm -g install kosmtik
+
+This might need root/Administrator rights. If you cannot install globally
+you can also install locally with
+
+    npm install kosmtik
+
+This will create a `node_modules/kosmtik` folder. You then have to replace all occurences of `kosmtik`
+below with `node node_modules/kosmtik/index.js`.
+
+To reinstall all plugins:
+
+    kosmtik plugins --reinstall
+
+",y,,,,,,,"Note: Node.js versions are moving very fast, and kosmtik or its dependencies are
+hardly totally up to date with latest release. Ideally, you should run the LTS
+version of Node.js. You can use a Node.js version manager (like
+[NVM](https://github.com/creationix/nvm)) to help.
+
+    npm -g install kosmtik
+
+This might need root/Administrator rights. If you cannot install globally
+you can also install locally with
+
+    npm install kosmtik
+
+This will create a `node_modules/kosmtik` folder. You then have to replace all occurences of `kosmtik`
+below with `node node_modules/kosmtik/index.js`.
+
+To reinstall all plugins:
+
+    kosmtik plugins --reinstall
+
+",n,,,,,,
+pyGeoPressure-README.md,,,,,"Read the documentaion for detailed explanations, tutorials and references:
+https://pygeopressure.readthedocs.io/en/latest/
+
+",y,,,,,,,"`pyGeoPressure` is on `PyPI`:
+
+```bash
+pip install pygeopressure
+```
+
+",y,,,,,"The project is licensed under the MIT license, see the file [LICENSE]() for details.
+",y,,,"If you find a bug, please report it at [Github Issues](https://github.com/whimian/pyGeoPressure/issues) by opening a new issue with `bug` label.
+
+",y,,,,
+DBNet-README.md,"* **Tensorflow 1.2.0**
+* Python 2.7
+* CUDA 8.0+ (For GPU)
+* Python Libraries: numpy, scipy and __laspy__
+
+The code has been tested with Python 2.7, Tensorflow 1.2.0, CUDA 8.0 and cuDNN 5.1 on Ubuntu 14.04. But it may work on more machines (directly or through mini-modification), pull-requests or test report are well welcomed.
+
+",y,,,,,,,"If you find our work useful in your research, please consider citing:
+
+	@InProceedings{DBNet2018,
+	  author = {Yiping Chen and Jingkang Wang and Jonathan Li and Cewu Lu and Zhipeng Luo and HanXue and Cheng Wang},
+	  title = {LiDAR-Video Driving Dataset: Learning Driving Policies Effectively},
+	  booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+	  month = {June},
+	  year = {2018}
+	}
+
+",y,,,,,,,"This work is based on our [research paper](http://openaccess.thecvf.com/content_cvpr_2018/html/Chen_LiDAR-Video_Driving_Dataset_CVPR_2018_paper.html), which appears in CVPR 2018. We propose a large-scale dataset for driving behavior learning, namely, DBNet. You can also check our [dataset webpage](http://www.dbehavior.net/) for a deeper introduction.
+
+In this repository, we release __demo code__ and __partial prepared data__ for training with only images, as well as leveraging feature maps or point clouds. The prepared data are accessible [here](https://drive.google.com/open?id=14RPdVTwBTuCTo0tFeYmL_SyN8fD0g6Hc). (__More demo models and scripts are released soon!__)
+
+",y,"Our code is released under Apache 2.0 License. The copyright of DBNet could be checked [here](http://www.dbehavior.net/contact.html).
+",y,,,,,,,"DBNet was developed by [MVIG](http://www.mvig.org/), Shanghai Jiao Tong University* and [SCSC](http://scsc.xmu.edu.cn/) Lab, Xiamen University* (*alphabetical order*).
+
+",y
