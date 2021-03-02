@@ -1,4 +1,4 @@
-# SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675)
+# SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)
 Software Metadata Extraction Framework: A command line interface for automatically extracting relevant information from readme files.
 
 **Authors:** Daniel Garijo, Allen Mao, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
@@ -119,6 +119,7 @@ Options:
                                   supplied, the output will be a Knowledge
                                   Graph, in the format given in the --format
                                   option
+    -c, --codemeta_out PATH       Path to an output codemeta file (in JSON-LD)
 
   -f, --graph_format [turtle|json-ld]
                                   If the --graph_out option is given, this is
@@ -157,8 +158,4 @@ pages={3032-3037}
 ```
 
 ## Next features:
-We are improving SOMEF to incorporate the following features:
-- Automated detection of other documentations sources, besides the readme.md file.
-- Automated detection and annotation of Docker files.
-- Automated detection and annotation of notebooks and their metadata.
-- Automated detection of examples associated with a software component.
+To see upcoming features, please have a look at our [open issues](https://github.com/KnowledgeCaptureAndDiscovery/somef/issues) and [milestones](https://github.com/KnowledgeCaptureAndDiscovery/somef/milestones)
