@@ -152,5 +152,17 @@ software_schema = {
                 "@type": "xsd:anyURI"
             }
         ]
+    },
+    "sd:hasDocumentation": {
+        "@path": "hasDocumentation",
+        "@type": "xsd:anyURI"
+    },
+    "sd:hasBuildFile": {
+        "@path": "hasBuildFile",
+        "@type": "xsd:string"
+    },
+    "sd:hasExecutableNotebook": {
+        "@path": "hasExecutableNotebook",
+        "@type": "xsd:string"
     }
 }

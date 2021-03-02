@@ -32,6 +32,8 @@ import time
 
 import tempfile
 
+import urllib
+
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
 def unmark_element(element, stream=None):
@@ -315,21 +317,40 @@ def load_repository_metadata(repository_url, header):
         notebooks = []
         dockerfiles = []
 
+        docs = []
+
         for dirpath, dirnames, filenames in os.walk(repo_dir):
             repo_relative_path = os.path.relpath(dirpath, repo_dir)
             for filename in filenames:
-                print(filename)
                 if filename == "Dockerfile":
                     dockerfiles.append(os.path.join(repo_relative_path, filename))
                 if filename.lower().endswith(".ipynb"):
                     notebooks.append(os.path.join(repo_relative_path, filename))
 
+            for dirname in dirnames:
+                if dirname.lower() == "docs":
+                    if repo_relative_path == ".":
+                        docs_path = dirname
+                    else:
+                        docs_path = repo_relative_path + "/" + dirname
+
+                    docs.append(f"https://github.com/{owner}/{repo_name}/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
+                    print(docs)
 
         print("NOTEBOOKS:")
         print(notebooks)
 
         print("DOCKERFILES:")
         print(dockerfiles)
+
+    def convert_to_raw_usercontent(partial):
+
+        return f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse.quote(partial)}"
+
+
+    filtered_resp["hasExecutableNotebook"] = [convert_to_raw_usercontent(x) for x in notebooks]
+    filtered_resp["hasBuildFile"] = [convert_to_raw_usercontent(x) for x in dockerfiles]
+    filtered_resp["hasDocumentation"] = docs
 
     ## get releases
     releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
