@@ -21,6 +21,7 @@ import pandas as pd
 import numpy as np
 import re
 from dateutil import parser as date_parser
+import zipfile
 
 from somef.data_to_graph import DataGraph
 
@@ -29,6 +30,9 @@ from . import header_analysis
 
 import time
 
+import tempfile
+
+import urllib
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
@@ -283,6 +287,70 @@ def load_repository_metadata(repository_url, header):
         readme = base64.b64decode(readme_info['content']).decode("utf-8")
         text = readme
         filtered_resp['readme_url'] = readme_info['html_url']
+
+    # get full git repository
+    # todo: maybe it should be optional, as this could take some time?
+
+    # create a temporary directory
+    with tempfile.TemporaryDirectory() as temp_dir:
+
+        # download the repo at the selected branch with the link
+        repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip"
+        print(f"Downloading {repo_archive_url}")
+        repo_download = requests.get(repo_archive_url)
+        repo_zip = repo_download.content
+
+        repo_zip_file = os.path.join(temp_dir, "repo.zip")
+        repo_extract_dir = os.path.join(temp_dir, "repo")
+
+        with open(repo_zip_file, "wb") as f:
+            f.write(repo_zip)
+
+        with zipfile.ZipFile(repo_zip_file, "r") as zip_ref:
+            zip_ref.extractall(repo_extract_dir)
+
+        repo_folders = os.listdir(repo_extract_dir)
+        assert(len(repo_folders) == 1)
+
+        repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
+
+        notebooks = []
+        dockerfiles = []
+
+        docs = []
+
+        for dirpath, dirnames, filenames in os.walk(repo_dir):
+            repo_relative_path = os.path.relpath(dirpath, repo_dir)
+            for filename in filenames:
+                if filename == "Dockerfile":
+                    dockerfiles.append(os.path.join(repo_relative_path, filename))
+                if filename.lower().endswith(".ipynb"):
+                    notebooks.append(os.path.join(repo_relative_path, filename))
+
+            for dirname in dirnames:
+                if dirname.lower() == "docs":
+                    if repo_relative_path == ".":
+                        docs_path = dirname
+                    else:
+                        docs_path = repo_relative_path + "/" + dirname
+
+                    docs.append(f"https://github.com/{owner}/{repo_name}/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
+                    print(docs)
+
+        print("NOTEBOOKS:")
+        print(notebooks)
+
+        print("DOCKERFILES:")
+        print(dockerfiles)
+
+    def convert_to_raw_usercontent(partial):
+
+        return f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse.quote(partial)}"
+
+
+    filtered_resp["hasExecutableNotebook"] = [convert_to_raw_usercontent(x) for x in notebooks]
+    filtered_resp["hasBuildFile"] = [convert_to_raw_usercontent(x) for x in dockerfiles]
+    filtered_resp["hasDocumentation"] = docs
 
     ## get releases
     releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
