@@ -41,6 +41,7 @@ Options:
                                   supplied, the output will be a Knowledge
                                   Graph, in the format given in the --format
                                   option
+    -c, --codemeta_out PATH       Path to an output codemeta file (in JSON-LD)
 
   -f, --graph_format [turtle|json-ld]
                                   If the --graph_out option is given, this is
