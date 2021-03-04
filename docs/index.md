@@ -19,7 +19,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component
 - **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it.
-- **Documentation**:
+- **Documentation**: Where to find additional documentation about a software component.
 - **Requirements**: Pre-requisites and dependencies needed to execute a software component.
 - **Contributors**: Contirbutors to a software component
 - **FAQ**: Frequently asked questions about a software component
