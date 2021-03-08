@@ -48,7 +48,7 @@ Commands:
   version    Show somef version.
 ```
 
-## Installing Through Docker
+## Installing through Docker
 We provide a Docker image with SOMEF already installed. To run through Docker, you may build the Dockerfile provided in the repository by running:
 
 ```bash
