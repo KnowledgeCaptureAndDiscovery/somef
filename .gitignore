@@ -9,3 +9,4 @@ __pycache__/
 Lib/*
 Scripts/*
 .idea/*
+test.json

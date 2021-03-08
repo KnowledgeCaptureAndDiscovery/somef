@@ -57,9 +57,9 @@ group.update({"usage": usage})
 update = [Word("updating").synsets[0], Word("updating").synsets[3]]
 group.update({"update": update})
 
-issues = [Word("issues").synsets[0], Word("errors").synsets[5], Word("problems").synsets[0],
-          Word("problems").synsets[2]]
-group.update({"issues": issues})
+faq = [Word("issues").synsets[0], Word("errors").synsets[5], Word("problems").synsets[0],
+          Word("problems").synsets[2],Word("faq").synsets[0]]
+group.update({"faq": faq})
 
 support = [Word("support").synsets[7], Word("help").synsets[0], Word("help").synsets[9], Word("report").synsets[0],
            Word("report").synsets[6]]
