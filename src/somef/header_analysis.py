@@ -149,7 +149,7 @@ def label_header(header):  # label the header with a subgroup
         synn = Word(s).synsets
         if (len(synn) > 0):
             bestgroup = match_group(synn, group, 0.8)
-            if (bestgroup != ""):
+            if (bestgroup != "" and bestgroup not in label):
                 label.append(bestgroup)
     return label
 

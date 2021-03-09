@@ -3,6 +3,39 @@ Software Metadata Extraction Framework: A command line interface for automatical
 
 **Authors:** Daniel Garijo, Allen Mao, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
 
+## Features
+Given a readme file (or a GitHub repository) SOMEF will extract the following categories (if present):
+
+- **Name**: Name identifying a software component
+- **Full name**: Name + owner (owner/name)
+- **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository  name
+- **Description**: A description of what the software does.
+- **Citation**: Preferred citation (usually in `.bib` form) as the authors have stated in their readme file.
+- **Installation instructions**: A set of instructions that indicate how to install a target repository
+- **Invocation**: Execution command(s) needed to run a scientific software component
+- **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it.
+- **Documentation**: Where to find additional documentation about a software component.
+- **Requirements**: Pre-requisites and dependencies needed to execute a software component.
+- **Contributors**: Contirbutors to a software component
+- **FAQ**: Frequently asked questions about a software component
+- **Support**: Guidelines and links of where to obtain support for a software component
+- **License**: License and usage terms of a software component
+- **Contact**: Contact person responsible for maintaining a software component
+- **Download URL**: URL where to download the target software (typically the installer, package or a tarball to a stable version)
+- **DOI**: Digital Object Identifier associated with the software (if any)
+- **DockerFile**: Build file to create a Docker image for the target software
+- **Notebooks**: Jupyter notebooks included in a repository
+- **Executable notebooks**: Jupyter notebooks ready for execution (e.g., through myBinder)
+- **Owner**: Name of the user or organization in charge of the repository
+- **Keywords**: set of terms used to commonly identify a software component
+- **Source code**: Link to the source code (typically the repository where the readme can be found)
+- **Releases**: Pointer to the available versions of a software component
+- **Changelog**: Description of the changes between versions
+- **Issue tracker**: Link where to open issues for the target repository
+- **Programming languages**: Languages used in the repository
+
+We use different supervised classifiers, header analysis, regular expressions and the GitHub API to retrieve all these fields (more than one technique may be used for each field)
+
 ## Documentation
 See full documentation at [https://somef.readthedocs.io/en/latest/](https://somef.readthedocs.io/en/latest/)
 
