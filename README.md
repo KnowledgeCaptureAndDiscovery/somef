@@ -16,7 +16,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it.
 - **Documentation**: Where to find additional documentation about a software component.
 - **Requirements**: Pre-requisites and dependencies needed to execute a software component.
-- **Contributors**: Contirbutors to a software component
+- **Contributors**: Contributors to a software component
 - **FAQ**: Frequently asked questions about a software component
 - **Support**: Guidelines and links of where to obtain support for a software component
 - **License**: License and usage terms of a software component
@@ -33,6 +33,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Changelog**: Description of the changes between versions
 - **Issue tracker**: Link where to open issues for the target repository
 - **Programming languages**: Languages used in the repository
+- **Acknowledgements**: People or institutions that the authors would like to acknowledge in their software component
 
 We use different supervised classifiers, header analysis, regular expressions and the GitHub API to retrieve all these fields (more than one technique may be used for each field)
 
