@@ -1,6 +1,9 @@
+## Script used to create an interactive evaluation of the header analysis
+## This script has to be executed and assessed manually each time we want to perform a new evaluation.
+
 tmp_json = "header_evaluation_tmp.json"
 
-input_dir = "../../experiments/training_corpus/repos"
+input_dir = "../../../experiments/training_corpus/repos"
 
 import os
 

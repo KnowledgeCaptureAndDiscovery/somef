@@ -1,3 +1,4 @@
+## Script used to create summary statistics on the interactive header evaluation
 in_file = "header_evaluation_tmp.json"
 
 full_out_csv = "header_evalution.csv"

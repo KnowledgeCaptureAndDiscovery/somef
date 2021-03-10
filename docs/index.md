@@ -13,7 +13,8 @@ SOMEF has currently been tested with GitHub repositories, but it can extract met
 Given a readme file (or a GitHub repository) SOMEF will extract the following categories (if present):
 
 - **Name**: Name identifying a software component
-- **Full name**: Full name of the software (not abbreviated)
+- **Full name**: Name + owner (owner/name)
+- **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository  name
 - **Description**: A description of what the software does.
 - **Citation**: Preferred citation (usually in `.bib` form) as the authors have stated in their readme file.
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
@@ -30,6 +31,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **DOI**: Digital Object Identifier associated with the software (if any)
 - **DockerFile**: Build file to create a Docker image for the target software
 - **Notebooks**: Jupyter notebooks included in a repository
+- **Executable notebooks**: Jupyter notebooks ready for execution (e.g., through myBinder)
 - **Owner**: Name of the user or organization in charge of the repository
 - **Keywords**: set of terms used to commonly identify a software component
 - **Source code**: Link to the source code (typically the repository where the readme can be found)

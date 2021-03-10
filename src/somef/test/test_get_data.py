@@ -16,20 +16,21 @@ class CliGetData(unittest.TestCase):
     def setUp(self):
         pass
 
+    # This test is too restrictive, since we are adding changes to somef almost all the time, and it does not validate
+    # functionality.
+    # def test_get_widoco_with_version(self):
+    #    thresh = 0.8
+    #    repo_url = "https://github.com/dgarijo/Widoco/tree/07d138baefd1a20e15740edc484a942328c5e974"
 
-    def test_get_widoco_with_version(self):
-        thresh = 0.8
-        repo_url = "https://github.com/dgarijo/Widoco/tree/07d138baefd1a20e15740edc484a942328c5e974"
-
-        with open("widoco_reference.json", "r") as data_file:
-            widoco_reference = json.load(data_file)
+    #    with open("widoco_reference.json", "r") as data_file:
+    #        widoco_reference = json.load(data_file)
 
 
-        current_data = cli_get_data(thresh, repo_url=repo_url)
+    #    current_data = cli_get_data(thresh, repo_url=repo_url)
         # print(current_data)
         # print(widoco_reference)
 
-        self.assertTrue(almost_equal(current_data, widoco_reference, exclude_paths=self.exclude_paths))
+    #    self.assertTrue(almost_equal(current_data, widoco_reference, exclude_paths=self.exclude_paths))
 
     # This test is too restrictive, since we are adding changes to somef almost all the time, and it does not validate
     # functionality.

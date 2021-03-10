@@ -1,0 +1,14 @@
+category,total correct,total incorrect,total missed,precision,recall
+citation,33,11,3,0.75,0.917
+run,20,3,1,0.87,0.952
+install,72,16,10,0.818,0.878
+download,2,3,0,0.4,1
+requirements,29,2,2,0.935,0.935
+contact,1,0,2,1,0.333
+description,15,8,5,0.652,0.75
+contributor,3,0,0,1,1
+documentation,18,2,0,0.9,1
+license,29,1,0,0.967,1
+usage,39,52,19,0.429,0.672
+faq,3,10,2,0.231,0.6
+support,6,8,3,0.429,0.667
