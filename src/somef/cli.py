@@ -34,6 +34,7 @@ import tempfile
 
 import urllib
 
+
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
 def unmark_element(element, stream=None):
@@ -226,7 +227,7 @@ def load_repository_metadata(repository_url, header):
     license_info = {}
     if 'license' in filtered_resp:
         for k in ('name', 'url'):
-             if k in filtered_resp['license']:
+            if k in filtered_resp['license']:
                 license_info[k] = filtered_resp['license'][k]
 
     ## If we didn't find it, look for the license
@@ -240,7 +241,8 @@ def load_repository_metadata(repository_url, header):
             # license_text = license_text_resp.text
             license_info['url'] = possible_license_url
 
-    filtered_resp['license'] = license_info
+    if license_info != '':
+        filtered_resp['license'] = license_info
 
     # get keywords / topics
     topics_headers = header
@@ -310,7 +312,7 @@ def load_repository_metadata(repository_url, header):
             zip_ref.extractall(repo_extract_dir)
 
         repo_folders = os.listdir(repo_extract_dir)
-        assert(len(repo_folders) == 1)
+        assert (len(repo_folders) == 1)
 
         repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
 
@@ -334,7 +336,8 @@ def load_repository_metadata(repository_url, header):
                     else:
                         docs_path = repo_relative_path + "/" + dirname
 
-                    docs.append(f"https://github.com/{owner}/{repo_name}/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
+                    docs.append(
+                        f"https://github.com/{owner}/{repo_name}/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
                     print(docs)
 
         print("NOTEBOOKS:")
@@ -343,14 +346,12 @@ def load_repository_metadata(repository_url, header):
         print("DOCKERFILES:")
         print(dockerfiles)
 
-    def convert_to_raw_usercontent(partial):
-
-        return f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse.quote(partial)}"
-
-
-    filtered_resp["hasExecutableNotebook"] = [convert_to_raw_usercontent(x) for x in notebooks]
-    filtered_resp["hasBuildFile"] = [convert_to_raw_usercontent(x) for x in dockerfiles]
-    filtered_resp["hasDocumentation"] = docs
+    if len(notebooks) > 0:
+        filtered_resp["hasExecutableNotebook"] = [convert_to_raw_usercontent(x, owner, repo_name, repo_ref) for x in notebooks]
+    if len(dockerfiles) > 0:
+        filtered_resp["hasBuildFile"] = [convert_to_raw_usercontent(x, owner, repo_name, repo_ref) for x in dockerfiles]
+    if len(docs) > 0:
+        filtered_resp["hasDocumentation"] = docs
 
     ## get releases
     releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
@@ -364,6 +365,9 @@ def load_repository_metadata(repository_url, header):
     print("Repository Information Successfully Loaded. \n")
     return text, filtered_resp
 
+
+def convert_to_raw_usercontent(partial, owner, repo_name, repo_ref):
+    return f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse.quote(partial)}"
 
 ## Function takes readme text as input and divides it into excerpts
 ## Returns the extracted excerpts
@@ -558,7 +562,7 @@ def merge(header_predictions, predictions, citations, dois, binder_links, long_t
     print("Merge prediction using header information, classifier and bibtex and doi parsers")
     if long_title:
         predictions['long_title'] = {'excerpt': long_title, 'confidence': [1.0],
-                                           'technique': 'Regular expression'}
+                                     'technique': 'Regular expression'}
     for i in range(len(citations)):
         if 'citation' not in predictions.keys():
             predictions['citation'] = []
@@ -575,7 +579,7 @@ def merge(header_predictions, predictions, citations, dois, binder_links, long_t
         for notebook in binder_links:
             # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
             predictions['executable_example'].insert(0, {'excerpt': notebook[1], 'confidence': [1.0],
-                                                 'technique': 'Regular expression'})
+                                                         'technique': 'Regular expression'})
     for headers in header_predictions:
         if headers not in predictions.keys():
             predictions[headers] = header_predictions[headers]
@@ -596,7 +600,10 @@ def format_output(git_data, repo_data):
                 repo_data['description'] = []
             repo_data['description'].append({'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'})
         else:
-            repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'}
+            if i == 'hasExecutableNotebook' or i == 'hasBuildFile' or i == 'hasDocumentation':
+                repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
+            else:
+                repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'}
 
     return repo_data
 
@@ -618,15 +625,14 @@ def save_json(git_data, repo_data, outfile):
     repo_data = format_output(git_data, repo_data)
     save_json_output(repo_data, outfile)
 
-def save_codemeta_output(repo_data, outfile, pretty=False):
 
+def save_codemeta_output(repo_data, outfile, pretty=False):
     def data_path(path):
         return DataGraph.resolve_path(repo_data, path)
 
     def format_date(date_string):
         date_object = date_parser.parse(date_string)
         return date_object.strftime("%Y-%m-%d")
-
 
     latest_release = None
     releases = data_path(["releases", "excerpt"])
@@ -659,9 +665,9 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         else:
             return 0
 
-
     descriptions = data_path(["description"])
-    descriptions.sort(key=lambda x: (average_confidence(x) + (1 if x["technique"] == "GitHub API" else 0)), reverse=True)
+    descriptions.sort(key=lambda x: (average_confidence(x) + (1 if x["technique"] == "GitHub API" else 0)),
+                      reverse=True)
     descriptions_text = [x["excerpt"] for x in descriptions]
 
     codemeta_output = {
