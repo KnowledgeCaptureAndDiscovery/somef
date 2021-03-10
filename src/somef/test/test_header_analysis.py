@@ -67,6 +67,6 @@ def test_extract_categories_using_headers():
     with open("widoco_readme.md", "r") as data_file:
         file_text = data_file.read()
         json,results = extract_categories_using_headers(file_text)
-        # At least 6 categories are extracted from the header analysis
-        assert len(json) == 6
+        # At least 5 categories are extracted from the header analysis
+        assert len(json) == 5
 

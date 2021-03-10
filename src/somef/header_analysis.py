@@ -1,7 +1,7 @@
 ## Main function: header_analysis(text)
 ## input file: readme files text data
 ## output file: json files with categories extracted using header analysis; other text data cannot be extracted
-
+import string
 
 import numpy as np
 import pandas as pd
@@ -12,8 +12,12 @@ import json
 # Define wordnet groups
 group = dict()
 
-citation = [Word("citation").synsets[2], Word("reference").synsets[1], Word("cite").synsets[3]]
+#Word("citation").synsets[2] -> Includes ack, which is not the right sense
+citation = [Word("citation").synsets[3],Word("reference").synsets[1], Word("cite").synsets[3]]
 group.update({"citation": citation})
+
+ack = [Word("acknowledgement").synsets[0]]
+group.update({"acknowledgement": ack})
 
 run = [Word("run").synsets[9], Word("run").synsets[34], Word("execute").synsets[4]]
 group.update({"run": run})
@@ -33,9 +37,12 @@ group.update({"requirement": requirement})
 contact = [Word("contact").synsets[9]]
 group.update({"contact": contact})
 
-description = [Word("description").synsets[0], Word("description").synsets[1], Word("introduction").synsets[3],
-               Word("introduction").synsets[6], Word("basics").synsets[0], Word("initiation").synsets[1],
-               Word("overview").synsets[0], Word("summary").synsets[0], Word("summary").synsets[2]]
+description = [Word("description").synsets[0], Word("description").synsets[1],
+               Word("introduction").synsets[3], Word("introduction").synsets[6],
+               Word("basics").synsets[0],
+               Word("initiation").synsets[1],
+#               Word("overview").synsets[0],
+               Word("summary").synsets[0], Word("summary").synsets[2]]
 group.update({"description": description})
 
 contributor = [Word("contributor").synsets[0]]
@@ -47,18 +54,21 @@ group.update({"documentation": documentation})
 license = [Word("license").synsets[3], Word("license").synsets[0]]
 group.update({"license": license})
 
-usage = [Word("usage").synsets[0], Word("example").synsets[0], Word("example").synsets[5], Word("implement").synsets[1],
-         Word("implementation").synsets[1], Word("demo").synsets[1], Word("tutorial").synsets[0],
+usage = [Word("usage").synsets[0], Word("example").synsets[0], Word("example").synsets[5],
+         #Word("implement").synsets[1],Word("implementation").synsets[1],
+         Word("demo").synsets[1], Word("tutorial").synsets[0],
          Word("tutorial").synsets[1],
          Word("start").synsets[0], Word("start").synsets[4], Word("started").synsets[0],
          Word("started").synsets[1], Word("started").synsets[7], Word("started").synsets[8]]
 group.update({"usage": usage})
 
-update = [Word("updating").synsets[0], Word("updating").synsets[3]]
-group.update({"update": update})
+#update = [Word("updating").synsets[0], Word("updating").synsets[3]]
+#group.update({"update": update})
 
-faq = [Word("issues").synsets[0], Word("errors").synsets[5], Word("problems").synsets[0],
-          Word("problems").synsets[2],Word("faq").synsets[0]]
+# Needs to be revisited
+#Word("issues").synsets[0],
+faq = [Word("errors").synsets[5], Word("problems").synsets[0],
+          Word("problems").synsets[2], Word("faq").synsets[0]]
 group.update({"faq": faq})
 
 support = [Word("support").synsets[7], Word("help").synsets[0], Word("help").synsets[9], Word("report").synsets[0],
@@ -143,7 +153,9 @@ def match_group(word_syn, group, threshold):  # match a word with a subgroup
 
 
 def label_header(header):  # label the header with a subgroup
-    sentence = header.lstrip().split(" ")
+    # remove punctuation
+    header_clean = header.translate(str.maketrans('', '', string.punctuation))
+    sentence = header_clean.strip().split(" ")
     label = []
     for s in sentence:
         synn = Word(s).synsets

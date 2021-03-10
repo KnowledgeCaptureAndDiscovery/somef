@@ -2,7 +2,7 @@ Repo,Header,Label
 LibGEOS.jl-README.md,LibGEOS.jl,
 LibGEOS.jl-README.md,Installation,install
 Flow-Guided-Feature-Aggregation-README.md, Flow-Guided Feature Aggregation for Video Object Detection,long_title
-Flow-Guided-Feature-Aggregation-README.md, Introduction,
+Flow-Guided-Feature-Aggregation-README.md, Introduction,description
 Flow-Guided-Feature-Aggregation-README.md, Disclaimer,
 Flow-Guided-Feature-Aggregation-README.md, License,license
 Flow-Guided-Feature-Aggregation-README.md, Citing Flow-Guided Feature Aggregation,citation
@@ -10,7 +10,7 @@ Flow-Guided-Feature-Aggregation-README.md, Main Results,
 Flow-Guided-Feature-Aggregation-README.md, Requirements: Software,requirements
 Flow-Guided-Feature-Aggregation-README.md, Requirements: Hardware,requirements
 Flow-Guided-Feature-Aggregation-README.md, Installation,install
-Flow-Guided-Feature-Aggregation-README.md, Demo,
+Flow-Guided-Feature-Aggregation-README.md, Demo,usage
 Flow-Guided-Feature-Aggregation-README.md, Preparation for Training & Testing,
 Flow-Guided-Feature-Aggregation-README.md, Usage,usage
 Flow-Guided-Feature-Aggregation-README.md, Misc.,
@@ -43,7 +43,7 @@ pyro-ppl-pyro-README.md, Running Pyro from a Docker Container,run
 pyro-ppl-pyro-README.md, Citation,citation
 LapSRN-README.md, Deep Laplacian Pyramid Networks for Fast and Accurate Super-Resolution (CVPR 2017),long_title
 LapSRN-README.md, Table of Contents,
-LapSRN-README.md, Introduction,
+LapSRN-README.md, Introduction,description
 LapSRN-README.md, Citation,citation
 LapSRN-README.md, Requirements and Dependencies,requirements
 LapSRN-README.md, Installation,install
@@ -82,7 +82,7 @@ apsg-README.md, Conda,
 apsg-README.md, Current release info,
 apsg-README.md, Installing apsg,install
 apsg-README.md, Master version,
-apsg-README.md, Getting started,
+apsg-README.md, Getting started,usage
 apsg-README.md, Documentation,documentation
 apsg-README.md, Contributing,contribute
 apsg-README.md, Donate,
@@ -90,7 +90,7 @@ apsg-README.md, License,license
 DCPDN-README.md, Densely Connected Pyramid Dehazing Network (CVPR'2018),long_title
 DCPDN-README.md, Prerequisites:,requirements
 DCPDN-README.md, Installation:,install
-DCPDN-README.md, Demo using pre-trained model,
+DCPDN-README.md, Demo using pre-trained model,usage
 DCPDN-README.md, Training (Fine-tuning),
 DCPDN-README.md, Testing,
 DCPDN-README.md, Reproduce,
@@ -106,7 +106,7 @@ gempy-README.md, What is new,
 gempy-README.md, Features,description
 gempy-README.md, Sandbox,
 gempy-README.md, Remote Geomod: From GoogleEarth to 3-D Geology,long_title
-gempy-README.md, Getting Started,
+gempy-README.md, Getting Started,usage
 gempy-README.md, Dependencies,requirements
 gempy-README.md, Conflictive packages.,
 gempy-README.md, Installation,install
@@ -264,7 +264,7 @@ pyvista-README.md,"Contributing
 pyvista-README.md,"Citing PyVista
 ",citation
 ICNet-README.md, ICNet for Real-Time Semantic Segmentation on High-Resolution Images,long_title
-ICNet-README.md, Introduction,
+ICNet-README.md, Introduction,description
 ICNet-README.md, Usage,usage
 ICNet-README.md, Citation,citation
 ICNet-README.md, Questions,faq
@@ -272,10 +272,10 @@ neural_renderer-README.md, Neural 3D Mesh Renderer (CVPR 2018),long_title
 neural_renderer-README.md, For PyTorch users,
 neural_renderer-README.md, Installation,install
 neural_renderer-README.md, Running examples,usage
-neural_renderer-README.md, Example 1: Drawing an object from multiple viewpoints,
-neural_renderer-README.md, Example 2: Optimizing vertices,
-neural_renderer-README.md, Example 3: Optimizing textures,
-neural_renderer-README.md, Example 4: Finding camera parameters,
+neural_renderer-README.md, Example 1: Drawing an object from multiple viewpoints,usage
+neural_renderer-README.md, Example 2: Optimizing vertices,usage
+neural_renderer-README.md, Example 3: Optimizing textures,usage
+neural_renderer-README.md, Example 4: Finding camera parameters,usage
 neural_renderer-README.md, CPU implementation?,
 neural_renderer-README.md, Python3 support?,support
 neural_renderer-README.md, Citation,citation
@@ -381,7 +381,7 @@ two-stream-dyntex-synth-README.md, License,license
 PRM-README.md, PyTorch Implementation,
 PRM-README.md, Prerequisites,requirements
 PRM-README.md, Installation,install
-PRM-README.md, Run demo,run
+PRM-README.md, Run demo,run;usage
 PRM-README.md, Citation ,citation
 tippecanoe-README.md," Linear features (world railroads), visible at all zoom levels",
 tippecanoe-README.md," Discontinuous polygon features (buildings of Rhode Island), visible at all zoom levels",
@@ -429,7 +429,7 @@ tippecanoe-README.md, Example,usage
 facebookresearch-ResNeXt-README.md, ResNeXt: Aggregated Residual Transformations for Deep Neural Networks,long_title
 facebookresearch-ResNeXt-README.md, Table of Contents,
 facebookresearch-ResNeXt-README.md, News,
-facebookresearch-ResNeXt-README.md, Introduction,
+facebookresearch-ResNeXt-README.md, Introduction,description
 facebookresearch-ResNeXt-README.md," Figure: Training curves on ImageNet-1K. (Left): ResNet/ResNeXt-50 with the same complexity (~4.1 billion FLOPs, ~25 million parameters); (Right): ResNet/ResNeXt-101 with the same complexity (~7.8 billion FLOPs, ~44 million parameters).",
 facebookresearch-ResNeXt-README.md, Citation,citation
 facebookresearch-ResNeXt-README.md, Requirements and Dependencies,requirements
@@ -438,7 +438,7 @@ facebookresearch-ResNeXt-README.md, 1x Complexity Configurations Reference Table
 facebookresearch-ResNeXt-README.md, ImageNet Pretrained Models,
 facebookresearch-ResNeXt-README.md, Single-crop (224x224) validation error rate,
 facebookresearch-ResNeXt-README.md, Third-party re-implementations,
-mapshaper-README.md, Introduction,
+mapshaper-README.md, Introduction,description
 mapshaper-README.md, Command line tool,usage
 mapshaper-README.md, Interactive web interface,
 mapshaper-README.md, Large file support,
@@ -505,7 +505,7 @@ gdal-docker-README.md, GDAL Docker Images,
 gdal-docker-README.md, Usage,usage
 RDN-README.md, Residual Dense Network for Image Super-Resolution,
 RDN-README.md, Contents,
-RDN-README.md, Introduction,
+RDN-README.md, Introduction,description
 RDN-README.md, Prepare training data ,
 RDN-README.md, Begin to train,
 RDN-README.md, Quick start,
@@ -599,7 +599,7 @@ mplleaflet-README.md, Installation,install
 mplleaflet-README.md, Development,
 mplleaflet-README.md, Dependencies,requirements
 pose-residual-network-pytorch-README.md, Pose Residual Network,long_title
-pose-residual-network-pytorch-README.md, Getting Started,
+pose-residual-network-pytorch-README.md, Getting Started,usage
 pose-residual-network-pytorch-README.md, Prerequisites,requirements
 pose-residual-network-pytorch-README.md, Installing,install
 pose-residual-network-pytorch-README.md, Training,
@@ -622,16 +622,16 @@ da-faster-rcnn-README.md, Example,usage
 da-faster-rcnn-README.md, Other Implementation,
 DBNet-README.md, News!,
 DBNet-README.md, Contents,
-DBNet-README.md, Introduction,
+DBNet-README.md, Introduction,description
 DBNet-README.md, Requirements,requirements
 DBNet-README.md, Training,
 DBNet-README.md, Evaluation    ,
 DBNet-README.md, Prediction,
 DBNet-README.md, Baseline,
-DBNet-README.md, Contributors,
+DBNet-README.md, Contributors,contributor
 DBNet-README.md, Citation,citation
 DBNet-README.md, License,license
-tensorflow-magenta-README.md, Getting Started,
+tensorflow-magenta-README.md, Getting Started,usage
 tensorflow-magenta-README.md, Installation,install
 tensorflow-magenta-README.md, Automated Install (w/ Anaconda),install
 tensorflow-magenta-README.md, Manual Install (w/o Anaconda),install
@@ -641,7 +641,7 @@ tensorflow-magenta-README.md, Playing a MIDI Instrument,
 tensorflow-magenta-README.md, Development Environment,
 tensorflow-magenta-README.md, PIP Release,
 vue-README.md, What's the difference between Patreon and OpenCollective?,
-vue-README.md, Introduction,
+vue-README.md, Introduction,description
 vue-README.md, Browser Compatibility,
 vue-README.md, Ecosystem,
 vue-README.md, Documentation,documentation
@@ -664,7 +664,7 @@ sequelize-sequelize-README.md, Translations,
 DID-MDN-README.md, Density-aware Single Image De-raining using a Multi-stream Dense Network,long_title
 DID-MDN-README.md, Prerequisites:,requirements
 DID-MDN-README.md, Installation:,install
-DID-MDN-README.md, Demo using pre-trained model,
+DID-MDN-README.md, Demo using pre-trained model,usage
 DID-MDN-README.md, Training (Density-aware Deraining network using GT label),
 DID-MDN-README.md, Density-estimation Training (rain-density classifier),
 DID-MDN-README.md, Testing,
@@ -682,9 +682,9 @@ cltk-cltk-README.md, Gratitude,ack
 cltk-cltk-README.md, License,license
 segyio-README.md, segyio ,
 segyio-README.md, Index ,
-segyio-README.md, Introduction ,
+segyio-README.md, Introduction ,description
 segyio-README.md, Feature summary ,
-segyio-README.md, Getting started ,
+segyio-README.md, Getting started ,usage
 segyio-README.md, Quick start ,
 segyio-README.md, Get segyio ,
 segyio-README.md, Build segyio ,install
@@ -717,9 +717,9 @@ omfvista-README.md, Grab the active plotting window,
 omfvista-README.md,  from the thresher tool,
 omfvista-README.md, Add our datasets,
 omfvista-README.md, Add the bounds axis,
-PVGeo-README.md, Demonstrations of *PVGeo*,
+PVGeo-README.md, Demonstrations of *PVGeo*,usage
 PVGeo-README.md, Connections,
-PVGeo-README.md, Getting Started,
+PVGeo-README.md, Getting Started,usage
 PVGeo-README.md, Report Issues and Contribute,contribute
 PVGeo-README.md, About the Authors [![Open Source](https://img.shields.io/badge/open--source-yes-brightgreen.svg)](https://opensource.com/resources/what-open-source),
 PVGeo-README.md, Linking PVGeo to ParaView,
@@ -734,7 +734,7 @@ readgssi-README.md, example 1B,usage
 readgssi-README.md, example 1C: gain can be tricky depending on your colormap,usage
 readgssi-README.md, example 2A: no background removal,usage
 readgssi-README.md, example 2B: horizontal mean BGR algorithm applied,usage
-readgssi-README.md, contributors,
+readgssi-README.md, contributors,contributor
 readgssi-README.md, citation suggestion:,citation
 readgssi-README.md, known bugs:,faq
 readgssi-README.md, future,
@@ -748,7 +748,7 @@ RESCAN-README.md, Scripts,
 RESCAN-README.md, Cite,citation
 RESCAN-README.md, Recent Works,
 Detectron-README.md, Detectron,
-Detectron-README.md, Introduction,
+Detectron-README.md, Introduction,description
 Detectron-README.md, Update,
 Detectron-README.md, License,license
 Detectron-README.md, Citing Detectron,citation
@@ -760,7 +760,7 @@ Detectron-README.md, References,
 facebookresearch-pyrobot-README.md, What can you do with PyRobot?,
 facebookresearch-pyrobot-README.md, Installing both PyRobot and LoCoBot dependencies,install
 facebookresearch-pyrobot-README.md, Installing just PyRobot,install
-facebookresearch-pyrobot-README.md, Getting Started,
+facebookresearch-pyrobot-README.md, Getting Started,usage
 facebookresearch-pyrobot-README.md, The Team,
 facebookresearch-pyrobot-README.md, Future features,
 facebookresearch-pyrobot-README.md, Citation,citation
@@ -799,12 +799,12 @@ facebookresearch-DensePose-README.md, DensePose-RCNN Texture Transfer:,
 facebookresearch-DensePose-README.md, License,license
 facebookresearch-DensePose-README.md," <a name=""CitingDensePose""></a>Citing DensePose",citation
 DaSiamRPN-README.md, DaSiamRPN,
-DaSiamRPN-README.md, Introduction,
+DaSiamRPN-README.md, Introduction,description
 DaSiamRPN-README.md, Prerequisites,requirements
 DaSiamRPN-README.md, Pretrained model for SiamRPN,
 DaSiamRPN-README.md, Detailed steps to install the prerequisites,install
 DaSiamRPN-README.md, Results,
-DaSiamRPN-README.md, Demo and Test on OTB2015,
+DaSiamRPN-README.md, Demo and Test on OTB2015,usage
 DaSiamRPN-README.md, License,license
 DaSiamRPN-README.md, Citing DaSiamRPN,citation
 hmr-README.md, End-to-end Recovery of Human Shape and Pose,
@@ -813,8 +813,8 @@ hmr-README.md, Linux Setup with virtualenv,install
 hmr-README.md, Install TensorFlow,install
 hmr-README.md, Windows Setup with python 3 and Anaconda,install
 hmr-README.md, if you need to get chumpy ,
-hmr-README.md, Demo,
-hmr-README.md, Webcam Demo (thanks @JulesDoe!),
+hmr-README.md, Demo,usage
+hmr-README.md, Webcam Demo (thanks @JulesDoe!),usage
 hmr-README.md, Training code/data,
 hmr-README.md, Citation,citation
 hmr-README.md, Opensource contributions,contribute
@@ -831,8 +831,7 @@ d3-README.md, Installing,install
 iter-reason-README.md, Iterative Visual Reasoning Beyond Convolutions,long_title
 iter-reason-README.md, Disclaimer,
 iter-reason-README.md, Prerequisites,requirements
-iter-reason-README.md, Setup and Running,run
-iter-reason-README.md, Setup and Running,install
+iter-reason-README.md, Setup and Running,run;install
 iter-reason-README.md, References,
 tetgen-README.md, get cell centroids,
 tetgen-README.md, extract cells below the 0 xy plane,
@@ -845,7 +844,7 @@ GAN_stability-README.md, celebA-HQ,
 GAN_stability-README.md, Imagenet,
 pylops-README.md, Objective,
 pylops-README.md, Project structure,
-pylops-README.md, Getting started,
+pylops-README.md, Getting started,usage
 pylops-README.md, From PyPi,install
 pylops-README.md, From Conda-forge,install
 pylops-README.md, From Docker,install
@@ -854,7 +853,7 @@ pylops-README.md, 1. Fork and clone the repository,
 pylops-README.md, 2. Install PyLops in a new Conda environment,
 pylops-README.md, Documentation,documentation
 pylops-README.md, History,
-pylops-README.md, Contributors,
+pylops-README.md, Contributors,contributor
 generator-arcgis-js-app-README.md, generator-arcgis-js-app,
 generator-arcgis-js-app-README.md, What is Yeoman?,description
 generator-arcgis-js-app-README.md, Yeoman Generators,
@@ -888,7 +887,7 @@ puppeteer-README.md, Q: I am having trouble installing / running Puppeteer in my
 puppeteer-README.md, Q: How do I try/test a prerelease version of Puppeteer?,
 puppeteer-README.md, Q: I have more questions! Where do I ask?,
 integral-human-pose-README.md, Integral Human Pose Regression,long_title
-integral-human-pose-README.md, Introduction,
+integral-human-pose-README.md, Introduction,description
 integral-human-pose-README.md, Disclaimer,
 integral-human-pose-README.md, License,license
 integral-human-pose-README.md, Citing Papers,citation
@@ -909,7 +908,7 @@ GANimation-README.md, Data Preparation,
 GANimation-README.md, Run,run
 GANimation-README.md, Citation,citation
 geojson-vt-README.md, geojson-vt &mdash; GeoJSON Vector Tiles,
-geojson-vt-README.md, Demo,
+geojson-vt-README.md, Demo,usage
 geojson-vt-README.md, Usage,usage
 geojson-vt-README.md, Options,usage
 geojson-vt-README.md, Install,install
@@ -959,7 +958,7 @@ SRN-Deblur-README.md, How to choose,
 SRN-Deblur-README.md, Reference,citation
 SRN-Deblur-README.md, Contact,contact
 hyvr-README.md,"Introduction
-",
+",description
 hyvr-README.md,"Installing the HyVR package
 ",install
 hyvr-README.md,"Usage
@@ -969,7 +968,7 @@ hyvr-README.md,"Requirements
 ",requirements
 hyvr-README.md,Development,
 hyvr-README.md,"Problems, Bugs, Unclear Documentation
-",support
+",faq
 lasio-README.md, lasio,
 lasio-README.md, Documentation,documentation
 lasio-README.md, Quick start,

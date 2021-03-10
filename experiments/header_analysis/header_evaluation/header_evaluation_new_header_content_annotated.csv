@@ -45,7 +45,7 @@ LibGEOS.jl-README.md,Installation,install,"1. At the Julia prompt, run
 Flow-Guided-Feature-Aggregation-README.md, Flow-Guided Feature Aggregation for Video Object Detection,long_title,"This repository is implemented by [Yuqing Zhu](https://github.com/jeremy43), [Shuhao Fu](https://github.com/howardmumu), and [Xizhou Zhu](https://github.com/einsiedler0408), when they are interns at MSRA.
 
 ",
-Flow-Guided-Feature-Aggregation-README.md, Introduction,,"**Flow-Guided Feature Aggregation (FGFA)** is initially described in an [ICCV 2017 paper](https://arxiv.org/abs/1703.10025). It provides an accurate and end-to-end learning framework for video object detection. The proposed FGFA method, together with our previous work of [Deep Feature Flow](https://github.com/msracver/Deep-Feature-Flow), powered the winning entry of [ImageNet VID 2017](http://image-net.org/challenges/LSVRC/2017/results). It is worth noting that:
+Flow-Guided-Feature-Aggregation-README.md, Introduction,description,"**Flow-Guided Feature Aggregation (FGFA)** is initially described in an [ICCV 2017 paper](https://arxiv.org/abs/1703.10025). It provides an accurate and end-to-end learning framework for video object detection. The proposed FGFA method, together with our previous work of [Deep Feature Flow](https://github.com/msracver/Deep-Feature-Flow), powered the winning entry of [ImageNet VID 2017](http://image-net.org/challenges/LSVRC/2017/results). It is worth noting that:
 
 * FGFA improves the per-frame features by aggregating nearby frame features along the motion paths. It significantly improves the object detection accuracy in videos, especially for fast moving objects.
 * FGFA is end-to-end trainable for the task of video object detection, which is vital for improving the recognition accuracy.
@@ -59,7 +59,7 @@ Flow-Guided-Feature-Aggregation-README.md, Introduction,,"**Flow-Guided Feature 
 
 ![Instance Motion](instance_motion.png)
 
-",
+",description
 Flow-Guided-Feature-Aggregation-README.md, Disclaimer,,"This is an official implementation for [Flow-Guided Feature Aggregation for Video Recognition](https://arxiv.org/abs/1703.10025) (FGFA) based on MXNet. It is worth noticing that:
 
   * The original implementation is based on our internal Caffe version on Windows. There are slight differences in the final accuracy and running time due to the plenty details in platform switch.
@@ -531,7 +531,7 @@ LapSRN-README.md, Table of Contents,,"1. [Introduction](#introduction)
 1. [Third-Party Implementation](#third-party-implementation)
 
 ",
-LapSRN-README.md, Introduction,,"The Laplacian Pyramid Super-Resolution Network (LapSRN) is a progressive super-resolution model that super-resolves an low-resolution images in a coarse-to-fine Laplacian pyramid framework.
+LapSRN-README.md, Introduction,description,"The Laplacian Pyramid Super-Resolution Network (LapSRN) is a progressive super-resolution model that super-resolves an low-resolution images in a coarse-to-fine Laplacian pyramid framework.
 Our method is fast and achieves state-of-the-art performance on five benchmark datasets for 4x and 8x SR.
 For more details and evaluation results, please check out our [project webpage](http://vllab.ucmerced.edu/wlai24/LapSRN/) and [paper](http://vllab.ucmerced.edu/wlai24/LapSRN/papers/cvpr17_LapSRN.pdf).
 
@@ -2724,9 +2724,9 @@ BibTex:
 ICNet-README.md, ICNet for Real-Time Semantic Segmentation on High-Resolution Images,long_title,"by Hengshuang Zhao, Xiaojuan Qi, Xiaoyong Shen, Jianping Shi, Jiaya Jia, details are in [project page](https://hszhao.github.io/projects/icnet).
 
 ",long_title
-ICNet-README.md, Introduction,,"Based on [PSPNet](https://github.com/hszhao/PSPNet), this repository is build for evaluation in ICNet. For installation, please follow the description in PSPNet repository (support CUDA 7.0/7.5 + cuDNN v4).
+ICNet-README.md, Introduction,description,"Based on [PSPNet](https://github.com/hszhao/PSPNet), this repository is build for evaluation in ICNet. For installation, please follow the description in PSPNet repository (support CUDA 7.0/7.5 + cuDNN v4).
 
-",
+",description
 ICNet-README.md, Usage,usage,"1. Clone the repository recursively:
 
    ```shell
@@ -2842,24 +2842,24 @@ python ./examples/example4.py
 
 
 ",usage
-neural_renderer-README.md, Example 1: Drawing an object from multiple viewpoints,,"![](https://raw.githubusercontent.com/hiroharu-kato/neural_renderer/master/examples/data/example1.gif)
+neural_renderer-README.md, Example 1: Drawing an object from multiple viewpoints,usage,"![](https://raw.githubusercontent.com/hiroharu-kato/neural_renderer/master/examples/data/example1.gif)
 
 ",
-neural_renderer-README.md, Example 2: Optimizing vertices,,"Transforming the silhouette of a teapot into a rectangle. The loss function is the difference between the rendered image and the reference image.
+neural_renderer-README.md, Example 2: Optimizing vertices,usage,"Transforming the silhouette of a teapot into a rectangle. The loss function is the difference between the rendered image and the reference image.
 
 Reference image, optimization, and the result.
 
 ![](https://raw.githubusercontent.com/hiroharu-kato/neural_renderer/master/examples/data/example2_ref.png) ![](https://raw.githubusercontent.com/hiroharu-kato/neural_renderer/master/examples/data/example2_optimization.gif) ![](https://raw.githubusercontent.com/hiroharu-kato/neural_renderer/master/examples/data/example2_result.gif)
 
 ",
-neural_renderer-README.md, Example 3: Optimizing textures,,"Matching the color of a teapot with a reference image.
+neural_renderer-README.md, Example 3: Optimizing textures,usage,"Matching the color of a teapot with a reference image.
 
 Reference image, result.
 
 ![](https://raw.githubusercontent.com/hiroharu-kato/neural_renderer/master/examples/data/example3_ref.png) ![](https://raw.githubusercontent.com/hiroharu-kato/neural_renderer/master/examples/data/example3_result.gif)
 
 ",
-neural_renderer-README.md, Example 4: Finding camera parameters,,"The derivative of images with respect to camera pose can be computed through this renderer. In this example the position of the camera is optimized by gradient descent.
+neural_renderer-README.md, Example 4: Finding camera parameters,usage,"The derivative of images with respect to camera pose can be computed through this renderer. In this example the position of the camera is optimized by gradient descent.
 
 From left to right: reference image, initial state, and optimization process.
 
@@ -4731,7 +4731,7 @@ ResNeXt is the foundation of their new SENet architecture (a **ResNeXt-152 (64 x
 
 
 ",
-facebookresearch-ResNeXt-README.md, Introduction,,"This repository contains a [Torch](http://torch.ch) implementation for the [ResNeXt](https://arxiv.org/abs/1611.05431) algorithm for image classification. The code is based on [fb.resnet.torch](https://github.com/facebook/fb.resnet.torch).
+facebookresearch-ResNeXt-README.md, Introduction,description,"This repository contains a [Torch](http://torch.ch) implementation for the [ResNeXt](https://arxiv.org/abs/1611.05431) algorithm for image classification. The code is based on [fb.resnet.torch](https://github.com/facebook/fb.resnet.torch).
 
 [ResNeXt](https://arxiv.org/abs/1611.05431) is a simple, highly modularized network architecture for image classification. Our network is constructed by repeating a building block that aggregates a set of transformations with the same topology. Our simple design results in a homogeneous, multi-branch architecture that has only a few hyper-parameters to set. This strategy exposes a new dimension, which we call “cardinality” (the size of the set of transformations), as an essential factor in addition to the dimensions of depth and width.
 
@@ -4812,7 +4812,7 @@ facebookresearch-ResNeXt-README.md, Third-party re-implementations,,"Besides our
 1. Training code in MXNet and pretrained ImageNet models [code](https://github.com/dmlc/mxnet/tree/master/example/image-classification#imagenet-1k)
 1. Caffe prototxt, pretrained ImageNet models (with ResNeXt-152), curves [code](https://github.com/cypw/ResNeXt-1)[code](https://github.com/terrychenism/ResNeXt)
 ",
-mapshaper-README.md, Introduction,,"Mapshaper is software for editing Shapefile, GeoJSON, [TopoJSON](https://github.com/mbostock/topojson/wiki), CSV and several other data formats, written in JavaScript.
+mapshaper-README.md, Introduction,description,"Mapshaper is software for editing Shapefile, GeoJSON, [TopoJSON](https://github.com/mbostock/topojson/wiki), CSV and several other data formats, written in JavaScript.
 
 The `mapshaper` command line program supports essential map making tasks like simplifying shapes, editing attribute data, clipping, erasing, dissolving, filtering and more.
 
@@ -4824,7 +4824,7 @@ To suggest improvements, add an [issue](https://github.com/mbloch/mapshaper/issu
 
 To learn about recent updates, read the [changelog](https://github.com/mbloch/mapshaper/releases).
 
-",
+",description
 mapshaper-README.md, Command line tool,usage,"The `mapshaper` command line program has been used successfully under Mac OS X, Linux and Windows.
 
 The project wiki has an [introduction](https://github.com/mbloch/mapshaper/wiki/Introduction-to-the-Command-Line-Tool) to using the command line tool that includes many simple examples.
@@ -5640,14 +5640,14 @@ RDN-README.md, Contents,,"1. [Introduction](#introduction)
 6. [Acknowledgements](#acknowledgements)
 
 ",
-RDN-README.md, Introduction,,"A very deep convolutional neural network (CNN) has recently achieved great success for image super-resolution (SR) and offered hierarchical features as well. However, most deep CNN based SR models do not make full use of the hierarchical features from the original low-resolution (LR) images, thereby achieving relatively-low performance. In this paper, we propose a novel residual dense network (RDN) to address this problem in image SR. We fully exploit the hierarchical features from all the convolutional layers. Speciﬁcally, we propose residual dense block (RDB) to extract abundant local features via dense connected convolutional layers. RDB further allows direct connections from the state of preceding RDB to all the layers of current RDB, leading to a contiguous memory (CM) mechanism. Local feature fusion in RDB is then used to adaptively learn more effective features from preceding and current local features and stabilizes the training of wider network. After fully obtaining dense local features, we use global feature fusion to jointly and adaptively learn global hierarchical features in a holistic way. Experiments on benchmark datasets with different degradation models show that our RDN achieves favorable performance against state-of-the-art methods.
+RDN-README.md, Introduction,description,"A very deep convolutional neural network (CNN) has recently achieved great success for image super-resolution (SR) and offered hierarchical features as well. However, most deep CNN based SR models do not make full use of the hierarchical features from the original low-resolution (LR) images, thereby achieving relatively-low performance. In this paper, we propose a novel residual dense network (RDN) to address this problem in image SR. We fully exploit the hierarchical features from all the convolutional layers. Speciﬁcally, we propose residual dense block (RDB) to extract abundant local features via dense connected convolutional layers. RDB further allows direct connections from the state of preceding RDB to all the layers of current RDB, leading to a contiguous memory (CM) mechanism. Local feature fusion in RDB is then used to adaptively learn more effective features from preceding and current local features and stabilizes the training of wider network. After fully obtaining dense local features, we use global feature fusion to jointly and adaptively learn global hierarchical features in a holistic way. Experiments on benchmark datasets with different degradation models show that our RDN achieves favorable performance against state-of-the-art methods.
 
 ![RDB](/Figs/RDB.png)
 Figure 1. Residual dense block (RDB) architecture.
 ![RDN](/Figs/RDN.png)
 Figure 2. The architecture of our proposed residual dense network (RDN).
 
-",
+",description
 RDN-README.md, Prepare training data ,,"1. Download DIV2K training data (800 training + 100 validtion images) from [DIV2K dataset](https://data.vision.ee.ethz.ch/cvl/DIV2K/) or [SNU_CVLab](https://cv.snu.ac.kr/research/EDSR/DIV2K.tar).
 
 2. Place all the HR images in 'Prepare_TrainData/DIV2K/DIV2K_HR'.
@@ -6998,11 +6998,11 @@ DBNet-README.md, Contents,,"1. [Introduction](#introduction)
 7. [License](#license)
 
 ",
-DBNet-README.md, Introduction,,"This work is based on our [research paper](http://openaccess.thecvf.com/content_cvpr_2018/html/Chen_LiDAR-Video_Driving_Dataset_CVPR_2018_paper.html), which appears in CVPR 2018. We propose a large-scale dataset for driving behavior learning, namely, DBNet. You can also check our [dataset webpage](http://www.dbehavior.net/) for a deeper introduction.
+DBNet-README.md, Introduction,description,"This work is based on our [research paper](http://openaccess.thecvf.com/content_cvpr_2018/html/Chen_LiDAR-Video_Driving_Dataset_CVPR_2018_paper.html), which appears in CVPR 2018. We propose a large-scale dataset for driving behavior learning, namely, DBNet. You can also check our [dataset webpage](http://www.dbehavior.net/) for a deeper introduction.
 
 In this repository, we release __demo code__ and __partial prepared data__ for training with only images, as well as leveraging feature maps or point clouds. The prepared data are accessible [here](https://drive.google.com/open?id=14RPdVTwBTuCTo0tFeYmL_SyN8fD0g6Hc). (__More demo models and scripts are released soon!__)
 
-",
+",description
 DBNet-README.md, Requirements,requirements,"* **Tensorflow 1.2.0**
 * Python 2.7
 * CUDA 8.0+ (For GPU)
@@ -7051,9 +7051,9 @@ This baseline is run on __dbnet-2018 challenge data__ and only __nvidia\_pn__ is
 The implementations of these metrics could be found in `evaluate.py`.
 
 ",
-DBNet-README.md, Contributors,,"DBNet was developed by [MVIG](http://www.mvig.org/), Shanghai Jiao Tong University* and [SCSC](http://scsc.xmu.edu.cn/) Lab, Xiamen University* (*alphabetical order*).
+DBNet-README.md, Contributors,contributor,"DBNet was developed by [MVIG](http://www.mvig.org/), Shanghai Jiao Tong University* and [SCSC](http://scsc.xmu.edu.cn/) Lab, Xiamen University* (*alphabetical order*).
 
-",
+",contributor
 DBNet-README.md, Citation,citation,"If you find our work useful in your research, please consider citing:
 
 	@InProceedings{DBNet2018,
@@ -7451,7 +7451,7 @@ vue-README.md, What's the difference between Patreon and OpenCollective?,,"Funds
 ---
 
 ",
-vue-README.md, Introduction,,"Vue (pronounced `/vjuː/`, like view) is a **progressive framework** for building user interfaces. It is designed from the ground up to be incrementally adoptable, and can easily scale between a library and a framework depending on different use cases. It consists of an approachable core library that focuses on the view layer only, and an ecosystem of supporting libraries that helps you tackle complexity in large Single-Page Applications.
+vue-README.md, Introduction,description,"Vue (pronounced `/vjuː/`, like view) is a **progressive framework** for building user interfaces. It is designed from the ground up to be incrementally adoptable, and can easily scale between a library and a framework depending on different use cases. It consists of an approachable core library that focuses on the view layer only, and an ecosystem of supporting libraries that helps you tackle complexity in large Single-Page Applications.
 
 ",description
 vue-README.md, Browser Compatibility,,"Vue.js supports all browsers that are [ES5-compliant](http://kangax.github.io/compat-table/es5/) (IE8 and below are not supported).
@@ -7763,7 +7763,7 @@ segyio-README.md, Index ,,"* [Introduction](#introduction)
 * [History](#history)
 
 ",
-segyio-README.md, Introduction ,,"Segyio is a small LGPL licensed C library for easy interaction with SEG-Y and
+segyio-README.md, Introduction ,description,"Segyio is a small LGPL licensed C library for easy interaction with SEG-Y and
 Seismic Unix formatted seismic data, with language bindings for Python and
 Matlab. Segyio is an attempt to create an easy-to-use, embeddable,
 community-oriented library for seismic applications. Features are added as they
@@ -7773,7 +7773,7 @@ To catch up on the latest development and features, see the
 [changelog](changelog.md). To write future proof code, consult the planned
 [breaking changes](breaking-changes.md).
 
-",
+",description
 segyio-README.md, Feature summary ,,"  * A low-level C interface with few assumptions; easy to bind to other
     languages
   * Read and write binary and textual headers
@@ -8668,11 +8668,11 @@ The script does the same thing, except it applies horizontal mean background rem
 
 
 ",usage
-readgssi-README.md, contributors,,"- Ian Nesbitt ([@iannesbitt](https://github.com/iannesbitt), author)
+readgssi-README.md, contributors,contributor,"- Ian Nesbitt ([@iannesbitt](https://github.com/iannesbitt), author)
 - François-Xavier Simon ([@fxsimon](https://github.com/fxsimon))
 - Thomas Paulin ([@thomaspaulin](https://github.com/thomaspaulin))
 
-",
+",contributor
 readgssi-README.md, citation suggestion:,citation,"Ian M. Nesbitt, François-Xavier Simon, Thomas Paulin, 2018. readgssi - an open-source tool to read and plot GSSI ground-penetrating radar data. [doi:10.5281/zenodo.1439119](https://dx.doi.org/10.5281/zenodo.1439119)
 
 ",citation
@@ -8791,7 +8791,7 @@ At FAIR, Detectron has enabled numerous research projects, including: [Feature P
 </div>
 
 ",description
-Detectron-README.md, Introduction,,"The goal of Detectron is to provide a high-quality, high-performance
+Detectron-README.md, Introduction,description,"The goal of Detectron is to provide a high-quality, high-performance
 codebase for object detection *research*. It is designed to be flexible in order
 to support rapid implementation and evaluation of novel research. Detectron
 includes implementations of the following object detection algorithms:
@@ -8812,7 +8812,7 @@ using the following backbone network architectures:
 
 Additional backbone architectures may be easily implemented. For more details about these models, please see [References](#references) below.
 
-",
+",description
 Detectron-README.md, Update,,"- 4/2018: Support Group Normalization - see [`GN/README.md`](./projects/GN/README.md)
 
 ",
@@ -9183,7 +9183,7 @@ Zheng Zhu<sup>\*</sup>, Qiang Wang<sup>\*</sup>, Bo Li<sup>\*</sup>, Wei Wu, Jun
 
 
 ",description
-DaSiamRPN-README.md, Introduction,,"**SiamRPN** formulates the task of visual tracking as a task of localization and identification simultaneously, initially described in an [CVPR2018 spotlight paper](http://openaccess.thecvf.com/content_cvpr_2018/papers/Li_High_Performance_Visual_CVPR_2018_paper.pdf). (Slides at [CVPR 2018 Spotlight](https://drive.google.com/open?id=1OGIOUqANvYfZjRoQfpiDqhPQtOvPCpdq))
+DaSiamRPN-README.md, Introduction,description,"**SiamRPN** formulates the task of visual tracking as a task of localization and identification simultaneously, initially described in an [CVPR2018 spotlight paper](http://openaccess.thecvf.com/content_cvpr_2018/papers/Li_High_Performance_Visual_CVPR_2018_paper.pdf). (Slides at [CVPR 2018 Spotlight](https://drive.google.com/open?id=1OGIOUqANvYfZjRoQfpiDqhPQtOvPCpdq))
 
 **DaSiamRPN** improves the performances of SiamRPN by (1) introducing an effective sampling strategy to control the imbalanced sample distribution, (2) designing a novel distractor-aware module to perform incremental learning, (3) making a long-term tracking extension. [ECCV2018](https://arxiv.org/pdf/1808.06048.pdf). (Slides at [VOT-18 Real-time challenge winners talk](https://drive.google.com/open?id=1dsEI2uYHDfELK0CW2xgv7R4QdCs6lwfr))
 
@@ -9542,7 +9542,7 @@ iter-reason-README.md, Prerequisites,requirements,"1. Tensorflow, tested with ve
   ```
 
 ",requirements
-iter-reason-README.md, Setup and Running,run,"1. Clone the repository.
+iter-reason-README.md, Setup and Running,run;install,"1. Clone the repository.
   ```Shell
   git clone https://github.com/endernewton/iter-reason.git
   cd iter-reason
@@ -9611,77 +9611,7 @@ iter-reason-README.md, Setup and Running,run,"1. Clone the repository.
   tensorboard --logdir=tensorboard/res50/ade_train_5/ --port=7002 &
   ```
 
-",run
-iter-reason-README.md, Setup and Running,install,"1. Clone the repository.
-  ```Shell
-  git clone https://github.com/endernewton/iter-reason.git
-  cd iter-reason
-  ```
-
-2. Set up data, here we use [ADE20K](http://groups.csail.mit.edu/vision/datasets/ADE20K/) as an example.
-  ```Shell
-  mkdir -p data/ADE
-  cd data/ADE
-  wget -v http://groups.csail.mit.edu/vision/datasets/ADE20K/ADE20K_2016_07_26.zip
-  tar -xzvf ADE20K_2016_07_26.zip
-  mv ADE20K_2016_07_26/* ./
-  rmdir ADE20K_2016_07_26
-  #: then get the train/val/test split
-  wget -v http://xinleic.xyz/data/ADE_split.tar.gz
-  tar -xzvf ADE_split.tar.gz
-  rm -vf ADE_split.tar.gz
-  cd ../..
-  ```
-
-3. Set up pre-trained ImageNet models. This is similarly done in [tf-faster-rcnn](https://github.com/endernewton/tf-faster-rcnn). Here by default we use ResNet-50 as the backbone:
-  ```Shell
-   mkdir -p data/imagenet_weights
-   cd data/imagenet_weights
-   wget -v http://download.tensorflow.org/models/resnet_v1_50_2016_08_28.tar.gz
-   tar -xzvf resnet_v1_50_2016_08_28.tar.gz
-   mv resnet_v1_50.ckpt res50.ckpt
-   cd ../..
-   ```
-
-4. Compile the library (for computing bounding box overlaps).
-  ```Shell
-  cd lib
-  make
-  cd ..
-  ```
-
-5. Now you are ready to run! For example, to train and test the baseline:
-  ```Shell
-  ./experiments/scripts/train.sh [GPU_ID] [DATASET] [NET] [STEPS] [ITER] 
-  #: GPU_ID is the GPU you want to test on
-  #: DATASET in {ade, coco, vg} is the dataset to train/test on, defined in the script
-  #: NET in {res50, res101} is the backbone networks to choose from
-  #: STEPS (x10K) is the number of iterations before it reduces learning rate, can support multiple steps separated by character 'a'
-  #: ITER (x10K) is the total number of iterations to run
-  #: Examples:
-  #: train on ADE20K for 320K iterations, reducing learning rate at 280K.
-  ./experiments/scripts/train.sh 0 ade 28 32
-  #: train on COCO for 720K iterations, reducing at 320K and 560K.
-  ./experiments/scripts/train.sh 1 coco 32a56 72
-  ```
-
-6. To train and test the reasoning modules (based on ResNet-50):
-  ```Shell
-  ./experiments/scripts/train_memory.sh [GPU_ID] [DATASET] [MEM] [STEPS] [ITER] 
-  #: MEM in {local} is the type of reasoning modules to use 
-  #: Examples:
-  #: train on ADE20K on the local spatial memory.
-  ./experiments/scripts/train_memory.sh 0 ade local 28 32
-  ```
-
-7. Once the training is done, you can test the models separately with `test.sh` and `test_memory.sh`, we also provided a separate set of scripts to test on larger image inputs.
-
-8. You can use tensorboard to visualize and track the progress, for example:
-  ```Shell
-  tensorboard --logdir=tensorboard/res50/ade_train_5/ --port=7002 &
-  ```
-
-",install
+",run;install
 iter-reason-README.md, References,,"```
 @inproceedings{chen18iterative,
     author = {Xinlei Chen and Li-Jia Li and Li Fei-Fei and Abhinav Gupta},
@@ -9955,11 +9885,11 @@ operators that can be tailored to our needs, and as contribution to the free sof
 
 
 ",
-pylops-README.md, Contributors,,"* Matteo Ravasi, mrava87
+pylops-README.md, Contributors,contributor,"* Matteo Ravasi, mrava87
 * Carlos da Costa, cako
 * Dieter Werthmüller, prisae
 * Tristan van Leeuwen, TristanvanLeeuwen
-",
+",contributor
 generator-arcgis-js-app-README.md, generator-arcgis-js-app,,"> [Yeoman](http://yeoman.io) generator
 
 This is a yeoman generator for [ArcGIS API for JavaScript applications](https://developers.arcgis.com/javascript/).
@@ -10432,7 +10362,7 @@ Make sure to search these channels before posting your question.
 integral-human-pose-README.md, Integral Human Pose Regression,long_title,"The major contributors of this repository include [Xiao Sun](https://jimmysuen.github.io/), [Chuankang Li](https://github.com/lck1201), [Bin Xiao](https://github.com/leoxiaobin), [Fangyin Wei](https://weify627.github.io/), [Yichen Wei](https://github.com/YichenWei).
 
 ",
-integral-human-pose-README.md, Introduction,,"**Integral Regression** is initially described in an [ECCV 2018 paper](https://arxiv.org/abs/1711.08229). ([Slides](https://jimmysuen.github.io/slides/xiaosun_integral_human_pose_regression.pptx)).
+integral-human-pose-README.md, Introduction,description,"**Integral Regression** is initially described in an [ECCV 2018 paper](https://arxiv.org/abs/1711.08229). ([Slides](https://jimmysuen.github.io/slides/xiaosun_integral_human_pose_regression.pptx)).
 
 We build a [3D pose estimation system](https://arxiv.org/abs/1809.06079) based mainly on the Integral Regression, placing second in the [ECCV2018 3D Human Pose Estimation Challenge](http://vision.imar.ro/human3.6m/ranking.php). Note that, the winner [Sarandi et al.](https://arxiv.org/pdf/1809.04987.pdf) also uses the Integral Regression (or soft-argmax) with a better [augmented 3D dataset](https://github.com/isarandi/synthetic-occlusion) in their method indicating the Integral Regression is the currently state-of-the-art 3D human pose estimation method.
 
@@ -10442,7 +10372,7 @@ The Integral Regression is also known as soft-argmax. Please refer to two contem
 <img src='figure/overview5.png' width='800'>
 <img src='figure/examples2.png' width='800'>
 
-",
+",description
 integral-human-pose-README.md, Disclaimer,,"This is an official implementation for [Integral Human Pose Regression](https://arxiv.org/abs/1711.08229) based on Pytorch. It is worth noticing that:
 
   * The original implementation is based on our internal Mxnet version. There are slight differences in the final accuracy and running time due to the plenty details in platform switch.
@@ -11460,7 +11390,7 @@ neural network for dynamic scene deblurring.* pages 3883–3891, 2017.
 [3] `Whyte et al.` O. Whyte, J. Sivic, A. Zisserman, and J. Ponce. *Nonuniform
 deblurring for shaken images.* International Journal on Computer Vision, 98(2):168–186, 2012.",
 hyvr-README.md,"Introduction
-",,"**HyVR: Turning your geofantasy into reality!** 
+",description,"**HyVR: Turning your geofantasy into reality!** 
 
 The Hydrogeological Virtual Reality simulation package (HyVR) is a Python module
 that helps researchers and practitioners generate subsurface models with
@@ -11485,7 +11415,7 @@ work.
 
 *HyVR can be attributed by citing the following journal article: Bennett, J. P., Haslauer, C. P., Ross, M., & Cirpka, O. A. (2018). An open, object-based framework for generating anisotropy in sedimentary subsurface models. Groundwater. DOI:* `10.1111/gwat.12803 <https://onlinelibrary.wiley.com/doi/abs/10.1111/gwat.12803>`_. *A preprint version of the article is available* `here <https://github.com/driftingtides/hyvr/blob/master/docs/Bennett_GW_2018.pdf>`_.
 
-",
+",description
 hyvr-README.md,"Installing the HyVR package
 ",install,"Installing Python
 ^^^^^^^^^^^^^^^^^
@@ -11601,12 +11531,12 @@ or via github.
 
 ",
 hyvr-README.md,"Problems, Bugs, Unclear Documentation
-",support,"If you have problems with HyVR have a look at the `troubleshooting
+",faq,"If you have problems with HyVR have a look at the `troubleshooting
 <https://driftingtides.github.io/hyvr/troubleshooting.html>`_ section. If this
 doesn't help, don't hesitate to contact us via email or at github.
 
 If you find that the documentation is unclear, lacking, or wrong, please also contact us.
-",support
+",faq
 lasio-README.md, lasio,,"![Status](https://img.shields.io/badge/status-beta-yellow.svg)
 [![Version](http://img.shields.io/pypi/v/lasio.svg)](https://pypi.python.org/pypi/lasio/)
 [![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/kinverarity1/lasio/blob/master/LICENSE)
