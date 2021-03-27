@@ -389,7 +389,7 @@ def run_classifiers(excerpts, file_paths):
             file_name = file_paths[category]
             if not path.exists(file_name):
                 sys.exit(f"Error: File/Directory {file_name} does not exist")
-            print("Classifying excerpts for the catgory", category)
+            print("Classifying excerpts for the category", category)
             classifier = pickle.load(open(file_name, 'rb'))
             scores = classifier.predict_proba(excerpts)
             score_dict[category] = {'excerpt': excerpts, 'confidence': scores[:, 1]}
