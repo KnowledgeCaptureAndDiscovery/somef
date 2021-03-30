@@ -63,6 +63,14 @@ To obtain the same information as a JSON-LD file:
 somef describe -r https://github.com/dgarijo/Widoco/ -g test.jsonld -f json-ld -t 0.8
 ```
 
+If you prefer to export as a [Codemeta](https://codemeta.github.io/) JSON-LD, just type:
+
+```bash
+somef describe -r https://github.com/dgarijo/Widoco/ -c test.json
+```
+
+For more information about the output types supported by SOMEF, please see [the output format help page](https://somef.readthedocs.io/en/latest/output/).
+
 We recommend having a high value for the `threshold` parameter, 0.8 (default) or above.
 
 To see a live usage example, try our Binder Notebook: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)
