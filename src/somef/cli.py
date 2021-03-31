@@ -347,7 +347,8 @@ def load_repository_metadata(repository_url, header):
         print(dockerfiles)
 
     if len(notebooks) > 0:
-        filtered_resp["hasExecutableNotebook"] = [convert_to_raw_usercontent(x, owner, repo_name, repo_ref) for x in notebooks]
+        filtered_resp["hasExecutableNotebook"] = [convert_to_raw_usercontent(x, owner, repo_name, repo_ref) for x in
+                                                  notebooks]
     if len(dockerfiles) > 0:
         filtered_resp["hasBuildFile"] = [convert_to_raw_usercontent(x, owner, repo_name, repo_ref) for x in dockerfiles]
     if len(docs) > 0:
@@ -368,6 +369,7 @@ def load_repository_metadata(repository_url, header):
 
 def convert_to_raw_usercontent(partial, owner, repo_name, repo_ref):
     return f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse.quote(partial)}"
+
 
 ## Function takes readme text as input and divides it into excerpts
 ## Returns the extracted excerpts
@@ -595,16 +597,18 @@ def merge(header_predictions, predictions, citations, dois, binder_links, long_t
 def format_output(git_data, repo_data):
     print("formatting output")
     for i in git_data.keys():
+        # print(i)
+        # print(git_data[i])
         if i == 'description':
             if 'description' not in repo_data.keys():
                 repo_data['description'] = []
-            repo_data['description'].append({'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'})
+            if git_data[i] != "":
+                repo_data['description'].append({'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'})
         else:
             if i == 'hasExecutableNotebook' or i == 'hasBuildFile' or i == 'hasDocumentation':
                 repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
-            else:
+            elif git_data[i] != "" and git_data[i] != []:
                 repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'}
-
     return repo_data
 
 
