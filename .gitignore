@@ -10,3 +10,4 @@ Lib/*
 Scripts/*
 .idea/*
 test.json
+out.json
