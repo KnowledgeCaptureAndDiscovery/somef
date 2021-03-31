@@ -603,7 +603,8 @@ def format_output(git_data, repo_data):
             if 'description' not in repo_data.keys():
                 repo_data['description'] = []
             if git_data[i] != "":
-                repo_data['description'].append({'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'})
+                repo_data['description'].append(
+                    {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'})
         else:
             if i == 'hasExecutableNotebook' or i == 'hasBuildFile' or i == 'hasDocumentation':
                 repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
@@ -674,13 +675,18 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                       reverse=True)
     descriptions_text = [x["excerpt"] for x in descriptions]
 
+    published_date = ""
+    try:
+        published_date = format_date(release_path(["datePublished"]))
+    except:
+        print("Published date is not available")
+
     codemeta_output = {
         "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
         "@type": "SoftwareSourceCode",
         "license": data_path(["license", "excerpt", "url"]),
         "codeRepository": "git+" + code_repository + ".git",
         "dateCreated": format_date(data_path(["dateCreated", "excerpt"])),
-        "datePublished": format_date(release_path(["datePublished"])),
         "dateModified": format_date(data_path(["dateModified", "excerpt"])),
         "downloadUrl": data_path(["downloadUrl", "excerpt"]),
         "issueTracker": code_repository + "/issues",
@@ -698,6 +704,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             }
         ]
     }
+    if published_date != "":
+        codemeta_output["datePublished"] = published_date
 
     pruned_output = {}
 
