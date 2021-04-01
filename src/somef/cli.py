@@ -697,6 +697,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         "keywords": data_path(["topics", "excerpt"]),
         "programmingLanguage": data_path(["languages", "excerpt"]),
         "softwareRequirements": data_path(["requirement", "excerpt"]),
+        "buildInstructions": data_path(["installation", "excerpt"]),
         "author": [
             {
                 "@type": "Person",
@@ -705,7 +706,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         ]
     }
     if published_date != "":
-        codemeta_output["datePublished"] = published_date
+        codemeta_output["datePublished"] = published_date\
 
     pruned_output = {}
 
