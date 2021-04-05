@@ -9,5 +9,5 @@ __pycache__/
 Lib/*
 Scripts/*
 .idea/*
-test.json
-out.json
+*.json
+*.ttl
