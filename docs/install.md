@@ -93,3 +93,20 @@ If you want to configure SOMEF with the default parameters, just type:
 ```bash
 somef configure -a
 ```
+
+For showing help about the available options, run:
+
+```bash
+somef configure --help
+```
+Which displays:
+
+```bash
+Usage: somef configure [OPTIONS]
+
+  Configure GitHub credentials and classifiers file path
+
+Options:
+  -a, --auto  Automatically configure SOMEF
+  -h, --help  Show this message and exit.
+```

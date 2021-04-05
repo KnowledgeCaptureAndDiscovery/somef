@@ -103,6 +103,14 @@ class URLParamType(click.types.StringParamType):
     default=False,
     help="""Pretty print the JSON output file so that it is easy to compare to another JSON output file."""
 )
+@click.option(
+    "--missing",
+    "-m",
+    is_flag=True,
+    default=False,
+    help="""JSON report with the missing metadata fields SOMEF was not able to find. The report will be placed in 
+    $PATH_missing.json, where $PATH is -o, -c or -g."""
+)
 def describe(**kwargs):
     from somef import cli
     cli.run_cli(**kwargs)

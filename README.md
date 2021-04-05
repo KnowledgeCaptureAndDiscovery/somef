@@ -128,6 +128,23 @@ If you want somef to be automatically configured (without GitHUb authentication 
 somef configure -a
 ```
 
+For showing help about the available options, run:
+
+```bash
+somef configure --help
+```
+Which displays:
+
+```bash
+Usage: somef configure [OPTIONS]
+
+  Configure GitHub credentials and classifiers file path
+
+Options:
+  -a, --auto  Automatically configure SOMEF
+  -h, --help  Show this message and exit.
+```
+
 ### Run SOMEF
 
 ```bash
@@ -149,15 +166,24 @@ Options:
     -o, --output PATH             Path to the output file. If supplied, the
                                   output will be in JSON
 
-    -g, --graph_out PATH          Path to the output Knowledge Graph file. If
-                                  supplied, the output will be a Knowledge
-                                  Graph, in the format given in the --format
-                                  option
-    -c, --codemeta_out PATH       Path to an output codemeta file (in JSON-LD)
+    -c, --codemeta_out PATH       Path to an output codemeta file
+    -g, --graph_out PATH          Path to the output Knowledge Graph export
+                                  file. If supplied, the output will be a
+                                  Knowledge Graph, in the format given in the
+                                  --format option chosen (turtle, json-ld)
 
   -f, --graph_format [turtle|json-ld]
                                   If the --graph_out option is given, this is
                                   the format that the graph will be stored in
+
+  -p, --pretty                    Pretty print the JSON output file so that it
+                                  is easy to compare to another JSON output
+                                  file.
+
+  -m, --missing                   JSON report with the missing metadata fields
+                                  SOMEF was not able to find. The report will
+                                  be placed in  $PATH_missing.json, where
+                                  $PATH is -o, -c or -g.
 
   -h, --help                      Show this message and exit.
 ```
@@ -173,7 +199,7 @@ Try SOMEF in Binder with our sample notebook: [![Binder](https://mybinder.org/ba
 
 ### Add/Remove a Category:
 
-If the user wants to run the classifier for an additional category or wants to remove an existing category, corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in cli.py
+To run a classifier with an additional category or remove an existing one, a corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in `cli.py`
 
 ## Contribute:
 

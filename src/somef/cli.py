@@ -592,9 +592,19 @@ def merge(header_predictions, predictions, citations, dois, binder_links, long_t
     return predictions
 
 
-## Function takes metadata, readme text predictions, bibtex citations and path to the output file
-## Performs some combinations
 def format_output(git_data, repo_data):
+    """
+    Function takes metadata, readme text predictions, bibtex citations and path to the output file
+    Performs some combinations
+    Parameters
+    ----------
+    git_data GitHub obtained data
+    repo_data Data extracted from the code repo by SOMEF
+
+    Returns
+    -------
+    json representation of the categories found in file
+    """
     print("formatting output")
     for i in git_data.keys():
         # print(i)
@@ -610,8 +620,22 @@ def format_output(git_data, repo_data):
                 repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
             elif git_data[i] != "" and git_data[i] != []:
                 repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'}
-    return repo_data
+    # remove empty categories from json
+    return remove_empty_elements(repo_data)
 
+
+def remove_empty_elements(d):
+    """recursively remove empty lists, empty dicts, or None elements from a dictionary"""
+
+    def empty(x):
+        return x is None or x == {} or x == []
+
+    if not isinstance(d, (dict, list)):
+        return d
+    elif isinstance(d, list):
+        return [v for v in (remove_empty_elements(v) for v in d) if not empty(v)]
+    else:
+        return {k: v for k, v in ((k, remove_empty_elements(v)) for k, v in d.items()) if not empty(v)}
 
 # saves the final json Object in the file
 def save_json_output(repo_data, outfile, pretty=False):
@@ -671,9 +695,11 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             return 0
 
     descriptions = data_path(["description"])
-    descriptions.sort(key=lambda x: (average_confidence(x) + (1 if x["technique"] == "GitHub API" else 0)),
-                      reverse=True)
-    descriptions_text = [x["excerpt"] for x in descriptions]
+    descriptions_text = []
+    if descriptions is not None:
+        descriptions.sort(key=lambda x: (average_confidence(x) + (1 if x["technique"] == "GitHub API" else 0)),
+                          reverse=True)
+        descriptions_text = [x["excerpt"] for x in descriptions]
 
     published_date = ""
     try:
@@ -692,7 +718,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         "issueTracker": code_repository + "/issues",
         "name": data_path(["name", "excerpt"]),
         "version": release_path(["tag_name"]),
-        "description": descriptions_text,
         "releaseNotes": release_path(["body"]),
         "keywords": data_path(["topics", "excerpt"]),
         "programmingLanguage": data_path(["languages", "excerpt"]),
@@ -705,9 +730,10 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             }
         ]
     }
+    if descriptions_text:
+        codemeta_output["description"] = descriptions_text
     if published_date != "":
-        codemeta_output["datePublished"] = published_date\
-
+        codemeta_output["datePublished"] = published_date
     pruned_output = {}
 
     for key, value in codemeta_output.items():
@@ -717,6 +743,27 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     # now, prune out the variables that are None
 
     save_json_output(pruned_output, outfile, pretty=pretty)
+
+
+def create_missing_fields_report(repo_data, out_path):
+    """Function to create a small report with the categories SOMEF was not able to find"""
+    categs = ["installation", "citation", "acknowledgement", "run", "download", "requirement", "contact", "description",
+              "contributor", "documentation", "license", "usage", "faq", "support", "identifier",
+              "hasExecutableNotebook", "hasBuildFile", "hasDocumentation", "executable_example"]
+    missing = []
+    out = {}
+    for c in categs:
+        if c not in repo_data:
+            missing.append(c)
+    out["missing"] = missing
+    export_path = ""
+    if "json" in out_path:
+        export_path = out_path.replace(".json", "_missing.json")
+    if "ttl" in out_path:
+        export_path = out_path.replace(".ttl", "_missing.json")
+    else:
+        export_path = out_path + "_missing.json"
+    save_json_output(out, export_path)
 
 
 def cli_get_data(threshold, repo_url=None, doc_src=None):
@@ -775,7 +822,8 @@ def run_cli(*,
             graph_out=None,
             graph_format="turtle",
             codemeta_out=None,
-            pretty=False
+            pretty=False,
+            missing=False
             ):
     multiple_repos = in_file is not None
     if multiple_repos:
@@ -812,3 +860,12 @@ def run_cli(*,
 
     if codemeta_out is not None:
         save_codemeta_output(repo_data, codemeta_out, pretty=pretty)
+
+    if missing is True:
+        # save in the same path as output
+        if output is not None:
+            create_missing_fields_report(repo_data, output)
+        elif codemeta_out is not None:
+            create_missing_fields_report(repo_data, codemeta_out)
+        elif graph_out is not None:
+            create_missing_fields_report(repo_data, graph_out)

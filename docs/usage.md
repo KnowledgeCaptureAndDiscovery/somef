@@ -47,6 +47,15 @@ Options:
                                   If the --graph_out option is given, this is
                                   the format that the graph will be stored in
 
+  -p, --pretty                    Pretty print the JSON output file so that it
+                                  is easy to compare to another JSON output
+                                  file.
+
+  -m, --missing                   JSON report with the missing metadata fields
+                                  SOMEF was not able to find. The report will
+                                  be placed in  $PATH_missing.json, where
+                                  $PATH is -o, -c or -g.
+
   -h, --help                      Show this message and exit.
 ```
 
