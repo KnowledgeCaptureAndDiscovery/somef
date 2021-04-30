@@ -537,13 +537,15 @@ def extract_title(unfiltered_text):
     """
     underline_header = re.findall('.+[\n]={3,}[\n]', unfiltered_text)
     # header declared with ====
+    title = ""
     if len(underline_header) != 0:
         title = re.split('.+[=]+[\n]+', unfiltered_text)[0].strip()
     else:
         # The first occurrence is assumed to be the title.
         title = re.findall(r'#.+', unfiltered_text)[0]
         # Remove initial #
-        title = title[1:].strip()
+        if title is not None and len(title)>0:
+            title = title[1:].strip()
     return title
 
 
