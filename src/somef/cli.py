@@ -318,7 +318,6 @@ def load_repository_metadata(repository_url, header):
 
         notebooks = []
         dockerfiles = []
-
         docs = []
 
         for dirpath, dirnames, filenames in os.walk(repo_dir):
@@ -328,6 +327,12 @@ def load_repository_metadata(repository_url, header):
                     dockerfiles.append(os.path.join(repo_relative_path, filename))
                 if filename.lower().endswith(".ipynb"):
                     notebooks.append(os.path.join(repo_relative_path, filename))
+                if "LICENSE" in filename.upper(): # includes LICENSE and LICENSE.md
+                    filtered_resp["license_file"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
+                if "CODE_OF_CONDUCT" in filename.upper():
+                    filtered_resp["code_of_conduct"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
+                if "CONTRIBUTING" in filename.upper():
+                    filtered_resp["contributing_guidelines"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
 
             for dirname in dirnames:
                 if dirname.lower() == "docs":
@@ -608,6 +613,8 @@ def format_output(git_data, repo_data):
     json representation of the categories found in file
     """
     print("formatting output")
+    file_exploration = ['hasExecutableNotebook', 'hasBuildFile', 'hasDocumentation', 'code_of_conduct',
+                        'contributing_guidelines', 'license_file']
     for i in git_data.keys():
         # print(i)
         # print(git_data[i])
@@ -618,7 +625,7 @@ def format_output(git_data, repo_data):
                 repo_data['description'].append(
                     {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'})
         else:
-            if i == 'hasExecutableNotebook' or i == 'hasBuildFile' or i == 'hasDocumentation':
+            if i in file_exploration:
                 repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
             elif git_data[i] != "" and git_data[i] != []:
                 repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'}
