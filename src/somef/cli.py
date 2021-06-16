@@ -4,35 +4,28 @@
 ## output file: json with each excerpt marked with all four classification scores
 
 import argparse
-import json
 import base64
-from urllib.parse import urlparse
-import sys
+import json
 import os
+import pickle
+import re
+import sys
+import tempfile
+import time
+import urllib
+import zipfile
+from io import StringIO
 from os import path
 from pathlib import Path
+from urllib.parse import urlparse
+
 import requests
-from markdown import Markdown
-from bs4 import BeautifulSoup
-from io import StringIO
-import pickle
-import pprint
-import pandas as pd
-import numpy as np
-import re
 from dateutil import parser as date_parser
-import zipfile
+from markdown import Markdown
 
 from somef.data_to_graph import DataGraph
-
 from . import createExcerpts
 from . import header_analysis
-
-import time
-
-import tempfile
-
-import urllib
 
 
 ## Markdown to plain text conversion: begin ##
@@ -327,12 +320,13 @@ def load_repository_metadata(repository_url, header):
                     dockerfiles.append(os.path.join(repo_relative_path, filename))
                 if filename.lower().endswith(".ipynb"):
                     notebooks.append(os.path.join(repo_relative_path, filename))
-                if "LICENSE" in filename.upper(): # includes LICENSE and LICENSE.md
+                if "LICENSE" == filename.upper() or "LICENSE.md" == filename.upper():
                     filtered_resp["license_file"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
-                if "CODE_OF_CONDUCT" in filename.upper():
+                if "CODE_OF_CONDUCT" == filename.upper() or "CODE_OF_CONDUCT.md" == filename.upper():
                     filtered_resp["code_of_conduct"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
-                if "CONTRIBUTING" in filename.upper():
-                    filtered_resp["contributing_guidelines"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
+                if "CONTRIBUTING" in filename.upper() or "CONTRIBUTING.md" in filename.upper():
+                    filtered_resp["contributing_guidelines"] = convert_to_raw_usercontent(filename, owner, repo_name,
+                                                                                          repo_ref)
 
             for dirname in dirnames:
                 if dirname.lower() == "docs":
@@ -340,16 +334,15 @@ def load_repository_metadata(repository_url, header):
                         docs_path = dirname
                     else:
                         docs_path = repo_relative_path + "/" + dirname
-
                     docs.append(
                         f"https://github.com/{owner}/{repo_name}/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
-                    print(docs)
+                    # print(docs)
 
-        print("NOTEBOOKS:")
-        print(notebooks)
+        # print("NOTEBOOKS:")
+        # print(notebooks)
 
-        print("DOCKERFILES:")
-        print(dockerfiles)
+        # print("DOCKERFILES:")
+        # print(dockerfiles)
 
     if len(notebooks) > 0:
         filtered_resp["hasExecutableNotebook"] = [convert_to_raw_usercontent(x, owner, repo_name, repo_ref) for x in
@@ -359,7 +352,7 @@ def load_repository_metadata(repository_url, header):
     if len(docs) > 0:
         filtered_resp["hasDocumentation"] = docs
 
-    ## get releases
+    # get releases
     releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
                                          headers=header)
 
@@ -373,6 +366,8 @@ def load_repository_metadata(repository_url, header):
 
 
 def convert_to_raw_usercontent(partial, owner, repo_name, repo_ref):
+    if partial.startswith("./"):
+        partial = partial.replace("./","")
     return f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse.quote(partial)}"
 
 
@@ -534,7 +529,7 @@ def extract_title(unfiltered_text):
     Function to extract a title based on the first header in the readme file
     Parameters
     ----------
-    unfiltered_text
+    unfiltered_text unfiltered text of the title
 
     Returns
     -------
@@ -549,8 +544,12 @@ def extract_title(unfiltered_text):
         # The first occurrence is assumed to be the title.
         title = re.findall(r'#.+', unfiltered_text)[0]
         # Remove initial #
-        if title is not None and len(title)>0:
+        if title is not None and len(title) > 0:
             title = title[1:].strip()
+        # Remove other markup (links, etc.)
+        if "[!" in title:
+            title = re.split('\[\!',title)[0].strip()
+        # title = re.sub(r'/\[\!([^\[\]]*)\]\((.*?)\)', '',title)
     return title
 
 
@@ -645,6 +644,7 @@ def remove_empty_elements(d):
         return [v for v in (remove_empty_elements(v) for v in d) if not empty(v)]
     else:
         return {k: v for k, v in ((k, remove_empty_elements(v)) for k, v in d.items()) if not empty(v)}
+
 
 # saves the final json Object in the file
 def save_json_output(repo_data, outfile, pretty=False):

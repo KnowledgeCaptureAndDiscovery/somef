@@ -1,15 +1,49 @@
 Metadata-Version: 2.1
 Name: somef
-Version: 0.3.1
+Version: 0.6.0
 Summary: UNKNOWN
 Home-page: https://github.com/KnowledgeCaptureAndDiscovery/somef
 Author: Daniel Garijo
 Author-email: dgarijo@isi.edu
 License: UNKNOWN
-Description: # SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675)
+Description: # SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)
         Software Metadata Extraction Framework: A command line interface for automatically extracting relevant information from readme files.
         
         **Authors:** Daniel Garijo, Allen Mao, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
+        
+        ## Features
+        Given a readme file (or a GitHub repository) SOMEF will extract the following categories (if present):
+        
+        - **Name**: Name identifying a software component
+        - **Full name**: Name + owner (owner/name)
+        - **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository  name
+        - **Description**: A description of what the software does.
+        - **Citation**: Preferred citation (usually in `.bib` form) as the authors have stated in their readme file.
+        - **Installation instructions**: A set of instructions that indicate how to install a target repository
+        - **Invocation**: Execution command(s) needed to run a scientific software component
+        - **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it.
+        - **Documentation**: Where to find additional documentation about a software component.
+        - **Requirements**: Pre-requisites and dependencies needed to execute a software component.
+        - **Contributors**: Contributors to a software component
+        - **FAQ**: Frequently asked questions about a software component
+        - **Support**: Guidelines and links of where to obtain support for a software component
+        - **License**: License and usage terms of a software component
+        - **Contact**: Contact person responsible for maintaining a software component
+        - **Download URL**: URL where to download the target software (typically the installer, package or a tarball to a stable version)
+        - **DOI**: Digital Object Identifier associated with the software (if any)
+        - **DockerFile**: Build file to create a Docker image for the target software
+        - **Notebooks**: Jupyter notebooks included in a repository
+        - **Executable notebooks**: Jupyter notebooks ready for execution (e.g., through myBinder)
+        - **Owner**: Name of the user or organization in charge of the repository
+        - **Keywords**: set of terms used to commonly identify a software component
+        - **Source code**: Link to the source code (typically the repository where the readme can be found)
+        - **Releases**: Pointer to the available versions of a software component
+        - **Changelog**: Description of the changes between versions
+        - **Issue tracker**: Link where to open issues for the target repository
+        - **Programming languages**: Languages used in the repository
+        - **Acknowledgements**: People or institutions that the authors would like to acknowledge in their software component
+        
+        We use different supervised classifiers, header analysis, regular expressions and the GitHub API to retrieve all these fields (more than one technique may be used for each field)
         
         ## Documentation
         See full documentation at [https://somef.readthedocs.io/en/latest/](https://somef.readthedocs.io/en/latest/)
@@ -18,7 +52,7 @@ Description: # SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://ze
         
         - Python 3.6
         
-        Note: SOMEF has not been tested on Python 3.8.
+        SOMEF has also been tested on Python 3.7 and 3.8.
         
         ## Install from GitHub
         To run SOMEF, please follow the next steps:
@@ -29,7 +63,7 @@ Description: # SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://ze
         git clone https://github.com/KnowledgeCaptureAndDiscovery/somef.git
         ```
         
-        Install somef (note that you should be in the folder that you just cloned)
+        Install somef (you should be in the folder that you just cloned). Note that for Python 3.7 and 3.8 the module Cython should be installed in advanced (through the command: `pip install Cython`). 
         
         ```
         cd somef
@@ -56,6 +90,31 @@ Description: # SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://ze
           version    Show somef version.
         ```
         
+        ## Installing through Docker
+        We provide a Docker image with SOMEF already installed. To run through Docker, you may build the Dockerfile provided in the repository by running:
+        
+        ```bash
+        docker build -t somef .
+        ```
+        Or just use the Docker image already built in [DockerHub](https://hub.docker.com/r/kcapd/somef):
+        
+        ```bash
+        docker pull kcapd/somef
+        ```
+        
+        Then, to run your image just type:
+        
+        ```bash
+        docker run -it kcapd/somef /bin/bash
+        ```
+        
+        And you will be ready to use SOMEF (see section below). If you want to have access to the results we recommend [mounting a volume](https://docs.docker.com/storage/volumes/). For example, the following command will mount the current directory as the `out` folder in the Docker image:
+        
+        ```bash 
+        docker run -it --rm -v $PWD/:/out kcapd/somef /bin/bash
+        ```
+        If you move any files produced by somef into `/out`, then you will be able to see them in your current directory.
+        
         
         ## Usage 
         
@@ -75,6 +134,23 @@ Description: # SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://ze
         
         ```bash
         somef configure -a
+        ```
+        
+        For showing help about the available options, run:
+        
+        ```bash
+        somef configure --help
+        ```
+        Which displays:
+        
+        ```bash
+        Usage: somef configure [OPTIONS]
+        
+          Configure GitHub credentials and classifiers file path
+        
+        Options:
+          -a, --auto  Automatically configure SOMEF
+          -h, --help  Show this message and exit.
         ```
         
         ### Run SOMEF
@@ -98,14 +174,24 @@ Description: # SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://ze
             -o, --output PATH             Path to the output file. If supplied, the
                                           output will be in JSON
         
-            -g, --graph_out PATH          Path to the output Knowledge Graph file. If
-                                          supplied, the output will be a Knowledge
-                                          Graph, in the format given in the --format
-                                          option
+            -c, --codemeta_out PATH       Path to an output codemeta file
+            -g, --graph_out PATH          Path to the output Knowledge Graph export
+                                          file. If supplied, the output will be a
+                                          Knowledge Graph, in the format given in the
+                                          --format option chosen (turtle, json-ld)
         
           -f, --graph_format [turtle|json-ld]
                                           If the --graph_out option is given, this is
                                           the format that the graph will be stored in
+        
+          -p, --pretty                    Pretty print the JSON output file so that it
+                                          is easy to compare to another JSON output
+                                          file.
+        
+          -m, --missing                   JSON report with the missing metadata fields
+                                          SOMEF was not able to find. The report will
+                                          be placed in  $PATH_missing.json, where
+                                          $PATH is -o, -c or -g.
         
           -h, --help                      Show this message and exit.
         ```
@@ -121,7 +207,7 @@ Description: # SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://ze
         
         ### Add/Remove a Category:
         
-        If the user wants to run the classifier for an additional category or wants to remove an existing category, corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in cli.py
+        To run a classifier with an additional category or remove an existing one, a corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in `cli.py`
         
         ## Contribute:
         
@@ -140,11 +226,7 @@ Description: # SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://ze
         ```
         
         ## Next features:
-        We are improving SOMEF to incorporate the following features:
-        - Automated detection of other documentations sources, besides the readme.md file.
-        - Automated detection and annotation of Docker files.
-        - Automated detection and annotation of notebooks and their metadata.
-        - Automated detection of examples associated with a software component.
+        To see upcoming features, please have a look at our [open issues](https://github.com/KnowledgeCaptureAndDiscovery/somef/issues) and [milestones](https://github.com/KnowledgeCaptureAndDiscovery/somef/milestones)
         
 Platform: UNKNOWN
 Classifier: License :: OSI Approved :: Apache Software License

@@ -4,21 +4,22 @@ somef.
 :license: Apache 2.0
 """
 
-import configparser
 import sys
 from pathlib import Path
+
 import click
 from click_option_group import optgroup, RequiredMutuallyExclusiveOptionGroup, RequiredAnyOptionGroup
+
 import somef
 from . import configuration
 
 
 @click.group(context_settings={'help_option_names': ['-h', '--help']})
-def trycli():
+def cli():
     print("SOftware Metadata Extraction Framework (SOMEF) Command Line Interface")
 
 
-@trycli.command(help="Configure GitHub credentials and classifiers file path")
+@cli.command(help="Configure GitHub credentials and classifiers file path")
 @click.option('-a', '--auto', help="Automatically configure SOMEF", is_flag=True, default=False)
 def configure(auto):
     if auto:
@@ -36,7 +37,7 @@ def configure(auto):
     click.secho(f"Success", fg="green")
 
 
-@trycli.command(help="Show SOMEF version.")
+@cli.command(help="Show SOMEF version.")
 def version(debug=False):
     click.echo(f"{Path(sys.argv[0]).name} v{somef.__version__}")
 
@@ -45,7 +46,7 @@ class URLParamType(click.types.StringParamType):
     name = "url"
 
 
-@trycli.command(help="Running SOMEF Command Line Interface")
+@cli.command(help="Running SOMEF Command Line Interface")
 @click.option(
     "--threshold",
     "-t",
@@ -121,5 +122,5 @@ def describe(**kwargs):
     click.secho(f"Success", fg="green")
 
 
-if __name__ == '__main__':
-    version()
+#if __name__ == '__main__':
+#    version()

@@ -73,3 +73,11 @@ def test_extract_title_hash():
     c = extract_title(test_text)
     print(c)
     assert "T2WML: A Cell-Based Language To Map Tables Into Wikidata Records" == c
+
+def test_extract_title_with_md():
+    test_text = """
+# SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)
+    """
+    c = extract_title(test_text)
+    print(c)
+    assert "SOMEF" == c
