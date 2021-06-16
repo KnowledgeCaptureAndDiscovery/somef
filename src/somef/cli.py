@@ -529,7 +529,7 @@ def extract_title(unfiltered_text):
     Function to extract a title based on the first header in the readme file
     Parameters
     ----------
-    unfiltered_text
+    unfiltered_text unfiltered text of the title
 
     Returns
     -------
@@ -546,6 +546,10 @@ def extract_title(unfiltered_text):
         # Remove initial #
         if title is not None and len(title) > 0:
             title = title[1:].strip()
+        # Remove other markup (links, etc.)
+        if "[!" in title:
+            title = re.split('\[\!',title)[0].strip()
+        # title = re.sub(r'/\[\!([^\[\]]*)\]\((.*?)\)', '',title)
     return title
 
 
