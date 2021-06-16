@@ -520,7 +520,8 @@ def extract_binder_links(readme_text) -> object:
     regex = r'\[\!\[Binder\]([^\]]+)\]\(([^)]+)\)'
     binder_links = re.findall(regex, readme_text)
     print("Extraction of Binder links from readme completed.\n")
-    return binder_links
+    # remove duplicates
+    return list(dict.fromkeys(binder_links))
 
 
 def extract_title(unfiltered_text):
