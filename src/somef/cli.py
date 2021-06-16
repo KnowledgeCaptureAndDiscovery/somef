@@ -520,8 +520,8 @@ def extract_binder_links(readme_text) -> object:
     regex = r'\[\!\[Binder\]([^\]]+)\]\(([^)]+)\)'
     binder_links = re.findall(regex, readme_text)
     print("Extraction of Binder links from readme completed.\n")
-    # print(dois)
-    return binder_links
+    # remove duplicates
+    return list(dict.fromkeys(binder_links))
 
 
 def extract_title(unfiltered_text):
@@ -546,14 +546,32 @@ def extract_title(unfiltered_text):
         # Remove initial #
         if title is not None and len(title) > 0:
             title = title[1:].strip()
-        # Remove other markup (links, etc.)
-        if "[!" in title:
-            title = re.split('\[\!',title)[0].strip()
-        # title = re.sub(r'/\[\!([^\[\]]*)\]\((.*?)\)', '',title)
+    # Remove other markup (links, etc.)
+    if "[!" in title:
+        title = re.split('\[\!',title)[0].strip()
+    # title = re.sub(r'/\[\!([^\[\]]*)\]\((.*?)\)', '',title)
     return title
 
 
-def merge(header_predictions, predictions, citations, dois, binder_links, long_title):
+def extract_readthedocs(readme_text) -> object:
+    """
+    Function to extract readthedocs links from text
+    Parameters
+    ----------
+    readme_text text readme
+
+    Returns
+    -------
+    Links to the readthedocs documentation
+    """
+    regex = r'http[s]?://[\w]+.readthedocs.io/'
+    readthedocs_links = re.findall(regex, readme_text)
+    print("Extraction of readthedocs links from readme completed.\n")
+    # remove duplicates (links like [readthedocs](readthedocs) are found twice
+    return list(dict.fromkeys(readthedocs_links))
+
+
+def merge(header_predictions, predictions, citations, dois, binder_links, long_title, readthedocs_links):
     """
     Function that takes the predictions using header information, classifier and bibtex/doi parser
     Parameters
@@ -588,6 +606,11 @@ def merge(header_predictions, predictions, citations, dois, binder_links, long_t
             # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
             predictions['executable_example'].insert(0, {'excerpt': notebook[1], 'confidence': [1.0],
                                                          'technique': 'Regular expression'})
+    for i in range(len(readthedocs_links)):
+        if 'documentation' not in predictions.keys():
+            predictions['documentation'] = []
+        predictions['documentation'].insert(0, {'excerpt': readthedocs_links[i], 'confidence': [1.0],
+                                           'technique': 'Regular expression'})
     for headers in header_predictions:
         if headers not in predictions.keys():
             predictions[headers] = header_predictions[headers]
@@ -812,7 +835,8 @@ def cli_get_data(threshold, repo_url=None, doc_src=None):
     dois = extract_dois(unfiltered_text)
     binder_links = extract_binder_links(unfiltered_text)
     title = extract_title(unfiltered_text)
-    predictions = merge(header_predictions, predictions, citations, dois, binder_links, title)
+    readthedocs_links = extract_readthedocs(unfiltered_text)
+    predictions = merge(header_predictions, predictions, citations, dois, binder_links, title, readthedocs_links)
     return format_output(github_data, predictions)
 
 

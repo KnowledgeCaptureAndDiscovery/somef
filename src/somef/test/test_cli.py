@@ -74,6 +74,7 @@ def test_extract_title_hash():
     print(c)
     assert "T2WML: A Cell-Based Language To Map Tables Into Wikidata Records" == c
 
+
 def test_extract_title_with_md():
     test_text = """
 # SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)
@@ -81,3 +82,36 @@ def test_extract_title_with_md():
     c = extract_title(test_text)
     print(c)
     assert "SOMEF" == c
+
+
+def test_extract_readthedocs_1():
+    test_text = """
+    For instructions on using OBA to create your API server, go to the 
+    [documentation](https://oba.readthedocs.io/en/latest/)
+    """
+    c = extract_readthedocs(test_text)
+    print(c)
+    assert ["https://oba.readthedocs.io/"] == c
+
+
+def test_extract_readthedocs_2():
+    test_text = """
+    # Ontology-Based APIs (OBA) [![Build Status]
+    (https://travis-ci.org/KnowledgeCaptureAndDiscovery/OBA.svg?branch=master)]
+    (https://travis-ci.org/KnowledgeCaptureAndDiscovery/OBA)
+    [![DOI](https://zenodo.org/badge/184804693.svg)](https://zenodo.org/badge/latestdoi/184804693)
+    ### Documentation
+    https://kgtk.readthedocs.io/en/latest/ as you may have guessed
+    """
+    c = extract_readthedocs(test_text)
+    print(c)
+    assert ["https://kgtk.readthedocs.io/"] == c
+
+
+def test_extract_readthedocs_3():
+    test_text = """
+    See full documentation at [https://somef.readthedocs.io/en/latest/](https://somef.readthedocs.io/en/latest/)
+    """
+    c = extract_readthedocs(test_text)
+    print(c)
+    assert ["https://somef.readthedocs.io/"] == c
