@@ -4,35 +4,28 @@
 ## output file: json with each excerpt marked with all four classification scores
 
 import argparse
-import json
 import base64
-from urllib.parse import urlparse
-import sys
+import json
 import os
+import pickle
+import re
+import sys
+import tempfile
+import time
+import urllib
+import zipfile
+from io import StringIO
 from os import path
 from pathlib import Path
+from urllib.parse import urlparse
+
 import requests
-from markdown import Markdown
-from bs4 import BeautifulSoup
-from io import StringIO
-import pickle
-import pprint
-import pandas as pd
-import numpy as np
-import re
 from dateutil import parser as date_parser
-import zipfile
+from markdown import Markdown
 
 from somef.data_to_graph import DataGraph
-
 from . import createExcerpts
 from . import header_analysis
-
-import time
-
-import tempfile
-
-import urllib
 
 
 ## Markdown to plain text conversion: begin ##
@@ -373,6 +366,8 @@ def load_repository_metadata(repository_url, header):
 
 
 def convert_to_raw_usercontent(partial, owner, repo_name, repo_ref):
+    if partial.startswith("./"):
+        partial = partial.replace("./","")
     return f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse.quote(partial)}"
 
 

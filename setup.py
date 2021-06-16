@@ -66,7 +66,7 @@ setup(
         "Intended Audience :: Science/Research",
         "Operating System :: Unix",
     ],
-    entry_points={"console_scripts": ["somef = somef.__main__:trycli"]},
+    entry_points={"console_scripts": ["somef = somef.__main__:cli"]},
     package_dir={"": "src"},
     packages=find_packages(where="src", exclude=["somef.tests*"]),
     package_data={"somef": find_package_data("src/somef")},
