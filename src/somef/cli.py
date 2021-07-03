@@ -320,11 +320,11 @@ def load_repository_metadata(repository_url, header):
                     dockerfiles.append(os.path.join(repo_relative_path, filename))
                 if filename.lower().endswith(".ipynb"):
                     notebooks.append(os.path.join(repo_relative_path, filename))
-                if "LICENSE" == filename.upper() or "LICENSE.md" == filename.upper():
+                if "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
                     filtered_resp["license_file"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
-                if "CODE_OF_CONDUCT" == filename.upper() or "CODE_OF_CONDUCT.md" == filename.upper():
+                if "CODE_OF_CONDUCT" == filename.upper() or "CODE_OF_CONDUCT.MD" == filename.upper():
                     filtered_resp["code_of_conduct"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
-                if "CONTRIBUTING" in filename.upper() or "CONTRIBUTING.md" in filename.upper():
+                if "CONTRIBUTING" in filename.upper() or "CONTRIBUTING.MD" in filename.upper():
                     filtered_resp["contributing_guidelines"] = convert_to_raw_usercontent(filename, owner, repo_name,
                                                                                           repo_ref)
 
