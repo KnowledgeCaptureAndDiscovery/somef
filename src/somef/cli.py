@@ -103,13 +103,14 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
     response = {}
     date = ""
     while rate_limited:
-        response = requests.get(*args, **kwargs)
+        req = requests.get(*args, **kwargs)
+        response = req.json()
         data = response
         date = data.headers["date"]
         response = response.json()
         if 'message' in response and 'API rate limit exceeded' in response['message']:
             rate_limited = True
-            print(f"rate limited. Backing off for {initial_backoff} seconds")
+            print(f"{response['message']}. Backing off for {initial_backoff} seconds")
             time.sleep(initial_backoff)
 
             # increase the backoff for next time
@@ -263,7 +264,7 @@ def load_repository_metadata(repository_url, header):
     filtered_resp['forks_count'] = forks_info
 
     ## get languages
-    languages, date = rate_limit_get(filtered_resp['languages_url'])
+    languages, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
     if "message" in languages:
         print("Languages Error: " + languages["message"])
     else:

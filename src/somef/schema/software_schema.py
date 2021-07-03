@@ -112,6 +112,22 @@ software_schema = {
             "@type": "schema:Text"
         }
     },
+    "sd:hasFAQ": {
+        "@path": ["faq", "excerpt"],
+        "@type": "xsd:string",
+    },
+    "sd:hasExecutableNotebook": {
+        "@path": ["executable_example", "excerpt"],
+        "@type": "xsd:anyURI"
+    },
+    "sd:hasCodeOfConduct": {
+        "@path": ["code_of_conduct", "excerpt"],
+        "@type": "xsd:anyURI"
+    },
+    "sd:hasAcknowledgement": {
+        "@path": ["acknowledgement", "excerpt"],
+        "@type": "xsd:string"
+    },
     "sd:hasVersion": {
         "@class": "sd:SoftwareVersion",
         "@id": {
