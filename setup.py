@@ -15,7 +15,7 @@ install_requires = [
     "nltk",
     "numpy",
    # "scikit-learn==0.21.2",
-    "scikit-learn",
+    "scikit-learn==0.24.2",
     "scikit-learn",
     "pandas",
     "textblob",
