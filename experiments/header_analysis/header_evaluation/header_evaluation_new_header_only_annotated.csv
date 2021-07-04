@@ -764,7 +764,7 @@ facebookresearch-pyrobot-README.md, Getting Started,usage
 facebookresearch-pyrobot-README.md, The Team,
 facebookresearch-pyrobot-README.md, Future features,
 facebookresearch-pyrobot-README.md, Citation,citation
-facebookresearch-pyrobot-README.md, License,
+facebookresearch-pyrobot-README.md, License,license
 pymeshfix-README.md, Test of pymeshfix without VTK module,
 pymeshfix-README.md, Performs same mesh repair while leveraging VTK's plotting/mesh loading,
 pymeshfix-README.md, Read mesh from infile and output cleaned mesh to outfile,

@@ -11,5 +11,5 @@ rdflib-jsonld
 requests
 requests
 scikit-learn
-scikit-learn
+scikit-learn==0.24.2
 textblob
