@@ -367,7 +367,7 @@ def load_repository_metadata(repository_url, header):
 
 def convert_to_raw_usercontent(partial, owner, repo_name, repo_ref):
     if partial.startswith("./"):
-        partial = partial.replace("./","")
+        partial = partial.replace("./", "")
     return f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse.quote(partial)}"
 
 
@@ -380,9 +380,19 @@ def create_excerpts(string_list):
     return divisions
 
 
-## Function takes readme text as input and runs the provided classifiers on it
-## Returns the dictionary containing scores for each excerpt.
 def run_classifiers(excerpts, file_paths):
+    """
+    Function takes readme text as input and runs the provided classifiers on it
+    Returns the dictionary containing scores for each excerpt.
+    Parameters
+    ----------
+    excerpts text fragments to process
+    file_paths pickle files of the classifiers
+
+    Returns
+    -------
+
+    """
     score_dict = {}
     if len(excerpts) > 0:
         for category in categories:
@@ -548,7 +558,7 @@ def extract_title(unfiltered_text):
             title = title[1:].strip()
     # Remove other markup (links, etc.)
     if "[!" in title:
-        title = re.split('\[\!',title)[0].strip()
+        title = re.split('\[\!', title)[0].strip()
     # title = re.sub(r'/\[\!([^\[\]]*)\]\((.*?)\)', '',title)
     return title
 
@@ -610,7 +620,7 @@ def merge(header_predictions, predictions, citations, dois, binder_links, long_t
         if 'documentation' not in predictions.keys():
             predictions['documentation'] = []
         predictions['documentation'].insert(0, {'excerpt': readthedocs_links[i], 'confidence': [1.0],
-                                           'technique': 'Regular expression'})
+                                                'technique': 'Regular expression'})
     for headers in header_predictions:
         if headers not in predictions.keys():
             predictions[headers] = header_predictions[headers]
@@ -798,7 +808,7 @@ def create_missing_fields_report(repo_data, out_path):
     save_json_output(out, export_path)
 
 
-def cli_get_data(threshold, repo_url=None, doc_src=None):
+def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
     credentials_file = Path(
         os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
     ).expanduser()
@@ -829,8 +839,11 @@ def cli_get_data(threshold, repo_url=None, doc_src=None):
     header_predictions, string_list = extract_categories_using_header(unfiltered_text)
     text = unmark(text)
     excerpts = create_excerpts(string_list)
-    score_dict = run_classifiers(excerpts, file_paths)
-    predictions = classify(score_dict, threshold)
+    if ignore_classifiers:
+        predictions = {}
+    else:
+        score_dict = run_classifiers(excerpts, file_paths)
+        predictions = classify(score_dict, threshold)
     citations = extract_bibtex(text)
     dois = extract_dois(unfiltered_text)
     binder_links = extract_binder_links(unfiltered_text)
@@ -848,6 +861,7 @@ def run_cli_document(doc_src, threshold, output):
 # Function runs all the required components of the cli for a repository
 def run_cli(*,
             threshold=0.8,
+            ignore_classifiers=False,
             repo_url=None,
             doc_src=None,
             in_file=None,
@@ -867,13 +881,13 @@ def run_cli(*,
         # convert to a set to ensure uniqueness (we don't want to get the same data multiple times)
         repo_set = set(repo_list)
 
-        repo_data = [cli_get_data(threshold, repo_url=repo_url) for repo_url in repo_set]
+        repo_data = [cli_get_data(threshold, ignore_classifiers, repo_url=repo_url) for repo_url in repo_set]
 
     else:
         if repo_url:
-            repo_data = cli_get_data(threshold, repo_url=repo_url)
+            repo_data = cli_get_data(threshold, ignore_classifiers, repo_url=repo_url)
         else:
-            repo_data = cli_get_data(threshold, doc_src=doc_src)
+            repo_data = cli_get_data(threshold, ignore_classifiers, doc_src=doc_src)
 
     if output is not None:
         save_json_output(repo_data, output, pretty=pretty)

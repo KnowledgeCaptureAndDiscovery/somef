@@ -55,6 +55,13 @@ class URLParamType(click.types.StringParamType):
     required=True,
     default=0.8,
 )
+@click.option(
+    "--ignore_classifiers",
+    "-ic",
+    is_flag=True,
+    default=False,
+    help="Flag to ignore running the classifiers (by default False)"
+)
 @optgroup.group('Input', cls=RequiredMutuallyExclusiveOptionGroup)
 @optgroup.option(
     "--repo_url",
@@ -72,7 +79,7 @@ class URLParamType(click.types.StringParamType):
     "--in_file",
     "-i",
     type=click.Path(exists=True),
-    help="A file of newline separated links to GitHub repositories"
+    help="A file of newline separated links to GitHub repositories to process in bulk"
 )
 @optgroup.group('Output', cls=RequiredAnyOptionGroup)
 @optgroup.option(
