@@ -3,6 +3,8 @@
 # As output, this script generates a series of JSONL files, each with an annotation corpus.
 # Files are generated for description, ack, installation, requirements and run sections
 # A special treatment is done to all the elements under the first header
+
+# This script is NOT included on purpose (it's part of Ner4soft)
 import json
 import os
 
