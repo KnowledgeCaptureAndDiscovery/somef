@@ -43,6 +43,19 @@ We use different supervised classifiers, header analysis, regular expressions an
 ## Documentation
 See full documentation at [https://somef.readthedocs.io/en/latest/](https://somef.readthedocs.io/en/latest/)
 
+## Cite SOMEF:
+```
+@INPROCEEDINGS{9006447, 
+author={A. {Mao} and D. {Garijo} and S. {Fakhraei}}, 
+booktitle={2019 IEEE International Conference on Big Data (Big Data)}, 
+title={SoMEF: A Framework for Capturing Scientific Software Metadata from its Documentation}, 
+year={2019},
+doi={10.1109/BigData47090.2019.9006447}, 
+url={http://dgarijo.com/papers/SoMEF.pdf},
+pages={3032-3037}
+} 
+```
+
 ## Requirements
 
 - Python 3.6
@@ -208,17 +221,6 @@ To run a classifier with an additional category or remove an existing one, a cor
 
 If you want to contribute with a pull request, please do so by submitting it to the `dev` branch.
 
-## Cite SOMEF:
-```
-@INPROCEEDINGS{9006447, 
-author={A. {Mao} and D. {Garijo} and S. {Fakhraei}}, 
-booktitle={2019 IEEE International Conference on Big Data (Big Data)}, 
-title={SoMEF: A Framework for Capturing Scientific Software Metadata from its Documentation}, 
-year={2019}, 
-url={http://dgarijo.com/papers/SoMEF.pdf},
-pages={3032-3037}
-} 
-```
 
 ## Next features:
 To see upcoming features, please have a look at our [open issues](https://github.com/KnowledgeCaptureAndDiscovery/somef/issues) and [milestones](https://github.com/KnowledgeCaptureAndDiscovery/somef/milestones)
