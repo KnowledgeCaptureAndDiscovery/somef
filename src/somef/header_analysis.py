@@ -75,6 +75,14 @@ support = [Word("support").synsets[7], Word("help").synsets[0], Word("help").syn
            Word("report").synsets[6]]
 group.update({"support": support})
 
+def extract_bash_code(text):
+    splitted = text.split("```")
+    output = []
+    if (len(splitted)>=3):
+        for index, value in enumerate(splitted):
+            if index%2 == 1:
+                output.append(splitted[index])
+    return output
 
 def extract_header_content(text):  # extract the header and content of text to dataframe
     print('Extracting headers and content.')
@@ -93,7 +101,9 @@ def extract_header_content(text):  # extract the header and content of text to d
 
     # header declared with ##
     else:
-        a = re.findall(r'\`\`\`[^\`]+\`\`\`', text, flags=re.DOTALL)
+        #a = re.findall(r'\`\`\`[^\`]+\`\`\`', text, flags=re.DOTALL)
+        #replace call to re.findall for extract_bash_code to solve GitHub issue 231
+        a = extract_bash_code(text)
         a_sub = [re.sub('#', '#notes:', i) for i in a]
         for i, j in zip(a, a_sub):
             text = text.replace(i, j)
@@ -173,7 +183,8 @@ def clean_html(text):
 
 
 def extract_categories_using_headers(text):  # main function
-    text = clean_html(text)
+    #remove call to clean_html to solve GitHub issues 139 and 89
+    #text = clean_html(text)
     data = extract_header_content(text)
     print('Labeling headers.')
     if data.empty:
