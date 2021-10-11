@@ -5,10 +5,10 @@ import json
 __DEFAULT_SOMEF_CONFIGURATION_FILE__ = "~/.somef/config.json"
 
 path = Path(__file__).parent.absolute()
-default_description = str(path) + "/models/description.sk"
-default_invocation = str(path) + "/models/invocation.sk"
-default_installation = str(path) + "/models/installation.sk"
-default_citation = str(path) + "/models/citation.sk"
+default_description = str(path) + "/models/description.p"
+default_invocation = str(path) + "/models/invocation.p"
+default_installation = str(path) + "/models/installation.p"
+default_citation = str(path) + "/models/citation.p"
 
 
 def configure(authorization="",

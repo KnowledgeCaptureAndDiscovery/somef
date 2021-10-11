@@ -1,6 +1,6 @@
 {
-	"description" : "./models/description.sk",
-	"citation" : "./models/citation.sk",
-	"installation" : "./models/installation.sk",
-	"invocation" : "./models/invocation.sk"
+	"description" : "./models/description.p",
+	"citation" : "./models/citation.p",
+	"installation" : "./models/installation.p",
+	"invocation" : "./models/invocation.p"
 }

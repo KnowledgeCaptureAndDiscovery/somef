@@ -1,12 +1,12 @@
-sklearn Primitive - Invocation,Hyperparameters,Input Data Used,Accuracy,Precision,Recall,F-measure,Pickle ID
-"sklearnpipeline(TFIDFVectorizer, NaiveBayes)", - ,Allen,0.88,0.86,0.94,0.9,invtfnb.p
-"sklearnpipeline(CountVectorizer, NaiveBayes)", -,Allen,0.87,0.88,0.9,0.89,invcvnb.p
-"sklearnpipeline(TFIDFVectorizer, StochasticGradientDescent)",loss = 'log',Allen,0.86,0.85,0.91,88,invtfsgd.p
-"sklearnpipeline(CountVectorizer, LogisticRegression)", - ,Allen,0.85,0.83,0.93,0.87,invcvlr.p
-"sklearnpipeline(TFIDFVectorizer, LogisticRegression)", - ,Allen,0.85,0.82,0.93,0.87,invtflr.p
-"sklearnpipeline(TFIDFVectorizer, Perceptron)", -,Allen,0.83,0.87,0.84,0.85,invtfper.p
-"sklearnpipeline(TFIDFVectorizer, RandomForest)", -,Allen,0.79,0.85,0.77,0.81,invtfrfc.p
-"sklearnpipeline(TFIDFVectorizer, AdaBoostClassifier)", -,Allen,0.77,0.75,0.89,0.82,invtfada.p
-"sklearnpipeline(TFIDFVectorizer, XGBClassifier)", -,Allen,0.76,0.74,0.92,0.82,invtfxgb.p
-"sklearnpipeline(TFIDFVectorizer, DecisionTreeClassifier)", -,Allen,0.76,0.82,0.75,0.78,invtfdtc.p
-"sklearnpipeline(CountVectorizer, BernoulliBayes)", -,Allen,0.76,0.72,0.94,0.82,invcvbb.p
+sklearn Primitive - Citation,Hyperparameters,Input Data Used,Accuracy,Precision,Recall,F-measure,Pickle ID
+"sklearnpipeline(CountVectorizer, LogisticRegression)", - ,Allen,0.845,0.824,0.928,0.873,invcvlr.p
+"sklearnpipeline(TFIDFVectorizer, LogisticRegression)", - ,Allen,0.844,0.823,0.928,0.872,invtflr.p
+"sklearnpipeline(TFIDFVectorizer, NaiveBayes)", - ,Allen,0.845,0.819,0.936,0.874,invtfnb.p
+"sklearnpipeline(CountVectorizer, NaiveBayes)", -,Allen,0.849,0.829,0.928,0.875,invcvnb.p
+"sklearnpipeline(CountVectorizer, BernoulliBayes)", -,Allen,0.848,0.824,0.934,0.875,invcvbb.p
+"sklearnpipeline(TFIDFVectorizer, StochasticGradientDescent)",loss = 'log',Allen,0.843,0.823,0.925,0.871,invtfsgd.p
+"sklearnpipeline(TFIDFVectorizer, XGBClassifier)", -,Allen,0.844,0.824,0.925,0.871,invtfxgb.p
+"sklearnpipeline(TFIDFVectorizer, Perceptron)", -,Allen,0.845,0.824,0.929,0.873,invtfper.p
+"sklearnpipeline(TFIDFVectorizer, RandomForestClassifier)", -,Allen,0.848,0.827,0.929,0.875,invtfrfc.p
+"sklearnpipeline(TFIDFVectorizer, DecisionTreeClassifier)", -,Allen,0.84,0.817,0.929,0.869,invtfdtc.p
+"sklearnpipeline(TFIDFVectorizer, AdaBoostClassifier)", -,Allen,0.842,0.819,0.929,0.871,invtfada.p
