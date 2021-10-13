@@ -20,7 +20,8 @@ install_requires = [
     "pandas",
     "textblob",
     "rdflib",
-    "rdflib-jsonld"
+    "rdflib-jsonld",
+    "xgboost"
 ]
 
 
@@ -73,5 +74,5 @@ setup(
     exclude_package_data={"somef": ["test/*"]},
     zip_safe=False,
     install_requires=install_requires,
-    python_requires="=3.9",
+    python_requires=">=3.9",
 )
