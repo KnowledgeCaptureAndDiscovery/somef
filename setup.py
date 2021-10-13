@@ -15,12 +15,13 @@ install_requires = [
     "nltk",
     "numpy",
    # "scikit-learn==0.21.2",
-    "scikit-learn==0.24.2",
-    "scikit-learn",
+    #"scikit-learn==0.24.2",
+    "scikit-learn==1.0",
     "pandas",
     "textblob",
     "rdflib",
-    "rdflib-jsonld"
+    "rdflib-jsonld",
+    "xgboost"
 ]
 
 
@@ -62,9 +63,7 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.9",
         "Intended Audience :: Science/Research",
         "Operating System :: Unix",
     ],
@@ -75,5 +74,5 @@ setup(
     exclude_package_data={"somef": ["test/*"]},
     zip_safe=False,
     install_requires=install_requires,
-    python_requires=">=3.6.0",
+    python_requires=">=3.9",
 )
