@@ -58,9 +58,7 @@ pages={3032-3037}
 
 ## Requirements
 
-- Python 3.6
-
-SOMEF has also been tested on Python 3.7 and 3.8.
+- Python 3.9
 
 ## Install from GitHub
 To run SOMEF, please follow the next steps:
