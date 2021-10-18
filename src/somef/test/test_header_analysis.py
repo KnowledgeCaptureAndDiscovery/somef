@@ -114,3 +114,17 @@ class TestAlmostEqual(unittest.TestCase):
             """
         output = extract_bash_code(text)
         assert len(output) == 3
+
+    def test_issue_232(self):
+        with open("pyansys-README.rst", "r") as data_file:
+            file_text = data_file.read()
+            results = extract_header_content(file_text)
+            # At least 5 categories are extracted from the header analysis
+            print(results)
+            assert len(results) == 8
+        with open("rasterio-README.md", "r") as data_file:
+            file_text = data_file.read()
+            results = extract_header_content(file_text)
+            # At least 5 categories are extracted from the header analysis
+            print(results)
+            assert len(results) == 17
