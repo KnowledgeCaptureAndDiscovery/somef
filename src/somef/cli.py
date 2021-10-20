@@ -370,11 +370,32 @@ def convert_to_raw_usercontent(partial, owner, repo_name, repo_ref):
         partial = partial.replace("./", "")
     return f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse.quote(partial)}"
 
+def remove_bibtex(string_list):
+    """
+        Function that takes the string list and removes all bibtex blocks of it
+        Parameters
+        ----------
+        string_list A list of strings
+
+        Returns
+        -------
+        The strings list without bibtex blocks
+        """
+    for x, element in enumerate(string_list):
+        bib_references = extract_bibtex(element)
+        if len(bib_references)>0:
+            top = element.find(bib_references[0])
+            init = element.rfind("```", 0, top)
+            end = element.find("```", init + 3)
+            substring = element[init:end + 3]
+            string_list[x] = element.replace(substring, "")
+    return string_list
 
 ## Function takes readme text as input and divides it into excerpts
 ## Returns the extracted excerpts
 def create_excerpts(string_list):
     print("Splitting text into valid excerpts for classification")
+    string_list = remove_bibtex(string_list)
     divisions = createExcerpts.split_into_excerpts(string_list)
     print("Text Successfully split. \n")
     return divisions
