@@ -88,7 +88,7 @@ def extract_header_content(text):  # extract the header and content of text to d
     print('Extracting headers and content.')
     # check the format of header
     underline_header = re.findall('.+[\n]={3,}[\n]', text)
-    hash_header = re.findall('#{1,5} .*', text)
+    hash_header = re.findall('#{1,5} .*[\n][\n]', text)
 
     # header declared with ==== and --- Since creating a single regex for both is complicated,
     # We select the maximum number of headers we can match
