@@ -327,6 +327,10 @@ def load_repository_metadata(repository_url, header):
                 if "CONTRIBUTING" in filename.upper() or "CONTRIBUTING.MD" in filename.upper():
                     filtered_resp["contributing_guidelines"] = convert_to_raw_usercontent(filename, owner, repo_name,
                                                                                           repo_ref)
+                if "ACKNOWLEDGMENT" in filename.upper():
+                    with open(os.path.join(dirpath, filename), "r") as data_file:
+                        file_text = data_file.read()
+                        filtered_resp["acknowledgments"] = unmark(file_text)
 
             for dirname in dirnames:
                 if dirname.lower() == "docs":
@@ -589,7 +593,7 @@ def extract_readthedocs(readme_text) -> object:
     Function to extract readthedocs links from text
     Parameters
     ----------
-    readme_text text readme
+    unfiltered_text text readme
 
     Returns
     -------
@@ -601,8 +605,26 @@ def extract_readthedocs(readme_text) -> object:
     # remove duplicates (links like [readthedocs](readthedocs) are found twice
     return list(dict.fromkeys(readthedocs_links))
 
+def extract_gitter_chat(readme_text):
+    """
+    Function to extract Gitter Chat link from text
+    Parameters
+    ----------
+    readme_text text readme
 
-def merge(header_predictions, predictions, citations, dois, binder_links, long_title, readthedocs_links):
+    Returns
+    -------
+    Link to the Gitter Chat
+    """
+    gitter_chat = ""
+    index_gitter_chat = readme_text.find("[![Gitter chat]")
+    if index_gitter_chat > 0:
+        init = readme_text.find(")](",index_gitter_chat)
+        end = readme_text.find(")",init + 3)
+        gitter_chat = readme_text[init+3:end]
+    return gitter_chat
+
+def merge(header_predictions, predictions, citations, dois, binder_links, long_title, readthedocs_links, gitter_chat):
     """
     Function that takes the predictions using header information, classifier and bibtex/doi parser
     Parameters
@@ -637,6 +659,10 @@ def merge(header_predictions, predictions, citations, dois, binder_links, long_t
             # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
             predictions['executable_example'].insert(0, {'excerpt': notebook[1], 'confidence': [1.0],
                                                          'technique': 'Regular expression'})
+    if len(gitter_chat) != 0:
+        predictions['support_channel'] = {'excerpt': gitter_chat, 'confidence': [1.0],
+                                     'technique': 'Regular expression'}
+
     for i in range(len(readthedocs_links)):
         if 'documentation' not in predictions.keys():
             predictions['documentation'] = []
@@ -667,7 +693,7 @@ def format_output(git_data, repo_data):
     """
     print("formatting output")
     file_exploration = ['hasExecutableNotebook', 'hasBuildFile', 'hasDocumentation', 'code_of_conduct',
-                        'contributing_guidelines', 'license_file']
+                        'contributing_guidelines', 'license_file', 'acknowledgments']
     for i in git_data.keys():
         # print(i)
         # print(git_data[i])
@@ -870,7 +896,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
     binder_links = extract_binder_links(unfiltered_text)
     title = extract_title(unfiltered_text)
     readthedocs_links = extract_readthedocs(unfiltered_text)
-    predictions = merge(header_predictions, predictions, citations, dois, binder_links, title, readthedocs_links)
+    gitter_chat = extract_gitter_chat(unfiltered_text)
+    predictions = merge(header_predictions, predictions, citations, dois, binder_links, title, readthedocs_links, gitter_chat)
     return format_output(github_data, predictions)
 
 
