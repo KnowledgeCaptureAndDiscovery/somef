@@ -327,6 +327,10 @@ def load_repository_metadata(repository_url, header):
                 if "CONTRIBUTING" in filename.upper() or "CONTRIBUTING.MD" in filename.upper():
                     filtered_resp["contributing_guidelines"] = convert_to_raw_usercontent(filename, owner, repo_name,
                                                                                           repo_ref)
+                if "ACKNOWLEDGMENT" in filename.upper():
+                    with open(os.path.join(dirpath, filename), "r") as data_file:
+                        file_text = data_file.read()
+                        filtered_resp["acknowledgments"] = unmark(file_text)
 
             for dirname in dirnames:
                 if dirname.lower() == "docs":
@@ -689,7 +693,7 @@ def format_output(git_data, repo_data):
     """
     print("formatting output")
     file_exploration = ['hasExecutableNotebook', 'hasBuildFile', 'hasDocumentation', 'code_of_conduct',
-                        'contributing_guidelines', 'license_file']
+                        'contributing_guidelines', 'license_file', 'acknowledgments']
     for i in git_data.keys():
         # print(i)
         # print(git_data[i])

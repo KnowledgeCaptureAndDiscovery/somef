@@ -126,3 +126,9 @@ class TestCli(unittest.TestCase):
         c = extract_gitter_chat(text)
         print(c)
         assert "https://gitter.im/OpenGeoscience/geonotebook" == c
+
+    def test_issue_166(self):
+        header = {}
+        header['accept'] = 'application/vnd.github.v3+json'
+        text, github_data = load_repository_metadata("https://github.com/tensorflow/tensorflow/tree/v2.6.0", header)
+        assert len(github_data['acknowledgments']) > 0
