@@ -6,6 +6,8 @@ A command line interface for automatically extracting relevant information from 
 
 **Authors:** Daniel Garijo, Allen Mao, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
 
+**Contributors:** Miguel Ángel García Delgado.
+
 ## Features
 Given a readme file (or a GitHub repository) SOMEF will extract the following categories (if present):
 
