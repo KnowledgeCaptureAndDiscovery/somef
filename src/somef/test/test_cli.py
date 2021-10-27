@@ -147,7 +147,7 @@ class TestCli(unittest.TestCase):
         Please feel free to leave comments as Issues, or open pull requests.
         """
         repo_status = extract_repo_status(text)
-        assert  len(repo_status) > 0
+        assert len(repo_status) > 0
 
 
     def test_issue_171(self):
@@ -155,3 +155,38 @@ class TestCli(unittest.TestCase):
         header['accept'] = 'application/vnd.github.v3+json'
         text, github_data = load_repository_metadata("https://github.com/RDFLib/rdflib/tree/6.0.2", header)
         assert len(github_data['contributors']) > 0
+
+
+    def test_issue_209(self):
+        header = {}
+        header['accept'] = 'application/vnd.github.v3+json'
+        text, github_data = load_repository_metadata("https://github.com/RDFLib/rdflib/tree/6.0.2", header)
+        assert len(github_data['hasScriptFile']) > 0
+
+
+    def test_issue_181(self):
+        text = """
+        This repository is for RDN introduced in the following paper
+
+[Yulun Zhang](http://yulunzhang.com/), [Yapeng Tian](http://yapengtian.org/), [Yu Kong](http://www1.ece.neu.edu/~yukong/), [Bineng Zhong](https://scholar.google.de/citations?user=hvRBydsAAAAJ&hl=en), and [Yun Fu](http://www1.ece.neu.edu/~yunfu/), "Residual Dense Network for Image Super-Resolution", CVPR 2018 (spotlight), [[arXiv]](https://arxiv.org/abs/1802.08797) 
+
+[Yulun Zhang](http://yulunzhang.com/), [Yapeng Tian](http://yapengtian.org/), [Yu Kong](http://www1.ece.neu.edu/~yukong/), [Bineng Zhong](https://scholar.google.de/citations?user=hvRBydsAAAAJ&hl=en), and [Yun Fu](http://www1.ece.neu.edu/~yunfu/), "Residual Dense Network for Image Restoration", arXiv 2018, [[arXiv]](https://arxiv.org/abs/1812.10477)
+        
+        ## Citation
+```
+@article{pyrobot2019,
+  title={PyRobot: An Open-source Robotics Framework for Research and Benchmarking},
+  author={Adithyavairavan Murali and Tao Chen and Kalyan Vasudev Alwala and Dhiraj Gandhi and Lerrel Pinto and Saurabh Gupta and Abhinav Gupta},
+  journal={arXiv preprint arXiv:1906.08236},
+  year={2019}
+}
+```
+        """
+        arxiv_links = extract_arxiv_links(text)
+        assert len(arxiv_links) > 0
+
+    def test_issue_211(self):
+        header = {}
+        header['accept'] = 'application/vnd.github.v3+json'
+        text, github_data = load_repository_metadata("https://github.com/probot/probot/tree/v12.1.1", header)
+        assert len(github_data['contributingGuidelines']) > 0 and len(github_data['licenseFile']) > 0
