@@ -312,30 +312,40 @@ def load_repository_metadata(repository_url, header):
         notebooks = []
         dockerfiles = []
         docs = []
+        scriptfiles = []
 
         for dirpath, dirnames, filenames in os.walk(repo_dir):
             repo_relative_path = os.path.relpath(dirpath, repo_dir)
             for filename in filenames:
                 if filename == "Dockerfile":
-                    dockerfiles.append(os.path.join(repo_relative_path, filename))
+                    #dockerfiles.append(os.path.join(repo_relative_path, filename))
+                    dockerfiles.append(repo_relative_path + "/" + filename)
                 if filename.lower().endswith(".ipynb"):
                     notebooks.append(os.path.join(repo_relative_path, filename))
                 if "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
-                    filtered_resp["license_file"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
+                    #filtered_resp["licenseFile"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
+                    with open(os.path.join(dirpath, filename), "r") as data_file:
+                        file_text = data_file.read()
+                        filtered_resp["licenseFile"] = unmark(file_text)
                 if "CODE_OF_CONDUCT" == filename.upper() or "CODE_OF_CONDUCT.MD" == filename.upper():
-                    filtered_resp["code_of_conduct"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
+                    filtered_resp["codeOfConduct"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
                 if "CONTRIBUTING" in filename.upper() or "CONTRIBUTING.MD" in filename.upper():
-                    filtered_resp["contributing_guidelines"] = convert_to_raw_usercontent(filename, owner, repo_name,
-                                                                                          repo_ref)
+                    #filtered_resp["contributing_guidelines"] = convert_to_raw_usercontent(filename, owner, repo_name,
+                    # repo_ref)
+                    with open(os.path.join(dirpath, filename), "r") as data_file:
+                        file_text = data_file.read()
+                        filtered_resp["contributingGuidelines"] = unmark(file_text)
                 if "ACKNOWLEDGMENT" in filename.upper():
                     with open(os.path.join(dirpath, filename), "r") as data_file:
                         file_text = data_file.read()
                         filtered_resp["acknowledgments"] = unmark(file_text)
-
                 if "CONTRIBUTORS" in filename.upper() or "CONTRIBUTORS.MD" in filename.upper():
                     with open(os.path.join(dirpath, filename), "r") as data_file:
                         file_text = data_file.read()
                         filtered_resp["contributors"] = unmark(file_text)
+                if filename.endswith(".sh"):
+                    #scriptfiles.append(os.path.join(repo_relative_path, filename))
+                    scriptfiles.append(repo_relative_path + "/" + filename)
 
             for dirname in dirnames:
                 if dirname.lower() == "docs":
@@ -361,6 +371,9 @@ def load_repository_metadata(repository_url, header):
     if len(docs) > 0:
         filtered_resp["hasDocumentation"] = docs
 
+    if len(scriptfiles) > 0:
+        filtered_resp["hasScriptFile"] = [convert_to_raw_usercontent(x, owner, repo_name, repo_ref) for x in scriptfiles]
+
     # get releases
     releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
                                          headers=header)
@@ -377,6 +390,8 @@ def load_repository_metadata(repository_url, header):
 def convert_to_raw_usercontent(partial, owner, repo_name, repo_ref):
     if partial.startswith("./"):
         partial = partial.replace("./", "")
+    if partial.startswith(".\\"):
+        partial = partial.replace(".\\", "")
     return f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse.quote(partial)}"
 
 def remove_bibtex(string_list):
@@ -640,7 +655,23 @@ def extract_repo_status(unfiltered_text):
     return repo_status
 
 
-def merge(header_predictions, predictions, citations, dois, binder_links, long_title, readthedocs_links, gitter_chat, repo_status):
+def extract_arxiv_links(unfiltered_text):
+    result_links = [m.start() for m in re.finditer('https://arxiv.org/abs/', unfiltered_text)]
+    result_refs = [m.start() for m in re.finditer('arXiv:', unfiltered_text)]
+    results = []
+    for position in result_links:
+        end = unfiltered_text.find(')', position)
+        link = unfiltered_text[position:end]
+        results.append(link)
+    for position in result_refs:
+        end = unfiltered_text.find('}', position)
+        link = unfiltered_text[position:end]
+        results.append(link.replace('arXiv:', 'https://arxiv.org/abs/'))
+
+    return results
+
+
+def merge(header_predictions, predictions, citations, dois, binder_links, long_title, readthedocs_links, gitter_chat, repo_status, arxiv_links):
     """
     Function that takes the predictions using header information, classifier and bibtex/doi parser
     Parameters
@@ -683,6 +714,10 @@ def merge(header_predictions, predictions, citations, dois, binder_links, long_t
         predictions['repo_status'] = {'excerpt': "https://www.repostatus.org/#"+repo_status[0:repo_status.find(" ")].lower(), 'description': repo_status,
                                      'technique': 'Regular expression'}
 
+    if len(arxiv_links) != 0:
+        predictions['arxivLinks'] = {'excerpt': arxiv_links, 'confidence': [1.0],
+                                     'technique': 'Regular expression'}
+
     for i in range(len(readthedocs_links)):
         if 'documentation' not in predictions.keys():
             predictions['documentation'] = []
@@ -712,8 +747,8 @@ def format_output(git_data, repo_data):
     json representation of the categories found in file
     """
     print("formatting output")
-    file_exploration = ['hasExecutableNotebook', 'hasBuildFile', 'hasDocumentation', 'code_of_conduct',
-                        'contributing_guidelines', 'license_file', 'acknowledgments', 'contributors']
+    file_exploration = ['hasExecutableNotebook', 'hasBuildFile', 'hasDocumentation', 'codeOfConduct',
+                        'contributingGuidelines', 'licenseFile', 'acknowledgments', 'contributors', 'hasScriptFile']
     for i in git_data.keys():
         # print(i)
         # print(git_data[i])
@@ -918,7 +953,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
     readthedocs_links = extract_readthedocs(unfiltered_text)
     gitter_chat = extract_gitter_chat(unfiltered_text)
     repo_status = extract_repo_status(unfiltered_text)
-    predictions = merge(header_predictions, predictions, citations, dois, binder_links, title, readthedocs_links, gitter_chat, repo_status)
+    arxiv_links = extract_arxiv_links(unfiltered_text)
+    predictions = merge(header_predictions, predictions, citations, dois, binder_links, title, readthedocs_links, gitter_chat, repo_status, arxiv_links)
     return format_output(github_data, predictions)
 
 
