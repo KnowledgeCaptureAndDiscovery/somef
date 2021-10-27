@@ -956,7 +956,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
         score_dict = run_classifiers(excerpts, file_paths)
         predictions = classify(score_dict, threshold)
     citations = extract_bibtex(text)
-    citation_file = ""
+    citation_file_text = ""
     if 'citation' in github_data.keys():
         citation_file_text = github_data['citation']
         del github_data['citation']
