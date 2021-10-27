@@ -190,3 +190,9 @@ class TestCli(unittest.TestCase):
         header['accept'] = 'application/vnd.github.v3+json'
         text, github_data = load_repository_metadata("https://github.com/probot/probot/tree/v12.1.1", header)
         assert len(github_data['contributingGuidelines']) > 0 and len(github_data['licenseFile']) > 0
+
+    def test_issue_218(self):
+        header = {}
+        header['accept'] = 'application/vnd.github.v3+json'
+        text, github_data = load_repository_metadata("https://github.com/pytorch/captum/tree/v0.4.0", header)
+        assert len(github_data['citation']) > 0

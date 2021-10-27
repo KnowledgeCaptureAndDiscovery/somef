@@ -343,6 +343,10 @@ def load_repository_metadata(repository_url, header):
                     with open(os.path.join(dirpath, filename), "r") as data_file:
                         file_text = data_file.read()
                         filtered_resp["contributors"] = unmark(file_text)
+                if "CITATION" in filename.upper() or "CITATION.CFF" in filename.upper():
+                    with open(os.path.join(dirpath, filename), "r") as data_file:
+                        file_text = data_file.read()
+                        filtered_resp["citation"] = unmark(file_text)
                 if filename.endswith(".sh"):
                     #scriptfiles.append(os.path.join(repo_relative_path, filename))
                     scriptfiles.append(repo_relative_path + "/" + filename)
@@ -671,7 +675,7 @@ def extract_arxiv_links(unfiltered_text):
     return results
 
 
-def merge(header_predictions, predictions, citations, dois, binder_links, long_title, readthedocs_links, gitter_chat, repo_status, arxiv_links):
+def merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, long_title, readthedocs_links, gitter_chat, repo_status, arxiv_links):
     """
     Function that takes the predictions using header information, classifier and bibtex/doi parser
     Parameters
@@ -694,6 +698,11 @@ def merge(header_predictions, predictions, citations, dois, binder_links, long_t
             predictions['citation'] = []
         predictions['citation'].insert(0, {'excerpt': citations[i], 'confidence': [1.0],
                                            'technique': 'Regular expression'})
+    if len(citation_file_text) != 0:
+        if 'citation' not in predictions.keys():
+            predictions['citation'] = []
+        predictions['citation'].insert(0, {'excerpt': citation_file_text, 'confidence': [1.0],
+                                           'technique': 'File Exploration'})
     if len(dois) != 0:
         predictions['identifier'] = []
         for identifier in dois:
@@ -947,6 +956,10 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
         score_dict = run_classifiers(excerpts, file_paths)
         predictions = classify(score_dict, threshold)
     citations = extract_bibtex(text)
+    citation_file = ""
+    if 'citation' in github_data.keys():
+        citation_file_text = github_data['citation']
+        del github_data['citation']
     dois = extract_dois(unfiltered_text)
     binder_links = extract_binder_links(unfiltered_text)
     title = extract_title(unfiltered_text)
@@ -954,7 +967,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
     gitter_chat = extract_gitter_chat(unfiltered_text)
     repo_status = extract_repo_status(unfiltered_text)
     arxiv_links = extract_arxiv_links(unfiltered_text)
-    predictions = merge(header_predictions, predictions, citations, dois, binder_links, title, readthedocs_links, gitter_chat, repo_status, arxiv_links)
+    predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title, readthedocs_links, gitter_chat, repo_status, arxiv_links)
     return format_output(github_data, predictions)
 
 
