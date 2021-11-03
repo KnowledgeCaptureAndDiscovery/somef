@@ -323,30 +323,51 @@ def load_repository_metadata(repository_url, header):
                 if filename.lower().endswith(".ipynb"):
                     notebooks.append(os.path.join(repo_relative_path, filename))
                 if "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
-                    #filtered_resp["licenseFile"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
-                    with open(os.path.join(dirpath, filename), "r") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["licenseFile"] = unmark(file_text)
+                    try:
+                        with open(os.path.join(dirpath, filename), "rb") as data_file:
+                            file_text = data_file.read()
+                            filtered_resp["licenseText"] = unmark(file_text)
+                    except:
+                        # TO DO: try different encodings
+                        filtered_resp["licenseFile"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
+
                 if "CODE_OF_CONDUCT" == filename.upper() or "CODE_OF_CONDUCT.MD" == filename.upper():
                     filtered_resp["codeOfConduct"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
-                if "CONTRIBUTING" in filename.upper() or "CONTRIBUTING.MD" in filename.upper():
-                    #filtered_resp["contributing_guidelines"] = convert_to_raw_usercontent(filename, owner, repo_name,
-                    # repo_ref)
-                    with open(os.path.join(dirpath, filename), "r") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["contributingGuidelines"] = unmark(file_text)
+                if "CONTRIBUTING" == filename.upper() or "CONTRIBUTING.MD" == filename.upper():
+                    try:
+                        with open(os.path.join(dirpath, filename), "r") as data_file:
+                            file_text = data_file.read()
+                            filtered_resp["contributingGuidelines"] = unmark(file_text)
+                    except:
+                        filtered_resp["contributingGuidelinesFile"] = convert_to_raw_usercontent(filename, owner, repo_name,
+                        repo_ref)
                 if "ACKNOWLEDGMENT" in filename.upper():
-                    with open(os.path.join(dirpath, filename), "r") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["acknowledgments"] = unmark(file_text)
-                if "CONTRIBUTORS" in filename.upper() or "CONTRIBUTORS.MD" in filename.upper():
-                    with open(os.path.join(dirpath, filename), "r") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["contributors"] = unmark(file_text)
-                if "CITATION" in filename.upper() or "CITATION.CFF" in filename.upper():
-                    with open(os.path.join(dirpath, filename), "r") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["citation"] = unmark(file_text)
+                    try:
+                        with open(os.path.join(dirpath, filename), "r") as data_file:
+                            file_text = data_file.read()
+                            filtered_resp["acknowledgments"] = unmark(file_text)
+                    except:
+                        filtered_resp["acknowledgmentsFile"] = convert_to_raw_usercontent(filename, owner,
+                                                                                              repo_name,
+                                                                                              repo_ref)
+                if "CONTRIBUTORS" == filename.upper() or "CONTRIBUTORS.MD" == filename.upper():
+                    try:
+                        with open(os.path.join(dirpath, filename), "r") as data_file:
+                            file_text = data_file.read()
+                            filtered_resp["contributors"] = unmark(file_text)
+                    except:
+                        filtered_resp["contributorsFile"] = convert_to_raw_usercontent(filename, owner,
+                                                                                      repo_name,
+                                                                                      repo_ref)
+                if "CITATION" == filename.upper() or "CITATION.CFF" == filename.upper():
+                    try:
+                        with open(os.path.join(dirpath, filename), "r") as data_file:
+                            file_text = data_file.read()
+                            filtered_resp["citation"] = unmark(file_text)
+                    except:
+                        filtered_resp["citationFile"] = convert_to_raw_usercontent(filename, owner,
+                                                                                      repo_name,
+                                                                                      repo_ref)
                 if filename.endswith(".sh"):
                     #scriptfiles.append(os.path.join(repo_relative_path, filename))
                     scriptfiles.append(repo_relative_path + "/" + filename)
@@ -956,7 +977,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
         score_dict = run_classifiers(excerpts, file_paths)
         predictions = classify(score_dict, threshold)
     citations = extract_bibtex(text)
-    citation_file = ""
+    citation_file_text = ""
     if 'citation' in github_data.keys():
         citation_file_text = github_data['citation']
         del github_data['citation']
