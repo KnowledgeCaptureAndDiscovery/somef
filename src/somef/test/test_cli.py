@@ -226,3 +226,9 @@ class TestCli(unittest.TestCase):
         for remove_url in remove_urls:
             repo_set.remove(remove_url)
         assert len(repo_set) > 0
+
+    def test_issue_268(self):
+        header = {}
+        header['accept'] = 'application/vnd.github.v3+json'
+        text, github_data = load_repository_metadata("https://github.com/probot/probot/tree/v12.1.1", header)
+        assert len(github_data['licenseText']) > 0

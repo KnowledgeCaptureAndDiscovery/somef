@@ -779,7 +779,7 @@ def format_output(git_data, repo_data):
     """
     print("formatting output")
     file_exploration = ['hasExecutableNotebook', 'hasBuildFile', 'hasDocumentation', 'codeOfConduct',
-                        'contributingGuidelines', 'licenseFile', 'acknowledgments', 'contributors', 'hasScriptFile']
+                        'contributingGuidelines', 'licenseFile', 'licenseText', 'acknowledgments', 'contributors', 'hasScriptFile']
     for i in git_data.keys():
         # print(i)
         # print(git_data[i])

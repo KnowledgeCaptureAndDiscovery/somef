@@ -83,8 +83,12 @@ software_schema = {
         "@type": "xsd:string"
     },
     "sd:license": {
-        "@path": ["license", "url"],
+        "@path": ["license", "licenseFile", "url"],
         "@type": "xsd:anyURI"
+    },
+    "sd:licenseText": {
+        "@path": ["licenseText"],
+        "@type": "xsd:string"
     },
     "sd:keywords": {
         "@path": "topics",
