@@ -1,4 +1,5 @@
 import unittest
+import io
 
 from somef.cli import *
 
@@ -196,3 +197,38 @@ class TestCli(unittest.TestCase):
         header['accept'] = 'application/vnd.github.v3+json'
         text, github_data = load_repository_metadata("https://github.com/pytorch/captum/tree/v0.4.0", header)
         assert len(github_data['citation']) > 0
+
+    def test_issue_224(self):
+        repo_data = cli_get_data(0.8, False, repo_url="https://github.com/tensorflow/tensorflow/tree/v2.6.0")
+        data_graph = DataGraph()
+        data_graph.add_somef_data(repo_data)
+        output = io.StringIO()
+        print(data_graph, file=output)
+        content = output.getvalue()
+        output.close()
+        assert content.find("sd:dateCreated") >= 0
+
+    def test_issue_280(self):
+        with open("input-test.txt", "r") as in_handle:
+            # get the line (with the final newline omitted) if the line is not empty
+            repo_list = [line[:-1] for line in in_handle if len(line) > 1]
+
+        # convert to a set to ensure uniqueness (we don't want to get the same data multiple times)
+        repo_set = set(repo_list)
+        # check if the urls in repo_set if are valids
+        remove_urls = []
+        for repo_elem in repo_set:
+            if not validators.url(repo_elem):
+                print("Not a valid repository url. Please check the url provided: " + repo_elem)
+                # repo_set.remove(repo_url)
+                remove_urls.append(repo_elem)
+        # remove non valid urls in repo_set
+        for remove_url in remove_urls:
+            repo_set.remove(remove_url)
+        assert len(repo_set) > 0
+
+    def test_issue_268(self):
+        header = {}
+        header['accept'] = 'application/vnd.github.v3+json'
+        text, github_data = load_repository_metadata("https://github.com/probot/probot/tree/v12.1.1", header)
+        assert len(github_data['licenseText']) > 0

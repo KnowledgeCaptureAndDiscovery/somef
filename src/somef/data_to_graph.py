@@ -17,6 +17,10 @@ class DataGraph:
     def add_somef_data(self, somef_data):
         # process the somef output into data
         data = DataGraph.process_somef(somef_data)
+        if 'name' not in data.keys():
+            data['name'] = 'name'
+        if 'fullName' not in data.keys():
+            data['fullName'] = 'fullName'
         # add the prefixes that we use in the software_schema
         self.prefixes.update(software_prefixes)
         self.bind_prefixes(software_prefixes)
