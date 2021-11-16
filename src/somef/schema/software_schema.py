@@ -29,7 +29,11 @@ software_schema = {
         "@path": "citation",
         "@type": "xsd:string"
     },
-    "sd:hasInstallInstructions": {
+    "sd:hasAcknowledgments": {
+        "@path": "acknowledgments",
+        "@type": "xsd:string"
+    },
+    "sd:hasInstallationInstructions": {
         "@path": "installation",
         "@type": "xsd:string"
     },
@@ -47,7 +51,7 @@ software_schema = {
         "@path": "usage",
         "@type": "xsd:string"
     },
-    "sd:downloadUrl": [
+    "sd:hasDownloadUrl": [
         {
             "@path": "downloadUrl",
             "@type": "xsd:anyURI"
@@ -121,8 +125,16 @@ software_schema = {
         "@type": "xsd:anyURI"
     },
     "sd:hasCodeOfConduct": {
-        "@path": ["code_of_conduct", "excerpt"],
+        "@path": "codeOfConduct",
         "@type": "xsd:anyURI"
+    },
+    "sd:dateCreated": {
+        "@path": "dateCreated",
+        "@type": "xsd:dateTime"
+    },
+    "sd:dateModified": {
+        "@path": "dateModified",
+        "@type": "xsd:dateTime"
     },
     "sd:hasAcknowledgement": {
         "@path": ["acknowledgement", "excerpt"],
@@ -173,12 +185,63 @@ software_schema = {
         "@path": "hasDocumentation",
         "@type": "xsd:anyURI"
     },
+    "sd:referencePublication": {
+        "@path": "arxivLinks",
+        "@type": "xsd:string"
+    },
     "sd:hasBuildFile": {
         "@path": "hasBuildFile",
         "@type": "xsd:string"
     },
-    "sd:hasExecutableNotebook": {
-        "@path": "hasExecutableNotebook",
+    "sd:identifier": {
+        "@path": "identifier",
         "@type": "xsd:string"
+    },
+    "sd:issueTracker": {
+        "@path": "issueTracker",
+        "@type": "xsd:anyURI"
+    },
+    "sd:hasLongName": {
+        "@path": "long_title",
+        "@type": "xsd:string"
+    },
+    "sd:readme": {
+        "@path": "readme_url",
+        "@type": "xsd:anyURI"
+    },
+    "sd:contributor": {
+        "@path": "contributors",
+        "@type": "xsd:string"
+    },
+    "sd:contributingGuidelines": {
+        "@path": "contributingGuidelines",
+        "@type": "xsd:string"
+    },
+    "sd:datePublished": {
+        "@path": "datePublished",
+        "@type": "xsd:dateTime"
+    },
+    "sd:hasExample": {
+        "@path": "executable_example",
+        "@type": "xsd:string"
+    },
+    "sd:hasSupportScriptLocation": {
+        "@path": "hasScriptFile",
+        "@type": "xsd:anyURI"
+    },
+    "sd:hasExecutableInstructions": [
+        {
+            "@path": "invocation",
+            "@type": "xsd:string"
+        },
+        {
+            "@path": "run",
+            "@type": "xsd:string"
+        }
+    ],
+    "sd:supportDetails": {
+        "@path": "support_channel",
+        "@type": "xsd:anyURI"
     }
+
 }

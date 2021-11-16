@@ -13,6 +13,7 @@ import sys
 import tempfile
 import time
 import urllib
+import validators
 import zipfile
 from io import StringIO
 from os import path
@@ -1011,6 +1012,11 @@ def run_cli(*,
             pretty=False,
             missing=False
             ):
+    # check if it is a valid url
+    if repo_url:
+        if not validators.url(repo_url):
+            print("Not a valid repository url. Please check the url provided")
+            return None
     multiple_repos = in_file is not None
     if multiple_repos:
         with open(in_file, "r") as in_handle:
@@ -1019,8 +1025,20 @@ def run_cli(*,
 
         # convert to a set to ensure uniqueness (we don't want to get the same data multiple times)
         repo_set = set(repo_list)
-
-        repo_data = [cli_get_data(threshold, ignore_classifiers, repo_url=repo_url) for repo_url in repo_set]
+        # check if the urls in repo_set if are valids
+        remove_urls = []
+        for repo_elem in repo_set:
+            if not validators.url(repo_elem):
+                print("Not a valid repository url. Please check the url provided: " + repo_elem)
+                #repo_set.remove(repo_url)
+                remove_urls.append(repo_elem)
+        # remove non valid urls in repo_set
+        for remove_url in remove_urls:
+            repo_set.remove(remove_url)
+        if len(repo_set) > 0:
+            repo_data = [cli_get_data(threshold, ignore_classifiers, repo_url=repo_url) for repo_url in repo_set]
+        else:
+            return None
 
     else:
         if repo_url:
@@ -1042,7 +1060,7 @@ def run_cli(*,
 
         print("Saving Knowledge Graph ttl data to", graph_out)
         with open(graph_out, "wb") as out_file:
-            out_file.write(data_graph.g.serialize(format=graph_format))
+            out_file.write(data_graph.g.serialize(format=graph_format, encoding="UTF-8"))
 
     if codemeta_out is not None:
         save_codemeta_output(repo_data, codemeta_out, pretty=pretty)
