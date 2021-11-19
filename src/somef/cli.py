@@ -855,7 +855,9 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     def release_path(path):
         return DataGraph.resolve_path(latest_release, path)
 
-    code_repository = data_path(["codeRepository", "excerpt"])
+    code_repository = None
+    if "codeRepository" in repo_data:
+        code_repository = data_path(["codeRepository", "excerpt"])
 
     author_name = data_path(["owner", "excerpt"])
 
@@ -882,29 +884,114 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     except:
         print("Published date is not available")
 
+
     codemeta_output = {
         "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-        "@type": "SoftwareSourceCode",
-        "license": data_path(["license", "excerpt", "url"]),
-        "codeRepository": "git+" + code_repository + ".git",
-        "dateCreated": format_date(data_path(["dateCreated", "excerpt"])),
-        "dateModified": format_date(data_path(["dateModified", "excerpt"])),
-        "downloadUrl": data_path(["downloadUrl", "excerpt"]),
-        "issueTracker": code_repository + "/issues",
-        "name": data_path(["name", "excerpt"]),
-        "version": release_path(["tag_name"]),
-        "releaseNotes": release_path(["body"]),
-        "keywords": data_path(["topics", "excerpt"]),
-        "programmingLanguage": data_path(["languages", "excerpt"]),
-        "softwareRequirements": data_path(["requirement", "excerpt"]),
-        "buildInstructions": data_path(["installation", "excerpt"]),
-        "author": [
-            {
-                "@type": "Person",
-                "@id": "https://github.com/" + author_name
-            }
-        ]
+        "@type": "SoftwareSourceCode"
     }
+    if "license" in repo_data:
+        codemeta_output["license"] = data_path(["license", "excerpt"])
+    if "license_file" in repo_data:
+        codemeta_output["license_file"] = data_path(["license_file", "excerpt"])
+    if code_repository is not None:
+        codemeta_output["codeRepository"] = "git+" + code_repository + ".git"
+        codemeta_output["issueTracker"] = code_repository + "/issues"
+    if "dateCreated" in repo_data:
+        codemeta_output["dateCreated"] = format_date(data_path(["dateCreated", "excerpt"]))
+    if "dateModified" in repo_data:
+        codemeta_output["dateModified"] = format_date(data_path(["dateModified", "excerpt"]))
+    if "downloadUrl" in repo_data:
+        codemeta_output["downloadUrl"] = data_path(["downloadUrl", "excerpt"])
+    if "name" in repo_data:
+        codemeta_output["name"] = data_path(["name", "excerpt"])
+    if "releases" in repo_data:
+        codemeta_output["releaseNotes"] = release_path(["body"])
+        codemeta_output["version"] = release_path(["tag_name"])
+    if "topics" in repo_data:
+        codemeta_output["keywords"] = data_path(["topics", "excerpt"])
+    if "languages" in repo_data:
+        codemeta_output["programmingLanguage"] = data_path(["languages", "excerpt"])
+    if "requirement" in repo_data:
+        codemeta_output["softwareRequirements"] = data_path(["requirement", "excerpt"])
+    if "installation" in repo_data:
+        codemeta_output["buildInstructions"] = data_path(["installation", "excerpt"])
+    if "owner" in repo_data:
+        codemeta_output["author"] = [
+                {
+                    "@type": "Person",
+                    "@id": "https://github.com/" + author_name
+                }
+            ]
+
+    if "acknowledgement" in repo_data:
+        codemeta_output["acknowledgement"] = data_path(["acknowledgement", "excerpt"])
+    if "long_title" in repo_data:
+        codemeta_output["long_title"] = data_path(["long_title", "excerpt"])
+    if "support" in repo_data:
+        codemeta_output["support"] = data_path(["support", "excerpt"])
+    if "citation" in repo_data:
+        codemeta_output["citation"] = data_path(["citation", "excerpt"])
+    if "citationFile" in repo_data:
+        codemeta_output["citationFile"] = data_path(["citationFile", "excerpt"])
+    if "code_of_conduct" in repo_data:
+        codemeta_output["code_of_conduct"] = data_path(["code_of_conduct", "excerpt"])
+    if "contributing_guidelines" in repo_data:
+        codemeta_output["contributing_guidelines"] = data_path(["contributing_guidelines", "excerpt"])
+    if "forks_count" in repo_data:
+        codemeta_output["forks_count"] = data_path(["forks_count", "excerpt"])
+    if "forks_url" in repo_data:
+        codemeta_output["forks_url"] = data_path(["forks_url", "excerpt"])
+    if "fullName" in repo_data:
+        codemeta_output["fullName"] = data_path(["fullName", "excerpt"])
+    if "hasBuildFile" in repo_data:
+        codemeta_output["hasBuildFile"] = data_path(["hasBuildFile", "excerpt"])
+    if "hasDocumentation" in repo_data:
+        codemeta_output["hasDocumentation"] = data_path(["hasDocumentation", "excerpt"])
+    if "hasExecutableNotebook" in repo_data:
+        codemeta_output["hasExecutableNotebook"] = data_path(["hasExecutableNotebook", "excerpt"])
+    if "identifier" in repo_data:
+        codemeta_output["identifier"] = data_path(["identifier", "excerpt"])
+    if "invocation" in repo_data:
+        codemeta_output["invocation"] = data_path(["invocation", "excerpt"])
+    if "issueTracker" in repo_data:
+        codemeta_output["issueTracker"] = data_path(["issueTracker", "excerpt"])
+    if "name" in repo_data:
+        codemeta_output["name"] = data_path(["name", "excerpt"])
+    if "ownerType" in repo_data:
+        codemeta_output["ownerType"] = data_path(["ownerType", "excerpt"])
+    if "readme_url" in repo_data:
+        codemeta_output["readme_url"] = data_path(["readme_url", "excerpt"])
+    if "stargazers_count" in repo_data:
+        codemeta_output["stargazers_count"] = data_path(["stargazers_count", "excerpt"])
+    if "repo_status" in repo_data:
+        codemeta_output["repo_status"] = data_path(["repo_status", "excerpt"])
+    if "arxivLinks" in repo_data:
+        codemeta_output["arxivLinks"] = data_path(["arxivLinks", "excerpt"])
+    if "codeOfConduct" in repo_data:
+        codemeta_output["codeOfConduct"] = data_path(["codeOfConduct", "excerpt"])
+    if "contributingGuidelines" in repo_data:
+        codemeta_output["contributingGuidelines"] = data_path(["contributingGuidelines", "excerpt"])
+    if "contributingGuidelinesFile" in repo_data:
+        codemeta_output["contributingGuidelinesFile"] = data_path(["contributingGuidelinesFile", "excerpt"])
+    if "licenseFile" in repo_data:
+        codemeta_output["licenseFile"] = data_path(["licenseFile", "excerpt"])
+    if "licenseText" in repo_data:
+        codemeta_output["licenseText"] = data_path(["licenseText", "excerpt"])
+    if "acknowledgments" in repo_data:
+        codemeta_output["acknowledgments"] = data_path(["acknowledgments", "excerpt"])
+    if "acknowledgmentsFile" in repo_data:
+        codemeta_output["acknowledgmentsFile"] = data_path(["acknowledgmentsFile", "excerpt"])
+    if "contributors" in repo_data:
+        codemeta_output["contributors"] = data_path(["contributors", "excerpt"])
+    if "contributorsFile" in repo_data:
+        codemeta_output["contributorsFile"] = data_path(["contributorsFile", "excerpt"])
+    if "hasScriptFile" in repo_data:
+        codemeta_output["hasScriptFile"] = data_path(["hasScriptFile", "excerpt"])
+    if "executable_example" in repo_data:
+        codemeta_output["executable_example"] = data_path(["executable_example", "excerpt"])
+    if "support_channel" in repo_data:
+        codemeta_output["support_channel"] = data_path(["support_channel", "excerpt"])
+
     if descriptions_text:
         codemeta_output["description"] = descriptions_text
     if published_date != "":

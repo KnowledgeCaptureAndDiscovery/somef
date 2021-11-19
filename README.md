@@ -32,6 +32,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Notebooks**: Jupyter notebooks included in a repository
 - **Executable notebooks**: Jupyter notebooks ready for execution (e.g., through myBinder)
 - **Owner**: Name of the user or organization in charge of the repository
+- **Owner type**: Type of the owner, user or organization, of the repository
 - **Keywords**: set of terms used to commonly identify a software component
 - **Source code**: Link to the source code (typically the repository where the readme can be found)
 - **Releases**: Pointer to the available versions of a software component
@@ -39,6 +40,14 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Issue tracker**: Link where to open issues for the target repository
 - **Programming languages**: Languages used in the repository
 - **Acknowledgements**: People or institutions that the authors would like to acknowledge in their software component
+- **Repository Status**: Repository status as it is described in [repostatus.org](https://www.repostatus.org/)
+- **Arxiv Links**: Links to Arxiv articles
+- **Stargazers count**: Total number of stargazers of the project
+- **Forks count**: Number of forks of the project
+- **Forks url**: Links to forks made of the project
+- **Code of Conduct**: Link to the code of conduct of the project
+- **Script**: Snippets of code contained in the readme file
+ 
 
 We use different supervised classifiers, header analysis, regular expressions and the GitHub API to retrieve all these fields (more than one technique may be used for each field)
 
