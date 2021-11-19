@@ -232,3 +232,26 @@ class TestCli(unittest.TestCase):
         header['accept'] = 'application/vnd.github.v3+json'
         text, github_data = load_repository_metadata("https://github.com/probot/probot/tree/v12.1.1", header)
         assert len(github_data['licenseText']) > 0
+
+    def test_issu_210(self):
+        from somef import cli
+        cli.run_cli(threshold=0.8,
+                    ignore_classifiers=False,
+                    repo_url="https://github.com/tensorflow/tensorflow/tree/v2.6.0",
+                    doc_src=None,
+                    in_file=None,
+                    output=None,
+                    graph_out=None,
+                    graph_format="turtle",
+                    codemeta_out="test-tensorflow-2.6.0.json-ld",
+                    pretty=True,
+                    missing=False)
+        text_file = open("test-tensorflow-2.6.0.json-ld", "r")
+
+        # read whole file to a string
+        data = text_file.read()
+
+        # close file
+        text_file.close()
+
+        assert data.find("\"acknowledgments\":") >= 0
