@@ -7,22 +7,22 @@ class TestCli(unittest.TestCase):
 
     def test_extract_bibtex(self):
         test_txt = """
-    Author: Daniel Garijo Verdejo (@dgarijo)
-    Contributors: María Poveda, Idafen Santana, Almudena Ruiz, Miguel Angel García, Oscar Corcho, Daniel Vila, Sergio Barrio, Martin Scharm, Maxime Lefrancois, Alfredo Serafini, @kartgk.
-    Citing WIDOCO: If you used WIDOCO in your work, please cite the ISWC 2017 paper: https://iswc2017.semanticweb.org/paper-138
-    bib
-    @inproceedings{garijo2017widoco,
-      title={WIDOCO: a wizard for documenting ontologies},
-      author={Garijo, Daniel},
-      booktitle={International Semantic Web Conference},
-      pages={94--102},
-      year={2017},
-      organization={Springer, Cham},
-      doi = {10.1007/978-3-319-68204-4_9},
-      funding = {USNSF ICER-1541029, NIH 1R01GM117097-01},
-      url={http://dgarijo.com/papers/widoco-iswc2017.pdf}
-    }
-    If you want to cite the latest version of the software, you can do so by using: https://zenodo.org/badge/latestdoi/11427075.
+    **Citing WIDOCO**: If you used WIDOCO in your work, please cite the ISWC 2017 paper: https://iswc2017.semanticweb.org/paper-138
+
+```bib
+@inproceedings{garijo2017widoco,
+  title={WIDOCO: a wizard for documenting ontologies},
+  author={Garijo, Daniel},
+  booktitle={International Semantic Web Conference},
+  pages={94--102},
+  year={2017},
+  organization={Springer, Cham},
+  doi = {10.1007/978-3-319-68204-4_9},
+  funding = {USNSF ICER-1541029, NIH 1R01GM117097-01},
+  url={http://dgarijo.com/papers/widoco-iswc2017.pdf}
+}
+```
+If you want to cite the latest version of the software, you can do so by using: https://zenodo.org/badge/latestdoi/11427075.
         """
         c = extract_bibtex(test_txt)
         # Only one element is returned.
@@ -54,12 +54,12 @@ class TestCli(unittest.TestCase):
 
     def test_extract_title_underline(self):
         test_text = """
-    Taguette
-    ========
-    Some text goes here
-    
-    Other header
-    ------------
+Taguette
+========
+Some text goes here
+
+Other header
+------------
         """
         c = extract_title(test_text)
         assert "Taguette" == c
@@ -190,7 +190,7 @@ class TestCli(unittest.TestCase):
         header = {}
         header['accept'] = 'application/vnd.github.v3+json'
         text, github_data = load_repository_metadata("https://github.com/probot/probot/tree/v12.1.1", header)
-        assert len(github_data['contributingGuidelines']) > 0 and len(github_data['licenseFile']) > 0
+        assert len(github_data['contributingGuidelines']) > 0 and len(github_data['license']) > 0
 
     def test_issue_218(self):
         header = {}
@@ -202,11 +202,12 @@ class TestCli(unittest.TestCase):
         repo_data = cli_get_data(0.8, False, repo_url="https://github.com/tensorflow/tensorflow/tree/v2.6.0")
         data_graph = DataGraph()
         data_graph.add_somef_data(repo_data)
-        output = io.StringIO()
-        print(data_graph, file=output)
-        content = output.getvalue()
-        output.close()
-        assert content.find("sd:dateCreated") >= 0
+        with open("test-tensorflow-2.6.0.ttl", "wb") as out_file:
+            out_file.write(data_graph.g.serialize(format="turtle", encoding="UTF-8"))
+        text_file = open("test-tensorflow-2.6.0.ttl", "r", encoding="UTF-8")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("sd:dateCreated") >= 0
 
     def test_issue_280(self):
         with open("input-test.txt", "r") as in_handle:
@@ -247,11 +248,6 @@ class TestCli(unittest.TestCase):
                     pretty=True,
                     missing=False)
         text_file = open("test-tensorflow-2.6.0.json-ld", "r")
-
-        # read whole file to a string
         data = text_file.read()
-
-        # close file
         text_file.close()
-
         assert data.find("\"acknowledgments\":") >= 0
