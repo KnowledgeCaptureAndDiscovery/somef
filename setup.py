@@ -5,24 +5,21 @@ import os
 from setuptools import find_packages, setup
 
 install_requires = [
-    "Click",
-    "click-option-group",
-    "requests",
-    "markdown",
-    "requests",
-    "bs4",
-    "matplotlib",
-    "nltk",
-    "numpy",
-   # "scikit-learn==0.21.2",
-    #"scikit-learn==0.24.2",
+    "bs4==0.0.1",
+    "Click==7.0",
+    "click-option-group==0.5.3",
+    "markdown==3.3.6",
+    "matplotlib==3.5.0",
+    "nltk==3.6.5",
+    "numpy==1.21.4",
+    "pandas==1.3.4",
+    "rdflib==6.0.2",
+    "rdflib-jsonld==0.6.2",
+    "requests==2.22.0",
     "scikit-learn==1.0",
-    "pandas",
-    "textblob",
-    "rdflib",
-    "rdflib-jsonld",
-    "xgboost",
-    "validators"
+    "textblob==0.17.1",
+    "validators==0.18.2",
+    "xgboost==1.5.0"
 ]
 
 
