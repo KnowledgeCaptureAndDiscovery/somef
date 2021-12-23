@@ -234,7 +234,7 @@ Other header
         text, github_data = load_repository_metadata("https://github.com/probot/probot/tree/v12.1.1", header)
         assert len(github_data['licenseText']) > 0
 
-    def test_issu_210(self):
+    def test_issue_210(self):
         from somef import cli
         cli.run_cli(threshold=0.8,
                     ignore_classifiers=False,
@@ -251,3 +251,42 @@ Other header
         data = text_file.read()
         text_file.close()
         assert data.find("\"acknowledgments\":") >= 0
+
+    def test_issue_286(self):
+        header = {}
+        header['accept'] = 'application/vnd.github.v3+json'
+        text, github_data = load_repository_metadata("https://gitlab.com/gitlab-org/ci-sample-projects/platform-team", header)
+        assert len(github_data['downloadUrl']) > 0
+
+    def test_issue_291(self):
+        repo_url = "https://github.com/dgarijo/Widoco"
+        text = """
+# WIzard for DOCumenting Ontologies (WIDOCO)
+[![DOI](https://zenodo.org/badge/11427075.svg)](https://zenodo.org/badge/latestdoi/11427075) [![](https://jitpack.io/v/dgarijo/Widoco.svg)](https://jitpack.io/#dgarijo/Widoco)
+
+![Logo](src/main/resources/logo/logo2.png)
+
+WIDOCO helps you to publish and create an enriched and customized documentation of your ontology automatically, by following a series of steps in a GUI.
+
+**Author**: Daniel Garijo Verdejo (@dgarijo)
+
+**Contributors**: María Poveda, Idafen Santana, Almudena Ruiz, Miguel Angel García, Oscar Corcho, Daniel Vila, Sergio Barrio, Martin Scharm, Maxime Lefrancois, Alfredo Serafini, @kartgk, Pat Mc Bennett, Christophe Camel.
+
+**Citing WIDOCO**: If you used WIDOCO in your work, please cite the ISWC 2017 paper: https://iswc2017.semanticweb.org/paper-138
+                """
+        logo = extract_logo(text, repo_url)
+        assert len(logo) > 0
+
+    def test_issue_images(self):
+        repo_url = "https://github.com/dgarijo/Widoco"
+        text = """
+<img src="https://github.com/usc-isi-i2/kgtk/raw/master/docs/images/kgtk_logo_200x200.png" width="150"/>
+<img src="https://github.com/usc-isi-i2/kgtk/blob/master/docs/images/kgtk-data-model.png" width="150"/>
+<img src="https://github.com/usc-isi-i2/kgtk/blob/master/docs/images/kgtk-pipeline.png" width="150"/>
+
+# KGTK: Knowledge Graph Toolkit
+
+[![doi](https://zenodo.org/badge/DOI/10.5281/zenodo.3828068.svg)](https://doi.org/10.5281/zenodo.3828068)  ![travis ci](https://travis-ci.org/usc-isi-i2/kgtk.svg?branch=master)  [![Coverage Status](https://coveralls.io/repos/github/usc-isi-i2/kgtk/badge.svg?branch=master)](https://coveralls.io/github/usc-isi-i2/kgtk?branch=master)
+"""
+        images = extract_images(text, repo_url)
+        assert len(images) > 0
