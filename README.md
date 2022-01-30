@@ -55,6 +55,25 @@ We use different supervised classifiers, header analysis, regular expressions an
 See full documentation at [https://somef.readthedocs.io/en/latest/](https://somef.readthedocs.io/en/latest/)
 
 ## Cite SOMEF:
+
+Journal publication (preferred):
+
+```
+@article{10.1162/qss_a_00167,
+    author = {Kelley, Aidan and Garijo, Daniel},
+    title = "{A Framework for Creating Knowledge Graphs of Scientific Software Metadata}",
+    journal = {Quantitative Science Studies},
+    pages = {1-37},
+    year = {2021},
+    month = {11},
+    issn = {2641-3337},
+    doi = {10.1162/qss_a_00167},
+    url = {https://doi.org/10.1162/qss\_a\_00167},
+    eprint = {https://direct.mit.edu/qss/article-pdf/doi/10.1162/qss\_a\_00167/1971225/qss\_a\_00167.pdf},
+}
+```
+
+Conference publication (first):
 ```
 @INPROCEEDINGS{9006447, 
 author={A. {Mao} and D. {Garijo} and S. {Fakhraei}}, 
@@ -70,6 +89,13 @@ pages={3032-3037}
 ## Requirements
 
 - Python 3.9
+
+## Install from Pypi
+SOMEF [is available in Pypi!](https://pypi.org/project/somef/). To install it just type:
+
+```
+pip install somef
+```
 
 ## Install from GitHub
 To run SOMEF, please follow the next steps:

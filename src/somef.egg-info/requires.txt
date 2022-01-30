@@ -12,4 +12,5 @@ requests
 requests
 scikit-learn==1.0
 textblob
+validators
 xgboost
