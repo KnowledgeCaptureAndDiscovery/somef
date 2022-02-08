@@ -239,7 +239,7 @@ def load_repository_metadata(repository_url, header):
             # license_text = license_text_resp.text
             license_info['url'] = possible_license_url
 
-    if license_info != '':
+    if len(license_info) > 0:
         filtered_resp['license'] = license_info
 
     # get keywords / topics
@@ -846,7 +846,7 @@ def remove_unimportant_excerpts(excerpt_element):
     else:
         final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification'}
     final_excerpt['excerpt'] += excerpt_info;
-    final_excerpt['confidence'].append(excerpt_confidence[0])
+    final_excerpt['confidence'].append(excerpt_confidence)
     if not excerpt_element['original_header'] is None:
         final_excerpt['original_header'] += excerpt_element['original_header']
 
