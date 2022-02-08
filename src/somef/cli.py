@@ -239,7 +239,7 @@ def load_repository_metadata(repository_url, header):
             # license_text = license_text_resp.text
             license_info['url'] = possible_license_url
 
-    if license_info != '':
+    if len(license_info) > 0:
         filtered_resp['license'] = license_info
 
     # get keywords / topics
@@ -846,7 +846,7 @@ def remove_unimportant_excerpts(excerpt_element):
     else:
         final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification'}
     final_excerpt['excerpt'] += excerpt_info;
-    final_excerpt['confidence'].append(excerpt_confidence[0])
+    final_excerpt['confidence'].append(excerpt_confidence)
     if not excerpt_element['original_header'] is None:
         final_excerpt['original_header'] += excerpt_element['original_header']
 
@@ -1471,6 +1471,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
         assert (doc_src is None)
         try:
             text, github_data = load_repository_metadata(repo_url, header)
+            if text == "":
+                print("Warning: README document does not exist in the repository")
         except GithubUrlError:
             return None
     else:
@@ -1485,26 +1487,40 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
     header_predictions, string_list = extract_categories_using_header(unfiltered_text)
     text = unmark(text)
     excerpts = create_excerpts(string_list)
-    if ignore_classifiers:
+    if ignore_classifiers or unfiltered_text == '':
         predictions = {}
     else:
         excerpts_headers = parser_somef.extract_text_excerpts_header(unfiltered_text)
         score_dict = run_classifiers(excerpts, file_paths)
         predictions = classify(score_dict, threshold, excerpts_headers)
-    citations = extract_bibtex(text)
-    citation_file_text = ""
-    if 'citation' in github_data.keys():
-        citation_file_text = github_data['citation']
-        del github_data['citation']
-    dois = extract_dois(unfiltered_text)
-    binder_links = extract_binder_links(unfiltered_text)
-    title = extract_title(unfiltered_text)
-    readthedocs_links = extract_readthedocs(unfiltered_text)
-    gitter_chat = extract_gitter_chat(unfiltered_text)
-    repo_status = extract_repo_status(unfiltered_text)
-    arxiv_links = extract_arxiv_links(unfiltered_text)
-    logo = extract_logo(unfiltered_text, repo_url)
-    images = extract_images(unfiltered_text, repo_url)
+    if text != '':
+        citations = extract_bibtex(text)
+        citation_file_text = ""
+        if 'citation' in github_data.keys():
+            citation_file_text = github_data['citation']
+            del github_data['citation']
+        dois = extract_dois(unfiltered_text)
+        binder_links = extract_binder_links(unfiltered_text)
+        title = extract_title(unfiltered_text)
+        readthedocs_links = extract_readthedocs(unfiltered_text)
+        gitter_chat = extract_gitter_chat(unfiltered_text)
+        repo_status = extract_repo_status(unfiltered_text)
+        arxiv_links = extract_arxiv_links(unfiltered_text)
+        logo = extract_logo(unfiltered_text, repo_url)
+        images = extract_images(unfiltered_text, repo_url)
+    else:
+        citations = []
+        citation_file_text = ""
+        dois = []
+        binder_links = []
+        title = ""
+        readthedocs_links = []
+        gitter_chat = ""
+        repo_status = ""
+        arxiv_links = []
+        logo = ""
+        images = []
+
     predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title, readthedocs_links, gitter_chat, repo_status, arxiv_links, logo, images)
     return format_output(github_data, predictions)
 
