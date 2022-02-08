@@ -291,9 +291,16 @@ WIDOCO helps you to publish and create an enriched and customized documentation 
         images = extract_images(text, repo_url)
         assert len(images) > 0
 
+
     def test_issue_285(self):
         header = {}
         header['accept'] = 'application/vnd.github.v3+json'
         text, github_data = load_repository_metadata("https://github.com/vroddon/rdfchess", header)
         assert not 'license' in github_data == True
 
+
+    def test_issue_309(self):
+        header = {}
+        header['accept'] = 'application/vnd.github.v3+json'
+        text, github_data = load_repository_metadata("https://github.com/oeg-upm/OpenRefineExtension_Transformation", header)
+        assert ('codeRepository' in github_data) == True
