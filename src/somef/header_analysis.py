@@ -3,10 +3,12 @@
 ## output file: json files with categories extracted using header analysis; other text data cannot be extracted
 import string
 
+import markdown
 import numpy as np
 import pandas as pd
 import re
 from textblob import Word
+from . import parser_somef
 import json
 
 # Define wordnet groups
@@ -86,35 +88,12 @@ def extract_bash_code(text):
 
 def extract_header_content(text):  # extract the header and content of text to dataframe
     print('Extracting headers and content.')
-    # check the format of header
-    underline_header = re.findall('.+[\n]={3,}[\n]', text)
-    hash_header = re.findall('#{1,5} .*[\n][\n]', text)
-
-    # header declared with ==== and --- Since creating a single regex for both is complicated,
-    # We select the maximum number of headers we can match
-    if len(underline_header) != 0 and len(underline_header) > len(hash_header):
-        header = re.findall('.+[\n][=-]+[\n]+', text)
-        header = [re.sub('[\n][=-]+[\n]', '', i) for i in header]
-        content = re.split('.+[\n][=-]+[\n]+', text)
-        # Remove the first entry, as it is always empty
-        content = content[1:]
-
-    # header declared with ##
-    else:
-        #a = re.findall(r'\`\`\`[^\`]+\`\`\`', text, flags=re.DOTALL)
-        #replace call to re.findall for extract_bash_code to solve GitHub issue 231
-        a = extract_bash_code(text)
-        a_sub = [re.sub('#', '#notes:', i) for i in a]
-        for i, j in zip(a, a_sub):
-            text = text.replace(i, j)
-        header = re.findall('#{1,5} .*', text)
-        header = [re.sub('#', '', i) for i in header]
-        content = re.split('#{1,6} .*', text)
-        content = [re.sub('#notes', '#', i) for i in content]
-        content = [re.sub("[\n]+", '', i, 1) for i in content]
-        # Remove the first entry, as it is always empty
-        content = content[1:]
-
+    header = []
+    headers = parser_somef.extract_headers(markdown.markdown(text))
+    for key in headers.keys():
+        if headers[key]:
+            header.append(key)
+    content = parser_somef.extract_content_per_header(text, headers)
     # into dataframe
     df = pd.DataFrame(columns=['Header', 'Content'])
     for i, j in zip(header, content):
@@ -201,14 +180,21 @@ def extract_categories_using_headers(text):  # main function
 
     # to json
     group = data.loc[(data['Group'] != 'None') & pd.notna(data['Group'])]
-    group = group.reindex(columns=['Content', 'Group'])
+    #group = group.reindex(columns=['Content', 'Group'])
     group['confidence'] = [[1]] * len(group)
     group.rename(columns={'Content': 'excerpt'}, inplace=True)
+    group.rename(columns={'Header': 'original_header'}, inplace=True)
     group['technique'] = 'Header extraction'
+    #group['original header'] = 'NaN'
     group_json = group.groupby('Group').apply(lambda x: x.to_dict('r')).to_dict()
     for key in group_json.keys():
         for ind in range(len(group_json[key])):
             del group_json[key][ind]['Group']
+
+    for key in group_json.keys():
+        for ind in range(len(group_json[key])):
+            print(group_json[key][ind]['excerpt'])
+
     print('Converting to json files.')
 
     # strings without tag (they will be classified)

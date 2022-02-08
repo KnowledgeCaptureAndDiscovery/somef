@@ -28,6 +28,7 @@ from somef.data_to_graph import DataGraph
 from . import createExcerpts
 from . import header_analysis
 
+from . import parser_somef
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
@@ -455,7 +456,6 @@ def load_repository_metadata_gitlab(repository_url, header):
     project_details = details.json()
     date = details.headers["date"]
 
-    #repo_api_base_url = f"https://api.github.com/repos/{owner}/{repo_name}"
     repo_api_base_url = f"{repository_url}"
 
     repo_ref = None
@@ -464,7 +464,7 @@ def load_repository_metadata_gitlab(repository_url, header):
     if len(path_components) >= 5:
         if not path_components[3] == "tree":
             print(
-                "Github link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}/tree/{ref}.")
+                "GitLab link is not correct. \nThe correct format is https://gitlab.com/{owner}/{repo_name}.")
 
             return " ", {}
 
@@ -474,8 +474,6 @@ def load_repository_metadata_gitlab(repository_url, header):
 
     print(repo_api_base_url)
 
-    #general_resp, date = rate_limit_get(repo_api_base_url, headers=header)
-    #general_resp = {'default_branch': "master"}
     general_resp = {'default_branch': project_details['default_branch']}
 
     if 'message' in general_resp:
@@ -740,7 +738,13 @@ def get_project_id(repository_url):
     project_id = "-1"
     start = init + len("\"project_id\":")
     if init >= 0:
-        end = response_str.find("}", start)
+        end = 0
+        end_bracket = response_str.find("}", start)
+        comma = response_str.find(",", start)
+        if comma != -1 and comma < end_bracket:
+            end = comma
+        else:
+            end = end_bracket
         if end >= 0:
             project_id = response_str[start:end]
     return project_id
@@ -795,7 +799,8 @@ def remove_bibtex(string_list):
 def create_excerpts(string_list):
     print("Splitting text into valid excerpts for classification")
     string_list = remove_bibtex(string_list)
-    divisions = createExcerpts.split_into_excerpts(string_list)
+    #divisions = createExcerpts.split_into_excerpts(string_list)
+    divisions = parser_somef.extract_blocks_excerpts(string_list)
     print("Text Successfully split. \n")
     return divisions
 
@@ -836,20 +841,21 @@ def run_classifiers(excerpts, file_paths):
 def remove_unimportant_excerpts(excerpt_element):
     excerpt_info = excerpt_element['excerpt']
     excerpt_confidence = excerpt_element['confidence']
-    excerpt_lines = excerpt_info.split('\n')
-    final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification'}
-    for i in range(len(excerpt_lines) - 1):
-        words = excerpt_lines[i].split(' ')
-        if len(words) == 2:
-            continue
-        final_excerpt['excerpt'] += excerpt_lines[i] + '\n';
-        final_excerpt['confidence'].append(excerpt_confidence[i])
+    if not excerpt_element['original_header'] is None:
+        final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification', 'original_header': ""}
+    else:
+        final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification'}
+    final_excerpt['excerpt'] += excerpt_info;
+    final_excerpt['confidence'].append(excerpt_confidence[0])
+    if not excerpt_element['original_header'] is None:
+        final_excerpt['original_header'] += excerpt_element['original_header']
+
     return final_excerpt
 
 
 ## Function takes scores dictionary and a threshold as input
 ## Returns predictions containing excerpts with a confidence above the given threshold.
-def classify(scores, threshold):
+def classify(scores, threshold, excerpts_headers):
     print("Checking Thresholds for Classified Excerpts.")
     predictions = {}
     for ele in scores.keys():
@@ -858,8 +864,14 @@ def classify(scores, threshold):
         predictions[ele] = []
         excerpt = ""
         confid = []
+        header = ""
         for i in range(len(scores[ele]['confidence'])):
             if scores[ele]['confidence'][i] >= threshold:
+                element = scores[ele]['excerpt'][i]
+                if element in set(excerpts_headers['text']):
+                    elem = excerpts_headers.loc[excerpts_headers['text'] == element]
+                    ind = elem.index.values[0]
+                    header = elem.at[ind, 'header']
                 if flag == False:
                     excerpt = excerpt + scores[ele]['excerpt'][i] + ' \n'
                     confid.append(scores[ele]['confidence'][i])
@@ -869,7 +881,11 @@ def classify(scores, threshold):
                     confid.append(scores[ele]['confidence'][i])
             else:
                 if flag == True:
-                    element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid})
+                    if not header == "":
+                        element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid, 'original_header': header})
+                        header == ""
+                    else:
+                        element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid})
                     if len(element['confidence']) != 0:
                         predictions[ele].append(element)
                     excerpt = ""
@@ -931,7 +947,6 @@ def extract_dois(readme_text) -> object:
     regex = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
     dois = re.findall(regex, readme_text)
     print("Extraction of DOIS from readme completed.\n")
-    # print(dois)
     return dois
 
 
@@ -1473,8 +1488,9 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
     if ignore_classifiers:
         predictions = {}
     else:
+        excerpts_headers = parser_somef.extract_text_excerpts_header(unfiltered_text)
         score_dict = run_classifiers(excerpts, file_paths)
-        predictions = classify(score_dict, threshold)
+        predictions = classify(score_dict, threshold, excerpts_headers)
     citations = extract_bibtex(text)
     citation_file_text = ""
     if 'citation' in github_data.keys():

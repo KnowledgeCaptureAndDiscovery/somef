@@ -29,9 +29,11 @@ Content sixth header
 First level header
 ==================
 Content first header
+
 ## Second level header ##
 
 Content second header
+
 ### Third level header ###
 
 Content third header
@@ -39,7 +41,7 @@ Content third header
         result = extract_header_content(text)
         print(result)
         #Should return 2: we select the maximum amount of headers we can match
-        assert len(result.index) == 2
+        assert len(result.index) == 3
 
     # Example: Taguette
     def test_extract_header_content_underline(self):
@@ -127,4 +129,22 @@ According to Mozilla's [FAQ](http://www.mozilla.org/MPL/2.0/FAQ.html), "The MPL'
             file_text = data_file.read()
             results = extract_header_content(file_text)
             print(results)
-            assert len(results) == 17
+            assert len(results) == 16
+
+    def test_issue_237(self):
+        with open("README-manim.md", "r") as data_file:
+            file_text = data_file.read()
+            json, results = extract_categories_using_headers(file_text)
+            element = results[2]
+            split = element.split("\n")
+            assert len(split) > 1
+            print(split)
+
+    def test_issue_313(self):
+        with open("README-manim.md", "r") as data_file:
+            file_text = data_file.read()
+            json, results = extract_categories_using_headers(file_text)
+            element = json.get('documentation')
+            elem = element[0]
+            title = elem.get('original_header')
+            assert title == 'Documentation'
