@@ -299,8 +299,46 @@ WIDOCO helps you to publish and create an enriched and customized documentation 
         assert not 'license' in github_data == True
 
 
-    def test_issue_309(self):
+    def test_issue_270(self):
         header = {}
         header['accept'] = 'application/vnd.github.v3+json'
         text, github_data = load_repository_metadata("https://github.com/oeg-upm/OpenRefineExtension_Transformation", header)
         assert ('codeRepository' in github_data) == True
+
+        def test_issue_270(self):
+            text = """
+<p align="center">
+    <a href="https://github.com/3b1b/manim">
+        <img src="https://raw.githubusercontent.com/3b1b/manim/master/logo/cropped.png">
+    </a>
+</p>
+
+[![pypi version](https://img.shields.io/pypi/v/manimgl?logo=pypi)](https://pypi.org/project/manimgl/)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://choosealicense.com/licenses/mit/)
+[![Manim Subreddit](https://img.shields.io/reddit/subreddit-subscribers/manim.svg?color=ff4301&label=reddit&logo=reddit)](https://www.reddit.com/r/manim/)
+[![Manim Discord](https://img.shields.io/discord/581738731934056449.svg?label=discord&logo=discord)](https://discord.com/invite/bYCyhM9Kz2)
+[![docs](https://github.com/3b1b/manim/workflows/docs/badge.svg)](https://3b1b.github.io/manim/)
+
+Manim is an engine for precise programmatic animations, designed for creating explanatory math videos.
+            """
+            support_channels = extract_support_channels(text)
+            assert len(support_channels) == 2
+
+
+    def test_issue_311(self):
+        from somef import cli
+        cli.run_cli(threshold=0.8,
+                    ignore_classifiers=False,
+                    repo_url=None,
+                    doc_src="repostatus-README.md",
+                    in_file=None,
+                    output=None,
+                    graph_out=None,
+                    graph_format="turtle",
+                    codemeta_out="test-repostatus-311.json-ld",
+                    pretty=True,
+                    missing=False)
+        text_file = open("test-tensorflow-2.6.0.json-ld", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("\"repo_status\":") < 0
