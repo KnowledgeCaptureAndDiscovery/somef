@@ -1015,9 +1015,9 @@ def extract_readthedocs(readme_text) -> object:
     # remove duplicates (links like [readthedocs](readthedocs) are found twice
     return list(dict.fromkeys(readthedocs_links))
 
-def extract_gitter_chat(readme_text):
+def extract_support_channels(readme_text):
     """
-    Function to extract Gitter Chat link from text
+    Function to extract Gitter Chat, Reddit and Discord links from text
     Parameters
     ----------
     readme_text text readme
@@ -1026,13 +1026,28 @@ def extract_gitter_chat(readme_text):
     -------
     Link to the Gitter Chat
     """
-    gitter_chat = ""
+    results = []
+
     index_gitter_chat = readme_text.find("[![Gitter chat]")
     if index_gitter_chat > 0:
         init = readme_text.find(")](",index_gitter_chat)
         end = readme_text.find(")",init + 3)
         gitter_chat = readme_text[init+3:end]
-    return gitter_chat
+        results.append(gitter_chat)
+
+    init = readme_text.find("(https://www.reddit.com/r/")
+    if init > 0:
+        end = readme_text.find(")", init)
+        repo_status = readme_text[init + 1:end]
+        results.append(repo_status)
+
+    init = readme_text.find("(https://discord.com/invite/")
+    if init > 0:
+        end = readme_text.find(")", init)
+        repo_status = readme_text[init + 1:end]
+        results.append(repo_status)
+
+    return results
 
 
 def extract_repo_status(unfiltered_text):
@@ -1089,6 +1104,7 @@ def extract_logo(unfiltered_text, repo_url):
         logo = repo_url + logo
     return logo
 
+
 def extract_images(unfiltered_text, repo_url):
     images = []
     index_logo = unfiltered_text.find("![Logo]")
@@ -1112,7 +1128,24 @@ def extract_images(unfiltered_text, repo_url):
 
     return images
 
-def merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, long_title, readthedocs_links, gitter_chat, repo_status, arxiv_links, logo, images):
+
+def extract_support(unfiltered_text):
+    results = []
+    init = unfiltered_text.find("(https://www.reddit.com/r/")
+    if init > 0:
+        end = unfiltered_text.find(")", init)
+        repo_status = unfiltered_text[init + 1:end]
+        results.append(repo_status)
+
+    init = unfiltered_text.find("(https://discord.com/invite/")
+    if init > 0:
+        end = unfiltered_text.find(")", init)
+        repo_status = unfiltered_text[init + 1:end]
+        results.append(repo_status)
+
+    return results
+
+def merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, long_title, readthedocs_links, repo_status, arxiv_links, logo, images, support_channels):
     """
     Function that takes the predictions using header information, classifier and bibtex/doi parser
     Parameters
@@ -1152,9 +1185,6 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
             # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
             predictions['executable_example'].insert(0, {'excerpt': notebook[1], 'confidence': [1.0],
                                                          'technique': 'Regular expression'})
-    if len(gitter_chat) != 0:
-        predictions['support_channel'] = {'excerpt': gitter_chat, 'confidence': [1.0],
-                                     'technique': 'Regular expression'}
 
     if len(repo_status) != 0:
         predictions['repo_status'] = {'excerpt': "https://www.repostatus.org/#"+repo_status[0:repo_status.find(" ")].lower(), 'description': repo_status,
@@ -1174,6 +1204,10 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
             # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
             predictions['image'].insert(0, {'excerpt': images[1], 'confidence': [1.0],
                                                          'technique': 'Regular expression'})
+
+    if len(support_channels) != 0:
+        predictions['support_channels'] = {'excerpt': support_channels, 'confidence': [1.0],
+                                     'technique': 'Regular expression'}
 
     for i in range(len(readthedocs_links)):
         if 'documentation' not in predictions.keys():
@@ -1293,7 +1327,10 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         confs = x["confidence"]
 
         if len(confs) > 0:
-            return sum(confs) / len(confs)
+            try:
+                return max(sum(confs) / len(confs))
+            except:
+                return 0
         else:
             return 0
 
@@ -1317,8 +1354,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     }
     if "license" in repo_data:
         codemeta_output["license"] = data_path(["license", "excerpt"])
-    if "license_file" in repo_data:
-        codemeta_output["license_file"] = data_path(["license_file", "excerpt"])
+    #if "license_file" in repo_data:
+    #    codemeta_output["license_file"] = data_path(["license_file", "excerpt"])
     if code_repository is not None:
         codemeta_output["codeRepository"] = "git+" + code_repository + ".git"
         codemeta_output["issueTracker"] = code_repository + "/issues"
@@ -1351,8 +1388,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
     if "acknowledgement" in repo_data:
         codemeta_output["acknowledgement"] = data_path(["acknowledgement", "excerpt"])
-    if "long_title" in repo_data:
-        codemeta_output["long_title"] = data_path(["long_title", "excerpt"])
+    #if "long_title" in repo_data:
+    #    codemeta_output["long_title"] = data_path(["long_title", "excerpt"])
     if "support" in repo_data:
         codemeta_output["support"] = data_path(["support", "excerpt"])
     if "citation" in repo_data:
@@ -1389,8 +1426,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["readme_url"] = data_path(["readme_url", "excerpt"])
     if "stargazers_count" in repo_data:
         codemeta_output["stargazers_count"] = data_path(["stargazers_count", "excerpt"])
-    if "repo_status" in repo_data:
-        codemeta_output["repo_status"] = data_path(["repo_status", "excerpt"])
+    #if "repo_status" in repo_data:
+    #    codemeta_output["repo_status"] = data_path(["repo_status", "excerpt"])
     if "arxivLinks" in repo_data:
         codemeta_output["arxivLinks"] = data_path(["arxivLinks", "excerpt"])
     if "codeOfConduct" in repo_data:
@@ -1415,8 +1452,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["hasScriptFile"] = data_path(["hasScriptFile", "excerpt"])
     if "executable_example" in repo_data:
         codemeta_output["executable_example"] = data_path(["executable_example", "excerpt"])
-    if "support_channel" in repo_data:
-        codemeta_output["support_channel"] = data_path(["support_channel", "excerpt"])
+    #if "support_channel" in repo_data:
+    #    codemeta_output["support_channel"] = data_path(["support_channel", "excerpt"])
 
     if descriptions_text:
         codemeta_output["description"] = descriptions_text
@@ -1503,11 +1540,11 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
         binder_links = extract_binder_links(unfiltered_text)
         title = extract_title(unfiltered_text)
         readthedocs_links = extract_readthedocs(unfiltered_text)
-        gitter_chat = extract_gitter_chat(unfiltered_text)
         repo_status = extract_repo_status(unfiltered_text)
         arxiv_links = extract_arxiv_links(unfiltered_text)
         logo = extract_logo(unfiltered_text, repo_url)
         images = extract_images(unfiltered_text, repo_url)
+        support_channels = extract_support_channels(unfiltered_text)
     else:
         citations = []
         citation_file_text = ""
@@ -1515,13 +1552,13 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
         binder_links = []
         title = ""
         readthedocs_links = []
-        gitter_chat = ""
         repo_status = ""
         arxiv_links = []
         logo = ""
         images = []
+        support_channels = []
 
-    predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title, readthedocs_links, gitter_chat, repo_status, arxiv_links, logo, images)
+    predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title, readthedocs_links, repo_status, arxiv_links, logo, images, support_channels)
     return format_output(github_data, predictions)
 
 
