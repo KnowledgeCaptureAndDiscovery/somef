@@ -146,5 +146,5 @@ According to Mozilla's [FAQ](http://www.mozilla.org/MPL/2.0/FAQ.html), "The MPL'
             json, results = extract_categories_using_headers(file_text)
             element = json.get('documentation')
             elem = element[0]
-            title = elem.get('original_header')
+            title = elem.get('originalHeader')
             assert title == 'Documentation'

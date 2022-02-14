@@ -183,7 +183,7 @@ def extract_categories_using_headers(text):  # main function
     #group = group.reindex(columns=['Content', 'Group'])
     group['confidence'] = [[1]] * len(group)
     group.rename(columns={'Content': 'excerpt'}, inplace=True)
-    group.rename(columns={'Header': 'original_header'}, inplace=True)
+    group.rename(columns={'Header': 'originalHeader'}, inplace=True)
     group['technique'] = 'Header extraction'
     #group['original header'] = 'NaN'
     group_json = group.groupby('Group').apply(lambda x: x.to_dict('r')).to_dict()
