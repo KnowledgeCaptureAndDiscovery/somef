@@ -79,20 +79,20 @@ github_crosswalk_table = {
     "name": "name",
     "fullName": "full_name",
     "issueTracker": "issues_url",
-    "forks_url": "forks_url",
+    "forksUrl": "forks_url",
     "stargazers_count": "stargazers_count",
     "forks_count": "forks_count"
 }
 
 release_crosswalk_table = {
-    'tag_name': 'tag_name',
+    'tagName': 'tag_name',
     'name': 'name',
-    'author_name': ['author', 'login'],
+    'authorName': ['author', 'login'],
     'authorType': ['author', 'type'],
     'body': 'body',
-    'tarball_url': 'tarball_url',
-    'zipball_url': 'zipball_url',
-    'html_url': 'html_url',
+    'tarballUrl': 'tarball_url',
+    'zipballUrl': 'zipball_url',
+    'htmlUrl': 'html_url',
     'url': 'url',
     'dateCreated': 'created_at',
     'datePublished': "published_at",
@@ -258,14 +258,16 @@ def load_repository_metadata(repository_url, header):
     if 'stargazers_count' in filtered_resp:
         stargazers_info['count'] = filtered_resp['stargazers_count']
         stargazers_info['date'] = date
-    filtered_resp['stargazers_count'] = stargazers_info
+        del filtered_resp['stargazers_count']
+    filtered_resp['stargazersCount'] = stargazers_info
 
     # get social features: forks_count
     forks_info = {}
     if 'forks_count' in filtered_resp:
         forks_info['count'] = filtered_resp['forks_count']
         forks_info['date'] = date
-    filtered_resp['forks_count'] = forks_info
+        del filtered_resp['forks_count']
+    filtered_resp['forksCount'] = forks_info
 
     ## get languages
     languages, date = rate_limit_get(filtered_resp['languages_url'])
@@ -286,7 +288,7 @@ def load_repository_metadata(repository_url, header):
     else:
         readme = base64.b64decode(readme_info['content']).decode("utf-8")
         text = readme
-        filtered_resp['readme_url'] = readme_info['html_url']
+        filtered_resp['readmeUrl'] = readme_info['html_url']
 
     # get full git repository
     # todo: maybe it should be optional, as this could take some time?
@@ -474,7 +476,7 @@ def load_repository_metadata_gitlab(repository_url, header):
 
     print(repo_api_base_url)
 
-    general_resp = {'default_branch': project_details['default_branch']}
+    general_resp = {'defaultBranch': project_details['default_branch']}
 
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
@@ -559,7 +561,8 @@ def load_repository_metadata_gitlab(repository_url, header):
     if project_details['star_count'] is not None:
         stargazers_info['count'] = project_details['star_count']
         stargazers_info['date'] = date
-    filtered_resp['stargazers_count'] = stargazers_info
+        del filtered_resp['stargazers_count']
+    filtered_resp['stargazersCount'] = stargazers_info
 
     # get social features: forks_count
     forks_info = {}
@@ -567,7 +570,8 @@ def load_repository_metadata_gitlab(repository_url, header):
     if project_details['star_count'] is not None:
         forks_info['count'] = project_details['forks_count']
         forks_info['date'] = date
-    filtered_resp['forks_count'] = forks_info
+        del filtered_resp['forks_count']
+    filtered_resp['forksCount'] = forks_info
 
     ## get languages
     #languages, date = rate_limit_get(filtered_resp['languages_url'])
@@ -592,11 +596,11 @@ def load_repository_metadata_gitlab(repository_url, header):
     elif 'content' in readme_info:
         readme = base64.b64decode(readme_info['content']).decode("utf-8")
         text = readme
-        filtered_resp['readme_url'] = readme_info['html_url']
+        filtered_resp['readmeUrl'] = readme_info['html_url']
 
     if 'readme_url' in project_details:
         text = get_readme_content(project_details['readme_url'])
-        filtered_resp['readme_url'] = project_details['readme_url']
+        filtered_resp['readmeUrl'] = project_details['readme_url']
 
     # get full git repository
     # todo: maybe it should be optional, as this could take some time?
@@ -841,14 +845,14 @@ def run_classifiers(excerpts, file_paths):
 def remove_unimportant_excerpts(excerpt_element):
     excerpt_info = excerpt_element['excerpt']
     excerpt_confidence = excerpt_element['confidence']
-    if not excerpt_element['original_header'] is None:
-        final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification', 'original_header': ""}
+    if not excerpt_element['originalHeader'] is None:
+        final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification', 'originalHeader': ""}
     else:
         final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification'}
     final_excerpt['excerpt'] += excerpt_info;
     final_excerpt['confidence'].append(excerpt_confidence)
-    if not excerpt_element['original_header'] is None:
-        final_excerpt['original_header'] += excerpt_element['original_header']
+    if not excerpt_element['originalHeader'] is None:
+        final_excerpt['originalHeader'] += excerpt_element['originalHeader']
 
     return final_excerpt
 
@@ -882,7 +886,7 @@ def classify(scores, threshold, excerpts_headers):
             else:
                 if flag == True:
                     if not header == "":
-                        element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid, 'original_header': header})
+                        element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid, 'originalHeader': header})
                         header == ""
                     else:
                         element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid})
@@ -1161,7 +1165,7 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
     """
     print("Merge prediction using header information, classifier and bibtex and doi parsers")
     if long_title:
-        predictions['long_title'] = {'excerpt': long_title, 'confidence': [1.0],
+        predictions['longTitle'] = {'excerpt': long_title, 'confidence': [1.0],
                                      'technique': 'Regular expression'}
     for i in range(len(citations)):
         if 'citation' not in predictions.keys():
@@ -1180,14 +1184,14 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
             predictions['identifier'].insert(0, {'excerpt': identifier[1], 'confidence': [1.0],
                                                  'technique': 'Regular expression'})
     if len(binder_links) != 0:
-        predictions['executable_example'] = []
+        predictions['executableExample'] = []
         for notebook in binder_links:
             # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
-            predictions['executable_example'].insert(0, {'excerpt': notebook[1], 'confidence': [1.0],
+            predictions['executableExample'].insert(0, {'excerpt': notebook[1], 'confidence': [1.0],
                                                          'technique': 'Regular expression'})
 
     if len(repo_status) != 0:
-        predictions['repo_status'] = {'excerpt': "https://www.repostatus.org/#"+repo_status[0:repo_status.find(" ")].lower(), 'description': repo_status,
+        predictions['repoStatus'] = {'excerpt': "https://www.repostatus.org/#"+repo_status[0:repo_status.find(" ")].lower(), 'description': repo_status,
                                      'technique': 'Regular expression'}
 
     if len(arxiv_links) != 0:
@@ -1206,7 +1210,7 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
                                                          'technique': 'Regular expression'})
 
     if len(support_channels) != 0:
-        predictions['support_channels'] = {'excerpt': support_channels, 'confidence': [1.0],
+        predictions['supportChannels'] = {'excerpt': support_channels, 'confidence': [1.0],
                                      'technique': 'Regular expression'}
 
     for i in range(len(readthedocs_links)):
@@ -1354,8 +1358,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     }
     if "license" in repo_data:
         codemeta_output["license"] = data_path(["license", "excerpt"])
-    #if "license_file" in repo_data:
-    #    codemeta_output["license_file"] = data_path(["license_file", "excerpt"])
     if code_repository is not None:
         codemeta_output["codeRepository"] = "git+" + code_repository + ".git"
         codemeta_output["issueTracker"] = code_repository + "/issues"
@@ -1385,11 +1387,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                     "@id": "https://github.com/" + author_name
                 }
             ]
-
     if "acknowledgement" in repo_data:
         codemeta_output["acknowledgement"] = data_path(["acknowledgement", "excerpt"])
-    #if "long_title" in repo_data:
-    #    codemeta_output["long_title"] = data_path(["long_title", "excerpt"])
     if "support" in repo_data:
         codemeta_output["support"] = data_path(["support", "excerpt"])
     if "citation" in repo_data:
@@ -1426,8 +1425,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["readme_url"] = data_path(["readme_url", "excerpt"])
     if "stargazers_count" in repo_data:
         codemeta_output["stargazers_count"] = data_path(["stargazers_count", "excerpt"])
-    #if "repo_status" in repo_data:
-    #    codemeta_output["repo_status"] = data_path(["repo_status", "excerpt"])
     if "arxivLinks" in repo_data:
         codemeta_output["arxivLinks"] = data_path(["arxivLinks", "excerpt"])
     if "codeOfConduct" in repo_data:
@@ -1452,9 +1449,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["hasScriptFile"] = data_path(["hasScriptFile", "excerpt"])
     if "executable_example" in repo_data:
         codemeta_output["executable_example"] = data_path(["executable_example", "excerpt"])
-    #if "support_channel" in repo_data:
-    #    codemeta_output["support_channel"] = data_path(["support_channel", "excerpt"])
-
     if descriptions_text:
         codemeta_output["description"] = descriptions_text
     if published_date != "":

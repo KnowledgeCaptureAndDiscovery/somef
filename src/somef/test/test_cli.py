@@ -124,9 +124,9 @@ Other header
         text = """## GeoNotebook [![CircleCI](https://circleci.com/gh/OpenGeoscience/geonotebook.svg?style=shield)](https://circleci.com/gh/OpenGeoscience/geonotebook) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/OpenGeoscience/geonotebook)
         GeoNotebook is an application that provides client/server
                   """
-        c = extract_gitter_chat(text)
+        c = extract_support_channels(text)
         print(c)
-        assert "https://gitter.im/OpenGeoscience/geonotebook" == c
+        assert "https://gitter.im/OpenGeoscience/geonotebook" in c
 
     def test_issue_166(self):
         header = {}
@@ -342,3 +342,10 @@ Manim is an engine for precise programmatic animations, designed for creating ex
         data = text_file.read()
         text_file.close()
         assert data.find("\"repo_status\":") < 0
+
+
+    def test_issue_284(self):
+        header = {}
+        header['accept'] = 'application/vnd.github.v3+json'
+        text, github_data = load_repository_metadata("https://github.com/3b1b/manim", header)
+        assert ('stargazersCount' in github_data) == True
