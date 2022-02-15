@@ -349,3 +349,9 @@ Manim is an engine for precise programmatic animations, designed for creating ex
         header['accept'] = 'application/vnd.github.v3+json'
         text, github_data = load_repository_metadata("https://github.com/3b1b/manim", header)
         assert ('stargazersCount' in github_data) == True
+
+    def test_issue_272(self):
+        header = {}
+        header['accept'] = 'application/vnd.github.v3+json'
+        text, github_data = load_repository_metadata("https://github.com/3b1b/manim", header)
+        assert ('longTitle' in github_data) == False

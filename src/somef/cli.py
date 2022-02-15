@@ -13,6 +13,8 @@ import sys
 import tempfile
 import time
 import urllib
+
+import markdown
 import validators
 import zipfile
 from io import StringIO
@@ -974,6 +976,23 @@ def extract_binder_links(readme_text) -> object:
 
 
 def extract_title(unfiltered_text):
+    html_text = markdown.markdown(unfiltered_text)
+    splitted = html_text.split("\n")
+    index = 0
+    limit = len(splitted)
+    output = ""
+    regex = r'<[^<>]+>'
+    while index < limit:
+        line = splitted[index]
+        if line.startswith("<h"):
+            if line.startswith("<h1>"):
+                output = re.sub(regex, '', line)
+            break
+        index += 1
+    return output
+
+
+def extract_title_old(unfiltered_text):
     """
     Function to extract a title based on the first header in the readme file
     Parameters
@@ -991,7 +1010,7 @@ def extract_title(unfiltered_text):
         title = re.split('.+[=]+[\n]+', unfiltered_text)[0].strip()
     else:
         # The first occurrence is assumed to be the title.
-        title = re.findall(r'#.+', unfiltered_text)[0]
+        title = re.findall(r'# .+', unfiltered_text)[0]
         # Remove initial #
         if title is not None and len(title) > 0:
             title = title[1:].strip()
