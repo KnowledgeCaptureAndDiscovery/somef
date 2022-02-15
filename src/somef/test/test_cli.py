@@ -355,3 +355,21 @@ Manim is an engine for precise programmatic animations, designed for creating ex
         header['accept'] = 'application/vnd.github.v3+json'
         text, github_data = load_repository_metadata("https://github.com/3b1b/manim", header)
         assert ('longTitle' in github_data) == False
+
+    def test_issue_281(self):
+        from somef import cli
+        cli.run_cli(threshold=0.8,
+                    ignore_classifiers=False,
+                    repo_url=None,
+                    doc_src="repostatus-README.md",
+                    in_file=None,
+                    output="test-281.json",
+                    graph_out=None,
+                    graph_format="turtle",
+                    codemeta_out=None,
+                    pretty=True,
+                    missing=True)
+        text_file = open("test-281.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("missingCategories") > 0
