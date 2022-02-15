@@ -1296,8 +1296,11 @@ def remove_empty_elements(d):
 
 
 # saves the final json Object in the file
-def save_json_output(repo_data, outfile, pretty=False):
+def save_json_output(repo_data, outfile, missing, pretty=False):
     print("Saving json data to", outfile)
+    if missing:
+        missing = create_missing_fields(repo_data)
+        repo_data["missingCategories"] = missing["missingCategories"]
     with open(outfile, 'w') as output:
         if pretty:
             json.dump(repo_data, output, sort_keys=True, indent=2)
@@ -1483,11 +1486,25 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     save_json_output(pruned_output, outfile, pretty=pretty)
 
 
+def create_missing_fields(repo_data):
+    """Function to create a small report with the categories SOMEF was not able to find"""
+    categs = ["installation", "citation", "acknowledgement", "run", "download", "requirement", "contact", "description",
+              "contributor", "documentation", "license", "usage", "faq", "support", "identifier",
+              "hasExecutableNotebook", "hasBuildFile", "hasDocumentation", "executableExample"]
+    missing = []
+    out = {}
+    for c in categs:
+        if c not in repo_data:
+            missing.append(c)
+    out["missingCategories"] = missing
+    return out
+
+
 def create_missing_fields_report(repo_data, out_path):
     """Function to create a small report with the categories SOMEF was not able to find"""
     categs = ["installation", "citation", "acknowledgement", "run", "download", "requirement", "contact", "description",
               "contributor", "documentation", "license", "usage", "faq", "support", "identifier",
-              "hasExecutableNotebook", "hasBuildFile", "hasDocumentation", "executable_example"]
+              "hasExecutableNotebook", "hasBuildFile", "hasDocumentation", "executableExample"]
     missing = []
     out = {}
     for c in categs:
@@ -1501,7 +1518,7 @@ def create_missing_fields_report(repo_data, out_path):
         export_path = out_path.replace(".ttl", "_missing.json")
     else:
         export_path = out_path + "_missing.json"
-    save_json_output(out, export_path)
+    save_json_output(out, export_path, False)
 
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
@@ -1629,7 +1646,7 @@ def run_cli(*,
             repo_data = cli_get_data(threshold, ignore_classifiers, doc_src=doc_src)
 
     if output is not None:
-        save_json_output(repo_data, output, pretty=pretty)
+        save_json_output(repo_data, output, missing, pretty=pretty)
 
     if graph_out is not None:
         print("Generating Knowledge Graph")
@@ -1649,9 +1666,10 @@ def run_cli(*,
 
     if missing is True:
         # save in the same path as output
-        if output is not None:
-            create_missing_fields_report(repo_data, output)
-        elif codemeta_out is not None:
+        #if output is not None:
+        #    create_missing_fields_report(repo_data, output)
+        #elif codemeta_out is not None:
+        if codemeta_out is not None:
             create_missing_fields_report(repo_data, codemeta_out)
         elif graph_out is not None:
             create_missing_fields_report(repo_data, graph_out)
