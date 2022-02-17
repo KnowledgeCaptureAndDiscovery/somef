@@ -3,8 +3,10 @@ import re
 import pandas as pd
 
 
-def extract_headers(htmlText):
-    splitted = htmlText.split("\n")
+def extract_headers(original_text):
+    text, bashes = extract_bash(original_text)
+    html_text = markdown.markdown(text)
+    splitted = html_text.split("\n")
     index = 0
     limit = len(splitted)
     output = {}
@@ -17,6 +19,20 @@ def extract_headers(htmlText):
                 output[text] = True
             else:
                 output[text] = False
+        index += 1
+    return output
+
+def extract_headers_with_tags(original_text):
+    text, bashes = extract_bash(original_text)
+    html_text = markdown.markdown(text)
+    splitted = html_text.split("\n")
+    index = 0
+    limit = len(splitted)
+    output = []
+    while index < limit:
+        line = splitted[index]
+        if line.startswith("<h"):
+            output.append(line)
         index += 1
     return output
 
@@ -337,3 +353,46 @@ def process_blocks_header(headers_content):
             b_block = False
 
     return df
+
+
+def extract_headers_parents(original_text):
+    headers = extract_headers_with_tags(original_text)
+    output = {}
+    parents = []
+    parent = ""
+    for header in headers:
+        parent, parents = update_parents(header, parents)
+        #output[header] = parent
+        output[header] = ' --- '.join(parents)
+        parents.append(header)
+
+    return remove_tags(output)
+
+def remove_tags(header_parents):
+    output = {}
+    regex = r'<[^<>]+>'
+    for key in header_parents.keys():
+        value = header_parents[key]
+        new_key = re.sub(regex, '', key)
+        new_value = re.sub(regex, '', value)
+        output[new_key] = new_value
+
+    return output
+
+
+def update_parents(new_header, parents):
+    parent = ""
+    parent_list = []
+    for l in parents:
+        if minor_than(new_header, l):
+            parent_list.append(l)
+            parent = l
+        else:
+            return parent, parent_list
+
+    return parent, parent_list
+
+def minor_than(second, first):
+    if first == "":
+        return False
+    return int(second[2]) > int(first[2])

@@ -66,13 +66,12 @@ Other header
 
 
     def test_extract_title_hash(self):
-        test_text = """
-    # T2WML: A Cell-Based Language To Map Tables Into Wikidata Records
+        test_text = """# T2WML: A Cell-Based Language To Map Tables Into Wikidata Records
     
-    [![Coverage Status](https://coveralls.io/repos/github/usc-isi-i2/t2wml/badge.svg?branch=master&service=github)](https://coveralls.io/github/usc-isi-i2/t2wml)
+[![Coverage Status](https://coveralls.io/repos/github/usc-isi-i2/t2wml/badge.svg?branch=master&service=github)](https://coveralls.io/github/usc-isi-i2/t2wml)
     
-    * [Running T2WML for Development](#development)
-    ## Wrong header
+* [Running T2WML for Development](#development)
+## Wrong header
         """
         c = extract_title(test_text)
         print(c)
@@ -80,8 +79,8 @@ Other header
 
 
     def test_extract_title_with_md(self):
-        test_text = """
-    # SOMEF [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)
+        test_text = """# SOMEF 
+        [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)
         """
         c = extract_title(test_text)
         print(c)
@@ -195,7 +194,7 @@ Other header
     def test_issue_218(self):
         header = {}
         header['accept'] = 'application/vnd.github.v3+json'
-        text, github_data = load_repository_metadata("https://github.com/pytorch/captum/tree/v0.4.0", header)
+        text, github_data = load_repository_metadata("https://github.com/pytorch/captum/tree", header)
         assert len(github_data['citation']) > 0
 
     def test_issue_224(self):
@@ -341,7 +340,7 @@ Manim is an engine for precise programmatic animations, designed for creating ex
         text_file = open("test-tensorflow-2.6.0.json-ld", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("\"repo_status\":") < 0
+        assert data.find("\"repoStatus\":") < 0
 
 
     def test_issue_284(self):
@@ -373,3 +372,21 @@ Manim is an engine for precise programmatic animations, designed for creating ex
         data = text_file.read()
         text_file.close()
         assert data.find("missingCategories") > 0
+
+    def test_issue_200(self):
+        from somef import cli
+        cli.run_cli(threshold=0.8,
+                    ignore_classifiers=False,
+                    repo_url=None,
+                    doc_src="README-widoco.md",
+                    in_file=None,
+                    output="test-200.json",
+                    graph_out=None,
+                    graph_format="turtle",
+                    codemeta_out=None,
+                    pretty=True,
+                    missing=True)
+        text_file = open("test-200.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("parentHeader") > 0
