@@ -52,7 +52,7 @@ setup(
     name="somef",
     version=version["__version__"],
     author="Daniel Garijo",
-    author_email="dgarijo@isi.edu",
+    author_email="daniel.garijo@upm.es",
     description=__doc__,
     long_description=read("README.md"),
     long_description_content_type="text/markdown",

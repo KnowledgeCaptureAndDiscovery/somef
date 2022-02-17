@@ -4,9 +4,7 @@
 
 A command line interface for automatically extracting relevant information from readme files.
 
-**Authors:** Daniel Garijo, Allen Mao, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
-
-**Contributors:** Miguel Ángel García Delgado.
+**Authors:** Daniel Garijo, Allen Mao, Miguel Ángel García Delgado, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
 
 ## Features
 Given a readme file (or a GitHub repository) SOMEF will extract the following categories (if present):
@@ -47,7 +45,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Forks url**: Links to forks made of the project
 - **Code of Conduct**: Link to the code of conduct of the project
 - **Script**: Snippets of code contained in the readme file
- 
+
 
 We use different supervised classifiers, header analysis, regular expressions and the GitHub API to retrieve all these fields (more than one technique may be used for each field)
 
@@ -75,15 +73,15 @@ Journal publication (preferred):
 
 Conference publication (first):
 ```
-@INPROCEEDINGS{9006447, 
-author={A. {Mao} and D. {Garijo} and S. {Fakhraei}}, 
-booktitle={2019 IEEE International Conference on Big Data (Big Data)}, 
-title={SoMEF: A Framework for Capturing Scientific Software Metadata from its Documentation}, 
+@INPROCEEDINGS{9006447,
+author={A. {Mao} and D. {Garijo} and S. {Fakhraei}},
+booktitle={2019 IEEE International Conference on Big Data (Big Data)},
+title={SoMEF: A Framework for Capturing Scientific Software Metadata from its Documentation},
 year={2019},
-doi={10.1109/BigData47090.2019.9006447}, 
+doi={10.1109/BigData47090.2019.9006447},
 url={http://dgarijo.com/papers/SoMEF.pdf},
 pages={3032-3037}
-} 
+}
 ```
 
 ## Requirements
@@ -106,7 +104,7 @@ Clone this GitHub repository
 git clone https://github.com/KnowledgeCaptureAndDiscovery/somef.git
 ```
 
-Install somef (you should be in the folder that you just cloned). Note that for Python 3.7 and 3.8 the module Cython should be installed in advanced (through the command: `pip install Cython`). 
+Install somef (you should be in the folder that you just cloned). Note that for Python 3.7 and 3.8 the module Cython should be installed in advanced (through the command: `pip install Cython`).
 
 ```
 cd somef
@@ -153,13 +151,13 @@ docker run -it kcapd/somef /bin/bash
 
 And you will be ready to use SOMEF (see section below). If you want to have access to the results we recommend [mounting a volume](https://docs.docker.com/storage/volumes/). For example, the following command will mount the current directory as the `out` folder in the Docker image:
 
-```bash 
+```bash
 docker run -it --rm -v $PWD/:/out kcapd/somef /bin/bash
 ```
 If you move any files produced by somef into `/out`, then you will be able to see them in your current directory.
 
 
-## Usage 
+## Usage
 
 ### Configure
 Before running SOMEF, you must configure it appropriately. Run
@@ -168,9 +166,9 @@ Before running SOMEF, you must configure it appropriately. Run
 somef configure
 ```
 
-And you will be asked to provide the following: 
+And you will be asked to provide the following:
 
-- A GitHub authentication token [**optional, leave blank if not used**], which SOMEF uses to retrieve metadata from GitHub. If you don't include an authentication token, you can still use SOMEF. However, you may be limited to a series of requests per hour. For more information, see [https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) 
+- A GitHub authentication token [**optional, leave blank if not used**], which SOMEF uses to retrieve metadata from GitHub. If you don't include an authentication token, you can still use SOMEF. However, you may be limited to a series of requests per hour. For more information, see [https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
 - The path to the trained classifiers (pickle files). If you have your own classifiers, you can provide them here. Otherwise, you can leave it blank
 
 If you want somef to be automatically configured (without GitHUb authentication key and using the default classifiers) just type:
@@ -240,7 +238,7 @@ Options:
 ```
 
 ## Usage example:
-The following command extracts all metadata available from [https://github.com/dgarijo/Widoco/](https://github.com/dgarijo/Widoco/). 
+The following command extracts all metadata available from [https://github.com/dgarijo/Widoco/](https://github.com/dgarijo/Widoco/).
 
 ```bash
 somef describe -r https://github.com/dgarijo/Widoco/ -o test.json -t 0.8
