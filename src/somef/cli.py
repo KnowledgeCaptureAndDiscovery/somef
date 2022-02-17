@@ -490,7 +490,7 @@ def load_repository_metadata_gitlab(repository_url, header):
         raise GithubUrlError
 
     if repo_ref is None:
-        repo_ref = general_resp['default_branch']
+        repo_ref = general_resp['defaultBranch']
 
     ## get only the fields that we want
     def do_crosswalk(data, crosswalk_table):
@@ -563,16 +563,18 @@ def load_repository_metadata_gitlab(repository_url, header):
     if project_details['star_count'] is not None:
         stargazers_info['count'] = project_details['star_count']
         stargazers_info['date'] = date
-        del filtered_resp['stargazers_count']
+        if 'stargazers_count' in filtered_resp.keys():
+            del filtered_resp['stargazers_count']
     filtered_resp['stargazersCount'] = stargazers_info
 
     # get social features: forks_count
     forks_info = {}
     #if 'forks_count' in filtered_resp:
-    if project_details['star_count'] is not None:
+    if project_details['forks_count'] is not None:
         forks_info['count'] = project_details['forks_count']
         forks_info['date'] = date
-        del filtered_resp['forks_count']
+        if 'forks_count' in filtered_resp.keys():
+            del filtered_resp['forks_count']
     filtered_resp['forksCount'] = forks_info
 
     ## get languages
@@ -855,13 +857,14 @@ def remove_unimportant_excerpts(excerpt_element):
     final_excerpt['confidence'].append(excerpt_confidence)
     if not excerpt_element['originalHeader'] is None:
         final_excerpt['originalHeader'] += excerpt_element['originalHeader']
-
+    if not excerpt_element['parentHeader'] is None and excerpt_element['parentHeader'] != "":
+        final_excerpt['parentHeader'] = excerpt_element['parentHeader']
     return final_excerpt
 
 
 ## Function takes scores dictionary and a threshold as input
 ## Returns predictions containing excerpts with a confidence above the given threshold.
-def classify(scores, threshold, excerpts_headers):
+def classify(scores, threshold, excerpts_headers, header_parents):
     print("Checking Thresholds for Classified Excerpts.")
     predictions = {}
     for ele in scores.keys():
@@ -888,7 +891,7 @@ def classify(scores, threshold, excerpts_headers):
             else:
                 if flag == True:
                     if not header == "":
-                        element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid, 'originalHeader': header})
+                        element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid, 'originalHeader': header, 'parentHeader': header_parents[header]})
                         header == ""
                     else:
                         element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid})
@@ -1313,7 +1316,7 @@ def save_json_output(repo_data, outfile, missing, pretty=False):
 ## Performs some combinations and saves the final json Object in the file
 def save_json(git_data, repo_data, outfile):
     repo_data = format_output(git_data, repo_data)
-    save_json_output(repo_data, outfile)
+    save_json_output(repo_data, outfile, None)
 
 
 def save_codemeta_output(repo_data, outfile, pretty=False):
@@ -1483,7 +1486,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
     # now, prune out the variables that are None
 
-    save_json_output(pruned_output, outfile, pretty=pretty)
+    save_json_output(pruned_output, outfile, None, pretty=pretty)
 
 
 def create_missing_fields(repo_data):
@@ -1558,8 +1561,9 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
         predictions = {}
     else:
         excerpts_headers = parser_somef.extract_text_excerpts_header(unfiltered_text)
+        header_parents = parser_somef.extract_headers_parents(unfiltered_text)
         score_dict = run_classifiers(excerpts, file_paths)
-        predictions = classify(score_dict, threshold, excerpts_headers)
+        predictions = classify(score_dict, threshold, excerpts_headers, header_parents)
     if text != '':
         citations = extract_bibtex(text)
         citation_file_text = ""

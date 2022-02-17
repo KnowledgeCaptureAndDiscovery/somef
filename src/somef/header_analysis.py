@@ -89,15 +89,16 @@ def extract_bash_code(text):
 def extract_header_content(text):  # extract the header and content of text to dataframe
     print('Extracting headers and content.')
     header = []
-    headers = parser_somef.extract_headers(markdown.markdown(text))
+    headers = parser_somef.extract_headers(text)
     for key in headers.keys():
         if headers[key]:
             header.append(key)
     content = parser_somef.extract_content_per_header(text, headers)
+    parent_headers = parser_somef.extract_headers_parents(text)
     # into dataframe
-    df = pd.DataFrame(columns=['Header', 'Content'])
+    df = pd.DataFrame(columns=['Header', 'Content', 'ParentHeader'])
     for i, j in zip(header, content):
-        df = df.append({'Header': i, 'Content': j}, ignore_index=True)
+        df = df.append({'Header': i, 'Content': j, 'ParentHeader': parent_headers[i]}, ignore_index=True)
     df['Content'].replace('', np.nan, inplace=True)
     df.dropna(subset=['Content'], inplace=True)
     return df
@@ -184,6 +185,7 @@ def extract_categories_using_headers(text):  # main function
     group['confidence'] = [[1]] * len(group)
     group.rename(columns={'Content': 'excerpt'}, inplace=True)
     group.rename(columns={'Header': 'originalHeader'}, inplace=True)
+    group.rename(columns={'ParentHeader': 'parentHeader'}, inplace=True)
     group['technique'] = 'Header extraction'
     #group['original header'] = 'NaN'
     group_json = group.groupby('Group').apply(lambda x: x.to_dict('r')).to_dict()
@@ -201,4 +203,15 @@ def extract_categories_using_headers(text):  # main function
     str_list = data.loc[data['Group'].isna(), ['Content']].values.squeeze().tolist()
     if type(str_list) != list:
         str_list = [str_list]
+
+    # remove empty field parentHeader
+    for key in group_json.keys():
+        elements = group_json[key]
+        new_elements = []
+        for element in elements:
+            if element['parentHeader'] == "":
+                del element['parentHeader']
+            new_elements.append(element)
+        group_json[key] = new_elements
+
     return group_json, str_list
