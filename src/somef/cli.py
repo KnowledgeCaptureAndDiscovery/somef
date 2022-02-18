@@ -466,19 +466,22 @@ def load_repository_metadata_gitlab(repository_url, header):
     ref_param = None
 
     if len(path_components) >= 5:
-        if not path_components[3] == "tree":
+        if not path_components[4] == "tree":
             print(
                 "GitLab link is not correct. \nThe correct format is https://gitlab.com/{owner}/{repo_name}.")
 
             return " ", {}
 
         # we must join all after 4, as sometimes tags have "/" in them.
-        repo_ref = "/".join(path_components[4:])
+        repo_ref = "/".join(path_components[5:])
         ref_param = {"ref": repo_ref}
 
     print(repo_api_base_url)
+    if 'defaultBranch' in project_details.keys():
+        general_resp = {'defaultBranch': project_details['defaultBranch']}
+    elif 'default_branch' in project_details.keys():
+        general_resp = {'defaultBranch': project_details['default_branch']}
 
-    general_resp = {'defaultBranch': project_details['defaultBranch']}
 
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
