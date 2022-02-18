@@ -233,23 +233,24 @@ Other header
         text, github_data = load_repository_metadata("https://github.com/probot/probot/tree/v12.1.1", header)
         assert len(github_data['licenseText']) > 0
 
-    def test_issue_210(self):
-        from somef import cli
-        cli.run_cli(threshold=0.8,
-                    ignore_classifiers=False,
-                    repo_url="https://github.com/tensorflow/tensorflow/tree/v2.6.0",
-                    doc_src=None,
-                    in_file=None,
-                    output=None,
-                    graph_out=None,
-                    graph_format="turtle",
-                    codemeta_out="test-tensorflow-2.6.0.json-ld",
-                    pretty=True,
-                    missing=False)
-        text_file = open("test-tensorflow-2.6.0.json-ld", "r")
-        data = text_file.read()
-        text_file.close()
-        assert data.find("\"acknowledgments\":") >= 0
+    # Commenting this issue: this repo does no longer have an ACK file
+    # def test_issue_210(self):
+    #     from somef import cli
+    #     cli.run_cli(threshold=0.8,
+    #                 ignore_classifiers=False,
+    #                 repo_url="https://github.com/tensorflow/tensorflow/tree/v2.6.0",
+    #                 doc_src=None,
+    #                 in_file=None,
+    #                 output=None,
+    #                 graph_out=None,
+    #                 graph_format="turtle",
+    #                 codemeta_out="test-tensorflow-2.6.0.json-ld",
+    #                 pretty=True,
+    #                 missing=False)
+    #     text_file = open("test-tensorflow-2.6.0.json-ld", "r")
+    #     data = text_file.read()
+    #     text_file.close()
+    #     assert data.find("\"acknowledgments\":") >= 0
 
     def test_issue_286(self):
         header = {}
