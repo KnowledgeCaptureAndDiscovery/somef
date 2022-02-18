@@ -1,6 +1,7 @@
-# Software Metadata Extraction Framework (SOMEF) [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675)
+# Software Metadata Extraction Framework (SOMEF) [![Python](https://img.shields.io/pypi/pyversions/somef.svg?style=plastic)](https://badge.fury.io/py/somef) [![PyPI](https://badge.fury.io/py/somef.svg)](https://badge.fury.io/py/somef) [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb) [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
-**Authors**: Daniel Garijo, Allen Mao, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
+
+**Authors:** Daniel Garijo, Allen Mao, Miguel Ángel García Delgado, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
 
 The aim of SOMEF is to help automatically extract metadata from scientific software from their readme files and GitHub repositories and make it available in a machine-readable manner. Thanks to SOMEF, we can populate knowedge graphs of scientific software metadata and relate different software together.
 
@@ -39,7 +40,16 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Changelog**: Description of the changes between versions
 - **Issue tracker**: Link where to open issues for the target repository
 - **Programming languages**: Languages used in the repository
-- **Acknowledgements**: People or institutions that the authors would like to acknowledge in their software component
+- **Repository Status**: Repository status as it is described in [repostatus.org](https://www.repostatus.org/)
+- **Arxiv Links**: Links to Arxiv articles
+- **Stargazers count**: Total number of stargazers of the project
+- **Forks count**: Number of forks of the project
+- **Forks url**: Links to forks made of the project
+- **Code of Conduct**: Link to the code of conduct of the project
+- **Scripts**: Snippets of code contained in the repository.
+- **Support channels**: Help channels one can use to get support about the target software component.
+- **Images**: Images used to illustrate the software component.
+- **Logo**: Main logo used to represent the target software component.
 
 SOMEF uses the [Software  Description Ontology](https://w3id.org/okn/o/sd), which extends [Schema.org](https://schema.org) and [Codemeta](https://codemeta.github.io/terms/) to represent all the categories listed above. To see different export options please see [the getting started page](https://somef.readthedocs.io/en/latest/usage/).
 

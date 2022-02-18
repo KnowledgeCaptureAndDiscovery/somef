@@ -1,5 +1,5 @@
 # Software Metadata Extraction Framework (SOMEF) 
-[![Python](https://img.shields.io/pypi/pyversions/somef.svg?style=plastic)](https://badge.fury.io/py/somef) [![PyPI](https://badge.fury.io/py/somef.svg)](https://badge.fury.io/py/somef) [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb) 
+[![Python](https://img.shields.io/pypi/pyversions/somef.svg?style=plastic)](https://badge.fury.io/py/somef) [![PyPI](https://badge.fury.io/py/somef.svg)](https://badge.fury.io/py/somef) [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)  [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
 <img src="docs/logo.png" alt="logo" width="150"/>
 
@@ -8,7 +8,7 @@ A command line interface for automatically extracting relevant information from 
 **Authors:** Daniel Garijo, Allen Mao, Miguel Ángel García Delgado, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
 
 ## Features
-Given a readme file (or a GitHub repository) SOMEF will extract the following categories (if present):
+Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the following categories (if present):
 
 - **Name**: Name identifying a software component
 - **Full name**: Name + owner (owner/name)
@@ -27,7 +27,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Contact**: Contact person responsible for maintaining a software component
 - **Download URL**: URL where to download the target software (typically the installer, package or a tarball to a stable version)
 - **DOI**: Digital Object Identifier associated with the software (if any)
-- **DockerFile**: Build file to create a Docker image for the target software
+- **DockerFile**: Build file(s) to create a Docker image for the target software
 - **Notebooks**: Jupyter notebooks included in a repository
 - **Executable notebooks**: Jupyter notebooks ready for execution (e.g., through myBinder)
 - **Owner**: Name of the user or organization in charge of the repository
@@ -38,17 +38,19 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Changelog**: Description of the changes between versions
 - **Issue tracker**: Link where to open issues for the target repository
 - **Programming languages**: Languages used in the repository
-- **Acknowledgements**: People or institutions that the authors would like to acknowledge in their software component
 - **Repository Status**: Repository status as it is described in [repostatus.org](https://www.repostatus.org/)
 - **Arxiv Links**: Links to Arxiv articles
 - **Stargazers count**: Total number of stargazers of the project
 - **Forks count**: Number of forks of the project
 - **Forks url**: Links to forks made of the project
 - **Code of Conduct**: Link to the code of conduct of the project
-- **Script**: Snippets of code contained in the readme file
+- **Scripts**: Snippets of code contained in the repository.
+- **Support channels**: Help channels one can use to get support about the target software component.
+- **Images**: Images used to illustrate the software component.
+- **Logo**: Main logo used to represent the target software component.
 
 
-We use different supervised classifiers, header analysis, regular expressions and the GitHub API to retrieve all these fields (more than one technique may be used for each field)
+We use different supervised classifiers, header analysis, regular expressions and the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field)
 
 ## Documentation
 See full documentation at [https://somef.readthedocs.io/en/latest/](https://somef.readthedocs.io/en/latest/)
@@ -207,10 +209,10 @@ Usage: somef describe [OPTIONS]
 Options:
   -t, --threshold FLOAT           Threshold to classify the text  [required]
   Input: [mutually_exclusive, required]
-    -r, --repo_url URL            Github Repository URL
+    -r, --repo_url URL            Github/Gitlab Repository URL
     -d, --doc_src PATH            Path to the README file source
-    -i, --in_file PATH            A file of newline separated links to GitHub
-                                  repositories
+    -i, --in_file PATH            A file of newline separated links to GitHub/
+                                  Gitlab repositories
 
   Output: [required_any]
     -o, --output PATH             Path to the output file. If supplied, the

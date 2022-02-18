@@ -1,5 +1,4 @@
 import unittest
-import io
 
 from somef.cli import *
 
@@ -357,8 +356,7 @@ Manim is an engine for precise programmatic animations, designed for creating ex
         assert ('longTitle' in github_data) == False
 
     def test_issue_281(self):
-        from somef import cli
-        cli.run_cli(threshold=0.8,
+        run_cli(threshold=0.8,
                     ignore_classifiers=False,
                     repo_url=None,
                     doc_src="repostatus-README.md",
@@ -374,19 +372,111 @@ Manim is an engine for precise programmatic animations, designed for creating ex
         text_file.close()
         assert data.find("missingCategories") > 0
 
+    def test_logo(self):
+        text = """![Logo](https://github.com/oeg-upm/Chowlk/blob/webservice/static/resources/logo.png)
+
+# Chowlk Converter
+Tool to transform ontology conceptualizations made with diagrams.net into OWL code.
+        """
+        logos = extract_logo(text,"https://github.com/oeg-upm/Chowlk")
+        # print(logos)
+        assert(len(logos)>0)
+
+    def test_logo2(self):
+        text = """![PyTorch Logo](https://github.com/pytorch/pytorch/blob/master/docs/source/_static/img/pytorch-logo-dark.png)
+--------------------------------------------------------------------------------
+
+PyTorch is a Python package that provides two high-level features:
+        """
+        logos = extract_logo(text, "https://github.com/pytorch/pytorch")
+        # print(logos)
+        assert (len(logos) > 0)
+
+    def test_images(self):
+        text = """![PyTorch Logo](https://github.com/pytorch/pytorch/blob/master/docs/source/_static/img/pytorch-logo-dark.png)
+
+--------------------------------------------------------------------------------
+
+PyTorch is a Python package that provides two high-level features:
+- Tensor computation (like NumPy) with strong GPU acceleration
+- Deep neural networks built on a tape-based autograd system
+
+You can reuse your favorite Python packages such as NumPy, SciPy, and Cython to extend PyTorch when needed.
+
+<!-- toc -->
+
+- [More About PyTorch](#more-about-pytorch)
+  - [A GPU-Ready Tensor Library](#a-gpu-ready-tensor-library)
+  - [Dynamic Neural Networks: Tape-Based Autograd](#dynamic-neural-networks-tape-based-autograd)
+  - [Python First](#python-first)
+  - [Imperative Experiences](#imperative-experiences)
+  - [Fast and Lean](#fast-and-lean)
+  - [Extensions Without Pain](#extensions-without-pain)
+- [Installation](#installation)
+  - [Binaries](#binaries)
+    - [NVIDIA Jetson Platforms](#nvidia-jetson-platforms)
+  - [From Source](#from-source)
+    - [Install Dependencies](#install-dependencies)
+    - [Get the PyTorch Source](#get-the-pytorch-source)
+    - [Install PyTorch](#install-pytorch)
+      - [Adjust Build Options (Optional)](#adjust-build-options-optional)
+  - [Docker Image](#docker-image)
+    - [Using pre-built images](#using-pre-built-images)
+    - [Building the image yourself](#building-the-image-yourself)
+  - [Building the Documentation](#building-the-documentation)
+  - [Previous Versions](#previous-versions)
+- [Getting Started](#getting-started)
+- [Resources](#resources)
+- [Communication](#communication)
+- [Releases and Contributing](#releases-and-contributing)
+- [The Team](#the-team)
+- [License](#license)
+
+<!-- tocstop -->
+
+| System | 3.7 | 3.8 |
+| :---: | :---: | :--: |
+| Linux CPU | [![Build Status](https://ci.pytorch.org/jenkins/job/pytorch-master/badge/icon)](https://ci.pytorch.org/jenkins/job/pytorch-master/) | <center>—</center> |
+| Linux GPU | [![Build Status](https://ci.pytorch.org/jenkins/job/pytorch-master/badge/icon)](https://ci.pytorch.org/jenkins/job/pytorch-master/) | <center>—</center> |
+| Windows CPU / GPU | [![Build Status](https://ci.pytorch.org/jenkins/job/pytorch-builds/job/pytorch-win-ws2016-cuda9-cudnn7-py3-trigger/badge/icon)](https://ci.pytorch.org/jenkins/job/pytorch-builds/job/pytorch-win-ws2016-cuda9-cudnn7-py3-trigger/) |  <center>—</center> |
+| Linux (ppc64le) CPU | [![Build Status](https://powerci.osuosl.org/job/pytorch-master-nightly-py3-linux-ppc64le/badge/icon)](https://powerci.osuosl.org/job/pytorch-master-nightly-py3-linux-ppc64le/) | <center>—</center> |
+| Linux (ppc64le) GPU | [![Build Status](https://powerci.osuosl.org/job/pytorch-master-nightly-py3-linux-ppc64le-gpu/badge/icon)](https://powerci.osuosl.org/job/pytorch-master-nightly-py3-linux-ppc64le-gpu/) | <center>—</center> |
+| Linux (aarch64) CPU | [![Build Status](http://openlabtesting.org:15000/badge?project=pytorch%2Fpytorch&job_name=pytorch-arm64-build-daily-master-py37)](https://status.openlabtesting.org/builds/builds?project=pytorch%2Fpytorch&job_name=pytorch-arm64-build-daily-master-py37) | [![Build Status](http://openlabtesting.org:15000/badge?project=pytorch%2Fpytorch&job_name=pytorch-arm64-build-daily-master-py38)](https://status.openlabtesting.org/builds/builds?project=pytorch%2Fpytorch&job_name=pytorch-arm64-build-daily-master-py38) |
+
+See also the [CI HUD at hud.pytorch.org](https://hud.pytorch.org/ci/pytorch/pytorch/master).
+
+Usually, PyTorch is used either as:
+
+- A replacement for NumPy to use the power of GPUs.
+- A deep learning research platform that provides maximum flexibility and speed.
+
+Elaborating Further:
+
+### A GPU-Ready Tensor Library
+
+If you use NumPy, then you have used Tensors (a.k.a. ndarray).
+
+![Tensor illustration](./docs/source/_static/img/tensor_illustration.png)
+
+PyTorch provides Tensors that can live either on the CPU or the GPU and accelerates the
+computation by a huge amount.
+            """
+        images = extract_images(text, "https://github.com/pytorch/pytorch")
+        print(images)
+        assert (len(images) > 0)
+    
     def test_issue_200(self):
-        from somef import cli
-        cli.run_cli(threshold=0.8,
-                    ignore_classifiers=False,
-                    repo_url=None,
-                    doc_src="README-widoco.md",
-                    in_file=None,
-                    output="test-200.json",
-                    graph_out=None,
-                    graph_format="turtle",
-                    codemeta_out=None,
-                    pretty=True,
-                    missing=True)
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src="README-widoco.md",
+                in_file=None,
+                output="test-200.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
         text_file = open("test-200.json", "r")
         data = text_file.read()
         text_file.close()
