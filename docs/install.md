@@ -1,7 +1,14 @@
 ## Requirements
 
-- Python 3.6 or above (tested on Python 3.8.6)
+- Python 3.9
 
+
+## Install from Pypi
+SOMEF [is available in Pypi!](https://pypi.org/project/somef/). To install it just type:
+
+```
+pip install somef
+```
 
 ## Install from GitHub
 To run SOMEF, please follow the next steps:

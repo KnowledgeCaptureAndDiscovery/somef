@@ -22,6 +22,7 @@ def extract_headers(original_text):
         index += 1
     return output
 
+
 def extract_headers_with_tags(original_text):
     text, bashes = extract_bash(original_text)
     html_text = markdown.markdown(text)
@@ -111,6 +112,7 @@ def extract_bash(text):
         index += 1
     return text, output
 
+
 def extract_blocks_excerpts(header_content):
     output = []
     for block_text in header_content:
@@ -142,17 +144,18 @@ def extract_blocks_excerpts(header_content):
                     p_block = False
                 index_bash = piece.find('BASH')
                 key = retrieve_bash_key(piece, index_bash)
-                piece = piece.replace(key, bashes[key])
-                if index + 1 < limit and block_pieces[index + 1].startswith("BASH"):
-                    b_text.append(piece)
-                    b_block = True
-                elif b_block:
-                    b_text.append(piece)
-                    output.append(join_elements(b_text))
-                    b_text.clear()
-                    b_block = False
-                else:
-                    output.append(piece)
+                if key != '':
+                    piece = piece.replace(key, bashes[key])
+                    if index + 1 < limit and block_pieces[index + 1].startswith("BASH"):
+                        b_text.append(piece)
+                        b_block = True
+                    elif b_block:
+                        b_text.append(piece)
+                        output.append(join_elements(b_text))
+                        b_text.clear()
+                        b_block = False
+                    else:
+                        output.append(piece)
             else:
                 if len(piece) > 0:
                     if b_block:
@@ -225,34 +228,35 @@ def extract_text_excerpts_header(original_text):
     output = {}
     limit = len(keys)
     index = 0
-    top = keys[0]
-    bottom = None
-    text_tokenized = original_text.split('\n')
-    top_index = get_position(0, text_tokenized, top)
-    offset = 1
-    if not text_tokenized[top_index].startswith('#'):
-        offset = 2
-    while index < limit:
-        index += 1
-        if index < limit:
-            bottom = keys[index]
-            bottom_index = get_position(top_index, text_tokenized, bottom)
-            if headers[top]:
-                header_content = get_text(top_index + offset, bottom_index, text_tokenized)
-                if header_content.startswith('\n'):
-                    header_content = header_content[1:]
-                content.append(header_content)
-                output[top] = header_content
-            # else:
-                # print('No se procesa-->' + top)
-            top = bottom
-            top_index = bottom_index
+    if limit > 0:
+        top = keys[0]
+        bottom = None
+        text_tokenized = original_text.split('\n')
+        top_index = get_position(0, text_tokenized, top)
+        offset = 1
+        if not text_tokenized[top_index].startswith('#'):
+            offset = 2
+        while index < limit:
+            index += 1
+            if index < limit:
+                bottom = keys[index]
+                bottom_index = get_position(top_index, text_tokenized, bottom)
+                if headers[top]:
+                    header_content = get_text(top_index + offset, bottom_index, text_tokenized)
+                    if header_content.startswith('\n'):
+                        header_content = header_content[1:]
+                    content.append(header_content)
+                    output[top] = header_content
+                # else:
+                    # print('No se procesa-->' + top)
+                top = bottom
+                top_index = bottom_index
 
-    header_content = get_text(top_index + offset, -1, text_tokenized)
-    if header_content.startswith('\n'):
-        header_content = header_content[1:]
-    content.append(header_content)
-    output[top] = header_content
+        header_content = get_text(top_index + offset, -1, text_tokenized)
+        if header_content.startswith('\n'):
+            header_content = header_content[1:]
+        content.append(header_content)
+        output[top] = header_content
     return process_blocks_header(output)
 
 
@@ -293,19 +297,20 @@ def process_blocks_header(headers_content):
                     p_block = False
                 index_bash = piece.find('BASH')
                 key = retrieve_bash_key(piece, index_bash)
-                piece = piece.replace(key, bashes[key])
-                if index + 1 < limit and block_pieces[index + 1].startswith("BASH"):
-                    b_text.append(piece)
-                    b_block = True
-                elif b_block:
-                    b_text.append(piece)
-                    s_row = pd.Series([join_elements(b_text), header], index=df.columns)
-                    df = df.append(s_row, ignore_index=True)
-                    b_text.clear()
-                    b_block = False
-                else:
-                    s_row = pd.Series([piece, header], index=df.columns)
-                    df = df.append(s_row, ignore_index=True)
+                if key !='':
+                    piece = piece.replace(key, bashes[key])
+                    if index + 1 < limit and block_pieces[index + 1].startswith("BASH"):
+                        b_text.append(piece)
+                        b_block = True
+                    elif b_block:
+                        b_text.append(piece)
+                        s_row = pd.Series([join_elements(b_text), header], index=df.columns)
+                        df = df.append(s_row, ignore_index=True)
+                        b_text.clear()
+                        b_block = False
+                    else:
+                        s_row = pd.Series([piece, header], index=df.columns)
+                        df = df.append(s_row, ignore_index=True)
             else:
                 if len(piece) > 0:
                     if b_block:
@@ -368,6 +373,7 @@ def extract_headers_parents(original_text):
 
     return remove_tags(output)
 
+
 def remove_tags(header_parents):
     output = {}
     regex = r'<[^<>]+>'
@@ -383,14 +389,18 @@ def remove_tags(header_parents):
 def update_parents(new_header, parents):
     parent = ""
     parent_list = []
-    for l in parents:
-        if minor_than(new_header, l):
-            parent_list.append(l)
-            parent = l
-        else:
-            return parent, parent_list
+    try:
+        for p in parents:
+            if minor_than(new_header, p):
+                parent_list.append(p)
+                parent = p
+            else:
+                return parent, parent_list
+    except:
+        print("error when retrieving the parent header list")
 
     return parent, parent_list
+
 
 def minor_than(second, first):
     if first == "":

@@ -24,7 +24,7 @@ def cli():
 def configure(auto):
     if auto:
         click.echo(
-            "Configuring SOMEF automatically. To assign credentials edit the configuration file or run the intearctive mode")
+            "Configuring SOMEF automatically. To assign credentials edit the configuration file or run the interactive mode")
         configuration.configure()
     else:
         authorization = click.prompt("Authorization", default="")
@@ -67,7 +67,7 @@ class URLParamType(click.types.StringParamType):
     "--repo_url",
     "-r",
     type=URLParamType(),
-    help="Github Repository URL",
+    help="Github/Gitlab Repository URL",
 )
 @optgroup.option(
     "--doc_src",
@@ -79,7 +79,7 @@ class URLParamType(click.types.StringParamType):
     "--in_file",
     "-i",
     type=click.Path(exists=True),
-    help="A file of newline separated links to GitHub repositories to process in bulk"
+    help="A file of newline separated links to GitHub/Gitlab repositories to process in bulk"
 )
 @optgroup.group('Output', cls=RequiredAnyOptionGroup)
 @optgroup.option(

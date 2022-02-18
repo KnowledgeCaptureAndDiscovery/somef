@@ -186,7 +186,7 @@ def load_repository_metadata(repository_url, header):
 
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
-            print("Error: repository name is incorrect")
+            print("Error: repository name is private or incorrect")
         else:
             message = general_resp['message']
             print("Error: " + message)
@@ -847,20 +847,28 @@ def run_classifiers(excerpts, file_paths):
     return score_dict
 
 
-## Function removes all excerpt lines which have been classified but contain only one word.
-## Returns the excerpt to be entered into the predictions
 def remove_unimportant_excerpts(excerpt_element):
+    """
+    Function which removes all excerpt lines which have been classified but contain only one word.
+    Parameters
+    ----------
+    excerpt_element
+
+    Returns
+    -------
+    Returns the excerpt to be entered into the predictions
+    """
     excerpt_info = excerpt_element['excerpt']
     excerpt_confidence = excerpt_element['confidence']
-    if not excerpt_element['originalHeader'] is None:
+    if 'originalHeader' in excerpt_element:
         final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification', 'originalHeader': ""}
     else:
         final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification'}
     final_excerpt['excerpt'] += excerpt_info;
     final_excerpt['confidence'].append(excerpt_confidence)
-    if not excerpt_element['originalHeader'] is None:
+    if 'originalHeader' in excerpt_element:
         final_excerpt['originalHeader'] += excerpt_element['originalHeader']
-    if not excerpt_element['parentHeader'] is None and excerpt_element['parentHeader'] != "":
+    if 'parentHeader' in excerpt_element and excerpt_element['parentHeader'] != "":
         final_excerpt['parentHeader'] = excerpt_element['parentHeader']
     return final_excerpt
 
@@ -1105,14 +1113,17 @@ def extract_arxiv_links(unfiltered_text):
     return results
 
 
+# TO DO: join with image detection in a single method
 def extract_logo(unfiltered_text, repo_url):
     logo = ""
     index_logo = unfiltered_text.lower().find("![logo]")
-    if index_logo > 0:
+    if index_logo >= 0:
         init = unfiltered_text.find("(", index_logo)
         end = unfiltered_text.find(")",init)
         logo = unfiltered_text[init+1:end]
     else:
+        # This is problematic if alt label is used
+        # TO DO
         result = [_.start() for _ in re.finditer("<img src=",unfiltered_text)]
         if len(result) > 0:
             for index_img in result:
@@ -1136,18 +1147,20 @@ def extract_logo(unfiltered_text, repo_url):
             if not repo_url.endswith("/"):
                 repo_url = repo_url + "/"
             logo = repo_url + logo
+    print(logo)
     return logo
 
-
+# TO DO: join with logo detection
 def extract_images(unfiltered_text, repo_url):
     images = []
-    index_logo = unfiltered_text.find("![Logo]")
-    result = [_.start() for _ in re.finditer("<img src=",unfiltered_text)]
+    html_text = markdown.markdown(unfiltered_text)
+    # print(html_text)
+    result = [_.start() for _ in re.finditer("<img src=", html_text)]
     if len(result) > 0:
         for index_img in result:
-            init = unfiltered_text.find("\"", index_img)
-            end = unfiltered_text.find("\"", init+1)
-            img = unfiltered_text[init + 1:end]
+            init = html_text.find("\"", index_img)
+            end = html_text.find("\"", init+1)
+            img = html_text[init + 1:end]
             if img.find("logo") < 0:
                 if not img.startswith("http") and repo_url is not None:
                     if repo_url.find("/tree/") > 0:
@@ -1235,8 +1248,7 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
     if len(images) != 0:
         predictions['image'] = []
         for image in images:
-            # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
-            predictions['image'].insert(0, {'excerpt': images[1], 'confidence': [1.0],
+            predictions['image'].insert(0, {'excerpt': image, 'confidence': [1.0],
                                                          'technique': 'Regular expression'})
 
     if len(support_channels) != 0:
