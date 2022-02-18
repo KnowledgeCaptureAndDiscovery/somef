@@ -478,7 +478,7 @@ def load_repository_metadata_gitlab(repository_url, header):
 
     print(repo_api_base_url)
 
-    general_resp = {'defaultBranch': project_details['default_branch']}
+    general_resp = {'defaultBranch': project_details['defaultBranch']}
 
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
@@ -1104,7 +1104,7 @@ def extract_arxiv_links(unfiltered_text):
 
 def extract_logo(unfiltered_text, repo_url):
     logo = ""
-    index_logo = unfiltered_text.find("![Logo]")
+    index_logo = unfiltered_text.lower().find("![logo]")
     if index_logo > 0:
         init = unfiltered_text.find("(", index_logo)
         end = unfiltered_text.find(")",init)
@@ -1119,15 +1119,20 @@ def extract_logo(unfiltered_text, repo_url):
                 if img.find("logo") > 0:
                     logo = img
 
-    if not logo.startswith("http") and repo_url is not None:
-        if repo_url.find("/tree/") > 0:
-            repo_url = repo_url.replace("/tree/", "/")
+    if logo != "" and not logo.startswith("http") and repo_url is not None:
+        if repo_url.find("github.com") > 0:
+            if repo_url.find("/tree/") > 0:
+                repo_url = repo_url.replace("/tree/", "/")
+            else:
+                repo_url = repo_url + "/master/"
+            repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
+            if not repo_url.endswith("/"):
+                repo_url = repo_url + "/"
+            logo = repo_url + logo
         else:
-            repo_url = repo_url + "/master/"
-        repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-        if not repo_url.endswith("/"):
-            repo_url = repo_url + "/"
-        logo = repo_url + logo
+            if not repo_url.endswith("/"):
+                repo_url = repo_url + "/"
+            logo = repo_url + logo
     return logo
 
 
