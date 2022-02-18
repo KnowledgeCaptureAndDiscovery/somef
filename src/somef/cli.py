@@ -445,7 +445,7 @@ def load_repository_metadata_gitlab(repository_url, header):
     path_components = url.path.split('/')
 
     if len(path_components) < 3:
-        print("Github link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}.")
+        print("Gitlab link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}.")
         return " ", {}
 
     owner = path_components[1]
@@ -466,19 +466,22 @@ def load_repository_metadata_gitlab(repository_url, header):
     ref_param = None
 
     if len(path_components) >= 5:
-        if not path_components[3] == "tree":
+        if not path_components[4] == "tree":
             print(
                 "GitLab link is not correct. \nThe correct format is https://gitlab.com/{owner}/{repo_name}.")
 
             return " ", {}
 
         # we must join all after 4, as sometimes tags have "/" in them.
-        repo_ref = "/".join(path_components[4:])
+        repo_ref = "/".join(path_components[5:])
         ref_param = {"ref": repo_ref}
 
     print(repo_api_base_url)
+    if 'defaultBranch' in project_details.keys():
+        general_resp = {'defaultBranch': project_details['defaultBranch']}
+    elif 'default_branch' in project_details.keys():
+        general_resp = {'defaultBranch': project_details['default_branch']}
 
-    general_resp = {'defaultBranch': project_details['default_branch']}
 
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
@@ -512,7 +515,7 @@ def load_repository_metadata_gitlab(repository_url, header):
             if value is not None:
                 output[codemeta_key] = value
             else:
-                print(f"Error: key {path} not present in github repository")
+                print(f"Error: key {path} not present in gitlab repository")
         return output
 
     #filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
@@ -1104,7 +1107,7 @@ def extract_arxiv_links(unfiltered_text):
 
 def extract_logo(unfiltered_text, repo_url):
     logo = ""
-    index_logo = unfiltered_text.find("![Logo]")
+    index_logo = unfiltered_text.lower().find("![logo]")
     if index_logo > 0:
         init = unfiltered_text.find("(", index_logo)
         end = unfiltered_text.find(")",init)
@@ -1119,15 +1122,20 @@ def extract_logo(unfiltered_text, repo_url):
                 if img.find("logo") > 0:
                     logo = img
 
-    if not logo.startswith("http") and repo_url is not None:
-        if repo_url.find("/tree/") > 0:
-            repo_url = repo_url.replace("/tree/", "/")
+    if logo != "" and not logo.startswith("http") and repo_url is not None:
+        if repo_url.find("github.com") > 0:
+            if repo_url.find("/tree/") > 0:
+                repo_url = repo_url.replace("/tree/", "/")
+            else:
+                repo_url = repo_url + "/master/"
+            repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
+            if not repo_url.endswith("/"):
+                repo_url = repo_url + "/"
+            logo = repo_url + logo
         else:
-            repo_url = repo_url + "/master/"
-        repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-        if not repo_url.endswith("/"):
-            repo_url = repo_url + "/"
-        logo = repo_url + logo
+            if not repo_url.endswith("/"):
+                repo_url = repo_url + "/"
+            logo = repo_url + logo
     return logo
 
 
@@ -1250,7 +1258,7 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
     return predictions
 
 
-def format_output(git_data, repo_data):
+def format_output(git_data, repo_data, gitlab_url=False):
     """
     Function takes metadata, readme text predictions, bibtex citations and path to the output file
     Performs some combinations
@@ -1263,6 +1271,9 @@ def format_output(git_data, repo_data):
     -------
     json representation of the categories found in file
     """
+    text_technigue = 'GitHub API'
+    if gitlab_url:
+        text_technigue = 'GitLab API'
     print("formatting output")
     file_exploration = ['hasExecutableNotebook', 'hasBuildFile', 'hasDocumentation', 'codeOfConduct',
                         'contributingGuidelines', 'licenseFile', 'licenseText', 'acknowledgments', 'contributors', 'hasScriptFile']
@@ -1274,12 +1285,12 @@ def format_output(git_data, repo_data):
                 repo_data['description'] = []
             if git_data[i] != "":
                 repo_data['description'].append(
-                    {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'})
+                    {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technigue})
         else:
             if i in file_exploration:
                 repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
             elif git_data[i] != "" and git_data[i] != []:
-                repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'GitHub API'}
+                repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technigue}
     # remove empty categories from json
     return remove_empty_elements(repo_data)
 
@@ -1420,10 +1431,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["citation"] = data_path(["citation", "excerpt"])
     if "citationFile" in repo_data:
         codemeta_output["citationFile"] = data_path(["citationFile", "excerpt"])
-    if "code_of_conduct" in repo_data:
-        codemeta_output["code_of_conduct"] = data_path(["code_of_conduct", "excerpt"])
-    if "contributing_guidelines" in repo_data:
-        codemeta_output["contributing_guidelines"] = data_path(["contributing_guidelines", "excerpt"])
+    if "codeOfConduct" in repo_data:
+        codemeta_output["codeOfConduct"] = data_path(["codeOfConduct", "excerpt"])
     if "forks_count" in repo_data:
         codemeta_output["forks_count"] = data_path(["forks_count", "excerpt"])
     if "forks_url" in repo_data:
@@ -1472,8 +1481,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["contributorsFile"] = data_path(["contributorsFile", "excerpt"])
     if "hasScriptFile" in repo_data:
         codemeta_output["hasScriptFile"] = data_path(["hasScriptFile", "excerpt"])
-    if "executable_example" in repo_data:
-        codemeta_output["executable_example"] = data_path(["executable_example", "excerpt"])
+    if "executableExample" in repo_data:
+        codemeta_output["executableExample"] = data_path(["executableExample", "excerpt"])
     if descriptions_text:
         codemeta_output["description"] = descriptions_text
     if published_date != "":
@@ -1593,7 +1602,11 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
         support_channels = []
 
     predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title, readthedocs_links, repo_status, arxiv_links, logo, images, support_channels)
-    return format_output(github_data, predictions)
+    gitlab_url = False
+    if repo_url is not None:
+        if repo_url.rfind("gitlab.com") > 0:
+            gitlab_url = True
+    return format_output(github_data, predictions, gitlab_url)
 
 
 # Function runs all the required components of the cli on a given document file

@@ -193,9 +193,9 @@ def extract_categories_using_headers(text):  # main function
         for ind in range(len(group_json[key])):
             del group_json[key][ind]['Group']
 
-    for key in group_json.keys():
-        for ind in range(len(group_json[key])):
-            print(group_json[key][ind]['excerpt'])
+    # for key in group_json.keys():
+    #     for ind in range(len(group_json[key])):
+    #         print(group_json[key][ind]['excerpt'])
 
     print('Converting to json files.')
 

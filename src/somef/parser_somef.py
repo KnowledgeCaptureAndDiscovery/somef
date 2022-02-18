@@ -65,8 +65,8 @@ def extract_content_per_header(original_text, headers):
                     header_content = header_content[1:]
                 content.append(header_content)
                 output[top] = header_content
-            else:
-                print('No se procesa-->' + top)
+            # else:
+            #    print('No se procesa-->' + top)
             top = bottom
             top_index = bottom_index
 
@@ -183,7 +183,7 @@ def extract_blocks_excerpts(header_content):
                         output.append(join_elements(b_text))
                         b_text.clear()
                         b_block = False
-                    print('No se añade')
+                    # print('No se añade')
             index += 1
         if p_block:
             output.append(join_elements(p_text))
@@ -243,8 +243,8 @@ def extract_text_excerpts_header(original_text):
                     header_content = header_content[1:]
                 content.append(header_content)
                 output[top] = header_content
-            else:
-                print('No se procesa-->' + top)
+            # else:
+                # print('No se procesa-->' + top)
             top = bottom
             top_index = bottom_index
 
