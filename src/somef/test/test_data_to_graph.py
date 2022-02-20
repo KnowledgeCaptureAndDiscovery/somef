@@ -2,53 +2,7 @@ import unittest
 
 from somef.data_to_graph import DataGraph
 
-
-class Base(unittest.TestCase):
-    def setUp(self):
-        pass
-    # def test_basic(self):
-    #     test_software = {
-    #         "fullName": "test/test",
-    #         "description": "test",
-    #         "owner": {
-    #             "login": "test"
-    #         }
-    #     }
-    #
-    #     schema_table = {
-    #         "@class": "sd:Software",
-    #         "@id": {
-    #             "@format": "obj:Software/{name}",
-    #             "name": "fullName"
-    #         },
-    #         "sd:name": {
-    #             "@value": "fullName",
-    #             "@type": "xsd:string"
-    #         },
-    #         "sd:description": {
-    #             "@value": "description",
-    #             "@type": "xsd:string"
-    #         },
-    #         "sd:hasAuthor": {
-    #             "@class": "schema:Person",
-    #             "@id": {
-    #                 "@format": "obj:Person/{name}",
-    #                 "name": ["owner", "login"]
-    #             },
-    #             "sd:additionalName": {
-    #                 "@value": ["owner", "login"],
-    #                 "@type": "schema:Text"
-    #             }
-    #         }
-    #     }
-    #
-    #     data_graph = DataGraph()
-    #     data_graph.somef_to_graph(test_software, schema_table)
-    #
-    #     for triple in data_graph.g:
-    #         print(triple)
-
-class FlattenDict(Base):
+class FlattenDict(unittest.TestCase):
     def test_combine_dict(self):
 
         dict_in = {
@@ -87,7 +41,8 @@ class FlattenDict(Base):
         for i, _ in enumerate(string_out):
             self.assertEqual(string_out[i], actual_out[i])
 
-class ResolvePath(Base):
+
+class ResolvePath(unittest.TestCase):
     def test_resolve_path_array(self):
         test_obj = {
             "x": [

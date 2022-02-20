@@ -158,7 +158,7 @@ def load_repository_metadata(repository_url, header):
     path_components = url.path.split('/')
 
     if len(path_components) < 3:
-        print("Github link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}.")
+        print("Repository link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}.")
         return " ", {}
 
     owner = path_components[1]
@@ -186,7 +186,7 @@ def load_repository_metadata(repository_url, header):
 
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
-            print("Error: repository name is private or incorrect")
+            print("Error: Repository name is private or incorrect")
         else:
             message = general_resp['message']
             print("Error: " + message)

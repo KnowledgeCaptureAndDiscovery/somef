@@ -2,10 +2,10 @@ import unittest
 
 from somef.test.utils_for_tests import almost_equal
 
+
 class TestAlmostEqual(unittest.TestCase):
 
     def test_basic(self):
-
         a = {
             'b': [5, 7],
             'a': 1
@@ -32,7 +32,6 @@ class TestAlmostEqual(unittest.TestCase):
         self.assertFalse(almost_equal(a, b))
 
     def test_with_exclusion(self):
-
         a = {
             "use": "use",
             "no": "no"
