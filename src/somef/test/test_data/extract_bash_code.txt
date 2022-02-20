@@ -1,0 +1,37 @@
+Another solution is to run Node directly with the `--max-old-space-size` option. The following example (Mac or Linux) allocates 16GB of memory:
+```bash
+$ node  --max-old-space-size=16000 `which mapshaper` <mapshaper commands>
+```
+
+## Installation
+
+Mapshaper requires [Node.js](http://nodejs.org).
+
+With Node installed, you can install the latest release version of mapshaper using npm. Install with the "-g" flag to make the executable scripts available systemwide.
+
+```bash
+npm install -g mapshaper
+```
+
+To install and run the latest development code from github:
+
+```bash
+git clone git@github.com:mbloch/mapshaper.git
+cd mapshaper
+npm install       # install dependencies
+npm run build     # bundle source code files
+npm link          # (optional) add global symlinks so scripts are available systemwide
+```
+
+## Building and testing
+
+From the project directory, run `npm run build` to build both the cli and web UI modules.
+
+Run `npm test` to run mapshaper's tests.
+
+## License
+
+This software is licensed under [MPL 2.0](http://www.mozilla.org/MPL/2.0/).
+
+According to Mozilla's [FAQ](http://www.mozilla.org/MPL/2.0/FAQ.html), "The MPL's â€˜file-levelâ€™ copyleft is designed to encourage contributors to share modifications they make to your code, while still allowing them to combine your code with code under other licenses (open or proprietary) with minimal restrictions."" \
+

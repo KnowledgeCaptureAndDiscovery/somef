@@ -1,0 +1,13 @@
+# First level header
+Content first header
+# Empty header (should not be counted, as there is no content)
+## Second level header
+Content second header
+### Third level header
+Content third header
+#### Fourth level header
+Content fourth header
+##### Fifth level header
+Content fifth header
+###### Sixth level header
+Content sixth header
