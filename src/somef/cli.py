@@ -302,6 +302,8 @@ def load_repository_metadata(repository_url, header):
         repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip"
         print(f"Downloading {repo_archive_url}")
         repo_download = requests.get(repo_archive_url)
+        if repo_download.status_code != 200:
+            sys.exit(f"Error: Archive request failed with HTTP {repo_download.status_code}")
         repo_zip = repo_download.content
 
         repo_zip_file = os.path.join(temp_dir, "repo.zip")
