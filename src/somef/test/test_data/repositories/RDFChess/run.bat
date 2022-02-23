@@ -1,0 +1,1 @@
+java -jar jetty-runner.jar target\rdfchess-1.0.war

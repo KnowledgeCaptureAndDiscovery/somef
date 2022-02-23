@@ -14,11 +14,12 @@ def extract_headers(original_text):
     while index < limit:
         line = splitted[index]
         if line.startswith("<h"):
-            text = re.sub(regex, '', line)
-            if not splitted[index + 1].startswith("<h"):
-                output[text] = True
-            else:
-                output[text] = False
+            if is_header(line):
+                text = re.sub(regex, '', line)
+                if not splitted[index + 1].startswith("<h"):
+                    output[text] = True
+                else:
+                    output[text] = False
         index += 1
     return output
 
@@ -33,7 +34,8 @@ def extract_headers_with_tags(original_text):
     while index < limit:
         line = splitted[index]
         if line.startswith("<h"):
-            output.append(line)
+            if is_header(line):
+                output.append(line)
         index += 1
     return output
 
@@ -66,8 +68,6 @@ def extract_content_per_header(original_text, headers):
                     header_content = header_content[1:]
                 content.append(header_content)
                 output[top] = header_content
-            # else:
-            #    print('No se procesa-->' + top)
             top = bottom
             top_index = bottom_index
 
@@ -166,7 +166,6 @@ def extract_blocks_excerpts(header_content):
                         bash_piece = block_pieces[index + 1]
                         key = retrieve_bash_key(bash_piece, 0)
                         bash_piece = bash_piece.replace(key, bashes[key])
-                        # output.append(piece + '\n' + bash_piece)
                         p_text.append(piece)
                         p_text.append(bash_piece)
                         p_block = True
@@ -186,7 +185,6 @@ def extract_blocks_excerpts(header_content):
                         output.append(join_elements(b_text))
                         b_text.clear()
                         b_block = False
-                    # print('No se añade')
             index += 1
         if p_block:
             output.append(join_elements(p_text))
@@ -356,7 +354,6 @@ def process_blocks_header(headers_content):
             df = df.append(s_row, ignore_index=True)
             b_text.clear()
             b_block = False
-
     return df
 
 
@@ -367,7 +364,6 @@ def extract_headers_parents(original_text):
     parent = ""
     for header in headers:
         parent, parents = update_parents(header, parents)
-        #output[header] = parent
         output[header] = ' --- '.join(parents)
         parents.append(header)
 
@@ -406,3 +402,11 @@ def minor_than(second, first):
     if first == "":
         return False
     return int(second[2]) > int(first[2])
+
+
+def is_header(header):
+    if header.startswith('<h1') or header.startswith('<h2') or header.startswith('<h3') \
+            or header.startswith('<h4') or header.startswith('<h5') or header.startswith('<h6'):
+        return True
+    else:
+        return False

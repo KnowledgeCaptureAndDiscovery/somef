@@ -4,6 +4,7 @@ import os
 from somef.cli import *
 
 test_data_path = "test_data/"
+test_data_repositories = "test_data/repositories/"
 
 
 class TestCli(unittest.TestCase):
@@ -88,14 +89,12 @@ class TestCli(unittest.TestCase):
 
     # This issue should be changed to making a snapshot of the zip file
     def test_issue_171(self):
-        header = {'accept': 'application/vnd.github.v3+json'}
-        text, github_data = load_repository_metadata("https://github.com/RDFLib/rdflib/tree/6.0.2", header)
+        text, github_data = load_local_repository_metadata(test_data_repositories + "rdflib-6.0.2")
         assert len(github_data['contributors']) > 0
 
     # This issue should be changed to making a snapshot of the zip file
     def test_issue_209(self):
-        header = {'accept': 'application/vnd.github.v3+json'}
-        text, github_data = load_repository_metadata("https://github.com/RDFLib/rdflib/tree/6.0.2", header)
+        text, github_data = load_local_repository_metadata(test_data_repositories + "rdflib-6.0.2")
         assert len(github_data['hasScriptFile']) > 0
 
     def test_issue_181(self):
@@ -106,14 +105,12 @@ class TestCli(unittest.TestCase):
 
     # This issue should be changed to making a snapshot of the zip file
     def test_issue_211(self):
-        header = {'accept': 'application/vnd.github.v3+json'}
-        text, github_data = load_repository_metadata("https://github.com/probot/probot/tree/v12.1.1", header)
-        assert len(github_data['contributingGuidelines']) > 0 and len(github_data['license']) > 0
+        text, github_data = load_local_repository_metadata(test_data_repositories + "probot-12.1.1")
+        assert len(github_data['contributingGuidelines']) > 0 and ('license' in github_data.keys() or 'licenseText' in github_data.keys())
 
     # This issue should be changed to making a snapshot of the zip file
     def test_issue_218(self):
-        header = {'accept': 'application/vnd.github.v3+json'}
-        text, github_data = load_repository_metadata("https://github.com/pytorch/captum/tree", header)
+        text, github_data = load_local_repository_metadata(test_data_repositories + "captum")
         assert len(github_data['citation']) > 0
 
     # Commenting this test because it downloads a big repository, and just checks that a ttl has a field.
@@ -150,8 +147,7 @@ class TestCli(unittest.TestCase):
 
     # This issue should be changed to making a snapshot of the zip file
     def test_issue_268(self):
-        header = {'accept': 'application/vnd.github.v3+json'}
-        text, github_data = load_repository_metadata("https://github.com/probot/probot/tree/v12.1.1", header)
+        text, github_data = load_local_repository_metadata(test_data_repositories + "probot-12.1.1")
         assert len(github_data['licenseText']) > 0
 
     # Commenting this issue: this repo does no longer have an ACK file
@@ -183,25 +179,37 @@ class TestCli(unittest.TestCase):
         repo_url = "https://github.com/dgarijo/Widoco"
         with open(test_data_path + "README-widoco.md", "r") as data_file:
             test_text = data_file.read()
-            logo = extract_logo(test_text, repo_url)
-            assert len(logo) > 0
+            logo, images = extract_images(test_text, repo_url)
+            assert (not logo == "")
+
+    def test_issue_291_2(self):
+        repo_url = "https://github.com/usc-isi-i2/kgtk/"
+        with open(test_data_path + "test_logo_uscisii2.txt", "r") as data_file:
+            test_text = data_file.read()
+            logo, images = extract_images(test_text, repo_url)
+            assert (not logo == "")
+
+    def test_issue_291_3(self):
+        repo_url = "https://github.com/tensorflow/tensorflow/"
+        with open(test_data_path + "test_logo_tensorflow.txt", "r") as data_file:
+            test_text = data_file.read()
+            logo, images = extract_images(test_text, repo_url)
+            assert (not logo == "")
 
     def test_issue_images(self):
         repo_url = "https://github.com/usc-isi-i2/kgtk/"
         with open(test_data_path + "test_issue_images.txt", "r") as data_file:
             test_text = data_file.read()
-            images = extract_images(test_text, repo_url)
+            logo, images = extract_images(test_text, repo_url)
             assert len(images) > 0
 
     def test_issue_285(self):
-        header = {'accept': 'application/vnd.github.v3+json'}
-        text, github_data = load_repository_metadata("https://github.com/vroddon/rdfchess", header)
+        text, github_data = load_local_repository_metadata(test_data_repositories + "RDFChess")
         assert ('license' not in github_data) == True
 
     def test_issue_no_readme(self):
         header = {'accept': 'application/vnd.github.v3+json'}
-        text, github_data = load_repository_metadata("https://github.com/oeg-upm/OpenRefineExtension_Transformation",
-                                                     header)
+        text, github_data = load_repository_metadata("https://github.com/oeg-upm/OpenRefineExtension_Transformation",                                                     header)
         assert ('codeRepository' in github_data) == True
 
     def test_issue_270(self):
@@ -260,23 +268,20 @@ class TestCli(unittest.TestCase):
     def test_logo(self):
         with open(test_data_path + "test_logo.txt", "r") as data_file:
             test_text = data_file.read()
-            logos = extract_logo(test_text, "https://github.com/oeg-upm/Chowlk")
-            # print(logos)
-            assert (len(logos) > 0)
+            logo, images = extract_images(test_text, "https://github.com/oeg-upm/Chowlk")
+            assert (not logo == "")
 
     def test_logo2(self):
         with open(test_data_path + "test_logo2.txt", "r") as data_file:
             test_text = data_file.read()
-            logos = extract_logo(test_text, "https://github.com/pytorch/pytorch")
-            # print(logos)
-            assert (len(logos) > 0)
+            logo, images = extract_images(test_text, "https://github.com/pytorch/pytorch")
+            assert (not logo == "")
 
     def test_images(self):
         with open(test_data_path + "test_images.txt", "r") as data_file:
             test_text = data_file.read()
-            images = extract_images(test_text, "https://github.com/pytorch/pytorch")
-            # print(images)
-            assert (len(images) > 0)
+            logo, images = extract_images(test_text, "https://github.com/pytorch/pytorch")
+            assert (len(images) > 0 and not logo == "")
 
     def test_issue_200(self):
         run_cli(threshold=0.8,
@@ -295,3 +300,22 @@ class TestCli(unittest.TestCase):
         text_file.close()
         assert data.find("parentHeader") > 0
         os.remove(test_data_path + "test-200.json")
+
+
+    def test_issue_343(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=test_data_path + "README-ya2o.md",
+                in_file=None,
+                output=test_data_path + "test-343.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
+        text_file = open(test_data_path + "test-343.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("parentHeader") > 0
+        os.remove(test_data_path + "test-343.json")

@@ -1,0 +1,239 @@
+version: 2.1
+
+commands:
+
+  pip_install:
+    description: "Install dependencies via pip"
+    parameters:
+      args:
+        type: string
+        default: ""
+    steps:
+      - run:
+          name: "Install dependencies via pip"
+          command: ./scripts/install_via_pip.sh << parameters.args >>
+
+  conda_install:
+    description: "Install dependencies via conda"
+    parameters:
+      args:
+        type: string
+        default: ""
+    steps:
+      - run:
+          name: "Install dependencies via conda"
+          command: ./scripts/install_via_conda.sh << parameters.args >>
+
+  lint_flake8:
+    description: "Lint with flake8"
+    steps:
+      - run:
+          name: "Lint with flake8"
+          command: flake8
+
+  ufmt_check:
+    description: "Check formatting with ufmt"
+    steps:
+      - run:
+          name: "Check formatting with ufmt"
+          command: ufmt check .
+
+  mypy_check:
+    description: "Static type checking with mypy"
+    steps:
+      - run:
+          name: "Mypy checks"
+          command: ./scripts/run_mypy.sh
+
+  unit_tests:
+    description: "Run unit tests"
+    steps:
+      - run:
+          name: "Run unit tests"
+          command: python -m pytest -ra --cov=. --cov-report term-missing
+
+  sphinx:
+    description: "Run sphinx"
+    steps:
+      - run:
+          name: "Run sphinx"
+          command: sphinx-build -T --keep-going sphinx/source sphinx/build
+
+  configure_github_bot:
+    description: "Configure Docusaurus GitHub bot"
+    steps:
+      - run:
+          name: "Configure Docusaurus GitHub bot"
+          # Do not do this if we don't have the right org (pytorch), or if this is just a PR
+          command: |
+            if [[ $CIRCLE_PROJECT_USERNAME == "pytorch" && -z $CI_PULL_REQUEST && -z $CIRCLE_PR_USERNAME ]]; then
+              git config --global user.email "docusaurus-bot@users.noreply.github.com"
+              git config --global user.name "Captum website deployment script"
+              echo "machine github.com login docusaurus-bot password $DOCUSAURUS_GITHUB_TOKEN" > ~/.netrc
+            fi
+
+  deploy_site:
+    description: "Deploy website to GitHub Pages"
+    steps:
+      - run:
+          name: "Deploy website to GitHub Pages"
+            # TODO: make the installation above conditional on there being relevant changes (no need to install if there are none)
+          command: |
+            if ! git diff --name-only HEAD^ | grep -E "(^\.circleci\/.*)|(^docs\/.*)|(^website\/.*)|(^scripts\/.*)|(^sphinx\/.*)|(^tutorials\/.*)"; then
+              echo "Skipping deploy. No relevant website files have changed"
+            elif [[ $CIRCLE_PROJECT_USERNAME == "pytorch" && -z $CI_PULL_REQUEST && -z $CIRCLE_PR_USERNAME ]]; then
+              mkdir -p website/static/.circleci && cp -a .circleci/. website/static/.circleci/.
+              ./scripts/build_docs.sh -b
+              cd website
+              GIT_USER=docusaurus-bot yarn run publish-gh-pages
+            else
+              echo "Skipping deploy."
+            fi
+
+  simple_pip_install:
+    description: "Simple install of Captum via pip. Does not include extra dependencies such as yarn and nodejs needed for building insights."
+    steps:
+      - run:
+          name: "Simple PIP install"
+          command: |
+            python -m pip install --upgrade pip
+            python -m pip install -e .[dev]
+
+  py_3_7_setup:
+    description: "Set python version to 3.7 and install pip and pytest"
+    steps:
+      - run:
+          name: "Switch to Python v3.7"
+          command: |
+            pyenv versions
+            pyenv global 3.7.0
+
+  install_cuda:
+    description: "Install CUDA for GPU Machine"
+    steps:
+      - run:
+          name: "Install CUDA"
+          command: |
+            wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin
+            sudo mv cuda-ubuntu1604.pin /etc/apt/preferences.d/cuda-repository-pin-600
+            wget http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
+            sudo dpkg -i cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
+            sudo apt-key add /var/cuda-repo-10-2-local-10.2.89-440.33.01/7fa2af80.pub
+            sudo apt-get update
+            sudo apt-get --yes --force-yes install cuda
+
+jobs:
+
+  lint_test_py36_pip:
+    docker:
+      - image: circleci/python:3.6.8
+    steps:
+      - checkout
+      - pip_install:
+          args: "-n"
+      - lint_flake8
+      - ufmt_check
+      - unit_tests
+      - sphinx
+
+  lint_test_py36_pip_release:
+    docker:
+      - image: circleci/python:3.6.8
+    steps:
+      - checkout
+      - pip_install
+      - lint_flake8
+      - ufmt_check
+      - mypy_check
+      - unit_tests
+      - sphinx
+
+  test_py36_pip_torch_1_3:
+    docker:
+      - image: circleci/python:3.6.8
+    steps:
+      - checkout
+      - pip_install:
+          args: "-v 1.3"
+      - unit_tests
+
+  test_py36_pip_torch_1_2:
+    docker:
+      - image: circleci/python:3.6.8
+    steps:
+      - checkout
+      - pip_install:
+          args: "-v 1.2"
+      - unit_tests
+
+  lint_test_py37_conda:
+    docker:
+      - image: continuumio/miniconda3
+    steps:
+      - checkout
+      - conda_install:
+          args: "-n"
+      - lint_flake8
+      - ufmt_check
+      - unit_tests
+      - sphinx
+
+  test_cuda_multi_gpu:
+    machine:
+      image: ubuntu-1604:201903-01
+    resource_class: gpu.nvidia.medium.multi
+    steps:
+      - checkout
+      - install_cuda
+      - py_3_7_setup
+      - simple_pip_install
+      - unit_tests
+
+  auto_deploy_site:
+    docker:
+      - image: circleci/python:3.6.8-node
+    steps:
+      - checkout
+      - pip_install:
+          args: "-n -d"
+      - lint_flake8
+      - ufmt_check
+      - unit_tests
+      - sphinx
+      - configure_github_bot
+      - deploy_site
+
+
+aliases:
+
+  - &exclude_ghpages_fbconfig
+    branches:
+      ignore:
+        - gh-pages
+        - fb-config
+
+
+workflows:
+
+  lint_and_test:
+    jobs:
+      - lint_test_py36_pip:
+          filters: *exclude_ghpages_fbconfig
+      - lint_test_py36_pip_release:
+          filters: *exclude_ghpages_fbconfig
+      - lint_test_py37_conda:
+          filters: *exclude_ghpages_fbconfig
+      - test_py36_pip_torch_1_2:
+          filters: *exclude_ghpages_fbconfig
+      - test_py36_pip_torch_1_3:
+          filters: *exclude_ghpages_fbconfig
+      - test_cuda_multi_gpu:
+          filters: *exclude_ghpages_fbconfig
+
+  auto_deploy_site:
+    jobs:
+      - auto_deploy_site:
+          filters:
+            branches:
+              only:
+                - master
