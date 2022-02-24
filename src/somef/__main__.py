@@ -76,6 +76,12 @@ class URLParamType(click.types.StringParamType):
     help="Path to the README file source"
 )
 @optgroup.option(
+    "--local_repo",
+    "-l",
+    type=click.Path(exists=True),
+    help="Path to local repository"
+)
+@optgroup.option(
     "--in_file",
     "-i",
     type=click.Path(exists=True),
