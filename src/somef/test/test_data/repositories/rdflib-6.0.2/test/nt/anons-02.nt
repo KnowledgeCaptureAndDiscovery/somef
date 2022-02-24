@@ -1,2 +1,0 @@
-_:node1 <http://example.org/#PredPred> <http://example.org/#PredObjt> .
-<http://example.org/#MySubject> _:node1 <http://example.org/#MyObject> .

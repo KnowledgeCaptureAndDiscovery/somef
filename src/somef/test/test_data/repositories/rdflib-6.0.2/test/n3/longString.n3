@@ -1,3 +1,0 @@
-@prefix : <http://example.com/>.
-
-:gunnar :desc "This is a really long string, with \n newlines in it, and \" quotes.".

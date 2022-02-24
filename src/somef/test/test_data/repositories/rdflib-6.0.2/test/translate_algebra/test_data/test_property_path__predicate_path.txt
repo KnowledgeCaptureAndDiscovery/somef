@@ -1,1 +1,0 @@
-# Just an IRI. Nothing to test. Also no examples found here: https://www.w3.org/TR/sparql11-query/

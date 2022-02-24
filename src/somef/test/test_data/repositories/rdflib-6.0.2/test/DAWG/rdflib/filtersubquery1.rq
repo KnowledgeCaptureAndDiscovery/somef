@@ -1,4 +1,0 @@
-SELECT ?this WHERE {
-  VALUES ?this { <http://ex.com/a> "HI" }
-  FILTER ( isIRI(?this) )
-}

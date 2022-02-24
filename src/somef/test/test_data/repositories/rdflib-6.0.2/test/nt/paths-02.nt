@@ -1,3 +1,0 @@
-<http://example.org/#Jim> <http://example.org/#wife> _:path1 .
-_:path1 <http://example.org/#age> _:path2 .
-_:path2 <http://example.org/#over> "10" .
