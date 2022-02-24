@@ -1,0 +1,21 @@
+RDFLib.sublime-project
+/docs/_build/
+nosetests.xml
+RDFLib.sublime-workspace
+*.egg-info/
+coverage/
+dist/
+__pycache__/
+*.pyc
+/.hgtags
+/.hgignore
+build/
+/.coverage
+/.tox/
+/docs/draft/
+*~
+test_reports/*latest.ttl
+# PyCharm
+.idea/
+prepare_changelog.sh
+.venv/

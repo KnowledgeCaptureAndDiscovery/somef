@@ -32,6 +32,7 @@ from . import header_analysis
 
 from . import parser_somef
 
+
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
 def unmark_element(element, stream=None):
@@ -302,6 +303,8 @@ def load_repository_metadata(repository_url, header):
         repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip"
         print(f"Downloading {repo_archive_url}")
         repo_download = requests.get(repo_archive_url)
+        if repo_download.status_code != 200:
+            sys.exit(f"Error: Archive request failed with HTTP {repo_download.status_code}")
         repo_zip = repo_download.content
 
         repo_zip_file = os.path.join(temp_dir, "repo.zip")
@@ -327,7 +330,7 @@ def load_repository_metadata(repository_url, header):
             repo_relative_path = os.path.relpath(dirpath, repo_dir)
             for filename in filenames:
                 if filename == "Dockerfile":
-                    #dockerfiles.append(os.path.join(repo_relative_path, filename))
+                    # dockerfiles.append(os.path.join(repo_relative_path, filename))
                     dockerfiles.append(repo_relative_path + "/" + filename)
                 if filename.lower().endswith(".ipynb"):
                     notebooks.append(os.path.join(repo_relative_path, filename))
@@ -348,8 +351,9 @@ def load_repository_metadata(repository_url, header):
                             file_text = data_file.read()
                             filtered_resp["contributingGuidelines"] = unmark(file_text)
                     except:
-                        filtered_resp["contributingGuidelinesFile"] = convert_to_raw_usercontent(filename, owner, repo_name,
-                        repo_ref)
+                        filtered_resp["contributingGuidelinesFile"] = convert_to_raw_usercontent(filename, owner,
+                                                                                                 repo_name,
+                                                                                                 repo_ref)
                 if "ACKNOWLEDGMENT" in filename.upper():
                     try:
                         with open(os.path.join(dirpath, filename), "r") as data_file:
@@ -357,8 +361,8 @@ def load_repository_metadata(repository_url, header):
                             filtered_resp["acknowledgments"] = unmark(file_text)
                     except:
                         filtered_resp["acknowledgmentsFile"] = convert_to_raw_usercontent(filename, owner,
-                                                                                              repo_name,
-                                                                                              repo_ref)
+                                                                                          repo_name,
+                                                                                          repo_ref)
                 if "CONTRIBUTORS" == filename.upper() or "CONTRIBUTORS.MD" == filename.upper():
                     try:
                         with open(os.path.join(dirpath, filename), "r") as data_file:
@@ -366,8 +370,8 @@ def load_repository_metadata(repository_url, header):
                             filtered_resp["contributors"] = unmark(file_text)
                     except:
                         filtered_resp["contributorsFile"] = convert_to_raw_usercontent(filename, owner,
-                                                                                      repo_name,
-                                                                                      repo_ref)
+                                                                                       repo_name,
+                                                                                       repo_ref)
                 if "CITATION" == filename.upper() or "CITATION.CFF" == filename.upper():
                     try:
                         with open(os.path.join(dirpath, filename), "r") as data_file:
@@ -375,10 +379,10 @@ def load_repository_metadata(repository_url, header):
                             filtered_resp["citation"] = unmark(file_text)
                     except:
                         filtered_resp["citationFile"] = convert_to_raw_usercontent(filename, owner,
-                                                                                      repo_name,
-                                                                                      repo_ref)
+                                                                                   repo_name,
+                                                                                   repo_ref)
                 if filename.endswith(".sh"):
-                    #scriptfiles.append(os.path.join(repo_relative_path, filename))
+                    # scriptfiles.append(os.path.join(repo_relative_path, filename))
                     scriptfiles.append(repo_relative_path + "/" + filename)
 
             for dirname in dirnames:
@@ -406,7 +410,8 @@ def load_repository_metadata(repository_url, header):
         filtered_resp["hasDocumentation"] = docs
 
     if len(scriptfiles) > 0:
-        filtered_resp["hasScriptFile"] = [convert_to_raw_usercontent(x, owner, repo_name, repo_ref) for x in scriptfiles]
+        filtered_resp["hasScriptFile"] = [convert_to_raw_usercontent(x, owner, repo_name, repo_ref) for x in
+                                          scriptfiles]
 
     # get releases
     releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
@@ -419,6 +424,7 @@ def load_repository_metadata(repository_url, header):
 
     print("Repository Information Successfully Loaded. \n")
     return text, filtered_resp
+
 
 def load_repository_metadata_gitlab(repository_url, header):
     """
@@ -482,7 +488,6 @@ def load_repository_metadata_gitlab(repository_url, header):
     elif 'default_branch' in project_details.keys():
         general_resp = {'defaultBranch': project_details['default_branch']}
 
-
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
             print("Error: repository name is incorrect")
@@ -518,10 +523,10 @@ def load_repository_metadata_gitlab(repository_url, header):
                 print(f"Error: key {path} not present in gitlab repository")
         return output
 
-    #filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
+    # filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
     filtered_resp = {}
     # add download URL
-    #filtered_resp["downloadUrl"] = f"https://github.com/{owner}/{repo_name}/releases"
+    # filtered_resp["downloadUrl"] = f"https://github.com/{owner}/{repo_name}/releases"
     filtered_resp["downloadUrl"] = f"https://gitlab.com/{owner}/{repo_name}/-/branches"
 
     ## condense license information
@@ -548,7 +553,7 @@ def load_repository_metadata_gitlab(repository_url, header):
     # get keywords / topics
     topics_headers = header
     topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
-    #topics_resp, date = rate_limit_get(repo_api_base_url + "/topics",
+    # topics_resp, date = rate_limit_get(repo_api_base_url + "/topics",
     #                                   headers=topics_headers)
     topics_resp = {}
 
@@ -562,7 +567,7 @@ def load_repository_metadata_gitlab(repository_url, header):
 
     # get social features: stargazers_count
     stargazers_info = {}
-    #if 'stargazers_count' in filtered_resp:
+    # if 'stargazers_count' in filtered_resp:
     if project_details['star_count'] is not None:
         stargazers_info['count'] = project_details['star_count']
         stargazers_info['date'] = date
@@ -572,7 +577,7 @@ def load_repository_metadata_gitlab(repository_url, header):
 
     # get social features: forks_count
     forks_info = {}
-    #if 'forks_count' in filtered_resp:
+    # if 'forks_count' in filtered_resp:
     if project_details['forks_count'] is not None:
         forks_info['count'] = project_details['forks_count']
         forks_info['date'] = date
@@ -581,7 +586,7 @@ def load_repository_metadata_gitlab(repository_url, header):
     filtered_resp['forksCount'] = forks_info
 
     ## get languages
-    #languages, date = rate_limit_get(filtered_resp['languages_url'])
+    # languages, date = rate_limit_get(filtered_resp['languages_url'])
     languages = {}
     filtered_resp['languages_url'] = "languages_url"
     if "message" in languages:
@@ -593,7 +598,7 @@ def load_repository_metadata_gitlab(repository_url, header):
 
     # get default README
     # repo_api_base_url https://api.github.com/dgarijo/Widoco/readme
-    #readme_info, date = rate_limit_get(repo_api_base_url + "/readme",
+    # readme_info, date = rate_limit_get(repo_api_base_url + "/readme",
     #                                   headers=topics_headers,
     #                                   params=ref_param)
     readme_info = {}
@@ -616,7 +621,7 @@ def load_repository_metadata_gitlab(repository_url, header):
     with tempfile.TemporaryDirectory() as temp_dir:
 
         # download the repo at the selected branch with the link
-        #https://gitlab.com/unboundedsystems/adapt/-/archive/master/adapt-master.zip
+        # https://gitlab.com/unboundedsystems/adapt/-/archive/master/adapt-master.zip
         repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_ref}/{repo_name}-{repo_ref}.zip"
         if len(path_components) == 4:
             repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_ref}/{path_components[3]}.zip"
@@ -647,7 +652,7 @@ def load_repository_metadata_gitlab(repository_url, header):
             repo_relative_path = os.path.relpath(dirpath, repo_dir)
             for filename in filenames:
                 if filename == "Dockerfile":
-                    #dockerfiles.append(os.path.join(repo_relative_path, filename))
+                    # dockerfiles.append(os.path.join(repo_relative_path, filename))
                     dockerfiles.append(repo_relative_path + "/" + filename)
                 if filename.lower().endswith(".ipynb"):
                     notebooks.append(os.path.join(repo_relative_path, filename))
@@ -668,8 +673,9 @@ def load_repository_metadata_gitlab(repository_url, header):
                             file_text = data_file.read()
                             filtered_resp["contributingGuidelines"] = unmark(file_text)
                     except:
-                        filtered_resp["contributingGuidelinesFile"] = convert_to_raw_usercontent(filename, owner, repo_name,
-                        repo_ref)
+                        filtered_resp["contributingGuidelinesFile"] = convert_to_raw_usercontent(filename, owner,
+                                                                                                 repo_name,
+                                                                                                 repo_ref)
                 if "ACKNOWLEDGMENT" in filename.upper():
                     try:
                         with open(os.path.join(dirpath, filename), "r") as data_file:
@@ -677,8 +683,8 @@ def load_repository_metadata_gitlab(repository_url, header):
                             filtered_resp["acknowledgments"] = unmark(file_text)
                     except:
                         filtered_resp["acknowledgmentsFile"] = convert_to_raw_usercontent(filename, owner,
-                                                                                              repo_name,
-                                                                                              repo_ref)
+                                                                                          repo_name,
+                                                                                          repo_ref)
                 if "CONTRIBUTORS" == filename.upper() or "CONTRIBUTORS.MD" == filename.upper():
                     try:
                         with open(os.path.join(dirpath, filename), "r") as data_file:
@@ -686,8 +692,8 @@ def load_repository_metadata_gitlab(repository_url, header):
                             filtered_resp["contributors"] = unmark(file_text)
                     except:
                         filtered_resp["contributorsFile"] = convert_to_raw_usercontent(filename, owner,
-                                                                                      repo_name,
-                                                                                      repo_ref)
+                                                                                       repo_name,
+                                                                                       repo_ref)
                 if "CITATION" == filename.upper() or "CITATION.CFF" == filename.upper():
                     try:
                         with open(os.path.join(dirpath, filename), "r") as data_file:
@@ -695,10 +701,10 @@ def load_repository_metadata_gitlab(repository_url, header):
                             filtered_resp["citation"] = unmark(file_text)
                     except:
                         filtered_resp["citationFile"] = convert_to_raw_usercontent(filename, owner,
-                                                                                      repo_name,
-                                                                                      repo_ref)
+                                                                                   repo_name,
+                                                                                   repo_ref)
                 if filename.endswith(".sh"):
-                    #scriptfiles.append(os.path.join(repo_relative_path, filename))
+                    # scriptfiles.append(os.path.join(repo_relative_path, filename))
                     scriptfiles.append(repo_relative_path + "/" + filename)
 
             for dirname in dirnames:
@@ -718,18 +724,21 @@ def load_repository_metadata_gitlab(repository_url, header):
         # print(dockerfiles)
 
     if len(notebooks) > 0:
-        filtered_resp["hasExecutableNotebook"] = [convert_to_raw_usercontent_gitlab(x, owner, repo_name, repo_ref) for x in
+        filtered_resp["hasExecutableNotebook"] = [convert_to_raw_usercontent_gitlab(x, owner, repo_name, repo_ref) for x
+                                                  in
                                                   notebooks]
     if len(dockerfiles) > 0:
-        filtered_resp["hasBuildFile"] = [convert_to_raw_usercontent_gitlab(x, owner, repo_name, repo_ref) for x in dockerfiles]
+        filtered_resp["hasBuildFile"] = [convert_to_raw_usercontent_gitlab(x, owner, repo_name, repo_ref) for x in
+                                         dockerfiles]
     if len(docs) > 0:
         filtered_resp["hasDocumentation"] = docs
 
     if len(scriptfiles) > 0:
-        filtered_resp["hasScriptFile"] = [convert_to_raw_usercontent_gitlab(x, owner, repo_name, repo_ref) for x in scriptfiles]
+        filtered_resp["hasScriptFile"] = [convert_to_raw_usercontent_gitlab(x, owner, repo_name, repo_ref) for x in
+                                          scriptfiles]
 
     # get releases
-    #releases_list, date = rate_limit_get(repo_api_base_url + "/-/releases",
+    # releases_list, date = rate_limit_get(repo_api_base_url + "/-/releases",
     #                                     headers=header)
 
     releases_list = {}
@@ -740,6 +749,7 @@ def load_repository_metadata_gitlab(repository_url, header):
 
     print("Repository Information Successfully Loaded. \n")
     return text, filtered_resp
+
 
 def get_project_id(repository_url):
     print(f"Downloading {repository_url}")
@@ -759,6 +769,90 @@ def get_project_id(repository_url):
         if end >= 0:
             project_id = response_str[start:end]
     return project_id
+
+
+def load_local_repository_metadata(local_repo):
+    filtered_resp = {}
+    notebooks = []
+    dockerfiles = []
+    docs = []
+    scriptfiles = []
+    text = ""
+    repo_dir = os.path.abspath(local_repo)
+    if os.path.exists(os.path.join(repo_dir, "README")):
+        with open(os.path.join(os.path.join(repo_dir, "README")), "r", encoding='utf-8') as data_file:
+            text = data_file.read()
+    elif os.path.exists(os.path.join(repo_dir, "README.MD")):
+        with open(os.path.join(os.path.join(repo_dir, "README.MD")), "r", encoding='utf-8') as data_file:
+            text = data_file.read()
+    for dirpath, dirnames, filenames in os.walk(repo_dir):
+        repo_relative_path = os.path.relpath(dirpath, repo_dir)
+        for filename in filenames:
+            if filename == "Dockerfile":
+                dockerfiles.append(os.path.join(repo_dir, repo_relative_path, filename))
+            if filename.lower().endswith(".ipynb"):
+                notebooks.append(os.path.join(repo_dir, repo_relative_path, filename))
+            if "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
+                try:
+                    with open(os.path.join(dirpath, filename), "rb") as data_file:
+                        file_text = data_file.read()
+                        filtered_resp["licenseText"] = unmark(file_text)
+                except:
+                    filtered_resp["licenseFile"] = os.path.join(repo_dir, repo_relative_path, filename)
+            if "CODE_OF_CONDUCT" == filename.upper() or "CODE_OF_CONDUCT.MD" == filename.upper():
+                filtered_resp["codeOfConduct"] = os.path.join(repo_dir, repo_relative_path, filename)
+            if "CONTRIBUTING" == filename.upper() or "CONTRIBUTING.MD" == filename.upper():
+                try:
+                    with open(os.path.join(dirpath, filename), "r") as data_file:
+                        file_text = data_file.read()
+                        filtered_resp["contributingGuidelines"] = unmark(file_text)
+                except:
+                    filtered_resp["contributingGuidelinesFile"] = os.path.join(repo_dir, repo_relative_path, filename)
+            if "ACKNOWLEDGMENT" in filename.upper():
+                try:
+                    with open(os.path.join(dirpath, filename), "r") as data_file:
+                        file_text = data_file.read()
+                        filtered_resp["acknowledgments"] = unmark(file_text)
+                except:
+                    filtered_resp["acknowledgmentsFile"] = os.path.join(repo_dir, repo_relative_path, filename)
+            if "CONTRIBUTORS" == filename.upper() or "CONTRIBUTORS.MD" == filename.upper():
+                try:
+                    with open(os.path.join(dirpath, filename), "r") as data_file:
+                        file_text = data_file.read()
+                        filtered_resp["contributors"] = unmark(file_text)
+                except:
+                    filtered_resp["contributorsFile"] = os.path.join(repo_dir, repo_relative_path, filename)
+            if "CITATION" == filename.upper() or "CITATION.CFF" == filename.upper():
+                try:
+                    with open(os.path.join(dirpath, filename), "r") as data_file:
+                        file_text = data_file.read()
+                        filtered_resp["citation"] = unmark(file_text)
+                except:
+                    filtered_resp["citationFile"] = os.path.join(repo_dir, repo_relative_path, filename)
+            if filename.endswith(".sh"):
+                scriptfiles.append(os.path.join(repo_dir, repo_relative_path, filename))
+
+        for dirname in dirnames:
+            if dirname.lower() == "docs":
+                if repo_relative_path == ".":
+                    docs_path = dirname
+                else:
+                    docs_path = os.path.join(repo_relative_path, dirname)
+                docs.append(os.path.join(repo_dir,docs_path))
+
+    if len(notebooks) > 0:
+        filtered_resp["hasExecutableNotebook"] = notebooks
+    if len(dockerfiles) > 0:
+        filtered_resp["hasBuildFile"] = dockerfiles
+    if len(docs) > 0:
+        filtered_resp["hasDocumentation"] = docs
+
+    if len(scriptfiles) > 0:
+        filtered_resp["hasScriptFile"] = scriptfiles
+
+    print("Local Repository Information Successfully Loaded. \n")
+    return text, filtered_resp
+
 
 
 def get_readme_content(readme_url):
@@ -797,7 +891,7 @@ def remove_bibtex(string_list):
         """
     for x, element in enumerate(string_list):
         bib_references = extract_bibtex(element)
-        if len(bib_references)>0:
+        if len(bib_references) > 0:
             top = element.find(bib_references[0])
             init = element.rfind("```", 0, top)
             end = element.find("```", init + 3)
@@ -805,12 +899,13 @@ def remove_bibtex(string_list):
             string_list[x] = element.replace(substring, "")
     return string_list
 
+
 ## Function takes readme text as input and divides it into excerpts
 ## Returns the extracted excerpts
 def create_excerpts(string_list):
     print("Splitting text into valid excerpts for classification")
     string_list = remove_bibtex(string_list)
-    #divisions = createExcerpts.split_into_excerpts(string_list)
+    # divisions = createExcerpts.split_into_excerpts(string_list)
     divisions = parser_somef.extract_blocks_excerpts(string_list)
     print("Text Successfully split. \n")
     return divisions
@@ -861,7 +956,8 @@ def remove_unimportant_excerpts(excerpt_element):
     excerpt_info = excerpt_element['excerpt']
     excerpt_confidence = excerpt_element['confidence']
     if 'originalHeader' in excerpt_element:
-        final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification', 'originalHeader': ""}
+        final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification',
+                         'originalHeader': ""}
     else:
         final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification'}
     final_excerpt['excerpt'] += excerpt_info;
@@ -902,7 +998,9 @@ def classify(scores, threshold, excerpts_headers, header_parents):
             else:
                 if flag == True:
                     if not header == "":
-                        element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid, 'originalHeader': header, 'parentHeader': header_parents[header]})
+                        element = remove_unimportant_excerpts(
+                            {'excerpt': excerpt, 'confidence': confid, 'originalHeader': header,
+                             'parentHeader': header_parents[header]})
                         header == ""
                     else:
                         element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid})
@@ -1052,6 +1150,7 @@ def extract_readthedocs(readme_text) -> object:
     # remove duplicates (links like [readthedocs](readthedocs) are found twice
     return list(dict.fromkeys(readthedocs_links))
 
+
 def extract_support_channels(readme_text):
     """
     Function to extract Gitter Chat, Reddit and Discord links from text
@@ -1067,9 +1166,9 @@ def extract_support_channels(readme_text):
 
     index_gitter_chat = readme_text.find("[![Gitter chat]")
     if index_gitter_chat > 0:
-        init = readme_text.find(")](",index_gitter_chat)
-        end = readme_text.find(")",init + 3)
-        gitter_chat = readme_text[init+3:end]
+        init = readme_text.find(")](", index_gitter_chat)
+        end = readme_text.find(")", init + 3)
+        gitter_chat = readme_text[init + 3:end]
         results.append(gitter_chat)
 
     init = readme_text.find("(https://www.reddit.com/r/")
@@ -1098,7 +1197,7 @@ def extract_repo_status(unfiltered_text):
 
 
 def extract_arxiv_links(unfiltered_text):
-    result_links = [m.start() for m in re.finditer('https://arxiv.org/abs/', unfiltered_text)]
+    result_links = [m.start() for m in re.finditer('https://arxiv.org/', unfiltered_text)]
     result_refs = [m.start() for m in re.finditer('arXiv:', unfiltered_text)]
     results = []
     for position in result_links:
@@ -1119,16 +1218,16 @@ def extract_logo(unfiltered_text, repo_url):
     index_logo = unfiltered_text.lower().find("![logo]")
     if index_logo >= 0:
         init = unfiltered_text.find("(", index_logo)
-        end = unfiltered_text.find(")",init)
-        logo = unfiltered_text[init+1:end]
+        end = unfiltered_text.find(")", init)
+        logo = unfiltered_text[init + 1:end]
     else:
         # This is problematic if alt label is used
         # TO DO
-        result = [_.start() for _ in re.finditer("<img src=",unfiltered_text)]
+        result = [_.start() for _ in re.finditer("<img src=", unfiltered_text)]
         if len(result) > 0:
             for index_img in result:
                 init = unfiltered_text.find("\"", index_img)
-                end = unfiltered_text.find("\"", init+1)
+                end = unfiltered_text.find("\"", init + 1)
                 img = unfiltered_text[init + 1:end]
                 if img.find("logo") > 0:
                     logo = img
@@ -1150,17 +1249,19 @@ def extract_logo(unfiltered_text, repo_url):
     print(logo)
     return logo
 
+
 # TO DO: join with logo detection
 def extract_images(unfiltered_text, repo_url):
+    logo = ""
     images = []
     html_text = markdown.markdown(unfiltered_text)
     # print(html_text)
-    result = [_.start() for _ in re.finditer("<img src=", html_text)]
+    result = [_.start() for _ in re.finditer("<img ", html_text)]
     if len(result) > 0:
         for index_img in result:
-            init = html_text.find("\"", index_img)
-            end = html_text.find("\"", init+1)
-            img = html_text[init + 1:end]
+            init = html_text.find("src=\"", index_img)
+            end = html_text.find("\"", init + 5)
+            img = html_text[init + 5:end]
             if img.find("logo") < 0:
                 if not img.startswith("http") and repo_url is not None:
                     if repo_url.find("/tree/") > 0:
@@ -1172,8 +1273,19 @@ def extract_images(unfiltered_text, repo_url):
                         repo_url = repo_url + "/"
                     img = repo_url + img
                 images.append(img)
+            else:
+                if not img.startswith("http") and repo_url is not None:
+                    if repo_url.find("/tree/") > 0:
+                        repo_url = repo_url.replace("/tree/", "/")
+                    else:
+                        repo_url = repo_url + "/master/"
+                    repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
+                    if not repo_url.endswith("/"):
+                        repo_url = repo_url + "/"
+                    img = repo_url + img
+                logo = img
 
-    return images
+    return logo, images
 
 
 def extract_support(unfiltered_text):
@@ -1192,7 +1304,9 @@ def extract_support(unfiltered_text):
 
     return results
 
-def merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, long_title, readthedocs_links, repo_status, arxiv_links, logo, images, support_channels):
+
+def merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, long_title,
+          readthedocs_links, repo_status, arxiv_links, logo, images, support_channels):
     """
     Function that takes the predictions using header information, classifier and bibtex/doi parser
     Parameters
@@ -1209,7 +1323,7 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
     print("Merge prediction using header information, classifier and bibtex and doi parsers")
     if long_title:
         predictions['longTitle'] = {'excerpt': long_title, 'confidence': [1.0],
-                                     'technique': 'Regular expression'}
+                                    'technique': 'Regular expression'}
     for i in range(len(citations)):
         if 'citation' not in predictions.keys():
             predictions['citation'] = []
@@ -1231,11 +1345,13 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
         for notebook in binder_links:
             # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
             predictions['executableExample'].insert(0, {'excerpt': notebook[1], 'confidence': [1.0],
-                                                         'technique': 'Regular expression'})
+                                                        'technique': 'Regular expression'})
 
     if len(repo_status) != 0:
-        predictions['repoStatus'] = {'excerpt': "https://www.repostatus.org/#"+repo_status[0:repo_status.find(" ")].lower(), 'description': repo_status,
-                                     'technique': 'Regular expression'}
+        predictions['repoStatus'] = {
+            'excerpt': "https://www.repostatus.org/#" + repo_status[0:repo_status.find(" ")].lower(),
+            'description': repo_status,
+            'technique': 'Regular expression'}
 
     if len(arxiv_links) != 0:
         predictions['arxivLinks'] = {'excerpt': arxiv_links, 'confidence': [1.0],
@@ -1243,17 +1359,17 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
 
     if len(logo) != 0:
         predictions['logo'] = {'excerpt': logo, 'confidence': [1.0],
-                                     'technique': 'Regular expression'}
+                               'technique': 'Regular expression'}
 
     if len(images) != 0:
         predictions['image'] = []
         for image in images:
             predictions['image'].insert(0, {'excerpt': image, 'confidence': [1.0],
-                                                         'technique': 'Regular expression'})
+                                            'technique': 'Regular expression'})
 
     if len(support_channels) != 0:
         predictions['supportChannels'] = {'excerpt': support_channels, 'confidence': [1.0],
-                                     'technique': 'Regular expression'}
+                                          'technique': 'Regular expression'}
 
     for i in range(len(readthedocs_links)):
         if 'documentation' not in predictions.keys():
@@ -1288,7 +1404,8 @@ def format_output(git_data, repo_data, gitlab_url=False):
         text_technigue = 'GitLab API'
     print("formatting output")
     file_exploration = ['hasExecutableNotebook', 'hasBuildFile', 'hasDocumentation', 'codeOfConduct',
-                        'contributingGuidelines', 'licenseFile', 'licenseText', 'acknowledgments', 'contributors', 'hasScriptFile']
+                        'contributingGuidelines', 'licenseFile', 'licenseText', 'acknowledgments', 'contributors',
+                        'hasScriptFile']
     for i in git_data.keys():
         # print(i)
         # print(git_data[i])
@@ -1399,7 +1516,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     except:
         print("Published date is not available")
 
-
     codemeta_output = {
         "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
         "@type": "SoftwareSourceCode"
@@ -1430,11 +1546,11 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["buildInstructions"] = data_path(["installation", "excerpt"])
     if "owner" in repo_data:
         codemeta_output["author"] = [
-                {
-                    "@type": "Person",
-                    "@id": "https://github.com/" + author_name
-                }
-            ]
+            {
+                "@type": "Person",
+                "@id": "https://github.com/" + author_name
+            }
+        ]
     if "acknowledgement" in repo_data:
         codemeta_output["acknowledgement"] = data_path(["acknowledgement", "excerpt"])
     if "support" in repo_data:
@@ -1545,7 +1661,7 @@ def create_missing_fields_report(repo_data, out_path):
     save_json_output(out, export_path, False)
 
 
-def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
+def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None):
     credentials_file = Path(
         os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
     ).expanduser()
@@ -1564,6 +1680,14 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
             text, github_data = load_repository_metadata(repo_url, header)
             if text == "":
                 print("Warning: README document does not exist in the repository")
+        except GithubUrlError:
+            return None
+    elif local_repo is not None:
+        assert (local_repo is not None)
+        try:
+            text, github_data = load_local_repository_metadata(local_repo)
+            if text == "":
+                print("Warning: README document does not exist in the local repository")
         except GithubUrlError:
             return None
     else:
@@ -1597,8 +1721,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
         readthedocs_links = extract_readthedocs(unfiltered_text)
         repo_status = extract_repo_status(unfiltered_text)
         arxiv_links = extract_arxiv_links(unfiltered_text)
-        logo = extract_logo(unfiltered_text, repo_url)
-        images = extract_images(unfiltered_text, repo_url)
+        #logo = extract_logo(unfiltered_text, repo_url)
+        logo, images = extract_images(unfiltered_text, repo_url)
         support_channels = extract_support_channels(unfiltered_text)
     else:
         citations = []
@@ -1613,7 +1737,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None):
         images = []
         support_channels = []
 
-    predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title, readthedocs_links, repo_status, arxiv_links, logo, images, support_channels)
+    predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title,
+                        readthedocs_links, repo_status, arxiv_links, logo, images, support_channels)
     gitlab_url = False
     if repo_url is not None:
         if repo_url.rfind("gitlab.com") > 0:
@@ -1632,6 +1757,7 @@ def run_cli(*,
             ignore_classifiers=False,
             repo_url=None,
             doc_src=None,
+            local_repo=None,
             in_file=None,
             output=None,
             graph_out=None,
@@ -1658,7 +1784,7 @@ def run_cli(*,
         for repo_elem in repo_set:
             if not validators.url(repo_elem):
                 print("Not a valid repository url. Please check the url provided: " + repo_elem)
-                #repo_set.remove(repo_url)
+                # repo_set.remove(repo_url)
                 remove_urls.append(repo_elem)
         # remove non valid urls in repo_set
         for remove_url in remove_urls:
@@ -1671,6 +1797,8 @@ def run_cli(*,
     else:
         if repo_url:
             repo_data = cli_get_data(threshold, ignore_classifiers, repo_url=repo_url)
+        elif local_repo:
+            repo_data = cli_get_data(threshold, ignore_classifiers, local_repo=local_repo)
         else:
             repo_data = cli_get_data(threshold, ignore_classifiers, doc_src=doc_src)
 
@@ -1695,9 +1823,9 @@ def run_cli(*,
 
     if missing is True:
         # save in the same path as output
-        #if output is not None:
+        # if output is not None:
         #    create_missing_fields_report(repo_data, output)
-        #elif codemeta_out is not None:
+        # elif codemeta_out is not None:
         if codemeta_out is not None:
             create_missing_fields_report(repo_data, codemeta_out)
         elif graph_out is not None:
