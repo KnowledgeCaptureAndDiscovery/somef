@@ -16,7 +16,9 @@ def extract_headers(original_text):
         if line.startswith("<h"):
             if is_header(line):
                 text = re.sub(regex, '', line)
-                if not splitted[index + 1].startswith("<h"):
+                if index + 1 >= limit:
+                    output[text] = True
+                elif not splitted[index + 1].startswith("<h"):
                     output[text] = True
                 else:
                     output[text] = False
@@ -49,6 +51,8 @@ def extract_content_per_header(original_text, headers):
     top = keys[0]
     bottom = None
     text_tokenized = original_text.split('\n')
+    if len(text_tokenized) == 1:
+        return text_tokenized[0]
     top_index = get_position(0, text_tokenized, top)
     # si hay algo antes de la primera cabecera, no se procesa porque no está relacionado con ninguna cabecera
     #if top_index > 0:
@@ -230,6 +234,9 @@ def extract_text_excerpts_header(original_text):
         top = keys[0]
         bottom = None
         text_tokenized = original_text.split('\n')
+        if len(text_tokenized) == 1:
+            output[top] = text_tokenized[0]
+            return process_blocks_header(output)
         top_index = get_position(0, text_tokenized, top)
         offset = 1
         if not text_tokenized[top_index].startswith('#'):

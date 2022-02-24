@@ -319,3 +319,26 @@ class TestCli(unittest.TestCase):
         text_file.close()
         assert data.find("parentHeader") > 0
         os.remove(test_data_path + "test-343.json")
+
+    def test_issue_285(self):
+        text, github_data = load_local_repository_metadata(test_data_repositories + "repos-oeg/cogito-kgg-module")
+        assert ('license' not in github_data) == True
+
+    def test_issue_355(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=None,
+                local_repo=test_data_path + "repositories/repos_oeg/bimerr-core",
+                in_file=None,
+                output=test_data_path + "repositories/repos_oeg/test-355.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
+        text_file = open(test_data_path + "repositories/repos_oeg/test-355.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("longTitle") > 0
+        os.remove(test_data_path + "repositories/repos_oeg/test-355.json")
