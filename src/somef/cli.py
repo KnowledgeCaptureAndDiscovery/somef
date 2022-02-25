@@ -785,6 +785,9 @@ def load_local_repository_metadata(local_repo):
     elif os.path.exists(os.path.join(repo_dir, "README.MD")):
         with open(os.path.join(os.path.join(repo_dir, "README.MD")), "r", encoding='utf-8') as data_file:
             text = data_file.read()
+    elif os.path.exists(os.path.join(repo_dir, "README.md")):
+        with open(os.path.join(os.path.join(repo_dir, "README.md")), "r", encoding='utf-8') as data_file:
+            text = data_file.read()
     for dirpath, dirnames, filenames in os.walk(repo_dir):
         repo_relative_path = os.path.relpath(dirpath, repo_dir)
         for filename in filenames:
@@ -1683,7 +1686,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         except GithubUrlError:
             return None
     elif local_repo is not None:
-        assert (local_repo is not None)
+        # assert (local_repo is not None)
         try:
             text, github_data = load_local_repository_metadata(local_repo)
             if text == "":

@@ -336,9 +336,10 @@ class TestCli(unittest.TestCase):
                 graph_format="turtle",
                 codemeta_out=None,
                 pretty=True,
-                missing=True)
+                missing=False)
         text_file = open(test_data_path + "repositories/repos_oeg/test-355.json", "r")
         data = text_file.read()
+        print(data)
         text_file.close()
         assert data.find("longTitle") > 0
-        os.remove(test_data_path + "repositories/repos_oeg/test-355.json")
+        #os.remove(test_data_path + "repositories/repos_oeg/test-355.json")
