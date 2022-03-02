@@ -25,7 +25,7 @@ install_requires = [
 
 # Utility function to read the README file.
 def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    return open(os.path.join(os.path.dirname(__file__), fname), encoding='utf-8').read()
 
 
 def find_package_data(dirname):
