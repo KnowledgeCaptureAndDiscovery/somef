@@ -291,7 +291,7 @@ def load_repository_metadata(repository_url, header):
     del filtered_resp['languages_url']
 
     # get default README
-                                       headers=topics_headers,
+    #                                   headers=topics_headers,
     #readme_info, date = rate_limit_get(repo_api_base_url + "/readme",
     #                                   headers=topics_headers,
     #                                   params=ref_param)
