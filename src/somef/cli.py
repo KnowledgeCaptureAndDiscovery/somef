@@ -291,9 +291,10 @@ def load_repository_metadata(repository_url, header):
     del filtered_resp['languages_url']
 
     # get default README
-    readme_info, date = rate_limit_get(repo_api_base_url + "/readme",
                                        headers=topics_headers,
-                                       params=ref_param)
+    #readme_info, date = rate_limit_get(repo_api_base_url + "/readme",
+    #                                   headers=topics_headers,
+    #                                   params=ref_param)
     #if 'message' in readme_info.keys():
     #    print("README Error: " + readme_info['message'])
     #    text = ""
@@ -809,7 +810,7 @@ def load_local_repository_metadata(local_repo):
         with open(os.path.join(os.path.join(repo_dir, "README.MD")), "r", encoding='utf-8') as data_file:
             text = data_file.read()
     elif os.path.exists(os.path.join(repo_dir, "README.md")):
-        with open(os.path.join(os.path.join(repo_dir, "README.MD")), "r", encoding='utf-8') as data_file:
+        with open(os.path.join(os.path.join(repo_dir, "README.md")), "r", encoding='utf-8') as data_file:
             text = data_file.read()
     for dirpath, dirnames, filenames in os.walk(repo_dir):
         repo_relative_path = os.path.relpath(dirpath, repo_dir)
