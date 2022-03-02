@@ -13,6 +13,7 @@ import sys
 import tempfile
 import time
 import urllib
+from datetime import datetime
 
 import markdown
 import validators
@@ -111,6 +112,10 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
         response = requests.get(*args, **kwargs)
         data = response
         date = data.headers["date"]
+        rate_limit_remaining = data.headers["x-ratelimit-remaining"]
+        epochtime = int(data.headers["x-ratelimit-reset"])
+        date_reset = datetime.fromtimestamp(epochtime)
+        print("Rate limit ramaining: " + rate_limit_remaining + " ### Next rate limit reset at: " + str(date_reset))
         response = response.json()
         if 'message' in response and 'API rate limit exceeded' in response['message']:
             rate_limited = True
@@ -245,16 +250,20 @@ def load_repository_metadata(repository_url, header):
     if len(license_info) > 0:
         filtered_resp['license'] = license_info
 
-    # get keywords / topics
     topics_headers = header
-    topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
-    topics_resp, date = rate_limit_get(repo_api_base_url + "/topics",
-                                       headers=topics_headers)
+    # get keywords / topics
+    if 'topics' in general_resp.keys():
+        filtered_resp['topics'] = general_resp['topics']
+    #else:
+    #    topics_headers = header
+    #    topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
+    #    topics_resp, date = rate_limit_get(repo_api_base_url + "/topics",
+    #                                       headers=topics_headers)
 
-    if 'message' in topics_resp.keys():
-        print("Topics Error: " + topics_resp['message'])
-    elif topics_resp and 'names' in topics_resp.keys():
-        filtered_resp['topics'] = topics_resp['names']
+    #    if 'message' in topics_resp.keys():
+    #        print("Topics Error: " + topics_resp['message'])
+    #    elif topics_resp and 'names' in topics_resp.keys():
+    #        filtered_resp['topics'] = topics_resp['names']
 
     # get social features: stargazers_count
     stargazers_info = {}
@@ -273,7 +282,7 @@ def load_repository_metadata(repository_url, header):
     filtered_resp['forksCount'] = forks_info
 
     ## get languages
-    languages, date = rate_limit_get(filtered_resp['languages_url'])
+    languages, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
     if "message" in languages:
         print("Languages Error: " + languages["message"])
     else:
@@ -285,17 +294,18 @@ def load_repository_metadata(repository_url, header):
     readme_info, date = rate_limit_get(repo_api_base_url + "/readme",
                                        headers=topics_headers,
                                        params=ref_param)
-    if 'message' in readme_info.keys():
-        print("README Error: " + readme_info['message'])
-        text = ""
-    else:
-        readme = base64.b64decode(readme_info['content']).decode("utf-8")
-        text = readme
-        filtered_resp['readmeUrl'] = readme_info['html_url']
+    #if 'message' in readme_info.keys():
+    #    print("README Error: " + readme_info['message'])
+    #    text = ""
+    #else:
+    #    readme = base64.b64decode(readme_info['content']).decode("utf-8")
+    #    text = readme
+    #    filtered_resp['readmeUrl'] = readme_info['html_url']
 
     # get full git repository
     # todo: maybe it should be optional, as this could take some time?
 
+    text = ""
     # create a temporary directory
     with tempfile.TemporaryDirectory() as temp_dir:
 
@@ -334,6 +344,19 @@ def load_repository_metadata(repository_url, header):
                     dockerfiles.append(repo_relative_path + "/" + filename)
                 if filename.lower().endswith(".ipynb"):
                     notebooks.append(os.path.join(repo_relative_path, filename))
+                if "README" == filename.upper() or "README.MD" == filename.upper():
+                    if (repo_relative_path == "."):
+                        try:
+                            with open(os.path.join(dirpath, filename), "rb") as data_file:
+                                data_file_text = data_file.read()
+                                text = data_file_text.decode("utf-8")
+                                if repository_url.endswith("/"):
+                                    filtered_resp['readmeUrl'] = repository_url + filename
+                                else:
+                                    filtered_resp['readmeUrl'] = repository_url + "/" + filename
+                        except:
+                            print("README Error: error while reading file content")
+
                 if "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
                     try:
                         with open(os.path.join(dirpath, filename), "rb") as data_file:
@@ -786,7 +809,7 @@ def load_local_repository_metadata(local_repo):
         with open(os.path.join(os.path.join(repo_dir, "README.MD")), "r", encoding='utf-8') as data_file:
             text = data_file.read()
     elif os.path.exists(os.path.join(repo_dir, "README.md")):
-        with open(os.path.join(os.path.join(repo_dir, "README.md")), "r", encoding='utf-8') as data_file:
+        with open(os.path.join(os.path.join(repo_dir, "README.MD")), "r", encoding='utf-8') as data_file:
             text = data_file.read()
     for dirpath, dirnames, filenames in os.walk(repo_dir):
         repo_relative_path = os.path.relpath(dirpath, repo_dir)
@@ -1686,7 +1709,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         except GithubUrlError:
             return None
     elif local_repo is not None:
-        # assert (local_repo is not None)
+        assert (local_repo is not None)
         try:
             text, github_data = load_local_repository_metadata(local_repo)
             if text == "":
