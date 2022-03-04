@@ -62,6 +62,13 @@ class URLParamType(click.types.StringParamType):
     default=False,
     help="Flag to ignore running the classifiers (by default False)"
 )
+@click.option(
+    "--ignore_github_metadata",
+    "-igm",
+    is_flag=True,
+    default=False,
+    help="Flag to ignore Github Metadata (by default False)"
+)
 @optgroup.group('Input', cls=RequiredMutuallyExclusiveOptionGroup)
 @optgroup.option(
     "--repo_url",
