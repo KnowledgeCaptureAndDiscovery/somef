@@ -115,7 +115,7 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
         rate_limit_remaining = data.headers["x-ratelimit-remaining"]
         epochtime = int(data.headers["x-ratelimit-reset"])
         date_reset = datetime.fromtimestamp(epochtime)
-        print("Rate limit ramaining: " + rate_limit_remaining + " ### Next rate limit reset at: " + str(date_reset))
+        print("Remaining GitHub API requests: " + rate_limit_remaining + " ### Next rate limit reset at: " + str(date_reset))
         response = response.json()
         if 'message' in response and 'API rate limit exceeded' in response['message']:
             rate_limited = True
@@ -136,7 +136,7 @@ class GithubUrlError(Exception):
     pass
 
 
-def load_repository_metadata(repository_url, header):
+def load_repository_metadata(repository_url, header, ignore_github_metadata=False):
     """
     Function uses the repository_url provided to load required information from github.
     Information kept from the repository is written in keep_keys.
@@ -150,7 +150,7 @@ def load_repository_metadata(repository_url, header):
     Returns the readme text and required metadata
     """
     if repository_url.rfind("gitlab.com") > 0:
-        return load_repository_metadata_gitlab(repository_url, header)
+        return load_repository_metadata_gitlab(repository_url, header, ignore_github_metadata)
 
     print(f"Loading Repository {repository_url} Information....")
     ## load general response of the repository
@@ -188,7 +188,10 @@ def load_repository_metadata(repository_url, header):
 
     print(repo_api_base_url)
 
-    general_resp, date = rate_limit_get(repo_api_base_url, headers=header)
+    general_resp = {}
+    date = ""
+    if not ignore_github_metadata:
+        general_resp, date = rate_limit_get(repo_api_base_url, headers=header)
 
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
@@ -199,7 +202,9 @@ def load_repository_metadata(repository_url, header):
 
         raise GithubUrlError
 
-    if repo_ref is None:
+    if ignore_github_metadata:
+        repo_ref = 'master'
+    elif repo_ref is None:
         repo_ref = general_resp['default_branch']
 
     ## get only the fields that we want
@@ -225,7 +230,10 @@ def load_repository_metadata(repository_url, header):
                 print(f"Error: key {path} not present in github repository")
         return output
 
-    filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
+    filtered_resp = {}
+    if not ignore_github_metadata:
+        filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
+
     # add download URL
     filtered_resp["downloadUrl"] = f"https://github.com/{owner}/{repo_name}/releases"
 
@@ -282,13 +290,14 @@ def load_repository_metadata(repository_url, header):
     filtered_resp['forksCount'] = forks_info
 
     ## get languages
-    languages, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
-    if "message" in languages:
-        print("Languages Error: " + languages["message"])
-    else:
-        filtered_resp['languages'] = list(languages.keys())
+    if not ignore_github_metadata:
+        languages, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
+        if "message" in languages:
+            print("Languages Error: " + languages["message"])
+        else:
+            filtered_resp['languages'] = list(languages.keys())
 
-    del filtered_resp['languages_url']
+        del filtered_resp['languages_url']
 
     # get default README
     #                                   headers=topics_headers,
@@ -341,8 +350,8 @@ def load_repository_metadata(repository_url, header):
             repo_relative_path = os.path.relpath(dirpath, repo_dir)
             for filename in filenames:
                 if filename == "Dockerfile":
-                    # dockerfiles.append(os.path.join(repo_relative_path, filename))
-                    dockerfiles.append(repo_relative_path + "/" + filename)
+                    dockerfiles.append(os.path.join(repo_relative_path, filename))
+                    #dockerfiles.append(repo_relative_path + "/" + filename)
                 if filename.lower().endswith(".ipynb"):
                     notebooks.append(os.path.join(repo_relative_path, filename))
                 if "README" == filename.upper() or "README.MD" == filename.upper():
@@ -414,7 +423,11 @@ def load_repository_metadata(repository_url, header):
                     if repo_relative_path == ".":
                         docs_path = dirname
                     else:
-                        docs_path = repo_relative_path + "/" + dirname
+                        if repo_relative_path.find("\\") >= 0:
+                            new_repo_relative_path = repo_relative_path.replace("\\", "/")
+                            docs_path = new_repo_relative_path + "/" + dirname
+                        else:
+                            docs_path = repo_relative_path + "/" + dirname
                     docs.append(
                         f"https://github.com/{owner}/{repo_name}/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
                     # print(docs)
@@ -438,13 +451,14 @@ def load_repository_metadata(repository_url, header):
                                           scriptfiles]
 
     # get releases
-    releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
-                                         headers=header)
+    if not ignore_github_metadata:
+        releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
+                                             headers=header)
 
-    if isinstance(releases_list, dict) and 'message' in releases_list.keys():
-        print("Releases Error: " + releases_list['message'])
-    else:
-        filtered_resp['releases'] = [do_crosswalk(release, release_crosswalk_table) for release in releases_list]
+        if isinstance(releases_list, dict) and 'message' in releases_list.keys():
+            print("Releases Error: " + releases_list['message'])
+        else:
+            filtered_resp['releases'] = [do_crosswalk(release, release_crosswalk_table) for release in releases_list]
 
     print("Repository Information Successfully Loaded. \n")
     return text, filtered_resp
@@ -894,6 +908,9 @@ def convert_to_raw_usercontent(partial, owner, repo_name, repo_ref):
         partial = partial.replace("./", "")
     if partial.startswith(".\\"):
         partial = partial.replace(".\\", "")
+    if partial.find("\\") >= 0:
+        partial = re.sub("\\\\", "/", partial)
+
     return f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse.quote(partial)}"
 
 
@@ -1688,7 +1705,7 @@ def create_missing_fields_report(repo_data, out_path):
     save_json_output(out, export_path, False)
 
 
-def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None):
+def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None, ignore_github_metadata=False):
     credentials_file = Path(
         os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
     ).expanduser()
@@ -1704,7 +1721,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     if repo_url is not None:
         assert (doc_src is None)
         try:
-            text, github_data = load_repository_metadata(repo_url, header)
+            text, github_data = load_repository_metadata(repo_url, header, ignore_github_metadata)
             if text == "":
                 print("Warning: README document does not exist in the repository")
         except GithubUrlError:
@@ -1783,6 +1800,7 @@ def run_cli(*,
             threshold=0.8,
             ignore_classifiers=False,
             repo_url=None,
+            ignore_github_metadata=False,
             doc_src=None,
             local_repo=None,
             in_file=None,
@@ -1823,7 +1841,7 @@ def run_cli(*,
 
     else:
         if repo_url:
-            repo_data = cli_get_data(threshold, ignore_classifiers, repo_url=repo_url)
+            repo_data = cli_get_data(threshold, ignore_classifiers, repo_url=repo_url, ignore_github_metadata=ignore_github_metadata)
         elif local_repo:
             repo_data = cli_get_data(threshold, ignore_classifiers, local_repo=local_repo)
         else:

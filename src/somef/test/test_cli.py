@@ -343,3 +343,19 @@ class TestCli(unittest.TestCase):
         text_file.close()
         assert data.find("longTitle") > 0
         #os.remove(test_data_path + "repositories/repos_oeg/test-355.json")
+
+    def test_no_repository_metadata(self):
+        credentials_file = Path(
+            os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
+        ).expanduser()
+        if credentials_file.exists():
+            with credentials_file.open("r") as fh:
+                file_paths = json.load(fh)
+        else:
+            sys.exit("Error: Please provide a config.json file.")
+        header = {}
+        if 'Authorization' in file_paths.keys():
+            header['Authorization'] = file_paths['Authorization']
+        header['accept'] = 'application/vnd.github.v3+json'
+        text, github_data = load_repository_metadata("https://github.com/RDFLib/rdflib/tree/6.0.2", header, True)
+        assert ('releases' not in github_data) == True
