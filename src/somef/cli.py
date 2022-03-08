@@ -150,7 +150,7 @@ def load_repository_metadata(repository_url, header, ignore_github_metadata=Fals
     Returns the readme text and required metadata
     """
     if repository_url.rfind("gitlab.com") > 0:
-        return load_repository_metadata_gitlab(repository_url, header, ignore_github_metadata)
+        return load_repository_metadata_gitlab(repository_url, header)
 
     print(f"Loading Repository {repository_url} Information....")
     ## load general response of the repository
