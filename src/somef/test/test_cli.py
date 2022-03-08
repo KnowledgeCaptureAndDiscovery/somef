@@ -359,3 +359,23 @@ class TestCli(unittest.TestCase):
         header['accept'] = 'application/vnd.github.v3+json'
         text, github_data = load_repository_metadata("https://github.com/RDFLib/rdflib/tree/6.0.2", header, True)
         assert ('releases' not in github_data) == True
+
+    def test_issue_150(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=test_data_path + "README-mapshaper.md",
+                local_repo=None,
+                in_file=None,
+                output=None,
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=test_data_path + "test-150.json-ld",
+                pretty=True,
+                missing=False)
+        text_file = open(test_data_path + "test-150.json-ld", "r")
+        data = text_file.read()
+        print(data)
+        text_file.close()
+        assert data.find("acknowledgement") == -1
+        os.remove(test_data_path + "test-150.json-ld")
