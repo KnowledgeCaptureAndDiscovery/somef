@@ -125,7 +125,7 @@ software_schema = {
         "@type": "xsd:string",
     },
     "sd:hasExecutableNotebook": {
-        "@path": ["executable_example", "excerpt"],
+        "@path": ["executableExample", "excerpt"],
         "@type": "xsd:anyURI"
     },
     "sd:hasCodeOfConduct": {
@@ -226,7 +226,7 @@ software_schema = {
         "@type": "xsd:dateTime"
     },
     "sd:hasExample": {
-        "@path": "executable_example",
+        "@path": "executableExample",
         "@type": "xsd:string"
     },
     "sd:hasSupportScriptLocation": {
