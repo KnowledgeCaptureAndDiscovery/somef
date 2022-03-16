@@ -150,7 +150,7 @@ def load_repository_metadata(repository_url, header, ignore_github_metadata=Fals
     Returns the readme text and required metadata
     """
     if repository_url.rfind("gitlab.com") > 0:
-        return load_repository_metadata_gitlab(repository_url, header, ignore_github_metadata)
+        return load_repository_metadata_gitlab(repository_url, header)
 
     print(f"Loading Repository {repository_url} Information....")
     ## load general response of the repository
@@ -279,7 +279,8 @@ def load_repository_metadata(repository_url, header, ignore_github_metadata=Fals
         stargazers_info['count'] = filtered_resp['stargazers_count']
         stargazers_info['date'] = date
         del filtered_resp['stargazers_count']
-    filtered_resp['stargazersCount'] = stargazers_info
+    if len(stargazers_info.keys()) > 0:
+        filtered_resp['stargazersCount'] = stargazers_info
 
     # get social features: forks_count
     forks_info = {}
@@ -287,7 +288,8 @@ def load_repository_metadata(repository_url, header, ignore_github_metadata=Fals
         forks_info['count'] = filtered_resp['forks_count']
         forks_info['date'] = date
         del filtered_resp['forks_count']
-    filtered_resp['forksCount'] = forks_info
+    if len(forks_info.keys()) > 0:
+        filtered_resp['forksCount'] = forks_info
 
     ## get languages
     if not ignore_github_metadata:
@@ -817,15 +819,6 @@ def load_local_repository_metadata(local_repo):
     scriptfiles = []
     text = ""
     repo_dir = os.path.abspath(local_repo)
-    if os.path.exists(os.path.join(repo_dir, "README")):
-        with open(os.path.join(os.path.join(repo_dir, "README")), "r", encoding='utf-8') as data_file:
-            text = data_file.read()
-    elif os.path.exists(os.path.join(repo_dir, "README.MD")):
-        with open(os.path.join(os.path.join(repo_dir, "README.MD")), "r", encoding='utf-8') as data_file:
-            text = data_file.read()
-    elif os.path.exists(os.path.join(repo_dir, "README.md")):
-        with open(os.path.join(os.path.join(repo_dir, "README.md")), "r", encoding='utf-8') as data_file:
-            text = data_file.read()
     for dirpath, dirnames, filenames in os.walk(repo_dir):
         repo_relative_path = os.path.relpath(dirpath, repo_dir)
         for filename in filenames:
@@ -833,6 +826,14 @@ def load_local_repository_metadata(local_repo):
                 dockerfiles.append(os.path.join(repo_dir, repo_relative_path, filename))
             if filename.lower().endswith(".ipynb"):
                 notebooks.append(os.path.join(repo_dir, repo_relative_path, filename))
+            if "README" == filename.upper() or "README.MD" == filename.upper():
+                if (repo_relative_path == "."):
+                    try:
+                        with open(os.path.join(dirpath, filename), "rb") as data_file:
+                            data_file_text = data_file.read()
+                            text = data_file_text.decode("utf-8")
+                    except:
+                        print("README Error: error while reading file content")
             if "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
                 try:
                     with open(os.path.join(dirpath, filename), "rb") as data_file:
@@ -944,6 +945,32 @@ def remove_bibtex(string_list):
     return string_list
 
 
+def remove_links_images(text):
+    # process images
+    images = re.findall(r"!\[(.*?)?\]\((.*?)?\)", text)
+    for image in images:
+        link_text = image[1]
+        pos = text.find(link_text)
+        if pos != -1:
+            init = text[:pos].rindex("![")
+            end = text[pos:].index(")")
+            image_text = text[init:pos+end+1]
+            text = text.replace(image_text,"")
+
+    #process links
+    links = re.findall(r"\[(.*?)?\]\(([^)]+)\)", text)
+    for link in links:
+        link_text = link[1]
+        pos = text.find(link_text)
+        if pos != -1:
+            init = text[:pos].rindex("[")
+            end = text[pos:].index(")")
+            link_text = text[init:pos + end + 1]
+            text = text.replace(link_text, "")
+
+    # remove blank spaces and \n
+    return text.strip()
+
 ## Function takes readme text as input and divides it into excerpts
 ## Returns the extracted excerpts
 def create_excerpts(string_list):
@@ -952,7 +979,13 @@ def create_excerpts(string_list):
     # divisions = createExcerpts.split_into_excerpts(string_list)
     divisions = parser_somef.extract_blocks_excerpts(string_list)
     print("Text Successfully split. \n")
-    return divisions
+    # issue 337
+    output = []
+    for division in divisions:
+        division = remove_links_images(division)
+        if len(division) > 0:
+            output.append(division)
+    return output
 
 
 def run_classifiers(excerpts, file_paths):
@@ -1294,8 +1327,106 @@ def extract_logo(unfiltered_text, repo_url):
     return logo
 
 
-# TO DO: join with logo detection
 def extract_images(unfiltered_text, repo_url):
+    logo = ""
+    has_logo = False
+    images = []
+    repo = False
+    repo_name = ""
+    if repo_url != None and repo_url != "":
+        url = urlparse(repo_url)
+        path_components = url.path.split('/')
+        repo_name = path_components[2]
+        repo = True
+
+    html_text = markdown.markdown(unfiltered_text)
+    img_md = re.findall(r"!\[[^\]]*\]\((.*?)?\)", html_text)
+    result = [_.start() for _ in re.finditer("<img ", html_text)]
+    for img in img_md:
+        if not has_logo and repo:
+            start = img.rindex("/")
+            if img.find(repo_name, start) > 0:
+                logo = rename_github_image(img, repo_url)
+                has_logo = True
+            elif get_alt_text_md(html_text, img) == repo_name or get_alt_text_md(html_text, img).upper() == "LOGO":
+                logo = rename_github_image(img, repo_url)
+                has_logo = True
+            else:
+                start = img.rindex("/")
+                if img.upper().find("LOGO", start) > 0:
+                    logo = rename_github_image(img, repo_url)
+                    has_logo = True
+                else:
+                    images.append(rename_github_image(img, repo_url))
+        else:
+            images.append(rename_github_image(img, repo_url))
+    for index_img in result:
+        init = html_text.find("src=\"", index_img)
+        end = html_text.find("\"", init + 5)
+        img = html_text[init + 5:end]
+        if not has_logo and repo:
+            start = img.rindex("/")
+            image_name = img[start:]
+            if image_name.find(repo_name) > 0 or image_name.upper().find("LOGO") > 0:
+                logo = rename_github_image(img, repo_url)
+                has_logo = True
+            elif get_alt_text_img(html_text, index_img) == repo_name or get_alt_text_img(html_text, index_img).upper() == "LOGO":
+                logo = rename_github_image(img, repo_url)
+                has_logo = True
+            else:
+                images.append(rename_github_image(img, repo_url))
+        else:
+            start = img.rindex("/")
+            if img.upper().find("LOGO", start) > 0:
+                logo = rename_github_image(img, repo_url)
+                has_logo = True
+            else:
+                images.append(rename_github_image(img, repo_url))
+
+    return logo, images
+
+
+def rename_github_image(img, repo_url):
+    if not img.startswith("http") and repo_url is not None and repo_url != "":
+        if repo_url.find("/tree/") > 0:
+            repo_url = repo_url.replace("/tree/", "/")
+        else:
+            repo_url = repo_url + "/master/"
+        repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
+        if not repo_url.endswith("/"):
+            repo_url = repo_url + "/"
+        img = repo_url + img
+    return img
+
+
+def get_alt_text_md(text, image):
+    stop = text.find(image) - 2
+    start = text[:stop].rindex("![") + 2
+    return text[start:stop]
+
+
+def get_alt_text_img(html_text, index):
+    end = html_text.find(">", index)
+    output = ""
+    if html_text.find("alt=", index, end) > 0:
+        texto = html_text[index:end]
+        init = texto.find("alt=\"") + 5
+        end = texto.index("\"", init)
+        output = texto[init:end]
+    return output
+
+
+def get_alt_text_html(text, image):
+    stop = text.find(image)
+    start = text[:stop].rindex("<img")
+    if text[start:stop].find("alt=") != -1:
+        start = text.find("alt=",start) + 4
+        stop = text.find("\"",start)-1
+        return text[start:stop]
+    return ""
+
+# TO DO: join with logo detection
+def extract_images_old(unfiltered_text, repo_url):
     logo = ""
     images = []
     html_text = markdown.markdown(unfiltered_text)
@@ -1329,6 +1460,20 @@ def extract_images(unfiltered_text, repo_url):
                     img = repo_url + img
                 logo = img
 
+    if logo == "" and repo_url != "" and repo_url != None:
+        print(repo_url)
+        url = urlparse(repo_url)
+        path_components = url.path.split('/')
+        repo_name = path_components[2]
+
+        for image in images:
+            start = image.rindex("/")
+            if image.find(repo_name,start) > 0:
+                logo = image
+                images.remove(image)
+                break
+
+
     return logo, images
 
 
@@ -1348,9 +1493,19 @@ def extract_support(unfiltered_text):
 
     return results
 
+def extract_package_distributions(unfiltered_text):
+    output = ""
+    index_package_distribution = unfiltered_text.find("[![PyPI]")
+    if index_package_distribution > 0:
+        init = unfiltered_text.find(")](", index_package_distribution)
+        end = unfiltered_text.find(")", init + 3)
+        package_distribution = unfiltered_text[init + 3:end]
+        output = requests.get(package_distribution).url
+
+    return output
 
 def merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, long_title,
-          readthedocs_links, repo_status, arxiv_links, logo, images, support_channels):
+          readthedocs_links, repo_status, arxiv_links, logo, images, support_channels, package_distribution):
     """
     Function that takes the predictions using header information, classifier and bibtex/doi parser
     Parameters
@@ -1413,6 +1568,10 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
 
     if len(support_channels) != 0:
         predictions['supportChannels'] = {'excerpt': support_channels, 'confidence': [1.0],
+                                          'technique': 'Regular expression'}
+
+    if len(package_distribution) != 0:
+        predictions['packageDistribution'] = {'excerpt': package_distribution, 'confidence': [1.0],
                                           'technique': 'Regular expression'}
 
     for i in range(len(readthedocs_links)):
@@ -1595,66 +1754,16 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                 "@id": "https://github.com/" + author_name
             }
         ]
-    if "acknowledgement" in repo_data:
-        codemeta_output["acknowledgement"] = data_path(["acknowledgement", "excerpt"])
-    if "support" in repo_data:
-        codemeta_output["support"] = data_path(["support", "excerpt"])
     if "citation" in repo_data:
         codemeta_output["citation"] = data_path(["citation", "excerpt"])
-    if "citationFile" in repo_data:
-        codemeta_output["citationFile"] = data_path(["citationFile", "excerpt"])
-    if "codeOfConduct" in repo_data:
-        codemeta_output["codeOfConduct"] = data_path(["codeOfConduct", "excerpt"])
-    if "forks_count" in repo_data:
-        codemeta_output["forks_count"] = data_path(["forks_count", "excerpt"])
-    if "forks_url" in repo_data:
-        codemeta_output["forks_url"] = data_path(["forks_url", "excerpt"])
-    if "fullName" in repo_data:
-        codemeta_output["fullName"] = data_path(["fullName", "excerpt"])
-    if "hasBuildFile" in repo_data:
-        codemeta_output["hasBuildFile"] = data_path(["hasBuildFile", "excerpt"])
-    if "hasDocumentation" in repo_data:
-        codemeta_output["hasDocumentation"] = data_path(["hasDocumentation", "excerpt"])
-    if "hasExecutableNotebook" in repo_data:
-        codemeta_output["hasExecutableNotebook"] = data_path(["hasExecutableNotebook", "excerpt"])
     if "identifier" in repo_data:
         codemeta_output["identifier"] = data_path(["identifier", "excerpt"])
-    if "invocation" in repo_data:
-        codemeta_output["invocation"] = data_path(["invocation", "excerpt"])
     if "issueTracker" in repo_data:
         codemeta_output["issueTracker"] = data_path(["issueTracker", "excerpt"])
-    if "name" in repo_data:
-        codemeta_output["name"] = data_path(["name", "excerpt"])
-    if "ownerType" in repo_data:
-        codemeta_output["ownerType"] = data_path(["ownerType", "excerpt"])
     if "readme_url" in repo_data:
-        codemeta_output["readme_url"] = data_path(["readme_url", "excerpt"])
-    if "stargazers_count" in repo_data:
-        codemeta_output["stargazers_count"] = data_path(["stargazers_count", "excerpt"])
-    if "arxivLinks" in repo_data:
-        codemeta_output["arxivLinks"] = data_path(["arxivLinks", "excerpt"])
-    if "codeOfConduct" in repo_data:
-        codemeta_output["codeOfConduct"] = data_path(["codeOfConduct", "excerpt"])
-    if "contributingGuidelines" in repo_data:
-        codemeta_output["contributingGuidelines"] = data_path(["contributingGuidelines", "excerpt"])
-    if "contributingGuidelinesFile" in repo_data:
-        codemeta_output["contributingGuidelinesFile"] = data_path(["contributingGuidelinesFile", "excerpt"])
-    if "licenseFile" in repo_data:
-        codemeta_output["licenseFile"] = data_path(["licenseFile", "excerpt"])
-    if "licenseText" in repo_data:
-        codemeta_output["licenseText"] = data_path(["licenseText", "excerpt"])
-    if "acknowledgments" in repo_data:
-        codemeta_output["acknowledgments"] = data_path(["acknowledgments", "excerpt"])
-    if "acknowledgmentsFile" in repo_data:
-        codemeta_output["acknowledgmentsFile"] = data_path(["acknowledgmentsFile", "excerpt"])
+        codemeta_output["readme"] = data_path(["readme_url", "excerpt"])
     if "contributors" in repo_data:
-        codemeta_output["contributors"] = data_path(["contributors", "excerpt"])
-    if "contributorsFile" in repo_data:
-        codemeta_output["contributorsFile"] = data_path(["contributorsFile", "excerpt"])
-    if "hasScriptFile" in repo_data:
-        codemeta_output["hasScriptFile"] = data_path(["hasScriptFile", "excerpt"])
-    if "executableExample" in repo_data:
-        codemeta_output["executableExample"] = data_path(["executableExample", "excerpt"])
+        codemeta_output["contributor"] = data_path(["contributors", "excerpt"])
     if descriptions_text:
         codemeta_output["description"] = descriptions_text
     if published_date != "":
@@ -1738,7 +1847,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         assert (doc_src is not None)
         if not path.exists(doc_src):
             sys.exit("Error: Document does not exist at given path")
-        with open(doc_src, 'r') as doc_fh:
+        with open(doc_src, 'r', encoding="UTF-8") as doc_fh:
             text = doc_fh.read()
         github_data = {}
 
@@ -1768,6 +1877,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         #logo = extract_logo(unfiltered_text, repo_url)
         logo, images = extract_images(unfiltered_text, repo_url)
         support_channels = extract_support_channels(unfiltered_text)
+        package_distribution = extract_package_distributions(unfiltered_text)
     else:
         citations = []
         citation_file_text = ""
@@ -1780,9 +1890,10 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         logo = ""
         images = []
         support_channels = []
+        package_distribution = ""
 
     predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title,
-                        readthedocs_links, repo_status, arxiv_links, logo, images, support_channels)
+                        readthedocs_links, repo_status, arxiv_links, logo, images, support_channels, package_distribution)
     gitlab_url = False
     if repo_url is not None:
         if repo_url.rfind("gitlab.com") > 0:
