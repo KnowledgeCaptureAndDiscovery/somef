@@ -375,7 +375,90 @@ class TestCli(unittest.TestCase):
                 missing=False)
         text_file = open(test_data_path + "test-150.json-ld", "r")
         data = text_file.read()
-        print(data)
         text_file.close()
         assert data.find("acknowledgement") == -1
         os.remove(test_data_path + "test-150.json-ld")
+
+    def test_issue_346(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=test_data_path + "README-wothive.md",
+                in_file=None,
+                output=test_data_path + "test-346.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
+        text_file = open(test_data_path + "test-346.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("acknowledgement") > 0
+        os.remove(test_data_path + "test-346.json")
+
+    def test_issue_241(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=test_data_path + "README-tensorflow-2.6.0.md",
+                in_file=None,
+                output=test_data_path + "test-241.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
+        text_file = open(test_data_path + "test-241.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("packageDistribution") > 0
+        os.remove(test_data_path + "test-241.json")
+
+    def test_issue_320(self):
+        with open(test_data_path + "README-urllib3.md", "r") as data_file:
+            test_text = data_file.read()
+            logo, images = extract_images(test_text, "https://github.com/urllib3/urllib3")
+            assert (not logo == "")
+
+    def test_issue_361(self):
+        text, github_data = load_local_repository_metadata(test_data_repositories + "rdflib-6.0.2")
+        assert len(text) > 0
+
+    def test_issue_380(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=test_data_path + "README-raidologist.md",
+                in_file=None,
+                output=test_data_path + "test-380.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
+        text_file = open(test_data_path + "test-380.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("installation") > 0
+        os.remove(test_data_path + "test-380.json")
+
+    def test_issue_379(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=test_data_path + "README-raidologist.md",
+                in_file=None,
+                output=test_data_path + "test-379.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
+        text_file = open(test_data_path + "test-379.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        description = json_content['description']
+        assert len(description) == 1
+        os.remove(test_data_path + "test-379.json")
