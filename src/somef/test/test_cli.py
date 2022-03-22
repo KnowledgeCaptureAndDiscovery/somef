@@ -460,5 +460,66 @@ class TestCli(unittest.TestCase):
         text_file.close()
         json_content = json.loads(data)
         description = json_content['description']
-        assert len(description) == 1
+        assert len(description) > 0
         os.remove(test_data_path + "test-379.json")
+
+    def test_issue_383(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=test_data_path + "README-mapeathor.md",
+                in_file=None,
+                output=test_data_path + "test-383.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
+        text_file = open(test_data_path + "test-383.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("- [Ana Iglesias-Molina](https://github.com/anaigmo) (ana.iglesiasm@upm.es)") > 0
+        os.remove(test_data_path + "test-383.json")
+
+    def test_issue_384(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=test_data_path + "README-fair-ontologies.md",
+                in_file=None,
+                output=test_data_path + "test-384.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
+        text_file = open(test_data_path + "test-384.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("A public demo of FOOPS! is available here:") > 0
+        os.remove(test_data_path + "test-384.json")
+
+    def test_issue_378(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=test_data_path + "README-easytv-annotator.md",
+                in_file=None,
+                output=test_data_path + "test-378.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
+        text_file = open(test_data_path + "test-378.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        installation = json_content['installation']
+        assert_true = False
+        for install in installation:
+            if 'parentHeader' in install.keys():
+                if install['originalHeader'] == "Hard way" and install['parentHeader'] == "Installation":
+                    assert_true = True
+        assert assert_true
+        os.remove(test_data_path + "test-378.json")

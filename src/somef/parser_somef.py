@@ -15,7 +15,8 @@ def extract_headers(original_text):
         line = splitted[index]
         if line.startswith("<h"):
             if is_header(line):
-                text = re.sub(regex, '', line)
+                #text = re.sub(regex, '', line)
+                text = get_tag_content(line)
                 if index + 1 >= limit:
                     output[text] = True
                 elif not splitted[index + 1].startswith("<h"):
@@ -37,7 +38,7 @@ def extract_headers_with_tags(original_text):
         line = splitted[index]
         if line.startswith("<h"):
             if is_header(line):
-                output.append(line)
+                output.append(replace_html_tags(line))
         index += 1
     return output
 
@@ -85,12 +86,17 @@ def extract_content_per_header(original_text, headers):
 
 def get_position(init_index, text_tokenized, text):
     while init_index < len(text_tokenized):
-        val = text_tokenized[init_index].find(text)
-        if text_tokenized[init_index].find(text) != -1:
+        val = text_tokenized[init_index]
+        val = remove_hash(val).strip()
+        if val.startswith(text):
             return init_index
         init_index += 1
     return -1
 
+def remove_hash(text):
+    while text.startswith("#"):
+        text = text[1:]
+    return text
 
 def get_text(init_index, end_index, text_tokenized):
     if end_index == -1:
@@ -110,6 +116,8 @@ def extract_bash(text):
     while text.find('```')!= -1:
         init = text.find('```')
         end = text.find('```',init+3)
+        if end == -1:
+            break
         bash_text = text[init:end+3]
         text = text.replace(bash_text, "BASH"+str(index)+"*")
         output["BASH"+str(index)+"*"] = bash_text
@@ -417,3 +425,17 @@ def is_header(header):
         return True
     else:
         return False
+
+
+def get_tag_content(header):
+    init = header.index(">")
+    end = header.index("</h")
+    return replace_html_tags(header[init+1:end])
+
+
+def replace_html_tags(text):
+    text = text.replace("<i>","*").replace("</i>","*")
+    text = text.replace("<em>","*").replace("</em>","*")
+    text = text.replace("<b>", "**").replace("</b>", "**")
+    text = text.replace("<strong>", "**").replace("</strong>", "**")
+    return text

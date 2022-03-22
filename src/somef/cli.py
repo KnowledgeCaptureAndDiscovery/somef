@@ -980,11 +980,12 @@ def create_excerpts(string_list):
     divisions = parser_somef.extract_blocks_excerpts(string_list)
     print("Text Successfully split. \n")
     # issue 337
-    output = []
+    output = {}
     for division in divisions:
+        original = division
         division = remove_links_images(division)
         if len(division) > 0:
-            output.append(division)
+            output[division] = original
     return output
 
 
@@ -1003,6 +1004,11 @@ def run_classifiers(excerpts, file_paths):
     """
     score_dict = {}
     if len(excerpts) > 0:
+        text_to_classifier = []
+        text_to_results = []
+        for key in excerpts.keys():
+            text_to_classifier.append(key)
+            text_to_results.append(excerpts[key])
         for category in categories:
             if category not in file_paths.keys():
                 sys.exit("Error: Category " + category + " file path not present in config.json")
@@ -1011,8 +1017,8 @@ def run_classifiers(excerpts, file_paths):
                 sys.exit(f"Error: File/Directory {file_name} does not exist")
             print("Classifying excerpts for the category", category)
             classifier = pickle.load(open(file_name, 'rb'))
-            scores = classifier.predict_proba(excerpts)
-            score_dict[category] = {'excerpt': excerpts, 'confidence': scores[:, 1]}
+            scores = classifier.predict_proba(text_to_classifier)
+            score_dict[category] = {'excerpt': text_to_results, 'confidence': scores[:, 1]}
             print("Excerpt Classification Successful for the Category", category)
         print("\n")
 
@@ -1046,6 +1052,15 @@ def remove_unimportant_excerpts(excerpt_element):
     return final_excerpt
 
 
+def is_in_excerpts_headers(text, set_excerpts):
+    set_text = set(text.split())
+    for excerpt in set_excerpts:
+        set_excerpt = set(excerpt.split())
+        if set_text.issubset(set_excerpt):
+            return True, excerpt
+
+    return False, None
+
 ## Function takes scores dictionary and a threshold as input
 ## Returns predictions containing excerpts with a confidence above the given threshold.
 def classify(scores, threshold, excerpts_headers, header_parents):
@@ -1061,31 +1076,48 @@ def classify(scores, threshold, excerpts_headers, header_parents):
         for i in range(len(scores[ele]['confidence'])):
             if scores[ele]['confidence'][i] >= threshold:
                 element = scores[ele]['excerpt'][i]
-                if element in set(excerpts_headers['text']):
-                    elem = excerpts_headers.loc[excerpts_headers['text'] == element]
-                    ind = elem.index.values[0]
-                    header = elem.at[ind, 'header']
-                if flag == False:
+                # if excerpt is empty, it means it's the first iteration of the loop
+                if excerpt == "":
+                    if element in set(excerpts_headers['text']):
+                        elem = excerpts_headers.loc[excerpts_headers['text'] == element]
+                        ind = elem.index.values[0]
+                        header = elem.at[ind, 'header']
                     excerpt = excerpt + scores[ele]['excerpt'][i] + ' \n'
                     confid.append(scores[ele]['confidence'][i])
-                    flag = True
                 else:
-                    excerpt = excerpt + scores[ele]['excerpt'][i] + ' \n'
-                    confid.append(scores[ele]['confidence'][i])
-            else:
-                if flag == True:
-                    if not header == "":
-                        element = remove_unimportant_excerpts(
-                            {'excerpt': excerpt, 'confidence': confid, 'originalHeader': header,
-                             'parentHeader': header_parents[header]})
-                        header == ""
+                    current_header = ""
+                    if element in set(excerpts_headers['text']):
+                        elem = excerpts_headers.loc[excerpts_headers['text'] == element]
+                        ind = elem.index.values[0]
+                        current_header = elem.at[ind, 'header']
+                    # if both headers are the same, the new data is added
+                    if header == current_header:
+                        excerpt = excerpt + scores[ele]['excerpt'][i] + ' \n'
+                        confid.append(scores[ele]['confidence'][i])
+                    # if they are not the same, a new excerpt is created with the previous data
+                    # and store the new data as part of a new excerpt
                     else:
-                        element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid})
-                    if len(element['confidence']) != 0:
-                        predictions[ele].append(element)
-                    excerpt = ""
-                    confid = []
-                    flag = False
+                        if not header == "":
+                            element = remove_unimportant_excerpts(
+                                {'excerpt': excerpt, 'confidence': confid, 'originalHeader': header,
+                                 'parentHeader': header_parents[header]})
+                        else:
+                            element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid})
+                        if len(element['confidence']) != 0:
+                            predictions[ele].append(element)
+                        header = current_header
+                        excerpt = scores[ele]['excerpt'][i] + ' \n'
+                        confid = [scores[ele]['confidence'][i]]
+        # if an element hasn't been added, it's added at this point
+        if excerpt != "":
+            if not header == "":
+                element = remove_unimportant_excerpts(
+                    {'excerpt': excerpt, 'confidence': confid, 'originalHeader': header,
+                     'parentHeader': header_parents[header]})
+            else:
+                element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid})
+            if len(element['confidence']) != 0:
+                predictions[ele].append(element)
         print("Run completed.")
     print("All Excerpts below the given Threshold Removed. \n")
     return predictions
