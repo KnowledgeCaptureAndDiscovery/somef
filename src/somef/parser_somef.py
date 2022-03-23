@@ -377,12 +377,14 @@ def extract_headers_parents(original_text):
     output = {}
     parents = []
     parent = ""
+    test = []
     for header in headers:
         parent, parents = update_parents(header, parents)
-        output[header] = ' --- '.join(parents)
+        output[header] = parents
+        #output[header] = ' --- '.join(parents)
         parents.append(header)
 
-    return remove_tags(output)
+    return remove_tags_new(output)
 
 
 def remove_tags(header_parents):
@@ -393,6 +395,20 @@ def remove_tags(header_parents):
         new_key = re.sub(regex, '', key)
         new_value = re.sub(regex, '', value)
         output[new_key] = new_value
+
+    return
+
+def remove_tags_new(header_parents):
+    output = {}
+    regex = r'<[^<>]+>'
+    for key in header_parents.keys():
+        new_key = re.sub(regex, '', key)
+        new_list = []
+        for value in header_parents[key]:
+            if key != value:
+                new_value = re.sub(regex, '', value)
+                new_list.append(new_value)
+        output[new_key] = new_list
 
     return output
 
@@ -438,4 +454,5 @@ def replace_html_tags(text):
     text = text.replace("<em>","*").replace("</em>","*")
     text = text.replace("<b>", "**").replace("</b>", "**")
     text = text.replace("<strong>", "**").replace("</strong>", "**")
+    text = text.replace("<code>", "`").replace("</code>", "`")
     return text

@@ -971,6 +971,17 @@ def remove_links_images(text):
     # remove blank spaces and \n
     return text.strip()
 
+
+def extract_colab_links(text):
+    output = []
+    links = re.findall(r"\[(.*?)?\]\(([^)]+)\)", text)
+    for link in links:
+        link_url = link[1]
+        if link_url.startswith("https://colab.research.google.com/drive"):
+            output.append(link_url)
+
+    return output
+
 ## Function takes readme text as input and divides it into excerpts
 ## Returns the extracted excerpts
 def create_excerpts(string_list):
@@ -1193,6 +1204,8 @@ def extract_binder_links(readme_text) -> object:
     binder_links = re.findall(regex, readme_text)
     print("Extraction of Binder links from readme completed.\n")
     # remove duplicates
+    collabs = extract_colab_links(readme_text)
+    binder_links += collabs
     return list(dict.fromkeys(binder_links))
 
 
@@ -1564,7 +1577,7 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
         if 'citation' not in predictions.keys():
             predictions['citation'] = []
         predictions['citation'].insert(0, {'excerpt': citation_file_text, 'confidence': [1.0],
-                                           'technique': 'File Exploration'})
+                                           'technique': 'File Exploration', 'format': 'citation file format'})
     if len(dois) != 0:
         predictions['identifier'] = []
         for identifier in dois:
@@ -1572,12 +1585,8 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
             predictions['identifier'].insert(0, {'excerpt': identifier[1], 'confidence': [1.0],
                                                  'technique': 'Regular expression'})
     if len(binder_links) != 0:
-        predictions['executableExample'] = []
-        for notebook in binder_links:
-            # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
-            predictions['executableExample'].insert(0, {'excerpt': notebook[1], 'confidence': [1.0],
-                                                        'technique': 'Regular expression'})
-
+        predictions['executableExample'] = {'excerpt': binder_links, 'confidence': [1.0],
+                                     'technique': 'Regular expression'}
     if len(repo_status) != 0:
         predictions['repoStatus'] = {
             'excerpt': "https://www.repostatus.org/#" + repo_status[0:repo_status.find(" ")].lower(),
@@ -1652,7 +1661,11 @@ def format_output(git_data, repo_data, gitlab_url=False):
                     {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technigue})
         else:
             if i in file_exploration:
-                repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
+                if i == 'hasExecutableNotebook':
+                    repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration',
+                                    'format': 'jupyter notebook'}
+                else:
+                    repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
             elif git_data[i] != "" and git_data[i] != []:
                 repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technigue}
     # remove empty categories from json
