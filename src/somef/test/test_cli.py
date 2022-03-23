@@ -519,7 +519,124 @@ class TestCli(unittest.TestCase):
         assert_true = False
         for install in installation:
             if 'parentHeader' in install.keys():
-                if install['originalHeader'] == "Hard way" and install['parentHeader'] == "Installation":
+                if install['originalHeader'] == "Hard way" and "Installation" in install['parentHeader']:
                     assert_true = True
         assert assert_true
         os.remove(test_data_path + "test-378.json")
+
+    def test_issue_378_2(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=test_data_path + "README-easytv-annotator.md",
+                in_file=None,
+                output=test_data_path + "test-378-2.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
+        text_file = open(test_data_path + "test-378-2.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        installation = json_content['installation']
+        assert_true = False
+        for install in installation:
+            if 'parentHeader' in install.keys():
+                if install['originalHeader'] == "Easy way" and "Installation" in install['parentHeader']\
+                        and "easytv-annotator" in install["parentHeader"]:
+                    assert_true = True
+        assert assert_true
+        os.remove(test_data_path + "test-378-2.json")
+
+    def test_issue_389(self):
+        text, github_data = load_local_repository_metadata(test_data_repositories + "wot-hive")
+        assert len(github_data['hasBuildFile']) > 0
+
+    def test_issue_260(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=test_data_path + "README-kgtk-notebooks.md",
+                in_file=None,
+                output=test_data_path + "test-260.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
+        text_file = open(test_data_path + "test-260.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("executableExample") > 0
+        os.remove(test_data_path + "test-260.json")
+
+    def test_issue_337(self):
+        text = """## Interactive web interface
+
+Visit the public website at [www.mapshaper.org](http://www.mapshaper.org) or use the web UI locally via the `mapshaper-gui` script. 
+
+All processing is done in the browser, so your data stays private, even when using the public website.
+
+The web UI works in recent desktop versions of Chrome, Firefox, Safari and Internet Explorer. Safari before v10.1 and IE before v10 are not supported.
+
+        """
+        text = remove_links_images(text)
+        assert text.find("[www.mapshaper.org](http://www.mapshaper.org)") == -1
+
+    def test_issue_319_1(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=None,
+                local_repo=test_data_repositories + "Widoco",
+                in_file=None,
+                output=test_data_path + "test-319-1.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
+        text_file = open(test_data_path + "test-319-1.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("citation file format") > 0
+        os.remove(test_data_path + "test-319-1.json")
+
+    def test_issue_319_2(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=None,
+                local_repo=test_data_repositories + "kgtk-notebooks",
+                in_file=None,
+                output=test_data_path + "test-319-2.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
+        text_file = open(test_data_path + "test-319-2.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("jupyter notebook") > 0
+        os.remove(test_data_path + "test-319-2.json")
+
+    def test_issue_385(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                doc_src=test_data_path + "README-tada-gam.md",
+                in_file=None,
+                output=test_data_path + "test-385.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True)
+        text_file = open(test_data_path + "test-385.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("installation") > 0
+        #os.remove(test_data_path + "test-385.json")
