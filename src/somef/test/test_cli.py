@@ -170,7 +170,18 @@ class TestCli(unittest.TestCase):
     #     assert data.find("\"acknowledgments\":") >= 0
 
     def test_issue_286(self):
-        header = {'accept': 'application/vnd.github.v3+json'}
+        credentials_file = Path(
+            os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
+        ).expanduser()
+        if credentials_file.exists():
+            with credentials_file.open("r") as fh:
+                file_paths = json.load(fh)
+        else:
+            sys.exit("Error: Please provide a config.json file.")
+        header = {}
+        if 'Authorization' in file_paths.keys():
+            header['Authorization'] = file_paths['Authorization']
+        header['accept'] = 'application/vnd.github.v3+json'
         text, github_data = load_repository_metadata("https://gitlab.com/gitlab-org/ci-sample-projects/platform-team",
                                                      header)
         assert len(github_data['downloadUrl']) > 0
@@ -208,7 +219,18 @@ class TestCli(unittest.TestCase):
         assert ('license' not in github_data) == True
 
     def test_issue_no_readme(self):
-        header = {'accept': 'application/vnd.github.v3+json'}
+        credentials_file = Path(
+            os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
+        ).expanduser()
+        if credentials_file.exists():
+            with credentials_file.open("r") as fh:
+                file_paths = json.load(fh)
+        else:
+            sys.exit("Error: Please provide a config.json file.")
+        header = {}
+        if 'Authorization' in file_paths.keys():
+            header['Authorization'] = file_paths['Authorization']
+        header['accept'] = 'application/vnd.github.v3+json'
         text, github_data = load_repository_metadata("https://github.com/oeg-upm/OpenRefineExtension_Transformation",                                                     header)
         assert ('codeRepository' in github_data) == True
 
@@ -237,7 +259,18 @@ class TestCli(unittest.TestCase):
         os.remove(test_data_path + "test-repostatus-311.json-ld")
 
     def test_issue_284_issue_272(self):
-        header = {'accept': 'application/vnd.github.v3+json'}
+        credentials_file = Path(
+            os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
+        ).expanduser()
+        if credentials_file.exists():
+            with credentials_file.open("r") as fh:
+                file_paths = json.load(fh)
+        else:
+            sys.exit("Error: Please provide a config.json file.")
+        header = {}
+        if 'Authorization' in file_paths.keys():
+            header['Authorization'] = file_paths['Authorization']
+        header['accept'] = 'application/vnd.github.v3+json'
         text, github_data = load_repository_metadata("https://github.com/3b1b/manim", header)
         assert (('stargazersCount' in github_data) == True) and (('longTitle' in github_data) == False)
 
@@ -638,5 +671,7 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
         text_file = open(test_data_path + "test-385.json", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("installation") > 0
-        #os.remove(test_data_path + "test-385.json")
+        json_content = json.loads(data)
+        usage = json_content['usage']
+        assert len(usage) == 3
+        os.remove(test_data_path + "test-385.json")
