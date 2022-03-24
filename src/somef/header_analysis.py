@@ -155,6 +155,22 @@ def label_header(header):  # label the header with a subgroup
                 label.append(bestgroup)
     return label
 
+def label_parent_headers(parentHeaders):  # label the header with a subgroup
+    header = ""
+    for value in parentHeaders:
+        header += value + " "
+    # remove punctuation
+    header_clean = header.translate(str.maketrans('', '', string.punctuation))
+    sentence = header_clean.strip().split(" ")
+    label = []
+    for s in sentence:
+        synn = Word(s).synsets
+        if (len(synn) > 0):
+            bestgroup = match_group(synn, group, 0.8)
+            if (bestgroup != "" and bestgroup not in label):
+                label.append(bestgroup)
+    return label
+
 
 def clean_html(text):
     cleanr = re.compile('<.*?>')
@@ -171,6 +187,11 @@ def extract_categories_using_headers(text):  # main function
         print("File to analyze has no headers")
         return {}, [text]
     data['Group'] = data['Header'].apply(lambda row: label_header(row))
+    data['GroupParent'] = data['ParentHeader'].apply(lambda row: label_parent_headers(row))
+    for i in data.index:
+        if len(data['Group'][i]) == 0 and len(data['GroupParent'][i]) > 0:
+            data.at[i, 'Group'] = data['GroupParent'][i]
+    data = data.drop(columns=['GroupParent'])
     if len(data['Group'].iloc[0]) == 0:
         data['Group'].iloc[0] = ['unknown']
     groups = data.apply(lambda x: pd.Series(x['Group']), axis=1).stack().reset_index(level=1, drop=True)
