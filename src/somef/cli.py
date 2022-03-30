@@ -325,6 +325,12 @@ def load_repository_metadata(repository_url, header, ignore_github_metadata=Fals
         repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip"
         print(f"Downloading {repo_archive_url}")
         repo_download = requests.get(repo_archive_url)
+        if repo_download.status_code == 404:
+            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+            repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/main.zip"
+            print(f"Trying to download {repo_archive_url}")
+            repo_download = requests.get(repo_archive_url)
+
         if repo_download.status_code != 200:
             sys.exit(f"Error: Archive request failed with HTTP {repo_download.status_code}")
         repo_zip = repo_download.content
@@ -942,6 +948,7 @@ def remove_bibtex(string_list):
             end = element.find("```", init + 3)
             substring = element[init:end + 3]
             string_list[x] = element.replace(substring, "")
+    print("Extraction of bibtex citation from readme completed. \n")
     return string_list
 
 
@@ -1165,7 +1172,6 @@ def extract_bibtex(readme_text) -> object:
     """
     regex = r'\@[a-zA-Z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title][.\n\S\s]+?\n\}'
     citations = re.findall(regex, readme_text)
-    print("Extraction of bibtex citation from readme completed. \n")
     return citations
 
 
@@ -1591,6 +1597,7 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
         predictions['repoStatus'] = {
             'excerpt': "https://www.repostatus.org/#" + repo_status[0:repo_status.find(" ")].lower(),
             'description': repo_status,
+            'confidence': [1.0],
             'technique': 'Regular expression'}
 
     if len(arxiv_links) != 0:
