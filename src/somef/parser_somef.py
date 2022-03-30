@@ -231,8 +231,7 @@ def join_elements(p_text):
 
 
 def extract_text_excerpts_header(original_text):
-    html_text = markdown.markdown(original_text)
-    headers = extract_headers(html_text)
+    headers = extract_headers(original_text)
     keys = list(headers.keys())
     content = []
     output = {}

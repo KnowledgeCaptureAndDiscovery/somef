@@ -91,6 +91,8 @@ pages={3032-3037}
 
 - Python 3.9
 
+SOMEF has been tested on Unix, MacOS and Windows Microsoft operating systems
+
 ## Install from Pypi
 SOMEF [is available in Pypi!](https://pypi.org/project/somef/). To install it just type:
 
