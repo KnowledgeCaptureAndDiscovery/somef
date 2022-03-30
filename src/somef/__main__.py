@@ -69,6 +69,13 @@ class URLParamType(click.types.StringParamType):
     default=False,
     help="Flag to ignore Github Metadata (by default False)"
 )
+@click.option(
+    "--readme_only",
+    "-ro",
+    is_flag=True,
+    default=False,
+    help="Flag to retrieve only the README.md file from the Github/Gitlab Repository URL"
+)
 @optgroup.group('Input', cls=RequiredMutuallyExclusiveOptionGroup)
 @optgroup.option(
     "--repo_url",

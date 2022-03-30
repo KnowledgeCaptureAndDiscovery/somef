@@ -136,7 +136,7 @@ class GithubUrlError(Exception):
     pass
 
 
-def load_repository_metadata(repository_url, header, ignore_github_metadata=False):
+def load_repository_metadata(repository_url, header, ignore_github_metadata=False, readme_only=False):
     """
     Function uses the repository_url provided to load required information from github.
     Information kept from the repository is written in keep_keys.
@@ -150,7 +150,7 @@ def load_repository_metadata(repository_url, header, ignore_github_metadata=Fals
     Returns the readme text and required metadata
     """
     if repository_url.rfind("gitlab.com") > 0:
-        return load_repository_metadata_gitlab(repository_url, header)
+        return load_repository_metadata_gitlab(repository_url, header, readme_only)
 
     print(f"Loading Repository {repository_url} Information....")
     ## load general response of the repository
@@ -190,7 +190,7 @@ def load_repository_metadata(repository_url, header, ignore_github_metadata=Fals
 
     general_resp = {}
     date = ""
-    if not ignore_github_metadata:
+    if not ignore_github_metadata or readme_only:
         general_resp, date = rate_limit_get(repo_api_base_url, headers=header)
 
     if 'message' in general_resp:
@@ -206,6 +206,23 @@ def load_repository_metadata(repository_url, header, ignore_github_metadata=Fals
         repo_ref = 'master'
     elif repo_ref is None:
         repo_ref = general_resp['default_branch']
+
+    if readme_only:
+        repo_archive_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/README.md"
+        print(f"Downloading {repo_archive_url}")
+        repo_download = requests.get(repo_archive_url)
+        if repo_download.status_code == 404:
+            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+            repo_archive_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/master/README.md"
+            print(f"Trying to download {repo_archive_url}")
+            repo_download = requests.get(repo_archive_url)
+
+        if repo_download.status_code != 200:
+            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+        repo_zip = repo_download.content
+
+        text = repo_zip.decode('utf-8')
+        return text, {}
 
     ## get only the fields that we want
     def do_crosswalk(data, crosswalk_table):
@@ -472,7 +489,7 @@ def load_repository_metadata(repository_url, header, ignore_github_metadata=Fals
     return text, filtered_resp
 
 
-def load_repository_metadata_gitlab(repository_url, header):
+def load_repository_metadata_gitlab(repository_url, header, readme_only=False):
     """
     Function uses the repository_url provided to load required information from github.
     Information kept from the repository is written in keep_keys.
@@ -545,6 +562,23 @@ def load_repository_metadata_gitlab(repository_url, header):
 
     if repo_ref is None:
         repo_ref = general_resp['defaultBranch']
+
+    if readme_only:
+        repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/raw/{repo_ref}/README.md"
+        print(f"Downloading {repo_archive_url}")
+        repo_download = requests.get(repo_archive_url)
+        if repo_download.status_code == 404:
+            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+            repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/raw/master/README.md"
+            print(f"Trying to download {repo_archive_url}")
+            repo_download = requests.get(repo_archive_url)
+
+        if repo_download.status_code != 200:
+            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+        repo_zip = repo_download.content
+        print(repo_zip)
+        text = repo_zip.decode('utf-8')
+        return text, {}
 
     ## get only the fields that we want
     def do_crosswalk(data, crosswalk_table):
@@ -1866,7 +1900,7 @@ def create_missing_fields_report(repo_data, out_path):
     save_json_output(out, export_path, False)
 
 
-def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None, ignore_github_metadata=False):
+def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None, ignore_github_metadata=False, readme_only=False):
     credentials_file = Path(
         os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
     ).expanduser()
@@ -1882,7 +1916,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     if repo_url is not None:
         assert (doc_src is None)
         try:
-            text, github_data = load_repository_metadata(repo_url, header, ignore_github_metadata)
+            text, github_data = load_repository_metadata(repo_url, header, ignore_github_metadata, readme_only)
             if text == "":
                 print("Warning: README document does not exist in the repository")
         except GithubUrlError:
@@ -1964,6 +1998,7 @@ def run_cli(*,
             ignore_classifiers=False,
             repo_url=None,
             ignore_github_metadata=False,
+            readme_only=False,
             doc_src=None,
             local_repo=None,
             in_file=None,
@@ -2004,7 +2039,7 @@ def run_cli(*,
 
     else:
         if repo_url:
-            repo_data = cli_get_data(threshold, ignore_classifiers, repo_url=repo_url, ignore_github_metadata=ignore_github_metadata)
+            repo_data = cli_get_data(threshold, ignore_classifiers, repo_url=repo_url, ignore_github_metadata=ignore_github_metadata, readme_only=readme_only)
         elif local_repo:
             repo_data = cli_get_data(threshold, ignore_classifiers, local_repo=local_repo)
         else:

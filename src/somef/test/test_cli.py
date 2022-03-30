@@ -716,3 +716,87 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
         acknowledgement = json_content['acknowledgement']
         assert acknowledgement != None
         os.remove(test_data_path + "test-393.json")
+
+    def test_issue_314(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url="https://github.com/oeg-upm/wot-hive/tree/main/docker/auroral-hive",
+                doc_src=None,
+                in_file=None,
+                output=test_data_path + "test-314.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=True)
+        text_file = open(test_data_path + "test-314.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        acknowledgement = json_content['acknowledgement']
+        assert acknowledgement != None
+        os.remove(test_data_path + "test-314.json")
+
+    def test_issue_314_1(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url="https://github.com/tensorflow/tensorflow/tree/v2.6.0",
+                doc_src=None,
+                in_file=None,
+                output=test_data_path + "test-314-1.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=True)
+        text_file = open(test_data_path + "test-314-1.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        image = json_content['image']
+        assert image != None
+        os.remove(test_data_path + "test-314-1.json")
+
+    def test_issue_314_2(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url="https://gitlab.com/jleblay/tokei",
+                doc_src=None,
+                in_file=None,
+                output=test_data_path + "test-314-2.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=True)
+        text_file = open(test_data_path + "test-314-2.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        description = json_content['description']
+        assert description != None
+        os.remove(test_data_path + "test-314-2.json")
+
+    def test_issue_314_3(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url="https://gitlab.com/unboundedsystems/adapt/-/tree/release-0.1",
+                doc_src=None,
+                in_file=None,
+                output=test_data_path + "test-314-3.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=True)
+        text_file = open(test_data_path + "test-314-3.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        description = json_content['description']
+        assert description != None
+        os.remove(test_data_path + "test-314-3.json")
