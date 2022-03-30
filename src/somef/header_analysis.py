@@ -11,6 +11,8 @@ from textblob import Word
 from . import parser_somef
 import json
 
+pd.options.mode.chained_assignment = None  # default='warn'
+
 # Define wordnet groups
 group = dict()
 
@@ -195,6 +197,7 @@ def extract_categories_using_headers(text):  # main function
     if len(data['Group'].iloc[0]) == 0:
         data['Group'].iloc[0] = ['unknown']
     groups = data.apply(lambda x: pd.Series(x['Group']), axis=1).stack().reset_index(level=1, drop=True)
+
     groups.name = 'Group'
     data = data.drop('Group', axis=1).join(groups)
     if data['Group'].iloc[0] == 'unknown':
