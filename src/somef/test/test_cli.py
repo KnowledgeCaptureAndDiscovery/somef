@@ -800,3 +800,25 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
         description = json_content['description']
         assert description != None
         os.remove(test_data_path + "test-314-3.json")
+
+    def test_issue_403(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url="https://github.com/oeg-upm/wot-hive",
+                doc_src=None,
+                in_file=None,
+                output=test_data_path + "test-403.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=False)
+        text_file = open(test_data_path + "test-403.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        readme_url = json_content['readmeUrl']
+        excerpt = readme_url['excerpt']
+        assert excerpt == 'https://raw.githubusercontent.com/oeg-upm/wot-hive/main/README.md'
+        os.remove(test_data_path + "test-403.json")

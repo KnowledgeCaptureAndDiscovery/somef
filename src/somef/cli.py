@@ -385,10 +385,8 @@ def load_repository_metadata(repository_url, header, ignore_github_metadata=Fals
                             with open(os.path.join(dirpath, filename), "rb") as data_file:
                                 data_file_text = data_file.read()
                                 text = data_file_text.decode("utf-8")
-                                if repository_url.endswith("/"):
-                                    filtered_resp['readmeUrl'] = repository_url + filename
-                                else:
-                                    filtered_resp['readmeUrl'] = repository_url + "/" + filename
+                                filtered_resp['readmeUrl'] = convert_to_raw_usercontent(filename, owner, repo_name,
+                                                                                        repo_ref)
                         except:
                             print("README Error: error while reading file content")
 
