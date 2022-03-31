@@ -451,8 +451,14 @@ def load_repository_metadata(repository_url, header, ignore_github_metadata=Fals
                             docs_path = new_repo_relative_path + "/" + dirname
                         else:
                             docs_path = repo_relative_path + "/" + dirname
-                    docs.append(
-                        f"https://github.com/{owner}/{repo_name}/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
+
+                    names = os.listdir(os.path.join(repo_dir, docs_path))
+                    for name in names:
+                        if name.lower().endswith(".pdf") or name.lower().endswith(".md") or name.lower().endswith(".html") or name.lower().endswith(".htm"):
+                            print("El fichero por el que se añade")
+                            docs.append(
+                                f"https://github.com/{owner}/{repo_name}/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
+                            break;
                     # print(docs)
 
         # print("NOTEBOOKS:")
@@ -791,8 +797,15 @@ def load_repository_metadata_gitlab(repository_url, header, readme_only=False):
                         docs_path = dirname
                     else:
                         docs_path = repo_relative_path + "/" + dirname
-                    docs.append(
-                        f"https://gitlab.com/{owner}/{repo_name}/-/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
+                    names = os.listdir(os.path.join(repo_dir, docs_path))
+                    for name in names:
+                        if name.lower().endswith(".pdf") or name.lower().endswith(".md") or name.lower().endswith(
+                                ".html") or name.lower().endswith(".htm"):
+                            print("El fichero por el que se añade")
+                            docs.append(
+                                f"https://gitlab.com/{owner}/{repo_name}/-/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
+                            break;
+
                     # print(docs)
 
         # print("NOTEBOOKS:")
@@ -918,7 +931,14 @@ def load_local_repository_metadata(local_repo):
                     docs_path = dirname
                 else:
                     docs_path = os.path.join(repo_relative_path, dirname)
-                docs.append(os.path.join(repo_dir,docs_path))
+
+                names = os.listdir(os.path.join(repo_dir,docs_path))
+                for name in names:
+                    if name.lower().endswith(".pdf") or name.lower().endswith(".md") or name.lower().endswith(
+                            ".html") or name.lower().endswith(".htm"):
+                        print("El fichero por el que se añade:::" + name)
+                        docs.append(os.path.join(repo_dir,docs_path))
+
 
     if len(notebooks) > 0:
         filtered_resp["hasExecutableNotebook"] = notebooks
@@ -1304,7 +1324,8 @@ def extract_readthedocs(readme_text) -> object:
     -------
     Links to the readthedocs documentation
     """
-    regex = r'http[s]?://[\w]+.readthedocs.io/'
+    #regex = r'http[s]?://[\w]+.readthedocs.io/'
+    regex = r'http[s]?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]+.readthedocs.io/'
     readthedocs_links = re.findall(regex, readme_text)
     print("Extraction of readthedocs links from readme completed.\n")
     # remove duplicates (links like [readthedocs](readthedocs) are found twice
