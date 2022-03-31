@@ -455,7 +455,6 @@ def load_repository_metadata(repository_url, header, ignore_github_metadata=Fals
                     names = os.listdir(os.path.join(repo_dir, docs_path))
                     for name in names:
                         if name.lower().endswith(".pdf") or name.lower().endswith(".md") or name.lower().endswith(".html") or name.lower().endswith(".htm"):
-                            print("El fichero por el que se añade")
                             docs.append(
                                 f"https://github.com/{owner}/{repo_name}/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
                             break;
@@ -801,7 +800,6 @@ def load_repository_metadata_gitlab(repository_url, header, readme_only=False):
                     for name in names:
                         if name.lower().endswith(".pdf") or name.lower().endswith(".md") or name.lower().endswith(
                                 ".html") or name.lower().endswith(".htm"):
-                            print("El fichero por el que se añade")
                             docs.append(
                                 f"https://gitlab.com/{owner}/{repo_name}/-/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
                             break;
@@ -936,7 +934,6 @@ def load_local_repository_metadata(local_repo):
                 for name in names:
                     if name.lower().endswith(".pdf") or name.lower().endswith(".md") or name.lower().endswith(
                             ".html") or name.lower().endswith(".htm"):
-                        print("El fichero por el que se añade:::" + name)
                         docs.append(os.path.join(repo_dir,docs_path))
 
 
