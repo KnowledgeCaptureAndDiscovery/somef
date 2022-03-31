@@ -67,6 +67,13 @@ class TestCli(unittest.TestCase):
         print(c)
         assert ["https://somef.readthedocs.io/"] == c
 
+    def test_extract_readthedocs_issue_407(self):
+        with open(test_data_path + "test_extract_readthedocs_3.txt", "r") as data_file:
+            test_text = data_file.read()
+            c = extract_readthedocs(test_text)
+            print(c)
+            assert ["https://owl-to-oas.readthedocs.io/"] == c
+
     def test_extract_gitter_chat(self):
         with open(test_data_path + "test_extract_gitter_chat.txt", "r") as data_file:
             test_text = data_file.read()
@@ -362,7 +369,7 @@ class TestCli(unittest.TestCase):
                 ignore_classifiers=False,
                 repo_url=None,
                 doc_src=None,
-                local_repo=test_data_path + "repositories/repos_oeg/bimerr-core",
+                local_repo=test_data_repositories + "bimerr-epw",
                 in_file=None,
                 output=test_data_path + "repositories/repos_oeg/test-355.json",
                 graph_out=None,
@@ -375,7 +382,7 @@ class TestCli(unittest.TestCase):
         print(data)
         text_file.close()
         assert data.find("longTitle") > 0
-        #os.remove(test_data_path + "repositories/repos_oeg/test-355.json")
+        os.remove(test_data_path + "repositories/repos_oeg/test-355.json")
 
     def test_no_repository_metadata(self):
         credentials_file = Path(
@@ -822,3 +829,43 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
         excerpt = readme_url['excerpt']
         assert excerpt == 'https://raw.githubusercontent.com/oeg-upm/wot-hive/main/README.md'
         os.remove(test_data_path + "test-403.json")
+
+    def test_issue_408(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                local_repo=test_data_repositories + "bimerr-epw",
+                doc_src=None,
+                in_file=None,
+                output=test_data_path + "test-408.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=False)
+        text_file = open(test_data_path + "test-408.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("https://github.com/oeg-upm/bimerr-epw/tree/master/Code/TDATA2RDFANDV/static/rest_framework/docs") == -1
+        #os.remove(test_data_path + "test-408.json")
+
+    def test_issue_408_1(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url="https://github.com/oeg-upm/bimerr-epw/",
+                local_repo=None,
+                doc_src=None,
+                in_file=None,
+                output=test_data_path + "test-408-1.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=False)
+        text_file = open(test_data_path + "test-408-1.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("https://github.com/oeg-upm/bimerr-epw/tree/master/Code/TDATA2RDFANDV/static/rest_framework/docs") == -1
+        os.remove(test_data_path + "test-408-1.json")
