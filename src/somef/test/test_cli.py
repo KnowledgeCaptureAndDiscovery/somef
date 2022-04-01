@@ -848,7 +848,7 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
         data = text_file.read()
         text_file.close()
         assert data.find("https://github.com/oeg-upm/bimerr-epw/tree/master/Code/TDATA2RDFANDV/static/rest_framework/docs") == -1
-        #os.remove(test_data_path + "test-408.json")
+        os.remove(test_data_path + "test-408.json")
 
     def test_issue_408_1(self):
         run_cli(threshold=0.8,
@@ -869,3 +869,43 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
         text_file.close()
         assert data.find("https://github.com/oeg-upm/bimerr-epw/tree/master/Code/TDATA2RDFANDV/static/rest_framework/docs") == -1
         os.remove(test_data_path + "test-408-1.json")
+
+    def test_issue_225_406(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                local_repo=None,
+                doc_src=test_data_path+"README-mapshaper.md",
+                in_file=None,
+                output=test_data_path + "test-225.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=False)
+        text_file = open(test_data_path + "test-225.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("\"type\": \"wiki\"")
+        os.remove(test_data_path + "test-225.json")
+
+    def test_issue_406(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                local_repo=None,
+                doc_src=test_data_path+"README-OWL-To-OAS.md",
+                in_file=None,
+                output=test_data_path + "test-406.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=False)
+        text_file = open(test_data_path + "test-406.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("\"type\": \"readthedocs\"")
+        os.remove(test_data_path + "test-406.json")
