@@ -1390,6 +1390,25 @@ def extract_arxiv_links(unfiltered_text):
     return results
 
 
+def extract_wiki_links(unfiltered_text):
+    links = re.findall(r"\[[^\]]*\]\((.*?)?\)", unfiltered_text)
+    print(links)
+    output = []
+    ends = 0
+    for link in links:
+        if validators.url(link):
+            if link.endswith("/wiki"):
+                output.append(link)
+            else:
+                ends = unfiltered_text.find("("+link+")") - 1
+                if unfiltered_text[:ends].find("[") != -1:
+                    position = unfiltered_text[:ends].rindex("[") + 1
+                    if unfiltered_text[position:ends].find("wiki") >= 0:
+                        output.append(link)
+            unfiltered_text = unfiltered_text[ends + len(link):]
+
+    return list(dict.fromkeys(output))
+
 # TO DO: join with image detection in a single method
 def extract_logo(unfiltered_text, repo_url):
     logo = ""
@@ -1606,7 +1625,7 @@ def extract_package_distributions(unfiltered_text):
     return output
 
 def merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, long_title,
-          readthedocs_links, repo_status, arxiv_links, logo, images, support_channels, package_distribution):
+          readthedocs_links, repo_status, arxiv_links, logo, images, support_channels, package_distribution, wiki_links):
     """
     Function that takes the predictions using header information, classifier and bibtex/doi parser
     Parameters
@@ -1676,7 +1695,14 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
         if 'documentation' not in predictions.keys():
             predictions['documentation'] = []
         predictions['documentation'].insert(0, {'excerpt': readthedocs_links[i], 'confidence': [1.0],
-                                                'technique': 'Regular expression'})
+                                                'technique': 'Regular expression', 'type': 'readthedocs'})
+
+    for i in range(len(wiki_links)):
+        if 'documentation' not in predictions.keys():
+            predictions['documentation'] = []
+        predictions['documentation'].insert(0, {'excerpt': wiki_links[i], 'confidence': [1.0],
+                                                'technique': 'Regular expression', 'type': 'wiki'})
+
     for headers in header_predictions:
         if headers not in predictions.keys():
             predictions[headers] = header_predictions[headers]
@@ -1976,6 +2002,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         readthedocs_links = extract_readthedocs(unfiltered_text)
         repo_status = extract_repo_status(unfiltered_text)
         arxiv_links = extract_arxiv_links(unfiltered_text)
+        wiki_links = extract_wiki_links(unfiltered_text)
         #logo = extract_logo(unfiltered_text, repo_url)
         logo, images = extract_images(unfiltered_text, repo_url)
         support_channels = extract_support_channels(unfiltered_text)
@@ -1989,13 +2016,14 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         readthedocs_links = []
         repo_status = ""
         arxiv_links = []
+        wiki_links = []
         logo = ""
         images = []
         support_channels = []
         package_distribution = ""
 
     predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title,
-                        readthedocs_links, repo_status, arxiv_links, logo, images, support_channels, package_distribution)
+                        readthedocs_links, repo_status, arxiv_links, logo, images, support_channels, package_distribution, wiki_links)
     gitlab_url = False
     if repo_url is not None:
         if repo_url.rfind("gitlab.com") > 0:
