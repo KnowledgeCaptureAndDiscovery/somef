@@ -909,3 +909,43 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
         text_file.close()
         assert data.find("\"type\": \"readthedocs\"")
         os.remove(test_data_path + "test-406.json")
+
+    def test_issue_255(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url="https://github.com/mbloch/mapshaper/",
+                local_repo=None,
+                doc_src=None,
+                in_file=None,
+                output=test_data_path + "test-255.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=False)
+        text_file = open(test_data_path + "test-255.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("https://github.com/mbloch/mapshaper/wiki") != -1
+        os.remove(test_data_path + "test-255.json")
+
+    def test_issue_255_1(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url="https://github.com/PyLops/pylops/",
+                local_repo=None,
+                doc_src=None,
+                in_file=None,
+                output=test_data_path + "test-255-1.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=False)
+        text_file = open(test_data_path + "test-255-1.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("https://github.com/PyLops/pylops/wiki") == -1
+        os.remove(test_data_path + "test-255-1.json")
