@@ -1390,9 +1390,8 @@ def extract_arxiv_links(unfiltered_text):
     return results
 
 
-def extract_wiki_links(unfiltered_text):
+def extract_wiki_links(unfiltered_text, repo_url):
     links = re.findall(r"\[[^\]]*\]\((.*?)?\)", unfiltered_text)
-    print(links)
     output = []
     ends = 0
     for link in links:
@@ -1406,6 +1405,16 @@ def extract_wiki_links(unfiltered_text):
                     if unfiltered_text[position:ends].find("wiki") >= 0:
                         output.append(link)
             unfiltered_text = unfiltered_text[ends + len(link):]
+
+    #to check if a wiki url is available in the repository
+    if repo_url != "" and repo_url != None and validators.url(repo_url):
+        if repo_url.endswith("/"):
+            repo_url = repo_url + "wiki"
+        else:
+            repo_url = repo_url + "/wiki"
+        wiki = requests.get(repo_url, allow_redirects=False)
+        if wiki.status_code == 200:
+            output.append(repo_url)
 
     return list(dict.fromkeys(output))
 
@@ -2002,7 +2011,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         readthedocs_links = extract_readthedocs(unfiltered_text)
         repo_status = extract_repo_status(unfiltered_text)
         arxiv_links = extract_arxiv_links(unfiltered_text)
-        wiki_links = extract_wiki_links(unfiltered_text)
+        wiki_links = extract_wiki_links(unfiltered_text,repo_url)
         #logo = extract_logo(unfiltered_text, repo_url)
         logo, images = extract_images(unfiltered_text, repo_url)
         support_channels = extract_support_channels(unfiltered_text)
