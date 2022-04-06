@@ -1655,8 +1655,23 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
     for i in range(len(citations)):
         if 'citation' not in predictions.keys():
             predictions['citation'] = []
-        predictions['citation'].insert(0, {'excerpt': citations[i], 'confidence': [1.0],
-                                           'technique': 'Regular expression'})
+        if citations[i].find('https://doi.org/') >= 0 or citations[i].find('doi ') >= 0:
+            doi_text = ""
+            text_citation = citations[i]
+            if text_citation.find("https://doi.org/") >= 0:
+                starts = text_citation.find("https://doi.org/")
+                ends = text_citation[starts:].find("}")
+                doi_text = text_citation[starts:starts + ends]
+            elif text_citation.find("doi") >= 0:
+                doi_pos = text_citation.find("doi")
+                starts = text_citation[doi_pos:].find("{")
+                ends = text_citation[starts + doi_pos:].find("}")
+                doi_text = "https://doi.org/" + text_citation[starts + doi_pos + 1:doi_pos + starts + ends]
+            predictions['citation'].insert(0, {'excerpt': citations[i], 'confidence': [1.0],
+                                               'technique': 'Regular expression', 'doi': doi_text})
+        else:
+            predictions['citation'].insert(0, {'excerpt': citations[i], 'confidence': [1.0],
+                                               'technique': 'Regular expression'})
     if len(citation_file_text) != 0:
         if 'citation' not in predictions.keys():
             predictions['citation'] = []
@@ -1687,10 +1702,17 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
                                'technique': 'Regular expression'}
 
     if len(images) != 0:
-        predictions['image'] = []
+        badges = []
         for image in images:
-            predictions['image'].insert(0, {'excerpt': image, 'confidence': [1.0],
-                                            'technique': 'Regular expression'})
+            if image.find('badge') >= 0:
+                badges.append(image)
+        for badge in badges:
+            images.remove(badge)
+        if len(images) > 0:
+            predictions['image'] = []
+            for image in images:
+                predictions['image'].insert(0, {'excerpt': image, 'confidence': [1.0],
+                                                'technique': 'Regular expression'})
 
     if len(support_channels) != 0:
         predictions['supportChannels'] = {'excerpt': support_channels, 'confidence': [1.0],
