@@ -949,3 +949,63 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
         text_file.close()
         assert data.find("https://github.com/PyLops/pylops/wiki") == -1
         os.remove(test_data_path + "test-255-1.json")
+
+    def test_issue_375(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                local_repo=None,
+                doc_src=test_data_path+"README-pylops.md",
+                in_file=None,
+                output=test_data_path + "test-375.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=False)
+        text_file = open(test_data_path + "test-375.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("https://img.shields.io/badge/chat-slack-green.svg") == -1
+        os.remove(test_data_path + "test-375.json")
+
+    def test_issue_136(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                local_repo=None,
+                doc_src=test_data_path+"README-widoco.md",
+                in_file=None,
+                output=test_data_path + "test-136.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=False)
+        text_file = open(test_data_path + "test-136.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("doi") >= 0
+        os.remove(test_data_path + "test-136.json")
+
+    def test_issue_136_1(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                local_repo=None,
+                doc_src=test_data_path+"README-tokei.md",
+                in_file=None,
+                output=test_data_path + "test-136-1.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=False)
+        text_file = open(test_data_path + "test-136-1.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("doi") >= 0
+        os.remove(test_data_path + "test-136-1.json")
