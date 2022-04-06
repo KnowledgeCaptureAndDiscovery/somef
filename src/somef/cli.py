@@ -1659,7 +1659,8 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
             doi_text = ""
             text_citation = citations[i]
             if text_citation.find("https://doi.org/") >= 0:
-                starts = text_citation.find("https://doi.org/")
+                doi_pos = text_citation.find("doi.org/")
+                starts = text_citation[:doi_pos].rindex("http")
                 ends = text_citation[starts:].find("}")
                 doi_text = text_citation[starts:starts + ends]
             elif text_citation.find("doi") >= 0:
