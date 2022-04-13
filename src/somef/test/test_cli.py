@@ -592,6 +592,7 @@ class TestCli(unittest.TestCase):
 
     def test_issue_389(self):
         text, github_data = load_local_repository_metadata(test_data_repositories + "wot-hive")
+        print(github_data)
         assert len(github_data['hasBuildFile']) > 0
 
     def test_issue_260(self):
@@ -1009,3 +1010,87 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
         text_file.close()
         assert data.find("doi") >= 0
         os.remove(test_data_path + "test-136-1.json")
+
+    def test_issue_353(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url="https://github.com/proycon/analiticcl",
+                local_repo=None,
+                doc_src=None,
+                in_file=None,
+                output=test_data_path + "test-353.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=False)
+        text_file = open(test_data_path + "test-353.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("description") >= 0
+        os.remove(test_data_path + "test-353.json")
+
+    def test_issue_366(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url=None,
+                local_repo=test_data_repositories + "wot-hive",
+                doc_src=None,
+                in_file=None,
+                output=test_data_path + "test-366.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=False)
+        text_file = open(test_data_path + "test-366.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("Docker file") >= 0
+        os.remove(test_data_path + "test-366.json")
+
+    def test_issue_417(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url="https://github.com/dgarijo/Widoco",
+                local_repo=None,
+                doc_src=None,
+                in_file=None,
+                output=None,
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=test_data_path + "test-417.json-ld",
+                pretty=True,
+                missing=True,
+                readme_only=False)
+        text_file = open(test_data_path + "test-417.json-ld", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        issue_tracker = json_content['issueTracker']
+        assert issue_tracker == 'https://api.github.com/repos/dgarijo/Widoco/issues'
+        os.remove(test_data_path + "test-417.json-ld")
+
+    def test_issue_382(self):
+        run_cli(threshold=0.8,
+                ignore_classifiers=False,
+                repo_url="https://github.com/oeg-upm/mapeathor",
+                local_repo=None,
+                doc_src=None,
+                in_file=None,
+                output=test_data_path + "test-382.json",
+                graph_out=None,
+                graph_format="turtle",
+                codemeta_out=None,
+                pretty=True,
+                missing=True,
+                readme_only=False)
+        text_file = open(test_data_path + "test-382.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        contact = json_content['contact']
+        assert contact != None
+        os.remove(test_data_path + "test-382.json")
