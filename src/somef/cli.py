@@ -250,6 +250,10 @@ def load_repository_metadata(repository_url, header, ignore_github_metadata=Fals
     filtered_resp = {}
     if not ignore_github_metadata:
         filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
+        if "issueTracker" in filtered_resp:
+            issueTracker = filtered_resp["issueTracker"]
+            issueTracker = issueTracker.replace("{/number}","")
+            filtered_resp["issueTracker"] = issueTracker
 
     # add download URL
     filtered_resp["downloadUrl"] = f"https://github.com/{owner}/{repo_name}/releases"
@@ -374,7 +378,7 @@ def load_repository_metadata(repository_url, header, ignore_github_metadata=Fals
         for dirpath, dirnames, filenames in os.walk(repo_dir):
             repo_relative_path = os.path.relpath(dirpath, repo_dir)
             for filename in filenames:
-                if filename == "Dockerfile":
+                if filename == "Dockerfile" or filename.lower() == "docker-compose.yml":
                     dockerfiles.append(os.path.join(repo_relative_path, filename))
                     #dockerfiles.append(repo_relative_path + "/" + filename)
                 if filename.lower().endswith(".ipynb"):
@@ -734,7 +738,7 @@ def load_repository_metadata_gitlab(repository_url, header, readme_only=False):
         for dirpath, dirnames, filenames in os.walk(repo_dir):
             repo_relative_path = os.path.relpath(dirpath, repo_dir)
             for filename in filenames:
-                if filename == "Dockerfile":
+                if filename == "Dockerfile" or filename.lower() == "docker-compose.yml":
                     # dockerfiles.append(os.path.join(repo_relative_path, filename))
                     dockerfiles.append(repo_relative_path + "/" + filename)
                 if filename.lower().endswith(".ipynb"):
@@ -871,7 +875,7 @@ def load_local_repository_metadata(local_repo):
     for dirpath, dirnames, filenames in os.walk(repo_dir):
         repo_relative_path = os.path.relpath(dirpath, repo_dir)
         for filename in filenames:
-            if filename == "Dockerfile":
+            if filename == "Dockerfile" or filename.lower() == "docker-compose.yml":
                 dockerfiles.append(os.path.join(repo_dir, repo_relative_path, filename))
             if filename.lower().endswith(".ipynb"):
                 notebooks.append(os.path.join(repo_dir, repo_relative_path, filename))
@@ -1779,6 +1783,22 @@ def format_output(git_data, repo_data, gitlab_url=False):
                 if i == 'hasExecutableNotebook':
                     repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration',
                                     'format': 'jupyter notebook'}
+                elif i == 'hasBuildFile':
+                    docker_files = []
+                    docker_compose = []
+                    for data in git_data[i]:
+                        if data.lower().endswith('docker-compose.yml'):
+                            docker_compose.append(data)
+                        else:
+                            docker_files.append(data)
+                    repo_data[i] = []
+                    if len(docker_files) > 0:
+                        repo_data[i].insert(0, {'excerpt': docker_files, 'confidence': [1.0], 'technique': 'File Exploration',
+                                    'format': 'Docker file'})
+                    if len(docker_compose) > 0:
+                        repo_data[i].insert(0, {'excerpt': docker_compose, 'confidence': [1.0], 'technique': 'File Exploration',
+                                    'format': 'Docker compose file'})
+                    #TODO docker
                 else:
                     repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
             elif git_data[i] != "" and git_data[i] != []:
@@ -1886,7 +1906,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     if "license" in repo_data:
         codemeta_output["license"] = data_path(["license", "excerpt"])
     if code_repository is not None:
-        codemeta_output["codeRepository"] = "git+" + code_repository + ".git"
+        codemeta_output["codeRepository"] = code_repository
         codemeta_output["issueTracker"] = code_repository + "/issues"
     if "dateCreated" in repo_data:
         codemeta_output["dateCreated"] = format_date(data_path(["dateCreated", "excerpt"]))
@@ -1896,6 +1916,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["downloadUrl"] = data_path(["downloadUrl", "excerpt"])
     if "name" in repo_data:
         codemeta_output["name"] = data_path(["name", "excerpt"])
+    if "logo" in repo_data:
+        codemeta_output["logo"] = data_path(["logo", "excerpt"])
     if "releases" in repo_data:
         codemeta_output["releaseNotes"] = release_path(["body"])
         codemeta_output["version"] = release_path(["tag_name"])
