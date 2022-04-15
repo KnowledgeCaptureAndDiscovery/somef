@@ -164,8 +164,7 @@ If you move any files produced by somef into `/out`, then you will be able to se
 
 ## Usage
 
-### Configure
-Before running SOMEF, you must configure it appropriately. Run
+Before running SOMEF for the first time, you must **configure** it appropriately (you only need to do this once). Run
 
 ```bash
 somef configure
@@ -198,6 +197,9 @@ Options:
   -a, --auto  Automatically configure SOMEF
   -h, --help  Show this message and exit.
 ```
+
+### Updating SOMEF
+If you update SOMEF to a newer version, we recommend you `configure` again the library (by running `somef configure`). The rationale is that different versions may rely on classifiers which may be stored in a different path. 
 
 ### Run SOMEF
 
@@ -251,9 +253,6 @@ somef describe -r https://github.com/dgarijo/Widoco/ -o test.json -t 0.8
 
 Try SOMEF in Binder with our sample notebook: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)
 
-### Add/Remove a Category:
-
-To run a classifier with an additional category or remove an existing one, a corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in `cli.py`
 
 ## Contribute:
 
@@ -262,3 +261,7 @@ If you want to contribute with a pull request, please do so by submitting it to 
 
 ## Next features:
 To see upcoming features, please have a look at our [open issues](https://github.com/KnowledgeCaptureAndDiscovery/somef/issues) and [milestones](https://github.com/KnowledgeCaptureAndDiscovery/somef/milestones)
+
+## Extending SOMEF categories:
+
+To run a classifier with an additional category or remove an existing one, a corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in `cli.py`.
