@@ -2,6 +2,7 @@ import unittest
 
 from somef.data_to_graph import DataGraph
 
+
 class FlattenDict(unittest.TestCase):
     def test_combine_dict(self):
 

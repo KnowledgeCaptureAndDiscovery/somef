@@ -1,62 +1,17 @@
-# creatJSON.py
-# parameters:
-## input file: either: url to github repository OR markdown documentation file path
-## output file: json with each excerpt marked with all four classification scores
-
 import argparse
-import base64
 import json
 import os
 import pickle
-import re
 import sys
-import tempfile
-import time
-import urllib
-from datetime import datetime
-
-import markdown
 import validators
-import zipfile
-from io import StringIO
 from os import path
 from pathlib import Path
-from urllib.parse import urlparse
-
-import requests
 from dateutil import parser as date_parser
-from markdown import Markdown
 
-from somef.data_to_graph import DataGraph
-from . import createExcerpts
+from .data_to_graph import DataGraph
 from . import header_analysis
 
-from . import parser_somef
-
-
-## Markdown to plain text conversion: begin ##
-# code snippet from https://stackoverflow.com/a/54923798
-def unmark_element(element, stream=None):
-    if stream is None:
-        stream = StringIO()
-    if element.text:
-        stream.write(element.text)
-    for sub in element:
-        unmark_element(sub, stream)
-    if element.tail:
-        stream.write(element.tail)
-    return stream.getvalue()
-
-
-# patching Markdown
-Markdown.output_formats["plain"] = unmark_element
-__md = Markdown(output_format="plain")
-__md.stripTopLevelTags = False
-
-
-def unmark(text):
-    return __md.convert(text)
-
+from . import parser_somef, regular_expressions, process_repository, markdown_utils, constants
 
 ## Markdown to plain text conversion: end ##
 
@@ -65,921 +20,6 @@ def restricted_float(x):
     if x < 0.0 or x > 1.0:
         raise argparse.ArgumentTypeError(f"{x} not in range [0.0, 1.0]")
     return x
-
-
-categories = ['description', 'citation', 'installation', 'invocation']
-# keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_url')
-# instead of keep keys, we have this table
-# it says that we want the key "codeRepository", and that we'll get it from the path "html_url" within the result object
-github_crosswalk_table = {
-    "codeRepository": "html_url",
-    "languages_url": "languages_url",
-    "owner": ["owner", "login"],
-    "ownerType": ["owner", "type"],  # used to determine if owner is User or Organization
-    "dateCreated": "created_at",
-    "dateModified": "updated_at",
-    "license": "license",
-    "description": "description",
-    "name": "name",
-    "fullName": "full_name",
-    "issueTracker": "issues_url",
-    "forksUrl": "forks_url",
-    "stargazers_count": "stargazers_count",
-    "forks_count": "forks_count"
-}
-
-release_crosswalk_table = {
-    'tagName': 'tag_name',
-    'name': 'name',
-    'authorName': ['author', 'login'],
-    'authorType': ['author', 'type'],
-    'body': 'body',
-    'tarballUrl': 'tarball_url',
-    'zipballUrl': 'zipball_url',
-    'htmlUrl': 'html_url',
-    'url': 'url',
-    'dateCreated': 'created_at',
-    'datePublished': "published_at",
-}
-
-
-# the same as requests.get(args).json(), but protects against rate limiting
-def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
-    rate_limited = True
-    response = {}
-    date = ""
-    while rate_limited:
-        response = requests.get(*args, **kwargs)
-        data = response
-        date = data.headers["date"]
-        rate_limit_remaining = data.headers["x-ratelimit-remaining"]
-        epochtime = int(data.headers["x-ratelimit-reset"])
-        date_reset = datetime.fromtimestamp(epochtime)
-        print("Remaining GitHub API requests: " + rate_limit_remaining + " ### Next rate limit reset at: " + str(date_reset))
-        response = response.json()
-        if 'message' in response and 'API rate limit exceeded' in response['message']:
-            rate_limited = True
-            print(f"rate limited. Backing off for {initial_backoff} seconds")
-            time.sleep(initial_backoff)
-
-            # increase the backoff for next time
-            initial_backoff *= backoff_rate
-        else:
-            rate_limited = False
-
-    return response, date
-
-
-# error when github url is wrong
-class GithubUrlError(Exception):
-    # print("The URL provided seems to be incorrect")
-    pass
-
-
-def load_repository_metadata(repository_url, header, ignore_github_metadata=False, readme_only=False):
-    """
-    Function uses the repository_url provided to load required information from github.
-    Information kept from the repository is written in keep_keys.
-    Parameters
-    ----------
-    repository_url
-    header
-
-    Returns
-    -------
-    Returns the readme text and required metadata
-    """
-    if repository_url.rfind("gitlab.com") > 0:
-        return load_repository_metadata_gitlab(repository_url, header, readme_only)
-
-    print(f"Loading Repository {repository_url} Information....")
-    ## load general response of the repository
-    if repository_url[-1] == '/':
-        repository_url = repository_url[:-1]
-    url = urlparse(repository_url)
-    if url.netloc != 'github.com':
-        print("Error: repository must come from github")
-        return " ", {}
-
-    path_components = url.path.split('/')
-
-    if len(path_components) < 3:
-        print("Repository link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}.")
-        return " ", {}
-
-    owner = path_components[1]
-    repo_name = path_components[2]
-
-    repo_api_base_url = f"https://api.github.com/repos/{owner}/{repo_name}"
-
-    repo_ref = None
-    ref_param = None
-
-    if len(path_components) >= 5:
-        if not path_components[3] == "tree":
-            print(
-                "Github link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}/tree/{ref}.")
-
-            return " ", {}
-
-        # we must join all after 4, as sometimes tags have "/" in them.
-        repo_ref = "/".join(path_components[4:])
-        ref_param = {"ref": repo_ref}
-
-    print(repo_api_base_url)
-
-    general_resp = {}
-    date = ""
-    if not ignore_github_metadata or readme_only:
-        general_resp, date = rate_limit_get(repo_api_base_url, headers=header)
-
-    if 'message' in general_resp:
-        if general_resp['message'] == "Not Found":
-            print("Error: Repository name is private or incorrect")
-        else:
-            message = general_resp['message']
-            print("Error: " + message)
-
-        raise GithubUrlError
-
-    if ignore_github_metadata:
-        repo_ref = 'master'
-    elif repo_ref is None:
-        repo_ref = general_resp['default_branch']
-
-    if readme_only:
-        repo_archive_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/README.md"
-        print(f"Downloading {repo_archive_url}")
-        repo_download = requests.get(repo_archive_url)
-        if repo_download.status_code == 404:
-            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-            repo_archive_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/master/README.md"
-            print(f"Trying to download {repo_archive_url}")
-            repo_download = requests.get(repo_archive_url)
-
-        if repo_download.status_code != 200:
-            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-        repo_zip = repo_download.content
-
-        text = repo_zip.decode('utf-8')
-        return text, {}
-
-    ## get only the fields that we want
-    def do_crosswalk(data, crosswalk_table):
-        def get_path(obj, path):
-            if isinstance(path, list) or isinstance(path, tuple):
-                if len(path) == 1:
-                    path = path[0]
-                else:
-                    return get_path(obj[path[0]], path[1:])
-
-            if obj is not None and path in obj:
-                return obj[path]
-            else:
-                return None
-
-        output = {}
-        for codemeta_key, path in crosswalk_table.items():
-            value = get_path(data, path)
-            if value is not None:
-                output[codemeta_key] = value
-            else:
-                print(f"Error: key {path} not present in github repository")
-        return output
-
-    filtered_resp = {}
-    if not ignore_github_metadata:
-        filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
-        if "issueTracker" in filtered_resp:
-            issueTracker = filtered_resp["issueTracker"]
-            issueTracker = issueTracker.replace("{/number}","")
-            filtered_resp["issueTracker"] = issueTracker
-
-    # add download URL
-    filtered_resp["downloadUrl"] = f"https://github.com/{owner}/{repo_name}/releases"
-
-    ## condense license information
-    license_info = {}
-    if 'license' in filtered_resp:
-        for k in ('name', 'url'):
-            if k in filtered_resp['license']:
-                license_info[k] = filtered_resp['license'][k]
-
-    ## If we didn't find it, look for the license
-    if 'url' not in license_info or license_info['url'] is None:
-
-        possible_license_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/LICENSE"
-        license_text_resp = requests.get(possible_license_url)
-
-        # todo: It's possible that this request will get rate limited. Figure out how to detect that.
-        if license_text_resp.status_code == 200:
-            # license_text = license_text_resp.text
-            license_info['url'] = possible_license_url
-
-    if len(license_info) > 0:
-        filtered_resp['license'] = license_info
-
-    topics_headers = header
-    # get keywords / topics
-    if 'topics' in general_resp.keys():
-        filtered_resp['topics'] = general_resp['topics']
-    #else:
-    #    topics_headers = header
-    #    topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
-    #    topics_resp, date = rate_limit_get(repo_api_base_url + "/topics",
-    #                                       headers=topics_headers)
-
-    #    if 'message' in topics_resp.keys():
-    #        print("Topics Error: " + topics_resp['message'])
-    #    elif topics_resp and 'names' in topics_resp.keys():
-    #        filtered_resp['topics'] = topics_resp['names']
-
-    # get social features: stargazers_count
-    stargazers_info = {}
-    if 'stargazers_count' in filtered_resp:
-        stargazers_info['count'] = filtered_resp['stargazers_count']
-        stargazers_info['date'] = date
-        del filtered_resp['stargazers_count']
-    if len(stargazers_info.keys()) > 0:
-        filtered_resp['stargazersCount'] = stargazers_info
-
-    # get social features: forks_count
-    forks_info = {}
-    if 'forks_count' in filtered_resp:
-        forks_info['count'] = filtered_resp['forks_count']
-        forks_info['date'] = date
-        del filtered_resp['forks_count']
-    if len(forks_info.keys()) > 0:
-        filtered_resp['forksCount'] = forks_info
-
-    ## get languages
-    if not ignore_github_metadata:
-        languages, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
-        if "message" in languages:
-            print("Languages Error: " + languages["message"])
-        else:
-            filtered_resp['languages'] = list(languages.keys())
-
-        del filtered_resp['languages_url']
-
-    # get default README
-    #                                   headers=topics_headers,
-    #readme_info, date = rate_limit_get(repo_api_base_url + "/readme",
-    #                                   headers=topics_headers,
-    #                                   params=ref_param)
-    #if 'message' in readme_info.keys():
-    #    print("README Error: " + readme_info['message'])
-    #    text = ""
-    #else:
-    #    readme = base64.b64decode(readme_info['content']).decode("utf-8")
-    #    text = readme
-    #    filtered_resp['readmeUrl'] = readme_info['html_url']
-
-    # get full git repository
-    # todo: maybe it should be optional, as this could take some time?
-
-    text = ""
-    # create a temporary directory
-    with tempfile.TemporaryDirectory() as temp_dir:
-
-        # download the repo at the selected branch with the link
-        repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip"
-        print(f"Downloading {repo_archive_url}")
-        repo_download = requests.get(repo_archive_url)
-        if repo_download.status_code == 404:
-            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-            repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/main.zip"
-            print(f"Trying to download {repo_archive_url}")
-            repo_download = requests.get(repo_archive_url)
-
-        if repo_download.status_code != 200:
-            sys.exit(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-        repo_zip = repo_download.content
-
-        repo_zip_file = os.path.join(temp_dir, "repo.zip")
-        repo_extract_dir = os.path.join(temp_dir, "repo")
-
-        with open(repo_zip_file, "wb") as f:
-            f.write(repo_zip)
-
-        with zipfile.ZipFile(repo_zip_file, "r") as zip_ref:
-            zip_ref.extractall(repo_extract_dir)
-
-        repo_folders = os.listdir(repo_extract_dir)
-        assert (len(repo_folders) == 1)
-
-        repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
-
-        notebooks = []
-        dockerfiles = []
-        docs = []
-        scriptfiles = []
-
-        for dirpath, dirnames, filenames in os.walk(repo_dir):
-            repo_relative_path = os.path.relpath(dirpath, repo_dir)
-            for filename in filenames:
-                if filename == "Dockerfile" or filename.lower() == "docker-compose.yml":
-                    dockerfiles.append(os.path.join(repo_relative_path, filename))
-                    #dockerfiles.append(repo_relative_path + "/" + filename)
-                if filename.lower().endswith(".ipynb"):
-                    notebooks.append(os.path.join(repo_relative_path, filename))
-                if "README" == filename.upper() or "README.MD" == filename.upper():
-                    if (repo_relative_path == "."):
-                        try:
-                            with open(os.path.join(dirpath, filename), "rb") as data_file:
-                                data_file_text = data_file.read()
-                                text = data_file_text.decode("utf-8")
-                                filtered_resp['readmeUrl'] = convert_to_raw_usercontent(filename, owner, repo_name,
-                                                                                        repo_ref)
-                        except:
-                            print("README Error: error while reading file content")
-
-                if "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
-                    try:
-                        with open(os.path.join(dirpath, filename), "rb") as data_file:
-                            file_text = data_file.read()
-                            filtered_resp["licenseText"] = unmark(file_text)
-                    except:
-                        # TO DO: try different encodings
-                        filtered_resp["licenseFile"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
-
-                if "CODE_OF_CONDUCT" == filename.upper() or "CODE_OF_CONDUCT.MD" == filename.upper():
-                    filtered_resp["codeOfConduct"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
-                if "CONTRIBUTING" == filename.upper() or "CONTRIBUTING.MD" == filename.upper():
-                    try:
-                        with open(os.path.join(dirpath, filename), "r") as data_file:
-                            file_text = data_file.read()
-                            filtered_resp["contributingGuidelines"] = unmark(file_text)
-                    except:
-                        filtered_resp["contributingGuidelinesFile"] = convert_to_raw_usercontent(filename, owner,
-                                                                                                 repo_name,
-                                                                                                 repo_ref)
-                if "ACKNOWLEDGMENT" in filename.upper():
-                    try:
-                        with open(os.path.join(dirpath, filename), "r") as data_file:
-                            file_text = data_file.read()
-                            filtered_resp["acknowledgments"] = unmark(file_text)
-                    except:
-                        filtered_resp["acknowledgmentsFile"] = convert_to_raw_usercontent(filename, owner,
-                                                                                          repo_name,
-                                                                                          repo_ref)
-                if "CONTRIBUTORS" == filename.upper() or "CONTRIBUTORS.MD" == filename.upper():
-                    try:
-                        with open(os.path.join(dirpath, filename), "r") as data_file:
-                            file_text = data_file.read()
-                            filtered_resp["contributors"] = unmark(file_text)
-                    except:
-                        filtered_resp["contributorsFile"] = convert_to_raw_usercontent(filename, owner,
-                                                                                       repo_name,
-                                                                                       repo_ref)
-                if "CITATION" == filename.upper() or "CITATION.CFF" == filename.upper():
-                    try:
-                        with open(os.path.join(dirpath, filename), "r") as data_file:
-                            file_text = data_file.read()
-                            filtered_resp["citation"] = unmark(file_text)
-                    except:
-                        filtered_resp["citationFile"] = convert_to_raw_usercontent(filename, owner,
-                                                                                   repo_name,
-                                                                                   repo_ref)
-                if filename.endswith(".sh"):
-                    # scriptfiles.append(os.path.join(repo_relative_path, filename))
-                    scriptfiles.append(repo_relative_path + "/" + filename)
-
-            for dirname in dirnames:
-                if dirname.lower() == "docs":
-                    if repo_relative_path == ".":
-                        docs_path = dirname
-                    else:
-                        if repo_relative_path.find("\\") >= 0:
-                            new_repo_relative_path = repo_relative_path.replace("\\", "/")
-                            docs_path = new_repo_relative_path + "/" + dirname
-                        else:
-                            docs_path = repo_relative_path + "/" + dirname
-
-                    names = os.listdir(os.path.join(repo_dir, docs_path))
-                    for name in names:
-                        if name.lower().endswith(".pdf") or name.lower().endswith(".md") or name.lower().endswith(".html") or name.lower().endswith(".htm"):
-                            docs.append(
-                                f"https://github.com/{owner}/{repo_name}/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
-                            break;
-                    # print(docs)
-
-        # print("NOTEBOOKS:")
-        # print(notebooks)
-
-        # print("DOCKERFILES:")
-        # print(dockerfiles)
-
-    if len(notebooks) > 0:
-        filtered_resp["hasExecutableNotebook"] = [convert_to_raw_usercontent(x, owner, repo_name, repo_ref) for x in
-                                                  notebooks]
-    if len(dockerfiles) > 0:
-        filtered_resp["hasBuildFile"] = [convert_to_raw_usercontent(x, owner, repo_name, repo_ref) for x in dockerfiles]
-    if len(docs) > 0:
-        filtered_resp["hasDocumentation"] = docs
-
-    if len(scriptfiles) > 0:
-        filtered_resp["hasScriptFile"] = [convert_to_raw_usercontent(x, owner, repo_name, repo_ref) for x in
-                                          scriptfiles]
-
-    # get releases
-    if not ignore_github_metadata:
-        releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
-                                             headers=header)
-
-        if isinstance(releases_list, dict) and 'message' in releases_list.keys():
-            print("Releases Error: " + releases_list['message'])
-        else:
-            filtered_resp['releases'] = [do_crosswalk(release, release_crosswalk_table) for release in releases_list]
-
-    print("Repository Information Successfully Loaded. \n")
-    return text, filtered_resp
-
-
-def load_repository_metadata_gitlab(repository_url, header, readme_only=False):
-    """
-    Function uses the repository_url provided to load required information from github.
-    Information kept from the repository is written in keep_keys.
-    Parameters
-    ----------
-    repository_url
-    header
-
-    Returns
-    -------
-    Returns the readme text and required metadata
-    """
-    print(f"Loading Repository {repository_url} Information....")
-    ## load general response of the repository
-    if repository_url[-1] == '/':
-        repository_url = repository_url[:-1]
-    url = urlparse(repository_url)
-    if url.netloc != 'gitlab.com':
-        print("Error: repository must come from github")
-        return " ", {}
-
-    path_components = url.path.split('/')
-
-    if len(path_components) < 3:
-        print("Gitlab link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}.")
-        return " ", {}
-
-    owner = path_components[1]
-    repo_name = path_components[2]
-    if len(path_components) == 4:
-        repo_name = repo_name + '/' + path_components[3]
-
-    project_id = get_project_id(repository_url)
-    project_api_url = f"https://gitlab.com/api/v4/projects/{project_id}"
-    print(f"Downloading {project_api_url}")
-    details = requests.get(project_api_url)
-    project_details = details.json()
-    date = details.headers["date"]
-
-    repo_api_base_url = f"{repository_url}"
-
-    repo_ref = None
-    ref_param = None
-
-    if len(path_components) >= 5:
-        if not path_components[4] == "tree":
-            print(
-                "GitLab link is not correct. \nThe correct format is https://gitlab.com/{owner}/{repo_name}.")
-
-            return " ", {}
-
-        # we must join all after 4, as sometimes tags have "/" in them.
-        repo_ref = "/".join(path_components[5:])
-        ref_param = {"ref": repo_ref}
-
-    print(repo_api_base_url)
-    if 'defaultBranch' in project_details.keys():
-        general_resp = {'defaultBranch': project_details['defaultBranch']}
-    elif 'default_branch' in project_details.keys():
-        general_resp = {'defaultBranch': project_details['default_branch']}
-
-    if 'message' in general_resp:
-        if general_resp['message'] == "Not Found":
-            print("Error: repository name is incorrect")
-        else:
-            message = general_resp['message']
-            print("Error: " + message)
-
-        raise GithubUrlError
-
-    if repo_ref is None:
-        repo_ref = general_resp['defaultBranch']
-
-    if readme_only:
-        repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/raw/{repo_ref}/README.md"
-        print(f"Downloading {repo_archive_url}")
-        repo_download = requests.get(repo_archive_url)
-        if repo_download.status_code == 404:
-            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-            repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/raw/master/README.md"
-            print(f"Trying to download {repo_archive_url}")
-            repo_download = requests.get(repo_archive_url)
-
-        if repo_download.status_code != 200:
-            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-        repo_zip = repo_download.content
-        print(repo_zip)
-        text = repo_zip.decode('utf-8')
-        return text, {}
-
-    ## get only the fields that we want
-    def do_crosswalk(data, crosswalk_table):
-        def get_path(obj, path):
-            if isinstance(path, list) or isinstance(path, tuple):
-                if len(path) == 1:
-                    path = path[0]
-                else:
-                    return get_path(obj[path[0]], path[1:])
-
-            if obj is not None and path in obj:
-                return obj[path]
-            else:
-                return None
-
-        output = {}
-        for codemeta_key, path in crosswalk_table.items():
-            value = get_path(data, path)
-            if value is not None:
-                output[codemeta_key] = value
-            else:
-                print(f"Error: key {path} not present in gitlab repository")
-        return output
-
-    # filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
-    filtered_resp = {}
-    # add download URL
-    # filtered_resp["downloadUrl"] = f"https://github.com/{owner}/{repo_name}/releases"
-    filtered_resp["downloadUrl"] = f"https://gitlab.com/{owner}/{repo_name}/-/branches"
-
-    ## condense license information
-    license_info = {}
-    if 'license' in filtered_resp:
-        for k in ('name', 'url'):
-            if k in filtered_resp['license']:
-                license_info[k] = filtered_resp['license'][k]
-
-    ## If we didn't find it, look for the license
-    if 'url' not in license_info or license_info['url'] is None:
-
-        possible_license_url = f"{repository_url}/-/blob/master/LICENSE"
-        license_text_resp = requests.get(possible_license_url)
-
-        # todo: It's possible that this request will get rate limited. Figure out how to detect that.
-        if license_text_resp.status_code == 200:
-            # license_text = license_text_resp.text
-            license_info['url'] = possible_license_url
-
-    if license_info != '':
-        filtered_resp['license'] = license_info
-
-    # get keywords / topics
-    topics_headers = header
-    topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
-    # topics_resp, date = rate_limit_get(repo_api_base_url + "/topics",
-    #                                   headers=topics_headers)
-    topics_resp = {}
-
-    if 'message' in topics_resp.keys():
-        print("Topics Error: " + topics_resp['message'])
-    elif topics_resp and 'names' in topics_resp.keys():
-        filtered_resp['topics'] = topics_resp['names']
-
-    if project_details['topics'] is not None:
-        filtered_resp['topics'] = project_details['topics']
-
-    # get social features: stargazers_count
-    stargazers_info = {}
-    # if 'stargazers_count' in filtered_resp:
-    if project_details['star_count'] is not None:
-        stargazers_info['count'] = project_details['star_count']
-        stargazers_info['date'] = date
-        if 'stargazers_count' in filtered_resp.keys():
-            del filtered_resp['stargazers_count']
-    filtered_resp['stargazersCount'] = stargazers_info
-
-    # get social features: forks_count
-    forks_info = {}
-    # if 'forks_count' in filtered_resp:
-    if project_details['forks_count'] is not None:
-        forks_info['count'] = project_details['forks_count']
-        forks_info['date'] = date
-        if 'forks_count' in filtered_resp.keys():
-            del filtered_resp['forks_count']
-    filtered_resp['forksCount'] = forks_info
-
-    ## get languages
-    # languages, date = rate_limit_get(filtered_resp['languages_url'])
-    languages = {}
-    filtered_resp['languages_url'] = "languages_url"
-    if "message" in languages:
-        print("Languages Error: " + languages["message"])
-    else:
-        filtered_resp['languages'] = list(languages.keys())
-
-    del filtered_resp['languages_url']
-
-    # get default README
-    # repo_api_base_url https://api.github.com/dgarijo/Widoco/readme
-    # readme_info, date = rate_limit_get(repo_api_base_url + "/readme",
-    #                                   headers=topics_headers,
-    #                                   params=ref_param)
-    readme_info = {}
-    if 'message' in readme_info.keys():
-        print("README Error: " + readme_info['message'])
-        text = ""
-    elif 'content' in readme_info:
-        readme = base64.b64decode(readme_info['content']).decode("utf-8")
-        text = readme
-        filtered_resp['readmeUrl'] = readme_info['html_url']
-
-    if 'readme_url' in project_details:
-        text = get_readme_content(project_details['readme_url'])
-        filtered_resp['readmeUrl'] = project_details['readme_url']
-
-    # get full git repository
-    # todo: maybe it should be optional, as this could take some time?
-
-    # create a temporary directory
-    with tempfile.TemporaryDirectory() as temp_dir:
-
-        # download the repo at the selected branch with the link
-        # https://gitlab.com/unboundedsystems/adapt/-/archive/master/adapt-master.zip
-        repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_ref}/{repo_name}-{repo_ref}.zip"
-        if len(path_components) == 4:
-            repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_ref}/{path_components[3]}.zip"
-        print(f"Downloading {repo_archive_url}")
-        repo_download = requests.get(repo_archive_url)
-        repo_zip = repo_download.content
-
-        repo_zip_file = os.path.join(temp_dir, "repo.zip")
-        repo_extract_dir = os.path.join(temp_dir, "repo")
-
-        with open(repo_zip_file, "wb") as f:
-            f.write(repo_zip)
-
-        with zipfile.ZipFile(repo_zip_file, "r") as zip_ref:
-            zip_ref.extractall(repo_extract_dir)
-
-        repo_folders = os.listdir(repo_extract_dir)
-        assert (len(repo_folders) == 1)
-
-        repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
-
-        notebooks = []
-        dockerfiles = []
-        docs = []
-        scriptfiles = []
-
-        for dirpath, dirnames, filenames in os.walk(repo_dir):
-            repo_relative_path = os.path.relpath(dirpath, repo_dir)
-            for filename in filenames:
-                if filename == "Dockerfile" or filename.lower() == "docker-compose.yml":
-                    # dockerfiles.append(os.path.join(repo_relative_path, filename))
-                    dockerfiles.append(repo_relative_path + "/" + filename)
-                if filename.lower().endswith(".ipynb"):
-                    notebooks.append(os.path.join(repo_relative_path, filename))
-                if "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
-                    try:
-                        with open(os.path.join(dirpath, filename), "rb") as data_file:
-                            file_text = data_file.read()
-                            filtered_resp["licenseText"] = unmark(file_text)
-                    except:
-                        # TO DO: try different encodings
-                        filtered_resp["licenseFile"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
-
-                if "CODE_OF_CONDUCT" == filename.upper() or "CODE_OF_CONDUCT.MD" == filename.upper():
-                    filtered_resp["codeOfConduct"] = convert_to_raw_usercontent(filename, owner, repo_name, repo_ref)
-                if "CONTRIBUTING" == filename.upper() or "CONTRIBUTING.MD" == filename.upper():
-                    try:
-                        with open(os.path.join(dirpath, filename), "r") as data_file:
-                            file_text = data_file.read()
-                            filtered_resp["contributingGuidelines"] = unmark(file_text)
-                    except:
-                        filtered_resp["contributingGuidelinesFile"] = convert_to_raw_usercontent(filename, owner,
-                                                                                                 repo_name,
-                                                                                                 repo_ref)
-                if "ACKNOWLEDGMENT" in filename.upper():
-                    try:
-                        with open(os.path.join(dirpath, filename), "r") as data_file:
-                            file_text = data_file.read()
-                            filtered_resp["acknowledgments"] = unmark(file_text)
-                    except:
-                        filtered_resp["acknowledgmentsFile"] = convert_to_raw_usercontent(filename, owner,
-                                                                                          repo_name,
-                                                                                          repo_ref)
-                if "CONTRIBUTORS" == filename.upper() or "CONTRIBUTORS.MD" == filename.upper():
-                    try:
-                        with open(os.path.join(dirpath, filename), "r") as data_file:
-                            file_text = data_file.read()
-                            filtered_resp["contributors"] = unmark(file_text)
-                    except:
-                        filtered_resp["contributorsFile"] = convert_to_raw_usercontent(filename, owner,
-                                                                                       repo_name,
-                                                                                       repo_ref)
-                if "CITATION" == filename.upper() or "CITATION.CFF" == filename.upper():
-                    try:
-                        with open(os.path.join(dirpath, filename), "r") as data_file:
-                            file_text = data_file.read()
-                            filtered_resp["citation"] = unmark(file_text)
-                    except:
-                        filtered_resp["citationFile"] = convert_to_raw_usercontent(filename, owner,
-                                                                                   repo_name,
-                                                                                   repo_ref)
-                if filename.endswith(".sh"):
-                    # scriptfiles.append(os.path.join(repo_relative_path, filename))
-                    scriptfiles.append(repo_relative_path + "/" + filename)
-
-            for dirname in dirnames:
-                if dirname.lower() == "docs":
-                    if repo_relative_path == ".":
-                        docs_path = dirname
-                    else:
-                        docs_path = repo_relative_path + "/" + dirname
-                    names = os.listdir(os.path.join(repo_dir, docs_path))
-                    for name in names:
-                        if name.lower().endswith(".pdf") or name.lower().endswith(".md") or name.lower().endswith(
-                                ".html") or name.lower().endswith(".htm"):
-                            docs.append(
-                                f"https://gitlab.com/{owner}/{repo_name}/-/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
-                            break;
-
-                    # print(docs)
-
-        # print("NOTEBOOKS:")
-        # print(notebooks)
-
-        # print("DOCKERFILES:")
-        # print(dockerfiles)
-
-    if len(notebooks) > 0:
-        filtered_resp["hasExecutableNotebook"] = [convert_to_raw_usercontent_gitlab(x, owner, repo_name, repo_ref) for x
-                                                  in
-                                                  notebooks]
-    if len(dockerfiles) > 0:
-        filtered_resp["hasBuildFile"] = [convert_to_raw_usercontent_gitlab(x, owner, repo_name, repo_ref) for x in
-                                         dockerfiles]
-    if len(docs) > 0:
-        filtered_resp["hasDocumentation"] = docs
-
-    if len(scriptfiles) > 0:
-        filtered_resp["hasScriptFile"] = [convert_to_raw_usercontent_gitlab(x, owner, repo_name, repo_ref) for x in
-                                          scriptfiles]
-
-    # get releases
-    # releases_list, date = rate_limit_get(repo_api_base_url + "/-/releases",
-    #                                     headers=header)
-
-    releases_list = {}
-    if isinstance(releases_list, dict) and 'message' in releases_list.keys():
-        print("Releases Error: " + releases_list['message'])
-    else:
-        filtered_resp['releases'] = [do_crosswalk(release, release_crosswalk_table) for release in releases_list]
-
-    print("Repository Information Successfully Loaded. \n")
-    return text, filtered_resp
-
-
-def get_project_id(repository_url):
-    print(f"Downloading {repository_url}")
-    response = requests.get(repository_url)
-    response_str = str(response.content.decode('utf-8'))
-    init = response_str.find('\"project_id\":')
-    project_id = "-1"
-    start = init + len("\"project_id\":")
-    if init >= 0:
-        end = 0
-        end_bracket = response_str.find("}", start)
-        comma = response_str.find(",", start)
-        if comma != -1 and comma < end_bracket:
-            end = comma
-        else:
-            end = end_bracket
-        if end >= 0:
-            project_id = response_str[start:end]
-    return project_id
-
-
-def load_local_repository_metadata(local_repo):
-    filtered_resp = {}
-    notebooks = []
-    dockerfiles = []
-    docs = []
-    scriptfiles = []
-    text = ""
-    repo_dir = os.path.abspath(local_repo)
-    for dirpath, dirnames, filenames in os.walk(repo_dir):
-        repo_relative_path = os.path.relpath(dirpath, repo_dir)
-        for filename in filenames:
-            if filename == "Dockerfile" or filename.lower() == "docker-compose.yml":
-                dockerfiles.append(os.path.join(repo_dir, repo_relative_path, filename))
-            if filename.lower().endswith(".ipynb"):
-                notebooks.append(os.path.join(repo_dir, repo_relative_path, filename))
-            if "README" == filename.upper() or "README.MD" == filename.upper():
-                if (repo_relative_path == "."):
-                    try:
-                        with open(os.path.join(dirpath, filename), "rb") as data_file:
-                            data_file_text = data_file.read()
-                            text = data_file_text.decode("utf-8")
-                    except:
-                        print("README Error: error while reading file content")
-            if "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
-                try:
-                    with open(os.path.join(dirpath, filename), "rb") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["licenseText"] = unmark(file_text)
-                except:
-                    filtered_resp["licenseFile"] = os.path.join(repo_dir, repo_relative_path, filename)
-            if "CODE_OF_CONDUCT" == filename.upper() or "CODE_OF_CONDUCT.MD" == filename.upper():
-                filtered_resp["codeOfConduct"] = os.path.join(repo_dir, repo_relative_path, filename)
-            if "CONTRIBUTING" == filename.upper() or "CONTRIBUTING.MD" == filename.upper():
-                try:
-                    with open(os.path.join(dirpath, filename), "r") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["contributingGuidelines"] = unmark(file_text)
-                except:
-                    filtered_resp["contributingGuidelinesFile"] = os.path.join(repo_dir, repo_relative_path, filename)
-            if "ACKNOWLEDGMENT" in filename.upper():
-                try:
-                    with open(os.path.join(dirpath, filename), "r") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["acknowledgments"] = unmark(file_text)
-                except:
-                    filtered_resp["acknowledgmentsFile"] = os.path.join(repo_dir, repo_relative_path, filename)
-            if "CONTRIBUTORS" == filename.upper() or "CONTRIBUTORS.MD" == filename.upper():
-                try:
-                    with open(os.path.join(dirpath, filename), "r") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["contributors"] = unmark(file_text)
-                except:
-                    filtered_resp["contributorsFile"] = os.path.join(repo_dir, repo_relative_path, filename)
-            if "CITATION" == filename.upper() or "CITATION.CFF" == filename.upper():
-                try:
-                    with open(os.path.join(dirpath, filename), "r") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["citation"] = unmark(file_text)
-                except:
-                    filtered_resp["citationFile"] = os.path.join(repo_dir, repo_relative_path, filename)
-            if filename.endswith(".sh"):
-                scriptfiles.append(os.path.join(repo_dir, repo_relative_path, filename))
-
-        for dirname in dirnames:
-            if dirname.lower() == "docs":
-                if repo_relative_path == ".":
-                    docs_path = dirname
-                else:
-                    docs_path = os.path.join(repo_relative_path, dirname)
-
-                names = os.listdir(os.path.join(repo_dir,docs_path))
-                for name in names:
-                    if name.lower().endswith(".pdf") or name.lower().endswith(".md") or name.lower().endswith(
-                            ".html") or name.lower().endswith(".htm"):
-                        docs.append(os.path.join(repo_dir,docs_path))
-
-
-    if len(notebooks) > 0:
-        filtered_resp["hasExecutableNotebook"] = notebooks
-    if len(dockerfiles) > 0:
-        filtered_resp["hasBuildFile"] = dockerfiles
-    if len(docs) > 0:
-        filtered_resp["hasDocumentation"] = docs
-
-    if len(scriptfiles) > 0:
-        filtered_resp["hasScriptFile"] = scriptfiles
-
-    print("Local Repository Information Successfully Loaded. \n")
-    return text, filtered_resp
-
-
-
-def get_readme_content(readme_url):
-    readme_url = readme_url.replace("/blob/", "/raw/")
-    readme = requests.get(readme_url)
-    readme_text = readme.content.decode('utf-8')
-    return readme_text
-
-
-def convert_to_raw_usercontent(partial, owner, repo_name, repo_ref):
-    if partial.startswith("./"):
-        partial = partial.replace("./", "")
-    if partial.startswith(".\\"):
-        partial = partial.replace(".\\", "")
-    if partial.find("\\") >= 0:
-        partial = re.sub("\\\\", "/", partial)
-
-    return f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse.quote(partial)}"
-
-
-def convert_to_raw_usercontent_gitlab(partial, owner, repo_name, repo_ref):
-    if partial.startswith("./"):
-        partial = partial.replace("./", "")
-    if partial.startswith(".\\"):
-        partial = partial.replace(".\\", "")
-    return f"https://gitlab.com/{owner}/{repo_name}/-/blob/{repo_ref}/{urllib.parse.quote(partial)}"
 
 
 def remove_bibtex(string_list):
@@ -994,7 +34,7 @@ def remove_bibtex(string_list):
         The strings list without bibtex blocks
         """
     for x, element in enumerate(string_list):
-        bib_references = extract_bibtex(element)
+        bib_references = regular_expressions.extract_bibtex(element)
         if len(bib_references) > 0:
             top = element.find(bib_references[0])
             init = element.rfind("```", 0, top)
@@ -1005,56 +45,25 @@ def remove_bibtex(string_list):
     return string_list
 
 
-def remove_links_images(text):
-    # process images
-    images = re.findall(r"!\[(.*?)?\]\((.*?)?\)", text)
-    for image in images:
-        link_text = image[1]
-        pos = text.find(link_text)
-        if pos != -1:
-            init = text[:pos].rindex("![")
-            end = text[pos:].index(")")
-            image_text = text[init:pos+end+1]
-            text = text.replace(image_text,"")
-
-    #process links
-    links = re.findall(r"\[(.*?)?\]\(([^)]+)\)", text)
-    for link in links:
-        link_text = link[1]
-        pos = text.find(link_text)
-        if pos != -1:
-            init = text[:pos].rindex("[")
-            end = text[pos:].index(")")
-            link_text = text[init:pos + end + 1]
-            text = text.replace(link_text, "")
-
-    # remove blank spaces and \n
-    return text.strip()
-
-
-def extract_colab_links(text):
-    output = []
-    links = re.findall(r"\[(.*?)?\]\(([^)]+)\)", text)
-    for link in links:
-        link_url = link[1]
-        if link_url.startswith("https://colab.research.google.com/drive"):
-            output.append(link_url)
-
-    return output
-
-## Function takes readme text as input and divides it into excerpts
-## Returns the extracted excerpts
 def create_excerpts(string_list):
+    """
+    Function takes readme text as input and divides it into excerpts
+    Parameters
+    ----------
+    string_list: Markdown text passed as input
+    Returns
+    -------
+    Returns the extracted excerpts
+    """
     print("Splitting text into valid excerpts for classification")
     string_list = remove_bibtex(string_list)
     # divisions = createExcerpts.split_into_excerpts(string_list)
     divisions = parser_somef.extract_blocks_excerpts(string_list)
     print("Text Successfully split. \n")
-    # issue 337
     output = {}
     for division in divisions:
         original = division
-        division = remove_links_images(division)
+        division = regular_expressions.remove_links_images(division)
         if len(division) > 0:
             output[division] = original
     return output
@@ -1080,7 +89,7 @@ def run_classifiers(excerpts, file_paths):
         for key in excerpts.keys():
             text_to_classifier.append(key)
             text_to_results.append(excerpts[key])
-        for category in categories:
+        for category in constants.categories:
             if category not in file_paths.keys():
                 sys.exit("Error: Category " + category + " file path not present in config.json")
             file_name = file_paths[category]
@@ -1114,7 +123,7 @@ def remove_unimportant_excerpts(excerpt_element):
                          'originalHeader': ""}
     else:
         final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification'}
-    final_excerpt['excerpt'] += excerpt_info;
+    final_excerpt['excerpt'] += excerpt_info
     final_excerpt['confidence'].append(excerpt_confidence)
     if 'originalHeader' in excerpt_element:
         final_excerpt['originalHeader'] += excerpt_element['originalHeader']
@@ -1131,6 +140,7 @@ def is_in_excerpts_headers(text, set_excerpts):
             return True, excerpt
 
     return False, None
+
 
 ## Function takes scores dictionary and a threshold as input
 ## Returns predictions containing excerpts with a confidence above the given threshold.
@@ -1218,427 +228,9 @@ def extract_categories_using_header(repo_data):
         return {}, [repo_data]
 
 
-def extract_bibtex(readme_text) -> object:
-    """
-    Function takes readme text as input (cleaned from markdown notation) and runs a regex expression on top of it.
-    Returns list of bibtex citations
-    """
-    regex = r'\@[a-zA-Z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title][.\n\S\s]+?\n\}'
-    citations = re.findall(regex, readme_text)
-    return citations
-
-
-def extract_dois(readme_text) -> object:
-    """
-    Function that takes the text of a readme file and searches if there are any DOIs badges.
-    Parameters
-    ----------
-    readme_text Text of the readme
-
-    Returns
-    -------
-    DOIs/identifiers associated with this software component
-    """
-    # regex = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
-    # regex = r'\[\!\[DOI\]\(.+\)\]\(([^)]+)\)'
-    regex = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
-    dois = re.findall(regex, readme_text)
-    print("Extraction of DOIS from readme completed.\n")
-    return dois
-
-
-def extract_binder_links(readme_text) -> object:
-    """
-    Function that does a regex to extract binder links used as reference in the readme.
-    There could be multiple binder links for one reprository
-    Parameters
-    ----------
-    readme_text
-
-    Returns
-    -------
-    Links with binder notebooks/scripts that are ready to be executed.
-    """
-    regex = r'\[\!\[Binder\]([^\]]+)\]\(([^)]+)\)'
-    binder_links = re.findall(regex, readme_text)
-    print("Extraction of Binder links from readme completed.\n")
-    # remove duplicates
-    collabs = extract_colab_links(readme_text)
-    binder_links += collabs
-    return list(dict.fromkeys(binder_links))
-
-
-def extract_title(unfiltered_text):
-    html_text = markdown.markdown(unfiltered_text)
-    splitted = html_text.split("\n")
-    index = 0
-    limit = len(splitted)
-    output = ""
-    regex = r'<[^<>]+>'
-    while index < limit:
-        line = splitted[index]
-        if line.startswith("<h"):
-            if line.startswith("<h1>"):
-                output = re.sub(regex, '', line)
-            break
-        index += 1
-    return output
-
-
-def extract_title_old(unfiltered_text):
-    """
-    Function to extract a title based on the first header in the readme file
-    Parameters
-    ----------
-    unfiltered_text unfiltered text of the title
-
-    Returns
-    -------
-    Full title of the repo (if found)
-    """
-    underline_header = re.findall('.+[\n]={3,}[\n]', unfiltered_text)
-    # header declared with ====
-    title = ""
-    if len(underline_header) != 0:
-        title = re.split('.+[=]+[\n]+', unfiltered_text)[0].strip()
-    else:
-        # The first occurrence is assumed to be the title.
-        title = re.findall(r'# .+', unfiltered_text)[0]
-        # Remove initial #
-        if title is not None and len(title) > 0:
-            title = title[1:].strip()
-    # Remove other markup (links, etc.)
-    if "[!" in title:
-        title = re.split('\[\!', title)[0].strip()
-    # title = re.sub(r'/\[\!([^\[\]]*)\]\((.*?)\)', '',title)
-    return title
-
-
-def extract_readthedocs(readme_text) -> object:
-    """
-    Function to extract readthedocs links from text
-    Parameters
-    ----------
-    unfiltered_text text readme
-
-    Returns
-    -------
-    Links to the readthedocs documentation
-    """
-    #regex = r'http[s]?://[\w]+.readthedocs.io/'
-    regex = r'http[s]?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]+.readthedocs.io/'
-    readthedocs_links = re.findall(regex, readme_text)
-    print("Extraction of readthedocs links from readme completed.\n")
-    # remove duplicates (links like [readthedocs](readthedocs) are found twice
-    return list(dict.fromkeys(readthedocs_links))
-
-
-def extract_support_channels(readme_text):
-    """
-    Function to extract Gitter Chat, Reddit and Discord links from text
-    Parameters
-    ----------
-    readme_text text readme
-
-    Returns
-    -------
-    Link to the Gitter Chat
-    """
-    results = []
-
-    index_gitter_chat = readme_text.find("[![Gitter chat]")
-    if index_gitter_chat > 0:
-        init = readme_text.find(")](", index_gitter_chat)
-        end = readme_text.find(")", init + 3)
-        gitter_chat = readme_text[init + 3:end]
-        results.append(gitter_chat)
-
-    init = readme_text.find("(https://www.reddit.com/r/")
-    if init > 0:
-        end = readme_text.find(")", init)
-        repo_status = readme_text[init + 1:end]
-        results.append(repo_status)
-
-    init = readme_text.find("(https://discord.com/invite/")
-    if init > 0:
-        end = readme_text.find(")", init)
-        repo_status = readme_text[init + 1:end]
-        results.append(repo_status)
-
-    return results
-
-
-def extract_repo_status(unfiltered_text):
-    repo_status = ""
-    init = unfiltered_text.find("[![Project Status:")
-    if init > 0:
-        end = unfiltered_text.find("](", init)
-        repo_status = unfiltered_text[init + 3:end]
-        repo_status = repo_status.replace("Project Status: ", "")
-    return repo_status
-
-
-def extract_arxiv_links(unfiltered_text):
-    result_links = [m.start() for m in re.finditer('https://arxiv.org/', unfiltered_text)]
-    result_refs = [m.start() for m in re.finditer('arXiv:', unfiltered_text)]
-    results = []
-    for position in result_links:
-        end = unfiltered_text.find(')', position)
-        link = unfiltered_text[position:end]
-        results.append(link)
-    for position in result_refs:
-        end = unfiltered_text.find('}', position)
-        link = unfiltered_text[position:end]
-        results.append(link.replace('arXiv:', 'https://arxiv.org/abs/'))
-
-    return results
-
-
-def extract_wiki_links(unfiltered_text, repo_url):
-    links = re.findall(r"\[[^\]]*\]\((.*?)?\)", unfiltered_text)
-    output = []
-    ends = 0
-    for link in links:
-        if validators.url(link):
-            if link.endswith("/wiki"):
-                output.append(link)
-            else:
-                ends = unfiltered_text.find("("+link+")") - 1
-                if unfiltered_text[:ends].find("[") != -1:
-                    position = unfiltered_text[:ends].rindex("[") + 1
-                    if unfiltered_text[position:ends].find("wiki") >= 0:
-                        output.append(link)
-            unfiltered_text = unfiltered_text[ends + len(link):]
-
-    #to check if a wiki url is available in the repository
-    if repo_url != "" and repo_url != None and validators.url(repo_url):
-        if repo_url.endswith("/"):
-            repo_url = repo_url + "wiki"
-        else:
-            repo_url = repo_url + "/wiki"
-        wiki = requests.get(repo_url, allow_redirects=False)
-        if wiki.status_code == 200:
-            output.append(repo_url)
-
-    return list(dict.fromkeys(output))
-
-# TO DO: join with image detection in a single method
-def extract_logo(unfiltered_text, repo_url):
-    logo = ""
-    index_logo = unfiltered_text.lower().find("![logo]")
-    if index_logo >= 0:
-        init = unfiltered_text.find("(", index_logo)
-        end = unfiltered_text.find(")", init)
-        logo = unfiltered_text[init + 1:end]
-    else:
-        # This is problematic if alt label is used
-        # TO DO
-        result = [_.start() for _ in re.finditer("<img src=", unfiltered_text)]
-        if len(result) > 0:
-            for index_img in result:
-                init = unfiltered_text.find("\"", index_img)
-                end = unfiltered_text.find("\"", init + 1)
-                img = unfiltered_text[init + 1:end]
-                if img.find("logo") > 0:
-                    logo = img
-
-    if logo != "" and not logo.startswith("http") and repo_url is not None:
-        if repo_url.find("github.com") > 0:
-            if repo_url.find("/tree/") > 0:
-                repo_url = repo_url.replace("/tree/", "/")
-            else:
-                repo_url = repo_url + "/master/"
-            repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-            if not repo_url.endswith("/"):
-                repo_url = repo_url + "/"
-            logo = repo_url + logo
-        else:
-            if not repo_url.endswith("/"):
-                repo_url = repo_url + "/"
-            logo = repo_url + logo
-    print(logo)
-    return logo
-
-
-def extract_images(unfiltered_text, repo_url):
-    logo = ""
-    has_logo = False
-    images = []
-    repo = False
-    repo_name = ""
-    if repo_url != None and repo_url != "":
-        url = urlparse(repo_url)
-        path_components = url.path.split('/')
-        repo_name = path_components[2]
-        repo = True
-
-    html_text = markdown.markdown(unfiltered_text)
-    img_md = re.findall(r"!\[[^\]]*\]\((.*?)?\)", html_text)
-    result = [_.start() for _ in re.finditer("<img ", html_text)]
-    for img in img_md:
-        if not has_logo and repo:
-            start = img.rindex("/")
-            if img.find(repo_name, start) > 0:
-                logo = rename_github_image(img, repo_url)
-                has_logo = True
-            elif get_alt_text_md(html_text, img) == repo_name or get_alt_text_md(html_text, img).upper() == "LOGO":
-                logo = rename_github_image(img, repo_url)
-                has_logo = True
-            else:
-                start = img.rindex("/")
-                if img.upper().find("LOGO", start) > 0:
-                    logo = rename_github_image(img, repo_url)
-                    has_logo = True
-                else:
-                    images.append(rename_github_image(img, repo_url))
-        else:
-            images.append(rename_github_image(img, repo_url))
-    for index_img in result:
-        init = html_text.find("src=\"", index_img)
-        end = html_text.find("\"", init + 5)
-        img = html_text[init + 5:end]
-        if not has_logo and repo:
-            start = img.rindex("/")
-            image_name = img[start:]
-            if image_name.find(repo_name) > 0 or image_name.upper().find("LOGO") > 0:
-                logo = rename_github_image(img, repo_url)
-                has_logo = True
-            elif get_alt_text_img(html_text, index_img) == repo_name or get_alt_text_img(html_text, index_img).upper() == "LOGO":
-                logo = rename_github_image(img, repo_url)
-                has_logo = True
-            else:
-                images.append(rename_github_image(img, repo_url))
-        else:
-            start = img.rindex("/")
-            if img.upper().find("LOGO", start) > 0:
-                logo = rename_github_image(img, repo_url)
-                has_logo = True
-            else:
-                images.append(rename_github_image(img, repo_url))
-
-    return logo, images
-
-
-def rename_github_image(img, repo_url):
-    if not img.startswith("http") and repo_url is not None and repo_url != "":
-        if repo_url.find("/tree/") > 0:
-            repo_url = repo_url.replace("/tree/", "/")
-        else:
-            repo_url = repo_url + "/master/"
-        repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-        if not repo_url.endswith("/"):
-            repo_url = repo_url + "/"
-        img = repo_url + img
-    return img
-
-
-def get_alt_text_md(text, image):
-    stop = text.find(image) - 2
-    start = text[:stop].rindex("![") + 2
-    return text[start:stop]
-
-
-def get_alt_text_img(html_text, index):
-    end = html_text.find(">", index)
-    output = ""
-    if html_text.find("alt=", index, end) > 0:
-        texto = html_text[index:end]
-        init = texto.find("alt=\"") + 5
-        end = texto.index("\"", init)
-        output = texto[init:end]
-    return output
-
-
-def get_alt_text_html(text, image):
-    stop = text.find(image)
-    start = text[:stop].rindex("<img")
-    if text[start:stop].find("alt=") != -1:
-        start = text.find("alt=",start) + 4
-        stop = text.find("\"",start)-1
-        return text[start:stop]
-    return ""
-
-# TO DO: join with logo detection
-def extract_images_old(unfiltered_text, repo_url):
-    logo = ""
-    images = []
-    html_text = markdown.markdown(unfiltered_text)
-    # print(html_text)
-    result = [_.start() for _ in re.finditer("<img ", html_text)]
-    if len(result) > 0:
-        for index_img in result:
-            init = html_text.find("src=\"", index_img)
-            end = html_text.find("\"", init + 5)
-            img = html_text[init + 5:end]
-            if img.find("logo") < 0:
-                if not img.startswith("http") and repo_url is not None:
-                    if repo_url.find("/tree/") > 0:
-                        repo_url = repo_url.replace("/tree/", "/")
-                    else:
-                        repo_url = repo_url + "/master/"
-                    repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-                    if not repo_url.endswith("/"):
-                        repo_url = repo_url + "/"
-                    img = repo_url + img
-                images.append(img)
-            else:
-                if not img.startswith("http") and repo_url is not None:
-                    if repo_url.find("/tree/") > 0:
-                        repo_url = repo_url.replace("/tree/", "/")
-                    else:
-                        repo_url = repo_url + "/master/"
-                    repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-                    if not repo_url.endswith("/"):
-                        repo_url = repo_url + "/"
-                    img = repo_url + img
-                logo = img
-
-    if logo == "" and repo_url != "" and repo_url != None:
-        print(repo_url)
-        url = urlparse(repo_url)
-        path_components = url.path.split('/')
-        repo_name = path_components[2]
-
-        for image in images:
-            start = image.rindex("/")
-            if image.find(repo_name,start) > 0:
-                logo = image
-                images.remove(image)
-                break
-
-
-    return logo, images
-
-
-def extract_support(unfiltered_text):
-    results = []
-    init = unfiltered_text.find("(https://www.reddit.com/r/")
-    if init > 0:
-        end = unfiltered_text.find(")", init)
-        repo_status = unfiltered_text[init + 1:end]
-        results.append(repo_status)
-
-    init = unfiltered_text.find("(https://discord.com/invite/")
-    if init > 0:
-        end = unfiltered_text.find(")", init)
-        repo_status = unfiltered_text[init + 1:end]
-        results.append(repo_status)
-
-    return results
-
-def extract_package_distributions(unfiltered_text):
-    output = ""
-    index_package_distribution = unfiltered_text.find("[![PyPI]")
-    if index_package_distribution > 0:
-        init = unfiltered_text.find(")](", index_package_distribution)
-        end = unfiltered_text.find(")", init + 3)
-        package_distribution = unfiltered_text[init + 3:end]
-        output = requests.get(package_distribution).url
-
-    return output
-
 def merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, long_title,
-          readthedocs_links, repo_status, arxiv_links, logo, images, support_channels, package_distribution, wiki_links):
+          readthedocs_links, repo_status, arxiv_links, logo, images, support_channels, package_distribution,
+          wiki_links):
     """
     Function that takes the predictions using header information, classifier and bibtex/doi parser
     Parameters
@@ -1690,7 +282,7 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
                                                  'technique': 'Regular expression'})
     if len(binder_links) != 0:
         predictions['executableExample'] = {'excerpt': binder_links, 'confidence': [1.0],
-                                     'technique': 'Regular expression'}
+                                            'technique': 'Regular expression'}
     if len(repo_status) != 0:
         predictions['repoStatus'] = {
             'excerpt': "https://www.repostatus.org/#" + repo_status[0:repo_status.find(" ")].lower(),
@@ -1725,7 +317,7 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
 
     if len(package_distribution) != 0:
         predictions['packageDistribution'] = {'excerpt': package_distribution, 'confidence': [1.0],
-                                          'technique': 'Regular expression'}
+                                              'technique': 'Regular expression'}
 
     for i in range(len(readthedocs_links)):
         if 'documentation' not in predictions.keys():
@@ -1762,22 +354,20 @@ def format_output(git_data, repo_data, gitlab_url=False):
     -------
     json representation of the categories found in file
     """
-    text_technigue = 'GitHub API'
+    text_technique = 'GitHub API'
     if gitlab_url:
-        text_technigue = 'GitLab API'
+        text_technique = 'GitLab API'
     print("formatting output")
     file_exploration = ['hasExecutableNotebook', 'hasBuildFile', 'hasDocumentation', 'codeOfConduct',
                         'contributingGuidelines', 'licenseFile', 'licenseText', 'acknowledgments', 'contributors',
-                        'hasScriptFile']
+                        'hasScriptFile', 'ontologies']
     for i in git_data.keys():
-        # print(i)
-        # print(git_data[i])
         if i == 'description':
             if 'description' not in repo_data.keys():
                 repo_data['description'] = []
             if git_data[i] != "":
                 repo_data['description'].append(
-                    {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technigue})
+                    {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technique})
         else:
             if i in file_exploration:
                 if i == 'hasExecutableNotebook':
@@ -1793,16 +383,17 @@ def format_output(git_data, repo_data, gitlab_url=False):
                             docker_files.append(data)
                     repo_data[i] = []
                     if len(docker_files) > 0:
-                        repo_data[i].insert(0, {'excerpt': docker_files, 'confidence': [1.0], 'technique': 'File Exploration',
-                                    'format': 'Docker file'})
+                        repo_data[i].insert(0, {'excerpt': docker_files, 'confidence': [1.0],
+                                                'technique': 'File Exploration',
+                                                'format': 'Docker file'})
                     if len(docker_compose) > 0:
-                        repo_data[i].insert(0, {'excerpt': docker_compose, 'confidence': [1.0], 'technique': 'File Exploration',
-                                    'format': 'Docker compose file'})
-                    #TODO docker
+                        repo_data[i].insert(0, {'excerpt': docker_compose, 'confidence': [1.0],
+                                                'technique': 'File Exploration',
+                                                'format': 'Docker compose file'})
                 else:
                     repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
             elif git_data[i] != "" and git_data[i] != []:
-                repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technigue}
+                repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technique}
     # remove empty categories from json
     return remove_empty_elements(repo_data)
 
@@ -1996,7 +587,8 @@ def create_missing_fields_report(repo_data, out_path):
     save_json_output(out, export_path, False)
 
 
-def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None, ignore_github_metadata=False, readme_only=False):
+def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
+                 ignore_github_metadata=False, readme_only=False):
     credentials_file = Path(
         os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
     ).expanduser()
@@ -2012,18 +604,18 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     if repo_url is not None:
         assert (doc_src is None)
         try:
-            text, github_data = load_repository_metadata(repo_url, header, ignore_github_metadata, readme_only)
+            text, github_data = process_repository.load_github_repository_metadata(repo_url, header, ignore_github_metadata, readme_only)
             if text == "":
                 print("Warning: README document does not exist in the repository")
-        except GithubUrlError:
+        except process_repository.GithubUrlError:
             return None
     elif local_repo is not None:
-        assert (local_repo is not None)
+        # assert (local_repo is not None)
         try:
-            text, github_data = load_local_repository_metadata(local_repo)
+            text, github_data = process_repository.load_local_repository_metadata(local_repo)
             if text == "":
                 print("Warning: README document does not exist in the local repository")
-        except GithubUrlError:
+        except process_repository.GithubUrlError:
             return None
     else:
         assert (doc_src is not None)
@@ -2035,7 +627,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
 
     unfiltered_text = text
     header_predictions, string_list = extract_categories_using_header(unfiltered_text)
-    text = unmark(text)
+    text = markdown_utils.unmark(text)
     excerpts = create_excerpts(string_list)
     if ignore_classifiers or unfiltered_text == '':
         predictions = {}
@@ -2045,22 +637,22 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         score_dict = run_classifiers(excerpts, file_paths)
         predictions = classify(score_dict, threshold, excerpts_headers, header_parents)
     if text != '':
-        citations = extract_bibtex(text)
+        citations = regular_expressions.extract_bibtex(text)
         citation_file_text = ""
         if 'citation' in github_data.keys():
             citation_file_text = github_data['citation']
             del github_data['citation']
-        dois = extract_dois(unfiltered_text)
-        binder_links = extract_binder_links(unfiltered_text)
-        title = extract_title(unfiltered_text)
-        readthedocs_links = extract_readthedocs(unfiltered_text)
-        repo_status = extract_repo_status(unfiltered_text)
-        arxiv_links = extract_arxiv_links(unfiltered_text)
-        wiki_links = extract_wiki_links(unfiltered_text,repo_url)
-        #logo = extract_logo(unfiltered_text, repo_url)
-        logo, images = extract_images(unfiltered_text, repo_url)
-        support_channels = extract_support_channels(unfiltered_text)
-        package_distribution = extract_package_distributions(unfiltered_text)
+        dois = regular_expressions.extract_dois(unfiltered_text)
+        binder_links = regular_expressions.extract_binder_links(unfiltered_text)
+        title = regular_expressions.extract_title(unfiltered_text)
+        readthedocs_links = regular_expressions.extract_readthedocs(unfiltered_text)
+        repo_status = regular_expressions.extract_repo_status(unfiltered_text)
+        arxiv_links = regular_expressions.extract_arxiv_links(unfiltered_text)
+        wiki_links = regular_expressions.extract_wiki_links(unfiltered_text, repo_url)
+        # logo = extract_logo(unfiltered_text, repo_url)
+        logo, images = regular_expressions.extract_images(unfiltered_text, repo_url)
+        support_channels = regular_expressions.extract_support_channels(unfiltered_text)
+        package_distribution = regular_expressions.extract_package_distributions(unfiltered_text)
     else:
         citations = []
         citation_file_text = ""
@@ -2077,7 +669,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         package_distribution = ""
 
     predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title,
-                        readthedocs_links, repo_status, arxiv_links, logo, images, support_channels, package_distribution, wiki_links)
+                        readthedocs_links, repo_status, arxiv_links, logo, images, support_channels,
+                        package_distribution, wiki_links)
     gitlab_url = False
     if repo_url is not None:
         if repo_url.rfind("gitlab.com") > 0:
@@ -2137,7 +730,8 @@ def run_cli(*,
 
     else:
         if repo_url:
-            repo_data = cli_get_data(threshold, ignore_classifiers, repo_url=repo_url, ignore_github_metadata=ignore_github_metadata, readme_only=readme_only)
+            repo_data = cli_get_data(threshold, ignore_classifiers, repo_url=repo_url,
+                                     ignore_github_metadata=ignore_github_metadata, readme_only=readme_only)
         elif local_repo:
             repo_data = cli_get_data(threshold, ignore_classifiers, local_repo=local_repo)
         else:

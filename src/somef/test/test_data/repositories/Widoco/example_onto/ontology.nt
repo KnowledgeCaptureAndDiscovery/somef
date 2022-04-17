@@ -1,0 +1,153 @@
+<https://w3id.org/example> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Ontology> .
+<https://w3id.org/example> <http://www.w3.org/2002/07/owl#versionIRI> <https://w3id.org/example/1.0.1> .
+<https://w3id.org/example> <http://purl.org/dc/terms/abstract> "An example vocabulary designed to illustrate how to publish vocabularies on the Web following the FAIR principles"@en .
+<https://w3id.org/example> <http://purl.org/dc/elements/1.1/description> "This is an example ontology to illustrate some of the annotations that should be included"@en .
+<https://w3id.org/example> <http://purl.org/dc/elements/1.1/title> "The example ontology"@en .
+<https://w3id.org/example> <http://purl.org/dc/terms/created> "February 5th, 2020"@en .
+<https://w3id.org/example> <http://purl.org/dc/terms/creator> "Daniel Garijo"@en .
+<https://w3id.org/example> <http://purl.org/dc/terms/creator> "Maria Poveda-Villalon"@en .
+<https://w3id.org/example> <http://purl.org/dc/terms/license> <http://creativecommons.org/licenses/by/2.0/> .
+<https://w3id.org/example> <http://purl.org/vocab/vann/preferredNamespacePrefix> "exo"@en .
+<https://w3id.org/example> <http://purl.org/vocab/vann/preferredNamespaceUri> "https://w3id.org/example" .
+<https://w3id.org/example> <http://schema.org/citation> "Cite this vocabulary as: Garijo, D. and Poveda-Villalon, M. The example ontology 1.0.1."@en .
+<https://w3id.org/example> <http://www.w3.org/2000/01/rdf-schema#comment> "An example vocabulary designed to illustrate how to publish vocabularies on the Web following the FAIR principles. This vocabulary describes three simple classes with 3 properties and a data property."@en .
+<https://w3id.org/example> <http://www.w3.org/2002/07/owl#backwardCompatibleWith> <https://w3id.org/example/1.0.0> .
+<https://w3id.org/example> <http://www.w3.org/2002/07/owl#priorVersion> <https://w3id.org/example/1.0.0> .
+<https://w3id.org/example> <http://www.w3.org/2002/07/owl#versionInfo> "1.0.1"@en .
+# 
+# 
+# #################################################################
+# #
+# #    Annotation properties
+# #
+# #################################################################
+# 
+# 
+# http://purl.org/dc/elements/1.1/abstract
+<http://purl.org/dc/elements/1.1/abstract> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://purl.org/dc/elements/1.1/created
+<http://purl.org/dc/elements/1.1/created> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://purl.org/dc/elements/1.1/description
+<http://purl.org/dc/elements/1.1/description> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://purl.org/dc/elements/1.1/publisher
+<http://purl.org/dc/elements/1.1/publisher> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://purl.org/dc/elements/1.1/title
+<http://purl.org/dc/elements/1.1/title> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://purl.org/dc/terms/created
+<http://purl.org/dc/terms/created> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://purl.org/dc/terms/creator
+<http://purl.org/dc/terms/creator> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://purl.org/dc/terms/license
+<http://purl.org/dc/terms/license> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://purl.org/vocab/vann/example
+<http://purl.org/vocab/vann/example> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://purl.org/vocab/vann/preferredNamespacePrefix
+<http://purl.org/vocab/vann/preferredNamespacePrefix> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://purl.org/vocab/vann/preferredNamespaceUri
+<http://purl.org/vocab/vann/preferredNamespaceUri> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://schema.org/author
+<http://schema.org/author> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://schema.org/citation
+<http://schema.org/citation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://www.linkedmodel.org/schema/vaem#rationale
+<http://www.linkedmodel.org/schema/vaem#rationale> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# 
+# 
+# #################################################################
+# #
+# #    Datatypes
+# #
+# #################################################################
+# 
+# 
+# http://www.w3.org/2001/XMLSchema#date
+<http://www.w3.org/2001/XMLSchema#date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Datatype> .
+# 
+# 
+# 
+# #################################################################
+# #
+# #    Object Properties
+# #
+# #################################################################
+# 
+# 
+# https://w3id.org/example#hasMember
+<https://w3id.org/example#hasMember> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<https://w3id.org/example#hasMember> <http://www.w3.org/2000/01/rdf-schema#domain> <https://w3id.org/example#Organization> .
+<https://w3id.org/example#hasMember> <http://www.w3.org/2000/01/rdf-schema#range> <https://w3id.org/example#Researcher> .
+<https://w3id.org/example#hasMember> <http://www.w3.org/2000/01/rdf-schema#comment> "This example property indicates that an Organization has a Researcher as member"@en .
+<https://w3id.org/example#hasMember> <http://www.w3.org/2000/01/rdf-schema#label> "has member"@en .
+# 
+# https://w3id.org/example#hasMentor
+<https://w3id.org/example#hasMentor> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<https://w3id.org/example#hasMentor> <http://www.w3.org/2000/01/rdf-schema#domain> <https://w3id.org/example#Student> .
+<https://w3id.org/example#hasMentor> <http://www.w3.org/2000/01/rdf-schema#range> <https://w3id.org/example#Researcher> .
+<https://w3id.org/example#hasMentor> <http://www.w3.org/2000/01/rdf-schema#comment> "This property links the students to the researcher who mentored them"@en .
+<https://w3id.org/example#hasMentor> <http://www.w3.org/2000/01/rdf-schema#label> "has mentor"@en .
+# 
+# https://w3id.org/example#partOf
+<https://w3id.org/example#partOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<https://w3id.org/example#partOf> <http://www.w3.org/2000/01/rdf-schema#domain> <https://w3id.org/example#Researcher> .
+<https://w3id.org/example#partOf> <http://www.w3.org/2000/01/rdf-schema#range> <https://w3id.org/example#Organization> .
+<https://w3id.org/example#partOf> <http://www.w3.org/2000/01/rdf-schema#comment> "This property links instances from Researcher to Organization"@en .
+<https://w3id.org/example#partOf> <http://www.w3.org/2000/01/rdf-schema#label> "part of"@en .
+# 
+# 
+# 
+# #################################################################
+# #
+# #    Data properties
+# #
+# #################################################################
+# 
+# 
+# https://w3id.org/example#foundedIn
+<https://w3id.org/example#foundedIn> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<https://w3id.org/example#foundedIn> <http://www.w3.org/2000/01/rdf-schema#domain> <https://w3id.org/example#Organization> .
+<https://w3id.org/example#foundedIn> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#date> .
+<https://w3id.org/example#foundedIn> <http://www.w3.org/2000/01/rdf-schema#comment> "Date when an organization was founded"@en .
+<https://w3id.org/example#foundedIn> <http://www.w3.org/2000/01/rdf-schema#label> "founded in"@en .
+# 
+# 
+# 
+# #################################################################
+# #
+# #    Classes
+# #
+# #################################################################
+# 
+# 
+# https://w3id.org/example#Organization
+<https://w3id.org/example#Organization> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://w3id.org/example#Organization> <http://purl.org/vocab/vann/example> "University of Southern California"@en .
+<https://w3id.org/example#Organization> <http://www.w3.org/2000/01/rdf-schema#comment> "An organized body of people with a particular purpose, especially a business, society, association, etc."@en .
+<https://w3id.org/example#Organization> <http://www.w3.org/2000/01/rdf-schema#label> "Organization"@en .
+# 
+# https://w3id.org/example#Researcher
+<https://w3id.org/example#Researcher> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://w3id.org/example#Researcher> <http://purl.org/vocab/vann/example> "An example using the Researcher class, e.g., Bob is a professor at the University of Southern California."@en .
+<https://w3id.org/example#Researcher> <http://www.linkedmodel.org/schema/vaem#rationale> "The reason why this concept was added to the ontology. This could reflect some agreement or use cases that may need to be reflected here. For example: The concept Researcher was added to the ontology to represent those authors of scientific publications that belong to a public institution."@en .
+<https://w3id.org/example#Researcher> <http://www.w3.org/2000/01/rdf-schema#comment> "A definition of your class. For example, A researcher is a person who publishes scientific papers, writes research proposals and mentors students"@en .
+<https://w3id.org/example#Researcher> <http://www.w3.org/2000/01/rdf-schema#label> "Researcher"@en .
+# 
+# https://w3id.org/example#Student
+<https://w3id.org/example#Student> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://w3id.org/example#Student> <http://www.w3.org/2000/01/rdf-schema#comment> "Student is a class introduced in the version 1.0.1 of the ontology. "@en .
+<https://w3id.org/example#Student> <http://www.w3.org/2000/01/rdf-schema#label> "Student"@en .
+# 
+# Generated by the OWL API (version 5.1.14) https://github.com/owlcs/owlapi/

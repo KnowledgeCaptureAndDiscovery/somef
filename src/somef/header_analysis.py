@@ -1,15 +1,14 @@
 ## Main function: header_analysis(text)
 ## input file: readme files text data
 ## output file: json files with categories extracted using header analysis; other text data cannot be extracted
+import re
 import string
 
-import markdown
 import numpy as np
 import pandas as pd
-import re
 from textblob import Word
+
 from . import parser_somef
-import json
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -79,6 +78,7 @@ support = [Word("support").synsets[7], Word("help").synsets[0], Word("help").syn
            Word("report").synsets[6]]
 group.update({"support": support})
 
+
 def extract_bash_code(text):
     splitted = text.split("```")
     output = []
@@ -87,6 +87,7 @@ def extract_bash_code(text):
             if index%2 == 1:
                 output.append(splitted[index])
     return output
+
 
 def extract_header_content(text):  # extract the header and content of text to dataframe
     print('Extracting headers and content.')
