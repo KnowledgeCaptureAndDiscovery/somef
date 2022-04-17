@@ -5,6 +5,7 @@ from somef.header_analysis import extract_header_content, extract_categories_usi
 # Test data for tests
 test_data_path = "test_data/"
 
+
 class TestHeaderAnalysis(unittest.TestCase):
 
     def test_extract_header_content_hash(self):
@@ -58,7 +59,7 @@ class TestHeaderAnalysis(unittest.TestCase):
         with open(test_data_path + "README-manim.md", "r") as data_file:
             file_text = data_file.read()
             json, results = extract_categories_using_headers(file_text)
-            element = results[2]
+            element = results[0]
             split = element.split("\n")
             assert len(split) > 1
             print(split)

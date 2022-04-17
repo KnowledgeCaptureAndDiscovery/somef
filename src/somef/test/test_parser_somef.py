@@ -1,10 +1,11 @@
 import unittest
 
-from somef.parser_somef import extract_headers, extract_headers_with_tags, extract_content_per_header, extract_bash, \
-    extract_blocks_excerpts, extract_text_excerpts_header, extract_headers_parents
+from somef.parser_somef import extract_headers, extract_headers_with_tags, extract_content_per_header, \
+    extract_bash, extract_blocks_excerpts, extract_text_excerpts_header, extract_headers_parents
 
 # Test data for tests
 test_data_path = "test_data/"
+
 
 class TestParserSomef(unittest.TestCase):
 
@@ -41,13 +42,11 @@ class TestParserSomef(unittest.TestCase):
             excerpts = extract_blocks_excerpts(content)
             assert len(excerpts) == 48
 
-
     def test_extract_text_excerpts_header(self):
         with open(test_data_path + "README-widoco.md", "r") as data_file:
             text = data_file.read()
             excerpts = extract_text_excerpts_header(text)
             assert len(excerpts.index) == 48
-
 
     def test_extract_headers_parents(self):
         with open(test_data_path + "README-widoco.md", "r") as data_file:
