@@ -50,6 +50,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Support channels**: Help channels one can use to get support about the target software component.
 - **Images**: Images used to illustrate the software component.
 - **Logo**: Main logo used to represent the target software component.
+- **Ontologies**: URL and path to the ontology files present in the repository.
 
 SOMEF uses the [Software  Description Ontology](https://w3id.org/okn/o/sd), which extends [Schema.org](https://schema.org) and [Codemeta](https://codemeta.github.io/terms/) to represent all the categories listed above. To see different export options please see [the getting started page](https://somef.readthedocs.io/en/latest/usage/).
 
