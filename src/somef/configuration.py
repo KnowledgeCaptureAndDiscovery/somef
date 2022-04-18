@@ -16,6 +16,7 @@ def configure(authorization="",
               invocation=default_invocation,
               installation=default_installation,
               citation=default_citation):
+    """ Function to configure the main program"""
     import nltk
     nltk.download('wordnet')
     nltk.download('omw-1.4')

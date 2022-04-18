@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 
 
 def extract_title(unfiltered_text):
+    """Regexp to extract title (first header) from a repository"""
     html_text = markdown.markdown(unfiltered_text)
     splitted = html_text.split("\n")
     index = 0
@@ -106,6 +107,7 @@ def extract_support_channels(readme_text):
 
 
 def extract_repo_status(unfiltered_text):
+    """Extracts the repostatus.org badge from a given text"""
     repo_status = ""
     init = unfiltered_text.find("[![Project Status:")
     if init > 0:
@@ -116,6 +118,7 @@ def extract_repo_status(unfiltered_text):
 
 
 def extract_arxiv_links(unfiltered_text):
+    """Extracts arxiv links from a given text"""
     result_links = [m.start() for m in re.finditer('https://arxiv.org/', unfiltered_text)]
     result_refs = [m.start() for m in re.finditer('arXiv:', unfiltered_text)]
     results = []
@@ -132,6 +135,7 @@ def extract_arxiv_links(unfiltered_text):
 
 
 def extract_wiki_links(unfiltered_text, repo_url):
+    """Extracts wiki links from a given text"""
     links = re.findall(r"\[[^\]]*\]\((.*?)?\)", unfiltered_text)
     output = []
     ends = 0
@@ -162,6 +166,7 @@ def extract_wiki_links(unfiltered_text, repo_url):
 
 # TO DO: join with image detection in a single method
 def extract_logo(unfiltered_text, repo_url):
+    """Extracts logos from a given text"""
     logo = ""
     index_logo = unfiltered_text.lower().find("![logo]")
     if index_logo >= 0:
@@ -199,6 +204,7 @@ def extract_logo(unfiltered_text, repo_url):
 
 
 def extract_images(unfiltered_text, repo_url):
+    """Extracts logos from a given text"""
     logo = ""
     has_logo = False
     images = []
@@ -260,6 +266,7 @@ def extract_images(unfiltered_text, repo_url):
 
 # TO DO: join with logo detection
 def extract_images_old(unfiltered_text, repo_url):
+    """Extracts images from a given text"""
     logo = ""
     images = []
     html_text = markdown.markdown(unfiltered_text)
@@ -310,6 +317,7 @@ def extract_images_old(unfiltered_text, repo_url):
 
 
 def extract_support(unfiltered_text):
+    """Extracts support channels (reddit, discord, gitter) from a given text"""
     results = []
     init = unfiltered_text.find("(https://www.reddit.com/r/")
     if init > 0:
@@ -327,6 +335,7 @@ def extract_support(unfiltered_text):
 
 
 def extract_package_distributions(unfiltered_text):
+    """Extracts package distributions from a given text"""
     output = ""
     index_package_distribution = unfiltered_text.find("[![PyPI]")
     if index_package_distribution > 0:
@@ -359,6 +368,7 @@ def extract_colab_links(text):
 
 
 def remove_links_images(text):
+    """Removes links from images in a given text"""
     # process images
     images = re.findall(r"!\[(.*?)?\]\((.*?)?\)", text)
     for image in images:
@@ -435,8 +445,8 @@ def extract_binder_links(readme_text) -> object:
     return list(dict.fromkeys(binder_links))
 
 
-
 def rename_github_image(img, repo_url):
+    """Renames GitHub image links so they can be accessed raw"""
     if not img.startswith("http") and repo_url is not None and repo_url != "":
         if repo_url.find("/tree/") > 0:
             repo_url = repo_url.replace("/tree/", "/")
@@ -456,6 +466,7 @@ def get_alt_text_md(text, image):
 
 
 def get_alt_text_img(html_text, index):
+    """Processing alt names for images"""
     end = html_text.find(">", index)
     output = ""
     if html_text.find("alt=", index, end) > 0:
@@ -467,6 +478,7 @@ def get_alt_text_img(html_text, index):
 
 
 def get_alt_text_html(text, image):
+    """Processing alt names for images in html"""
     stop = text.find(image)
     start = text[:stop].rindex("<img")
     if text[start:stop].find("alt=") != -1:

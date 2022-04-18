@@ -13,7 +13,6 @@ from . import header_analysis
 
 from . import parser_somef, regular_expressions, process_repository, markdown_utils, constants
 
-## Markdown to plain text conversion: end ##
 
 def restricted_float(x):
     x = float(x)
@@ -27,7 +26,7 @@ def remove_bibtex(string_list):
         Function that takes the string list and removes all bibtex blocks of it
         Parameters
         ----------
-        string_list A list of strings
+        string_list: A list of strings to process
 
         Returns
         -------
@@ -53,7 +52,7 @@ def create_excerpts(string_list):
     string_list: Markdown text passed as input
     Returns
     -------
-    Returns the extracted excerpts
+    Extracted excerpts
     """
     print("Splitting text into valid excerpts for classification")
     string_list = remove_bibtex(string_list)
@@ -75,11 +74,12 @@ def run_classifiers(excerpts, file_paths):
     Returns the dictionary containing scores for each excerpt.
     Parameters
     ----------
-    excerpts text fragments to process
-    file_paths pickle files of the classifiers
+    excerpts: text fragments to process
+    file_paths: pickle files of the classifiers
 
     Returns
     -------
+    A score dictionary with the results
 
     """
     score_dict = {}
@@ -110,7 +110,7 @@ def remove_unimportant_excerpts(excerpt_element):
     Function which removes all excerpt lines which have been classified but contain only one word.
     Parameters
     ----------
-    excerpt_element
+    excerpt_element: excerpt to process
 
     Returns
     -------
@@ -133,6 +133,17 @@ def remove_unimportant_excerpts(excerpt_element):
 
 
 def is_in_excerpts_headers(text, set_excerpts):
+    """
+    Function that checks if some text is included in a set of excerpts
+    Parameters
+    ----------
+    text: text to look for
+    set_excerpts: existing set of excerpts
+
+    Returns
+    -------
+    True if the text is included in the excerpts, False otherwise.
+    """
     set_text = set(text.split())
     for excerpt in set_excerpts:
         set_excerpt = set(excerpt.split())
@@ -142,9 +153,20 @@ def is_in_excerpts_headers(text, set_excerpts):
     return False, None
 
 
-## Function takes scores dictionary and a threshold as input
-## Returns predictions containing excerpts with a confidence above the given threshold.
 def classify(scores, threshold, excerpts_headers, header_parents):
+    """
+    Function takes scores dictionary and a threshold as input
+    Parameters
+    ----------
+    scores: score dictionary passed as input
+    threshold: threshold to filter predictions (only predictions above threshold are returned)
+    excerpts_headers: headers to which each excerpt belongs (if any)
+    header_parents: parent headers of each excerpt
+
+    Returns
+    -------
+    Predictions containing excerpts with a confidence above the given threshold.
+    """
     print("Checking Thresholds for Classified Excerpts.")
     predictions = {}
     for ele in scores.keys():
@@ -235,11 +257,22 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
     Function that takes the predictions using header information, classifier and bibtex/doi parser
     Parameters
     ----------
-    header_predictions extraction of common headers and their contents
-    predictions predictions from classifiers (description, installation instructions, invocation, citation)
-    citations (bibtex citations)
-    dois identifiers found in readme (Zenodo DOIs)
-
+    header_predictions: extraction of common headers and their contents
+    wiki_links: links to wikis
+    package_distribution: packages that appear in the readme
+    support_channels: like gitter, discord, etc.
+    images: included in the readme
+    logo: included in the readme
+    arxiv_links: links to arxiv papers
+    repo_status: repostatus.org badges
+    readthedocs_links: documentation links
+    long_title: title of the repository
+    binder_links: links to binder notebooks
+    citation_file_text: text of the citation file
+    header_predictions: predicted headers
+    predictions: predictions from classifiers (description, installation instructions, invocation, citation)
+    citations: bibtex citations
+    dois: identifiers found in readme Zenodo DOIs, or other
     Returns
     -------
     Combined predictions and results of the extraction process
@@ -412,8 +445,8 @@ def remove_empty_elements(d):
         return {k: v for k, v in ((k, remove_empty_elements(v)) for k, v in d.items()) if not empty(v)}
 
 
-# saves the final json Object in the file
 def save_json_output(repo_data, outfile, missing, pretty=False):
+    """Function that saves the final json Object in the output file"""
     print("Saving json data to", outfile)
     if missing:
         missing = create_missing_fields(repo_data)
@@ -424,16 +457,15 @@ def save_json_output(repo_data, outfile, missing, pretty=False):
         else:
             json.dump(repo_data, output)
 
-    ## Function takes metadata, readme text predictions, bibtex citations and path to the output file
 
-
-## Performs some combinations and saves the final json Object in the file
 def save_json(git_data, repo_data, outfile):
+    """Performs some combinations and saves the final json Object in output file"""
     repo_data = format_output(git_data, repo_data)
     save_json_output(repo_data, outfile, None)
 
 
 def save_codemeta_output(repo_data, outfile, pretty=False):
+    """Function that saves a JSONLD file with the codemeta results"""
     def data_path(path):
         return DataGraph.resolve_path(repo_data, path)
 
@@ -589,6 +621,22 @@ def create_missing_fields_report(repo_data, out_path):
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
                  ignore_github_metadata=False, readme_only=False):
+    """
+    Main function to get the data through the command line
+    Parameters
+    ----------
+    threshold: threshold to filter annotations. 0.8 by default
+    ignore_classifiers: flag to indicate if the output from the classifiers should be ignored
+    repo_url: URL of the repository to analyze
+    doc_src: path to the src of the target repo
+    local_repo: flag to indicate that the repo is local
+    ignore_github_metadata: flag used to avoid doing extra requests to the GitHub API
+    readme_only: flag to indicate that only the readme should be analyzed
+
+    Returns
+    -------
+    JSON file with the results found by SOMEF.
+    """
     credentials_file = Path(
         os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
     ).expanduser()
@@ -678,12 +726,11 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     return format_output(github_data, predictions, gitlab_url)
 
 
-# Function runs all the required components of the cli on a given document file
 def run_cli_document(doc_src, threshold, output):
+    """Runs all the required components of the cli on a given document file"""
     return run_cli(threshold=threshold, output=output, doc_src=doc_src)
 
 
-# Function runs all the required components of the cli for a repository
 def run_cli(*,
             threshold=0.8,
             ignore_classifiers=False,
@@ -700,6 +747,7 @@ def run_cli(*,
             pretty=False,
             missing=False
             ):
+    """Function to run all the required components of the cli for a repository"""
     # check if it is a valid url
     if repo_url:
         if not validators.url(repo_url):

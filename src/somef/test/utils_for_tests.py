@@ -1,4 +1,5 @@
 def almost_equal(obj1, obj2, exclude_paths=[]):
+    """Helper functions for legacy tests"""
     def almost_equal_helper(x, y, path):
 
         if isinstance(x, dict):

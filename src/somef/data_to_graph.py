@@ -1,6 +1,7 @@
 from rdflib import RDF, Graph, Literal, URIRef, Namespace
-from rdflib.namespace import XSD
-from somef.schema.software_schema import software_prefixes, software_schema
+
+from .schema.software_schema import software_prefixes, software_schema
+
 
 class DataGraph:
     def __init__(self):

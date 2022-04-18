@@ -93,10 +93,13 @@ def get_position(init_index, text_tokenized, text):
         init_index += 1
     return -1
 
+
 def remove_hash(text):
+    """Removes hash from a given text"""
     while text.startswith("#"):
         text = text[1:]
     return text
+
 
 def get_text(init_index, end_index, text_tokenized):
     if end_index == -1:
