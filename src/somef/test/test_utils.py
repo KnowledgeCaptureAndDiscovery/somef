@@ -1,6 +1,7 @@
 import unittest
 
-from somef.test.utils_for_tests import almost_equal
+from .utils_for_tests import almost_equal
+# This class introduces legacy tests
 
 
 class TestAlmostEqual(unittest.TestCase):

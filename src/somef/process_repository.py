@@ -15,6 +15,7 @@ from . import markdown_utils, extract_ontologies, constants
 
 # the same as requests.get(args).json(), but protects against rate limiting
 def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
+    """Function to obtain how many requests we have pending with the GitHub API"""
     rate_limited = True
     response = {}
     date = ""
@@ -534,6 +535,7 @@ def load_github_repository_metadata(repository_url, header, ignore_github_metada
 
 
 def load_local_repository_metadata(local_repo):
+    """Function to apply somef to a local repository (already downloaded)"""
     filtered_resp = {}
     repo_dir = os.path.abspath(local_repo)
     text, filtered_resp = process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.LOCAL)
@@ -542,6 +544,7 @@ def load_local_repository_metadata(local_repo):
 
 
 def get_project_id(repository_url):
+    """Function to download a repository, given its URL"""
     print(f"Downloading {repository_url}")
     response = requests.get(repository_url)
     response_str = str(response.content.decode('utf-8'))
@@ -568,6 +571,7 @@ class GithubUrlError(Exception):
 
 
 def get_readme_content(readme_url):
+    """Function to retrieve the content of a readme file given its URL (github)"""
     readme_url = readme_url.replace("/blob/", "/raw/")
     readme = requests.get(readme_url)
     readme_text = readme.content.decode('utf-8')
@@ -575,6 +579,7 @@ def get_readme_content(readme_url):
 
 
 def convert_to_raw_user_content_github(partial, owner, repo_name, repo_ref):
+    """Converts GitHub paths into raw.githubuser content URLs, accessible by users"""
     if partial.startswith("./"):
         partial = partial.replace("./", "")
     if partial.startswith(".\\"):
@@ -586,6 +591,7 @@ def convert_to_raw_user_content_github(partial, owner, repo_name, repo_ref):
 
 
 def convert_to_raw_user_content_gitlab(partial, owner, repo_name, repo_ref):
+    """Converts GitLab paths into raw.githubuser content URLs, accessible by users"""
     if partial.startswith("./"):
         partial = partial.replace("./", "")
     if partial.startswith(".\\"):

@@ -1,44 +1,51 @@
 import unittest
+import os
+from pathlib import Path
 
-from somef import regular_expressions
+from .. import regular_expressions
 
-test_data_path = "test_data/"
-test_data_repositories = "test_data/repositories/"
+test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 
 
 class TestCli(unittest.TestCase):
 
     def test_extract_bibtex(self):
+        """Test designed to check if bibtext citations are detected"""
         with open(test_data_path + "test_extract_bibtex.txt", "r") as data_file:
             test_text = data_file.read()
             c = regular_expressions.extract_bibtex(test_text)
             assert "@inproceedings" in c[0]
 
     def test_extract_dois(self):
+        """Test designed to check if doi links are detected"""
         with open(test_data_path + "test_extract_dois.txt", "r") as data_file:
             test_text = data_file.read()
             c = regular_expressions.extract_dois(test_text)
             assert len(c) == 2
 
     def test_extract_binder_links(self):
+        """Test designed to check if binder links are detected"""
         with open(test_data_path + "test_extract_binder_links.txt", "r") as data_file:
             test_text = data_file.read()
             c = regular_expressions.extract_binder_links(test_text)
             assert len(c) == 2
 
     def test_extract_title_underline(self):
+        """Test designed to check if titles with underline markdown notation are detected"""
         with open(test_data_path + "test_extract_title_underline.txt", "r") as data_file:
             test_text = data_file.read()
             c = regular_expressions.extract_title(test_text)
             assert "Taguette" == c
 
     def test_extract_title_hash(self):
+        """Test designed to check if titles with hash notation are detected"""
         with open(test_data_path + "test_extract_title_hash.txt", "r") as data_file:
             test_text = data_file.read()
             c = regular_expressions.extract_title(test_text)
             assert "T2WML: A Cell-Based Language To Map Tables Into Wikidata Records" == c
 
     def test_extract_title_with_md(self):
+        """Test designed to check if titles are detected"""
         with open(test_data_path + "test_extract_title_with_md.txt", "r") as data_file:
             test_text = data_file.read()
             c = regular_expressions.extract_title(test_text)
@@ -46,12 +53,14 @@ class TestCli(unittest.TestCase):
             assert "SOMEF" == c
 
     def test_extract_readthedocs_1(self):
+        """Test designed to check if readthedocs links are detected"""
         with open(test_data_path + "test_extract_readthedocs_1.txt", "r") as data_file:
             test_text = data_file.read()
             c = regular_expressions.extract_readthedocs(test_text)
             assert ["https://oba.readthedocs.io/"] == c
 
     def test_extract_readthedocs_2(self):
+        """Test designed to check if readthedocs links are detected"""
         with open(test_data_path + "test_extract_readthedocs_2.txt", "r") as data_file:
             test_text = data_file.read()
             c = regular_expressions.extract_readthedocs(test_text)
@@ -59,6 +68,7 @@ class TestCli(unittest.TestCase):
             assert ["https://kgtk.readthedocs.io/"] == c
 
     def test_extract_readthedocs_3(self):
+        """Test designed to check if readthedoc links are detected"""
         test_text = """
         See full documentation at [https://somef.readthedocs.io/en/latest/](https://somef.readthedocs.io/en/latest/)
         """
@@ -67,6 +77,7 @@ class TestCli(unittest.TestCase):
         assert ["https://somef.readthedocs.io/"] == c
 
     def test_extract_readthedocs_issue_407(self):
+        """Test designed to check if readthedocs links are detected"""
         with open(test_data_path + "test_extract_readthedocs_3.txt", "r") as data_file:
             test_text = data_file.read()
             c = regular_expressions.extract_readthedocs(test_text)
@@ -74,6 +85,7 @@ class TestCli(unittest.TestCase):
             assert ["https://owl-to-oas.readthedocs.io/"] == c
 
     def test_extract_gitter_chat(self):
+        """Test designed to check if gitter chats are detected"""
         with open(test_data_path + "test_extract_gitter_chat.txt", "r") as data_file:
             test_text = data_file.read()
             c = regular_expressions.extract_support_channels(test_text)
@@ -81,12 +93,14 @@ class TestCli(unittest.TestCase):
             assert "https://gitter.im/OpenGeoscience/geonotebook" in c
 
     def test_repo_status(self):
+        """Test designed to check if repostatus badges are detected"""
         with open(test_data_path + "test_repo_status.txt", "r") as data_file:
             test_text = data_file.read()
             repo_status = regular_expressions.extract_repo_status(test_text)
             assert len(repo_status) > 0
 
     def test_issue_291(self):
+        """Test designed to check if logos are detected"""
         repo_url = "https://github.com/dgarijo/Widoco"
         with open(test_data_path + "README-widoco.md", "r") as data_file:
             test_text = data_file.read()
@@ -94,6 +108,7 @@ class TestCli(unittest.TestCase):
             assert (not logo == "")
 
     def test_issue_291_2(self):
+        """Test designed to check if logos are detected"""
         repo_url = "https://github.com/usc-isi-i2/kgtk/"
         with open(test_data_path + "test_logo_uscisii2.txt", "r") as data_file:
             test_text = data_file.read()
@@ -101,6 +116,7 @@ class TestCli(unittest.TestCase):
             assert (not logo == "")
 
     def test_issue_291_3(self):
+        """Test designed to check if logos are detected"""
         repo_url = "https://github.com/tensorflow/tensorflow/"
         with open(test_data_path + "test_logo_tensorflow.txt", "r") as data_file:
             test_text = data_file.read()
@@ -108,6 +124,7 @@ class TestCli(unittest.TestCase):
             assert (not logo == "")
 
     def test_issue_images(self):
+        """Test designed to check if images are detected"""
         repo_url = "https://github.com/usc-isi-i2/kgtk/"
         with open(test_data_path + "test_issue_images.txt", "r") as data_file:
             test_text = data_file.read()
@@ -115,42 +132,49 @@ class TestCli(unittest.TestCase):
             assert len(images) > 0
 
     def test_issue_181(self):
+        """Test designed to check if arxiv papers are detected"""
         with open(test_data_path + "test_issue_181.txt", "r") as data_file:
             test_text = data_file.read()
             arxiv_links = regular_expressions.extract_arxiv_links(test_text)
             assert len(arxiv_links) > 0
 
     def test_issue_270(self):
+        """Test designed to check if support channels are detected"""
         with open(test_data_path + "test_issue_270.txt", "r") as data_file:
             test_text = data_file.read()
             support_channels = regular_expressions.extract_support_channels(test_text)
             assert len(support_channels) == 2
 
     def test_logo(self):
+        """Test designed to check if logos are detected"""
         with open(test_data_path + "test_logo.txt", "r") as data_file:
             test_text = data_file.read()
             logo, images = regular_expressions.extract_images(test_text, "https://github.com/oeg-upm/Chowlk")
             assert (not logo == "")
 
     def test_logo2(self):
+        """Test designed to check if logos are detected"""
         with open(test_data_path + "test_logo2.txt", "r") as data_file:
             test_text = data_file.read()
             logo, images = regular_expressions.extract_images(test_text, "https://github.com/pytorch/pytorch")
             assert (not logo == "")
 
     def test_images(self):
+        """Test designed to check if images are detected"""
         with open(test_data_path + "test_images.txt", "r") as data_file:
             test_text = data_file.read()
             logo, images = regular_expressions.extract_images(test_text, "https://github.com/pytorch/pytorch")
             assert (len(images) > 0 and not logo == "")
 
     def test_issue_320(self):
+        """Test designed to check if logos are detected"""
         with open(test_data_path + "README-urllib3.md", "r") as data_file:
             test_text = data_file.read()
             logo, images = regular_expressions.extract_images(test_text, "https://github.com/urllib3/urllib3")
             assert (not logo == "")
 
     def test_issue_337(self):
+        """Test designed to check if links are removed from the text sent to classifiers"""
         text = """## Interactive web interface
 
 Visit the public website at [www.mapshaper.org](http://www.mapshaper.org) or use the web UI locally via the `mapshaper-gui` script. 

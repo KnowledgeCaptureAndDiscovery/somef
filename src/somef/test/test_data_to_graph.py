@@ -1,6 +1,8 @@
 import unittest
 
-from somef.data_to_graph import DataGraph
+from ..data_to_graph import DataGraph
+
+# Tests from this class are legacy tests
 
 
 class FlattenDict(unittest.TestCase):

@@ -15,8 +15,8 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # Define wordnet groups
 group = dict()
 
-#Word("citation").synsets[2] -> Includes ack, which is not the right sense
-citation = [Word("citation").synsets[3],Word("reference").synsets[1], Word("cite").synsets[3]]
+# Word("citation").synsets[2] -> Includes ack, which is not the right sense
+citation = [Word("citation").synsets[3], Word("reference").synsets[1], Word("cite").synsets[3]]
 group.update({"citation": citation})
 
 ack = [Word("acknowledgement").synsets[0]]
@@ -44,7 +44,7 @@ description = [Word("description").synsets[0], Word("description").synsets[1],
                Word("introduction").synsets[3], Word("introduction").synsets[6],
                Word("basics").synsets[0],
                Word("initiation").synsets[1],
-#               Word("overview").synsets[0],
+               #               Word("overview").synsets[0],
                Word("summary").synsets[0], Word("summary").synsets[2]]
 group.update({"description": description})
 
@@ -58,20 +58,20 @@ license = [Word("license").synsets[3], Word("license").synsets[0]]
 group.update({"license": license})
 
 usage = [Word("usage").synsets[0], Word("example").synsets[0], Word("example").synsets[5],
-         #Word("implement").synsets[1],Word("implementation").synsets[1],
+         # Word("implement").synsets[1],Word("implementation").synsets[1],
          Word("demo").synsets[1], Word("tutorial").synsets[0],
          Word("tutorial").synsets[1],
          Word("start").synsets[0], Word("start").synsets[4], Word("started").synsets[0],
          Word("started").synsets[1], Word("started").synsets[7], Word("started").synsets[8]]
 group.update({"usage": usage})
 
-#update = [Word("updating").synsets[0], Word("updating").synsets[3]]
-#group.update({"update": update})
+# update = [Word("updating").synsets[0], Word("updating").synsets[3]]
+# group.update({"update": update})
 
 # Needs to be revisited
-#Word("issues").synsets[0],
+# Word("issues").synsets[0],
 faq = [Word("errors").synsets[5], Word("problems").synsets[0],
-          Word("problems").synsets[2], Word("faq").synsets[0]]
+       Word("problems").synsets[2], Word("faq").synsets[0]]
 group.update({"faq": faq})
 
 support = [Word("support").synsets[7], Word("help").synsets[0], Word("help").synsets[9], Word("report").synsets[0],
@@ -80,16 +80,18 @@ group.update({"support": support})
 
 
 def extract_bash_code(text):
+    """Function to detect code blocks"""
     splitted = text.split("```")
     output = []
-    if (len(splitted)>=3):
+    if (len(splitted) >= 3):
         for index, value in enumerate(splitted):
-            if index%2 == 1:
+            if index % 2 == 1:
                 output.append(splitted[index])
     return output
 
 
-def extract_header_content(text):  # extract the header and content of text to dataframe
+def extract_header_content(text):
+    """Function designed to extract headers and contents of text and place it in a dataframe"""
     print('Extracting headers and content.')
     header = []
     headers = parser_somef.extract_headers(text)
@@ -112,24 +114,25 @@ def find_sim(wordlist, wd):
     Function that returns the max probability between a word and subgroup
     Parameters
     ----------
-    wordlist
-    wd
+    wordlist: word group
+    wd: input word
 
     Returns
     -------
-
+    Maximum probability between word and a category
     """
     sim_value = []
     for sense in wordlist:
-        if (wd.path_similarity(sense) != None):
+        if wd.path_similarity(sense) is not None:
             sim_value.append(wd.path_similarity(sense))
-    if (len(sim_value) != 0):
+    if len(sim_value) != 0:
         return max(sim_value)
     else:
         return 0
 
 
-def match_group(word_syn, group, threshold):  # match a word with a subgroup
+def match_group(word_syn, group, threshold):
+    """Function designed to match a word with a subgroup"""
     currmax = 0
     maxgroup = ""
     simvalues = dict()
@@ -138,27 +141,30 @@ def match_group(word_syn, group, threshold):  # match a word with a subgroup
         for key, value in group.items():  # value has all the similar words
             path_sim = find_sim(value, sense)
             # print("Similarity is:",path_sim)
-            if (path_sim > threshold):  # then append to the list
-                if (path_sim > currmax):
+            if path_sim > threshold:  # then append to the list
+                if path_sim > currmax:
                     maxgroup = key
                     currmax = path_sim
     return maxgroup
 
 
-def label_header(header):  # label the header with a subgroup
+def label_header(header):
+    """Function designed to label a header with a subgroup"""
     # remove punctuation
     header_clean = header.translate(str.maketrans('', '', string.punctuation))
     sentence = header_clean.strip().split(" ")
     label = []
     for s in sentence:
         synn = Word(s).synsets
-        if (len(synn) > 0):
+        if len(synn) > 0:
             bestgroup = match_group(synn, group, 0.8)
-            if (bestgroup != "" and bestgroup not in label):
+            if bestgroup != "" and bestgroup not in label:
                 label.append(bestgroup)
     return label
 
-def label_parent_headers(parentHeaders):  # label the header with a subgroup
+
+def label_parent_headers(parentHeaders):
+    """label the header with a subgroup"""
     header = ""
     for value in parentHeaders:
         header += value + " "
@@ -168,22 +174,22 @@ def label_parent_headers(parentHeaders):  # label the header with a subgroup
     label = []
     for s in sentence:
         synn = Word(s).synsets
-        if (len(synn) > 0):
+        if len(synn) > 0:
             bestgroup = match_group(synn, group, 0.8)
-            if (bestgroup != "" and bestgroup not in label):
+            if bestgroup != "" and bestgroup not in label:
                 label.append(bestgroup)
     return label
 
 
 def clean_html(text):
+    """Cleaner function"""
     cleanr = re.compile('<.*?>')
     cleantext = re.sub(cleanr, '', text)
     return cleantext
 
 
-def extract_categories_using_headers(text):  # main function
-    #remove call to clean_html to solve GitHub issues 139 and 89
-    #text = clean_html(text)
+def extract_categories_using_headers(text):
+    """Main function to extract categories using headers"""
     data = extract_header_content(text)
     print('Labeling headers.')
     if data.empty:
@@ -206,13 +212,13 @@ def extract_categories_using_headers(text):  # main function
 
     # to json
     group = data.loc[(data['Group'] != 'None') & pd.notna(data['Group'])]
-    #group = group.reindex(columns=['Content', 'Group'])
+    # group = group.reindex(columns=['Content', 'Group'])
     group['confidence'] = [[1]] * len(group)
     group.rename(columns={'Content': 'excerpt'}, inplace=True)
     group.rename(columns={'Header': 'originalHeader'}, inplace=True)
     group.rename(columns={'ParentHeader': 'parentHeader'}, inplace=True)
     group['technique'] = 'Header extraction'
-    #group['original header'] = 'NaN'
+    # group['original header'] = 'NaN'
     group_json = group.groupby('Group').apply(lambda x: x.to_dict('r')).to_dict()
     for key in group_json.keys():
         for ind in range(len(group_json[key])):
