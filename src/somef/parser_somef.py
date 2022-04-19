@@ -446,9 +446,12 @@ def is_header(header):
 
 
 def get_tag_content(header):
-    init = header.index(">")
-    end = header.index("</h")
-    return replace_html_tags(header[init+1:end])
+    try:
+        init = header.index(">")
+        end = header.index("</h")
+        return replace_html_tags(header[init+1:end])
+    except:
+        return ""
 
 
 def replace_html_tags(text):
