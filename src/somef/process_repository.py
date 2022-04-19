@@ -731,7 +731,7 @@ def process_repository_files(repo_dir, filtered_resp, repo_type, owner="", repo_
                                                                                                repo_ref)
                     else:
                         filtered_resp["contributorsFile"] = os.path.join(repo_dir, repo_relative_path, filename)
-            if "CITATION" == filename.upper() or "CITATION.CFF" == filename.upper():
+            if "CITATION" == filename.upper() or "CITATION.CFF" == filename.upper() or "CITATION.BIB" == filename.upper():
                 try:
                     with open(os.path.join(dir_path, filename), "r") as data_file:
                         file_text = data_file.read()
