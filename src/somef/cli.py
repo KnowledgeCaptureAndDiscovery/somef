@@ -698,7 +698,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         arxiv_links = regular_expressions.extract_arxiv_links(unfiltered_text)
         wiki_links = regular_expressions.extract_wiki_links(unfiltered_text, repo_url)
         # logo = extract_logo(unfiltered_text, repo_url)
-        logo, images = regular_expressions.extract_images(unfiltered_text, repo_url)
+        logo, images = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo)
         support_channels = regular_expressions.extract_support_channels(unfiltered_text)
         package_distribution = regular_expressions.extract_package_distributions(unfiltered_text)
     else:

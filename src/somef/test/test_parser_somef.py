@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 from ..parser_somef import extract_headers, extract_headers_with_tags, extract_content_per_header, \
-    extract_bash, extract_blocks_excerpts, extract_text_excerpts_header, extract_headers_parents
+    extract_bash, extract_blocks_excerpts, extract_text_excerpts_header, extract_headers_parents, is_header
 
 # Test data for tests
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
@@ -62,3 +62,13 @@ class TestParserSomef(unittest.TestCase):
             text = data_file.read()
             parents = extract_headers_parents(text)
             assert len(parents) == 15
+
+    def test_issue_431(self):
+        # Changed method is_header to avoid false positive
+        # It will return true only when there is an opening and closing header tag in string input
+        first_header = '''<h1 align="center">\n
+        '''
+        second_header = '''<h1>WIzard for DOCumenting Ontologies (WIDOCO)</h1>'''
+        print(is_header(first_header))
+        print(is_header(second_header))
+        assert (not is_header(first_header) and is_header(second_header))
