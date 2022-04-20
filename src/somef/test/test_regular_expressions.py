@@ -5,6 +5,7 @@ from pathlib import Path
 from .. import regular_expressions
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
+test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
 
 
 class TestCli(unittest.TestCase):
@@ -104,7 +105,7 @@ class TestCli(unittest.TestCase):
         repo_url = "https://github.com/dgarijo/Widoco"
         with open(test_data_path + "README-widoco.md", "r") as data_file:
             test_text = data_file.read()
-            logo, images = regular_expressions.extract_images(test_text, repo_url)
+            logo, images = regular_expressions.extract_images(test_text, repo_url, None)
             assert (not logo == "")
 
     def test_issue_291_2(self):
@@ -112,7 +113,7 @@ class TestCli(unittest.TestCase):
         repo_url = "https://github.com/usc-isi-i2/kgtk/"
         with open(test_data_path + "test_logo_uscisii2.txt", "r") as data_file:
             test_text = data_file.read()
-            logo, images = regular_expressions.extract_images(test_text, repo_url)
+            logo, images = regular_expressions.extract_images(test_text, repo_url, None)
             assert (not logo == "")
 
     def test_issue_291_3(self):
@@ -120,7 +121,7 @@ class TestCli(unittest.TestCase):
         repo_url = "https://github.com/tensorflow/tensorflow/"
         with open(test_data_path + "test_logo_tensorflow.txt", "r") as data_file:
             test_text = data_file.read()
-            logo, images = regular_expressions.extract_images(test_text, repo_url)
+            logo, images = regular_expressions.extract_images(test_text, repo_url, None)
             assert (not logo == "")
 
     def test_issue_images(self):
@@ -128,7 +129,7 @@ class TestCli(unittest.TestCase):
         repo_url = "https://github.com/usc-isi-i2/kgtk/"
         with open(test_data_path + "test_issue_images.txt", "r") as data_file:
             test_text = data_file.read()
-            logo, images = regular_expressions.extract_images(test_text, repo_url)
+            logo, images = regular_expressions.extract_images(test_text, repo_url, None)
             assert len(images) > 0
 
     def test_issue_181(self):
@@ -149,28 +150,28 @@ class TestCli(unittest.TestCase):
         """Test designed to check if logos are detected"""
         with open(test_data_path + "test_logo.txt", "r") as data_file:
             test_text = data_file.read()
-            logo, images = regular_expressions.extract_images(test_text, "https://github.com/oeg-upm/Chowlk")
+            logo, images = regular_expressions.extract_images(test_text, "https://github.com/oeg-upm/Chowlk", None)
             assert (not logo == "")
 
     def test_logo2(self):
         """Test designed to check if logos are detected"""
         with open(test_data_path + "test_logo2.txt", "r") as data_file:
             test_text = data_file.read()
-            logo, images = regular_expressions.extract_images(test_text, "https://github.com/pytorch/pytorch")
+            logo, images = regular_expressions.extract_images(test_text, "https://github.com/pytorch/pytorch", None)
             assert (not logo == "")
 
     def test_images(self):
         """Test designed to check if images are detected"""
         with open(test_data_path + "test_images.txt", "r") as data_file:
             test_text = data_file.read()
-            logo, images = regular_expressions.extract_images(test_text, "https://github.com/pytorch/pytorch")
+            logo, images = regular_expressions.extract_images(test_text, "https://github.com/pytorch/pytorch", None)
             assert (len(images) > 0 and not logo == "")
 
     def test_issue_320(self):
         """Test designed to check if logos are detected"""
         with open(test_data_path + "README-urllib3.md", "r") as data_file:
             test_text = data_file.read()
-            logo, images = regular_expressions.extract_images(test_text, "https://github.com/urllib3/urllib3")
+            logo, images = regular_expressions.extract_images(test_text, "https://github.com/urllib3/urllib3", None)
             assert (not logo == "")
 
     def test_issue_337(self):
@@ -186,3 +187,10 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
         """
         text = regular_expressions.remove_links_images(text)
         assert text.find("[www.mapshaper.org](http://www.mapshaper.org)") == -1
+
+    def test_issue_427(self):
+        with open(test_data_repositories + "Widoco" + os.path.sep + "README.md", "r") as data_file:
+            test_text = data_file.read()
+            logo, images = regular_expressions.extract_images(test_text, None, test_data_repositories + "Widoco")
+            assert (logo.find('test_data') > 0)
+

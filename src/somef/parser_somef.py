@@ -438,20 +438,19 @@ def minor_than(second, first):
 
 
 def is_header(header):
-    if header.startswith('<h1') or header.startswith('<h2') or header.startswith('<h3') \
-            or header.startswith('<h4') or header.startswith('<h5') or header.startswith('<h6'):
+    if (header.startswith('<h1') or header.startswith('<h2') or header.startswith('<h3') \
+            or header.startswith('<h4') or header.startswith('<h5') or header.startswith('<h6')) \
+            and header.find('</h') > 0:
         return True
     else:
         return False
 
 
 def get_tag_content(header):
-    try:
-        init = header.index(">")
-        end = header.index("</h")
-        return replace_html_tags(header[init+1:end])
-    except:
-        return ""
+    init = header.index(">")
+    end = header.index("</h")
+    return replace_html_tags(header[init+1:end])
+
 
 
 def replace_html_tags(text):
