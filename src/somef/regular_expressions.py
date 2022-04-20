@@ -1,3 +1,4 @@
+import os
 import re
 import markdown
 import requests
@@ -203,7 +204,7 @@ def extract_logo(unfiltered_text, repo_url):
     return logo
 
 
-def extract_images(unfiltered_text, repo_url):
+def extract_images(unfiltered_text, repo_url, local_repo):
     """Extracts logos from a given text"""
     logo = ""
     has_logo = False
@@ -223,20 +224,20 @@ def extract_images(unfiltered_text, repo_url):
         if not has_logo and repo:
             start = img.rindex("/")
             if img.find(repo_name, start) > 0:
-                logo = rename_github_image(img, repo_url)
+                logo = rename_github_image(img, repo_url, local_repo)
                 has_logo = True
             elif get_alt_text_md(html_text, img) == repo_name or get_alt_text_md(html_text, img).upper() == "LOGO":
-                logo = rename_github_image(img, repo_url)
+                logo = rename_github_image(img, repo_url, local_repo)
                 has_logo = True
             else:
                 start = img.rindex("/")
                 if img.upper().find("LOGO", start) > 0:
-                    logo = rename_github_image(img, repo_url)
+                    logo = rename_github_image(img, repo_url, local_repo)
                     has_logo = True
                 else:
-                    images.append(rename_github_image(img, repo_url))
+                    images.append(rename_github_image(img, repo_url, local_repo))
         else:
-            images.append(rename_github_image(img, repo_url))
+            images.append(rename_github_image(img, repo_url, local_repo))
     for index_img in result:
         init = html_text.find("src=\"", index_img)
         end = html_text.find("\"", init + 5)
@@ -245,21 +246,21 @@ def extract_images(unfiltered_text, repo_url):
             start = img.rindex("/")
             image_name = img[start:]
             if image_name.find(repo_name) > 0 or image_name.upper().find("LOGO") > 0:
-                logo = rename_github_image(img, repo_url)
+                logo = rename_github_image(img, repo_url, local_repo)
                 has_logo = True
             elif get_alt_text_img(html_text, index_img) == repo_name or get_alt_text_img(html_text,
                                                                                          index_img).upper() == "LOGO":
-                logo = rename_github_image(img, repo_url)
+                logo = rename_github_image(img, repo_url, local_repo)
                 has_logo = True
             else:
-                images.append(rename_github_image(img, repo_url))
+                images.append(rename_github_image(img, repo_url, local_repo))
         else:
             start = img.rindex("/")
             if img.upper().find("LOGO", start) > 0:
-                logo = rename_github_image(img, repo_url)
+                logo = rename_github_image(img, repo_url, local_repo)
                 has_logo = True
             else:
-                images.append(rename_github_image(img, repo_url))
+                images.append(rename_github_image(img, repo_url, local_repo))
 
     return logo, images
 
@@ -445,17 +446,20 @@ def extract_binder_links(readme_text) -> object:
     return list(dict.fromkeys(binder_links))
 
 
-def rename_github_image(img, repo_url):
+def rename_github_image(img, repo_url, local_repo):
     """Renames GitHub image links so they can be accessed raw"""
-    if not img.startswith("http") and repo_url is not None and repo_url != "":
-        if repo_url.find("/tree/") > 0:
-            repo_url = repo_url.replace("/tree/", "/")
+    if not img.startswith("http") and ((repo_url is not None and repo_url != "") or (local_repo is not None and local_repo != "")):
+        if repo_url is not None and repo_url != "":
+            if repo_url.find("/tree/") > 0:
+                repo_url = repo_url.replace("/tree/", "/")
+            else:
+                repo_url = repo_url + "/master/"
+            repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
+            if not repo_url.endswith("/"):
+                repo_url = repo_url + "/"
+            img = repo_url + img
         else:
-            repo_url = repo_url + "/master/"
-        repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-        if not repo_url.endswith("/"):
-            repo_url = repo_url + "/"
-        img = repo_url + img
+            img = local_repo + os.path.sep + img
     return img
 
 
