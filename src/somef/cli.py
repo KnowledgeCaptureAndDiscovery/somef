@@ -13,6 +13,10 @@ from . import header_analysis
 
 from . import parser_somef, regular_expressions, process_repository, markdown_utils, constants
 
+from .rolf import preprocessing
+import pandas as pd
+
+
 
 def restricted_float(x):
     x = float(x)
@@ -104,6 +108,30 @@ def run_classifiers(excerpts, file_paths):
 
     return score_dict
 
+def run_category_classification(readme_text: str, threshold: float):
+    """
+    Function which returns the categories, confidence and technique of the given repo
+    Parameters
+    ----------
+    readme_text: the pure text of the readme
+    threshold: the threshold for the confidence
+
+    Returns
+    -------
+    Returns the list of the results
+    """
+    df = pd.DataFrame([readme_text], columns=['Text'])
+    preprocessing.Preprocessor(df).run()
+    text = [df['Text'][0]]
+    res = []
+    for model_file in Path('rolf/models').iterdir():
+        with open(model_file, 'rb') as f:
+            model = pickle.load(f)
+            cat = model.predict(text).tolist()[0]
+            prob = max(model.predict_proba(text).tolist()[0])
+            if cat != 'Other' and prob > threshold:
+                res.append({'confidence': [prob], 'output': [cat], 'technique': 'Supervised classification'})
+    return res
 
 def remove_unimportant_excerpts(excerpt_element):
     """
@@ -252,7 +280,7 @@ def extract_categories_using_header(repo_data):
 
 def merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, long_title,
           readthedocs_links, repo_status, arxiv_links, logo, images, support_channels, package_distribution,
-          wiki_links):
+          wiki_links, category):
     """
     Function that takes the predictions using header information, classifier and bibtex/doi parser
     Parameters
@@ -273,6 +301,7 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
     predictions: predictions from classifiers (description, installation instructions, invocation, citation)
     citations: bibtex citations
     dois: identifiers found in readme Zenodo DOIs, or other
+    category: prediction of the category of the given repo
     Returns
     -------
     Combined predictions and results of the extraction process
@@ -363,6 +392,9 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
             predictions['documentation'] = []
         predictions['documentation'].insert(0, {'excerpt': wiki_links[i], 'confidence': [1.0],
                                                 'technique': 'Regular expression', 'type': 'wiki'})
+
+    if category:
+        predictions['category'] = category
 
     for headers in header_predictions:
         if headers not in predictions.keys():
@@ -676,6 +708,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     unfiltered_text = text
     header_predictions, string_list = extract_categories_using_header(unfiltered_text)
     text = markdown_utils.unmark(text)
+    category = run_category_classification(unfiltered_text, threshold)
     excerpts = create_excerpts(string_list)
     if ignore_classifiers or unfiltered_text == '':
         predictions = {}
@@ -718,7 +751,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
 
     predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title,
                         readthedocs_links, repo_status, arxiv_links, logo, images, support_channels,
-                        package_distribution, wiki_links)
+                        package_distribution, wiki_links, category)
     gitlab_url = False
     if repo_url is not None:
         if repo_url.rfind("gitlab.com") > 0:
