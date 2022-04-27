@@ -368,6 +368,11 @@ def extract_colab_links(text):
     return output
 
 
+def remove_html_tags(text):
+    regex = re.compile('<.*?>')
+    clean_text = re.sub(regex, '', text)
+    return clean_text
+
 def remove_links_images(text):
     """Removes links from images in a given text"""
     # process images
