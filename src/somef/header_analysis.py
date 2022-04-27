@@ -98,7 +98,7 @@ def extract_header_content(text):
     for key in headers.keys():
         if headers[key]:
             header.append(key)
-    content = parser_somef.extract_content_per_header(text, headers)
+    content, none_header_content = parser_somef.extract_content_per_header(text, headers)
     parent_headers = parser_somef.extract_headers_parents(text)
     # into dataframe
     df = pd.DataFrame(columns=['Header', 'Content', 'ParentHeader'])
@@ -106,7 +106,7 @@ def extract_header_content(text):
         df = df.append({'Header': i, 'Content': j, 'ParentHeader': parent_headers[i]}, ignore_index=True)
     df['Content'].replace('', np.nan, inplace=True)
     df.dropna(subset=['Content'], inplace=True)
-    return df
+    return df, none_header_content
 
 
 def find_sim(wordlist, wd):
@@ -190,7 +190,7 @@ def clean_html(text):
 
 def extract_categories_using_headers(text):
     """Main function to extract categories using headers"""
-    data = extract_header_content(text)
+    data, none_header_content = extract_header_content(text)
     print('Labeling headers.')
     if data.empty:
         print("File to analyze has no headers")
@@ -213,7 +213,7 @@ def extract_categories_using_headers(text):
     # to json
     group = data.loc[(data['Group'] != 'None') & pd.notna(data['Group'])]
     # group = group.reindex(columns=['Content', 'Group'])
-    group['confidence'] = [[1]] * len(group)
+    group['confidence'] = [[1.0]] * len(group)
     group.rename(columns={'Content': 'excerpt'}, inplace=True)
     group.rename(columns={'Header': 'originalHeader'}, inplace=True)
     group.rename(columns={'ParentHeader': 'parentHeader'}, inplace=True)
@@ -234,6 +234,9 @@ def extract_categories_using_headers(text):
     str_list = data.loc[data['Group'].isna(), ['Content']].values.squeeze().tolist()
     if type(str_list) != list:
         str_list = [str_list]
+
+    if none_header_content != None:
+        str_list.append(none_header_content)
 
     # remove empty field parentHeader
     for key in group_json.keys():

@@ -30,7 +30,7 @@ class TestParserSomef(unittest.TestCase):
         with open(test_data_path + "README-widoco.md", "r") as data_file:
             text = data_file.read()
             headers = extract_headers(text)
-            content = extract_content_per_header(text, headers)
+            content, non_header_content  = extract_content_per_header(text, headers)
             assert len(content) == 14
 
     def test_extract_bash(self):
@@ -45,7 +45,7 @@ class TestParserSomef(unittest.TestCase):
         with open(test_data_path + "README-widoco.md", "r") as data_file:
             text = data_file.read()
             headers = extract_headers(text)
-            content = extract_content_per_header(text, headers)
+            content, non_header_content  = extract_content_per_header(text, headers)
             excerpts = extract_blocks_excerpts(content)
             assert len(excerpts) == 48
 

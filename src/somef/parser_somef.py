@@ -1,7 +1,7 @@
 import markdown
 import re
 import pandas as pd
-
+from . import regular_expressions
 
 def extract_headers(original_text):
     text, bashes = extract_bash(original_text)
@@ -51,14 +51,17 @@ def extract_content_per_header(original_text, headers):
     index = 0
     top = keys[0]
     bottom = None
+    none_header_content = None
     text_tokenized = original_text.split('\n')
     if len(text_tokenized) == 1:
         return text_tokenized[0]
     top_index = get_position(0, text_tokenized, top)
     # si hay algo antes de la primera cabecera, no se procesa porque no está relacionado con ninguna cabecera
-    #if top_index > 0:
-    #    header_content = get_text(0, top_index, text_tokenized)
-    #    content.append(header_content)
+    if top_index > 0:
+        none_header_content = get_text(0, top_index, text_tokenized)
+        none_header_content = regular_expressions.remove_links_images(none_header_content)
+        none_header_content = regular_expressions.remove_html_tags(none_header_content)
+        print(none_header_content)
     offset = 1
     if not text_tokenized[top_index].startswith('#'):
         offset = 2
@@ -81,7 +84,7 @@ def extract_content_per_header(original_text, headers):
         header_content = header_content[1:]
     content.append(header_content)
     output[top] = header_content
-    return content
+    return content, none_header_content
 
 
 def get_position(init_index, text_tokenized, text):
