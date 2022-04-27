@@ -3,7 +3,8 @@ import os
 import unittest
 import validators
 from pathlib import Path
-from .. import cli
+from somef import cli
+from somef import parser_somef
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
@@ -387,7 +388,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         json_content = json.loads(data)
         text_file.close()
-        assert len(json_content["ontologies"]["excerpt"]) == 2
+        assert len(json_content["ontologies"]["excerpt"]) == 1
         os.remove(test_data_path + "test-388.json")
 
     def test_issue_319_2(self):
@@ -863,3 +864,24 @@ class TestCli(unittest.TestCase):
         contact = json_content['contact']
         assert contact is not None
         os.remove(test_data_path + "test-382.json")
+
+    def test_issue_428(self):
+        """Checks a given github repo works fine (contact section)"""
+        cli.run_cli(threshold=0.8,
+                    ignore_classifiers=False,
+                    repo_url=None,
+                    local_repo=None,
+                    doc_src=test_data_path + "README-manim.md",
+                    in_file=None,
+                    output=test_data_path + "test-428.json",
+                    graph_out=None,
+                    graph_format="turtle",
+                    codemeta_out=None,
+                    pretty=True,
+                    missing=True,
+                    readme_only=False)
+        text_file = open(test_data_path + "test-428.json", "r")
+        data = text_file.read()
+        text_file.close()
+        assert data.find("Manim is an engine for precise programmatic animations, designed for creating explanatory math videos.") > 0
+        os.remove(test_data_path + "test-428.json")

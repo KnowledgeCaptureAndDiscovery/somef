@@ -1,8 +1,11 @@
-import unittest
+import json
 import os
+import unittest
+
 from pathlib import Path
 
 from ..header_analysis import extract_header_content, extract_categories_using_headers, extract_bash_code
+from somef import cli
 
 # Test data for tests
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
@@ -14,15 +17,15 @@ class TestHeaderAnalysis(unittest.TestCase):
         """Test to check if the markdown parser works against hash headers"""
         with open(test_data_path + "test_extract_header_content_hash.txt", "r") as data_file:
             text = data_file.read()
-            result = extract_header_content(text)
-            # print(result)
+            result, non_header_content = extract_header_content(text)
+            print(result)
             assert len(result.index) == 6
 
     def test_extract_header_content_hash_complex(self):
         """Test to check if the markdown parser works in a more complex setting"""
         with open(test_data_path + "test_extract_header_content_hash_complex.txt", "r") as data_file:
             text = data_file.read()
-            result = extract_header_content(text)
+            result, non_header_content  = extract_header_content(text)
             print(result)
             # Should return 2: we select the maximum amount of headers we can match
             assert len(result.index) == 3
@@ -31,7 +34,7 @@ class TestHeaderAnalysis(unittest.TestCase):
         """Parser checks in case header are underlined (e.g., '___')"""
         with open(test_data_path + "test_extract_header_content_underline.txt", "r") as data_file:
             text = data_file.read()
-            result = extract_header_content(text)
+            result, non_header_content  = extract_header_content(text)
             print(result)
             assert len(result.index) == 3
 
@@ -54,12 +57,12 @@ class TestHeaderAnalysis(unittest.TestCase):
         """Test to avoid a bug in header analysis, where no installation instructions were detected"""
         with open(test_data_path + "pyansys-README.rst", "r") as data_file:
             file_text = data_file.read()
-            results = extract_header_content(file_text)
+            results, non_header_content  = extract_header_content(file_text)
             print(results)
             assert len(results) == 8
         with open(test_data_path + "rasterio-README.md", "r") as data_file:
             file_text = data_file.read()
-            results = extract_header_content(file_text)
+            results, non_header_content  = extract_header_content(file_text)
             print(results)
             assert len(results) == 16
 
@@ -82,3 +85,14 @@ class TestHeaderAnalysis(unittest.TestCase):
             elem = element[0]
             title = elem.get('originalHeader')
             assert title == 'Documentation'
+
+    def test_issue_425(self):
+        """Checks that the confidence value of fields extracted using header extraction technique is 1.0"""
+        with open(test_data_path + "README-mapshaper.md", "r") as data_file:
+            file_text = data_file.read()
+            json, results = extract_categories_using_headers(file_text)
+            element = json.get('description')
+            elem = element[0]
+            confidence = elem.get('confidence')
+            print(confidence)
+            assert confidence == [1.0]
