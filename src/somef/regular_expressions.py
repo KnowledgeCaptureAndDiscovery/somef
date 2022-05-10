@@ -243,7 +243,9 @@ def extract_images(unfiltered_text, repo_url, local_repo):
         end = html_text.find("\"", init + 5)
         img = html_text[init + 5:end]
         if not has_logo and repo:
-            start = img.rindex("/")
+            start = 0
+            if img.find("/") > 0:
+                start = img.rindex("/")
             image_name = img[start:]
             if image_name.find(repo_name) > 0 or image_name.upper().find("LOGO") > 0:
                 logo = rename_github_image(img, repo_url, local_repo)
