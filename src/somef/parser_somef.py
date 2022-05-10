@@ -407,11 +407,13 @@ def remove_tags_new(header_parents):
     output = {}
     regex = r'<[^<>]+>'
     for key in header_parents.keys():
-        new_key = re.sub(regex, '', key)
+        #new_key = re.sub(regex, '', key)
+        new_key = key[4:len(key)-5]
         new_list = []
         for value in header_parents[key]:
             if key != value:
-                new_value = re.sub(regex, '', value)
+                #new_value = re.sub(regex, '', value)
+                new_value = value[4:len(value)-5]
                 new_list.append(new_value)
         output[new_key] = new_list
 
@@ -451,7 +453,7 @@ def is_header(header):
 
 def get_tag_content(header):
     init = header.index(">")
-    end = header.index("</h")
+    end = header.rindex("</h")
     return replace_html_tags(header[init+1:end])
 
 

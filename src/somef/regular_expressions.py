@@ -221,7 +221,11 @@ def extract_images(unfiltered_text, repo_url, local_repo):
     img_md = re.findall(r"!\[[^\]]*\]\((.*?)?\)", html_text)
     result = [_.start() for _ in re.finditer("<img ", html_text)]
     for img in img_md:
-        if not has_logo and repo:
+        # if the image contains jitpack.io, the element is not processed
+        if img.find("jitpack.io") > 0 or img.find("/badge") >= 0 or img.find("/travis-ci.org") >= 0 \
+                or img.find("img.shields.io") >= 0:
+            None
+        elif not has_logo and repo:
             start = img.rindex("/")
             if img.find(repo_name, start) > 0:
                 logo = rename_github_image(img, repo_url, local_repo)
@@ -242,8 +246,14 @@ def extract_images(unfiltered_text, repo_url, local_repo):
         init = html_text.find("src=\"", index_img)
         end = html_text.find("\"", init + 5)
         img = html_text[init + 5:end]
-        if not has_logo and repo:
-            start = img.rindex("/")
+        # if the image contains jitpack.io, the element is not processed
+        if img.find("jitpack.io") > 0 or img.find("/badge") >= 0 or img.find("/travis-ci.org") >= 0 \
+                or img.find("img.shields.io") >= 0:
+            None
+        elif not has_logo and repo:
+            start = 0
+            if img.find("/") > 0:
+                start = img.rindex("/")
             image_name = img[start:]
             if image_name.find(repo_name) > 0 or image_name.upper().find("LOGO") > 0:
                 logo = rename_github_image(img, repo_url, local_repo)
