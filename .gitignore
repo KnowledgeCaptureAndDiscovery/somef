@@ -1,6 +1,6 @@
 build/*
 dist/*
-env/*
+env*/*
 .vscode/
 .ipynb_checkpoints/
 config.json

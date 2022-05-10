@@ -388,7 +388,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         json_content = json.loads(data)
         text_file.close()
-        assert len(json_content["ontologies"]["excerpt"]) == 1
+        assert len(json_content["ontologies"]["excerpt"]) == 2
         os.remove(test_data_path + "test-388.json")
 
     def test_issue_319_2(self):
@@ -885,3 +885,69 @@ class TestCli(unittest.TestCase):
         text_file.close()
         assert data.find("Manim is an engine for precise programmatic animations, designed for creating explanatory math videos.") > 0
         os.remove(test_data_path + "test-428.json")
+
+    def test_issue_443(self):
+        cli.run_cli(threshold=0.8,
+                    ignore_classifiers=False,
+                    repo_url=None,
+                    local_repo=None,
+                    doc_src=test_data_path + "README-epw2rdf-contents.md",
+                    in_file=None,
+                    output=test_data_path + "test-443.json",
+                    graph_out=None,
+                    graph_format="turtle",
+                    codemeta_out=None,
+                    pretty=True,
+                    missing=True,
+                    readme_only=False)
+        text_file = open(test_data_path + "test-443.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        installation = json_content['installation']
+        assert installation is not None
+        os.remove(test_data_path + "test-443.json")
+
+    def test_issue_443_2(self):
+        cli.run_cli(threshold=0.8,
+                    ignore_classifiers=False,
+                    repo_url="https://github.com/oeg-upm/awesome-semantic-web",
+                    local_repo=None,
+                    doc_src=None,
+                    in_file=None,
+                    output=test_data_path + "test-443.json",
+                    graph_out=None,
+                    graph_format="turtle",
+                    codemeta_out=None,
+                    pretty=True,
+                    missing=True,
+                    readme_only=False)
+        text_file = open(test_data_path + "test-443.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        installation = json_content['installation']
+        assert installation is not None
+        os.remove(test_data_path + "test-443.json")
+
+    def test_issue_443_3(self):
+        cli.run_cli(threshold=0.8,
+                    ignore_classifiers=False,
+                    repo_url="https://github.com/oeg-upm/pcake",
+                    local_repo=None,
+                    doc_src=None,
+                    in_file=None,
+                    output=test_data_path + "test-443.json",
+                    graph_out=None,
+                    graph_format="turtle",
+                    codemeta_out=None,
+                    pretty=True,
+                    missing=True,
+                    readme_only=False)
+        text_file = open(test_data_path + "test-443.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        description = json_content['description']
+        assert description is not None
+        os.remove(test_data_path + "test-443.json")
