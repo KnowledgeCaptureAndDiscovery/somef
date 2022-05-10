@@ -194,3 +194,9 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
             logo, images = regular_expressions.extract_images(test_text, None, test_data_repositories + "Widoco")
             assert (logo.find('test_data') > 0)
 
+    def test_issue_446(self):
+        """Test that jitpack URLs are not returned"""
+        with open(test_data_path + "README-licensius.md", "r") as data_file:
+            test_text = data_file.read()
+            logo, images = regular_expressions.extract_images(test_text, "https://github.com/oeg-upm/licensius/", None)
+            assert (logo == "")
