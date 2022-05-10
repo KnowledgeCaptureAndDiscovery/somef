@@ -222,7 +222,8 @@ def extract_images(unfiltered_text, repo_url, local_repo):
     result = [_.start() for _ in re.finditer("<img ", html_text)]
     for img in img_md:
         # if the image contains jitpack.io, the element is not processed
-        if img.find("jitpack.io") > 0:
+        if img.find("jitpack.io") > 0 or img.find("/badge") >= 0 or img.find("/travis-ci.org") >= 0 \
+                or img.find("img.shields.io") >= 0:
             None
         elif not has_logo and repo:
             start = img.rindex("/")
@@ -246,7 +247,8 @@ def extract_images(unfiltered_text, repo_url, local_repo):
         end = html_text.find("\"", init + 5)
         img = html_text[init + 5:end]
         # if the image contains jitpack.io, the element is not processed
-        if img.find("jitpack.io") > 0:
+        if img.find("jitpack.io") > 0 or img.find("/badge") >= 0 or img.find("/travis-ci.org") >= 0 \
+                or img.find("img.shields.io") >= 0:
             None
         elif not has_logo and repo:
             start = 0
