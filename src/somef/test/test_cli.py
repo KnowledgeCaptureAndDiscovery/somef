@@ -388,7 +388,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         json_content = json.loads(data)
         text_file.close()
-        assert len(json_content["ontologies"]["excerpt"]) == 1
+        assert len(json_content["ontologies"]["excerpt"]) == 2
         os.remove(test_data_path + "test-388.json")
 
     def test_issue_319_2(self):
