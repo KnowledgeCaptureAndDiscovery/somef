@@ -400,7 +400,7 @@ def remove_links_images(text):
     links = re.findall(r"\[(.*?)?\]\(([^)]+)\)", text)
     for link in links:
         link_text = link[1]
-        pos = text.find(link_text)
+        pos = text.find("("+link_text+")")
         if pos != -1:
             init = text[:pos].rindex("[")
             end = text[pos:].index(")")
