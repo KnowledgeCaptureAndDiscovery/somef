@@ -388,7 +388,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         json_content = json.loads(data)
         text_file.close()
-        assert len(json_content["ontologies"]["excerpt"]) == 2
+        assert len(json_content["ontologies"]["excerpt"]) == 1
         os.remove(test_data_path + "test-388.json")
 
     def test_issue_319_2(self):
@@ -951,3 +951,25 @@ class TestCli(unittest.TestCase):
         description = json_content['description']
         assert description is not None
         os.remove(test_data_path + "test-443.json")
+
+    def test_issue_457(self):
+        cli.run_cli(threshold=0.8,
+                    ignore_classifiers=False,
+                    repo_url=None,
+                    local_repo=None,
+                    doc_src=test_data_path + "README-pytorch.md",
+                    in_file=None,
+                    output=test_data_path + "test-457.json",
+                    graph_out=None,
+                    graph_format="turtle",
+                    codemeta_out=None,
+                    pretty=True,
+                    missing=True,
+                    readme_only=False)
+        text_file = open(test_data_path + "test-457.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        description = json_content['description']
+        assert description is not None
+        os.remove(test_data_path + "test-457.json")
