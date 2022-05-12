@@ -53,7 +53,7 @@ setup(
     version=version["__version__"],
     author="Daniel Garijo",
     author_email="daniel.garijo@upm.es",
-    description=__doc__,
+    description="SOftware Metadata Extraction Framework: A tool for automatically extracting relevant software information from readme files",
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
     url="https://github.com/KnowledgeCaptureAndDiscovery/somef",
