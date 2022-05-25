@@ -185,7 +185,12 @@ def extract_logo(unfiltered_text, repo_url):
                 img = unfiltered_text[init + 1:end]
                 if img.find("logo") > 0:
                     logo = img
-
+    # processing for those github links that do not resolve correctly
+    if logo.startswith("http"):
+        if logo.find("github.com") > 0:
+            logo = logo.replace("/blob", "")
+            logo = logo.replace("github.com", "raw.githubusercontent.com")
+    #processing for those logos that are relative paths
     if logo != "" and not logo.startswith("http") and repo_url is not None:
         if repo_url.find("github.com") > 0:
             if repo_url.find("/tree/") > 0:
@@ -211,7 +216,7 @@ def extract_images(unfiltered_text, repo_url, local_repo):
     images = []
     repo = False
     repo_name = ""
-    if repo_url != None and repo_url != "":
+    if repo_url is not None and repo_url != "":
         url = urlparse(repo_url)
         path_components = url.path.split('/')
         repo_name = path_components[2]
@@ -463,6 +468,10 @@ def extract_binder_links(readme_text) -> object:
 
 def rename_github_image(img, repo_url, local_repo):
     """Renames GitHub image links so they can be accessed raw"""
+    if img.startswith("http"):
+        if img.find("github.com") > 0:
+            img = img.replace("/blob", "")
+            img = img.replace("github.com", "raw.githubusercontent.com")
     if not img.startswith("http") and ((repo_url is not None and repo_url != "") or (local_repo is not None and local_repo != "")):
         if repo_url is not None and repo_url != "":
             if repo_url.find("/tree/") > 0:
