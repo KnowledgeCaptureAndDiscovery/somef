@@ -214,3 +214,11 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
             test_text = data_file.read()
             logo, images = regular_expressions.extract_images(test_text, "https://github.com/oeg-upm/PPool/", None)
             assert (logo == "" and len(images) == 1)
+
+    def test_issue_467(self):
+        """Test designed to check if logo is correctly obtained"""
+        with open(test_data_path + "README-wothive.md", "r") as data_file:
+            test_text = data_file.read()
+            logo = regular_expressions.extract_logo(test_text,"https://github.com/oeg-upm/wot-hive/")
+            print(logo)
+            assert logo == "https://raw.githubusercontent.com/oeg-upm/wot-hive/AndreaCimminoArriaga-wothive-logo/logo.png"
