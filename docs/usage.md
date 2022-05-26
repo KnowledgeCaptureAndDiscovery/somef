@@ -55,6 +55,10 @@ Options:
                                   SOMEF was not able to find. The report will
                                   be placed in  $PATH_missing.json, where
                                   $PATH is -o, -c or -g.
+  -kt, --keep_tmp PATH            SOMEF will NOT delete the temporary folder
+                                  where files are stored for analysis. Files
+                                  will be stored at the
+                                  desired path
 
   -h, --help                      Show this message and exit.
 ```
