@@ -41,7 +41,7 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
     return response, date
 
 
-def load_gitlab_repository_metadata(repository_url, header, readme_only=False):
+def load_gitlab_repository_metadata(repository_url, header, readme_only=False, keep_tmp=None):
     """
     Function uses the repository_url provided to load required information from gitlab.
     Information kept from the repository is written in keep_keys.
@@ -50,6 +50,7 @@ def load_gitlab_repository_metadata(repository_url, header, readme_only=False):
     repository_url: URL of the Gitlab repository to analyze
     header: headers of the repository
     readme_only: flag to indicate whether to process the full repo or just the readme
+    keep_tmp
 
     Returns
     -------
@@ -128,7 +129,6 @@ def load_gitlab_repository_metadata(repository_url, header, readme_only=False):
         if repo_download.status_code != 200:
             print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
         repo_zip = repo_download.content
-        print(repo_zip)
         text = repo_zip.decode('utf-8')
         return text, {}
 
@@ -225,11 +225,6 @@ def load_gitlab_repository_metadata(repository_url, header, readme_only=False):
 
     del filtered_resp['languages_url']
 
-    # get default README
-    # repo_api_base_url https://api.github.com/dgarijo/Widoco/readme
-    # readme_info, date = rate_limit_get(repo_api_base_url + "/readme",
-    #                                   headers=topics_headers,
-    #                                   params=ref_param)
     readme_info = {}
     if 'message' in readme_info.keys():
         print("README Error: " + readme_info['message'])
@@ -243,34 +238,16 @@ def load_gitlab_repository_metadata(repository_url, header, readme_only=False):
         text = get_readme_content(project_details['readme_url'])
         filtered_resp['readmeUrl'] = project_details['readme_url']
 
-    # create a temporary directory
-    with tempfile.TemporaryDirectory() as temp_dir:
+    if keep_tmp is not None:
+        os.makedirs(keep_tmp, exist_ok=True)
+        text, filtered_resp = download_gitlab_files(keep_tmp, owner, repo_name, repo_ref, filtered_resp,
+                                                    path_components)
+    else:
+        # create a temporary directory (default behavior)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            text, filtered_resp = download_gitlab_files(temp_dir, owner, repo_name, repo_ref, filtered_resp,
+                                                        path_components)
 
-        # download the repo at the selected branch with the link
-        # https://gitlab.com/unboundedsystems/adapt/-/archive/master/adapt-master.zip
-        repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_ref}/{repo_name}-{repo_ref}.zip"
-        if len(path_components) == 4:
-            repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_ref}/{path_components[3]}.zip"
-        print(f"Downloading {repo_archive_url}")
-        repo_download = requests.get(repo_archive_url)
-        repo_zip = repo_download.content
-
-        repo_zip_file = os.path.join(temp_dir, "repo.zip")
-        repo_extract_dir = os.path.join(temp_dir, "repo")
-
-        with open(repo_zip_file, "wb") as f:
-            f.write(repo_zip)
-
-        with zipfile.ZipFile(repo_zip_file, "r") as zip_ref:
-            zip_ref.extractall(repo_extract_dir)
-
-        repo_folders = os.listdir(repo_extract_dir)
-        assert (len(repo_folders) == 1)
-
-        repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
-
-        text, filtered_resp = process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.GITLAB,
-                                                       owner, repo_name, repo_ref)
     releases_list = {}
     if isinstance(releases_list, dict) and 'message' in releases_list.keys():
         print("Releases Error: " + releases_list['message'])
@@ -278,16 +255,60 @@ def load_gitlab_repository_metadata(repository_url, header, readme_only=False):
         filtered_resp['releases'] = [do_crosswalk(release, constants.release_crosswalk_table) for release in
                                      releases_list]
 
-    print("Repository Information Successfully Loaded. \n")
+    print("Repository information successfully loaded. \n")
     return text, filtered_resp
 
 
-def load_github_repository_metadata(repository_url, header, ignore_github_metadata=False, readme_only=False):
+def download_gitlab_files(directory, owner, repo_name, repo_ref, filtered_resp, path_components):
     """
-    Function uses the repository_url provided to load required information from Github.
+    Download all repository files from a GitHub repository
+    Parameters
+    ----------
+    filtered_resp: the main response object we are building in somef
+    repo_ref: link to the repo
+    repo_name: name of the repo
+    owner: GitHub owner
+    directory: directory where to extract all downloaded files
+    path_components: components in the path of the gitlab repository
+
+    Returns
+    -------
+    text and filtered response obtained from the repository
+    """
+    repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_ref}/{repo_name}-{repo_ref}.zip"
+    if len(path_components) == 4:
+        repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_ref}/{path_components[3]}.zip"
+    print(f"Downloading {repo_archive_url}")
+    repo_download = requests.get(repo_archive_url)
+    repo_zip = repo_download.content
+
+    repo_zip_file = os.path.join(directory, "repo.zip")
+    repo_extract_dir = os.path.join(directory, "repo")
+
+    with open(repo_zip_file, "wb") as f:
+        f.write(repo_zip)
+
+    with zipfile.ZipFile(repo_zip_file, "r") as zip_ref:
+        zip_ref.extractall(repo_extract_dir)
+
+    repo_folders = os.listdir(repo_extract_dir)
+    assert (len(repo_folders) == 1)
+
+    repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
+
+    return process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.GITLAB,
+                                                   owner, repo_name, repo_ref)
+
+
+def load_online_repository_metadata(repository_url, header, ignore_github_metadata=False, readme_only=False, keep_tmp=None):
+    """
+    Function uses the repository_url provided to load required information from GitHub or Gitlab.
     Information kept from the repository is written in keep_keys.
     Parameters
     ----------
+    keep_tmp
+    readme_only
+    ignore_github_metadata
     repository_url
     header
 
@@ -296,10 +317,10 @@ def load_github_repository_metadata(repository_url, header, ignore_github_metada
     Returns the readme text and required metadata
     """
     if repository_url.rfind("gitlab.com") > 0:
-        return load_gitlab_repository_metadata(repository_url, header, readme_only)
+        return load_gitlab_repository_metadata(repository_url, header, readme_only, keep_tmp=keep_tmp)
 
     print(f"Loading Repository {repository_url} Information....")
-    ## load general response of the repository
+    # load general response of the repository
     if repository_url[-1] == '/':
         repository_url = repository_url[:-1]
     url = urlparse(repository_url)
@@ -319,7 +340,6 @@ def load_github_repository_metadata(repository_url, header, ignore_github_metada
     repo_api_base_url = f"https://api.github.com/repos/{owner}/{repo_name}"
 
     repo_ref = None
-    ref_param = None
 
     if len(path_components) >= 5:
         if not path_components[3] == "tree":
@@ -370,7 +390,7 @@ def load_github_repository_metadata(repository_url, header, ignore_github_metada
         text = repo_zip.decode('utf-8')
         return text, {}
 
-    ## get only the fields that we want
+    # get only the fields that we want
     def do_crosswalk(data, crosswalk_table):
         def get_path(obj, path):
             if isinstance(path, list) or isinstance(path, tuple):
@@ -458,7 +478,7 @@ def load_github_repository_metadata(repository_url, header, ignore_github_metada
     if len(forks_info.keys()) > 0:
         filtered_resp['forksCount'] = forks_info
 
-    ## get languages
+    # get languages
     if not ignore_github_metadata:
         languages, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
         if "message" in languages:
@@ -468,56 +488,14 @@ def load_github_repository_metadata(repository_url, header, ignore_github_metada
 
         del filtered_resp['languages_url']
 
-    # get default README
-    #                                   headers=topics_headers,
-    # readme_info, date = rate_limit_get(repo_api_base_url + "/readme",
-    #                                   headers=topics_headers,
-    #                                   params=ref_param)
-    # if 'message' in readme_info.keys():
-    #    print("README Error: " + readme_info['message'])
-    #    text = ""
-    # else:
-    #    readme = base64.b64decode(readme_info['content']).decode("utf-8")
-    #    text = readme
-    #    filtered_resp['readmeUrl'] = readme_info['html_url']
-
-    # get full git repository
-    # todo: maybe it should be optional, as this could take some time?
-
     text = ""
-    # create a temporary directory
-    with tempfile.TemporaryDirectory() as temp_dir:
-
-        # download the repo at the selected branch with the link
-        repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip"
-        print(f"Downloading {repo_archive_url}")
-        repo_download = requests.get(repo_archive_url)
-        if repo_download.status_code == 404:
-            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-            repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/main.zip"
-            print(f"Trying to download {repo_archive_url}")
-            repo_download = requests.get(repo_archive_url)
-
-        if repo_download.status_code != 200:
-            sys.exit(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-        repo_zip = repo_download.content
-
-        repo_zip_file = os.path.join(temp_dir, "repo.zip")
-        repo_extract_dir = os.path.join(temp_dir, "repo")
-
-        with open(repo_zip_file, "wb") as f:
-            f.write(repo_zip)
-
-        with zipfile.ZipFile(repo_zip_file, "r") as zip_ref:
-            zip_ref.extractall(repo_extract_dir)
-
-        repo_folders = os.listdir(repo_extract_dir)
-        assert (len(repo_folders) == 1)
-
-        repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
-
-        text, filtered_resp = process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.GITHUB,
-                                                 owner, repo_name, repo_ref)
+    if keep_tmp is not None:
+        os.makedirs(keep_tmp, exist_ok=True)
+        text, filtered_resp = download_github_files(keep_tmp, owner, repo_name, repo_ref, filtered_resp)
+    else:
+        # create a temporary directory (default behavior)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            text, filtered_resp = download_github_files(temp_dir, owner, repo_name, repo_ref, filtered_resp)
 
     # get releases
     if not ignore_github_metadata:
@@ -534,12 +512,60 @@ def load_github_repository_metadata(repository_url, header, ignore_github_metada
     return text, filtered_resp
 
 
+def download_github_files(directory, owner, repo_name, repo_ref, filtered_resp):
+    """
+    Download all repository files from a GitHub repository
+    Parameters
+    ----------
+    filtered_resp: the main response object we are building in somef
+    repo_ref: link to the repo
+    repo_name: name of the repo
+    owner: GitHub owner
+    directory: directory where to extract all downloaded files
+
+    Returns
+    -------
+    text and filtered response obtained from the repository
+    """
+    # download the repo at the selected branch with the link
+    repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip"
+    print(f"Downloading {repo_archive_url}")
+    repo_download = requests.get(repo_archive_url)
+    if repo_download.status_code == 404:
+        print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+        repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/main.zip"
+        print(f"Trying to download {repo_archive_url}")
+        repo_download = requests.get(repo_archive_url)
+
+    if repo_download.status_code != 200:
+        sys.exit(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+    repo_zip = repo_download.content
+
+    repo_name_full = owner+"_"+repo_name
+    repo_zip_file = os.path.join(directory, repo_name_full+".zip")
+    repo_extract_dir = os.path.join(directory, repo_name_full)
+
+    with open(repo_zip_file, "wb") as f:
+        f.write(repo_zip)
+
+    with zipfile.ZipFile(repo_zip_file, "r") as zip_ref:
+        zip_ref.extractall(repo_extract_dir)
+
+    repo_folders = os.listdir(repo_extract_dir)
+    # assert (len(repo_folders) == 1)
+
+    repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
+
+    return process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.GITHUB,
+                                                   owner, repo_name, repo_ref)
+
+
 def load_local_repository_metadata(local_repo):
     """Function to apply somef to a local repository (already downloaded)"""
     filtered_resp = {}
     repo_dir = os.path.abspath(local_repo)
     text, filtered_resp = process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.LOCAL)
-    print("Local Repository Information Successfully Loaded. \n")
+    print("Local repository information successfully loaded. \n")
     return text, filtered_resp
 
 

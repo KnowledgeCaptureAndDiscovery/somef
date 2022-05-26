@@ -143,11 +143,14 @@ class URLParamType(click.types.StringParamType):
     help="""JSON report with the missing metadata fields SOMEF was not able to find. The report will be placed in 
     $PATH_missing.json, where $PATH is -o, -c or -g."""
 )
+@click.option(
+    "--keep_tmp",
+    "-kt",
+    type=click.Path(),
+    help="""SOMEF will NOT delete the temporary folder where files are stored for analysis. Files will be stored at the
+    desired path"""
+)
 def describe(**kwargs):
     from somef import cli
     cli.run_cli(**kwargs)
     click.secho(f"Success", fg="green")
-
-
-#if __name__ == '__main__':
-#    version()

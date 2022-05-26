@@ -1,3 +1,4 @@
+import tempfile
 import unittest
 
 import os
@@ -64,7 +65,7 @@ class TestProcessRepository(unittest.TestCase):
         if 'Authorization' in file_paths.keys():
             header['Authorization'] = file_paths['Authorization']
         header['accept'] = 'application/vnd.github.v3+json'
-        text, github_data = process_repository.load_github_repository_metadata(
+        text, github_data = process_repository.load_online_repository_metadata(
             "https://github.com/oeg-upm/OpenRefineExtension_Transformation", header)
         assert 'codeRepository' in github_data
 
@@ -130,7 +131,7 @@ class TestProcessRepository(unittest.TestCase):
         if 'Authorization' in file_paths.keys():
             header['Authorization'] = file_paths['Authorization']
         header['accept'] = 'application/vnd.github.v3+json'
-        text, github_data = process_repository.load_github_repository_metadata(
+        text, github_data = process_repository.load_online_repository_metadata(
             "https://github.com/RDFLib/rdflib/tree/6.0.2",
             header, True)
         assert 'releases' not in github_data
@@ -144,10 +145,31 @@ class TestProcessRepository(unittest.TestCase):
             with credentials_file.open("r") as fh:
                 file_paths = json.load(fh)
         else:
-            sys.exit("Error: Please provide a config.json file.")
+            sys.exit("Error: Please configure SOMEF.")
         header = {}
         if 'Authorization' in file_paths.keys():
             header['Authorization'] = file_paths['Authorization']
         header['accept'] = 'application/vnd.github.v3+json'
-        text, github_data = process_repository.load_github_repository_metadata("https://github.com/3b1b/manim", header)
+        text, github_data = process_repository.load_online_repository_metadata("https://github.com/3b1b/manim", header)
         assert (('stargazersCount' in github_data) and ('longTitle' not in github_data))
+
+    def test_feature_462(self):
+        """Test designed to assess repositories with no releases"""
+        credentials_file = Path(
+            os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
+        ).expanduser()
+        if credentials_file.exists():
+            with credentials_file.open("r") as fh:
+                file_paths = json.load(fh)
+        else:
+            sys.exit("Error: Please configure SOMEF.")
+        header = {}
+        if 'Authorization' in file_paths.keys():
+            header['Authorization'] = file_paths['Authorization']
+        header['accept'] = 'application/vnd.github.v3+json'
+        with tempfile.TemporaryDirectory() as tmp_folder:
+            text, github_data = process_repository.load_online_repository_metadata(
+                "https://github.com/KnowledgeCaptureAndDiscovery/OBA_sparql/",
+                header, keep_tmp=tmp_folder)
+            # There has to be a downloaded zipped file of the repository
+            assert os.path.isfile(tmp_folder+"/KnowledgeCaptureAndDiscovery_OBA_sparql.zip")
