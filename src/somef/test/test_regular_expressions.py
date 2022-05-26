@@ -219,6 +219,19 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
         """Test designed to check if logo is correctly obtained"""
         with open(test_data_path + "README-wothive.md", "r") as data_file:
             test_text = data_file.read()
-            logo = regular_expressions.extract_logo(test_text,"https://github.com/oeg-upm/wot-hive/")
-            print(logo)
+            logo, images = regular_expressions.extract_images(test_text,"https://github.com/oeg-upm/wot-hive/", None)
             assert logo == "https://raw.githubusercontent.com/oeg-upm/wot-hive/AndreaCimminoArriaga-wothive-logo/logo.png"
+
+    def test_issue_463(self):
+        """Test designed to check if a repo with a badge but not logo is correctly ignored"""
+        with open(test_data_path + "README-OBA-SPARQL.md", "r") as data_file:
+            test_text = data_file.read()
+            logo, images = regular_expressions.extract_images(test_text,"https://github.com/KnowledgeCaptureAndDiscovery/OBA_sparql/", None)
+            assert logo == ""
+
+    def test_issue_463_2(self):
+        """Test designed to check if a repo with a badge but not logo is correctly ignored"""
+        with open(test_data_path + "README-base-images.md", "r") as data_file:
+            test_text = data_file.read()
+            logo, images = regular_expressions.extract_images(test_text,"https://github.com/mintproject/base_images", None)
+            assert logo == ""

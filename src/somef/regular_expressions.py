@@ -166,51 +166,51 @@ def extract_wiki_links(unfiltered_text, repo_url):
 
 
 # TO DO: join with image detection in a single method
-def extract_logo(unfiltered_text, repo_url):
-    """Extracts logos from a given text"""
-    logo = ""
-    index_logo = unfiltered_text.lower().find("![logo]")
-    if index_logo >= 0:
-        init = unfiltered_text.find("(", index_logo)
-        end = unfiltered_text.find(")", init)
-        logo = unfiltered_text[init + 1:end]
-    else:
-        # This is problematic if alt label is used
-        # TO DO
-        result = [_.start() for _ in re.finditer("<img src=", unfiltered_text)]
-        if len(result) > 0:
-            for index_img in result:
-                init = unfiltered_text.find("\"", index_img)
-                end = unfiltered_text.find("\"", init + 1)
-                img = unfiltered_text[init + 1:end]
-                if img.find("logo") > 0:
-                    logo = img
-    # processing for those github links that do not resolve correctly
-    if logo.startswith("http"):
-        if logo.find("github.com") > 0:
-            logo = logo.replace("/blob", "")
-            logo = logo.replace("github.com", "raw.githubusercontent.com")
-    #processing for those logos that are relative paths
-    if logo != "" and not logo.startswith("http") and repo_url is not None:
-        if repo_url.find("github.com") > 0:
-            if repo_url.find("/tree/") > 0:
-                repo_url = repo_url.replace("/tree/", "/")
-            else:
-                repo_url = repo_url + "/master/"
-            repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-            if not repo_url.endswith("/"):
-                repo_url = repo_url + "/"
-            logo = repo_url + logo
-        else:
-            if not repo_url.endswith("/"):
-                repo_url = repo_url + "/"
-            logo = repo_url + logo
-    print(logo)
-    return logo
+# def extract_logo(unfiltered_text, repo_url):
+#     """Extracts logos from a given text"""
+#     logo = ""
+#     index_logo = unfiltered_text.lower().find("![logo]")
+#     if index_logo >= 0:
+#         init = unfiltered_text.find("(", index_logo)
+#         end = unfiltered_text.find(")", init)
+#         logo = unfiltered_text[init + 1:end]
+#     else:
+#         # This is problematic if alt label is used
+#         # TO DO
+#         result = [_.start() for _ in re.finditer("<img src=", unfiltered_text)]
+#         if len(result) > 0:
+#             for index_img in result:
+#                 init = unfiltered_text.find("\"", index_img)
+#                 end = unfiltered_text.find("\"", init + 1)
+#                 img = unfiltered_text[init + 1:end]
+#                 if img.find("logo") > 0:
+#                     logo = img
+#     # processing for those github links that do not resolve correctly
+#     if logo.startswith("http"):
+#         if logo.find("github.com") > 0:
+#             logo = logo.replace("/blob", "")
+#             logo = logo.replace("github.com", "raw.githubusercontent.com")
+#     #processing for those logos that are relative paths
+#     if logo != "" and not logo.startswith("http") and repo_url is not None:
+#         if repo_url.find("github.com") > 0:
+#             if repo_url.find("/tree/") > 0:
+#                 repo_url = repo_url.replace("/tree/", "/")
+#             else:
+#                 repo_url = repo_url + "/master/"
+#             repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
+#             if not repo_url.endswith("/"):
+#                 repo_url = repo_url + "/"
+#             logo = repo_url + logo
+#         else:
+#             if not repo_url.endswith("/"):
+#                 repo_url = repo_url + "/"
+#             logo = repo_url + logo
+#     print(logo)
+#     return logo
 
 
 def extract_images(unfiltered_text, repo_url, local_repo):
-    """Extracts logos from a given text"""
+    """Extracts logos and images from a given text"""
     logo = ""
     has_logo = False
     images = []
@@ -227,7 +227,7 @@ def extract_images(unfiltered_text, repo_url, local_repo):
     result = [_.start() for _ in re.finditer("<img ", html_text)]
     for img in img_md:
         # if the image contains jitpack.io, the element is not processed
-        if img.find("jitpack.io") > 0 or img.find("/badge") >= 0 or img.find("/travis-ci.org") >= 0 \
+        if img.find("jitpack.io") > 0 or img.find("/badge") >= 0 or img.find("/travis-ci.") >= 0 \
                 or img.find("img.shields.io") >= 0:
             None
         elif not has_logo and repo:
@@ -252,7 +252,7 @@ def extract_images(unfiltered_text, repo_url, local_repo):
         end = html_text.find("\"", init + 5)
         img = html_text[init + 5:end]
         # if the image contains jitpack.io, the element is not processed
-        if img.find("jitpack.io") > 0 or img.find("/badge") >= 0 or img.find("/travis-ci.org") >= 0 \
+        if img.find("jitpack.io") > 0 or img.find("/badge") >= 0 or img.find("/travis-ci.") >= 0 \
                 or img.find("img.shields.io") >= 0:
             None
         elif not has_logo and repo:
@@ -281,55 +281,55 @@ def extract_images(unfiltered_text, repo_url, local_repo):
 
 
 # TO DO: join with logo detection
-def extract_images_old(unfiltered_text, repo_url):
-    """Extracts images from a given text"""
-    logo = ""
-    images = []
-    html_text = markdown.markdown(unfiltered_text)
-    # print(html_text)
-    result = [_.start() for _ in re.finditer("<img ", html_text)]
-    if len(result) > 0:
-        for index_img in result:
-            init = html_text.find("src=\"", index_img)
-            end = html_text.find("\"", init + 5)
-            img = html_text[init + 5:end]
-            if img.find("logo") < 0:
-                if not img.startswith("http") and repo_url is not None:
-                    if repo_url.find("/tree/") > 0:
-                        repo_url = repo_url.replace("/tree/", "/")
-                    else:
-                        repo_url = repo_url + "/master/"
-                    repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-                    if not repo_url.endswith("/"):
-                        repo_url = repo_url + "/"
-                    img = repo_url + img
-                images.append(img)
-            else:
-                if not img.startswith("http") and repo_url is not None:
-                    if repo_url.find("/tree/") > 0:
-                        repo_url = repo_url.replace("/tree/", "/")
-                    else:
-                        repo_url = repo_url + "/master/"
-                    repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-                    if not repo_url.endswith("/"):
-                        repo_url = repo_url + "/"
-                    img = repo_url + img
-                logo = img
-
-    if logo == "" and repo_url != "" and repo_url != None:
-        print(repo_url)
-        url = urlparse(repo_url)
-        path_components = url.path.split('/')
-        repo_name = path_components[2]
-
-        for image in images:
-            start = image.rindex("/")
-            if image.find(repo_name, start) > 0:
-                logo = image
-                images.remove(image)
-                break
-
-    return logo, images
+# def extract_images_old(unfiltered_text, repo_url):
+#     """Extracts images from a given text"""
+#     logo = ""
+#     images = []
+#     html_text = markdown.markdown(unfiltered_text)
+#     # print(html_text)
+#     result = [_.start() for _ in re.finditer("<img ", html_text)]
+#     if len(result) > 0:
+#         for index_img in result:
+#             init = html_text.find("src=\"", index_img)
+#             end = html_text.find("\"", init + 5)
+#             img = html_text[init + 5:end]
+#             if img.find("logo") < 0:
+#                 if not img.startswith("http") and repo_url is not None:
+#                     if repo_url.find("/tree/") > 0:
+#                         repo_url = repo_url.replace("/tree/", "/")
+#                     else:
+#                         repo_url = repo_url + "/master/"
+#                     repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
+#                     if not repo_url.endswith("/"):
+#                         repo_url = repo_url + "/"
+#                     img = repo_url + img
+#                 images.append(img)
+#             else:
+#                 if not img.startswith("http") and repo_url is not None:
+#                     if repo_url.find("/tree/") > 0:
+#                         repo_url = repo_url.replace("/tree/", "/")
+#                     else:
+#                         repo_url = repo_url + "/master/"
+#                     repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
+#                     if not repo_url.endswith("/"):
+#                         repo_url = repo_url + "/"
+#                     img = repo_url + img
+#                 logo = img
+#
+#     if logo == "" and repo_url != "" and repo_url != None:
+#         print(repo_url)
+#         url = urlparse(repo_url)
+#         path_components = url.path.split('/')
+#         repo_name = path_components[2]
+#
+#         for image in images:
+#             start = image.rindex("/")
+#             if image.find(repo_name, start) > 0:
+#                 logo = image
+#                 images.remove(image)
+#                 break
+#
+#     return logo, images
 
 
 def extract_support(unfiltered_text):
