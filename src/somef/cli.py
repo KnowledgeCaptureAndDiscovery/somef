@@ -124,7 +124,7 @@ def run_category_classification(readme_text: str, threshold: float):
     preprocessing.Preprocessor(df).run()
     text = [df['Text'][0]]
     res = []
-    for model_file in Path('rolf/models').iterdir():
+    for model_file in (Path(__file__).parent / 'rolf/models').iterdir():
         with open(model_file, 'rb') as f:
             model = pickle.load(f)
             cat = model.predict(text).tolist()[0]
