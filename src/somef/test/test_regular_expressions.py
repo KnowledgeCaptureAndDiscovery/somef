@@ -194,3 +194,44 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
             logo, images = regular_expressions.extract_images(test_text, None, test_data_repositories + "Widoco")
             assert (logo.find('test_data') > 0)
 
+    def test_issue_446(self):
+        """Test that jitpack URLs are not returned"""
+        with open(test_data_path + "README-licensius.md", "r") as data_file:
+            test_text = data_file.read()
+            logo, images = regular_expressions.extract_images(test_text, "https://github.com/oeg-upm/licensius/", None)
+            assert (logo == "")
+
+    def test_issue_446_1(self):
+        """Test that jitpack URLs are not returned"""
+        with open(test_data_path + "README-PPool.md", "r") as data_file:
+            test_text = data_file.read()
+            logo, images = regular_expressions.extract_images(test_text, "https://github.com/oeg-upm/PPool/", None)
+            assert (logo == "" and len(images) == 0)
+
+    def test_issue_446_2(self):
+        """Test that jitpack URLs are not returned"""
+        with open(test_data_path + "README-loupe-api.md", "r") as data_file:
+            test_text = data_file.read()
+            logo, images = regular_expressions.extract_images(test_text, "https://github.com/oeg-upm/PPool/", None)
+            assert (logo == "" and len(images) == 1)
+
+    def test_issue_467(self):
+        """Test designed to check if logo is correctly obtained"""
+        with open(test_data_path + "README-wothive.md", "r") as data_file:
+            test_text = data_file.read()
+            logo, images = regular_expressions.extract_images(test_text,"https://github.com/oeg-upm/wot-hive/", None)
+            assert logo == "https://raw.githubusercontent.com/oeg-upm/wot-hive/AndreaCimminoArriaga-wothive-logo/logo.png"
+
+    def test_issue_463(self):
+        """Test designed to check if a repo with a badge but not logo is correctly ignored"""
+        with open(test_data_path + "README-OBA-SPARQL.md", "r") as data_file:
+            test_text = data_file.read()
+            logo, images = regular_expressions.extract_images(test_text,"https://github.com/KnowledgeCaptureAndDiscovery/OBA_sparql/", None)
+            assert logo == ""
+
+    def test_issue_463_2(self):
+        """Test designed to check if a repo with a badge but not logo is correctly ignored"""
+        with open(test_data_path + "README-base-images.md", "r") as data_file:
+            test_text = data_file.read()
+            logo, images = regular_expressions.extract_images(test_text,"https://github.com/mintproject/base_images", None)
+            assert logo == ""

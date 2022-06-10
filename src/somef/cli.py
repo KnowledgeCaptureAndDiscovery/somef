@@ -652,7 +652,7 @@ def create_missing_fields_report(repo_data, out_path):
 
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
-                 ignore_github_metadata=False, readme_only=False):
+                 ignore_github_metadata=False, readme_only=False, keep_tmp=None):
     """
     Main function to get the data through the command line
     Parameters
@@ -664,6 +664,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     local_repo: flag to indicate that the repo is local
     ignore_github_metadata: flag used to avoid doing extra requests to the GitHub API
     readme_only: flag to indicate that only the readme should be analyzed
+    keep_tmp: path where to store TMP files in case SOMEF is instructed to keep them
 
     Returns
     -------
@@ -682,9 +683,9 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         header['Authorization'] = file_paths['Authorization']
     header['accept'] = 'application/vnd.github.v3+json'
     if repo_url is not None:
-        assert (doc_src is None)
+        # assert (doc_src is None)
         try:
-            text, github_data = process_repository.load_github_repository_metadata(repo_url, header, ignore_github_metadata, readme_only)
+            text, github_data = process_repository.load_online_repository_metadata(repo_url, header, ignore_github_metadata, readme_only, keep_tmp)
             if text == "":
                 print("Warning: README document does not exist in the repository")
         except process_repository.GithubUrlError:
@@ -778,7 +779,8 @@ def run_cli(*,
             graph_format="turtle",
             codemeta_out=None,
             pretty=False,
-            missing=False
+            missing=False,
+            keep_tmp=None
             ):
     """Function to run all the required components of the cli for a repository"""
     # check if it is a valid url
@@ -805,18 +807,18 @@ def run_cli(*,
         for remove_url in remove_urls:
             repo_set.remove(remove_url)
         if len(repo_set) > 0:
-            repo_data = [cli_get_data(threshold, ignore_classifiers, repo_url=repo_url) for repo_url in repo_set]
+            repo_data = [cli_get_data(threshold, ignore_classifiers, repo_url=repo_url, keep_tmp=keep_tmp) for repo_url in repo_set]
         else:
             return None
 
     else:
         if repo_url:
             repo_data = cli_get_data(threshold, ignore_classifiers, repo_url=repo_url,
-                                     ignore_github_metadata=ignore_github_metadata, readme_only=readme_only)
+                                     ignore_github_metadata=ignore_github_metadata, readme_only=readme_only, keep_tmp=keep_tmp)
         elif local_repo:
-            repo_data = cli_get_data(threshold, ignore_classifiers, local_repo=local_repo)
+            repo_data = cli_get_data(threshold, ignore_classifiers, local_repo=local_repo, keep_tmp=keep_tmp)
         else:
-            repo_data = cli_get_data(threshold, ignore_classifiers, doc_src=doc_src)
+            repo_data = cli_get_data(threshold, ignore_classifiers, doc_src=doc_src, keep_tmp=keep_tmp)
 
     if output is not None:
         save_json_output(repo_data, output, missing, pretty=pretty)
