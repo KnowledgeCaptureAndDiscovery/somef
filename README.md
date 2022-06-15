@@ -49,6 +49,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Images**: Images used to illustrate the software component.
 - **Logo**: Main logo used to represent the target software component.
 - **Ontologies**: URL and path to the ontology files present in the repository.
+- **Category**: The category of the repository.
 
 
 We use different supervised classifiers, header analysis, regular expressions and the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field)
