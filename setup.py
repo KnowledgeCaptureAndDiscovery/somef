@@ -11,7 +11,7 @@ install_requires = [
     "markdown==3.3.6",
     "matplotlib==3.5.0",
     "nltk==3.6.6",
-    "numpy==1.21.4",
+    "numpy==1.22.0",
     "pandas==1.3.4",
     "rdflib==6.0.2",
     "rdflib-jsonld==0.6.2",
