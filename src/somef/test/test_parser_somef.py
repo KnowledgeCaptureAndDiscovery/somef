@@ -2,6 +2,8 @@ import unittest
 import os
 from pathlib import Path
 
+from somef.cli import run_category_classification
+
 from ..parser_somef import extract_headers, extract_headers_with_tags, extract_content_per_header, \
     extract_bash, extract_blocks_excerpts, extract_text_excerpts_header, extract_headers_parents, is_header
 
@@ -62,6 +64,14 @@ class TestParserSomef(unittest.TestCase):
             text = data_file.read()
             parents = extract_headers_parents(text)
             assert len(parents) == 15
+
+    def test_run_category_classification(self):
+        """Test to check if category classification runs correctly."""
+        with open(test_data_path + "README-widoco.md", "r") as data_file:
+            text = data_file.read()
+            categories = run_category_classification(text, 0.8)
+            self.assertEqual(len(categories), 1)
+            self.assertEqual(categories[0]['output'], ["Semantic web"])
 
     def test_issue_431(self):
         # Changed method is_header to avoid false positive
