@@ -23,6 +23,7 @@ install_requires = [
     "scipy>=1.7.1",
     "inflect>=5.4.0",
     "contractions>=0.1.66",
+    "chardet==5.0.0"
     "imblearn>=0.0"
 ]
 

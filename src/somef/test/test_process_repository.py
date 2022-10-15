@@ -187,3 +187,10 @@ class TestProcessRepository(unittest.TestCase):
         """
         text, github_data = process_repository.load_local_repository_metadata(test_data_repositories + "resolver_deco")
         assert len(text) > 0
+
+    def test_feature_466(self):
+        """
+        Test designed to assess if a readme with non utf-8 encoding can be processed successfully
+        """
+        text, github_data = process_repository.load_local_repository_metadata(test_data_repositories + "corpuser")
+        assert len(text) > 0

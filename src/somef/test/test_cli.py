@@ -832,7 +832,7 @@ class TestCli(unittest.TestCase):
                     graph_format="turtle",
                     codemeta_out=test_data_path + "test-417.json-ld",
                     pretty=True,
-                    missing=True,
+                    missing=False,
                     readme_only=False)
         text_file = open(test_data_path + "test-417.json-ld", "r")
         data = text_file.read()
