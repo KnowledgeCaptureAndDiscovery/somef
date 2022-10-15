@@ -9,6 +9,7 @@ import requests
 import sys
 
 from datetime import datetime
+from chardet import detect
 from urllib.parse import urlparse
 from . import markdown_utils, extract_ontologies, constants
 
@@ -675,13 +676,19 @@ def process_repository_files(repo_dir, filtered_resp, repo_type, owner="", repo_
                     try:
                         with open(os.path.join(dir_path, filename), "rb") as data_file:
                             data_file_text = data_file.read()
-                            text = data_file_text.decode("utf-8")
+                            try:
+                                text = data_file_text.decode("utf-8")
+                            except UnicodeError as err:
+                                print(f"{type(err).__name__} was raised: {err} Trying other encodings...")
+                                text = data_file_text.decode(detect(data_file_text)["encoding"])
                             if repo_type == constants.RepositoryType.GITHUB:
                                 filtered_resp['readmeUrl'] = convert_to_raw_user_content_github(filename, owner,
                                                                                                 repo_name,
                                                                                                 repo_ref)
-                    except:
+                    except Exception:
                         print("README Error: error while reading file content")
+                        print(f"{type(err).__name__} was raised: {err}")
+
             if "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
                 try:
                     with open(os.path.join(dir_path, filename), "rb") as data_file:
