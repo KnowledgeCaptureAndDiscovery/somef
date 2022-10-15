@@ -173,3 +173,17 @@ class TestProcessRepository(unittest.TestCase):
                 header, keep_tmp=tmp_folder)
             # There has to be a downloaded zipped file of the repository
             assert os.path.isfile(tmp_folder+"/KnowledgeCaptureAndDiscovery_OBA_sparql.zip")
+
+    def test_feature_477(self):
+        """
+        Test designed to assess if readme.rst files are processed properly
+        """
+        text, github_data = process_repository.load_local_repository_metadata(test_data_repositories + "mir_eval")
+        assert len(text) > 0
+
+    def test_feature_477_2(self):
+        """
+        Test designed to assess if readme.txt files are processed properly
+        """
+        text, github_data = process_repository.load_local_repository_metadata(test_data_repositories + "resolver_deco")
+        assert len(text) > 0

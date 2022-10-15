@@ -644,7 +644,7 @@ def create_missing_fields_report(repo_data, out_path):
     export_path = ""
     if "json" in out_path:
         export_path = out_path.replace(".json", "_missing.json")
-    if "ttl" in out_path:
+    elif "ttl" in out_path:
         export_path = out_path.replace(".ttl", "_missing.json")
     else:
         export_path = out_path + "_missing.json"

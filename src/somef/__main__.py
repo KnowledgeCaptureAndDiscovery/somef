@@ -74,7 +74,8 @@ class URLParamType(click.types.StringParamType):
     "-ro",
     is_flag=True,
     default=False,
-    help="Flag to retrieve only the README.md file from the Github/Gitlab Repository URL"
+    help="Flag to retrieve only the README.md file from the Github/Gitlab Repository URL. If such file does not exist, "
+         "no metadata will be retrieved (by default False)"
 )
 @optgroup.group('Input', cls=RequiredMutuallyExclusiveOptionGroup)
 @optgroup.option(

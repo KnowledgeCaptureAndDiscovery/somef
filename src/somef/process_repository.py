@@ -307,7 +307,7 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
     Parameters
     ----------
     keep_tmp
-    readme_only
+    readme_only: get readme only. Caution: readme is assummed to be README.md
     ignore_github_metadata
     repository_url
     header
@@ -668,7 +668,9 @@ def process_repository_files(repo_dir, filtered_resp, repo_type, owner="", repo_
                 else:
                     notebooks.append(os.path.join(repo_dir, file_path))
 
-            if "README" == filename.upper() or "README.MD" == filename.upper():
+            filename_no_ext = os.path.splitext(filename)[0]
+            # this will take into account README, README.MD, README.TXT, README.RST
+            if "README" == filename_no_ext.upper():
                 if repo_relative_path == ".":
                     try:
                         with open(os.path.join(dir_path, filename), "rb") as data_file:
