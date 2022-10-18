@@ -1,5 +1,16 @@
 from enum import Enum
 
+# constants about SOMEF configuration
+CONF_AUTHORIZATION = "Authorization"
+CONF_DESCRIPTION = "description"
+CONF_INVOCATION = "invocation"
+CONF_INSTALLATION = "installation"
+CONF_CITATION = "citation"
+CONF_BASE_URI = "base_uri"
+CONF_DEFAULT_BASE_URI = "https://w3id.org/okn/i/"
+
+__DEFAULT_SOMEF_CONFIGURATION_FILE__ = "~/.somef/config.json"
+
 categories = ['description', 'citation', 'installation', 'invocation']
 # keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_url')
 # instead of keep keys, we have this table

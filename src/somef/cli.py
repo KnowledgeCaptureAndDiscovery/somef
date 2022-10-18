@@ -1,6 +1,5 @@
 import argparse
 import json
-import os
 import pickle
 import sys
 import validators
@@ -11,7 +10,7 @@ from dateutil import parser as date_parser
 from .data_to_graph import DataGraph
 from . import header_analysis
 
-from . import parser_somef, regular_expressions, process_repository, markdown_utils, constants
+from . import parser_somef, regular_expressions, process_repository, markdown_utils, constants, configuration
 
 from .rolf import preprocessing
 import pandas as pd
@@ -673,14 +672,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     -------
     JSON file with the results found by SOMEF.
     """
-    credentials_file = Path(
-        os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
-    ).expanduser()
-    if credentials_file.exists():
-        with credentials_file.open("r") as fh:
-            file_paths = json.load(fh)
-    else:
-        sys.exit("Error: Please provide a config.json file.")
+    file_paths = configuration.get_configuration_file()
     header = {}
     if 'Authorization' in file_paths.keys():
         header['Authorization'] = file_paths['Authorization']

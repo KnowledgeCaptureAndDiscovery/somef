@@ -2,7 +2,7 @@ import unittest
 import os
 from pathlib import Path
 
-from somef.cli import run_category_classification
+from ..cli import run_category_classification
 
 from ..parser_somef import extract_headers, extract_headers_with_tags, extract_content_per_header, \
     extract_bash, extract_blocks_excerpts, extract_text_excerpts_header, extract_headers_parents, is_header

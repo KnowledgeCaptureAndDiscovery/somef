@@ -5,7 +5,6 @@ import unittest
 from pathlib import Path
 
 from ..header_analysis import extract_header_content, extract_categories_using_headers, extract_bash_code
-from somef import cli
 
 # Test data for tests
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep

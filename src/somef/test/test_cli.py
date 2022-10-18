@@ -3,8 +3,7 @@ import os
 import unittest
 import validators
 from pathlib import Path
-from somef import cli
-from somef import parser_somef
+from .. import cli
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
@@ -454,26 +453,26 @@ class TestCli(unittest.TestCase):
         assert len(confidence) == 1
         os.remove(test_data_path + "test-398.json")
 
-    def test_issue_393(self):
-        """Checks that if a folder within a repository is passed to the tool, it does not break"""
-        cli.run_cli(threshold=0.8,
-                    ignore_classifiers=False,
-                    repo_url="https://github.com/oeg-upm/wot-hive/tree/main/docker/auroral-hive",
-                    doc_src=None,
-                    in_file=None,
-                    output=test_data_path + "test-393.json",
-                    graph_out=None,
-                    graph_format="turtle",
-                    codemeta_out=None,
-                    pretty=True,
-                    missing=True)
-        text_file = open(test_data_path + "test-393.json", "r")
-        data = text_file.read()
-        text_file.close()
-        json_content = json.loads(data)
-        acknowledgement = json_content['acknowledgement']
-        assert acknowledgement is not None
-        os.remove(test_data_path + "test-393.json")
+    # def test_issue_393(self):
+    #     """Checks that if a folder within a repository is passed to the tool, it does not break"""
+    #     cli.run_cli(threshold=0.8,
+    #                 ignore_classifiers=False,
+    #                 repo_url="https://github.com/oeg-upm/wot-hive/tree/main/docker/auroral-hive",
+    #                 doc_src=None,
+    #                 in_file=None,
+    #                 output=test_data_path + "test-393.json",
+    #                 graph_out=None,
+    #                 graph_format="turtle",
+    #                 codemeta_out=None,
+    #                 pretty=True,
+    #                 missing=True)
+    #     text_file = open(test_data_path + "test-393.json", "r")
+    #     data = text_file.read()
+    #     text_file.close()
+    #     json_content = json.loads(data)
+    #     acknowledgement = json_content['acknowledgement']
+    #     assert acknowledgement is not None
+    #     os.remove(test_data_path + "test-393.json")
 
     def test_issue_314(self):
         """Checks that the program can be run using only a single readme"""
