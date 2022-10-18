@@ -1,6 +1,7 @@
 from io import StringIO
 from markdown import Markdown
 
+
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
 def unmark_element(element, stream=None):
