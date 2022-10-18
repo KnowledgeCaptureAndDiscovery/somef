@@ -108,6 +108,7 @@ def run_classifiers(excerpts, file_paths):
 
     return score_dict
 
+
 def run_category_classification(readme_text: str, threshold: float):
     """
     Function which returns the categories, confidence and technique of the given repo
@@ -133,9 +134,11 @@ def run_category_classification(readme_text: str, threshold: float):
                 res.append({'confidence': [prob], 'output': [cat], 'technique': 'Supervised classification'})
     return res
 
+
 def remove_unimportant_excerpts(excerpt_element):
     """
     Function which removes all excerpt lines which have been classified but contain only one word.
+    TO DO: It does not seem to filter lines with one word
     Parameters
     ----------
     excerpt_element: excerpt to process
@@ -152,7 +155,7 @@ def remove_unimportant_excerpts(excerpt_element):
     else:
         final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification'}
     final_excerpt['excerpt'] += excerpt_info
-    final_excerpt['confidence'].append(excerpt_confidence)
+    final_excerpt['confidence'] = excerpt_confidence
     if 'originalHeader' in excerpt_element:
         final_excerpt['originalHeader'] += excerpt_element['originalHeader']
     if 'parentHeader' in excerpt_element and excerpt_element['parentHeader'] != "":
@@ -226,7 +229,7 @@ def classify(scores, threshold, excerpts_headers, header_parents):
                         excerpt = excerpt + scores[ele]['excerpt'][i] + ' \n'
                         confid.append(scores[ele]['confidence'][i])
                     # if they are not the same, a new excerpt is created with the previous data
-                    # and store the new data as part of a new excerpt
+                    # and stores the new data as part of a new excerpt
                     else:
                         if not header == "":
                             element = remove_unimportant_excerpts(
@@ -250,7 +253,7 @@ def classify(scores, threshold, excerpts_headers, header_parents):
             if len(element['confidence']) != 0:
                 predictions[ele].append(element)
         print("Run completed.")
-    print("All Excerpts below the given Threshold Removed. \n")
+    print("All excerpts below the given threshold have been removed. \n")
     return predictions
 
 

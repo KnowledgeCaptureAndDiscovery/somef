@@ -1,6 +1,7 @@
 from io import StringIO
 
 from markdown import Markdown
+from markdown_utils import unmark
 
 
 # code snippet from https://stackoverflow.com/a/54923798
@@ -21,10 +22,6 @@ def unmark_element(element, stream=None):
 Markdown.output_formats["plain"] = unmark_element
 __md = Markdown(output_format="plain")
 __md.stripTopLevelTags = False
-
-
-def unmark(text):
-    return __md.convert(text)
 
 
 def split_into_excerpts(string_list):

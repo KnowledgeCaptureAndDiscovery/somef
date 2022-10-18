@@ -133,7 +133,7 @@ def load_gitlab_repository_metadata(repository_url, header, readme_only=False, k
         text = repo_zip.decode('utf-8')
         return text, {}
 
-    ## get only the fields that we want
+    # get only the fields that we want
     def do_crosswalk(data, crosswalk_table):
         def get_path(obj, path):
             if isinstance(path, list) or isinstance(path, tuple):
@@ -298,10 +298,11 @@ def download_gitlab_files(directory, owner, repo_name, repo_ref, filtered_resp, 
     repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
 
     return process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.GITLAB,
-                                                   owner, repo_name, repo_ref)
+                                    owner, repo_name, repo_ref)
 
 
-def load_online_repository_metadata(repository_url, header, ignore_github_metadata=False, readme_only=False, keep_tmp=None):
+def load_online_repository_metadata(repository_url, header, ignore_github_metadata=False, readme_only=False,
+                                    keep_tmp=None):
     """
     Function uses the repository_url provided to load required information from GitHub or Gitlab.
     Information kept from the repository is written in keep_keys.
@@ -353,7 +354,7 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
         repo_ref = "/".join(path_components[4:])
         ref_param = {"ref": repo_ref}
 
-    print(repo_api_base_url)
+    # print(repo_api_base_url)
 
     general_resp = {}
     date = ""
@@ -542,8 +543,8 @@ def download_github_files(directory, owner, repo_name, repo_ref, filtered_resp):
         sys.exit(f"Error: Archive request failed with HTTP {repo_download.status_code}")
     repo_zip = repo_download.content
 
-    repo_name_full = owner+"_"+repo_name
-    repo_zip_file = os.path.join(directory, repo_name_full+".zip")
+    repo_name_full = owner + "_" + repo_name
+    repo_zip_file = os.path.join(directory, repo_name_full + ".zip")
     repo_extract_dir = os.path.join(directory, repo_name_full)
 
     with open(repo_zip_file, "wb") as f:
@@ -558,7 +559,7 @@ def download_github_files(directory, owner, repo_name, repo_ref, filtered_resp):
     repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
 
     return process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.GITHUB,
-                                                   owner, repo_name, repo_ref)
+                                    owner, repo_name, repo_ref)
 
 
 def load_local_repository_metadata(local_repo):

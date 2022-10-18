@@ -26,7 +26,7 @@ def is_file_ontology(file_path):
         # TO DO: extract title, preferred ns.
         # there should be only one ontology per file
         for r in g.query(q1):
-            print("Found that %s is an ontology" % file_path)
+            # print("Found that %s is an ontology" % file_path)
             return r.onto
     except:
         # If the candidate file could not be read, pass

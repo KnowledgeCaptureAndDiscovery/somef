@@ -61,7 +61,7 @@ def extract_content_per_header(original_text, headers):
         none_header_content = get_text(0, top_index, text_tokenized)
         none_header_content = regular_expressions.remove_links_images(none_header_content)
         none_header_content = regular_expressions.remove_html_tags(none_header_content)
-        print(none_header_content)
+        #print(none_header_content)
     offset = 1
     if not text_tokenized[top_index].startswith('#'):
         offset = 2
