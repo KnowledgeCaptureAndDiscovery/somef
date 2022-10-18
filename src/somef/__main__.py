@@ -11,7 +11,11 @@ import click
 from click_option_group import optgroup, RequiredMutuallyExclusiveOptionGroup, RequiredAnyOptionGroup
 
 import somef
-from . import configuration
+from . import configuration, constants
+
+
+class URLParamType(click.types.StringParamType):
+    name = "url"
 
 
 @click.group(context_settings={'help_option_names': ['-h', '--help']})
@@ -21,29 +25,31 @@ def cli():
 
 @cli.command(help="Configure GitHub credentials and classifiers file path")
 @click.option('-a', '--auto', help="Automatically configure SOMEF", is_flag=True, default=False)
-def configure(auto):
+@click.option('-b', '--base_uri', type=URLParamType(), help="Base URI for somef transformations",
+              default=constants.CONF_DEFAULT_BASE_URI)
+def configure(auto, base_uri):
     if auto:
         click.echo(
-            "Configuring SOMEF automatically. To assign credentials edit the configuration file or run the interactive mode")
+            "Configuring SOMEF automatically. To assign credentials edit the configuration file or run "
+            "the interactive mode")
         configuration.configure()
+    elif base_uri is not constants.CONF_DEFAULT_BASE_URI:
+        configuration.update_base_uri(base_uri)
     else:
         authorization = click.prompt("Authorization", default="")
         description = click.prompt("Documentation classifier model file", default=configuration.default_description)
         invocation = click.prompt("Invocation classifier model file", default=configuration.default_invocation)
         installation = click.prompt("Installation classifier model file", default=configuration.default_installation)
         citation = click.prompt("Citation classifier model file", default=configuration.default_citation)
+        base_uri = click.prompt("Base URI for RDF generation", default=base_uri)
         # configuration.configure()
-        configuration.configure(authorization, description, invocation, installation, citation)
+        configuration.configure(authorization, description, invocation, installation, citation, base_uri)
     click.secho(f"Success", fg="green")
 
 
 @cli.command(help="Show SOMEF version.")
 def version(debug=False):
     click.echo(f"{Path(sys.argv[0]).name} v{somef.__version__}")
-
-
-class URLParamType(click.types.StringParamType):
-    name = "url"
 
 
 @cli.command(help="Running SOMEF Command Line Interface")
