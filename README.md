@@ -93,10 +93,12 @@ pages={3032-3037}
 
 - Python 3.9
 
-SOMEF has been tested on Unix, MacOS and Windows Microsoft operating systems
+SOMEF has been tested on Unix, MacOS and Windows Microsoft operating systems.
+
+If you face any issues when installing SOMEF, please make sure you have installed the following packages: `build-essential`, `libssl-dev`,  `libffi-dev` and `python3-dev`. 
 
 ## Install from Pypi
-SOMEF [is available in Pypi!](https://pypi.org/project/somef/). To install it just type:
+SOMEF [is available in Pypi!](https://pypi.org/project/somef/) To install it just type:
 
 ```
 pip install somef
@@ -272,3 +274,4 @@ To see upcoming features, please have a look at our [open issues](https://github
 ## Extending SOMEF categories:
 
 To run a classifier with an additional category or remove an existing one, a corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in `cli.py`.
+
