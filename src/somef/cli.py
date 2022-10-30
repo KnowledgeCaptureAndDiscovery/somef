@@ -329,10 +329,11 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
                 ends = text_citation[starts + doi_pos:].find("}")
                 doi_text = "https://doi.org/" + text_citation[starts + doi_pos + 1:doi_pos + starts + ends]
             predictions['citation'].insert(0, {'excerpt': citations[i], 'confidence': [1.0],
-                                               'technique': 'Regular expression', 'doi': doi_text})
+                                               'technique': 'Regular expression', 'doi': doi_text,
+                                               'format': 'bibtex'})
         else:
             predictions['citation'].insert(0, {'excerpt': citations[i], 'confidence': [1.0],
-                                               'technique': 'Regular expression'})
+                                               'technique': 'Regular expression', 'format': 'bibtex'})
     if len(citation_file_text) != 0:
         if 'citation' not in predictions.keys():
             predictions['citation'] = []

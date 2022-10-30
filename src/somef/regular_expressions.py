@@ -3,6 +3,7 @@ import re
 import markdown
 import requests
 import validators
+from . import constants
 from urllib.parse import urlparse
 
 
@@ -64,9 +65,7 @@ def extract_readthedocs(readme_text) -> object:
     -------
     Links to the readthedocs documentation
     """
-    # regex = r'http[s]?://[\w]+.readthedocs.io/'
-    regex = r'http[s]?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]+.readthedocs.io/'
-    readthedocs_links = re.findall(regex, readme_text)
+    readthedocs_links = re.findall(constants.REGEXP_READTHEDOCS, readme_text)
     print("Extraction of readthedocs links from readme completed.\n")
     # remove duplicates (links like [readthedocs](readthedocs) are found twice
     return list(dict.fromkeys(readthedocs_links))
@@ -85,20 +84,20 @@ def extract_support_channels(readme_text):
     """
     results = []
 
-    index_gitter_chat = readme_text.find("[![Gitter chat]")
+    index_gitter_chat = readme_text.find(constants.REGEXP_GITTER)
     if index_gitter_chat > 0:
         init = readme_text.find(")](", index_gitter_chat)
         end = readme_text.find(")", init + 3)
         gitter_chat = readme_text[init + 3:end]
         results.append(gitter_chat)
 
-    init = readme_text.find("(https://www.reddit.com/r/")
+    init = readme_text.find(constants.REGEXP_REDDIT)
     if init > 0:
         end = readme_text.find(")", init)
         repo_status = readme_text[init + 1:end]
         results.append(repo_status)
 
-    init = readme_text.find("(https://discord.com/invite/")
+    init = readme_text.find(constants.REGEXP_DISCORD)
     if init > 0:
         end = readme_text.find(")", init)
         repo_status = readme_text[init + 1:end]
@@ -223,9 +222,10 @@ def extract_images(unfiltered_text, repo_url, local_repo):
         repo = True
 
     html_text = markdown.markdown(unfiltered_text)
-    img_md = re.findall(r"!\[[^\]]*\]\((.*?)?\)", html_text)
+    img_md = re.findall(constants.REGEXP_IMAGES, html_text)
     result = [_.start() for _ in re.finditer("<img ", html_text)]
     for img in img_md:
+        img = img[1] # the 0 position is the name used in the link
         # if the image contains jitpack.io, the element is not processed
         if img.find("jitpack.io") > 0 or img.find("/badge") >= 0 or img.find("/travis-ci.") >= 0 \
                 or img.find("img.shields.io") >= 0:
@@ -332,28 +332,28 @@ def extract_images(unfiltered_text, repo_url, local_repo):
 #     return logo, images
 
 
-def extract_support(unfiltered_text):
-    """Extracts support channels (reddit, discord, gitter) from a given text"""
-    results = []
-    init = unfiltered_text.find("(https://www.reddit.com/r/")
-    if init > 0:
-        end = unfiltered_text.find(")", init)
-        repo_status = unfiltered_text[init + 1:end]
-        results.append(repo_status)
-
-    init = unfiltered_text.find("(https://discord.com/invite/")
-    if init > 0:
-        end = unfiltered_text.find(")", init)
-        repo_status = unfiltered_text[init + 1:end]
-        results.append(repo_status)
-
-    return results
+# def extract_support(unfiltered_text):
+#     """Extracts support channels (reddit, discord, gitter) from a given text"""
+#     results = []
+#     init = unfiltered_text.find(constants.REGEXP_REDDIT)
+#     if init > 0:
+#         end = unfiltered_text.find(")", init)
+#         repo_status = unfiltered_text[init + 1:end]
+#         results.append(repo_status)
+#
+#     init = unfiltered_text.find(constants.REGEXP_DISCORD)
+#     if init > 0:
+#         end = unfiltered_text.find(")", init)
+#         repo_status = unfiltered_text[init + 1:end]
+#         results.append(repo_status)
+#
+#     return results
 
 
 def extract_package_distributions(unfiltered_text):
     """Extracts package distributions from a given text"""
     output = ""
-    index_package_distribution = unfiltered_text.find("[![PyPI]")
+    index_package_distribution = unfiltered_text.find(constants.REGEXP_PYPI)
     if index_package_distribution > 0:
         init = unfiltered_text.find(")](", index_package_distribution)
         end = unfiltered_text.find(")", init + 3)
@@ -375,10 +375,10 @@ def extract_colab_links(text):
     A list of colab links found in the text passed as a parameter.
     """
     output = []
-    links = re.findall(r"\[(.*?)?\]\(([^)]+)\)", text)
+    links = re.findall(constants.REGEXP_LINKS, text)
     for link in links:
         link_url = link[1]
-        if link_url.startswith("https://colab.research.google.com/drive"):
+        if link_url.startswith(constants.REGEXP_COLAB):
             output.append(link_url)
     return output
 
@@ -388,10 +388,11 @@ def remove_html_tags(text):
     clean_text = re.sub(regex, '', text)
     return clean_text
 
+
 def remove_links_images(text):
     """Removes links from images in a given text"""
     # process images
-    images = re.findall(r"!\[(.*?)?\]\((.*?)?\)", text)
+    images = re.findall(constants.REGEXP_IMAGES, text)
     for image in images:
         link_text = image[1]
         pos = text.find(link_text)
@@ -402,7 +403,7 @@ def remove_links_images(text):
             text = text.replace(image_text, "")
 
     # process links
-    links = re.findall(r"\[(.*?)?\]\(([^)]+)\)", text)
+    links = re.findall(constants.REGEXP_LINKS, text)
     for link in links:
         link_text = link[1]
         pos = text.find("("+link_text+")")
@@ -421,8 +422,7 @@ def extract_bibtex(readme_text) -> object:
     Function takes readme text as input (cleaned from markdown notation) and runs a regex expression on top of it.
     Returns list of bibtex citations
     """
-    regex = r'\@[a-zA-Z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title][.\n\S\s]+?\n\}'
-    citations = re.findall(regex, readme_text)
+    citations = re.findall(constants.REGEXP_BIBTEX, readme_text)
     return citations
 
 
@@ -439,8 +439,7 @@ def extract_dois(readme_text) -> object:
     """
     # regex = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
     # regex = r'\[\!\[DOI\]\(.+\)\]\(([^)]+)\)'
-    regex = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
-    dois = re.findall(regex, readme_text)
+    dois = re.findall(constants.REGEXP_DOI, readme_text)
     print("Extraction of DOIS from readme completed.\n")
     return dois
 
@@ -457,12 +456,10 @@ def extract_binder_links(readme_text) -> object:
     -------
     Links with binder notebooks/scripts that are ready to be executed.
     """
-    regex = r'\[\!\[Binder\]([^\]]+)\]\(([^)]+)\)'
-    binder_links = re.findall(regex, readme_text)
+    binder_links = re.findall(constants.REGEXP_BINDER, readme_text)
     print("Extraction of Binder links from readme completed.\n")
-    # remove duplicates
-    collabs = extract_colab_links(readme_text)
-    binder_links += collabs
+    # extract binder links and remove duplicates
+    binder_links += extract_colab_links(readme_text)
     return list(dict.fromkeys(binder_links))
 
 

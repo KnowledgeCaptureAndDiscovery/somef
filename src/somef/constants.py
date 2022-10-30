@@ -11,6 +11,21 @@ CONF_DEFAULT_BASE_URI = "https://w3id.org/okn/i/"
 
 __DEFAULT_SOMEF_CONFIGURATION_FILE__ = "~/.somef/config.json"
 
+# constants with regular expressions. Right now this has room for becoming more efficient
+REGEXP_BINDER = r'\[\!\[Binder\]([^\]]+)\]\(([^)]+)\)'
+REGEXP_READTHEDOCS = r'http[s]?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]+.readthedocs.io/'
+REGEXP_REDDIT = "(https://www.reddit.com/r/"
+REGEXP_DISCORD = "(https://discord.com/invite/"
+REGEXP_GITTER = "[![Gitter chat]"
+REGEXP_PYPI = "[![PyPI]"
+REGEXP_COLAB = "https://colab.research.google.com/drive"
+REGEXP_BIBTEX = r'\@[a-zA-Z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title][.\n\S\s]+?\n\}'
+REGEXP_DOI = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
+REGEXP_LINKS = r"\[(.*?)?\]\(([^)]+)\)"
+REGEXP_IMAGES = r"!\[(.*?)?\]\((.*?)?\)"
+                #r"!\[[^\]]*\]\((.*?)?\)"
+
+
 categories = ['description', 'citation', 'installation', 'invocation']
 # keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_url')
 # instead of keep keys, we have this table
