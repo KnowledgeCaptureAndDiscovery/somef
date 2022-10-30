@@ -14,7 +14,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Full name**: Name + owner (owner/name)
 - **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository  name
 - **Description**: A description of what the software does.
-- **Citation**: Preferred citation (usually in `.bib` form) as the authors have stated in their readme file.
+- **Citation**: Preferred citation as the authors have stated in their readme file. SOMEF recognizes Bibtex, Citation File Format files and other means by which authors cite their papers (e.g., by in-text citation)
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component
 - **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it.
