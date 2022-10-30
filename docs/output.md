@@ -19,6 +19,7 @@ The techniques can be of several types: `header analysis`, `supervised classific
 The output may also contain the following fields:
 - `format`: format in which a citation is recognized. Supported formats are `bibtex` and `citation file format`.
 - `doi`: Digital Object Identifier associated with a paper or a software repository.
+- `type`: type of documentation recognized by somef. There are two main recognized types: `readthedocs` and `wiki`.
 
 ### Turtle format
 RDF representation using the [Software Description Ontology](https://w3id.org/okn/o/sd/). The snippet below shows a sample description of a software entry. The `excerpt` and `confidence` fields are ommitted in this representation (every category with confidence above the threshold specified when running SOMEF will be included in the results)
