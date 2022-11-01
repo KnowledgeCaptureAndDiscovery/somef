@@ -17,6 +17,7 @@ The `confidence` depends on the `technique` used. In this case, the confidence i
 The techniques can be of several types: `header analysis`, `supervised classification`, `file exploration`, `GitHub API` and `regular expression`. Among these, only `supervised classification` provides a confidence different to `1`.
 
 The output may also contain the following fields:
+
 - `format`: format in which a citation is recognized. Supported formats are `bibtex` and `citation file format`.
 - `doi`: Digital Object Identifier associated with a paper or a software repository.
 - `type`: type of documentation recognized by somef. There are two main recognized types: `readthedocs` and `wiki`.
