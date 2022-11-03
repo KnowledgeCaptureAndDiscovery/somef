@@ -12,7 +12,7 @@ def get_prefixes():
     config = configuration.get_configuration_file()
     try:
         instance_prefix = config[constants.CONF_BASE_URI]
-    except:
+    except ValueError:
         # An error may occur if somef was not properly configured
         instance_prefix = constants.CONF_DEFAULT_BASE_URI
     software_prefixes = {
