@@ -1,4 +1,5 @@
 from rdflib import RDF, Graph, Literal, URIRef, Namespace
+import datetime
 
 from .schema.software_schema import get_prefixes, software_schema
 
@@ -17,12 +18,13 @@ class DataGraph:
 
     def add_somef_data(self, somef_data):
         software_prefixes = get_prefixes()
+        current_date = datetime.datetime.now()
         # process the somef output into data
         data = DataGraph.process_somef(somef_data)
         if 'name' not in data.keys():
-            data['name'] = 'name'
+            data['name'] = 'Software'+current_date.strftime("%Y%m%d%H%M%S")
         if 'fullName' not in data.keys():
-            data['fullName'] = 'fullName'
+            data['fullName'] = 'Software'+current_date.strftime("%Y%m%d%H%M%S")
         # add the prefixes that we use in the software_schema
         self.prefixes.update(software_prefixes)
         self.bind_prefixes(software_prefixes)

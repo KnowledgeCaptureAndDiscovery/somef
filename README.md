@@ -5,7 +5,7 @@
 
 A command line interface for automatically extracting relevant information from readme files.
 
-**Authors:** Daniel Garijo, Allen Mao, Miguel Ángel García Delgado, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
+**Authors:** Daniel Garijo, Allen Mao, Miguel Ángel García Delgado, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang, Aidan Kelley and Jenifer Tabita Ciuciu-Kiss.
 
 ## Features
 Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the following categories (if present):
@@ -52,7 +52,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Category**: The category of the repository.
 
 
-We use different supervised classifiers, header analysis, regular expressions and the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field)
+We use different supervised classifiers, header analysis, regular expressions and the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description]()
 
 ## Documentation
 See full documentation at [https://somef.readthedocs.io/en/latest/](https://somef.readthedocs.io/en/latest/)
