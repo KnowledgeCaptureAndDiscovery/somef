@@ -3,6 +3,7 @@
 import click
 from click_option_group import optgroup, RequiredMutuallyExclusiveOptionGroup, RequiredAnyOptionGroup
 
+import logging
 from . import configuration, constants
 from . import __version__
 
@@ -15,6 +16,9 @@ class URLParamType(click.types.StringParamType):
 @click.version_option(__version__)
 def cli():
     click.echo("SOftware Metadata Extraction Framework (SOMEF) Command Line Interface")
+    # Logging setup
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(levelname)s-%(message)s',
+                        datefmt='%d-%b-%y %H:%M:%S')
 
 
 @cli.command(help="Configure GitHub credentials and classifiers file path")

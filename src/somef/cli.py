@@ -12,7 +12,7 @@ from dateutil import parser as date_parser
 from .data_to_graph import DataGraph
 from . import header_analysis
 
-from . import parser_somef, regular_expressions, process_repository, markdown_utils, constants, configuration
+from . import mardown_parser, regular_expressions, process_repository, markdown_utils, constants, configuration
 
 from .rolf import preprocessing
 import pandas as pd
@@ -61,7 +61,7 @@ def create_excerpts(string_list):
     print("Splitting text into valid excerpts for classification")
     string_list = remove_bibtex(string_list)
     # divisions = createExcerpts.split_into_excerpts(string_list)
-    divisions = parser_somef.extract_blocks_excerpts(string_list)
+    divisions = mardown_parser.extract_blocks_excerpts(string_list)
     print("Text Successfully split. \n")
     output = {}
     for division in divisions:
@@ -666,21 +666,23 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                                    ignore_github_metadata, readme_only,
                                                                                    keep_tmp)
             if text == "":
-                print("Warning: README document does not exist in the repository")
+                logging.warning("README document does not exist in the repository")
         except process_repository.GithubUrlError:
+            logging.error("Error processing the GitHub repository")
             return None
     elif local_repo is not None:
         # assert (local_repo is not None)
         try:
             text, github_data = process_repository.load_local_repository_metadata(local_repo)
             if text == "":
-                print("Warning: README document does not exist in the local repository")
+                logging.warning("Warning: README document does not exist in the local repository")
         except process_repository.GithubUrlError:
+            logging.error("Error processing the GitHub repository")
             return None
     else:
-        assert (doc_src is not None)
-        if not path.exists(doc_src):
-            sys.exit("Error: Document does not exist at given path")
+        if doc_src is None or not path.exists(doc_src):
+            logging.error("Error processing the provided repository")
+            sys.exit()
         with open(doc_src, 'r', encoding="UTF-8") as doc_fh:
             text = doc_fh.read()
         github_data = {}
@@ -693,8 +695,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     if ignore_classifiers or unfiltered_text == '':
         predictions = {}
     else:
-        excerpts_headers = parser_somef.extract_text_excerpts_header(unfiltered_text)
-        header_parents = parser_somef.extract_headers_parents(unfiltered_text)
+        excerpts_headers = mardown_parser.extract_text_excerpts_header(unfiltered_text)
+        header_parents = mardown_parser.extract_headers_parents(unfiltered_text)
         score_dict = run_classifiers(excerpts, file_paths)
         predictions = classify(score_dict, threshold, excerpts_headers, header_parents)
     if text != '':
@@ -775,7 +777,7 @@ def run_cli(*,
 
         # convert to a set to ensure uniqueness (we don't want to get the same data multiple times)
         repo_set = set(repo_list)
-        # check if the urls in repo_set if are valids
+        # check if the urls in repo_set if are valid
         remove_urls = []
         for repo_elem in repo_set:
             if not validators.url(repo_elem):

@@ -46,6 +46,7 @@ def update_base_uri(base_uri):
             credentials_file.chmod(0o600)
             json.dump(data, fh)
 
+
 def configure(authorization="",
               description=default_description,
               invocation=default_invocation,

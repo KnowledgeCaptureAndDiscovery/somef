@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from textblob import Word
 
-from . import parser_somef
+from . import mardown_parser
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -94,12 +94,12 @@ def extract_header_content(text):
     """Function designed to extract headers and contents of text and place it in a dataframe"""
     print('Extracting headers and content.')
     header = []
-    headers = parser_somef.extract_headers(text)
+    headers = mardown_parser.extract_headers(text)
     for key in headers.keys():
         if headers[key]:
             header.append(key)
-    content, none_header_content = parser_somef.extract_content_per_header(text, headers)
-    parent_headers = parser_somef.extract_headers_parents(text)
+    content, none_header_content = mardown_parser.extract_content_per_header(text, headers)
+    parent_headers = mardown_parser.extract_headers_parents(text)
     # into dataframe
     df = pd.DataFrame(columns=['Header', 'Content', 'ParentHeader'])
     for i, j in zip(header, content):

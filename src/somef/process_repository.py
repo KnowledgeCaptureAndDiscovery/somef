@@ -1,4 +1,5 @@
 import base64
+import logging
 import urllib
 import os
 import tempfile
@@ -489,8 +490,14 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
             filtered_resp['languages'] = list(languages.keys())
 
         del filtered_resp['languages_url']
-
-    text = ""
+        # get releases
+        releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
+                                             headers=header)
+        if isinstance(releases_list, dict) and 'message' in releases_list.keys():
+            print("Releases Error: " + releases_list['message'])
+        else:
+            filtered_resp['releases'] = [do_crosswalk(release, constants.release_crosswalk_table) for release in
+                                         releases_list]
     if keep_tmp is not None:
         os.makedirs(keep_tmp, exist_ok=True)
         text, filtered_resp = download_github_files(keep_tmp, owner, repo_name, repo_ref, filtered_resp)
@@ -499,18 +506,7 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
         with tempfile.TemporaryDirectory() as temp_dir:
             text, filtered_resp = download_github_files(temp_dir, owner, repo_name, repo_ref, filtered_resp)
 
-    # get releases
-    if not ignore_github_metadata:
-        releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
-                                             headers=header)
-
-        if isinstance(releases_list, dict) and 'message' in releases_list.keys():
-            print("Releases Error: " + releases_list['message'])
-        else:
-            filtered_resp['releases'] = [do_crosswalk(release, constants.release_crosswalk_table) for release in
-                                         releases_list]
-
-    print("Repository information successfully loaded.\n")
+    logging.info("Repository information successfully loaded.\n")
     return text, filtered_resp
 
 

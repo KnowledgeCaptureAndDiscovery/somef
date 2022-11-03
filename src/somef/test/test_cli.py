@@ -972,3 +972,24 @@ class TestCli(unittest.TestCase):
         description = json_content['description']
         assert description is not None
         os.remove(test_data_path + "test-457.json")
+
+    def test_issue_445(self):
+        """Checks that ACKs are recognized both in files and in headers, and combined appropriately"""
+        cli.run_cli(threshold=0.9,
+                    ignore_classifiers=False,
+                    repo_url=None,
+                    doc_src=None,
+                    local_repo=test_data_repositories + "ack",
+                    in_file=None,
+                    output=test_data_path + "repositories/repos_oeg/test-445.json",
+                    graph_out=None,
+                    graph_format="turtle",
+                    codemeta_out=None,
+                    pretty=True,
+                    missing=False)
+        text_file = open(test_data_path + "repositories/repos_oeg/test-445.json", "r")
+        data = text_file.read()
+        json_content = json.loads(data)
+        text_file.close()
+        assert len(json_content["acknowledgement"]) == 2
+        os.remove(test_data_path + "repositories/repos_oeg/test-445.json")
