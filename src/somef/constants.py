@@ -62,6 +62,15 @@ release_crosswalk_table = {
     'datePublished': "published_at",
 }
 
+categories_files_header = ["installation", "citation", "acknowledgement", "run", "download", "requirement", "contact",
+            "description", "contributor", "documentation", "license", "usage", "faq", "support", "identifier",
+              "hasExecutableNotebook", "hasBuildFile", "hasDocumentation", "executableExample"]
+
+
+file_exploration = ['hasExecutableNotebook', 'hasBuildFile', 'hasDocumentation', 'codeOfConduct',
+                        'contributingGuidelines', 'licenseFile', 'licenseText', 'acknowledgement',
+                        'contributors', 'hasScriptFile', 'ontologies']
+
 
 class RepositoryType(Enum):
     GITHUB = 1
