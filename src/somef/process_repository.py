@@ -735,12 +735,12 @@ def process_repository_files(repo_dir, filtered_resp, repo_type, owner="", repo_
                     else:
                         filtered_resp["contributingGuidelinesFile"] = os.path.join(repo_dir, repo_relative_path,
                                                                                    filename)
-            if "ACKNOWLEDGMENT" in filename.upper():
+            if "ACKNOWLEDGMENT" in filename.upper() or "ACKNOWLEDGEMENT" in filename.upper():
                 try:
                     with open(os.path.join(dir_path, filename), "r") as data_file:
                         file_text = data_file.read()
-                        filtered_resp["acknowledgments"] = markdown_utils.unmark(file_text)
-                except:
+                        filtered_resp["acknowledgement"] = markdown_utils.unmark(file_text)
+                except ValueError:
                     if repo_type == constants.RepositoryType.GITHUB:
                         filtered_resp["acknowledgmentsFile"] = convert_to_raw_user_content_github(filename, owner,
                                                                                                   repo_name,

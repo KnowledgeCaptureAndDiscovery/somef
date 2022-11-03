@@ -1,17 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
-somef.
-:license: Apache 2.0
-"""
-
-import sys
-from pathlib import Path
 
 import click
 from click_option_group import optgroup, RequiredMutuallyExclusiveOptionGroup, RequiredAnyOptionGroup
 
-import somef
 from . import configuration, constants
+from . import __version__
 
 
 class URLParamType(click.types.StringParamType):
@@ -19,8 +12,9 @@ class URLParamType(click.types.StringParamType):
 
 
 @click.group(context_settings={'help_option_names': ['-h', '--help']})
+@click.version_option(__version__)
 def cli():
-    print("SOftware Metadata Extraction Framework (SOMEF) Command Line Interface")
+    click.echo("SOftware Metadata Extraction Framework (SOMEF) Command Line Interface")
 
 
 @cli.command(help="Configure GitHub credentials and classifiers file path")
@@ -45,11 +39,6 @@ def configure(auto, base_uri):
         # configuration.configure()
         configuration.configure(authorization, description, invocation, installation, citation, base_uri)
     click.secho(f"Success", fg="green")
-
-
-@cli.command(help="Show SOMEF version.")
-def version(debug=False):
-    click.echo(f"{Path(sys.argv[0]).name} v{somef.__version__}")
 
 
 @cli.command(help="Running SOMEF Command Line Interface")
@@ -147,8 +136,8 @@ def version(debug=False):
     "-m",
     is_flag=True,
     default=False,
-    help="""JSON report with the missing metadata fields SOMEF was not able to find. The report will be placed in 
-    $PATH_missing.json, where $PATH is -o, -c or -g."""
+    help="""The JSON will include a category missingCategories to report with the missing metadata fields SOMEF was not 
+    able to find. """
 )
 @click.option(
     "--keep_tmp",
@@ -158,6 +147,6 @@ def version(debug=False):
     desired path"""
 )
 def describe(**kwargs):
-    from somef import cli
+    from . import cli
     cli.run_cli(**kwargs)
     click.secho(f"Success", fg="green")
