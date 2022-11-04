@@ -51,8 +51,20 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Images**: Images used to illustrate the software component.
 - **Logo**: Main logo used to represent the target software component.
 - **Ontologies**: URL and path to the ontology files present in the repository.
+- **Category**: The category of the repository <sup>[1](#myfootnote1)</sup> 
 
 SOMEF uses the [Software  Description Ontology](https://w3id.org/okn/o/sd), which extends [Schema.org](https://schema.org) and [Codemeta](https://codemeta.github.io/terms/) to represent all the categories listed above. To see different export options please see [the getting started page](https://somef.readthedocs.io/en/latest/usage/).
+
+<a name="myfootnote1">1</a> The available categories currently are the followings: 
+
+- **Astrophisics**: a branch of space science that applies the laws of physics and chemistry to seek to understand the universe and our place in it. The field explores topics such as the birth, life and death of stars, planets, galaxies, nebulae and other objects in the universe.
+- **Audio**: a process of transforming, exploring, and interpreting audio signals recorded by digital devices.
+- **Computer vision**: a field of artificial intelligence (AI) that enables computers and systems to derive meaningful information from digital images, videos and other visual inputs — and take actions or make recommendations based on that information.
+- **Graphs**: data structures that can be ingested by various algorithms, notably neural nets, learning to perform tasks such as classification, clustering and regression.
+- **Natural language processing**: a branch of computer science—and more specifically, the branch of artificial intelligence or AI—concerned with giving computers the ability to understand text and spoken words in much the same way human beings can.
+- **Reinforcement learning**: a machine learning training method based on rewarding desired behaviors and/or punishing undesired ones.
+- **Semantc web**: a vision about an extension of the existing World Wide Web, which provides software programs with machine-interpretable metadata of the published information and data.
+- **Sequential**: the process of producing a sequence of values from a set of input values.
 
 ## Used Technologies and Standards
 
