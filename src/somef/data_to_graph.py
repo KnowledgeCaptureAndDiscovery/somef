@@ -1,6 +1,7 @@
 from rdflib import RDF, Graph, Literal, URIRef, Namespace
+import datetime
 
-from .schema.software_schema import software_prefixes, software_schema
+from .schema.software_schema import get_prefixes, software_schema
 
 
 class DataGraph:
@@ -16,12 +17,14 @@ class DataGraph:
             self.g.bind(key, Namespace(value))
 
     def add_somef_data(self, somef_data):
+        software_prefixes = get_prefixes()
+        current_date = datetime.datetime.now()
         # process the somef output into data
         data = DataGraph.process_somef(somef_data)
         if 'name' not in data.keys():
-            data['name'] = 'name'
+            data['name'] = 'Software'+current_date.strftime("%Y%m%d%H%M%S")
         if 'fullName' not in data.keys():
-            data['fullName'] = 'fullName'
+            data['fullName'] = 'Software'+current_date.strftime("%Y%m%d%H%M%S")
         # add the prefixes that we use in the software_schema
         self.prefixes.update(software_prefixes)
         self.bind_prefixes(software_prefixes)
@@ -36,7 +39,10 @@ class DataGraph:
             # if the value is a list, preserve the list
             if isinstance(value, list) or isinstance(value, tuple):
                 if len(value) > 0:
-                    out[key] = [obj["excerpt"] for obj in value]
+                    try:
+                        out[key] = [obj["excerpt"] for obj in value]
+                    except:
+                        print("Error when generating "+key)
             # if it is not a list, just get the excerpt
             else:
                 out[key] = value["excerpt"]
@@ -182,9 +188,9 @@ class DataGraph:
         else:
             return URIRef(type_name)
 
-if __name__ == "__main__":
-    from somef.schema.software_schema import software_prefixes
 
+if __name__ == "__main__":
+    software_prefixes = get_prefixes()
     test_software = {
         "fullName":"test/test",
         "description":"test",

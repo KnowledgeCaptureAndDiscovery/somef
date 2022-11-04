@@ -1,5 +1,31 @@
 from enum import Enum
 
+# constants about SOMEF configuration
+CONF_AUTHORIZATION = "Authorization"
+CONF_DESCRIPTION = "description"
+CONF_INVOCATION = "invocation"
+CONF_INSTALLATION = "installation"
+CONF_CITATION = "citation"
+CONF_BASE_URI = "base_uri"
+CONF_DEFAULT_BASE_URI = "https://w3id.org/okn/i/"
+
+__DEFAULT_SOMEF_CONFIGURATION_FILE__ = "~/.somef/config.json"
+
+# constants with regular expressions. Right now this has room for becoming more efficient
+REGEXP_BINDER = r'\[\!\[Binder\]([^\]]+)\]\(([^)]+)\)'
+REGEXP_READTHEDOCS = r'http[s]?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]+.readthedocs.io/'
+REGEXP_REDDIT = "(https://www.reddit.com/r/"
+REGEXP_DISCORD = "(https://discord.com/invite/"
+REGEXP_GITTER = "[![Gitter chat]"
+REGEXP_PYPI = "[![PyPI]"
+REGEXP_COLAB = "https://colab.research.google.com/drive"
+REGEXP_BIBTEX = r'\@[a-zA-Z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title][.\n\S\s]+?\n\}'
+REGEXP_DOI = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
+REGEXP_LINKS = r"\[(.*?)?\]\(([^)]+)\)"
+REGEXP_IMAGES = r"!\[(.*?)?\]\((.*?)?\)"
+                #r"!\[[^\]]*\]\((.*?)?\)"
+
+
 categories = ['description', 'citation', 'installation', 'invocation']
 # keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_url')
 # instead of keep keys, we have this table
@@ -35,6 +61,15 @@ release_crosswalk_table = {
     'dateCreated': 'created_at',
     'datePublished': "published_at",
 }
+
+categories_files_header = ["installation", "citation", "acknowledgement", "run", "download", "requirement", "contact",
+            "description", "contributor", "documentation", "license", "usage", "faq", "support", "identifier",
+              "hasExecutableNotebook", "hasBuildFile", "hasDocumentation", "executableExample"]
+
+
+file_exploration = ['hasExecutableNotebook', 'hasBuildFile', 'hasDocumentation', 'codeOfConduct',
+                        'contributingGuidelines', 'licenseFile', 'licenseText', 'acknowledgement',
+                        'contributors', 'hasScriptFile', 'ontologies']
 
 
 class RepositoryType(Enum):

@@ -1,49 +1,48 @@
 # -*- coding: utf-8 -*-
-"""
-somef.
-:license: Apache 2.0
-"""
-
-import sys
-from pathlib import Path
 
 import click
 from click_option_group import optgroup, RequiredMutuallyExclusiveOptionGroup, RequiredAnyOptionGroup
 
-import somef
-from . import configuration
+import logging
+from . import configuration, constants
+from . import __version__
+
+
+class URLParamType(click.types.StringParamType):
+    name = "url"
 
 
 @click.group(context_settings={'help_option_names': ['-h', '--help']})
+@click.version_option(__version__)
 def cli():
-    print("SOftware Metadata Extraction Framework (SOMEF) Command Line Interface")
+    click.echo("SOftware Metadata Extraction Framework (SOMEF) Command Line Interface")
+    # Logging setup
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(levelname)s-%(message)s',
+                        datefmt='%d-%b-%y %H:%M:%S')
 
 
 @cli.command(help="Configure GitHub credentials and classifiers file path")
 @click.option('-a', '--auto', help="Automatically configure SOMEF", is_flag=True, default=False)
-def configure(auto):
+@click.option('-b', '--base_uri', type=URLParamType(), help="Base URI for somef transformations",
+              default=constants.CONF_DEFAULT_BASE_URI)
+def configure(auto, base_uri):
     if auto:
         click.echo(
-            "Configuring SOMEF automatically. To assign credentials edit the configuration file or run the interactive mode")
+            "Configuring SOMEF automatically. To assign credentials edit the configuration file or run "
+            "the interactive mode")
         configuration.configure()
+    elif base_uri is not constants.CONF_DEFAULT_BASE_URI:
+        configuration.update_base_uri(base_uri)
     else:
         authorization = click.prompt("Authorization", default="")
         description = click.prompt("Documentation classifier model file", default=configuration.default_description)
         invocation = click.prompt("Invocation classifier model file", default=configuration.default_invocation)
         installation = click.prompt("Installation classifier model file", default=configuration.default_installation)
         citation = click.prompt("Citation classifier model file", default=configuration.default_citation)
+        base_uri = click.prompt("Base URI for RDF generation", default=base_uri)
         # configuration.configure()
-        configuration.configure(authorization, description, invocation, installation, citation)
+        configuration.configure(authorization, description, invocation, installation, citation, base_uri)
     click.secho(f"Success", fg="green")
-
-
-@cli.command(help="Show SOMEF version.")
-def version(debug=False):
-    click.echo(f"{Path(sys.argv[0]).name} v{somef.__version__}")
-
-
-class URLParamType(click.types.StringParamType):
-    name = "url"
 
 
 @cli.command(help="Running SOMEF Command Line Interface")
@@ -74,7 +73,8 @@ class URLParamType(click.types.StringParamType):
     "-ro",
     is_flag=True,
     default=False,
-    help="Flag to retrieve only the README.md file from the Github/Gitlab Repository URL"
+    help="Flag to retrieve only the README.md file from the Github/Gitlab Repository URL. If such file does not exist, "
+         "no metadata will be retrieved (by default False)"
 )
 @optgroup.group('Input', cls=RequiredMutuallyExclusiveOptionGroup)
 @optgroup.option(
@@ -140,8 +140,8 @@ class URLParamType(click.types.StringParamType):
     "-m",
     is_flag=True,
     default=False,
-    help="""JSON report with the missing metadata fields SOMEF was not able to find. The report will be placed in 
-    $PATH_missing.json, where $PATH is -o, -c or -g."""
+    help="""The JSON will include a category missingCategories to report with the missing metadata fields SOMEF was not 
+    able to find. """
 )
 @click.option(
     "--keep_tmp",
@@ -151,6 +151,6 @@ class URLParamType(click.types.StringParamType):
     desired path"""
 )
 def describe(**kwargs):
-    from somef import cli
+    from . import cli
     cli.run_cli(**kwargs)
     click.secho(f"Success", fg="green")

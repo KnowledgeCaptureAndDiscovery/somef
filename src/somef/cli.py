@@ -1,9 +1,10 @@
 import argparse
 import json
-import os
 import pickle
 import sys
 import validators
+import logging
+
 from os import path
 from pathlib import Path
 from dateutil import parser as date_parser
@@ -11,11 +12,10 @@ from dateutil import parser as date_parser
 from .data_to_graph import DataGraph
 from . import header_analysis
 
-from . import parser_somef, regular_expressions, process_repository, markdown_utils, constants
+from . import mardown_parser, regular_expressions, process_repository, markdown_utils, constants, configuration
 
 from .rolf import preprocessing
 import pandas as pd
-
 
 
 def restricted_float(x):
@@ -61,7 +61,7 @@ def create_excerpts(string_list):
     print("Splitting text into valid excerpts for classification")
     string_list = remove_bibtex(string_list)
     # divisions = createExcerpts.split_into_excerpts(string_list)
-    divisions = parser_somef.extract_blocks_excerpts(string_list)
+    divisions = mardown_parser.extract_blocks_excerpts(string_list)
     print("Text Successfully split. \n")
     output = {}
     for division in divisions:
@@ -108,6 +108,7 @@ def run_classifiers(excerpts, file_paths):
 
     return score_dict
 
+
 def run_category_classification(readme_text: str, threshold: float):
     """
     Function which returns the categories, confidence and technique of the given repo
@@ -133,9 +134,11 @@ def run_category_classification(readme_text: str, threshold: float):
                 res.append({'confidence': [prob], 'output': [cat], 'technique': 'Supervised classification'})
     return res
 
+
 def remove_unimportant_excerpts(excerpt_element):
     """
     Function which removes all excerpt lines which have been classified but contain only one word.
+    TO DO: It does not seem to filter lines with one word
     Parameters
     ----------
     excerpt_element: excerpt to process
@@ -152,7 +155,7 @@ def remove_unimportant_excerpts(excerpt_element):
     else:
         final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification'}
     final_excerpt['excerpt'] += excerpt_info
-    final_excerpt['confidence'].append(excerpt_confidence)
+    final_excerpt['confidence'] = excerpt_confidence
     if 'originalHeader' in excerpt_element:
         final_excerpt['originalHeader'] += excerpt_element['originalHeader']
     if 'parentHeader' in excerpt_element and excerpt_element['parentHeader'] != "":
@@ -226,7 +229,7 @@ def classify(scores, threshold, excerpts_headers, header_parents):
                         excerpt = excerpt + scores[ele]['excerpt'][i] + ' \n'
                         confid.append(scores[ele]['confidence'][i])
                     # if they are not the same, a new excerpt is created with the previous data
-                    # and store the new data as part of a new excerpt
+                    # and stores the new data as part of a new excerpt
                     else:
                         if not header == "":
                             element = remove_unimportant_excerpts(
@@ -250,7 +253,7 @@ def classify(scores, threshold, excerpts_headers, header_parents):
             if len(element['confidence']) != 0:
                 predictions[ele].append(element)
         print("Run completed.")
-    print("All Excerpts below the given Threshold Removed. \n")
+    print("All excerpts below the given threshold have been removed. \n")
     return predictions
 
 
@@ -326,22 +329,23 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
                 starts = text_citation[doi_pos:].find("{")
                 ends = text_citation[starts + doi_pos:].find("}")
                 doi_text = "https://doi.org/" + text_citation[starts + doi_pos + 1:doi_pos + starts + ends]
-            predictions['citation'].insert(0, {'excerpt': citations[i], 'confidence': [1.0],
-                                               'technique': 'Regular expression', 'doi': doi_text})
+            predictions['citation'].append({'excerpt': citations[i], 'confidence': [1.0],
+                                            'technique': 'Regular expression', 'doi': doi_text,
+                                            'format': 'bibtex'})
         else:
-            predictions['citation'].insert(0, {'excerpt': citations[i], 'confidence': [1.0],
-                                               'technique': 'Regular expression'})
+            predictions['citation'].append({'excerpt': citations[i], 'confidence': [1.0],
+                                            'technique': 'Regular expression', 'format': 'bibtex'})
     if len(citation_file_text) != 0:
         if 'citation' not in predictions.keys():
             predictions['citation'] = []
-        predictions['citation'].insert(0, {'excerpt': citation_file_text, 'confidence': [1.0],
-                                           'technique': 'File Exploration', 'format': 'citation file format'})
+        predictions['citation'].append({'excerpt': citation_file_text, 'confidence': [1.0],
+                                        'technique': 'File Exploration', 'format': 'citation file format'})
     if len(dois) != 0:
         predictions['identifier'] = []
         for identifier in dois:
             # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
-            predictions['identifier'].insert(0, {'excerpt': identifier[1], 'confidence': [1.0],
-                                                 'technique': 'Regular expression'})
+            predictions['identifier'].append({'excerpt': identifier[1], 'confidence': [1.0],
+                                              'technique': 'Regular expression'})
     if len(binder_links) != 0:
         predictions['executableExample'] = {'excerpt': binder_links, 'confidence': [1.0],
                                             'technique': 'Regular expression'}
@@ -370,8 +374,8 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
         if len(images) > 0:
             predictions['image'] = []
             for image in images:
-                predictions['image'].insert(0, {'excerpt': image, 'confidence': [1.0],
-                                                'technique': 'Regular expression'})
+                predictions['image'].append({'excerpt': image, 'confidence': [1.0],
+                                             'technique': 'Regular expression'})
 
     if len(support_channels) != 0:
         predictions['supportChannels'] = {'excerpt': support_channels, 'confidence': [1.0],
@@ -384,14 +388,14 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
     for i in range(len(readthedocs_links)):
         if 'documentation' not in predictions.keys():
             predictions['documentation'] = []
-        predictions['documentation'].insert(0, {'excerpt': readthedocs_links[i], 'confidence': [1.0],
-                                                'technique': 'Regular expression', 'type': 'readthedocs'})
+        predictions['documentation'].append({'excerpt': readthedocs_links[i], 'confidence': [1.0],
+                                             'technique': 'Regular expression', 'type': 'readthedocs'})
 
     for i in range(len(wiki_links)):
         if 'documentation' not in predictions.keys():
             predictions['documentation'] = []
-        predictions['documentation'].insert(0, {'excerpt': wiki_links[i], 'confidence': [1.0],
-                                                'technique': 'Regular expression', 'type': 'wiki'})
+        predictions['documentation'].append({'excerpt': wiki_links[i], 'confidence': [1.0],
+                                             'technique': 'Regular expression', 'type': 'wiki'})
 
     if category:
         predictions['category'] = category
@@ -409,7 +413,6 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
 def format_output(git_data, repo_data, gitlab_url=False):
     """
     Function takes metadata, readme text predictions, bibtex citations and path to the output file
-    Performs some combinations
     Parameters
     ----------
     git_data GitHub obtained data
@@ -423,9 +426,7 @@ def format_output(git_data, repo_data, gitlab_url=False):
     if gitlab_url:
         text_technique = 'GitLab API'
     print("formatting output")
-    file_exploration = ['hasExecutableNotebook', 'hasBuildFile', 'hasDocumentation', 'codeOfConduct',
-                        'contributingGuidelines', 'licenseFile', 'licenseText', 'acknowledgments', 'contributors',
-                        'hasScriptFile', 'ontologies']
+
     for i in git_data.keys():
         if i == 'description':
             if 'description' not in repo_data.keys():
@@ -434,7 +435,8 @@ def format_output(git_data, repo_data, gitlab_url=False):
                 repo_data['description'].append(
                     {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technique})
         else:
-            if i in file_exploration:
+            keys = repo_data.keys
+            if i in constants.file_exploration:
                 if i == 'hasExecutableNotebook':
                     repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration',
                                     'format': 'jupyter notebook'}
@@ -448,15 +450,19 @@ def format_output(git_data, repo_data, gitlab_url=False):
                             docker_files.append(data)
                     repo_data[i] = []
                     if len(docker_files) > 0:
-                        repo_data[i].insert(0, {'excerpt': docker_files, 'confidence': [1.0],
-                                                'technique': 'File Exploration',
-                                                'format': 'Docker file'})
+                        repo_data[i].append({'excerpt': docker_files, 'confidence': [1.0],
+                                             'technique': 'File Exploration',
+                                             'format': 'Docker file'})
                     if len(docker_compose) > 0:
-                        repo_data[i].insert(0, {'excerpt': docker_compose, 'confidence': [1.0],
-                                                'technique': 'File Exploration',
-                                                'format': 'Docker compose file'})
+                        repo_data[i].append({'excerpt': docker_compose, 'confidence': [1.0],
+                                             'technique': 'File Exploration',
+                                             'format': 'Docker compose file'})
                 else:
-                    repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
+                    if i in repo_data:
+                        repo_data[i].append(
+                            {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'})
+                    else:
+                        repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
             elif git_data[i] != "" and git_data[i] != []:
                 repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technique}
     # remove empty categories from json
@@ -498,6 +504,7 @@ def save_json(git_data, repo_data, outfile):
 
 def save_codemeta_output(repo_data, outfile, pretty=False):
     """Function that saves a JSONLD file with the codemeta results"""
+
     def data_path(path):
         return DataGraph.resolve_path(repo_data, path)
 
@@ -617,38 +624,15 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
 
 def create_missing_fields(repo_data):
-    """Function to create a small report with the categories SOMEF was not able to find"""
-    categs = ["installation", "citation", "acknowledgement", "run", "download", "requirement", "contact", "description",
-              "contributor", "documentation", "license", "usage", "faq", "support", "identifier",
-              "hasExecutableNotebook", "hasBuildFile", "hasDocumentation", "executableExample"]
+    """Function to create a small report with the categories SOMEF was not able to find.
+    The categories are added to the JSON results. This won't be added if you only export TTL or Codemeta"""
     missing = []
     out = {}
-    for c in categs:
+    for c in constants.categories_files_header:
         if c not in repo_data:
             missing.append(c)
     out["missingCategories"] = missing
     return out
-
-
-def create_missing_fields_report(repo_data, out_path):
-    """Function to create a small report with the categories SOMEF was not able to find"""
-    categs = ["installation", "citation", "acknowledgement", "run", "download", "requirement", "contact", "description",
-              "contributor", "documentation", "license", "usage", "faq", "support", "identifier",
-              "hasExecutableNotebook", "hasBuildFile", "hasDocumentation", "executableExample"]
-    missing = []
-    out = {}
-    for c in categs:
-        if c not in repo_data:
-            missing.append(c)
-    out["missing"] = missing
-    export_path = ""
-    if "json" in out_path:
-        export_path = out_path.replace(".json", "_missing.json")
-    if "ttl" in out_path:
-        export_path = out_path.replace(".ttl", "_missing.json")
-    else:
-        export_path = out_path + "_missing.json"
-    save_json_output(out, export_path, False)
 
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
@@ -670,14 +654,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     -------
     JSON file with the results found by SOMEF.
     """
-    credentials_file = Path(
-        os.getenv("SOMEF_CONFIGURATION_FILE", '~/.somef/config.json')
-    ).expanduser()
-    if credentials_file.exists():
-        with credentials_file.open("r") as fh:
-            file_paths = json.load(fh)
-    else:
-        sys.exit("Error: Please provide a config.json file.")
+    file_paths = configuration.get_configuration_file()
     header = {}
     if 'Authorization' in file_paths.keys():
         header['Authorization'] = file_paths['Authorization']
@@ -685,23 +662,27 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     if repo_url is not None:
         # assert (doc_src is None)
         try:
-            text, github_data = process_repository.load_online_repository_metadata(repo_url, header, ignore_github_metadata, readme_only, keep_tmp)
+            text, github_data = process_repository.load_online_repository_metadata(repo_url, header,
+                                                                                   ignore_github_metadata, readme_only,
+                                                                                   keep_tmp)
             if text == "":
-                print("Warning: README document does not exist in the repository")
+                logging.warning("README document does not exist in the repository")
         except process_repository.GithubUrlError:
+            logging.error("Error processing the GitHub repository")
             return None
     elif local_repo is not None:
         # assert (local_repo is not None)
         try:
             text, github_data = process_repository.load_local_repository_metadata(local_repo)
             if text == "":
-                print("Warning: README document does not exist in the local repository")
+                logging.warning("Warning: README document does not exist in the local repository")
         except process_repository.GithubUrlError:
+            logging.error("Error processing the GitHub repository")
             return None
     else:
-        assert (doc_src is not None)
-        if not path.exists(doc_src):
-            sys.exit("Error: Document does not exist at given path")
+        if doc_src is None or not path.exists(doc_src):
+            logging.error("Error processing the provided repository")
+            sys.exit()
         with open(doc_src, 'r', encoding="UTF-8") as doc_fh:
             text = doc_fh.read()
         github_data = {}
@@ -714,8 +695,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     if ignore_classifiers or unfiltered_text == '':
         predictions = {}
     else:
-        excerpts_headers = parser_somef.extract_text_excerpts_header(unfiltered_text)
-        header_parents = parser_somef.extract_headers_parents(unfiltered_text)
+        excerpts_headers = mardown_parser.extract_text_excerpts_header(unfiltered_text)
+        header_parents = mardown_parser.extract_headers_parents(unfiltered_text)
         score_dict = run_classifiers(excerpts, file_paths)
         predictions = classify(score_dict, threshold, excerpts_headers, header_parents)
     if text != '':
@@ -786,7 +767,7 @@ def run_cli(*,
     # check if it is a valid url
     if repo_url:
         if not validators.url(repo_url):
-            print("Not a valid repository url. Please check the url provided")
+            logging.error("Not a valid repository url. Please check the url provided")
             return None
     multiple_repos = in_file is not None
     if multiple_repos:
@@ -796,25 +777,26 @@ def run_cli(*,
 
         # convert to a set to ensure uniqueness (we don't want to get the same data multiple times)
         repo_set = set(repo_list)
-        # check if the urls in repo_set if are valids
+        # check if the urls in repo_set if are valid
         remove_urls = []
         for repo_elem in repo_set:
             if not validators.url(repo_elem):
-                print("Not a valid repository url. Please check the url provided: " + repo_elem)
-                # repo_set.remove(repo_url)
+                logging.error("Not a valid repository url. Please check the url provided: " + repo_elem)
                 remove_urls.append(repo_elem)
         # remove non valid urls in repo_set
         for remove_url in remove_urls:
             repo_set.remove(remove_url)
         if len(repo_set) > 0:
-            repo_data = [cli_get_data(threshold, ignore_classifiers, repo_url=repo_url, keep_tmp=keep_tmp) for repo_url in repo_set]
+            repo_data = [cli_get_data(threshold, ignore_classifiers, repo_url=repo_url, keep_tmp=keep_tmp) for repo_url
+                         in repo_set]
         else:
             return None
 
     else:
         if repo_url:
             repo_data = cli_get_data(threshold, ignore_classifiers, repo_url=repo_url,
-                                     ignore_github_metadata=ignore_github_metadata, readme_only=readme_only, keep_tmp=keep_tmp)
+                                     ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
+                                     keep_tmp=keep_tmp)
         elif local_repo:
             repo_data = cli_get_data(threshold, ignore_classifiers, local_repo=local_repo, keep_tmp=keep_tmp)
         else:
@@ -824,7 +806,7 @@ def run_cli(*,
         save_json_output(repo_data, output, missing, pretty=pretty)
 
     if graph_out is not None:
-        print("Generating Knowledge Graph")
+        logging.info("Generating Knowledge Graph")
         data_graph = DataGraph()
         if multiple_repos:
             for repo in repo_data:
@@ -832,19 +814,9 @@ def run_cli(*,
         else:
             data_graph.add_somef_data(repo_data)
 
-        print("Saving Knowledge Graph ttl data to", graph_out)
+        logging.info("Saving Knowledge Graph ttl data to", graph_out)
         with open(graph_out, "wb") as out_file:
             out_file.write(data_graph.g.serialize(format=graph_format, encoding="UTF-8"))
 
     if codemeta_out is not None:
         save_codemeta_output(repo_data, codemeta_out, pretty=pretty)
-
-    if missing is True:
-        # save in the same path as output
-        # if output is not None:
-        #    create_missing_fields_report(repo_data, output)
-        # elif codemeta_out is not None:
-        if codemeta_out is not None:
-            create_missing_fields_report(repo_data, codemeta_out)
-        elif graph_out is not None:
-            create_missing_fields_report(repo_data, graph_out)

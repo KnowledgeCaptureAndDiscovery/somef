@@ -1,4 +1,5 @@
 import base64
+import logging
 import urllib
 import os
 import tempfile
@@ -9,6 +10,7 @@ import requests
 import sys
 
 from datetime import datetime
+from chardet import detect
 from urllib.parse import urlparse
 from . import markdown_utils, extract_ontologies, constants
 
@@ -132,7 +134,7 @@ def load_gitlab_repository_metadata(repository_url, header, readme_only=False, k
         text = repo_zip.decode('utf-8')
         return text, {}
 
-    ## get only the fields that we want
+    # get only the fields that we want
     def do_crosswalk(data, crosswalk_table):
         def get_path(obj, path):
             if isinstance(path, list) or isinstance(path, tuple):
@@ -297,17 +299,18 @@ def download_gitlab_files(directory, owner, repo_name, repo_ref, filtered_resp, 
     repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
 
     return process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.GITLAB,
-                                                   owner, repo_name, repo_ref)
+                                    owner, repo_name, repo_ref)
 
 
-def load_online_repository_metadata(repository_url, header, ignore_github_metadata=False, readme_only=False, keep_tmp=None):
+def load_online_repository_metadata(repository_url, header, ignore_github_metadata=False, readme_only=False,
+                                    keep_tmp=None):
     """
     Function uses the repository_url provided to load required information from GitHub or Gitlab.
     Information kept from the repository is written in keep_keys.
     Parameters
     ----------
     keep_tmp
-    readme_only
+    readme_only: get readme only. Caution: readme is assummed to be README.md
     ignore_github_metadata
     repository_url
     header
@@ -352,7 +355,7 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
         repo_ref = "/".join(path_components[4:])
         ref_param = {"ref": repo_ref}
 
-    print(repo_api_base_url)
+    # print(repo_api_base_url)
 
     general_resp = {}
     date = ""
@@ -487,8 +490,14 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
             filtered_resp['languages'] = list(languages.keys())
 
         del filtered_resp['languages_url']
-
-    text = ""
+        # get releases
+        releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
+                                             headers=header)
+        if isinstance(releases_list, dict) and 'message' in releases_list.keys():
+            print("Releases Error: " + releases_list['message'])
+        else:
+            filtered_resp['releases'] = [do_crosswalk(release, constants.release_crosswalk_table) for release in
+                                         releases_list]
     if keep_tmp is not None:
         os.makedirs(keep_tmp, exist_ok=True)
         text, filtered_resp = download_github_files(keep_tmp, owner, repo_name, repo_ref, filtered_resp)
@@ -497,18 +506,7 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
         with tempfile.TemporaryDirectory() as temp_dir:
             text, filtered_resp = download_github_files(temp_dir, owner, repo_name, repo_ref, filtered_resp)
 
-    # get releases
-    if not ignore_github_metadata:
-        releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
-                                             headers=header)
-
-        if isinstance(releases_list, dict) and 'message' in releases_list.keys():
-            print("Releases Error: " + releases_list['message'])
-        else:
-            filtered_resp['releases'] = [do_crosswalk(release, constants.release_crosswalk_table) for release in
-                                         releases_list]
-
-    print("Repository information successfully loaded.\n")
+    logging.info("Repository information successfully loaded.\n")
     return text, filtered_resp
 
 
@@ -541,8 +539,8 @@ def download_github_files(directory, owner, repo_name, repo_ref, filtered_resp):
         sys.exit(f"Error: Archive request failed with HTTP {repo_download.status_code}")
     repo_zip = repo_download.content
 
-    repo_name_full = owner+"_"+repo_name
-    repo_zip_file = os.path.join(directory, repo_name_full+".zip")
+    repo_name_full = owner + "_" + repo_name
+    repo_zip_file = os.path.join(directory, repo_name_full + ".zip")
     repo_extract_dir = os.path.join(directory, repo_name_full)
 
     with open(repo_zip_file, "wb") as f:
@@ -557,7 +555,7 @@ def download_github_files(directory, owner, repo_name, repo_ref, filtered_resp):
     repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
 
     return process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.GITHUB,
-                                                   owner, repo_name, repo_ref)
+                                    owner, repo_name, repo_ref)
 
 
 def load_local_repository_metadata(local_repo):
@@ -668,18 +666,26 @@ def process_repository_files(repo_dir, filtered_resp, repo_type, owner="", repo_
                 else:
                     notebooks.append(os.path.join(repo_dir, file_path))
 
-            if "README" == filename.upper() or "README.MD" == filename.upper():
+            filename_no_ext = os.path.splitext(filename)[0]
+            # this will take into account README, README.MD, README.TXT, README.RST
+            if "README" == filename_no_ext.upper():
                 if repo_relative_path == ".":
                     try:
                         with open(os.path.join(dir_path, filename), "rb") as data_file:
                             data_file_text = data_file.read()
-                            text = data_file_text.decode("utf-8")
+                            try:
+                                text = data_file_text.decode("utf-8")
+                            except UnicodeError as err:
+                                print(f"{type(err).__name__} was raised: {err} Trying other encodings...")
+                                text = data_file_text.decode(detect(data_file_text)["encoding"])
                             if repo_type == constants.RepositoryType.GITHUB:
                                 filtered_resp['readmeUrl'] = convert_to_raw_user_content_github(filename, owner,
                                                                                                 repo_name,
                                                                                                 repo_ref)
-                    except:
+                    except Exception:
                         print("README Error: error while reading file content")
+                        print(f"{type(err).__name__} was raised: {err}")
+
             if "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
                 try:
                     with open(os.path.join(dir_path, filename), "rb") as data_file:
@@ -725,12 +731,12 @@ def process_repository_files(repo_dir, filtered_resp, repo_type, owner="", repo_
                     else:
                         filtered_resp["contributingGuidelinesFile"] = os.path.join(repo_dir, repo_relative_path,
                                                                                    filename)
-            if "ACKNOWLEDGMENT" in filename.upper():
+            if "ACKNOWLEDGMENT" in filename.upper() or "ACKNOWLEDGEMENT" in filename.upper():
                 try:
                     with open(os.path.join(dir_path, filename), "r") as data_file:
                         file_text = data_file.read()
-                        filtered_resp["acknowledgments"] = markdown_utils.unmark(file_text)
-                except:
+                        filtered_resp["acknowledgement"] = markdown_utils.unmark(file_text)
+                except ValueError:
                     if repo_type == constants.RepositoryType.GITHUB:
                         filtered_resp["acknowledgmentsFile"] = convert_to_raw_user_content_github(filename, owner,
                                                                                                   repo_name,

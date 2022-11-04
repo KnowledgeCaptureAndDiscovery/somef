@@ -1,11 +1,28 @@
 from rdflib import XSD
+from .. import configuration, constants
 
-software_prefixes = {
-    "schema": "https://schema.org/",
-    "sd": "https://w3id.org/okn/o/sd#",
-    "xsd": str(XSD),
-    "obj": "http://w3id.org/okn/o/i/"
-}
+
+def get_prefixes():
+    """
+    Function that returns the prefixes to use in the mapping based on the config file
+    Returns
+    -------
+    An object with the prefixes to be used
+    """
+    config = configuration.get_configuration_file()
+    try:
+        instance_prefix = config[constants.CONF_BASE_URI]
+    except ValueError:
+        # An error may occur if somef was not properly configured
+        instance_prefix = constants.CONF_DEFAULT_BASE_URI
+    software_prefixes = {
+        "schema": "https://schema.org/",
+        "sd": "https://w3id.org/okn/o/sd#",
+        "xsd": str(XSD),
+        "obj": instance_prefix
+    }
+    return software_prefixes
+
 
 software_schema = {
     # class and id

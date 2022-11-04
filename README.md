@@ -5,7 +5,7 @@
 
 A command line interface for automatically extracting relevant information from readme files.
 
-**Authors:** Daniel Garijo, Allen Mao, Miguel Ángel García Delgado, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang and Aidan Kelley.
+**Authors:** Daniel Garijo, Allen Mao, Miguel Ángel García Delgado, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang, Aidan Kelley and Jenifer Tabita Ciuciu-Kiss.
 
 ## Features
 Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the following categories (if present):
@@ -14,7 +14,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Full name**: Name + owner (owner/name)
 - **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository  name
 - **Description**: A description of what the software does.
-- **Citation**: Preferred citation (usually in `.bib` form) as the authors have stated in their readme file.
+- **Citation**: Preferred citation as the authors have stated in their readme file. SOMEF recognizes Bibtex, Citation File Format files and other means by which authors cite their papers (e.g., by in-text citation)
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component
 - **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it.
@@ -51,7 +51,8 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Ontologies**: URL and path to the ontology files present in the repository.
 - **Category**: The category of the repository.
 
-We use different supervised classifiers, header analysis, regular expressions and the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field)
+
+We use different supervised classifiers, header analysis, regular expressions and the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description]()
 
 ## Documentation
 See full documentation at [https://somef.readthedocs.io/en/latest/](https://somef.readthedocs.io/en/latest/)
@@ -92,10 +93,12 @@ pages={3032-3037}
 
 - Python 3.9
 
-SOMEF has been tested on Unix, MacOS and Windows Microsoft operating systems
+SOMEF has been tested on Unix, MacOS and Windows Microsoft operating systems.
+
+If you face any issues when installing SOMEF, please make sure you have installed the following packages: `build-essential`, `libssl-dev`,  `libffi-dev` and `python3-dev`. 
 
 ## Install from Pypi
-SOMEF [is available in Pypi!](https://pypi.org/project/somef/). To install it just type:
+SOMEF [is available in Pypi!](https://pypi.org/project/somef/) To install it just type:
 
 ```
 pip install somef
@@ -271,3 +274,4 @@ To see upcoming features, please have a look at our [open issues](https://github
 ## Extending SOMEF categories:
 
 To run a classifier with an additional category or remove an existing one, a corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in `cli.py`.
+
