@@ -23,8 +23,8 @@ install_requires = [
     "scipy>=1.7.1",
     "inflect>=5.4.0",
     "contractions>=0.1.66",
-    "chardet==5.0.0"
-    "imblearn>=0.0"
+    "chardet==5.0.0",
+    "imbalanced-learn>=0.8.1"
 ]
 
 
@@ -70,7 +70,7 @@ setup(
         "Intended Audience :: Science/Research",
         "Operating System :: Unix",
     ],
-    entry_points={"console_scripts": ["somef = somef.__main__:cli"]},
+    entry_points={"console_scripts": ["somef = somef.__main__:main"]},
     package_dir={"": "src"},
     packages=find_packages(where="src", exclude=["somef.tests*"]),
     package_data={"somef": find_package_data("src/somef")},

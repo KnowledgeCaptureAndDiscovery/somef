@@ -35,7 +35,7 @@ class Preprocessor:
 		stop_words += ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'hundred', 'thousand', 'and']
 		stop_words += ['network', 'install', 'run', 'file', 'use', 'result', 'paper', 'python', 'using', 'code', 'model', 'train', 'implementation', 'use']
 		stop_words += ['data', 'dataset', 'example', 'build', 'learn', 'download', 'obj']
-		return [word for word in text if not word in stop_words]
+		return [word for word in text if word not in stop_words]
 		
 	def remove_codeblocks(self, text):
 		return re.sub('```.*?```', ' ', text)

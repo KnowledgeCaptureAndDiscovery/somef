@@ -1,7 +1,7 @@
 from rdflib import RDF, Graph, Literal, URIRef, Namespace
 import datetime
 
-from .schema.software_schema import get_prefixes, software_schema
+from ..schema.software_schema import get_prefixes, software_schema
 
 
 class DataGraph:

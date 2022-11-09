@@ -9,13 +9,17 @@ from os import path
 from pathlib import Path
 from dateutil import parser as date_parser
 
-from .data_to_graph import DataGraph
+from somef.export.data_to_graph import DataGraph
 from . import header_analysis
 
-from . import parser_somef, regular_expressions, process_repository, markdown_utils, constants, configuration
+from . import regular_expressions, process_repository, configuration, process_files
+from .utils import constants, markdown_utils
+from .parser import mardown_parser
 
 from .rolf import preprocessing
 import pandas as pd
+import os
+import tempfile
 
 
 def restricted_float(x):
@@ -61,7 +65,7 @@ def create_excerpts(string_list):
     print("Splitting text into valid excerpts for classification")
     string_list = remove_bibtex(string_list)
     # divisions = createExcerpts.split_into_excerpts(string_list)
-    divisions = parser_somef.extract_blocks_excerpts(string_list)
+    divisions = mardown_parser.extract_blocks_excerpts(string_list)
     print("Text Successfully split. \n")
     output = {}
     for division in divisions:
@@ -410,7 +414,7 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
     return predictions
 
 
-def format_output(git_data, repo_data, gitlab_url=False):
+def format_output(git_data, repo_data, repo_type):
     """
     Function takes metadata, readme text predictions, bibtex citations and path to the output file
     Parameters
@@ -423,7 +427,7 @@ def format_output(git_data, repo_data, gitlab_url=False):
     json representation of the categories found in file
     """
     text_technique = 'GitHub API'
-    if gitlab_url:
+    if repo_type is constants.RepositoryType.GITLAB:
         text_technique = 'GitLab API'
     print("formatting output")
 
@@ -641,68 +645,90 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     Main function to get the data through the command line
     Parameters
     ----------
-    threshold: threshold to filter annotations. 0.8 by default
-    ignore_classifiers: flag to indicate if the output from the classifiers should be ignored
-    repo_url: URL of the repository to analyze
-    doc_src: path to the src of the target repo
-    local_repo: flag to indicate that the repo is local
-    ignore_github_metadata: flag used to avoid doing extra requests to the GitHub API
-    readme_only: flag to indicate that only the readme should be analyzed
-    keep_tmp: path where to store TMP files in case SOMEF is instructed to keep them
+    @param threshold: threshold to filter annotations. 0.8 by default
+    @param ignore_classifiers: flag to indicate if the output from the classifiers should be ignored
+    @param repo_url: URL of the repository to analyze
+    @param doc_src: path to the src of the target repo
+    @param local_repo: flag to indicate that the repo is local
+    @param ignore_github_metadata: flag used to avoid doing extra requests to the GitHub API
+    @param readme_only: flag to indicate that only the readme should be analyzed
+    @param keep_tmp: path where to store TMP files in case SOMEF is instructed to keep them
 
     Returns
     -------
-    JSON file with the results found by SOMEF.
+    @return: JSON file with the results found by SOMEF.
     """
     file_paths = configuration.get_configuration_file()
-    header = {}
-    if 'Authorization' in file_paths.keys():
-        header['Authorization'] = file_paths['Authorization']
-    header['accept'] = 'application/vnd.github.v3+json'
+    repo_type = constants.RepositoryType.GITHUB
+    # TO DO Create a new result (when everything works)
+    # result = ProcessedResult()
     if repo_url is not None:
-        # assert (doc_src is None)
         try:
-            text, github_data = process_repository.load_online_repository_metadata(repo_url, header,
-                                                                                   ignore_github_metadata, readme_only,
-                                                                                   keep_tmp)
-            if text == "":
-                print("Warning: README document does not exist in the repository")
+            if repo_url.rfind("gitlab.com") > 0:
+                repo_type = constants.RepositoryType.GITLAB
+            repository_metadata, owner, repo_name, def_branch = process_repository.load_online_repository_metadata(
+                                                                                            repo_url,
+                                                                                            ignore_github_metadata,
+                                                                                            repo_type)
+            # download files and obtain path to download folder
+            if readme_only:
+                # download readme only with the information above
+                readme_text = process_repository.download_readme(owner, repo_name, def_branch, repo_type)
+
+            elif keep_tmp is not None:  # save downloaded files locally
+                os.makedirs(keep_tmp, exist_ok=True)
+                local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type, keep_tmp)
+                readme_text, repository_metadata = process_files.process_repository_files(local_folder,
+                                                                                          repository_metadata,
+                                                                                          repo_type, owner, repo_name,
+                                                                                          def_branch)
+            else:  # Use a temp directory
+                with tempfile.TemporaryDirectory() as temp_dir:
+                    local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type, temp_dir)
+                    readme_text, repository_metadata = process_files.process_repository_files(local_folder,
+                                                                                              repository_metadata,
+                                                                                              repo_type, owner,
+                                                                                              repo_name,
+                                                                                              def_branch)
+            if readme_text == "":
+                logging.warning("README document does not exist in the target repository")
         except process_repository.GithubUrlError:
+            logging.error("Error processing the target repository")
             return None
     elif local_repo is not None:
-        # assert (local_repo is not None)
         try:
-            text, github_data = process_repository.load_local_repository_metadata(local_repo)
-            if text == "":
-                print("Warning: README document does not exist in the local repository")
+            readme_text, repository_metadata = process_files.process_repository_files(local_repo, {}, repo_type)
+            if readme_text == "":
+                logging.warning("Warning: README document does not exist in the local repository")
         except process_repository.GithubUrlError:
+            logging.error("Error processing the input repository")
             return None
     else:
-        assert (doc_src is not None)
-        if not path.exists(doc_src):
-            sys.exit("Error: Document does not exist at given path")
+        if doc_src is None or not path.exists(doc_src):
+            logging.error("Error processing the input repository")
+            sys.exit()
         with open(doc_src, 'r', encoding="UTF-8") as doc_fh:
-            text = doc_fh.read()
-        github_data = {}
+            readme_text = doc_fh.read()
+        repository_metadata = {}
 
-    unfiltered_text = text
+    unfiltered_text = readme_text
     header_predictions, string_list = extract_categories_using_header(unfiltered_text)
-    text = markdown_utils.unmark(text)
+    readme_text = markdown_utils.unmark(readme_text)
     category = run_category_classification(unfiltered_text, threshold)
     excerpts = create_excerpts(string_list)
     if ignore_classifiers or unfiltered_text == '':
         predictions = {}
     else:
-        excerpts_headers = parser_somef.extract_text_excerpts_header(unfiltered_text)
-        header_parents = parser_somef.extract_headers_parents(unfiltered_text)
+        excerpts_headers = mardown_parser.extract_text_excerpts_header(unfiltered_text)
+        header_parents = mardown_parser.extract_headers_parents(unfiltered_text)
         score_dict = run_classifiers(excerpts, file_paths)
         predictions = classify(score_dict, threshold, excerpts_headers, header_parents)
-    if text != '':
-        citations = regular_expressions.extract_bibtex(text)
-        citation_file_text = ""
-        if 'citation' in github_data.keys():
-            citation_file_text = github_data['citation']
-            del github_data['citation']
+    if readme_text != '':
+        citations = regular_expressions.extract_bibtex(readme_text)
+        citation_file_text = ''
+        if 'citation' in repository_metadata.keys():
+            citation_file_text = repository_metadata['citation']
+            del repository_metadata['citation']
         dois = regular_expressions.extract_dois(unfiltered_text)
         binder_links = regular_expressions.extract_binder_links(unfiltered_text)
         title = regular_expressions.extract_title(unfiltered_text)
@@ -710,7 +736,6 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         repo_status = regular_expressions.extract_repo_status(unfiltered_text)
         arxiv_links = regular_expressions.extract_arxiv_links(unfiltered_text)
         wiki_links = regular_expressions.extract_wiki_links(unfiltered_text, repo_url)
-        # logo = extract_logo(unfiltered_text, repo_url)
         logo, images = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo)
         support_channels = regular_expressions.extract_support_channels(unfiltered_text)
         package_distribution = regular_expressions.extract_package_distributions(unfiltered_text)
@@ -732,11 +757,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title,
                         readthedocs_links, repo_status, arxiv_links, logo, images, support_channels,
                         package_distribution, wiki_links, category)
-    gitlab_url = False
-    if repo_url is not None:
-        if repo_url.rfind("gitlab.com") > 0:
-            gitlab_url = True
-    return format_output(github_data, predictions, gitlab_url)
+    return format_output(repository_metadata, predictions, repo_type)
 
 
 def run_cli_document(doc_src, threshold, output):
@@ -775,7 +796,7 @@ def run_cli(*,
 
         # convert to a set to ensure uniqueness (we don't want to get the same data multiple times)
         repo_set = set(repo_list)
-        # check if the urls in repo_set if are valids
+        # check if the urls in repo_set if are valid
         remove_urls = []
         for repo_elem in repo_set:
             if not validators.url(repo_elem):
@@ -785,20 +806,23 @@ def run_cli(*,
         for remove_url in remove_urls:
             repo_set.remove(remove_url)
         if len(repo_set) > 0:
-            repo_data = [cli_get_data(threshold, ignore_classifiers, repo_url=repo_url, keep_tmp=keep_tmp) for repo_url
+            repo_data = [cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
+                                      keep_tmp=keep_tmp) for repo_url
                          in repo_set]
         else:
             return None
 
     else:
         if repo_url:
-            repo_data = cli_get_data(threshold, ignore_classifiers, repo_url=repo_url,
+            repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                      ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
                                      keep_tmp=keep_tmp)
         elif local_repo:
-            repo_data = cli_get_data(threshold, ignore_classifiers, local_repo=local_repo, keep_tmp=keep_tmp)
+            repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
+                                     local_repo=local_repo, keep_tmp=keep_tmp)
         else:
-            repo_data = cli_get_data(threshold, ignore_classifiers, doc_src=doc_src, keep_tmp=keep_tmp)
+            repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
+                                     doc_src=doc_src, keep_tmp=keep_tmp)
 
     if output is not None:
         save_json_output(repo_data, output, missing, pretty=pretty)

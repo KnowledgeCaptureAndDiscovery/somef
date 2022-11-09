@@ -1,5 +1,6 @@
 from rdflib import XSD
-from .. import configuration, constants
+from .. import configuration
+from ..utils import constants
 
 
 def get_prefixes():

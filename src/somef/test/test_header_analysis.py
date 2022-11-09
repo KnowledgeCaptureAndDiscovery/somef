@@ -13,7 +13,7 @@ test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 class TestHeaderAnalysis(unittest.TestCase):
 
     def test_extract_header_content_hash(self):
-        """Test to check if the markdown parser works against hash headers"""
+        """Test to check if the Markdown parser works against hash headers"""
         with open(test_data_path + "test_extract_header_content_hash.txt", "r") as data_file:
             text = data_file.read()
             result, non_header_content = extract_header_content(text)

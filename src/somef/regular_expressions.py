@@ -3,7 +3,7 @@ import re
 import markdown
 import requests
 import validators
-from . import constants
+from .utils import constants
 from urllib.parse import urlparse
 
 
@@ -50,7 +50,6 @@ def extract_title_old(unfiltered_text):
     # Remove other markup (links, etc.)
     if "[!" in title:
         title = re.split('\[\!', title)[0].strip()
-    # title = re.sub(r'/\[\!([^\[\]]*)\]\((.*?)\)', '',title)
     return title
 
 

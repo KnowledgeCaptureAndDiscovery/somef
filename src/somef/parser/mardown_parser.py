@@ -1,7 +1,7 @@
 import markdown
 import re
 import pandas as pd
-from . import regular_expressions
+from somef import regular_expressions
 
 def extract_headers(original_text):
     text, bashes = extract_bash(original_text)
@@ -386,7 +386,6 @@ def extract_headers_parents(original_text):
     for header in headers:
         parent, parents = update_parents(header, parents)
         output[header] = parents
-        #output[header] = ' --- '.join(parents)
         parents.append(header)
 
     return remove_tags_new(output)
@@ -430,8 +429,8 @@ def update_parents(new_header, parents):
                 parent = p
             else:
                 return parent, parent_list
-    except:
-        print("error when retrieving the parent header list")
+    except ValueError:
+        print("Error when retrieving the parent header list")
 
     return parent, parent_list
 
@@ -443,8 +442,8 @@ def minor_than(second, first):
 
 
 def is_header(header):
-    if (header.startswith('<h1') or header.startswith('<h2') or header.startswith('<h3') \
-            or header.startswith('<h4') or header.startswith('<h5') or header.startswith('<h6')) \
+    if (header.startswith('<h1') or header.startswith('<h2') or header.startswith('<h3')
+        or header.startswith('<h4') or header.startswith('<h5') or header.startswith('<h6')) \
             and header.find('</h') > 0:
         return True
     else:
@@ -455,7 +454,6 @@ def get_tag_content(header):
     init = header.index(">")
     end = header.rindex("</h")
     return replace_html_tags(header[init+1:end])
-
 
 
 def replace_html_tags(text):
