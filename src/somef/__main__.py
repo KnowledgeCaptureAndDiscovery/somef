@@ -4,8 +4,10 @@ import click
 from click_option_group import optgroup, RequiredMutuallyExclusiveOptionGroup, RequiredAnyOptionGroup
 
 import logging
-from . import configuration, constants
+from . import configuration
+from .utils import constants
 from . import __version__
+from . import somef_cli
 
 
 class URLParamType(click.types.StringParamType):
@@ -151,6 +153,5 @@ def configure(auto, base_uri):
     desired path"""
 )
 def describe(**kwargs):
-    from . import cli
-    cli.run_cli(**kwargs)
+    somef_cli.run_cli(**kwargs)
     click.secho(f"Success", fg="green")

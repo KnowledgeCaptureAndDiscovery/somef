@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 import sys
 
-from . import constants
+from .utils import constants
 
 path = Path(__file__).parent.absolute()
 default_description = str(path) + "/models/description.p"
@@ -66,15 +66,15 @@ def configure(authorization="",
     if credentials_file.exists():
         with credentials_file.open("r") as fh:
             data = json.load(fh)
-
-    data = {
-        constants.CONF_AUTHORIZATION: "token " + authorization,
-        constants.CONF_DESCRIPTION: description,
-        constants.CONF_INVOCATION: invocation,
-        constants.CONF_INSTALLATION: installation,
-        constants.CONF_CITATION: citation,
-        constants.CONF_BASE_URI: base_uri
-    }
+    else:
+        data = {
+            constants.CONF_AUTHORIZATION: "token " + authorization,
+            constants.CONF_DESCRIPTION: description,
+            constants.CONF_INVOCATION: invocation,
+            constants.CONF_INSTALLATION: installation,
+            constants.CONF_CITATION: citation,
+            constants.CONF_BASE_URI: base_uri
+        }
 
     if data[constants.CONF_AUTHORIZATION] == "token ":
         del data[constants.CONF_AUTHORIZATION]

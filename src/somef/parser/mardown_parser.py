@@ -1,7 +1,7 @@
 import markdown
 import re
 import pandas as pd
-from . import regular_expressions
+from somef import regular_expressions
 
 def extract_headers(original_text):
     text, bashes = extract_bash(original_text)

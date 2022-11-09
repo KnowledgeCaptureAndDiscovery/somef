@@ -49,10 +49,10 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Images**: Images used to illustrate the software component.
 - **Logo**: Main logo used to represent the target software component.
 - **Ontologies**: URL and path to the ontology files present in the repository.
-- **Category**: The category of the repository.
+- **Category**: The category of the repository. Current supported categories include: Astrophisics, Audio, Computer vision, Graphs, Natural language processing, Reinforcement learning, Semantc web, Sequential. These categories have been extracted from [awesome lists](https://github.com/topics/awesome-list) and [Papers with code](https://paperswithcode.com/). Find more information in our [documentation](https://somef.readthedocs.io/en/latest/).
 
 
-We use different supervised classifiers, header analysis, regular expressions and the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description]()
+We use different supervised classifiers, header analysis, regular expressions and the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description](https://somef.readthedocs.io/en/latest/output/)
 
 ## Documentation
 See full documentation at [https://somef.readthedocs.io/en/latest/](https://somef.readthedocs.io/en/latest/)

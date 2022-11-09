@@ -3,7 +3,7 @@ import re
 import markdown
 import requests
 import validators
-from . import constants
+from .utils import constants
 from urllib.parse import urlparse
 
 

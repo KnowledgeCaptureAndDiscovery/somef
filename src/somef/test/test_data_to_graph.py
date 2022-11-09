@@ -1,6 +1,6 @@
 import unittest
 
-from ..data_to_graph import DataGraph
+from somef.export.data_to_graph import DataGraph
 
 # Tests from this class are legacy tests
 

@@ -1,18 +1,14 @@
 import base64
 import logging
-import urllib
 import os
-import tempfile
-import re
 import zipfile
 import time
 import requests
 import sys
-
 from datetime import datetime
-from chardet import detect
 from urllib.parse import urlparse
-from . import markdown_utils, extract_ontologies, constants
+from .utils import constants
+from . import configuration
 
 
 # the same as requests.get(args).json(), but protects against rate limiting
@@ -43,34 +39,31 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
     return response, date
 
 
-def load_gitlab_repository_metadata(repository_url, header, readme_only=False, keep_tmp=None):
+def load_gitlab_repository_metadata(repository_url):
     """
     Function uses the repository_url provided to load required information from gitlab.
     Information kept from the repository is written in keep_keys.
     Parameters
     ----------
-    repository_url: URL of the Gitlab repository to analyze
-    header: headers of the repository
-    readme_only: flag to indicate whether to process the full repo or just the readme
-    keep_tmp
+    @param repository_url: URL of the Gitlab repository to analyze
 
     Returns
     -------
-    Readme text and required metadata
+    @return: Metadata available in GitLab from the target repo, along with its owner, name and default branch
     """
-    print(f"Loading Repository {repository_url} Information....")
+    logging.info(f"Loading Repository {repository_url} Information....")
     # load general response of the repository
     if repository_url[-1] == '/':
         repository_url = repository_url[:-1]
     url = urlparse(repository_url)
     if url.netloc != 'gitlab.com':
-        print("Error: repository must come from github")
+        logging.error("Repository must come from Gitlab")
         return " ", {}
 
     path_components = url.path.split('/')
 
     if len(path_components) < 3:
-        print("Gitlab link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}.")
+        print("Gitlab link is not correct.")
         return " ", {}
 
     owner = path_components[1]
@@ -87,7 +80,7 @@ def load_gitlab_repository_metadata(repository_url, header, readme_only=False, k
 
     repo_api_base_url = f"{repository_url}"
 
-    repo_ref = None
+    default_branch = None
 
     if len(path_components) >= 5:
         if not path_components[4] == "tree":
@@ -97,8 +90,8 @@ def load_gitlab_repository_metadata(repository_url, header, readme_only=False, k
             return " ", {}
 
         # we must join all after 4, as sometimes tags have "/" in them.
-        repo_ref = "/".join(path_components[5:])
-        ref_param = {"ref": repo_ref}
+        default_branch = "/".join(path_components[5:])
+        ref_param = {"ref": default_branch}
 
     print(repo_api_base_url)
     if 'defaultBranch' in project_details.keys():
@@ -115,24 +108,8 @@ def load_gitlab_repository_metadata(repository_url, header, readme_only=False, k
 
         raise GithubUrlError
 
-    if repo_ref is None:
-        repo_ref = general_resp['defaultBranch']
-
-    if readme_only:
-        repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/raw/{repo_ref}/README.md"
-        print(f"Downloading {repo_archive_url}")
-        repo_download = requests.get(repo_archive_url)
-        if repo_download.status_code == 404:
-            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-            repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/raw/master/README.md"
-            print(f"Trying to download {repo_archive_url}")
-            repo_download = requests.get(repo_archive_url)
-
-        if repo_download.status_code != 200:
-            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-        repo_zip = repo_download.content
-        text = repo_zip.decode('utf-8')
-        return text, {}
+    if default_branch is None:
+        default_branch = general_resp['defaultBranch']
 
     # get only the fields that we want
     def do_crosswalk(data, crosswalk_table):
@@ -182,8 +159,8 @@ def load_gitlab_repository_metadata(repository_url, header, readme_only=False, k
         filtered_resp['license'] = license_info
 
     # get keywords / topics
-    topics_headers = header
-    topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
+    # topics_headers = header
+    # topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
     # topics_resp, date = rate_limit_get(repo_api_base_url + "/topics",
     #                                   headers=topics_headers)
     topics_resp = {}
@@ -216,8 +193,7 @@ def load_gitlab_repository_metadata(repository_url, header, readme_only=False, k
             del filtered_resp['forks_count']
     filtered_resp['forksCount'] = forks_info
 
-    ## get languages
-    # languages, date = rate_limit_get(filtered_resp['languages_url'])
+    # get languages
     languages = {}
     filtered_resp['languages_url'] = "languages_url"
     if "message" in languages:
@@ -230,25 +206,15 @@ def load_gitlab_repository_metadata(repository_url, header, readme_only=False, k
     readme_info = {}
     if 'message' in readme_info.keys():
         print("README Error: " + readme_info['message'])
-        text = ""
+        # text = ""
     elif 'content' in readme_info:
         readme = base64.b64decode(readme_info['content']).decode("utf-8")
-        text = readme
+        # text = readme
         filtered_resp['readmeUrl'] = readme_info['html_url']
 
     if 'readme_url' in project_details:
-        text = get_readme_content(project_details['readme_url'])
+        # text = get_readme_content(project_details['readme_url'])
         filtered_resp['readmeUrl'] = project_details['readme_url']
-
-    if keep_tmp is not None:
-        os.makedirs(keep_tmp, exist_ok=True)
-        text, filtered_resp = download_gitlab_files(keep_tmp, owner, repo_name, repo_ref, filtered_resp,
-                                                    path_components)
-    else:
-        # create a temporary directory (default behavior)
-        with tempfile.TemporaryDirectory() as temp_dir:
-            text, filtered_resp = download_gitlab_files(temp_dir, owner, repo_name, repo_ref, filtered_resp,
-                                                        path_components)
 
     releases_list = {}
     if isinstance(releases_list, dict) and 'message' in releases_list.keys():
@@ -258,25 +224,29 @@ def load_gitlab_repository_metadata(repository_url, header, readme_only=False, k
                                      releases_list]
 
     print("Repository information successfully loaded. \n")
-    return text, filtered_resp
+    return filtered_resp, owner, repo_name, default_branch
 
 
-def download_gitlab_files(directory, owner, repo_name, repo_ref, filtered_resp, path_components):
+def download_gitlab_files(directory, owner, repo_name, repo_ref):
     """
     Download all repository files from a GitHub repository
     Parameters
     ----------
-    filtered_resp: the main response object we are building in somef
-    repo_ref: link to the repo
-    repo_name: name of the repo
-    owner: GitHub owner
-    directory: directory where to extract all downloaded files
-    path_components: components in the path of the gitlab repository
-
+    @param repo_ref: link to the repo
+    @param repo_name: name of the repo
+    @param owner: owner of the GitLab repo
+    @param directory: directory where to extract all downloaded files
     Returns
     -------
-    text and filtered response obtained from the repository
+    @rtype: string
+    @return: path of the folder where the files have been downloaded
     """
+    url = urlparse(repo_ref)
+    if url.netloc != 'gitlab.com':
+        logging.error("Repository must come from Gitlab")
+        return None
+
+    path_components = url.path.split('/')
     repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_ref}/{repo_name}-{repo_ref}.zip"
     if len(path_components) == 4:
         repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_ref}/{path_components[3]}.zip"
@@ -297,44 +267,88 @@ def download_gitlab_files(directory, owner, repo_name, repo_ref, filtered_resp, 
     assert (len(repo_folders) == 1)
 
     repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
-
-    return process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.GITLAB,
-                                    owner, repo_name, repo_ref)
+    return repo_dir
 
 
-def load_online_repository_metadata(repository_url, header, ignore_github_metadata=False, readme_only=False,
-                                    keep_tmp=None):
+def download_readme(owner, repo_name, default_branch, repo_type):
+    """
+    Method that given a repository owner, name and default branch, it downloads the readme content only.
+    The readme is assumed to be README.md
+    Parameters
+    ----------
+    @param owner: owner of the repository
+    @param repo_name: name of the repository to target
+    @param default_branch: branch to address
+    @param repo_type: see constants.RepositoryType to see types (mostly Github, Gitlab)
+
+    Returns
+    -------
+    @return: text with the contents of the readme file
+    """
+    if repo_type is constants.RepositoryType.GITLAB:
+        primary_url = f"https://gitlab.com/{owner}/{repo_name}/-/raw/{default_branch}/README.md"
+        secondary_url = f"https://gitlab.com/{owner}/{repo_name}/-/raw/master/README.md"
+    elif repo_type is constants.RepositoryType.GITHUB:
+        primary_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{default_branch}/README.md"
+        secondary_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/master/README.md"
+    else:
+        logging.error("Repository type not supported")
+        return None
+    logging.info(f"Downloading {primary_url}")
+    repo_download = requests.get(primary_url)
+    if repo_download.status_code == 404:
+        logging.error(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+        logging.info(f"Trying to download {secondary_url}")
+        repo_download = requests.get(secondary_url)
+    if repo_download.status_code != 200:
+        logging.error(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+        return None
+    repo_zip = repo_download.content
+    text = repo_zip.decode('utf-8')
+    return text
+
+
+def load_online_repository_metadata(repository_url, ignore_api_metadata=False,
+                                    repo_type=constants.RepositoryType.GITHUB):
     """
     Function uses the repository_url provided to load required information from GitHub or Gitlab.
     Information kept from the repository is written in keep_keys.
     Parameters
     ----------
-    keep_tmp
-    readme_only: get readme only. Caution: readme is assummed to be README.md
-    ignore_github_metadata
-    repository_url
-    header
+    @param repo_type: type of the repository (GITLAB, GITHUB or LOCAL)
+    @param ignore_api_metadata: true if you do not want to do an additional request to the target API
+    @param repository_url: target repository URL.
 
     Returns
     -------
-    Returns the readme text and required metadata
+    @return: Dictionary with the available metadata from online APIs, its owner, repo name and default branch
     """
-    if repository_url.rfind("gitlab.com") > 0:
-        return load_gitlab_repository_metadata(repository_url, header, readme_only, keep_tmp=keep_tmp)
+    if repo_type == constants.RepositoryType.GITLAB:
+        return load_gitlab_repository_metadata(repository_url)
+    elif repo_type == constants.RepositoryType.LOCAL:
+        logging.warning("Trying to download metadata from a local repository")
+        return None
 
-    print(f"Loading Repository {repository_url} Information....")
+    logging.info(f"Loading Repository {repository_url} Information....")
+    # Read from the config file the right token information
+    header = {}
+    file_paths = configuration.get_configuration_file()
+    if 'Authorization' in file_paths.keys():
+        header['Authorization'] = file_paths['Authorization']
+    header['accept'] = 'application/vnd.github.v3+json'
+
     # load general response of the repository
     if repository_url[-1] == '/':
         repository_url = repository_url[:-1]
     url = urlparse(repository_url)
     if url.netloc != 'github.com':
-        print("Error: repository must come from github")
+        logging.error("Repository must be from Github")
         return " ", {}
 
     path_components = url.path.split('/')
 
     if len(path_components) < 3:
-        print("Repository link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}.")
+        logging.error("Repository link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}.")
         return " ", {}
 
     owner = path_components[1]
@@ -342,7 +356,7 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
 
     repo_api_base_url = f"https://api.github.com/repos/{owner}/{repo_name}"
 
-    repo_ref = None
+    default_branch = None
 
     if len(path_components) >= 5:
         if not path_components[3] == "tree":
@@ -352,14 +366,12 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
             return " ", {}
 
         # we must join all after 4, as sometimes tags have "/" in them.
-        repo_ref = "/".join(path_components[4:])
-        ref_param = {"ref": repo_ref}
-
-    # print(repo_api_base_url)
+        default_branch = "/".join(path_components[4:])
+        ref_param = {"ref": default_branch}
 
     general_resp = {}
     date = ""
-    if not ignore_github_metadata or readme_only:
+    if not ignore_api_metadata:
         general_resp, date = rate_limit_get(repo_api_base_url, headers=header)
 
     if 'message' in general_resp:
@@ -371,27 +383,10 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
 
         raise GithubUrlError
 
-    if ignore_github_metadata:
-        repo_ref = 'master'
-    elif repo_ref is None:
-        repo_ref = general_resp['default_branch']
-
-    if readme_only:
-        repo_archive_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/README.md"
-        print(f"Downloading {repo_archive_url}")
-        repo_download = requests.get(repo_archive_url)
-        if repo_download.status_code == 404:
-            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-            repo_archive_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/master/README.md"
-            print(f"Trying to download {repo_archive_url}")
-            repo_download = requests.get(repo_archive_url)
-
-        if repo_download.status_code != 200:
-            print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-        repo_zip = repo_download.content
-
-        text = repo_zip.decode('utf-8')
-        return text, {}
+    if ignore_api_metadata:
+        default_branch = 'master'
+    elif default_branch is None:
+        default_branch = general_resp['default_branch']
 
     # get only the fields that we want
     def do_crosswalk(data, crosswalk_table):
@@ -417,7 +412,7 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
         return output
 
     filtered_resp = {}
-    if not ignore_github_metadata:
+    if not ignore_api_metadata:
         filtered_resp = do_crosswalk(general_resp, constants.github_crosswalk_table)
         if "issueTracker" in filtered_resp:
             issue_tracker = filtered_resp["issueTracker"]
@@ -427,17 +422,17 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
     # add download URL
     filtered_resp["downloadUrl"] = f"https://github.com/{owner}/{repo_name}/releases"
 
-    ## condense license information
+    # condense license information
     license_info = {}
     if 'license' in filtered_resp:
         for k in ('name', 'url'):
             if k in filtered_resp['license']:
                 license_info[k] = filtered_resp['license'][k]
 
-    ## If we didn't find it, look for the license
+    # If we didn't find it, look for the license
     if 'url' not in license_info or license_info['url'] is None:
 
-        possible_license_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/LICENSE"
+        possible_license_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{default_branch}/LICENSE"
         license_text_resp = requests.get(possible_license_url)
 
         # todo: It's possible that this request will get rate limited. Figure out how to detect that.
@@ -448,7 +443,6 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
     if len(license_info) > 0:
         filtered_resp['license'] = license_info
 
-    topics_headers = header
     # get keywords / topics
     if 'topics' in general_resp.keys():
         filtered_resp['topics'] = general_resp['topics']
@@ -482,7 +476,7 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
         filtered_resp['forksCount'] = forks_info
 
     # get languages
-    if not ignore_github_metadata:
+    if not ignore_api_metadata:
         languages, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
         if "message" in languages:
             print("Languages Error: " + languages["message"])
@@ -498,32 +492,49 @@ def load_online_repository_metadata(repository_url, header, ignore_github_metada
         else:
             filtered_resp['releases'] = [do_crosswalk(release, constants.release_crosswalk_table) for release in
                                          releases_list]
-    if keep_tmp is not None:
-        os.makedirs(keep_tmp, exist_ok=True)
-        text, filtered_resp = download_github_files(keep_tmp, owner, repo_name, repo_ref, filtered_resp)
-    else:
-        # create a temporary directory (default behavior)
-        with tempfile.TemporaryDirectory() as temp_dir:
-            text, filtered_resp = download_github_files(temp_dir, owner, repo_name, repo_ref, filtered_resp)
-
     logging.info("Repository information successfully loaded.\n")
-    return text, filtered_resp
+    return filtered_resp, owner, repo_name, default_branch
 
 
-def download_github_files(directory, owner, repo_name, repo_ref, filtered_resp):
+def download_repository_files(owner, repo_name, default_branch, repo_type, target_dir):
+    """
+    Given a repository, this method will download its files and return the readme text
+    Parameters
+    ----------
+    @param repo_type: type of the repo (github, gitlab or local)
+    @param default_branch: branch to download files from
+    @param repo_name: name of the repo
+    @param owner: owner of the repo
+    @param target_dir: directory where to download files
+
+    Returns
+    -------
+    @return: Path to the folder where files have been downloaded
+
+    """
+
+    if repo_type == constants.RepositoryType.GITHUB:
+        return download_github_files(target_dir, owner, repo_name, default_branch)
+    elif repo_type == constants.RepositoryType.GITLAB:
+        return download_gitlab_files(target_dir, owner, repo_name, default_branch)
+    else:
+        logging.error("Cannot download files from a local repository!")
+        return None
+
+
+def download_github_files(directory, owner, repo_name, repo_ref):
     """
     Download all repository files from a GitHub repository
     Parameters
     ----------
-    filtered_resp: the main response object we are building in somef
-    repo_ref: link to the repo
+    repo_ref: link to branch of the repo
     repo_name: name of the repo
     owner: GitHub owner
     directory: directory where to extract all downloaded files
 
     Returns
     -------
-    text and filtered response obtained from the repository
+    path to the folder where all files have been downloaded
     """
     # download the repo at the selected branch with the link
     repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip"
@@ -554,17 +565,18 @@ def download_github_files(directory, owner, repo_name, repo_ref, filtered_resp):
 
     repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
 
-    return process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.GITHUB,
-                                    owner, repo_name, repo_ref)
+    return repo_dir
+    #return process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.GITHUB,
+    #                                owner, repo_name, repo_ref)
 
 
-def load_local_repository_metadata(local_repo):
-    """Function to apply somef to a local repository (already downloaded)"""
-    filtered_resp = {}
-    repo_dir = os.path.abspath(local_repo)
-    text, filtered_resp = process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.LOCAL)
-    print("Local repository information successfully loaded. \n")
-    return text, filtered_resp
+# def load_local_repository_metadata(local_repo):
+#     """Function to apply somef to a local repository (already downloaded)"""
+#     filtered_resp = {}
+#     repo_dir = os.path.abspath(local_repo)
+#     text, filtered_resp = process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.LOCAL)
+#     print("Local repository information successfully loaded. \n")
+#     return text, filtered_resp
 
 
 def get_project_id(repository_url):
@@ -602,244 +614,3 @@ def get_readme_content(readme_url):
     return readme_text
 
 
-def convert_to_raw_user_content_github(partial, owner, repo_name, repo_ref):
-    """Converts GitHub paths into raw.githubuser content URLs, accessible by users"""
-    if partial.startswith("./"):
-        partial = partial.replace("./", "")
-    if partial.startswith(".\\"):
-        partial = partial.replace(".\\", "")
-    if partial.find("\\") >= 0:
-        partial = re.sub("\\\\", "/", partial)
-
-    return f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse.quote(partial)}"
-
-
-def convert_to_raw_user_content_gitlab(partial, owner, repo_name, repo_ref):
-    """Converts GitLab paths into raw.githubuser content URLs, accessible by users"""
-    if partial.startswith("./"):
-        partial = partial.replace("./", "")
-    if partial.startswith(".\\"):
-        partial = partial.replace(".\\", "")
-    return f"https://gitlab.com/{owner}/{repo_name}/-/blob/{repo_ref}/{urllib.parse.quote(partial)}"
-
-
-def process_repository_files(repo_dir, filtered_resp, repo_type, owner="", repo_name="", repo_ref=""):
-    """
-    Method that given a folder, it recognizes whether there are notebooks, dockerfiles, docs, script files or
-    ontologies.
-    Parameters
-    ----------
-    repo_dir: path to the dir to analyze
-    filtered_resp: JSON object to be completed by this method
-    repo_type: GITHUB, GITLAB or LOCAL
-    owner: owner of the repo (only for github/gitlab repos)
-    repo_name: repository name (only for github/gitlab repos)
-    repo_ref: branch (only for github/gitlab repos)
-
-    Returns
-    -------
-    A JSON object (filtered_resp) with the findings and the text of the readme
-    """
-    notebooks = []
-    dockerfiles = []
-    docs = []
-    script_files = []
-    ontologies = []
-    text = ""
-    for dir_path, dir_names, filenames in os.walk(repo_dir):
-        repo_relative_path = os.path.relpath(dir_path, repo_dir)
-        for filename in filenames:
-            file_path = os.path.join(repo_relative_path, filename)
-            if filename == "Dockerfile" or filename.lower() == "docker-compose.yml":
-                if repo_type == constants.RepositoryType.GITHUB:
-                    dockerfiles.append(convert_to_raw_user_content_github(file_path, owner, repo_name, repo_ref))
-                elif repo_type == constants.RepositoryType.GITLAB:
-                    dockerfiles.append(convert_to_raw_user_content_gitlab(file_path, owner, repo_name, repo_ref))
-                else:
-                    dockerfiles.append(os.path.join(repo_dir, file_path))
-
-            if filename.lower().endswith(".ipynb"):
-                if repo_type == constants.RepositoryType.GITHUB:
-                    notebooks.append(convert_to_raw_user_content_github(file_path, owner, repo_name, repo_ref))
-                elif repo_type == constants.RepositoryType.GITLAB:
-                    notebooks.append(convert_to_raw_user_content_gitlab(file_path, owner, repo_name, repo_ref))
-                else:
-                    notebooks.append(os.path.join(repo_dir, file_path))
-
-            filename_no_ext = os.path.splitext(filename)[0]
-            # this will take into account README, README.MD, README.TXT, README.RST
-            if "README" == filename_no_ext.upper():
-                if repo_relative_path == ".":
-                    try:
-                        with open(os.path.join(dir_path, filename), "rb") as data_file:
-                            data_file_text = data_file.read()
-                            try:
-                                text = data_file_text.decode("utf-8")
-                            except UnicodeError as err:
-                                print(f"{type(err).__name__} was raised: {err} Trying other encodings...")
-                                text = data_file_text.decode(detect(data_file_text)["encoding"])
-                            if repo_type == constants.RepositoryType.GITHUB:
-                                filtered_resp['readmeUrl'] = convert_to_raw_user_content_github(filename, owner,
-                                                                                                repo_name,
-                                                                                                repo_ref)
-                    except Exception:
-                        print("README Error: error while reading file content")
-                        print(f"{type(err).__name__} was raised: {err}")
-
-            if "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
-                try:
-                    with open(os.path.join(dir_path, filename), "rb") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["licenseText"] = markdown_utils.unmark(file_text)
-                except:
-                    # TO DO: try different encodings
-                    if repo_type == constants.RepositoryType.GITHUB:
-                        filtered_resp["licenseFile"] = convert_to_raw_user_content_github(filename, owner, repo_name,
-                                                                                          repo_ref)
-                    elif repo_type == constants.RepositoryType.GITLAB:
-                        filtered_resp["licenseFile"] = convert_to_raw_user_content_gitlab(filename, owner, repo_name,
-                                                                                          repo_ref)
-                    else:
-                        filtered_resp["licenseFile"] = os.path.join(repo_dir, repo_relative_path, filename)
-
-            if "CODE_OF_CONDUCT" == filename.upper() or "CODE_OF_CONDUCT.MD" == filename.upper():
-                if repo_type == constants.RepositoryType.GITHUB:
-                    filtered_resp["codeOfConduct"] = convert_to_raw_user_content_github(filename, owner, repo_name,
-                                                                                        repo_ref)
-                elif repo_type == constants.RepositoryType.GITLAB:
-                    filtered_resp["codeOfConduct"] = convert_to_raw_user_content_gitlab(filename, owner, repo_name,
-                                                                                        repo_ref)
-                else:
-                    filtered_resp["codeOfConduct"] = os.path.join(repo_dir, repo_relative_path, filename)
-
-            if "CONTRIBUTING" == filename.upper() or "CONTRIBUTING.MD" == filename.upper():
-                try:
-                    with open(os.path.join(dir_path, filename), "r") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["contributingGuidelines"] = markdown_utils.unmark(file_text)
-                except:
-                    if repo_type == constants.RepositoryType.GITHUB:
-                        filtered_resp["contributingGuidelinesFile"] = convert_to_raw_user_content_github(filename,
-                                                                                                         owner,
-                                                                                                         repo_name,
-                                                                                                         repo_ref)
-                    elif repo_type == constants.RepositoryType.GITLAB:
-                        filtered_resp["contributingGuidelinesFile"] = convert_to_raw_user_content_gitlab(filename,
-                                                                                                         owner,
-                                                                                                         repo_name,
-                                                                                                         repo_ref)
-                    else:
-                        filtered_resp["contributingGuidelinesFile"] = os.path.join(repo_dir, repo_relative_path,
-                                                                                   filename)
-            if "ACKNOWLEDGMENT" in filename.upper() or "ACKNOWLEDGEMENT" in filename.upper():
-                try:
-                    with open(os.path.join(dir_path, filename), "r") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["acknowledgement"] = markdown_utils.unmark(file_text)
-                except ValueError:
-                    if repo_type == constants.RepositoryType.GITHUB:
-                        filtered_resp["acknowledgmentsFile"] = convert_to_raw_user_content_github(filename, owner,
-                                                                                                  repo_name,
-                                                                                                  repo_ref)
-                    elif repo_type == constants.RepositoryType.GITLAB:
-                        filtered_resp["acknowledgmentsFile"] = convert_to_raw_user_content_gitlab(filename, owner,
-                                                                                                  repo_name,
-                                                                                                  repo_ref)
-                    else:
-                        filtered_resp["acknowledgmentsFile"] = os.path.join(repo_dir, repo_relative_path, filename)
-            if "CONTRIBUTORS" == filename.upper() or "CONTRIBUTORS.MD" == filename.upper():
-                try:
-                    with open(os.path.join(dir_path, filename), "r") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["contributors"] = markdown_utils.unmark(file_text)
-                except:
-                    if repo_type == constants.RepositoryType.GITHUB:
-                        filtered_resp["contributorsFile"] = convert_to_raw_user_content_github(filename, owner,
-                                                                                               repo_name,
-                                                                                               repo_ref)
-                    elif repo_type == constants.RepositoryType.GITLAB:
-                        filtered_resp["contributorsFile"] = convert_to_raw_user_content_gitlab(filename, owner,
-                                                                                               repo_name,
-                                                                                               repo_ref)
-                    else:
-                        filtered_resp["contributorsFile"] = os.path.join(repo_dir, repo_relative_path, filename)
-            if "CITATION" == filename.upper() or "CITATION.CFF" == filename.upper() or "CITATION.BIB" == filename.upper():
-                try:
-                    with open(os.path.join(dir_path, filename), "r") as data_file:
-                        file_text = data_file.read()
-                        filtered_resp["citation"] = markdown_utils.unmark(file_text)
-                except:
-                    if repo_type == constants.RepositoryType.GITHUB:
-                        filtered_resp["citationFile"] = convert_to_raw_user_content_github(filename, owner,
-                                                                                           repo_name,
-                                                                                           repo_ref)
-                    elif repo_type == constants.RepositoryType.GITLAB:
-                        filtered_resp["citationFile"] = convert_to_raw_user_content_gitlab(filename, owner,
-                                                                                           repo_name,
-                                                                                           repo_ref)
-                    else:
-                        filtered_resp["citationFile"] = os.path.join(repo_dir, repo_relative_path, filename)
-
-            if filename.endswith(".sh"):
-                if repo_type == constants.RepositoryType.GITHUB:
-                    script_files.append(convert_to_raw_user_content_github(file_path, owner, repo_name, repo_ref))
-                elif repo_type == constants.RepositoryType.GITLAB:
-                    script_files.append(convert_to_raw_user_content_gitlab(file_path, owner, repo_name, repo_ref))
-                else:
-                    script_files.append(os.path.join(repo_dir, file_path))
-
-            if filename.endswith(".ttl") or filename.endswith(".owl") or filename.endswith(".nt") or filename. \
-                    endswith(".xml"):
-                uri = extract_ontologies.is_file_ontology(os.path.join(repo_dir, file_path))
-                if uri is not None:
-                    # and not any(o['uri'] == uri for o in ontologies): This checks if the onto is not already
-                    # there, but we return all ontologies we find right now. Filtering is up to users
-                    file_url = ""
-                    if repo_type == constants.RepositoryType.GITHUB:
-                        file_url = convert_to_raw_user_content_github(file_path, owner, repo_name, repo_ref)
-                    elif repo_type == constants.RepositoryType.GITLAB:
-                        file_url = convert_to_raw_user_content_gitlab(file_path, owner, repo_name, repo_ref)
-                    else:
-                        file_url = os.path.join(repo_dir, file_path)
-                    onto = {
-                        "uri": uri,
-                        "file_url": file_url
-                    }
-                    ontologies.append(onto)
-
-        for dir_name in dir_names:
-            if dir_name.lower() == "docs":
-                if repo_relative_path == ".":
-                    docs_path = dir_name
-                else:
-                    if repo_relative_path.find("\\") >= 0:
-                        new_repo_relative_path = repo_relative_path.replace("\\", "/")
-                        docs_path = os.path.join(new_repo_relative_path, dir_name)
-                    else:
-                        docs_path = os.path.join(repo_relative_path, dir_name)
-
-                names = os.listdir(os.path.join(repo_dir, docs_path))
-                for name in names:
-                    if name.lower().endswith(".pdf") or name.lower().endswith(".md") or name.lower().endswith(
-                            ".html") or name.lower().endswith(".htm"):
-                        if repo_type == constants.RepositoryType.GITHUB:
-                            docs.append(
-                                f"https://github.com/{owner}/{repo_name}/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
-                        elif repo_type == constants.RepositoryType.GITLAB:
-                            docs.append(
-                                f"https://gitlab.com/{owner}/{repo_name}/-/tree/{urllib.parse.quote(repo_ref)}/{docs_path}")
-                        else:
-                            docs.append(os.path.join(repo_dir, docs_path))
-                        break
-
-    if len(notebooks) > 0:
-        filtered_resp["hasExecutableNotebook"] = notebooks
-    if len(dockerfiles) > 0:
-        filtered_resp["hasBuildFile"] = dockerfiles
-    if len(docs) > 0:
-        filtered_resp["hasDocumentation"] = docs
-    if len(script_files) > 0:
-        filtered_resp["hasScriptFile"] = script_files
-    if len(ontologies) > 0:
-        filtered_resp["ontologies"] = ontologies
-    return text, filtered_resp

@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from textblob import Word
 
-from . import mardown_parser
+from .parser import mardown_parser
 
 pd.options.mode.chained_assignment = None  # default='warn'
 

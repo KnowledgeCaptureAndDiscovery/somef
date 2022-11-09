@@ -1,7 +1,7 @@
 from io import StringIO
 
 from markdown import Markdown
-from markdown_utils import unmark
+from somef.utils.markdown_utils import unmark
 
 
 # code snippet from https://stackoverflow.com/a/54923798
