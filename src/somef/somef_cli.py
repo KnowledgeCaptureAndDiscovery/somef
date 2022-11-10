@@ -1,25 +1,21 @@
 import argparse
-import json
 import pickle
 import sys
 import validators
 import logging
-
-from os import path
-from pathlib import Path
-from dateutil import parser as date_parser
-
-from somef.export.data_to_graph import DataGraph
-from . import header_analysis
-
-from . import regular_expressions, process_repository, configuration, process_files
-from .utils import constants, markdown_utils
-from .parser import mardown_parser
-
-from .rolf import preprocessing
 import pandas as pd
 import os
 import tempfile
+
+from os import path
+from pathlib import Path
+
+from . import header_analysis, regular_expressions, process_repository, configuration, process_files
+from .utils import constants, markdown_utils
+from .parser import mardown_parser
+from .rolf import preprocessing
+from .export.data_to_graph import DataGraph
+from .export import json_export
 
 
 def restricted_float(x):
@@ -27,29 +23,6 @@ def restricted_float(x):
     if x < 0.0 or x > 1.0:
         raise argparse.ArgumentTypeError(f"{x} not in range [0.0, 1.0]")
     return x
-
-
-def remove_bibtex(string_list):
-    """
-        Function that takes the string list and removes all bibtex blocks of it
-        Parameters
-        ----------
-        string_list: A list of strings to process
-
-        Returns
-        -------
-        The strings list without bibtex blocks
-        """
-    for x, element in enumerate(string_list):
-        bib_references = regular_expressions.extract_bibtex(element)
-        if len(bib_references) > 0:
-            top = element.find(bib_references[0])
-            init = element.rfind("```", 0, top)
-            end = element.find("```", init + 3)
-            substring = element[init:end + 3]
-            string_list[x] = element.replace(substring, "")
-    print("Extraction of bibtex citation from readme completed. \n")
-    return string_list
 
 
 def create_excerpts(string_list):
@@ -63,7 +36,7 @@ def create_excerpts(string_list):
     Extracted excerpts
     """
     print("Splitting text into valid excerpts for classification")
-    string_list = remove_bibtex(string_list)
+    string_list = markdown_utils.remove_bibtex(string_list)
     # divisions = createExcerpts.split_into_excerpts(string_list)
     divisions = mardown_parser.extract_blocks_excerpts(string_list)
     print("Text Successfully split. \n")
@@ -102,7 +75,7 @@ def run_classifiers(excerpts, file_paths):
                 sys.exit("Error: Category " + category + " file path not present in config.json")
             file_name = file_paths[category]
             if not path.exists(file_name):
-                sys.exit(f"Error: File/Directory {file_name} does not exist")
+                sys.exit(f"Error: File or Directory {file_name} does not exist")
             print("Classifying excerpts for the category", category)
             classifier = pickle.load(open(file_name, 'rb'))
             scores = classifier.predict_proba(text_to_classifier)
@@ -487,156 +460,10 @@ def remove_empty_elements(d):
         return {k: v for k, v in ((k, remove_empty_elements(v)) for k, v in d.items()) if not empty(v)}
 
 
-def save_json_output(repo_data, outfile, missing, pretty=False):
-    """Function that saves the final json Object in the output file"""
-    print("Saving json data to", outfile)
-    if missing:
-        missing = create_missing_fields(repo_data)
-        repo_data["missingCategories"] = missing["missingCategories"]
-    with open(outfile, 'w') as output:
-        if pretty:
-            json.dump(repo_data, output, sort_keys=True, indent=2)
-        else:
-            json.dump(repo_data, output)
-
-
 def save_json(git_data, repo_data, outfile):
     """Performs some combinations and saves the final json Object in output file"""
     repo_data = format_output(git_data, repo_data)
-    save_json_output(repo_data, outfile, None)
-
-
-def save_codemeta_output(repo_data, outfile, pretty=False):
-    """Function that saves a JSONLD file with the codemeta results"""
-
-    def data_path(path):
-        return DataGraph.resolve_path(repo_data, path)
-
-    def format_date(date_string):
-        date_object = date_parser.parse(date_string)
-        return date_object.strftime("%Y-%m-%d")
-
-    latest_release = None
-    releases = data_path(["releases", "excerpt"])
-
-    if releases is not None and len(releases) > 0:
-        latest_release = releases[0]
-        latest_pub_date = date_parser.parse(latest_release["datePublished"])
-        for index in range(1, len(releases)):
-            release = releases[index]
-            pub_date = date_parser.parse(release["datePublished"])
-
-            if pub_date > latest_pub_date:
-                latest_release = release
-                latest_pub_date = pub_date
-
-    def release_path(path):
-        return DataGraph.resolve_path(latest_release, path)
-
-    code_repository = None
-    if "codeRepository" in repo_data:
-        code_repository = data_path(["codeRepository", "excerpt"])
-
-    author_name = data_path(["owner", "excerpt"])
-
-    # do the descriptions
-
-    def average_confidence(x):
-        confs = x["confidence"]
-
-        if len(confs) > 0:
-            try:
-                return max(sum(confs) / len(confs))
-            except:
-                return 0
-        else:
-            return 0
-
-    descriptions = data_path(["description"])
-    descriptions_text = []
-    if descriptions is not None:
-        descriptions.sort(key=lambda x: (average_confidence(x) + (1 if x["technique"] == "GitHub API" else 0)),
-                          reverse=True)
-        descriptions_text = [x["excerpt"] for x in descriptions]
-
-    published_date = ""
-    try:
-        published_date = format_date(release_path(["datePublished"]))
-    except:
-        print("Published date is not available")
-
-    codemeta_output = {
-        "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-        "@type": "SoftwareSourceCode"
-    }
-    if "license" in repo_data:
-        codemeta_output["license"] = data_path(["license", "excerpt"])
-    if code_repository is not None:
-        codemeta_output["codeRepository"] = code_repository
-        codemeta_output["issueTracker"] = code_repository + "/issues"
-    if "dateCreated" in repo_data:
-        codemeta_output["dateCreated"] = format_date(data_path(["dateCreated", "excerpt"]))
-    if "dateModified" in repo_data:
-        codemeta_output["dateModified"] = format_date(data_path(["dateModified", "excerpt"]))
-    if "downloadUrl" in repo_data:
-        codemeta_output["downloadUrl"] = data_path(["downloadUrl", "excerpt"])
-    if "name" in repo_data:
-        codemeta_output["name"] = data_path(["name", "excerpt"])
-    if "logo" in repo_data:
-        codemeta_output["logo"] = data_path(["logo", "excerpt"])
-    if "releases" in repo_data:
-        codemeta_output["releaseNotes"] = release_path(["body"])
-        codemeta_output["version"] = release_path(["tag_name"])
-    if "topics" in repo_data:
-        codemeta_output["keywords"] = data_path(["topics", "excerpt"])
-    if "languages" in repo_data:
-        codemeta_output["programmingLanguage"] = data_path(["languages", "excerpt"])
-    if "requirement" in repo_data:
-        codemeta_output["softwareRequirements"] = data_path(["requirement", "excerpt"])
-    if "installation" in repo_data:
-        codemeta_output["buildInstructions"] = data_path(["installation", "excerpt"])
-    if "owner" in repo_data:
-        codemeta_output["author"] = [
-            {
-                "@type": "Person",
-                "@id": "https://github.com/" + author_name
-            }
-        ]
-    if "citation" in repo_data:
-        codemeta_output["citation"] = data_path(["citation", "excerpt"])
-    if "identifier" in repo_data:
-        codemeta_output["identifier"] = data_path(["identifier", "excerpt"])
-    if "issueTracker" in repo_data:
-        codemeta_output["issueTracker"] = data_path(["issueTracker", "excerpt"])
-    if "readme_url" in repo_data:
-        codemeta_output["readme"] = data_path(["readme_url", "excerpt"])
-    if "contributors" in repo_data:
-        codemeta_output["contributor"] = data_path(["contributors", "excerpt"])
-    if descriptions_text:
-        codemeta_output["description"] = descriptions_text
-    if published_date != "":
-        codemeta_output["datePublished"] = published_date
-    pruned_output = {}
-
-    for key, value in codemeta_output.items():
-        if not (value is None or ((isinstance(value, list) or isinstance(value, tuple)) and len(value) == 0)):
-            pruned_output[key] = value
-
-    # now, prune out the variables that are None
-
-    save_json_output(pruned_output, outfile, None, pretty=pretty)
-
-
-def create_missing_fields(repo_data):
-    """Function to create a small report with the categories SOMEF was not able to find.
-    The categories are added to the JSON results. This won't be added if you only export TTL or Codemeta"""
-    missing = []
-    out = {}
-    for c in constants.categories_files_header:
-        if c not in repo_data:
-            missing.append(c)
-    out["missingCategories"] = missing
-    return out
+    json_export.save_json_output(repo_data, outfile, None)
 
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
@@ -825,7 +652,7 @@ def run_cli(*,
                                      doc_src=doc_src, keep_tmp=keep_tmp)
 
     if output is not None:
-        save_json_output(repo_data, output, missing, pretty=pretty)
+        json_export.save_json_output(repo_data, output, missing, pretty=pretty)
 
     if graph_out is not None:
         logging.info("Generating Knowledge Graph")
@@ -841,4 +668,4 @@ def run_cli(*,
             out_file.write(data_graph.g.serialize(format=graph_format, encoding="UTF-8"))
 
     if codemeta_out is not None:
-        save_codemeta_output(repo_data, codemeta_out, pretty=pretty)
+        json_export.save_codemeta_output(repo_data, codemeta_out, pretty=pretty)
