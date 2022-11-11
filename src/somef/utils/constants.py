@@ -27,6 +27,17 @@ REGEXP_IMAGES = r"!\[(.*?)?\]\((.*?)?\)"
 
 
 categories = ['description', 'citation', 'installation', 'invocation']
+
+# Constants for labeling the output JSON
+VALUE = "value"
+TECHNIQUE = "technique"
+CONFIDENCE = "confidence"
+# Different technique types
+SUPERVISED_CLASSIFICATION = "supervised classification"
+HEADER_ANALYSIS = "header analysis"
+REGULAR_EXPRESSION = "regular expression"
+FILE_EXPLORATION = "file exploration"
+
 # keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_url')
 # instead of keep keys, we have this table
 # it says that we want the key "codeRepository", and that we'll get it from the path "html_url" within the result object

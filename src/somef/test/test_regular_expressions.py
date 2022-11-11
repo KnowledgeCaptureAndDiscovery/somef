@@ -8,7 +8,7 @@ test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
 
 
-class TestCli(unittest.TestCase):
+class TestRegExp(unittest.TestCase):
 
     def test_extract_bibtex(self):
         """Test designed to check if bibtext citations are detected"""

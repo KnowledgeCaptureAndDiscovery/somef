@@ -1,143 +1,16 @@
-import argparse
-import pickle
 import sys
 import validators
 import logging
-import pandas as pd
 import os
 import tempfile
 
 from os import path
-from pathlib import Path
-
-from . import header_analysis, regular_expressions, process_repository, configuration, process_files
+from . import header_analysis, regular_expressions, process_repository, configuration, process_files, \
+    supervised_classification
 from .utils import constants, markdown_utils
-from .parser import mardown_parser
-from .rolf import preprocessing
+from .parser import mardown_parser, create_excerpts
 from .export.data_to_graph import DataGraph
 from .export import json_export
-
-
-def restricted_float(x):
-    x = float(x)
-    if x < 0.0 or x > 1.0:
-        raise argparse.ArgumentTypeError(f"{x} not in range [0.0, 1.0]")
-    return x
-
-
-def create_excerpts(string_list):
-    """
-    Function takes readme text as input and divides it into excerpts
-    Parameters
-    ----------
-    string_list: Markdown text passed as input
-    Returns
-    -------
-    Extracted excerpts
-    """
-    print("Splitting text into valid excerpts for classification")
-    string_list = markdown_utils.remove_bibtex(string_list)
-    # divisions = createExcerpts.split_into_excerpts(string_list)
-    divisions = mardown_parser.extract_blocks_excerpts(string_list)
-    print("Text Successfully split. \n")
-    output = {}
-    for division in divisions:
-        original = division
-        division = regular_expressions.remove_links_images(division)
-        if len(division) > 0:
-            output[division] = original
-    return output
-
-
-def run_classifiers(excerpts, file_paths):
-    """
-    Function takes readme text as input and runs the provided classifiers on it
-    Returns the dictionary containing scores for each excerpt.
-    Parameters
-    ----------
-    excerpts: text fragments to process
-    file_paths: pickle files of the classifiers
-
-    Returns
-    -------
-    A score dictionary with the results
-
-    """
-    score_dict = {}
-    if len(excerpts) > 0:
-        text_to_classifier = []
-        text_to_results = []
-        for key in excerpts.keys():
-            text_to_classifier.append(key)
-            text_to_results.append(excerpts[key])
-        for category in constants.categories:
-            if category not in file_paths.keys():
-                sys.exit("Error: Category " + category + " file path not present in config.json")
-            file_name = file_paths[category]
-            if not path.exists(file_name):
-                sys.exit(f"Error: File or Directory {file_name} does not exist")
-            print("Classifying excerpts for the category", category)
-            classifier = pickle.load(open(file_name, 'rb'))
-            scores = classifier.predict_proba(text_to_classifier)
-            score_dict[category] = {'excerpt': text_to_results, 'confidence': scores[:, 1]}
-            print("Excerpt Classification Successful for the Category", category)
-        print("\n")
-
-    return score_dict
-
-
-def run_category_classification(readme_text: str, threshold: float):
-    """
-    Function which returns the categories, confidence and technique of the given repo
-    Parameters
-    ----------
-    readme_text: the pure text of the readme
-    threshold: the threshold for the confidence
-
-    Returns
-    -------
-    Returns the list of the results
-    """
-    df = pd.DataFrame([readme_text], columns=['Text'])
-    preprocessing.Preprocessor(df).run()
-    text = [df['Text'][0]]
-    res = []
-    for model_file in (Path(__file__).parent / 'rolf/models').iterdir():
-        with open(model_file, 'rb') as f:
-            model = pickle.load(f)
-            cat = model.predict(text).tolist()[0]
-            prob = max(model.predict_proba(text).tolist()[0])
-            if cat != 'Other' and prob > threshold:
-                res.append({'confidence': [prob], 'output': [cat], 'technique': 'Supervised classification'})
-    return res
-
-
-def remove_unimportant_excerpts(excerpt_element):
-    """
-    Function which removes all excerpt lines which have been classified but contain only one word.
-    TO DO: It does not seem to filter lines with one word
-    Parameters
-    ----------
-    excerpt_element: excerpt to process
-
-    Returns
-    -------
-    Returns the excerpt to be entered into the predictions
-    """
-    excerpt_info = excerpt_element['excerpt']
-    excerpt_confidence = excerpt_element['confidence']
-    if 'originalHeader' in excerpt_element:
-        final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification',
-                         'originalHeader': ""}
-    else:
-        final_excerpt = {'excerpt': "", 'confidence': [], 'technique': 'Supervised classification'}
-    final_excerpt['excerpt'] += excerpt_info
-    final_excerpt['confidence'] = excerpt_confidence
-    if 'originalHeader' in excerpt_element:
-        final_excerpt['originalHeader'] += excerpt_element['originalHeader']
-    if 'parentHeader' in excerpt_element and excerpt_element['parentHeader'] != "":
-        final_excerpt['parentHeader'] = excerpt_element['parentHeader']
-    return final_excerpt
 
 
 def is_in_excerpts_headers(text, set_excerpts):
@@ -159,79 +32,6 @@ def is_in_excerpts_headers(text, set_excerpts):
             return True, excerpt
 
     return False, None
-
-
-def classify(scores, threshold, excerpts_headers, header_parents):
-    """
-    Function takes scores dictionary and a threshold as input
-    Parameters
-    ----------
-    scores: score dictionary passed as input
-    threshold: threshold to filter predictions (only predictions above threshold are returned)
-    excerpts_headers: headers to which each excerpt belongs (if any)
-    header_parents: parent headers of each excerpt
-
-    Returns
-    -------
-    Predictions containing excerpts with a confidence above the given threshold.
-    """
-    print("Checking Thresholds for Classified Excerpts.")
-    predictions = {}
-    for ele in scores.keys():
-        print("Running for", ele)
-        flag = False
-        predictions[ele] = []
-        excerpt = ""
-        confid = []
-        header = ""
-        for i in range(len(scores[ele]['confidence'])):
-            if scores[ele]['confidence'][i] >= threshold:
-                element = scores[ele]['excerpt'][i]
-                # if excerpt is empty, it means it's the first iteration of the loop
-                if excerpt == "":
-                    if element in set(excerpts_headers['text']):
-                        elem = excerpts_headers.loc[excerpts_headers['text'] == element]
-                        ind = elem.index.values[0]
-                        header = elem.at[ind, 'header']
-                    excerpt = excerpt + scores[ele]['excerpt'][i] + ' \n'
-                    confid.append(scores[ele]['confidence'][i])
-                else:
-                    current_header = ""
-                    if element in set(excerpts_headers['text']):
-                        elem = excerpts_headers.loc[excerpts_headers['text'] == element]
-                        ind = elem.index.values[0]
-                        current_header = elem.at[ind, 'header']
-                    # if both headers are the same, the new data is added
-                    if header == current_header:
-                        excerpt = excerpt + scores[ele]['excerpt'][i] + ' \n'
-                        confid.append(scores[ele]['confidence'][i])
-                    # if they are not the same, a new excerpt is created with the previous data
-                    # and stores the new data as part of a new excerpt
-                    else:
-                        if not header == "":
-                            element = remove_unimportant_excerpts(
-                                {'excerpt': excerpt, 'confidence': confid, 'originalHeader': header,
-                                 'parentHeader': header_parents[header]})
-                        else:
-                            element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid})
-                        if len(element['confidence']) != 0:
-                            predictions[ele].append(element)
-                        header = current_header
-                        excerpt = scores[ele]['excerpt'][i] + ' \n'
-                        confid = [scores[ele]['confidence'][i]]
-        # if an element hasn't been added, it's added at this point
-        if excerpt != "":
-            if not header == "":
-                element = remove_unimportant_excerpts(
-                    {'excerpt': excerpt, 'confidence': confid, 'originalHeader': header,
-                     'parentHeader': header_parents[header]})
-            else:
-                element = remove_unimportant_excerpts({'excerpt': excerpt, 'confidence': confid})
-            if len(element['confidence']) != 0:
-                predictions[ele].append(element)
-        print("Run completed.")
-    print("All excerpts below the given threshold have been removed. \n")
-    return predictions
 
 
 def extract_categories_using_header(repo_data):
@@ -541,15 +341,15 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     unfiltered_text = readme_text
     header_predictions, string_list = extract_categories_using_header(unfiltered_text)
     readme_text = markdown_utils.unmark(readme_text)
-    category = run_category_classification(unfiltered_text, threshold)
-    excerpts = create_excerpts(string_list)
+    category = supervised_classification.run_category_classification(unfiltered_text, threshold)
+    excerpts = create_excerpts.create_excerpts(string_list)
     if ignore_classifiers or unfiltered_text == '':
         predictions = {}
     else:
         excerpts_headers = mardown_parser.extract_text_excerpts_header(unfiltered_text)
         header_parents = mardown_parser.extract_headers_parents(unfiltered_text)
-        score_dict = run_classifiers(excerpts, file_paths)
-        predictions = classify(score_dict, threshold, excerpts_headers, header_parents)
+        score_dict = supervised_classification.run_classifiers(excerpts, file_paths)
+        predictions = supervised_classification.classify(score_dict, threshold, excerpts_headers, header_parents)
     if readme_text != '':
         citations = regular_expressions.extract_bibtex(readme_text)
         citation_file_text = ''
