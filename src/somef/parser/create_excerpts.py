@@ -1,7 +1,11 @@
 from io import StringIO
 
+
 from markdown import Markdown
-from somef.utils.markdown_utils import unmark
+from ..utils import markdown_utils
+from . import mardown_parser
+from .. import regular_expressions
+
 
 
 # code snippet from https://stackoverflow.com/a/54923798
@@ -38,6 +42,30 @@ def split_into_excerpts(string_list):
     divisions = []
     for text in string_list:
         if text:
-            divisions = divisions + unmark(text).splitlines()
+            divisions = divisions + markdown_utils.unmark(text).splitlines()
     divisions = [i for i in divisions if i]
     return divisions
+
+
+def create_excerpts(string_list):
+    """
+    Function takes readme text as input and divides it into excerpts
+    Parameters
+    ----------
+    string_list: Markdown text passed as input
+    Returns
+    -------
+    Extracted excerpts
+    """
+    print("Splitting text into valid excerpts for classification")
+    string_list = markdown_utils.remove_bibtex(string_list)
+    # divisions = createExcerpts.split_into_excerpts(string_list)
+    divisions = mardown_parser.extract_blocks_excerpts(string_list)
+    print("Text Successfully split. \n")
+    output = {}
+    for division in divisions:
+        original = division
+        division = regular_expressions.remove_links_images(division)
+        if len(division) > 0:
+            output[division] = original
+    return output
