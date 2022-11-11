@@ -47,7 +47,7 @@ def extract_categories_using_header(repo_data):
     """
     print("Extracting information using headers")
     # this is a hack because if repo_data is "" this errors out
-    if len(repo_data) == 0:
+    if repo_data is None or len(repo_data) == 0:
         return {}, []
     try:
         header_info, string_list = header_analysis.extract_categories_using_headers(repo_data)
@@ -304,14 +304,16 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
 
             elif keep_tmp is not None:  # save downloaded files locally
                 os.makedirs(keep_tmp, exist_ok=True)
-                local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type, keep_tmp)
+                local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
+                                                                            keep_tmp, repo_url)
                 readme_text, repository_metadata = process_files.process_repository_files(local_folder,
                                                                                           repository_metadata,
                                                                                           repo_type, owner, repo_name,
                                                                                           def_branch)
             else:  # Use a temp directory
                 with tempfile.TemporaryDirectory() as temp_dir:
-                    local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type, temp_dir)
+                    local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
+                                                                                temp_dir, repo_url)
                     readme_text, repository_metadata = process_files.process_repository_files(local_folder,
                                                                                               repository_metadata,
                                                                                               repo_type, owner,
@@ -337,54 +339,57 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         with open(doc_src, 'r', encoding="UTF-8") as doc_fh:
             readme_text = doc_fh.read()
         repository_metadata = {}
+    try:
+        unfiltered_text = readme_text
+        header_predictions, string_list = extract_categories_using_header(unfiltered_text)
+        readme_text = markdown_utils.unmark(readme_text)
+        category = supervised_classification.run_category_classification(unfiltered_text, threshold)
+        excerpts = create_excerpts.create_excerpts(string_list)
+        if ignore_classifiers or unfiltered_text == '':
+            predictions = {}
+        else:
+            excerpts_headers = mardown_parser.extract_text_excerpts_header(unfiltered_text)
+            header_parents = mardown_parser.extract_headers_parents(unfiltered_text)
+            score_dict = supervised_classification.run_classifiers(excerpts, file_paths)
+            predictions = supervised_classification.classify(score_dict, threshold, excerpts_headers, header_parents)
+        if readme_text != '':
+            citations = regular_expressions.extract_bibtex(readme_text)
+            citation_file_text = ''
+            if 'citation' in repository_metadata.keys():
+                citation_file_text = repository_metadata['citation']
+                del repository_metadata['citation']
+            dois = regular_expressions.extract_dois(unfiltered_text)
+            binder_links = regular_expressions.extract_binder_links(unfiltered_text)
+            title = regular_expressions.extract_title(unfiltered_text)
+            readthedocs_links = regular_expressions.extract_readthedocs(unfiltered_text)
+            repo_status = regular_expressions.extract_repo_status(unfiltered_text)
+            arxiv_links = regular_expressions.extract_arxiv_links(unfiltered_text)
+            wiki_links = regular_expressions.extract_wiki_links(unfiltered_text, repo_url)
+            logo, images = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo)
+            support_channels = regular_expressions.extract_support_channels(unfiltered_text)
+            package_distribution = regular_expressions.extract_package_distributions(unfiltered_text)
+        else:
+            citations = []
+            citation_file_text = ""
+            dois = []
+            binder_links = []
+            title = ""
+            readthedocs_links = []
+            repo_status = ""
+            arxiv_links = []
+            wiki_links = []
+            logo = ""
+            images = []
+            support_channels = []
+            package_distribution = ""
 
-    unfiltered_text = readme_text
-    header_predictions, string_list = extract_categories_using_header(unfiltered_text)
-    readme_text = markdown_utils.unmark(readme_text)
-    category = supervised_classification.run_category_classification(unfiltered_text, threshold)
-    excerpts = create_excerpts.create_excerpts(string_list)
-    if ignore_classifiers or unfiltered_text == '':
-        predictions = {}
-    else:
-        excerpts_headers = mardown_parser.extract_text_excerpts_header(unfiltered_text)
-        header_parents = mardown_parser.extract_headers_parents(unfiltered_text)
-        score_dict = supervised_classification.run_classifiers(excerpts, file_paths)
-        predictions = supervised_classification.classify(score_dict, threshold, excerpts_headers, header_parents)
-    if readme_text != '':
-        citations = regular_expressions.extract_bibtex(readme_text)
-        citation_file_text = ''
-        if 'citation' in repository_metadata.keys():
-            citation_file_text = repository_metadata['citation']
-            del repository_metadata['citation']
-        dois = regular_expressions.extract_dois(unfiltered_text)
-        binder_links = regular_expressions.extract_binder_links(unfiltered_text)
-        title = regular_expressions.extract_title(unfiltered_text)
-        readthedocs_links = regular_expressions.extract_readthedocs(unfiltered_text)
-        repo_status = regular_expressions.extract_repo_status(unfiltered_text)
-        arxiv_links = regular_expressions.extract_arxiv_links(unfiltered_text)
-        wiki_links = regular_expressions.extract_wiki_links(unfiltered_text, repo_url)
-        logo, images = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo)
-        support_channels = regular_expressions.extract_support_channels(unfiltered_text)
-        package_distribution = regular_expressions.extract_package_distributions(unfiltered_text)
-    else:
-        citations = []
-        citation_file_text = ""
-        dois = []
-        binder_links = []
-        title = ""
-        readthedocs_links = []
-        repo_status = ""
-        arxiv_links = []
-        wiki_links = []
-        logo = ""
-        images = []
-        support_channels = []
-        package_distribution = ""
-
-    predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title,
-                        readthedocs_links, repo_status, arxiv_links, logo, images, support_channels,
-                        package_distribution, wiki_links, category)
-    return format_output(repository_metadata, predictions, repo_type)
+        predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title,
+                            readthedocs_links, repo_status, arxiv_links, logo, images, support_channels,
+                            package_distribution, wiki_links, category)
+        return format_output(repository_metadata, predictions, repo_type)
+    except Exception:
+        logging.error("Error processing repository")
+        return None
 
 
 def run_cli_document(doc_src, threshold, output):

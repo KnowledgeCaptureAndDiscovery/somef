@@ -227,11 +227,12 @@ def load_gitlab_repository_metadata(repository_url):
     return filtered_resp, owner, repo_name, default_branch
 
 
-def download_gitlab_files(directory, owner, repo_name, repo_ref):
+def download_gitlab_files(directory, owner, repo_name, repo_branch, repo_ref):
     """
     Download all repository files from a GitHub repository
     Parameters
     ----------
+    @param repo_branch: Branch of the repo we are analysing
     @param repo_ref: link to the repo
     @param repo_name: name of the repo
     @param owner: owner of the GitLab repo
@@ -242,14 +243,10 @@ def download_gitlab_files(directory, owner, repo_name, repo_ref):
     @return: path of the folder where the files have been downloaded
     """
     url = urlparse(repo_ref)
-    if url.netloc != 'gitlab.com':
-        logging.error("Repository must come from Gitlab")
-        return None
-
     path_components = url.path.split('/')
-    repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_ref}/{repo_name}-{repo_ref}.zip"
+    repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_branch}/{repo_name}-{repo_branch}.zip"
     if len(path_components) == 4:
-        repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_ref}/{path_components[3]}.zip"
+        repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_branch}/{path_components[3]}.zip"
     print(f"Downloading {repo_archive_url}")
     repo_download = requests.get(repo_archive_url)
     repo_zip = repo_download.content
@@ -496,7 +493,7 @@ def load_online_repository_metadata(repository_url, ignore_api_metadata=False,
     return filtered_resp, owner, repo_name, default_branch
 
 
-def download_repository_files(owner, repo_name, default_branch, repo_type, target_dir):
+def download_repository_files(owner, repo_name, default_branch, repo_type, target_dir, repo_ref=None):
     """
     Given a repository, this method will download its files and return the readme text
     Parameters
@@ -506,6 +503,7 @@ def download_repository_files(owner, repo_name, default_branch, repo_type, targe
     @param repo_name: name of the repo
     @param owner: owner of the repo
     @param target_dir: directory where to download files
+    @param repo_ref: URL of the target repository (needed in some specific repos)
 
     Returns
     -------
@@ -516,7 +514,7 @@ def download_repository_files(owner, repo_name, default_branch, repo_type, targe
     if repo_type == constants.RepositoryType.GITHUB:
         return download_github_files(target_dir, owner, repo_name, default_branch)
     elif repo_type == constants.RepositoryType.GITLAB:
-        return download_gitlab_files(target_dir, owner, repo_name, default_branch)
+        return download_gitlab_files(target_dir, owner, repo_name, default_branch, repo_ref)
     else:
         logging.error("Cannot download files from a local repository!")
         return None
