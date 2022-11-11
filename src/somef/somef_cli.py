@@ -13,13 +13,6 @@ from .export.data_to_graph import DataGraph
 from .export import json_export
 
 
-# def restricted_float(x):
-#     x = float(x)
-#     if x < 0.0 or x > 1.0:
-#         raise argparse.ArgumentTypeError(f"{x} not in range [0.0, 1.0]")
-#     return x
-
-
 def is_in_excerpts_headers(text, set_excerpts):
     """
     Function that checks if some text is included in a set of excerpts
