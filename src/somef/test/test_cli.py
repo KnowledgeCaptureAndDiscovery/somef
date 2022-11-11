@@ -562,6 +562,21 @@ class TestCli(unittest.TestCase):
         assert description is not None
         os.remove(test_data_path + "test-314-3.json")
 
+    def test_gitlab(self):
+        """Checks if SOMEF works against Gitlab. Full analysis"""
+        somef_cli.run_cli(threshold=0.8,
+                          repo_url="https://gitlab.com/jleblay/tokei",
+                          output=test_data_path + "test-314-2.json",
+                          pretty=True,
+                          readme_only=False)
+        text_file = open(test_data_path + "test-314-2.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        description = json_content['description']
+        assert description is not None
+        os.remove(test_data_path + "test-314-2.json")
+
     def test_issue_403(self):
         """Checks that the readme returned by somef is correct"""
         somef_cli.run_cli(threshold=0.8,
