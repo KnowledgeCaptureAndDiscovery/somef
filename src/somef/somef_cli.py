@@ -288,7 +288,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     file_paths = configuration.get_configuration_file()
     repo_type = constants.RepositoryType.GITHUB
     # TO DO Create a new result (when everything works)
-    # result = ProcessedResult()
+    # repository_metadata = Result()
     if repo_url is not None:
         try:
             if repo_url.rfind("gitlab.com") > 0:

@@ -23,24 +23,120 @@ REGEXP_BIBTEX = r'\@[a-zA-Z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title
 REGEXP_DOI = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
 REGEXP_LINKS = r"\[(.*?)?\]\(([^)]+)\)"
 REGEXP_IMAGES = r"!\[(.*?)?\]\((.*?)?\)"
-                #r"!\[[^\]]*\]\((.*?)?\)"
+               #r"!\[[^\]]*\]\((.*?)?\)"
 
 
-categories = ['description', 'citation', 'installation', 'invocation']
+# Categories recognized by SOMEF (they all start by CAT_
+CAT_APPLICATION_DOMAIN = "application_domain"
+CAT_CONTRIBUTORS = "contributors"
+CAT_CITATION = "citation"
+CAT_COC = "code_of_conduct"
+CAT_CODE_REPOSITORY = "code_repository"
+CAT_CONTACT = "contact"
+CAT_DESCRIPTION = "description"
+CAT_DOCUMENTATION = "documentation"
+CAT_DOWNLOAD_URL = "download_url"
+CAT_EXECUTABLE_EXAMPLE = "executable_example"
+CAT_FAQ = "faq"
+CAT_FORK_COUNTS = "forks_count"
+CAT_FORKS_URLS = "forks_url"
+CAT_FULL_NAME = "full_name"
+CAT_FULL_TITLE = "full_title"
+CAT_HAS_BUILD_FILE = "has_build_file"
+CAT_HAS_EXECUTABLE_NOTEBOOK = "has_executable_notebook"
+CAT_HAS_SCRIPT_FILE = "has_script_file"
+CAT_IDENTIFIER = "identifier"
+CAT_IMAGE = "image"
+CAT_INSTALLATION = "installation"
+CAT_INVOCATION = "invocation"
+CAT_ISSUE_TRACKER = "issue_tracker"
+CAT_KEYWORDS = "keywords"
+CAT_LICENSE = "license"
+CAT_LOGO = "logo"
+CAT_NAME = "name"
+CAT_ONTOLOGIES = "ontologies"
+CAT_OWNER = "owner"
+CAT_PROGRAMMING_LANGUAGES = "programming_languages"
+CAT_RELEASES = "releases"
+CAT_STATUS = "repository_status"
+CAT_REQUIREMENTS = "requirements"
+CAT_STARS = "stargazers_count"
+CAT_SUPPORT = "support"
+CAT_SUPPORT_CHANNELS = "support_channels"
+CAT_USAGE = "usage"
 
-# Constants for labeling the output JSON
-VALUE = "value"
-TECHNIQUE = "technique"
-CONFIDENCE = "confidence"
-# Different technique types
-SUPERVISED_CLASSIFICATION = "supervised classification"
-HEADER_ANALYSIS = "header analysis"
-REGULAR_EXPRESSION = "regular expression"
-FILE_EXPLORATION = "file exploration"
+# list of those categories to be analyzed with supervised classification.
+supervised_categories = [CAT_DESCRIPTION, CAT_CITATION, CAT_INSTALLATION, CAT_INVOCATION]
 
-# keep_keys = ('description', 'name', 'owner', 'license', 'languages_url', 'forks_url')
-# instead of keep keys, we have this table
-# it says that we want the key "codeRepository", and that we'll get it from the path "html_url" within the result object
+
+# All properties used by SOMEF to label the output JSON
+# Provenance:
+PROP_PROVENANCE = "somef_provenance"
+PROP_SOMEF_VERSION = "somef_version"
+PROP_SOMEF_SCHEMA_VERSION = "somef_schema_version"
+PROP_DATE = "date"
+# for Category:
+PROP_CONFIDENCE = "confidence"
+PROP_RESULT = "result"
+PROP_SOURCE = "source"
+PROP_TECHNIQUE = "technique"
+#for Result:
+PROP_FORMAT = "format"
+PROP_TYPE = "type"
+PROP_VALUE = "value"
+# For Result types
+PROP_AUTHOR = "author"
+PROP_DOI = "doi"
+PROP_DESCRIPTION = "description"
+PROP_DATE_CREATED = "date_created"
+PROP_DATE_PUBLISHED = "date_published"
+PROP_HTML_URL = "html_url"
+PROP_NAME = "name"
+PROP_ORIGINAL_HEADER = "original_header"
+PROP_PARENT_HEADER = "parent_header"
+PROP_TAG = "tag"
+PROP_URL = "url"
+PROP_ZIPBALL_URL= "zipball_url"
+PROP_TARBALL_URL = "tarball_url"
+
+# Format:
+FORMAT_BIB = "bibtex"
+FORMAT_CFF = "cff"
+FORMAT_JUPYTER_NB = "jupyter_notebook"
+FORMAT_DOCKERFILE = "dockerfile"
+FORMAT_DOCKER_COMPOSE = "docker_compose"
+FORMAT_READTHEDOCS = "readthedocs"
+FORMAT_WIKI = "wiki"
+
+# Result types: data types
+STRING = "String"
+URL = "Url"
+DATE = "Date"
+INTEGER = "Integer"
+TEXT_EXCERPT = "Text_excerpt"
+
+# Result types: entities (complex objects)
+AGENT = "Agent"
+RELEASE = "Release"
+LICENSE = "License"
+PUBLICATION = "Publication"
+
+# Different techniques
+TECHNIQUE_SUPERVISED_CLASSIFICATION = "supervised_classification"
+TECHNIQUE_HEADER_ANALYSIS = "header_analysis"
+TECHNIQUE_REGULAR_EXPRESSION = "regular_expression"
+TECHNIQUE_FILE_EXPLORATION = "file_exploration"
+TECHNIQUE_CODE_CONFIG_PARSER = "code_parser"
+TECHNIQUE_GITHUB_API = "GitHub_API"
+TECHNIQUE_GITLAB_API = "GitLab_API"
+
+# GitHub metadata fields.
+
+# GitLab metadata fields
+
+
+### old Constants below
+
 
 github_crosswalk_table = {
     "codeRepository": "html_url",

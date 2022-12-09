@@ -156,7 +156,7 @@ def run_classifiers(excerpts, file_paths):
         for key in excerpts.keys():
             text_to_classifier.append(key)
             text_to_results.append(excerpts[key])
-        for category in constants.categories:
+        for category in constants.supervised_categories:
             if category not in file_paths.keys():
                 sys.exit("Error: Category " + category + " file path not present in config.json")
             file_name = file_paths[category]

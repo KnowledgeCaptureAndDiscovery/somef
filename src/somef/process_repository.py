@@ -261,10 +261,12 @@ def download_gitlab_files(directory, owner, repo_name, repo_branch, repo_ref):
         zip_ref.extractall(repo_extract_dir)
 
     repo_folders = os.listdir(repo_extract_dir)
-    assert (len(repo_folders) == 1)
-
-    repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
-    return repo_dir
+    if len(repo_folders) == 1:
+        repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
+        return repo_dir
+    else:
+        logging.error("Error when processing GitLab repository")
+        return None
 
 
 def download_readme(owner, repo_name, default_branch, repo_type):
@@ -330,8 +332,8 @@ def load_online_repository_metadata(repository_url, ignore_api_metadata=False,
     # Read from the config file the right token information
     header = {}
     file_paths = configuration.get_configuration_file()
-    if 'Authorization' in file_paths.keys():
-        header['Authorization'] = file_paths['Authorization']
+    if constants.CONF_AUTHORIZATION in file_paths.keys():
+        header[constants.CONF_AUTHORIZATION] = file_paths[constants.CONF_AUTHORIZATION]
     header['accept'] = 'application/vnd.github.v3+json'
 
     # load general response of the repository
