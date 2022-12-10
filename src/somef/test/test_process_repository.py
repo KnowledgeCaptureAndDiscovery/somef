@@ -5,6 +5,7 @@ from pathlib import Path
 
 from .. import process_repository, process_files, somef_cli
 from ..utils import constants
+from ..process_results import Result
 
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
 
@@ -13,50 +14,56 @@ class TestProcessRepository(unittest.TestCase):
 
     def test_issue_171(self):
         """Test designed to check if contributors are detected"""
-        text, github_data = process_files.process_repository_files(test_data_repositories + "rdflib-6.0.2", {},
+        res = Result()
+        text, res = process_files.process_repository_files(test_data_repositories + "rdflib-6.0.2", res,
                                                                    constants.RepositoryType.LOCAL)
-        assert len(github_data['contributors']) > 0
+        assert len(res.results[constants.CAT_CONTRIBUTORS]) > 0
 
     def test_issue_209(self):
         """Test designed to check if sh scripts are detected"""
-        text, github_data = process_files.process_repository_files(test_data_repositories + "rdflib-6.0.2", {},
+        github_data = Result()
+        text, github_data = process_files.process_repository_files(test_data_repositories + "rdflib-6.0.2", github_data,
                                                                    constants.RepositoryType.LOCAL)
-        assert len(github_data['hasScriptFile']) > 0
+        assert len(github_data.results[constants.CAT_HAS_SCRIPT_FILE]) > 0
 
     def test_issue_211(self):
         """Test designed to check if contributor guidelines are detected"""
-        text, github_data = process_files.process_repository_files(test_data_repositories + "probot-12.1.1", {},
+        github_data = Result()
+        text, github_data = process_files.process_repository_files(test_data_repositories + "probot-12.1.1", github_data,
                                                                    constants.RepositoryType.LOCAL)
-        assert len(github_data['contributingGuidelines']) > 0 and (
-                'license' in github_data.keys() or 'licenseText' in github_data.keys())
+        assert len(github_data.results[constants.CAT_CONTRIBUTING_GUIDELINES]) > 0 and (
+                'license' in github_data.results.keys())
 
     def test_issue_218(self):
         """Test designed to check if citation files (.cff) are detected"""
-        text, github_data = process_files.process_repository_files(test_data_repositories + "captum", {},
+        github_data = Result()
+        text, github_data = process_files.process_repository_files(test_data_repositories + "captum", github_data,
                                                                    constants.RepositoryType.LOCAL)
-        assert len(github_data['citation']) > 0
+        assert len(github_data.results['citation']) > 0
 
     def test_issue_285(self):
         """Test designed to test repositories with no license (somef should not break)"""
-
+        github_data = Result()
         text, github_data = process_files.process_repository_files(test_data_repositories +
-                                                                   "repos-oeg/cogito-kgg-module", {},
+                                                                   "repos-oeg/cogito-kgg-module", github_data,
                                                                    constants.RepositoryType.LOCAL)
-        assert 'license' not in github_data
+        assert 'license' not in github_data.results
 
     def test_issue_361(self):
         """Test designed to check if multiple readme combinations are detected"""
+        github_data = Result()
         text, github_data = process_files.process_repository_files(test_data_repositories +
-                                                                   "rdflib-6.0.2", {},
+                                                                   "rdflib-6.0.2", github_data,
                                                                    constants.RepositoryType.LOCAL)
         assert len(text) > 0
 
     def test_issue_389(self):
         """Test designed to check if Dockerfiles are detected"""
+        github_data = Result()
         text, github_data = process_files.process_repository_files(test_data_repositories +
-                                                                   "wot-hive", {},
+                                                                   "wot-hive", github_data,
                                                                    constants.RepositoryType.LOCAL)
-        assert len(github_data['hasBuildFile']) > 0
+        assert len(github_data.results[constants.CAT_HAS_BUILD_FILE]) > 0
 
     def test_issue_no_readme(self):
         """Test designed to check if repositories with no readme are detected"""
@@ -66,10 +73,11 @@ class TestProcessRepository(unittest.TestCase):
 
     def test_issue_268(self):
         """Test designed to check if license is properly captured"""
+        res = Result()
         text, github_data = process_files.process_repository_files(test_data_repositories +
-                                                                   "probot-12.1.1", {},
+                                                                   "probot-12.1.1", res,
                                                                    constants.RepositoryType.LOCAL)
-        assert len(github_data['licenseText']) > 0
+        assert len(github_data.results[constants.CAT_LICENSE]) > 0
 
     # Commenting this issue: this repo does no longer have an ACK file
     # def test_issue_210(self):
@@ -96,12 +104,13 @@ class TestProcessRepository(unittest.TestCase):
             "https://gitlab.com/gitlab-org/ci-sample-projects/platform-team")
         assert len(gitlab_data['downloadUrl']) > 0
 
-    def test_issue_285(self):
+    def test_issue_285_2(self):
         """Test designed to check if the tool is robust against repositories with empty license """
+        github_data = Result()
         readme_text, github_data = process_files.process_repository_files(test_data_repositories + "RDFChess",
-                                                                                  {},
+                                                                                  github_data,
                                                                                   constants.RepositoryType.LOCAL)
-        assert 'license' not in github_data
+        assert 'license' not in github_data.results
 
     def test_no_repository_metadata(self):
         """Test designed to assess repositories with no releases"""
@@ -127,7 +136,8 @@ class TestProcessRepository(unittest.TestCase):
         """
         Test designed to assess if readme.rst files are processed properly
         """
-        text, github_data = process_files.process_repository_files(test_data_repositories + "mir_eval", {},
+        github_data = Result()
+        text, github_data = process_files.process_repository_files(test_data_repositories + "mir_eval", github_data,
                                                                    constants.RepositoryType.LOCAL)
         assert len(text) > 0
 
@@ -135,7 +145,8 @@ class TestProcessRepository(unittest.TestCase):
         """
         Test designed to assess if readme.txt files are processed properly
         """
-        text, github_data = process_files.process_repository_files(test_data_repositories + "resolver_deco", {},
+        github_data = Result()
+        text, github_data = process_files.process_repository_files(test_data_repositories + "resolver_deco", github_data,
                                                                    constants.RepositoryType.LOCAL)
         assert len(text) > 0
 
@@ -143,6 +154,7 @@ class TestProcessRepository(unittest.TestCase):
         """
         Test designed to assess if a readme with non utf-8 encoding can be processed successfully
         """
-        text, github_data = process_files.process_repository_files(test_data_repositories + "corpuser", {},
+        github_data = Result()
+        text, github_data = process_files.process_repository_files(test_data_repositories + "corpuser", github_data,
                                                                    constants.RepositoryType.LOCAL)
         assert len(text) > 0

@@ -326,7 +326,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             return None
     elif local_repo is not None:
         try:
-            readme_text, full_repository_metadata = process_files.process_repository_files(local_repo, {}, repo_type)
+            readme_text, full_repository_metadata = process_files.process_repository_files(local_repo, full_repository_metadata, repo_type)
             if readme_text == "":
                 logging.warning("Warning: README document does not exist in the local repository")
         except process_repository.GithubUrlError:
