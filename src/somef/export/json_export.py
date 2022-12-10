@@ -4,13 +4,24 @@ from ..utils import constants
 from .data_to_graph import DataGraph
 
 
-def save_json_output(repo_data, outfile, missing, pretty=False):
-    """Function that saves the final json Object in the output file"""
-    print("Saving json data to", outfile)
+def save_json_output(repo_data, out_path, missing, pretty=False):
+    """
+    Function that saves the final json Object in the output file
+    Parameters
+    ----------
+    @param repo_data: repository metadata to be saved
+    @param out_path: output path where to save the JSON
+    @param missing: print the categories SOMEF was not able to find
+    @param pretty: format option to print the JSON in a human-readable way
+
+    Returns
+    -------
+    Does not return a value
+    """
+    print("Saving json data to", out_path)
     if missing:
-        missing = create_missing_fields(repo_data)
-        repo_data["missingCategories"] = missing["missingCategories"]
-    with open(outfile, 'w') as output:
+        repo_data[constants.CAT_MISSING] = create_missing_fields(repo_data)
+    with open(out_path, 'w') as output:
         if pretty:
             json.dump(repo_data, output, sort_keys=True, indent=2)
         else:
@@ -140,11 +151,9 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
 def create_missing_fields(repo_data):
     """Function to create a small report with the categories SOMEF was not able to find.
-    The categories are added to the JSON results. This won't be added if you only export TTL or Codemeta"""
+    The categories are added to the JSON results. This won't be added if you export TTL or Codemeta"""
     missing = []
-    out = {}
     for c in constants.categories_files_header:
         if c not in repo_data:
             missing.append(c)
-    out["missingCategories"] = missing
-    return out
+    return missing

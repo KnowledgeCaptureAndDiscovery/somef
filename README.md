@@ -240,10 +240,10 @@ Options:
                                   is easy to compare to another JSON output
                                   file.
 
-  -m, --missing                   JSON report with the missing metadata fields
-                                  SOMEF was not able to find. The report will
-                                  be placed in  $PATH_missing.json, where
-                                  $PATH is -o, -c or -g.
+  -m, --missing                   The JSON will include a field missing_categories 
+                                  to report with the missing metadata fields 
+                                  SOMEF was not able to find
+
   -kt, --keep_tmp PATH            SOMEF will NOT delete the temporary folder
                                   where files are stored for analysis. Files
                                   will be stored at the

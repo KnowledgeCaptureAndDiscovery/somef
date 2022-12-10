@@ -65,6 +65,9 @@ CAT_SUPPORT = "support"
 CAT_SUPPORT_CHANNELS = "support_channels"
 CAT_USAGE = "usage"
 
+#Special category: missing categories
+CAT_MISSING = "missing_categories"
+
 # list of those categories to be analyzed with supervised classification.
 supervised_categories = [CAT_DESCRIPTION, CAT_CITATION, CAT_INSTALLATION, CAT_INVOCATION]
 

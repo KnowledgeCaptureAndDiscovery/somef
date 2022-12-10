@@ -25,6 +25,7 @@ class Result:
 
     def add_result(self, category, result, confidence, technique, source=""):
         """
+        Method designed to add a result for a category (i.e., a new description is found)
         Parameters
         ----------
         @param category: one of the fields SOMEF recognizes (see Constants.CAT)

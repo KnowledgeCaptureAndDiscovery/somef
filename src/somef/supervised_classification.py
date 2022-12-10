@@ -120,12 +120,14 @@ def remove_unimportant_excerpts(excerpt_element):
     Returns the excerpt to be entered into the predictions
     """
     excerpt_info = excerpt_element['excerpt']
-    excerpt_confidence = excerpt_element[constants.CONFIDENCE]
+    excerpt_confidence = excerpt_element[constants.PROP_CONFIDENCE]
     if 'originalHeader' in excerpt_element:
-        final_excerpt = {'excerpt': "", 'confidence': [], constants.TECHNIQUE: constants.SUPERVISED_CLASSIFICATION,
+        final_excerpt = {'excerpt': "", 'confidence': [],
+                         constants.PROP_TECHNIQUE: constants.TECHNIQUE_SUPERVISED_CLASSIFICATION,
                          'originalHeader': ""}
     else:
-        final_excerpt = {'excerpt': "", 'confidence': [], constants.TECHNIQUE: constants.SUPERVISED_CLASSIFICATION}
+        final_excerpt = {'excerpt': "", 'confidence': [],
+                         constants.PROP_TECHNIQUE: constants.TECHNIQUE_SUPERVISED_CLASSIFICATION}
     final_excerpt['excerpt'] += excerpt_info
     final_excerpt['confidence'] = excerpt_confidence
     if 'originalHeader' in excerpt_element:
