@@ -39,7 +39,6 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Issue tracker**: Link where to open issues for the target repository
 - **Programming languages**: Languages used in the repository
 - **Repository Status**: Repository status as it is described in [repostatus.org](https://www.repostatus.org/)
-- **Arxiv Links**: Links to Arxiv articles
 - **Stargazers count**: Total number of stargazers of the project
 - **Forks count**: Number of forks of the project
 - **Forks url**: Links to forks made of the project

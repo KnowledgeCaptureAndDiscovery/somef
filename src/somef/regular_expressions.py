@@ -446,7 +446,7 @@ def extract_dois(readme_text) -> object:
 def extract_binder_links(readme_text) -> object:
     """
     Function that does a regex to extract binder links used as reference in the readme.
-    There could be multiple binder links for one reprository
+    There could be multiple binder links for one repository
     Parameters
     ----------
     readme_text
@@ -455,7 +455,8 @@ def extract_binder_links(readme_text) -> object:
     -------
     Links with binder notebooks/scripts that are ready to be executed.
     """
-    binder_links = re.findall(constants.REGEXP_BINDER, readme_text)
+    links = re.findall(constants.REGEXP_BINDER, readme_text, re.IGNORECASE)
+    binder_links = [result[1] for result in links]
     print("Extraction of Binder links from readme completed.\n")
     # extract binder links and remove duplicates
     binder_links += extract_colab_links(readme_text)

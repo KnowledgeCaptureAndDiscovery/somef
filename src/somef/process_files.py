@@ -362,7 +362,7 @@ def process_repository_files(repo_dir, metadata_result:Result, repo_type, owner=
         return text, metadata_result
     except TypeError:
         logging.error("Error when opening the repository files")
-        return None, None, None
+        return None, None
 
 
 def get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir, repo_relative_path,

@@ -29,6 +29,7 @@ class TestRegExp(unittest.TestCase):
         with open(test_data_path + "test_extract_binder_links.txt", "r") as data_file:
             test_text = data_file.read()
             c = regular_expressions.extract_binder_links(test_text)
+            print(c)
             assert len(c) == 2
 
     def test_extract_title_underline(self):

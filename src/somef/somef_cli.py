@@ -388,7 +388,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                             package_distribution, wiki_links, category)
         return format_output(repository_metadata, predictions, repo_type)
     except Exception as e:
-        logging.error("Error processing repository" + e)
+        logging.error("Error processing repository" + str(e))
         return None
 
 

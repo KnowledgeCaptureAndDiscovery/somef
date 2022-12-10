@@ -52,7 +52,6 @@ def classify(scores, threshold, excerpts_headers, header_parents):
     predictions = {}
     for ele in scores.keys():
         print("Running for", ele)
-        flag = False
         predictions[ele] = []
         excerpt = ""
         confid = []
