@@ -42,7 +42,7 @@ class Result:
                       constants.PROP_CONFIDENCE: confidence,
                       constants.PROP_TECHNIQUE: technique}
 
-            if source is not "":
+            if source != "":
                 result[constants.PROP_SOURCE] = source
 
             if category in self.results.keys():
@@ -57,4 +57,7 @@ class Result:
         # TO DO: for each category where we may reduce/ improve the results, do so.
         # For example, here is where we would detect if there are redundant citation files, and we would create a single
         # publication object.
+
+        # if multiple licenses are found, keep only the outmost one.
+
         return self.results

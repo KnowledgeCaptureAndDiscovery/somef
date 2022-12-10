@@ -6,7 +6,7 @@ import tempfile
 
 from os import path
 from . import header_analysis, regular_expressions, process_repository, configuration, process_files, \
-    supervised_classification
+    supervised_classification, process_results
 from .utils import constants, markdown_utils
 from .parser import mardown_parser, create_excerpts
 from .export.data_to_graph import DataGraph
@@ -59,7 +59,7 @@ def extract_categories_using_header(repo_data):
 
 
 def merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, long_title,
-          readthedocs_links, repo_status, arxiv_links, logo, images, support_channels, package_distribution,
+          readthedocs_links, repo_status, logo, images, support_channels, package_distribution,
           wiki_links, category):
     """
     Function that takes the predictions using header information, classifier and bibtex/doi parser
@@ -71,7 +71,6 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
     support_channels: like gitter, discord, etc.
     images: included in the readme
     logo: included in the readme
-    arxiv_links: links to arxiv papers
     repo_status: repostatus.org badges
     readthedocs_links: documentation links
     long_title: title of the repository
@@ -133,9 +132,10 @@ def merge(header_predictions, predictions, citations, citation_file_text, dois, 
             'confidence': [1.0],
             'technique': 'Regular expression'}
 
-    if len(arxiv_links) != 0:
-        predictions['arxivLinks'] = {'excerpt': arxiv_links, 'confidence': [1.0],
-                                     'technique': 'Regular expression'}
+    # Commenting this out because arxiv links without context are not useful.
+    # if len(arxiv_links) != 0:
+    #     predictions['arxivLinks'] = {'excerpt': arxiv_links, 'confidence': [1.0],
+    #                                  'technique': 'Regular expression'}
 
     if len(logo) != 0:
         predictions['logo'] = {'excerpt': logo, 'confidence': [1.0],
@@ -288,7 +288,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     file_paths = configuration.get_configuration_file()
     repo_type = constants.RepositoryType.GITHUB
     # TO DO Create a new result (when everything works)
-    # repository_metadata = Result()
+    full_repository_metadata = process_results.Result() #change name at the end
     if repo_url is not None:
         try:
             if repo_url.rfind("gitlab.com") > 0:
@@ -306,16 +306,16 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 os.makedirs(keep_tmp, exist_ok=True)
                 local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
                                                                             keep_tmp, repo_url)
-                readme_text, repository_metadata = process_files.process_repository_files(local_folder,
-                                                                                          repository_metadata,
+                readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
+                                                                                          full_repository_metadata,
                                                                                           repo_type, owner, repo_name,
                                                                                           def_branch)
             else:  # Use a temp directory
                 with tempfile.TemporaryDirectory() as temp_dir:
                     local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
                                                                                 temp_dir, repo_url)
-                    readme_text, repository_metadata = process_files.process_repository_files(local_folder,
-                                                                                              repository_metadata,
+                    readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
+                                                                                              full_repository_metadata,
                                                                                               repo_type, owner,
                                                                                               repo_name,
                                                                                               def_branch)
@@ -326,7 +326,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             return None
     elif local_repo is not None:
         try:
-            readme_text, repository_metadata = process_files.process_repository_files(local_repo, {}, repo_type)
+            readme_text, full_repository_metadata = process_files.process_repository_files(local_repo, {}, repo_type)
             if readme_text == "":
                 logging.warning("Warning: README document does not exist in the local repository")
         except process_repository.GithubUrlError:
@@ -363,7 +363,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             title = regular_expressions.extract_title(unfiltered_text)
             readthedocs_links = regular_expressions.extract_readthedocs(unfiltered_text)
             repo_status = regular_expressions.extract_repo_status(unfiltered_text)
-            arxiv_links = regular_expressions.extract_arxiv_links(unfiltered_text)
+            # arxiv_links = regular_expressions.extract_arxiv_links(unfiltered_text)
             wiki_links = regular_expressions.extract_wiki_links(unfiltered_text, repo_url)
             logo, images = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo)
             support_channels = regular_expressions.extract_support_channels(unfiltered_text)
@@ -376,7 +376,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             title = ""
             readthedocs_links = []
             repo_status = ""
-            arxiv_links = []
+           # arxiv_links = []
             wiki_links = []
             logo = ""
             images = []
@@ -384,7 +384,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             package_distribution = ""
 
         predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title,
-                            readthedocs_links, repo_status, arxiv_links, logo, images, support_channels,
+                            readthedocs_links, repo_status, logo, images, support_channels,
                             package_distribution, wiki_links, category)
         return format_output(repository_metadata, predictions, repo_type)
     except Exception as e:

@@ -81,12 +81,12 @@ group.update({"support": support})
 
 def extract_bash_code(text):
     """Function to detect code blocks"""
-    splitted = text.split("```")
+    split = text.split("```")
     output = []
-    if (len(splitted) >= 3):
-        for index, value in enumerate(splitted):
+    if len(split) >= 3:
+        for index, value in enumerate(split):
             if index % 2 == 1:
-                output.append(splitted[index])
+                output.append(split[index])
     return output
 
 
@@ -223,10 +223,6 @@ def extract_categories_using_headers(text):
     for key in group_json.keys():
         for ind in range(len(group_json[key])):
             del group_json[key][ind]['Group']
-
-    # for key in group_json.keys():
-    #     for ind in range(len(group_json[key])):
-    #         print(group_json[key][ind]['excerpt'])
 
     print('Converting to json files.')
 

@@ -29,8 +29,8 @@ def run_category_classification(readme_text: str, threshold: float):
             cat = model.predict(text).tolist()[0]
             prob = max(model.predict_proba(text).tolist()[0])
             if cat != 'Other' and prob > threshold:
-                res.append({constants.CONFIDENCE: [prob], constants.VALUE: [cat],
-                            constants.TECHNIQUE: constants.SUPERVISED_CLASSIFICATION})
+                res.append({constants.PROP_CONFIDENCE: [prob], constants.PROP_VALUE: [cat],
+                            constants.PROP_TECHNIQUE: constants.TECHNIQUE_SUPERVISED_CLASSIFICATION})
     return res
 
 

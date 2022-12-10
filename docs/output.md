@@ -67,6 +67,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `application_domain`: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects)
 - `acknowledgement`: Any text that the authors have prepared to acknnowledge the contribution from others, or project funding.
 - `contributors`: Contributors to a software component
+- `contributing guidelines`: Guidelines indicating how to contribute to a software component.
 - `citation`: Software citation (usually in `.bib` form) as the authors have stated in their readme file, or through a `CFF` file.
 - `code_of_conduct`: Link to the code of conduct file of the project
 - `code_repository`: Link to the source code (typically the repository where the readme can be found)
@@ -94,14 +95,15 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `name`: Name identifying a software component
 - `ontologies`: URL and path to the ontology files present in the repository.
 - `owner`: Name of the user or organization in charge of the repository
-- `programming_languages`: Languages used in the repository
-- `releases`: Pointer to the available versions of a software component
-- `repository_status`: Repository status as it is described in [repostatus.org](https://www.repostatus.org/)
+- `programming_languages`: Languages used in the repository.
+- `readme_url`: URL to the main README file in the repository.
+- `releases`: Pointer to the available versions of a software component.
+- `repository_status`: Repository status as it is described in [repostatus.org](https://www.repostatus.org/).
 - `requirements`: Pre-requisites and dependencies needed to execute a software component.
-- `stargazers_count`: Total number of stargazers of the project
-- `support`: Guidelines and links of where to obtain support for a software component
+- `stargazers_count`: Total number of stargazers of the project.
+- `support`: Guidelines and links of where to obtain support for a software component.
 - `support_channels`: Help channels one can use to get support about the target software component.
-- `usage`: Usage examples and considerations of a code repository
+- `usage`: Usage examples and considerations of a code repository.
 
 The following table summarized the properties used to describe a `category`:
 

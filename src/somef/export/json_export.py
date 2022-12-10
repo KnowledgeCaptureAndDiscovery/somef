@@ -16,7 +16,7 @@ def save_json_output(repo_data, out_path, missing, pretty=False):
 
     Returns
     -------
-    Does not return a value
+    @return: Does not return a value
     """
     print("Saving json data to", out_path)
     if missing:
