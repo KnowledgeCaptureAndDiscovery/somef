@@ -6,7 +6,8 @@ import tempfile
 
 from os import path
 from . import header_analysis, regular_expressions, process_repository, configuration, process_files, \
-    supervised_classification, process_results
+    supervised_classification
+from .process_results import  Result
 from .utils import constants, markdown_utils
 from .parser import mardown_parser, create_excerpts
 from .export.data_to_graph import DataGraph
@@ -267,7 +268,7 @@ def save_json(git_data, repo_data, outfile):
 
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
-                 ignore_github_metadata=False, readme_only=False, keep_tmp=None):
+                 ignore_github_metadata=False, readme_only=False, keep_tmp=None) -> Result:
     """
     Main function to get the data through the command line
     Parameters
@@ -283,17 +284,17 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
 
     Returns
     -------
-    @return: JSON file with the results found by SOMEF.
+    @return: Dictionary with the results found by SOMEF, formatted as a Result object.
     """
     file_paths = configuration.get_configuration_file()
     repo_type = constants.RepositoryType.GITHUB
-    # TO DO Create a new result (when everything works)
-    full_repository_metadata = process_results.Result() #change name at the end
+    repository_metadata = Result()
     if repo_url is not None:
         try:
             if repo_url.rfind("gitlab.com") > 0:
                 repo_type = constants.RepositoryType.GITLAB
             repository_metadata, owner, repo_name, def_branch = process_repository.load_online_repository_metadata(
+                                                                                            repository_metadata,
                                                                                             repo_url,
                                                                                             ignore_github_metadata,
                                                                                             repo_type)
@@ -307,7 +308,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
                                                                             keep_tmp, repo_url)
                 readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
-                                                                                          full_repository_metadata,
+                                                                                          repository_metadata,
                                                                                           repo_type, owner, repo_name,
                                                                                           def_branch)
             else:  # Use a temp directory
@@ -315,7 +316,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                     local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
                                                                                 temp_dir, repo_url)
                     readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
-                                                                                              full_repository_metadata,
+                                                                                              repository_metadata,
                                                                                               repo_type, owner,
                                                                                               repo_name,
                                                                                               def_branch)
@@ -323,15 +324,15 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 logging.warning("README document does not exist in the target repository")
         except process_repository.GithubUrlError:
             logging.error("Error processing the target repository")
-            return None
+            return repository_metadata
     elif local_repo is not None:
         try:
-            readme_text, full_repository_metadata = process_files.process_repository_files(local_repo, full_repository_metadata, repo_type)
+            readme_text, full_repository_metadata = process_files.process_repository_files(local_repo, repository_metadata, repo_type)
             if readme_text == "":
                 logging.warning("Warning: README document does not exist in the local repository")
         except process_repository.GithubUrlError:
             logging.error("Error processing the input repository")
-            return None
+            return repository_metadata
     else:
         if doc_src is None or not path.exists(doc_src):
             logging.error("Error processing the input repository")
@@ -340,6 +341,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             readme_text = doc_fh.read()
         repository_metadata = {}
     try:
+        return repository_metadata
+        # ONGOING WORK to make sure it returns ok
         unfiltered_text = readme_text
         header_predictions, string_list = extract_categories_using_header(unfiltered_text)
         readme_text = markdown_utils.unmark(readme_text)

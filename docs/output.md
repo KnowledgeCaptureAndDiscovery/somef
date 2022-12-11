@@ -72,7 +72,9 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `code_of_conduct`: Link to the code of conduct file of the project
 - `code_repository`: Link to the source code (typically the repository where the readme can be found)
 - `contact`: Contact person responsible for maintaining a software component.
-- `description`: A description of what the software does
+- `date_created`: Date when the software component was created.
+- `date_updated`: Date when the software component was last updated (note that this will always be older than the date of the extraction).
+- `description`: A description of what the software component does.
 - `documentation`: Where to find additional documentation about a software component.
 - `download_url`: URL where to download the target software (typically the installer, package or a tarball to a stable version)
 - `executable_example`: Jupyter notebooks ready for execution (e.g., through myBinder)
@@ -170,10 +172,11 @@ The table below summarizes all types and their corresponding properties:
 | **name** | License, Release,  User, Publication | String | Title or name used to designate the release, license user or publication. |
 | **original_header** | Text_excerpt | String | If the result value is extracted from a markdown file like a README, the original header of that section is also returned. |
 | **parent_header** | Text_excerpt | String | If the result value is extracted from a markdown file like a README, the parent header of the current section is also returned (in case it exists). |
+| **spdx_id** | License | String | Spdx id corresponding to this license |
 | **tag** | Release | String | named version of a release |
-| **url** | Release, Publication | Url | Uniform resource locator of the resource |
-| **zipball_url** | Release | Url | URL to the zip file where to download a software release |
 | **tarball_url** | Release | Url | URL to the tar ball file where to download a software release |
+| **url** | Release, Publication, License | Url | Uniform resource locator of the resource |
+| **zipball_url** | Release | Url | URL to the zip file where to download a software release |
 
 
 ### Format
@@ -200,12 +203,12 @@ The techniques can be of several types:
 If SOMEF is run with the `-m` flag, a report of the categories that the program was not able to find is returned. The format for this field is slightly different than the rest, providing a list of the missing categories. An example can be seen below:
 
 ```json
-"missing_categories": [
+"somef_missing_categories": [
   "description", 
   "citation"
 ]
 ```
-Meaning that SOMEF was not able to find a description or a citation in the target repository. Missing categories will not be added in Codemeta and Turtle exports.
+In this case, SOMEF was not able to find a description or a citation in the target repository. Missing categories will not be added in Codemeta and Turtle exports. Note that the prefix `somef` is added in the field, to indicate that this is a special type of category.
 
 
 ## Turtle format 

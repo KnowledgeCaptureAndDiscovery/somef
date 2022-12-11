@@ -392,7 +392,7 @@ def get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, r
         return os.path.join(repo_dir, repo_relative_path, filename)
 
 def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir, repo_relative_path,
-                     filename, dir_path, metadata_result:Result, category, format=""):
+                     filename, dir_path, metadata_result:Result, category, format_result=""):
     """
     This method will return to the JSON file the contents of the file or its link if it cannot process the contents
     Parameters
@@ -408,6 +408,7 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
     dir_path
     metadata_result
     category
+    format_result
 
     Returns
     -------
@@ -421,8 +422,8 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                        constants.PROP_VALUE: file_text,
                        constants.PROP_TYPE: constants.STRING
                    }
-            if format!= "":
-                result[constants.PROP_FORMAT] = format
+            if format_result!= "":
+                result[constants.PROP_FORMAT] = format_result
             metadata_result.add_result(category,
                                        result,
                                        1,
@@ -430,7 +431,7 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                                        url
                                        )
     except:
-        metadata_result.add_result(constants.CAT_CONTRIBUTING_GUIDELINES,
+        metadata_result.add_result(category,
                                    {
                                        constants.PROP_VALUE: url,
                                        constants.PROP_TYPE: constants.URL

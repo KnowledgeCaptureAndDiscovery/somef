@@ -2,9 +2,10 @@ import json
 from dateutil import parser as date_parser
 from ..utils import constants
 from .data_to_graph import DataGraph
+from ..process_results import Result
 
 
-def save_json_output(repo_data, out_path, missing, pretty=False):
+def save_json_output(repo_data:Result, out_path, missing, pretty=False):
     """
     Function that saves the final json Object in the output file
     Parameters
@@ -20,12 +21,12 @@ def save_json_output(repo_data, out_path, missing, pretty=False):
     """
     print("Saving json data to", out_path)
     if missing:
-        repo_data[constants.CAT_MISSING] = create_missing_fields(repo_data)
+        repo_data.results[constants.CAT_MISSING] = create_missing_fields(repo_data)
     with open(out_path, 'w') as output:
         if pretty:
-            json.dump(repo_data, output, sort_keys=True, indent=2)
+            json.dump(repo_data.results, output, sort_keys=True, indent=2)
         else:
-            json.dump(repo_data, output)
+            json.dump(repo_data.results, output)
 
 
 def save_codemeta_output(repo_data, outfile, pretty=False):
@@ -149,10 +150,11 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     save_json_output(pruned_output, outfile, None, pretty=pretty)
 
 
-def create_missing_fields(repo_data):
+def create_missing_fields(result:Result):
     """Function to create a small report with the categories SOMEF was not able to find.
     The categories are added to the JSON results. This won't be added if you export TTL or Codemeta"""
     missing = []
+    repo_data = result.results
     for c in constants.categories_files_header:
         if c not in repo_data:
             missing.append(c)

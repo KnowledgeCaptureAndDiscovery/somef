@@ -9,6 +9,7 @@ from datetime import datetime
 from urllib.parse import urlparse
 from .utils import constants
 from . import configuration
+from .process_results import Result
 
 
 # the same as requests.get(args).json(), but protects against rate limiting
@@ -24,7 +25,7 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
         rate_limit_remaining = data.headers["x-ratelimit-remaining"]
         epochtime = int(data.headers["x-ratelimit-reset"])
         date_reset = datetime.fromtimestamp(epochtime)
-        print("Remaining GitHub API requests: " + rate_limit_remaining + " ### Next rate limit reset at: " + str(
+        logging.info("Remaining GitHub API requests: " + rate_limit_remaining + " ### Next rate limit reset at: " + str(
             date_reset))
         response = response.json()
         if 'message' in response and 'API rate limit exceeded' in response['message']:
@@ -39,18 +40,20 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
     return response, date
 
 
-def load_gitlab_repository_metadata(repository_url):
+def load_gitlab_repository_metadata(repo_metadata:Result, repository_url):
     """
     Function uses the repository_url provided to load required information from gitlab.
     Information kept from the repository is written in keep_keys.
     Parameters
     ----------
+    @param repo_metadata: Result object with the metadata found in the repository so far
     @param repository_url: URL of the Gitlab repository to analyze
 
     Returns
     -------
     @return: Metadata available in GitLab from the target repo, along with its owner, name and default branch
     """
+    # TO DO
     logging.info(f"Loading Repository {repository_url} Information....")
     # load general response of the repository
     if repository_url[-1] == '/':
@@ -93,7 +96,6 @@ def load_gitlab_repository_metadata(repository_url):
         default_branch = "/".join(path_components[5:])
         ref_param = {"ref": default_branch}
 
-    print(repo_api_base_url)
     if 'defaultBranch' in project_details.keys():
         general_resp = {'defaultBranch': project_details['defaultBranch']}
     elif 'default_branch' in project_details.keys():
@@ -112,27 +114,27 @@ def load_gitlab_repository_metadata(repository_url):
         default_branch = general_resp['defaultBranch']
 
     # get only the fields that we want
-    def do_crosswalk(data, crosswalk_table):
-        def get_path(obj, path):
-            if isinstance(path, list) or isinstance(path, tuple):
-                if len(path) == 1:
-                    path = path[0]
-                else:
-                    return get_path(obj[path[0]], path[1:])
-
-            if obj is not None and path in obj:
-                return obj[path]
-            else:
-                return None
-
-        output = {}
-        for codemeta_key, path in crosswalk_table.items():
-            value = get_path(data, path)
-            if value is not None:
-                output[codemeta_key] = value
-            else:
-                print(f"Error: key {path} not present in gitlab repository")
-        return output
+    # def do_crosswalk(data, crosswalk_table):
+    #     def get_path(obj, path):
+    #         if isinstance(path, list) or isinstance(path, tuple):
+    #             if len(path) == 1:
+    #                 path = path[0]
+    #             else:
+    #                 return get_path(obj[path[0]], path[1:])
+    #
+    #         if obj is not None and path in obj:
+    #             return obj[path]
+    #         else:
+    #             return None
+    #
+    #     output = {}
+    #     for codemeta_key, path in crosswalk_table.items():
+    #         value = get_path(data, path)
+    #         if value is not None:
+    #             output[codemeta_key] = value
+    #         else:
+    #             print(f"Error: key {path} not present in gitlab repository")
+    #     return output
 
     # filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
     filtered_resp = {"downloadUrl": f"https://gitlab.com/{owner}/{repo_name}/-/branches"}
@@ -216,12 +218,12 @@ def load_gitlab_repository_metadata(repository_url):
         # text = get_readme_content(project_details['readme_url'])
         filtered_resp['readmeUrl'] = project_details['readme_url']
 
-    releases_list = {}
-    if isinstance(releases_list, dict) and 'message' in releases_list.keys():
-        print("Releases Error: " + releases_list['message'])
-    else:
-        filtered_resp['releases'] = [do_crosswalk(release, constants.release_crosswalk_table) for release in
-                                     releases_list]
+    # releases_list = {}
+    # if isinstance(releases_list, dict) and 'message' in releases_list.keys():
+    #     print("Releases Error: " + releases_list['message'])
+    # else:
+    #     filtered_resp['releases'] = [do_crosswalk(release, constants.release_crosswalk_table) for release in
+    #                                  releases_list]
 
     print("Repository information successfully loaded. \n")
     return filtered_resp, owner, repo_name, default_branch
@@ -307,23 +309,24 @@ def download_readme(owner, repo_name, default_branch, repo_type):
     return text
 
 
-def load_online_repository_metadata(repository_url, ignore_api_metadata=False,
+def load_online_repository_metadata(repository_metadata:Result, repository_url, ignore_api_metadata=False,
                                     repo_type=constants.RepositoryType.GITHUB):
     """
     Function uses the repository_url provided to load required information from GitHub or Gitlab.
     Information kept from the repository is written in keep_keys.
     Parameters
     ----------
+    @param repository_metadata: Result object to store the findings by SOMEF. This is the returned object
     @param repo_type: type of the repository (GITLAB, GITHUB or LOCAL)
     @param ignore_api_metadata: true if you do not want to do an additional request to the target API
     @param repository_url: target repository URL.
 
     Returns
     -------
-    @return: Dictionary with the available metadata from online APIs, its owner, repo name and default branch
+    @return: Result object with the available metadata from online APIs plus its owner, repo name and default branch
     """
     if repo_type == constants.RepositoryType.GITLAB:
-        return load_gitlab_repository_metadata(repository_url)
+        return load_gitlab_repository_metadata(repository_metadata,repository_url)
     elif repo_type == constants.RepositoryType.LOCAL:
         logging.warning("Trying to download metadata from a local repository")
         return None
@@ -334,45 +337,42 @@ def load_online_repository_metadata(repository_url, ignore_api_metadata=False,
     file_paths = configuration.get_configuration_file()
     if constants.CONF_AUTHORIZATION in file_paths.keys():
         header[constants.CONF_AUTHORIZATION] = file_paths[constants.CONF_AUTHORIZATION]
-    header['accept'] = 'application/vnd.github.v3+json'
+    header['accept'] = constants.GITHUB_ACCEPT_HEADER
 
     # load general response of the repository
     if repository_url[-1] == '/':
         repository_url = repository_url[:-1]
     url = urlparse(repository_url)
-    if url.netloc != 'github.com':
+    if url.netloc != constants.GITHUB_DOMAIN:
         logging.error("Repository must be from Github")
-        return " ", {}
+        return repository_metadata, "","",""
 
     path_components = url.path.split('/')
 
     if len(path_components) < 3:
         logging.error("Repository link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}.")
-        return " ", {}
+        return repository_metadata, "","",""
 
     owner = path_components[1]
     repo_name = path_components[2]
-
-    repo_api_base_url = f"https://api.github.com/repos/{owner}/{repo_name}"
-
+    repo_api_base_url = f"{constants.GITHUB_API}/{owner}/{repo_name}"
     default_branch = None
 
     if len(path_components) >= 5:
         if not path_components[3] == "tree":
-            print(
-                "Github link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}/tree/{ref}.")
-
-            return " ", {}
+            logging.error(
+                "Github link is not correct. \n"
+                "The correct format is https://github.com/{owner}/{repo_name}/tree/{ref}.")
+            return repository_metadata, "","",""
 
         # we must join all after 4, as sometimes tags have "/" in them.
         default_branch = "/".join(path_components[4:])
-        ref_param = {"ref": default_branch}
+        # ref_param = {"ref": default_branch}
 
     general_resp = {}
     date = ""
     if not ignore_api_metadata:
         general_resp, date = rate_limit_get(repo_api_base_url, headers=header)
-
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
             print("Error: Repository name is private or incorrect")
@@ -387,93 +387,50 @@ def load_online_repository_metadata(repository_url, ignore_api_metadata=False,
     elif default_branch is None:
         default_branch = general_resp['default_branch']
 
-    # get only the fields that we want
-    def do_crosswalk(data, crosswalk_table):
-        def get_path(obj, path):
-            if isinstance(path, list) or isinstance(path, tuple):
-                if len(path) == 1:
-                    path = path[0]
-                else:
-                    return get_path(obj[path[0]], path[1:])
-
-            if obj is not None and path in obj:
-                return obj[path]
-            else:
-                return None
-
-        output = {}
-        for codemeta_key, path in crosswalk_table.items():
-            value = get_path(data, path)
-            if value is not None:
-                output[codemeta_key] = value
-            else:
-                print(f"Error: key {path} not present in github repository")
-        return output
-
+    # filter the general response with only the fields we are interested in, mapping them to our keys
     filtered_resp = {}
     if not ignore_api_metadata:
         filtered_resp = do_crosswalk(general_resp, constants.github_crosswalk_table)
-        if "issueTracker" in filtered_resp:
-            issue_tracker = filtered_resp["issueTracker"]
-            issue_tracker = issue_tracker.replace("{/number}", "")
-            filtered_resp["issueTracker"] = issue_tracker
-
     # add download URL
-    filtered_resp["downloadUrl"] = f"https://github.com/{owner}/{repo_name}/releases"
+    filtered_resp[constants.CAT_DOWNLOAD_URL] = f"https://github.com/{owner}/{repo_name}/releases"
 
-    # condense license information
-    license_info = {}
-    if 'license' in filtered_resp:
-        for k in ('name', 'url'):
-            if k in filtered_resp['license']:
-                license_info[k] = filtered_resp['license'][k]
-
-    # If we didn't find it, look for the license
-    if 'url' not in license_info or license_info['url'] is None:
-
-        possible_license_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{default_branch}/LICENSE"
-        license_text_resp = requests.get(possible_license_url)
-
-        # todo: It's possible that this request will get rate limited. Figure out how to detect that.
-        if license_text_resp.status_code == 200:
-            # license_text = license_text_resp.text
-            license_info['url'] = possible_license_url
-
-    if len(license_info) > 0:
-        filtered_resp['license'] = license_info
-
-    # get keywords / topics
-    if 'topics' in general_resp.keys():
-        filtered_resp['topics'] = general_resp['topics']
-    # else:
-    #    topics_headers = header
-    #    topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
-    #    topics_resp, date = rate_limit_get(repo_api_base_url + "/topics",
-    #                                       headers=topics_headers)
-
-    #    if 'message' in topics_resp.keys():
-    #        print("Topics Error: " + topics_resp['message'])
-    #    elif topics_resp and 'names' in topics_resp.keys():
-    #        filtered_resp['topics'] = topics_resp['names']
-
-    # get social features: stargazers_count
-    stargazers_info = {}
-    if 'stargazers_count' in filtered_resp:
-        stargazers_info['count'] = filtered_resp['stargazers_count']
-        stargazers_info['date'] = date
-        del filtered_resp['stargazers_count']
-    if len(stargazers_info.keys()) > 0:
-        filtered_resp['stargazersCount'] = stargazers_info
-
-    # get social features: forks_count
-    forks_info = {}
-    if 'forks_count' in filtered_resp:
-        forks_info['count'] = filtered_resp['forks_count']
-        forks_info['date'] = date
-        del filtered_resp['forks_count']
-    if len(forks_info.keys()) > 0:
-        filtered_resp['forksCount'] = forks_info
-
+    for category, value in filtered_resp.items():
+        value_type = constants.STRING
+        if category in constants.all_categories:
+            if category == constants.CAT_ISSUE_TRACKER:
+                value = value.replace("{/number}", "")
+            if category == constants.CAT_OWNER:
+                value_type = filtered_resp[constants.AGENT_TYPE]
+            if category == constants.CAT_KEYWORDS:
+                # we concatenate all keywords in a list, as the return value is always a single object
+                value = '%s,' % (', '.join(value))
+                value = value.rstrip(',')
+            if category in [constants.CAT_CODE_REPOSITORY, constants.CAT_ISSUE_TRACKER,
+                            constants.CAT_DOWNLOAD_URL, constants.CAT_FORKS_URLS]:
+                value_type = constants.URL
+            if category in [constants.CAT_DATE_CREATED, constants.CAT_DATE_UPDATED]:
+                value_type = constants.DATE
+            if category in [constants.CAT_FORK_COUNTS, constants.CAT_STARS]:
+                value_type = constants.INTEGER
+            if category == constants.CAT_LICENSE:
+                result = {
+                    constants.PROP_VALUE: value["url"],
+                    constants.PROP_TYPE: constants.LICENSE,
+                    constants.PROP_NAME: value["name"],
+                    constants.PROP_URL: value["url"]
+                }
+                if "spdx_id" in value.keys():
+                    result[constants.PROP_SPDX_ID] = value["spdx_id"]
+            else:
+                result = {
+                    constants.PROP_VALUE: value,
+                    constants.PROP_TYPE:value_type
+                }
+            repository_metadata.add_result(category,
+                                           result,
+                                           1,
+                                           constants.TECHNIQUE_GITHUB_API)
+    # TO DO: langs and releases
     # get languages
     if not ignore_api_metadata:
         languages, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
@@ -492,8 +449,30 @@ def load_online_repository_metadata(repository_url, ignore_api_metadata=False,
             filtered_resp['releases'] = [do_crosswalk(release, constants.release_crosswalk_table) for release in
                                          releases_list]
     logging.info("Repository information successfully loaded.\n")
-    return filtered_resp, owner, repo_name, default_branch
+    # print(filtered_resp)
+    return repository_metadata, owner, repo_name, default_branch
 
+def get_path(obj, path):
+    if isinstance(path, list) or isinstance(path, tuple):
+        if len(path) == 1:
+            path = path[0]
+        else:
+            return get_path(obj[path[0]], path[1:])
+
+    if obj is not None and path in obj:
+        return obj[path]
+    else:
+        return None
+
+def do_crosswalk(data, crosswalk_table):
+    output = {}
+    for somef_key, path in crosswalk_table.items():
+        value = get_path(data, path)
+        if value is not None:
+            output[somef_key] = value
+        else:
+            print(f"Error: key {path} not present in github repository")
+    return output
 
 def download_repository_files(owner, repo_name, default_branch, repo_type, target_dir, repo_ref=None):
     """
