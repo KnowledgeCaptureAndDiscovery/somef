@@ -449,8 +449,29 @@ def load_online_repository_metadata(repository_metadata:Result, repository_url, 
         if isinstance(releases_list, dict) and 'message' in releases_list.keys():
             print("Releases Error: " + releases_list['message'])
         else:
-            filtered_resp['releases'] = [do_crosswalk(release, constants.release_crosswalk_table) for release in
-                                         releases_list]
+            release_list_filtered = [do_crosswalk(release, constants.release_crosswalk_table) for release in
+                                          releases_list]
+            for release in release_list_filtered:
+                release_obj = {
+                    constants.PROP_TYPE:constants.RELEASE,
+                    constants.PROP_VALUE:release[constants.PROP_URL]
+                }
+                for category, value in release.items():
+                    if category != constants.AGENT_TYPE:
+                        if category == constants.PROP_AUTHOR:
+                            value = {
+                                constants.PROP_NAME:value,
+                                constants.PROP_TYPE:release[constants.AGENT_TYPE]
+
+                            }
+                        if value != "":
+                            release_obj[category] = value
+                        else:
+                            logging.warning("Ignoring empty value in release for "+category)
+                repository_metadata.add_result(constants.CAT_RELEASES, release_obj, 1,
+                                              constants.TECHNIQUE_GITHUB_API)
+
+
     logging.info("Repository information successfully loaded.\n")
     # print(filtered_resp)
     return repository_metadata, owner, repo_name, default_branch

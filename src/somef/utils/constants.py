@@ -185,7 +185,7 @@ release_crosswalk_table = {
     PROP_NAME: 'name',
     PROP_AUTHOR: ['author', 'login'],
     AGENT_TYPE: ['author', 'type'],
-    CAT_DESCRIPTION: 'body',
+    PROP_DESCRIPTION: 'body',
     PROP_TARBALL_URL: 'tarball_url',
     PROP_ZIPBALL_URL: 'zipball_url',
     PROP_HTML_URL: 'html_url',

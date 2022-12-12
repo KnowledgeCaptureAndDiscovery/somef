@@ -300,20 +300,6 @@ def process_repository_files(repo_dir, metadata_result:Result, repo_type, owner=
                                                    1,
                                                    constants.TECHNIQUE_FILE_EXPLORATION
                                                    )
-                    #     # and not any(o['uri'] == uri for o in ontologies): This checks if the onto is not already
-                    #     # there, but we return all ontologies we find right now. Filtering is up to users
-                    #     file_url = ""
-                    #     if repo_type == constants.RepositoryType.GITHUB:
-                    #         file_url = convert_to_raw_user_content_github(file_path, owner, repo_name, repo_default_branch)
-                    #     elif repo_type == constants.RepositoryType.GITLAB:
-                    #         file_url = convert_to_raw_user_content_gitlab(file_path, owner, repo_name, repo_default_branch)
-                    #     else:
-                    #         file_url = os.path.join(repo_dir, file_path)
-                    #     onto = {
-                    #         "uri": uri,
-                    #         "file_url": file_url
-                    #     }
-                    #     ontologies.append(onto)
 
             # TO DO: Improve this a bit, as just returning the docs folder is not that informative
             for dir_name in dir_names:
