@@ -420,7 +420,7 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
             file_text = markdown_utils.unmark(data_file.read())
             result = {
                        constants.PROP_VALUE: file_text,
-                       constants.PROP_TYPE: constants.STRING
+                       constants.PROP_TYPE: constants.FILE_DUMP
                    }
             if format_result!= "":
                 result[constants.PROP_FORMAT] = format_result

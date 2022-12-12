@@ -411,7 +411,7 @@ def load_online_repository_metadata(repository_metadata:Result, repository_url, 
             if category in [constants.CAT_DATE_CREATED, constants.CAT_DATE_UPDATED]:
                 value_type = constants.DATE
             if category in [constants.CAT_FORK_COUNTS, constants.CAT_STARS]:
-                value_type = constants.INTEGER
+                value_type = constants.NUMBER
             if category == constants.CAT_LICENSE:
                 result = {
                     constants.PROP_VALUE: value["url"],
@@ -426,11 +426,7 @@ def load_online_repository_metadata(repository_metadata:Result, repository_url, 
                     constants.PROP_VALUE: value,
                     constants.PROP_TYPE:value_type
                 }
-            repository_metadata.add_result(category,
-                                           result,
-                                           1,
-                                           constants.TECHNIQUE_GITHUB_API)
-    # TO DO: langs and releases
+            repository_metadata.add_result(category, result, 1, constants.TECHNIQUE_GITHUB_API)
     # get languages
     if not ignore_api_metadata:
         languages, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
@@ -438,8 +434,15 @@ def load_online_repository_metadata(repository_metadata:Result, repository_url, 
             print("Languages Error: " + languages["message"])
         else:
             filtered_resp['languages'] = list(languages.keys())
+            for l,s in languages.items():
+                result = {
+                    constants.PROP_VALUE: l,
+                    constants.PROP_NAME: l,
+                    constants.PROP_TYPE: constants.LANGUAGE,
+                    constants.PROP_SIZE: s,
+                }
+                repository_metadata.add_result(constants.CAT_PROGRAMMING_LANGUAGES, result, 1, constants.TECHNIQUE_GITHUB_API)
 
-        del filtered_resp['languages_url']
         # get releases
         releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
                                              headers=header)

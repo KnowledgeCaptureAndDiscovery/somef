@@ -147,17 +147,19 @@ A result may have the following fields:
 Depending on the `type` of the result, additional properties may be found. 
 
 The following object `types` are currently supported:
-- `Release`: software releases of the current code repository, as available from GitHub. 
+- `Release`: software releases of the current code repository, as available from GitHub.
+- `Programming_language`: Programming language used in the repository. 
 - `License`: object representing all the metadata SOMEF extracts from a license.
 - `Agent`: user (typically, a person) or organization responsible for authoring a software release or a paper.
 - `Publication`: Scientific paper associated with the code repository.
 
 The following literal types are currently supported:
-- `Number`: A numerical value. We do not distinguish between integer or float.
+- `Number`: A numerical value. We do not distinguish between integer, long or float.
 - `Date`: Dates in xsd:date format.
-- `String`: Any representation in text that is not considered a number, date or url.
+- `String`: Any representation in text that is not considered a number, date or url. There are two special types of strings.
+  - `Text_excerpt`: The value is a string that has been extracted from a file.
+  - `File_dump`: The  value is a string with the contents of a file (e.g., a `citation.cff` file, or a `license.md` file).
 - `Url`: uniform resource locator of a file.
-- `Text_excerpt`: The value is a string that has been extracted from a file.
 
 The table below summarizes all types and their corresponding properties:
 
@@ -169,9 +171,10 @@ The table below summarizes all types and their corresponding properties:
 | **date_created** | Release | Date | Date of creation of a release |
 | **date_published** | Release | Date | Date of publication of a release |
 | **html_url** | Release | Url | link to the HTML representation of a release |
-| **name** | License, Release,  User, Publication | String | Title or name used to designate the release, license user or publication. |
+| **name** | License, Release,  User, Publication, Programming_language | String | Title or name used to designate the release, license user, programming language or publication. |
 | **original_header** | Text_excerpt | String | If the result value is extracted from a markdown file like a README, the original header of that section is also returned. |
 | **parent_header** | Text_excerpt | String | If the result value is extracted from a markdown file like a README, the parent header of the current section is also returned (in case it exists). |
+| **size** | Programming_language | Number | File size content (bytes) of a code repository using a given programming language |
 | **spdx_id** | License | String | Spdx id corresponding to this license |
 | **tag** | Release | String | named version of a release |
 | **tarball_url** | Release | Url | URL to the tar ball file where to download a software release |
