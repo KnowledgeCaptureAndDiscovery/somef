@@ -1,14 +1,18 @@
 ## Main function: header_analysis(text)
 ## input file: readme files text data
 ## output file: json files with categories extracted using header analysis; other text data cannot be extracted
+import logging
 import re
 import string
 
 import numpy as np
 import pandas as pd
+import sys
 from textblob import Word
 
+from .process_results import Result
 from .parser import mardown_parser
+from .utils import constants
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -92,7 +96,6 @@ def extract_bash_code(text):
 
 def extract_header_content(text):
     """Function designed to extract headers and contents of text and place it in a dataframe"""
-    print('Extracting headers and content.')
     header = []
     headers = mardown_parser.extract_headers(text)
     for key in headers.keys():
@@ -188,12 +191,22 @@ def clean_html(text):
     return cleantext
 
 
-def extract_categories_using_headers(text):
-    """Main function to extract categories using headers"""
+def extract_categories_using_headers(text, repository_metadata:Result):
+    """
+    Main function to extract categories using headers
+    Parameters
+    ----------
+    @param text: readme text to process.
+    @param repository_metadata: Result object with the repository metadata
+
+    Returns
+    -------
+    @returns: A Result object with the repository metadata
+    """
     data, none_header_content = extract_header_content(text)
-    print('Labeling headers.')
+    logging.info('Labeling headers.')
     if data.empty:
-        print("File to analyze has no headers")
+        logging.warning("File to analyze has no headers")
         return {}, [text]
     data['Group'] = data['Header'].apply(lambda row: label_header(row))
     data['GroupParent'] = data['ParentHeader'].apply(lambda row: label_parent_headers(row))
@@ -213,35 +226,77 @@ def extract_categories_using_headers(text):
     # to json
     group = data.loc[(data['Group'] != 'None') & pd.notna(data['Group'])]
     # group = group.reindex(columns=['Content', 'Group'])
-    group['confidence'] = [[1.0]] * len(group)
-    group.rename(columns={'Content': 'excerpt'}, inplace=True)
-    group.rename(columns={'Header': 'originalHeader'}, inplace=True)
-    group.rename(columns={'ParentHeader': 'parentHeader'}, inplace=True)
-    group['technique'] = 'Header extraction'
+    #group[constants.PROP_CONFIDENCE] = [[1.0]] * len(group)
+    group.rename(columns={'Content': constants.PROP_VALUE}, inplace=True)
+    group.rename(columns={'Header': constants.PROP_ORIGINAL_HEADER}, inplace=True)
+    group.rename(columns={'ParentHeader': constants.PROP_PARENT_HEADER}, inplace=True)
+    #group[constants.PROP_TECHNIQUE] = constants.TECHNIQUE_HEADER_ANALYSIS
     # group['original header'] = 'NaN'
-    group_json = group.groupby('Group').apply(lambda x: x.to_dict('r')).to_dict()
-    for key in group_json.keys():
-        for ind in range(len(group_json[key])):
-            del group_json[key][ind]['Group']
-
-    print('Converting to json files.')
+    for index, row in group.iterrows():
+        if constants.CAT_README_URL in repository_metadata.results.keys():
+            source = repository_metadata.results[constants.CAT_README_URL][0]
+            source = source[constants.PROP_RESULT][constants.PROP_VALUE]
+        if row[constants.PROP_PARENT_HEADER] !="":
+            parent_header = row.loc[constants.PROP_PARENT_HEADER]
+        result = {
+                   constants.PROP_VALUE:row.loc[constants.PROP_VALUE],
+                   constants.PROP_TYPE:constants.TEXT_EXCERPT,
+                   constants.PROP_ORIGINAL_HEADER: row.loc[constants.PROP_ORIGINAL_HEADER]
+               }
+        if parent_header is not None:
+            result[constants.PROP_PARENT_HEADER] = parent_header
+        if source:
+            repository_metadata.add_result(row.Group, result, 1, constants.TECHNIQUE_HEADER_ANALYSIS, source)
+        else:
+            repository_metadata.add_result(row.Group, result, 1, constants.TECHNIQUE_HEADER_ANALYSIS)
 
     # strings without tag (they will be classified)
     str_list = data.loc[data['Group'].isna(), ['Content']].values.squeeze().tolist()
     if type(str_list) != list:
         str_list = [str_list]
 
-    if none_header_content != None:
-        str_list.append(none_header_content)
+    # group_json = group.groupby('Group').apply(lambda x: x.to_dict('r')).to_dict()
+    # print(group_json)
+    # for key in group_json.keys():
+    #     for ind in range(len(group_json[key])):
+    #         del group_json[key][ind]['Group']
+    #
+    # print('Converting to json files.')
+    #
+    #
+    #
+    # if none_header_content is not None:
+    #     str_list.append(none_header_content)
+    #
+    # # remove empty field parentHeader
+    # for key in group_json.keys():
+    #     elements = group_json[key]
+    #     new_elements = []
+    #     for element in elements:
+    #         if element['parentHeader'] == "":
+    #             del element['parentHeader']
+    #         new_elements.append(element)
+    #     group_json[key] = new_elements
+    return repository_metadata, str_list
 
-    # remove empty field parentHeader
-    for key in group_json.keys():
-        elements = group_json[key]
-        new_elements = []
-        for element in elements:
-            if element['parentHeader'] == "":
-                del element['parentHeader']
-            new_elements.append(element)
-        group_json[key] = new_elements
+def extract_categories(repo_data, repository_metadata:Result):
+    """
+    Function that adds category information extracted using header information
+    Parameters
+    ----------
+    repo_data data to use the header analysis
 
-    return group_json, str_list
+    Returns
+    -------
+    Returns json with the information added.
+    """
+    logging.info("Extracting information using headers")
+    if repo_data is None or repo_data == "" or len(repo_data) == 0:
+        return {}, []
+    try:
+        repository_metadata, string_list = extract_categories_using_headers(repo_data, repository_metadata)
+        logging.info("Information extracted.")
+        return repository_metadata, string_list
+    except Exception as e:
+        logging.error("Error while extracting headers: ", str(e))
+        return repository_metadata, [repo_data]

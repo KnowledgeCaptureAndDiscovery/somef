@@ -35,28 +35,7 @@ def is_in_excerpts_headers(text, set_excerpts):
     return False, None
 
 
-def extract_categories_using_header(repo_data):
-    """
-    Function that adds category information extracted using header information
-    Parameters
-    ----------
-    repo_data data to use the header analysis
 
-    Returns
-    -------
-    Returns json with the information added.
-    """
-    print("Extracting information using headers")
-    # this is a hack because if repo_data is "" this errors out
-    if repo_data is None or len(repo_data) == 0:
-        return {}, []
-    try:
-        header_info, string_list = header_analysis.extract_categories_using_headers(repo_data)
-        print("Information extracted. \n")
-        return header_info, string_list
-    except:
-        print("Error while extracting headers: ", sys.exc_info()[0])
-        return {}, [repo_data]
 
 
 def merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, long_title,
@@ -341,10 +320,10 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             readme_text = doc_fh.read()
         repository_metadata = {}
     try:
-        return repository_metadata
         # ONGOING WORK to make sure it returns ok
         unfiltered_text = readme_text
-        header_predictions, string_list = extract_categories_using_header(unfiltered_text)
+        repository_metadata, string_list = header_analysis.extract_categories(unfiltered_text, repository_metadata)
+        return repository_metadata
         readme_text = markdown_utils.unmark(readme_text)
         category = supervised_classification.run_category_classification(unfiltered_text, threshold)
         excerpts = create_excerpts.create_excerpts(string_list)
