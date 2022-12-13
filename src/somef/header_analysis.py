@@ -233,6 +233,7 @@ def extract_categories_using_headers(text, repository_metadata:Result):
     #group[constants.PROP_TECHNIQUE] = constants.TECHNIQUE_HEADER_ANALYSIS
     # group['original header'] = 'NaN'
     for index, row in group.iterrows():
+        source = ""
         if constants.CAT_README_URL in repository_metadata.results.keys():
             source = repository_metadata.results[constants.CAT_README_URL][0]
             source = source[constants.PROP_RESULT][constants.PROP_VALUE]
@@ -245,7 +246,7 @@ def extract_categories_using_headers(text, repository_metadata:Result):
                }
         if parent_header is not None:
             result[constants.PROP_PARENT_HEADER] = parent_header
-        if source:
+        if source != "":
             repository_metadata.add_result(row.Group, result, 1, constants.TECHNIQUE_HEADER_ANALYSIS, source)
         else:
             repository_metadata.add_result(row.Group, result, 1, constants.TECHNIQUE_HEADER_ANALYSIS)
@@ -254,29 +255,6 @@ def extract_categories_using_headers(text, repository_metadata:Result):
     str_list = data.loc[data['Group'].isna(), ['Content']].values.squeeze().tolist()
     if type(str_list) != list:
         str_list = [str_list]
-
-    # group_json = group.groupby('Group').apply(lambda x: x.to_dict('r')).to_dict()
-    # print(group_json)
-    # for key in group_json.keys():
-    #     for ind in range(len(group_json[key])):
-    #         del group_json[key][ind]['Group']
-    #
-    # print('Converting to json files.')
-    #
-    #
-    #
-    # if none_header_content is not None:
-    #     str_list.append(none_header_content)
-    #
-    # # remove empty field parentHeader
-    # for key in group_json.keys():
-    #     elements = group_json[key]
-    #     new_elements = []
-    #     for element in elements:
-    #         if element['parentHeader'] == "":
-    #             del element['parentHeader']
-    #         new_elements.append(element)
-    #     group_json[key] = new_elements
     return repository_metadata, str_list
 
 def extract_categories(repo_data, repository_metadata:Result):
