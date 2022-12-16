@@ -64,7 +64,7 @@ For each element of the list, SOMEF returns a `result` object, together with its
 The `confidence` depends on the `technique` used. In this case, the confidence is driven by the classifier which makes the prediction. For the GitHub API the confidence is higher, as it was a description added manually by the authors.
 
 SOMEF aims to recognize the following categories (in alphabetical order):
-- `application_domain`: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects)
+- `application_domain`: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects). See all current recognized application domains [here](https://somef.readthedocs.io/en/latest/#myfootnote1).
 - `acknowledgement`: Any text that the authors have prepared to acknnowledge the contribution from others, or project funding.
 - `contributors`: Contributors to a software component
 - `contributing guidelines`: Guidelines indicating how to contribute to a software component.
@@ -76,6 +76,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `date_updated`: Date when the software component was last updated (note that this will always be older than the date of the extraction).
 - `description`: A description of what the software component does.
 - `documentation`: Where to find additional documentation about a software component.
+- `download`: Download instructions included in the repository.
 - `download_url`: URL where to download the target software (typically the installer, package or a tarball to a stable version)
 - `executable_example`: Jupyter notebooks ready for execution (e.g., through myBinder)
 - `faq`: Frequently asked questions about a software component
@@ -102,6 +103,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `releases`: Pointer to the available versions of a software component.
 - `repository_status`: Repository status as it is described in [repostatus.org](https://www.repostatus.org/).
 - `requirements`: Pre-requisites and dependencies needed to execute a software component.
+- `run`: Running instructions of a software component. It may be wider than the `invocation` category, as it may include several steps and explanations.
 - `stargazers_count`: Total number of stargazers of the project.
 - `support`: Guidelines and links of where to obtain support for a software component.
 - `support_channels`: Help channels one can use to get support about the target software component.

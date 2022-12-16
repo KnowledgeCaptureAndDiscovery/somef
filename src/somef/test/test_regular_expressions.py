@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 
 from .. import regular_expressions
+from ..process_results import Result
+from ..utils import constants
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
@@ -14,45 +16,47 @@ class TestRegExp(unittest.TestCase):
         """Test designed to check if bibtext citations are detected"""
         with open(test_data_path + "test_extract_bibtex.txt", "r") as data_file:
             test_text = data_file.read()
-            c = regular_expressions.extract_bibtex(test_text)
-            assert "@inproceedings" in c[0]
+            c = regular_expressions.extract_bibtex(test_text, Result(), test_data_path + "test_extract_bibtex.txt")
+            result = c.results[constants.CAT_CITATION][0]
+            assert "@inproceedings" in result["result"]["value"]
 
     def test_extract_dois(self):
         """Test designed to check if doi links are detected"""
         with open(test_data_path + "test_extract_dois.txt", "r") as data_file:
             test_text = data_file.read()
-            c = regular_expressions.extract_dois(test_text)
-            assert len(c) == 2
+            c = regular_expressions.extract_doi_badges(test_text, Result(), test_data_path + "test_extract_dois.txt")
+            assert len(c.results[constants.CAT_IDENTIFIER]) == 2
 
     def test_extract_binder_links(self):
         """Test designed to check if binder links are detected"""
         with open(test_data_path + "test_extract_binder_links.txt", "r") as data_file:
             test_text = data_file.read()
-            c = regular_expressions.extract_binder_links(test_text)
-            print(c)
-            assert len(c) == 2
+            c = regular_expressions.extract_binder_links(test_text, Result(), test_data_path + "test_extract_binder_links.txt")
+            assert len(c.results[constants.CAT_EXECUTABLE_EXAMPLE]) == 2
 
     def test_extract_title_underline(self):
         """Test designed to check if titles with underline markdown notation are detected"""
         with open(test_data_path + "test_extract_title_underline.txt", "r") as data_file:
             test_text = data_file.read()
-            c = regular_expressions.extract_title(test_text)
-            assert "Taguette" == c
+            c = regular_expressions.extract_title(test_text, Result(), test_data_path + "test_extract_title_underline.txt")
+            res = c.results[constants.CAT_FULL_TITLE][0]
+            assert "Taguette" == res[constants.PROP_RESULT][constants.PROP_VALUE]
 
     def test_extract_title_hash(self):
         """Test designed to check if titles with hash notation are detected"""
         with open(test_data_path + "test_extract_title_hash.txt", "r") as data_file:
             test_text = data_file.read()
-            c = regular_expressions.extract_title(test_text)
-            assert "T2WML: A Cell-Based Language To Map Tables Into Wikidata Records" == c
+            c = regular_expressions.extract_title(test_text, Result(), test_data_path +"test_extract_title_hash.txt")
+            res = c.results[constants.CAT_FULL_TITLE][0]
+            assert "T2WML: A Cell-Based Language To Map Tables Into Wikidata Records" == res[constants.PROP_RESULT][constants.PROP_VALUE]
 
     def test_extract_title_with_md(self):
         """Test designed to check if titles are detected"""
         with open(test_data_path + "test_extract_title_with_md.txt", "r") as data_file:
             test_text = data_file.read()
-            c = regular_expressions.extract_title(test_text)
-            # print(c)
-            assert "SOMEF" == c
+            c = regular_expressions.extract_title(test_text, Result(), test_data_path + "test_extract_title_with_md.txt")
+            res = c.results[constants.CAT_FULL_TITLE][0]
+            assert "SOMEF" == res[constants.PROP_RESULT][constants.PROP_VALUE]
 
     def test_extract_readthedocs_1(self):
         """Test designed to check if readthedocs links are detected"""

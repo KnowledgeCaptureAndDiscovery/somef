@@ -4,11 +4,24 @@ import markdown
 import requests
 import validators
 from .utils import constants
+from .process_results import Result
 from urllib.parse import urlparse
 
 
-def extract_title(unfiltered_text):
-    """Regexp to extract title (first header) from a repository"""
+def extract_title(unfiltered_text, repository_metadata:Result, readme_source) -> Result:
+    """
+    Regexp to extract title (first header) from a repository
+    Parameters
+    ----------
+    @param unfiltered_text: repo text
+    @param repository_metadata: Result with the extractions so far
+    @param readme_source: url to the file used (for provenance)
+
+    Returns
+    -------
+    @returns a Result including the title (if found)
+
+    """
     html_text = markdown.markdown(unfiltered_text)
     splitted = html_text.split("\n")
     index = 0
@@ -22,7 +35,12 @@ def extract_title(unfiltered_text):
                 output = re.sub(regex, '', line)
             break
         index += 1
-    return output
+    repository_metadata.add_result(constants.CAT_FULL_TITLE,
+                                   {
+                                       constants.PROP_TYPE:constants.STRING,
+                                       constants.PROP_VALUE:output
+                                   }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION,readme_source)
+    return repository_metadata
 
 
 def extract_title_old(unfiltered_text):
@@ -416,48 +434,88 @@ def remove_links_images(text):
     return text.strip()
 
 
-def extract_bibtex(readme_text) -> object:
+def extract_bibtex(readme_text, repository_metadata:Result, readme_source) -> Result:
     """
     Function takes readme text as input (cleaned from markdown notation) and runs a regex expression on top of it.
     Returns list of bibtex citations
+
+    Parameters
+    ----------
+    @param readme_text: Text of the readme
+    @param repository_metadata: Result with all the processed results so far
+    @param readme_source: source to the readme file used
+
+    Returns
+    -------
+    @returns bibtex associated with this software component
     """
     citations = re.findall(constants.REGEXP_BIBTEX, readme_text)
-    return citations
+    for c in citations:
+        # try to detect the doi with a regular expression. We should improve this to load an existing library
+        result = {
+            constants.PROP_VALUE:c,
+            constants.PROP_TYPE:constants.TEXT_EXCERPT,
+            constants.PROP_FORMAT:constants.FORMAT_BIB
+        }
+        doi_text = ""
+        if c.find('https://doi.org/') >= 0 or c.find('doi ') >= 0:
+            text_citation = c
+            if text_citation.find("https://doi.org/") >= 0:
+                doi_pos = text_citation.find("doi.org/")
+                starts = text_citation[:doi_pos].rindex("http")
+                ends = text_citation[starts:].find("}")
+                doi_text = text_citation[starts:starts + ends]
+            elif text_citation.find("doi") >= 0:
+                doi_pos = text_citation.find("doi")
+                starts = text_citation[doi_pos:].find("{")
+                ends = text_citation[starts + doi_pos:].find("}")
+                doi_text = "https://doi.org/" + text_citation[starts + doi_pos + 1:doi_pos + starts + ends]
+        if doi_text!="":
+            result[constants.PROP_DOI] = doi_text
+        repository_metadata.add_result(constants.CAT_CITATION,result,1,constants.TECHNIQUE_REGULAR_EXPRESSION,readme_source)
+    return repository_metadata
 
 
-def extract_dois(readme_text) -> object:
+def extract_doi_badges(readme_text, repository_metadata: Result, source) -> Result:
     """
     Function that takes the text of a readme file and searches if there are any DOIs badges.
     Parameters
     ----------
-    readme_text Text of the readme
-
+    @param readme_text: Text of the readme
+    @param repository_metadata: Result with all the findings in the repo
+    @param source: source file on top of which the extraction is performed (provenance)
     Returns
     -------
-    DOIs/identifiers associated with this software component
+    @returns Result with the DOI badges found
     """
     # regex = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
     # regex = r'\[\!\[DOI\]\(.+\)\]\(([^)]+)\)'
-    dois = re.findall(constants.REGEXP_DOI, readme_text)
-    print("Extraction of DOIS from readme completed.\n")
-    return dois
+    doi_badges = re.findall(constants.REGEXP_DOI, readme_text)
+    # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
+    for doi in doi_badges:
+        repository_metadata.add_result(constants.CAT_IDENTIFIER,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: doi[1]
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+    return repository_metadata
 
 
-def extract_binder_links(readme_text) -> object:
+def extract_binder_links(readme_text, repository_metadata: Result, source) -> Result:
     """
-    Function that does a regex to extract binder links used as reference in the readme.
+    Function that does a regex to extract binder and colab links used as reference in the readme.
     There could be multiple binder links for one repository
     Parameters
     ----------
-    readme_text
-
+    @param readme_text: Text of the readme
+    @param repository_metadata: Result with all the findings in the repo
+    @param source: source file on top of which the extraction is performed (provenance)
     Returns
     -------
     Links with binder notebooks/scripts that are ready to be executed.
     """
     links = re.findall(constants.REGEXP_BINDER, readme_text, re.IGNORECASE)
     binder_links = [result[1] for result in links]
-    print("Extraction of Binder links from readme completed.\n")
     # extract binder links and remove duplicates
     binder_links += extract_colab_links(readme_text)
     return list(dict.fromkeys(binder_links))

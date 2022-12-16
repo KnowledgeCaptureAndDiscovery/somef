@@ -24,7 +24,8 @@ install_requires = [
     "inflect>=5.4.0",
     "contractions>=0.1.66",
     "chardet==5.0.0",
-    "imbalanced-learn>=0.8.1"
+    "imbalanced-learn>=0.8.1",
+    "pytest"
 ]
 
 
@@ -70,7 +71,7 @@ setup(
         "Intended Audience :: Science/Research",
         "Operating System :: Unix",
     ],
-    entry_points={"console_scripts": ["somef = somef.__main__:main"]},
+    entry_points={"console_scripts": ["somef = somef.__main__:cli"]},
     package_dir={"": "src"},
     packages=find_packages(where="src", exclude=["somef.tests*"]),
     package_data={"somef": find_package_data("src/somef")},

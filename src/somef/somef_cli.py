@@ -320,58 +320,60 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             readme_text = doc_fh.read()
         repository_metadata = {}
     try:
-        # ONGOING WORK to make sure it returns ok
         unfiltered_text = readme_text
         repository_metadata, string_list = header_analysis.extract_categories(unfiltered_text, repository_metadata)
-        return repository_metadata
         readme_text = markdown_utils.unmark(readme_text)
-        category = supervised_classification.run_category_classification(unfiltered_text, threshold)
+        repository_metadata = supervised_classification.run_category_classification(unfiltered_text, threshold,
+                                                                                    repository_metadata)
+        print(string_list)
         excerpts = create_excerpts.create_excerpts(string_list)
-        if ignore_classifiers or unfiltered_text == '':
-            predictions = {}
-        else:
+        if not ignore_classifiers or unfiltered_text != '':
             excerpts_headers = mardown_parser.extract_text_excerpts_header(unfiltered_text)
             header_parents = mardown_parser.extract_headers_parents(unfiltered_text)
             score_dict = supervised_classification.run_classifiers(excerpts, file_paths)
-            predictions = supervised_classification.classify(score_dict, threshold, excerpts_headers, header_parents)
-        if readme_text != '':
-            citations = regular_expressions.extract_bibtex(readme_text)
-            citation_file_text = ''
-            if 'citation' in repository_metadata.keys():
-                citation_file_text = repository_metadata['citation']
-                del repository_metadata['citation']
-            dois = regular_expressions.extract_dois(unfiltered_text)
-            binder_links = regular_expressions.extract_binder_links(unfiltered_text)
-            title = regular_expressions.extract_title(unfiltered_text)
-            readthedocs_links = regular_expressions.extract_readthedocs(unfiltered_text)
-            repo_status = regular_expressions.extract_repo_status(unfiltered_text)
-            # arxiv_links = regular_expressions.extract_arxiv_links(unfiltered_text)
-            wiki_links = regular_expressions.extract_wiki_links(unfiltered_text, repo_url)
-            logo, images = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo)
-            support_channels = regular_expressions.extract_support_channels(unfiltered_text)
-            package_distribution = regular_expressions.extract_package_distributions(unfiltered_text)
-        else:
-            citations = []
-            citation_file_text = ""
-            dois = []
-            binder_links = []
-            title = ""
-            readthedocs_links = []
-            repo_status = ""
-           # arxiv_links = []
-            wiki_links = []
-            logo = ""
-            images = []
-            support_channels = []
-            package_distribution = ""
-
-        predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title,
-                            readthedocs_links, repo_status, logo, images, support_channels,
-                            package_distribution, wiki_links, category)
-        return format_output(repository_metadata, predictions, repo_type)
+            repository_metadata = supervised_classification.classify(score_dict, threshold, excerpts_headers,
+                                                                     header_parents, repository_metadata)
+        if readme_text != "":
+            try:
+                readme_source = repository_metadata.results[constants.CAT_README_URL][0]
+                readme_source = readme_source[constants.PROP_RESULT][constants.PROP_VALUE]
+            except:
+                readme_source = "README.md"
+            repository_metadata = regular_expressions.extract_bibtex(readme_text, repository_metadata, readme_source)
+            repository_metadata = regular_expressions.extract_doi_badges(unfiltered_text, repository_metadata, readme_source)
+            repository_metadata = regular_expressions.extract_title(unfiltered_text, repository_metadata, readme_source)
+            # repository_metadata = regular_expressions.extract_binder_links(unfiltered_text, repository_metadata,
+            #                                                                readme_source)
+            return repository_metadata
+        #
+        #     readthedocs_links = regular_expressions.extract_readthedocs(unfiltered_text)
+        #     repo_status = regular_expressions.extract_repo_status(unfiltered_text)
+        #     wiki_links = regular_expressions.extract_wiki_links(unfiltered_text, repo_url)
+        #     logo, images = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo)
+        #     support_channels = regular_expressions.extract_support_channels(unfiltered_text)
+        #     package_distribution = regular_expressions.extract_package_distributions(unfiltered_text)
+            logging.info("Completed extracting regular expressions")
+        # else:
+        #     citations = []
+        #     citation_file_text = ""
+        #     dois = []
+        #     binder_links = []
+        #     title = ""
+        #     readthedocs_links = []
+        #     repo_status = ""
+        #    # arxiv_links = []
+        #     wiki_links = []
+        #     logo = ""
+        #     images = []
+        #     support_channels = []
+        #     package_distribution = ""
+        # predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title,
+        #                     readthedocs_links, repo_status, logo, images, support_channels,
+        #                     package_distribution, wiki_links, category)
+        # return format_output(repository_metadata, predictions, repo_type)
     except Exception as e:
-        logging.error("Error processing repository" + str(e))
-        return None
+        logging.error("Error processing repository " + str(e))
+        return repository_metadata
 
 
 def run_cli_document(doc_src, threshold, output):
