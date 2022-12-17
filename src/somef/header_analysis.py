@@ -59,7 +59,7 @@ documentation = [Word("documentation").synsets[1]]
 group.update({constants.CAT_DOCUMENTATION: documentation})
 
 license = [Word("license").synsets[3], Word("license").synsets[0]]
-group.update({constants.LICENSE: license})
+group.update({constants.CAT_LICENSE: license})
 
 usage = [Word("usage").synsets[0], Word("example").synsets[0], Word("example").synsets[5],
          # Word("implement").synsets[1],Word("implementation").synsets[1],
@@ -191,7 +191,7 @@ def clean_html(text):
     return cleantext
 
 
-def extract_categories_using_headers(text, repository_metadata:Result):
+def extract_categories_using_headers(text, repository_metadata: Result):
     """
     Main function to extract categories using headers
     Parameters
@@ -226,11 +226,11 @@ def extract_categories_using_headers(text, repository_metadata:Result):
     # to json
     group = data.loc[(data['Group'] != 'None') & pd.notna(data['Group'])]
     # group = group.reindex(columns=['Content', 'Group'])
-    #group[constants.PROP_CONFIDENCE] = [[1.0]] * len(group)
+    # group[constants.PROP_CONFIDENCE] = [[1.0]] * len(group)
     group.rename(columns={'Content': constants.PROP_VALUE}, inplace=True)
     group.rename(columns={'Header': constants.PROP_ORIGINAL_HEADER}, inplace=True)
     group.rename(columns={'ParentHeader': constants.PROP_PARENT_HEADER}, inplace=True)
-    #group[constants.PROP_TECHNIQUE] = constants.TECHNIQUE_HEADER_ANALYSIS
+    # group[constants.PROP_TECHNIQUE] = constants.TECHNIQUE_HEADER_ANALYSIS
     # group['original header'] = 'NaN'
     for index, row in group.iterrows():
         source = ""
@@ -238,14 +238,14 @@ def extract_categories_using_headers(text, repository_metadata:Result):
             source = repository_metadata.results[constants.CAT_README_URL][0]
             source = source[constants.PROP_RESULT][constants.PROP_VALUE]
         parent_header = ""
-        if row[constants.PROP_PARENT_HEADER] !="":
+        if row[constants.PROP_PARENT_HEADER] != "":
             parent_header = row.loc[constants.PROP_PARENT_HEADER]
         result = {
-                   constants.PROP_VALUE:row.loc[constants.PROP_VALUE],
-                   constants.PROP_TYPE:constants.TEXT_EXCERPT,
-                   constants.PROP_ORIGINAL_HEADER: row.loc[constants.PROP_ORIGINAL_HEADER]
-               }
-        if parent_header !="":
+            constants.PROP_VALUE: row.loc[constants.PROP_VALUE],
+            constants.PROP_TYPE: constants.TEXT_EXCERPT,
+            constants.PROP_ORIGINAL_HEADER: row.loc[constants.PROP_ORIGINAL_HEADER]
+        }
+        if parent_header != "" and len(parent_header) > 0:
             result[constants.PROP_PARENT_HEADER] = parent_header
         if source != "":
             repository_metadata.add_result(row.Group, result, 1, constants.TECHNIQUE_HEADER_ANALYSIS, source)
@@ -259,7 +259,7 @@ def extract_categories_using_headers(text, repository_metadata:Result):
     return repository_metadata, str_list
 
 
-def extract_categories(repo_data, repository_metadata:Result):
+def extract_categories(repo_data, repository_metadata: Result):
     """
     Function that adds category information extracted using header information
     Parameters
