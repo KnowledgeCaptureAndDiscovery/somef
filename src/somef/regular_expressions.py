@@ -71,21 +71,47 @@ def extract_title_old(unfiltered_text):
     return title
 
 
-def extract_readthedocs(readme_text) -> object:
+def extract_readthedocs(readme_text, repository_metadata:Result, readme_source) -> Result:
     """
     Function to extract readthedocs links from text
     Parameters
     ----------
-    unfiltered_text text readme
+    @param readme_text: raw text of the readme file
+    @param repository_metadata: Result where to deposit the findings of the README
+    @param readme_source: URL of the README file
 
     Returns
     -------
-    Links to the readthedocs documentation
+    @return Result including links to the readthedocs documentation
     """
     readthedocs_links = re.findall(constants.REGEXP_READTHEDOCS, readme_text)
-    print("Extraction of readthedocs links from readme completed.\n")
-    # remove duplicates (links like [readthedocs](readthedocs) are found twice
-    return list(dict.fromkeys(readthedocs_links))
+    name = ""
+    try:
+        name = repository_metadata.results[constants.CAT_NAME][0]
+        name = name[constants.PROP_RESULT][constants.PROP_VALUE]
+    except:
+        pass
+    for link in list(dict.fromkeys(readthedocs_links)):
+        try:
+            # if name of the repo is known then compare against the readthedocs one. Only add it if it's similar/same
+            name_in_link = re.findall('https://([^.]+)\.readthedocs\.io', link)
+            name_in_link = name_in_link[0]
+            result = {
+                constants.PROP_TYPE: constants.URL,
+                constants.PROP_VALUE: link
+            }
+            if name == "" or name_in_link.lower() == name.lower():
+                repository_metadata.add_result(constants.CAT_DOCUMENTATION, result, 1,
+                                               constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+            else:
+                repository_metadata.add_result(constants.CAT_RELATED_DOCUMENTATION, result, 1,
+                                               constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+        except:
+            # add link as a regular doc link if we cannot retrieve name or there is an error
+            repository_metadata.add_result(constants.CAT_DOCUMENTATION, result, 1,
+                                           constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+
+    return repository_metadata
 
 
 def extract_support_channels(readme_text):
@@ -518,7 +544,13 @@ def extract_binder_links(readme_text, repository_metadata: Result, source) -> Re
     binder_links = [result[1] for result in links]
     # extract binder links and remove duplicates
     binder_links += extract_colab_links(readme_text)
-    return list(dict.fromkeys(binder_links))
+    for link in list(dict.fromkeys(binder_links)):
+        repository_metadata.add_result(constants.CAT_EXECUTABLE_EXAMPLE,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: link
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+    return repository_metadata
 
 
 def rename_github_image(img, repo_url, local_repo):

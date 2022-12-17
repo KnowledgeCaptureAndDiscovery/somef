@@ -62,33 +62,47 @@ class TestRegExp(unittest.TestCase):
         """Test designed to check if readthedocs links are detected"""
         with open(test_data_path + "test_extract_readthedocs_1.txt", "r") as data_file:
             test_text = data_file.read()
-            c = regular_expressions.extract_readthedocs(test_text)
-            assert ["https://oba.readthedocs.io/"] == c
+            c = regular_expressions.extract_readthedocs(test_text, Result(), test_data_path + "test_extract_readthedocs_1.txt")
+            result = c.results[constants.CAT_DOCUMENTATION][0]
+            assert "https://oba.readthedocs.io/" == result[constants.PROP_RESULT][constants.PROP_VALUE]
+
+    def test_extract_readthedocs_1_1(self):
+        """Test to check if a result is added with a different name, then it gets added as a related link"""
+        with open(test_data_path + "test_extract_readthedocs_1.txt", "r") as data_file:
+            test_text = data_file.read()
+            r = Result()
+            r.add_result(constants.CAT_NAME,{
+                constants.PROP_TYPE: constants.STRING,
+                constants.PROP_VALUE: "unrelated"
+            }, 1, test_data_path + "test_extract_readthedocs_1.txt")
+            c = regular_expressions.extract_readthedocs(test_text, r, test_data_path + "test_extract_readthedocs_1.txt")
+            result = c.results[constants.CAT_RELATED_DOCUMENTATION][0]
+            assert "https://oba.readthedocs.io/" == result[constants.PROP_RESULT][constants.PROP_VALUE]
 
     def test_extract_readthedocs_2(self):
         """Test designed to check if readthedocs links are detected"""
         with open(test_data_path + "test_extract_readthedocs_2.txt", "r") as data_file:
             test_text = data_file.read()
-            c = regular_expressions.extract_readthedocs(test_text)
-            # print(c)
-            assert ["https://kgtk.readthedocs.io/"] == c
+            c = regular_expressions.extract_readthedocs(test_text, Result(), test_data_path + "test_extract_readthedocs_2.txt")
+            result = c.results[constants.CAT_DOCUMENTATION][0]
+            assert "https://kgtk.readthedocs.io/" == result[constants.PROP_RESULT][constants.PROP_VALUE]
 
     def test_extract_readthedocs_3(self):
         """Test designed to check if readthedoc links are detected"""
         test_text = """
         See full documentation at [https://somef.readthedocs.io/en/latest/](https://somef.readthedocs.io/en/latest/)
         """
-        c = regular_expressions.extract_readthedocs(test_text)
-        print(c)
-        assert ["https://somef.readthedocs.io/"] == c
+        c = regular_expressions.extract_readthedocs(test_text, Result(), test_data_path + "invented_path.txt")
+        result = c.results[constants.CAT_DOCUMENTATION][0]
+        assert "https://somef.readthedocs.io/" == result[constants.PROP_RESULT][constants.PROP_VALUE]
 
     def test_extract_readthedocs_issue_407(self):
         """Test designed to check if readthedocs links are detected"""
         with open(test_data_path + "test_extract_readthedocs_3.txt", "r") as data_file:
             test_text = data_file.read()
-            c = regular_expressions.extract_readthedocs(test_text)
-            print(c)
-            assert ["https://owl-to-oas.readthedocs.io/"] == c
+            c = regular_expressions.extract_readthedocs(test_text, Result(), test_data_path + "test_extract_readthedocs_3.txt")
+            result = c.results[constants.CAT_DOCUMENTATION][0]
+            assert "https://owl-to-oas.readthedocs.io/" == result[constants.PROP_RESULT][constants.PROP_VALUE]
 
     def test_extract_gitter_chat(self):
         """Test designed to check if gitter chats are detected"""

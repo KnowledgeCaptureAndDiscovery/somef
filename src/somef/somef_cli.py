@@ -7,7 +7,7 @@ import tempfile
 from os import path
 from . import header_analysis, regular_expressions, process_repository, configuration, process_files, \
     supervised_classification
-from .process_results import  Result
+from .process_results import Result
 from .utils import constants, markdown_utils
 from .parser import mardown_parser, create_excerpts
 from .export.data_to_graph import DataGraph
@@ -33,9 +33,6 @@ def is_in_excerpts_headers(text, set_excerpts):
             return True, excerpt
 
     return False, None
-
-
-
 
 
 def merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, long_title,
@@ -273,10 +270,10 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             if repo_url.rfind("gitlab.com") > 0:
                 repo_type = constants.RepositoryType.GITLAB
             repository_metadata, owner, repo_name, def_branch = process_repository.load_online_repository_metadata(
-                                                                                            repository_metadata,
-                                                                                            repo_url,
-                                                                                            ignore_github_metadata,
-                                                                                            repo_type)
+                repository_metadata,
+                repo_url,
+                ignore_github_metadata,
+                repo_type)
             # download files and obtain path to download folder
             if readme_only:
                 # download readme only with the information above
@@ -287,18 +284,19 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
                                                                             keep_tmp, repo_url)
                 readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
-                                                                                          repository_metadata,
-                                                                                          repo_type, owner, repo_name,
-                                                                                          def_branch)
+                                                                                               repository_metadata,
+                                                                                               repo_type, owner,
+                                                                                               repo_name,
+                                                                                               def_branch)
             else:  # Use a temp directory
                 with tempfile.TemporaryDirectory() as temp_dir:
                     local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
                                                                                 temp_dir, repo_url)
                     readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
-                                                                                              repository_metadata,
-                                                                                              repo_type, owner,
-                                                                                              repo_name,
-                                                                                              def_branch)
+                                                                                                   repository_metadata,
+                                                                                                   repo_type, owner,
+                                                                                                   repo_name,
+                                                                                                   def_branch)
             if readme_text == "":
                 logging.warning("README document does not exist in the target repository")
         except process_repository.GithubUrlError:
@@ -306,7 +304,9 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             return repository_metadata
     elif local_repo is not None:
         try:
-            readme_text, full_repository_metadata = process_files.process_repository_files(local_repo, repository_metadata, repo_type)
+            readme_text, full_repository_metadata = process_files.process_repository_files(local_repo,
+                                                                                           repository_metadata,
+                                                                                           repo_type)
             if readme_text == "":
                 logging.warning("Warning: README document does not exist in the local repository")
         except process_repository.GithubUrlError:
@@ -340,10 +340,14 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             except:
                 readme_source = "README.md"
             repository_metadata = regular_expressions.extract_bibtex(readme_text, repository_metadata, readme_source)
-            repository_metadata = regular_expressions.extract_doi_badges(unfiltered_text, repository_metadata, readme_source)
+            repository_metadata = regular_expressions.extract_doi_badges(unfiltered_text, repository_metadata,
+                                                                         readme_source)
             repository_metadata = regular_expressions.extract_title(unfiltered_text, repository_metadata, readme_source)
-            # repository_metadata = regular_expressions.extract_binder_links(unfiltered_text, repository_metadata,
-            #                                                                readme_source)
+            repository_metadata = regular_expressions.extract_binder_links(unfiltered_text, repository_metadata,
+                                                                           readme_source)
+            repository_metadata = regular_expressions.extract_readthedocs(unfiltered_text, repository_metadata,
+                                                                          readme_source)
+            logging.info("Completed extracting regular expressions")
             return repository_metadata
         #
         #     readthedocs_links = regular_expressions.extract_readthedocs(unfiltered_text)
@@ -352,7 +356,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         #     logo, images = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo)
         #     support_channels = regular_expressions.extract_support_channels(unfiltered_text)
         #     package_distribution = regular_expressions.extract_package_distributions(unfiltered_text)
-            logging.info("Completed extracting regular expressions")
+
         # else:
         #     citations = []
         #     citation_file_text = ""

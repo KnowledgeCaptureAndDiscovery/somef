@@ -100,6 +100,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `owner`: Name of the user or organization in charge of the repository
 - `programming_languages`: Languages used in the repository.
 - `readme_url`: URL to the main README file in the repository.
+- `related_documentation`: Pointers to documentation of related projects which may be needed when using the target repository.
 - `releases`: Pointer to the available versions of a software component.
 - `repository_status`: Repository status as it is described in [repostatus.org](https://www.repostatus.org/).
 - `requirements`: Pre-requisites and dependencies needed to execute a software component.
