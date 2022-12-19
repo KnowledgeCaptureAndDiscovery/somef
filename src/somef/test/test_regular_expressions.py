@@ -116,8 +116,9 @@ class TestRegExp(unittest.TestCase):
         """Test designed to check if repostatus badges are detected"""
         with open(test_data_path + "test_repo_status.txt", "r") as data_file:
             test_text = data_file.read()
-            repo_status = regular_expressions.extract_repo_status(test_text)
-            assert len(repo_status) > 0
+            repo_status = regular_expressions.extract_repo_status(test_text, Result(), test_data_path + "test_repo_status.txt")
+            result = repo_status.results[constants.CAT_STATUS]
+            assert len(result) > 0 and result[0][constants.PROP_RESULT][constants.PROP_VALUE] == "https://www.repostatus.org/#active"
 
     def test_issue_291(self):
         """Test designed to check if logos are detected"""

@@ -149,15 +149,31 @@ def extract_support_channels(readme_text):
     return results
 
 
-def extract_repo_status(unfiltered_text):
-    """Extracts the repostatus.org badge from a given text"""
+def extract_repo_status(unfiltered_text, repository_metadata:Result, readme_source) -> Result:
+    """
+    Function takes readme text as input and extracts the repostatus.org badge
+
+    Parameters
+    ----------
+    @param unfiltered_text: Text of the readme
+    @param repository_metadata: Result with all the processed results so far
+    @param readme_source: source to the readme file used
+    """
+
     repo_status = ""
     init = unfiltered_text.find("[![Project Status:")
     if init > 0:
         end = unfiltered_text.find("](", init)
         repo_status = unfiltered_text[init + 3:end]
         repo_status = repo_status.replace("Project Status: ", "")
-    return repo_status
+        short_status = repo_status[0:repo_status.find(" ")].lower()
+        repository_metadata.add_result(constants.CAT_STATUS,
+                                       {
+                                           constants.PROP_TYPE:constants.URL,
+                                           constants.PROP_VALUE:"https://www.repostatus.org/#" + short_status,
+                                           constants.PROP_DESCRIPTION:repo_status
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION,readme_source)
+    return repository_metadata
 
 
 def extract_arxiv_links(unfiltered_text):
@@ -205,50 +221,6 @@ def extract_wiki_links(unfiltered_text, repo_url):
             output.append(repo_url)
 
     return list(dict.fromkeys(output))
-
-
-# TO DO: join with image detection in a single method
-# def extract_logo(unfiltered_text, repo_url):
-#     """Extracts logos from a given text"""
-#     logo = ""
-#     index_logo = unfiltered_text.lower().find("![logo]")
-#     if index_logo >= 0:
-#         init = unfiltered_text.find("(", index_logo)
-#         end = unfiltered_text.find(")", init)
-#         logo = unfiltered_text[init + 1:end]
-#     else:
-#         # This is problematic if alt label is used
-#         # TO DO
-#         result = [_.start() for _ in re.finditer("<img src=", unfiltered_text)]
-#         if len(result) > 0:
-#             for index_img in result:
-#                 init = unfiltered_text.find("\"", index_img)
-#                 end = unfiltered_text.find("\"", init + 1)
-#                 img = unfiltered_text[init + 1:end]
-#                 if img.find("logo") > 0:
-#                     logo = img
-#     # processing for those github links that do not resolve correctly
-#     if logo.startswith("http"):
-#         if logo.find("github.com") > 0:
-#             logo = logo.replace("/blob", "")
-#             logo = logo.replace("github.com", "raw.githubusercontent.com")
-#     #processing for those logos that are relative paths
-#     if logo != "" and not logo.startswith("http") and repo_url is not None:
-#         if repo_url.find("github.com") > 0:
-#             if repo_url.find("/tree/") > 0:
-#                 repo_url = repo_url.replace("/tree/", "/")
-#             else:
-#                 repo_url = repo_url + "/master/"
-#             repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-#             if not repo_url.endswith("/"):
-#                 repo_url = repo_url + "/"
-#             logo = repo_url + logo
-#         else:
-#             if not repo_url.endswith("/"):
-#                 repo_url = repo_url + "/"
-#             logo = repo_url + logo
-#     print(logo)
-#     return logo
 
 
 def extract_images(unfiltered_text, repo_url, local_repo):
@@ -321,76 +293,6 @@ def extract_images(unfiltered_text, repo_url, local_repo):
                 images.append(rename_github_image(img, repo_url, local_repo))
 
     return logo, images
-
-
-# TO DO: join with logo detection
-# def extract_images_old(unfiltered_text, repo_url):
-#     """Extracts images from a given text"""
-#     logo = ""
-#     images = []
-#     html_text = markdown.markdown(unfiltered_text)
-#     # print(html_text)
-#     result = [_.start() for _ in re.finditer("<img ", html_text)]
-#     if len(result) > 0:
-#         for index_img in result:
-#             init = html_text.find("src=\"", index_img)
-#             end = html_text.find("\"", init + 5)
-#             img = html_text[init + 5:end]
-#             if img.find("logo") < 0:
-#                 if not img.startswith("http") and repo_url is not None:
-#                     if repo_url.find("/tree/") > 0:
-#                         repo_url = repo_url.replace("/tree/", "/")
-#                     else:
-#                         repo_url = repo_url + "/master/"
-#                     repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-#                     if not repo_url.endswith("/"):
-#                         repo_url = repo_url + "/"
-#                     img = repo_url + img
-#                 images.append(img)
-#             else:
-#                 if not img.startswith("http") and repo_url is not None:
-#                     if repo_url.find("/tree/") > 0:
-#                         repo_url = repo_url.replace("/tree/", "/")
-#                     else:
-#                         repo_url = repo_url + "/master/"
-#                     repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-#                     if not repo_url.endswith("/"):
-#                         repo_url = repo_url + "/"
-#                     img = repo_url + img
-#                 logo = img
-#
-#     if logo == "" and repo_url != "" and repo_url != None:
-#         print(repo_url)
-#         url = urlparse(repo_url)
-#         path_components = url.path.split('/')
-#         repo_name = path_components[2]
-#
-#         for image in images:
-#             start = image.rindex("/")
-#             if image.find(repo_name, start) > 0:
-#                 logo = image
-#                 images.remove(image)
-#                 break
-#
-#     return logo, images
-
-
-# def extract_support(unfiltered_text):
-#     """Extracts support channels (reddit, discord, gitter) from a given text"""
-#     results = []
-#     init = unfiltered_text.find(constants.REGEXP_REDDIT)
-#     if init > 0:
-#         end = unfiltered_text.find(")", init)
-#         repo_status = unfiltered_text[init + 1:end]
-#         results.append(repo_status)
-#
-#     init = unfiltered_text.find(constants.REGEXP_DISCORD)
-#     if init > 0:
-#         end = unfiltered_text.find(")", init)
-#         repo_status = unfiltered_text[init + 1:end]
-#         results.append(repo_status)
-#
-#     return results
 
 
 def extract_package_distributions(unfiltered_text):

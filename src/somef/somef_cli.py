@@ -347,34 +347,17 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                            readme_source)
             repository_metadata = regular_expressions.extract_readthedocs(unfiltered_text, repository_metadata,
                                                                           readme_source)
+            repository_metadata = regular_expressions.extract_repo_status(unfiltered_text, repository_metadata,
+                                                                          readme_source)
             logging.info("Completed extracting regular expressions")
             return repository_metadata
         #
-        #     readthedocs_links = regular_expressions.extract_readthedocs(unfiltered_text)
         #     repo_status = regular_expressions.extract_repo_status(unfiltered_text)
         #     wiki_links = regular_expressions.extract_wiki_links(unfiltered_text, repo_url)
         #     logo, images = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo)
         #     support_channels = regular_expressions.extract_support_channels(unfiltered_text)
         #     package_distribution = regular_expressions.extract_package_distributions(unfiltered_text)
 
-        # else:
-        #     citations = []
-        #     citation_file_text = ""
-        #     dois = []
-        #     binder_links = []
-        #     title = ""
-        #     readthedocs_links = []
-        #     repo_status = ""
-        #    # arxiv_links = []
-        #     wiki_links = []
-        #     logo = ""
-        #     images = []
-        #     support_channels = []
-        #     package_distribution = ""
-        # predictions = merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, title,
-        #                     readthedocs_links, repo_status, logo, images, support_channels,
-        #                     package_distribution, wiki_links, category)
-        # return format_output(repository_metadata, predictions, repo_type)
     except Exception as e:
         logging.error("Error processing repository " + str(e))
         return repository_metadata
