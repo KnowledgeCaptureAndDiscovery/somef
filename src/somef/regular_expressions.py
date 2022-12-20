@@ -193,7 +193,20 @@ def extract_arxiv_links(unfiltered_text):
     return results
 
 
-def extract_wiki_links(unfiltered_text, repo_url):
+def extract_wiki_links(unfiltered_text, repo_url, repository_metadata:Result, readme_source) -> Result:
+    """
+
+    Parameters
+    ----------
+    @param unfiltered_text: text from readme
+    @param repo_url: repository URL
+    @param repository_metadata: results found in the repository so far
+    @param readme_source: readme URL/path
+
+    Returns
+    -------
+    @return a Result with the wiki documentation links found in the README
+    """
     """Extracts wiki links from a given text"""
     links = re.findall(r"\[[^\]]*\]\((.*?)?\)", unfiltered_text)
     output = []
@@ -220,7 +233,14 @@ def extract_wiki_links(unfiltered_text, repo_url):
         if wiki.status_code == 200:
             output.append(repo_url)
 
-    return list(dict.fromkeys(output))
+    for link in list(dict.fromkeys(output)):
+        repository_metadata.add_result(constants.CAT_DOCUMENTATION,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: link
+                                        },
+                                       1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+    return repository_metadata
 
 
 def extract_images(unfiltered_text, repo_url, local_repo):

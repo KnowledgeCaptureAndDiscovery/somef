@@ -255,3 +255,12 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
             test_text = data_file.read()
             logo, images = regular_expressions.extract_images(test_text,"https://github.com/mintproject/base_images", None)
             assert logo == ""
+
+    def test_wiki(self):
+        """Test designed to check if a repository with wiki links retrieves the wiki links as documentation"""
+        with open(test_data_path + "test_wiki.md", "r") as data_file:
+            test_text = data_file.read()
+            repo_status = regular_expressions.extract_wiki_links(test_text,"https://github.com/oeg-upm/mapeathor",
+                                                                 Result(), test_data_path + "test_wiki.md")
+            result = repo_status.results[constants.CAT_DOCUMENTATION]
+            assert len(result) > 0 and result[0][constants.PROP_RESULT][constants.PROP_VALUE] == "https://github.com/oeg-upm/Mapeathor/wiki"

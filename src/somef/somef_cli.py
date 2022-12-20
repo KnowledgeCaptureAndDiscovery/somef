@@ -349,10 +349,11 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                           readme_source)
             repository_metadata = regular_expressions.extract_repo_status(unfiltered_text, repository_metadata,
                                                                           readme_source)
+            repository_metadata = regular_expressions.extract_wiki_links(unfiltered_text, repo_url, repository_metadata,
+                                                                          readme_source)
             logging.info("Completed extracting regular expressions")
             return repository_metadata
         #
-        #     repo_status = regular_expressions.extract_repo_status(unfiltered_text)
         #     wiki_links = regular_expressions.extract_wiki_links(unfiltered_text, repo_url)
         #     logo, images = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo)
         #     support_channels = regular_expressions.extract_support_channels(unfiltered_text)
