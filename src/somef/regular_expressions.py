@@ -214,13 +214,15 @@ def extract_wiki_links(unfiltered_text, repo_url, repository_metadata:Result, re
     for link in links:
         if validators.url(link):
             if link.endswith("/wiki"):
-                output.append(link)
+                if link not in output:
+                    output.append(link)
             else:
                 ends = unfiltered_text.find("(" + link + ")") - 1
                 if unfiltered_text[:ends].find("[") != -1:
                     position = unfiltered_text[:ends].rindex("[") + 1
                     if unfiltered_text[position:ends].find("wiki") >= 0:
-                        output.append(link)
+                        if link not in output:
+                            output.append(link)
             unfiltered_text = unfiltered_text[ends + len(link):]
 
     # to check if a wiki url is available in the repository
@@ -231,9 +233,12 @@ def extract_wiki_links(unfiltered_text, repo_url, repository_metadata:Result, re
             repo_url = repo_url + "/wiki"
         wiki = requests.get(repo_url, allow_redirects=False)
         if wiki.status_code == 200:
-            output.append(repo_url)
+            # sometimes the repo starts with caps
+            links_in_list = [x.lower() for x in output]
+            if repo_url.lower() not in links_in_list:
+                output.append(repo_url)
 
-    for link in list(dict.fromkeys(output)):
+    for link in output:
         repository_metadata.add_result(constants.CAT_DOCUMENTATION,
                                        {
                                            constants.PROP_TYPE: constants.URL,

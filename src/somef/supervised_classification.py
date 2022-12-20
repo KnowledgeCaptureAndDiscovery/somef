@@ -9,7 +9,7 @@ from .rolf import preprocessing
 from .process_results import Result
 
 
-def run_category_classification(readme_text: str, threshold: float, results:Result):
+def run_category_classification(readme_text: str, threshold: float, results: Result):
     """
     Function which returns the categories, confidence and technique of the given repo
     Parameters
@@ -32,13 +32,13 @@ def run_category_classification(readme_text: str, threshold: float, results:Resu
             if cat != 'Other' and prob > threshold:
                 results.add_result(constants.CAT_APPLICATION_DOMAIN,
                                    {
-                                       constants.PROP_TYPE:constants.STRING,
-                                       constants.PROP_VALUE:cat
-                                   },prob,constants.TECHNIQUE_SUPERVISED_CLASSIFICATION)
+                                       constants.PROP_TYPE: constants.STRING,
+                                       constants.PROP_VALUE: cat
+                                   }, prob, constants.TECHNIQUE_SUPERVISED_CLASSIFICATION)
     return results
 
 
-def classify(scores, threshold, excerpts_headers, header_parents, repository_metadata:Result):
+def classify(scores, threshold, excerpts_headers, header_parents, repository_metadata: Result):
     """
     Function takes scores dictionary and a threshold as input
     Parameters
@@ -59,11 +59,12 @@ def classify(scores, threshold, excerpts_headers, header_parents, repository_met
         source = source[constants.PROP_RESULT][constants.PROP_VALUE]
     except:
         source = "README.md"
+    # print(scores)
     for ele in scores.keys():
         excerpt = ""
         confidence = 0
         header = ""
-        num_elems = 1 # for calculating an average of confidence (in case multiple values are aggregated).
+        num_elems = 1  # for calculating an average of confidence (in case multiple values are aggregated).
         for i in range(len(scores[ele]['confidence'])):
             if scores[ele]['confidence'][i] >= threshold:
                 element = scores[ele]['excerpt'][i]
@@ -94,7 +95,8 @@ def classify(scores, threshold, excerpts_headers, header_parents, repository_met
                         }
                         if header != "":
                             result[constants.PROP_ORIGINAL_HEADER] = header
-                        repository_metadata.add_result(ele, result, confidence, constants.TECHNIQUE_SUPERVISED_CLASSIFICATION, source)
+                        repository_metadata.add_result(ele, result, confidence/num_elems,
+                                                       constants.TECHNIQUE_SUPERVISED_CLASSIFICATION, source)
                         header = current_header
                         num_elems = 1
                         excerpt = scores[ele]['excerpt'][i] + ' \n'
@@ -107,7 +109,7 @@ def classify(scores, threshold, excerpts_headers, header_parents, repository_met
             }
             if header != "":
                 result[constants.PROP_ORIGINAL_HEADER] = header
-            repository_metadata.add_result(ele, result, confidence, constants.TECHNIQUE_SUPERVISED_CLASSIFICATION,
+            repository_metadata.add_result(ele, result, confidence/num_elems, constants.TECHNIQUE_SUPERVISED_CLASSIFICATION,
                                            source)
     logging.info("All excerpts below the threshold have been removed. \n")
     return repository_metadata
@@ -140,11 +142,10 @@ def run_classifiers(excerpts, file_paths):
             file_name = file_paths[category]
             if not path.exists(file_name):
                 sys.exit(f"Error: File or Directory {file_name} does not exist")
-            print("Classifying excerpts for the category", category)
+            logging.info("Classifying excerpts for the category"+ category)
             classifier = pickle.load(open(file_name, 'rb'))
             scores = classifier.predict_proba(text_to_classifier)
             score_dict[category] = {'excerpt': text_to_results, 'confidence': scores[:, 1]}
-            print("Excerpt Classification Successful for the Category", category)
-        print("\n")
+            #logging.info("Excerpt classification successful category"+ category)
 
     return score_dict

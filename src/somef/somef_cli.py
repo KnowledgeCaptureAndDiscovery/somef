@@ -325,7 +325,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         readme_text = markdown_utils.unmark(readme_text)
         repository_metadata = supervised_classification.run_category_classification(unfiltered_text, threshold,
                                                                                     repository_metadata)
-        print(string_list)
+        # print(string_list)
         excerpts = create_excerpts.create_excerpts(string_list)
         if not ignore_classifiers or unfiltered_text != '':
             excerpts_headers = mardown_parser.extract_text_excerpts_header(unfiltered_text)
@@ -350,11 +350,10 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             repository_metadata = regular_expressions.extract_repo_status(unfiltered_text, repository_metadata,
                                                                           readme_source)
             repository_metadata = regular_expressions.extract_wiki_links(unfiltered_text, repo_url, repository_metadata,
-                                                                          readme_source)
+                                                                         readme_source)
             logging.info("Completed extracting regular expressions")
             return repository_metadata
         #
-        #     wiki_links = regular_expressions.extract_wiki_links(unfiltered_text, repo_url)
         #     logo, images = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo)
         #     support_channels = regular_expressions.extract_support_channels(unfiltered_text)
         #     package_distribution = regular_expressions.extract_package_distributions(unfiltered_text)
