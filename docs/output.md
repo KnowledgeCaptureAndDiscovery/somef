@@ -64,6 +64,7 @@ For each element of the list, SOMEF returns a `result` object, together with its
 The `confidence` depends on the `technique` used. In this case, the confidence is driven by the classifier which makes the prediction. For the GitHub API the confidence is higher, as it was a description added manually by the authors.
 
 SOMEF aims to recognize the following categories (in alphabetical order):
+
 - `application_domain`: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects). See all current recognized application domains [here](https://somef.readthedocs.io/en/latest/#myfootnote1).
 - `acknowledgement`: Any text that the authors have prepared to acknnowledge the contribution from others, or project funding.
 - `contributors`: Contributors to a software component
@@ -98,6 +99,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `name`: Name identifying a software component
 - `ontologies`: URL and path to the ontology files present in the repository.
 - `owner`: Name of the user or organization in charge of the repository
+- `package_distribution`: Link to official package repositories where the software can be downloaded from (e.g., `pypi`).
 - `programming_languages`: Languages used in the repository.
 - `readme_url`: URL to the main README file in the repository.
 - `related_documentation`: Pointers to documentation of related projects which may be needed when using the target repository.
@@ -150,6 +152,7 @@ A result may have the following fields:
 Depending on the `type` of the result, additional properties may be found. 
 
 The following object `types` are currently supported:
+
 - `Release`: software releases of the current code repository, as available from GitHub.
 - `Programming_language`: Programming language used in the repository. 
 - `License`: object representing all the metadata SOMEF extracts from a license.
@@ -157,6 +160,7 @@ The following object `types` are currently supported:
 - `Publication`: Scientific paper associated with the code repository.
 
 The following literal types are currently supported:
+
 - `Number`: A numerical value. We do not distinguish between integer, long or float.
 - `Date`: Dates in xsd:date format.
 - `String`: Any representation in text that is not considered a number, date or url. There are two special types of strings.
@@ -187,6 +191,7 @@ The table below summarizes all types and their corresponding properties:
 
 ### Format
 The following formats for a result value are currently recognized:
+
 - `bibtex`: format typically used to [document bibliography](https://www.bibtex.com/g/bibtex-format/) in LateX projects.
 - `cff`: [Citation file format](https://citation-file-format.github.io/), an increasingly popular format for citing software projects.
 - `jupyter_notebook`: [computational notebooks](https://ipython.org/ipython-doc/3/notebook/nbformat.html) typically used in data science.
@@ -197,6 +202,7 @@ The following formats for a result value are currently recognized:
 
 ### Technique
 The techniques can be of several types: 
+
 - `header_analysis`: the result was extracted by analyzing the headers used in the README file and assessing their proximity to commonly used headers (and other synonims).
 - `supervised_classification`: the results were obtained after running text classifiers trained for detecting that type of header.
 - `file_exploration`: the result comes from an exploration of the files in the repository

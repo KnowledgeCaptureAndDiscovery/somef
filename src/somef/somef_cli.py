@@ -265,6 +265,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     file_paths = configuration.get_configuration_file()
     repo_type = constants.RepositoryType.GITHUB
     repository_metadata = Result()
+    def_branch = "main"
     if repo_url is not None:
         try:
             if repo_url.rfind("gitlab.com") > 0:
@@ -351,12 +352,15 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                           readme_source)
             repository_metadata = regular_expressions.extract_wiki_links(unfiltered_text, repo_url, repository_metadata,
                                                                          readme_source)
+            repository_metadata = regular_expressions.extract_support_channels(unfiltered_text, repository_metadata,
+                                                                               readme_source)
+            repository_metadata = regular_expressions.extract_package_distributions(unfiltered_text,
+                                                                                    repository_metadata,
+                                                                                    readme_source)
+            repository_metadata = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo,
+                                                                     repository_metadata, readme_source, def_branch)
             logging.info("Completed extracting regular expressions")
             return repository_metadata
-        #
-        #     logo, images = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo)
-        #     support_channels = regular_expressions.extract_support_channels(unfiltered_text)
-        #     package_distribution = regular_expressions.extract_package_distributions(unfiltered_text)
 
     except Exception as e:
         logging.error("Error processing repository " + str(e))

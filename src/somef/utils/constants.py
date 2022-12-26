@@ -17,7 +17,9 @@ REGEXP_READTHEDOCS = r'http[s]?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%
 REGEXP_REDDIT = "(https://www.reddit.com/r/"
 REGEXP_DISCORD = "(https://discord.com/invite/"
 REGEXP_GITTER = "[![Gitter chat]"
+# These are two of the most common ones for Python, but it may be expanded
 REGEXP_PYPI = "[![PyPI]"
+REGEXP_PYPI_2 = "[![Latest PyPI version]"
 REGEXP_COLAB = "https://colab.research.google.com/drive"
 REGEXP_BIBTEX = r'\@[a-zA-Z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title][.\n\S\s]+?\n\}'
 REGEXP_DOI = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
@@ -61,6 +63,7 @@ CAT_LOGO = "logo"
 CAT_NAME = "name"
 CAT_ONTOLOGIES = "ontologies"
 CAT_OWNER = "owner"
+CAT_PACKAGE_DISTRIBUTION = "package_distribution"
 CAT_PROGRAMMING_LANGUAGES = "programming_languages"
 CAT_README_URL = "readme_url"
 CAT_RELATED_DOCUMENTATION = "related_documentation"
@@ -88,7 +91,8 @@ all_categories = [CAT_APPLICATION_DOMAIN, CAT_ACKNOWLEDGEMENT, CAT_CITATION, CAT
                   CAT_FAQ, CAT_FORK_COUNTS, CAT_FORKS_URLS, CAT_FULL_NAME, CAT_FULL_TITLE, CAT_HAS_BUILD_FILE,
                   CAT_HAS_EXECUTABLE_NOTEBOOK, CAT_HAS_SCRIPT_FILE, CAT_IDENTIFIER, CAT_IMAGE, CAT_INSTALLATION,
                   CAT_INVOCATION, CAT_ISSUE_TRACKER, CAT_KEYWORDS, CAT_LICENSE, CAT_LOGO, CAT_NAME, CAT_ONTOLOGIES,
-                  CAT_OWNER, CAT_PROGRAMMING_LANGUAGES, CAT_README_URL, CAT_RELATED_DOCUMENTATION, CAT_RELEASES, CAT_RUN,
+                  CAT_OWNER, CAT_PACKAGE_DISTRIBUTION, CAT_PROGRAMMING_LANGUAGES, CAT_README_URL,
+                  CAT_RELATED_DOCUMENTATION, CAT_RELEASES, CAT_RUN,
                   CAT_STATUS, CAT_REQUIREMENTS, CAT_STARS, CAT_SUPPORT, CAT_SUPPORT_CHANNELS, CAT_USAGE]
 
 # All properties used by SOMEF to label the output JSON
