@@ -35,192 +35,63 @@ def is_in_excerpts_headers(text, set_excerpts):
     return False, None
 
 
-def merge(header_predictions, predictions, citations, citation_file_text, dois, binder_links, long_title,
-          readthedocs_links, repo_status, logo, images, support_channels, package_distribution,
-          wiki_links, category):
-    """
-    Function that takes the predictions using header information, classifier and bibtex/doi parser
-    Parameters
-    ----------
-    header_predictions: extraction of common headers and their contents
-    wiki_links: links to wikis
-    package_distribution: packages that appear in the readme
-    support_channels: like gitter, discord, etc.
-    images: included in the readme
-    logo: included in the readme
-    repo_status: repostatus.org badges
-    readthedocs_links: documentation links
-    long_title: title of the repository
-    binder_links: links to binder notebooks
-    citation_file_text: text of the citation file
-    header_predictions: predicted headers
-    predictions: predictions from classifiers (description, installation instructions, invocation, citation)
-    citations: bibtex citations
-    dois: identifiers found in readme Zenodo DOIs, or other
-    category: prediction of the category of the given repo
-    Returns
-    -------
-    Combined predictions and results of the extraction process
-    """
-    print("Merge prediction using header information, classifier and bibtex and doi parsers")
-    if long_title:
-        predictions['longTitle'] = {'excerpt': long_title, 'confidence': [1.0],
-                                    'technique': 'Regular expression'}
-    for i in range(len(citations)):
-        if 'citation' not in predictions.keys():
-            predictions['citation'] = []
-        if citations[i].find('https://doi.org/') >= 0 or citations[i].find('doi ') >= 0:
-            doi_text = ""
-            text_citation = citations[i]
-            if text_citation.find("https://doi.org/") >= 0:
-                doi_pos = text_citation.find("doi.org/")
-                starts = text_citation[:doi_pos].rindex("http")
-                ends = text_citation[starts:].find("}")
-                doi_text = text_citation[starts:starts + ends]
-            elif text_citation.find("doi") >= 0:
-                doi_pos = text_citation.find("doi")
-                starts = text_citation[doi_pos:].find("{")
-                ends = text_citation[starts + doi_pos:].find("}")
-                doi_text = "https://doi.org/" + text_citation[starts + doi_pos + 1:doi_pos + starts + ends]
-            predictions['citation'].append({'excerpt': citations[i], 'confidence': [1.0],
-                                            'technique': 'Regular expression', 'doi': doi_text,
-                                            'format': 'bibtex'})
-        else:
-            predictions['citation'].append({'excerpt': citations[i], 'confidence': [1.0],
-                                            'technique': 'Regular expression', 'format': 'bibtex'})
-    if len(citation_file_text) != 0:
-        if 'citation' not in predictions.keys():
-            predictions['citation'] = []
-        predictions['citation'].append({'excerpt': citation_file_text, 'confidence': [1.0],
-                                        'technique': 'File Exploration', 'format': 'citation file format'})
-    if len(dois) != 0:
-        predictions['identifier'] = []
-        for identifier in dois:
-            # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
-            predictions['identifier'].append({'excerpt': identifier[1], 'confidence': [1.0],
-                                              'technique': 'Regular expression'})
-    if len(binder_links) != 0:
-        predictions['executableExample'] = {'excerpt': binder_links, 'confidence': [1.0],
-                                            'technique': 'Regular expression'}
-    if len(repo_status) != 0:
-        predictions['repoStatus'] = {
-            'excerpt': "https://www.repostatus.org/#" + repo_status[0:repo_status.find(" ")].lower(),
-            'description': repo_status,
-            'confidence': [1.0],
-            'technique': 'Regular expression'}
-
-    # Commenting this out because arxiv links without context are not useful.
-    # if len(arxiv_links) != 0:
-    #     predictions['arxivLinks'] = {'excerpt': arxiv_links, 'confidence': [1.0],
-    #                                  'technique': 'Regular expression'}
-
-    if len(logo) != 0:
-        predictions['logo'] = {'excerpt': logo, 'confidence': [1.0],
-                               'technique': 'Regular expression'}
-
-    if len(images) != 0:
-        badges = []
-        for image in images:
-            if image.find('badge') >= 0:
-                badges.append(image)
-        for badge in badges:
-            images.remove(badge)
-        if len(images) > 0:
-            predictions['image'] = []
-            for image in images:
-                predictions['image'].append({'excerpt': image, 'confidence': [1.0],
-                                             'technique': 'Regular expression'})
-
-    if len(support_channels) != 0:
-        predictions['supportChannels'] = {'excerpt': support_channels, 'confidence': [1.0],
-                                          'technique': 'Regular expression'}
-
-    if len(package_distribution) != 0:
-        predictions['packageDistribution'] = {'excerpt': package_distribution, 'confidence': [1.0],
-                                              'technique': 'Regular expression'}
-
-    for i in range(len(readthedocs_links)):
-        if 'documentation' not in predictions.keys():
-            predictions['documentation'] = []
-        predictions['documentation'].append({'excerpt': readthedocs_links[i], 'confidence': [1.0],
-                                             'technique': 'Regular expression', 'type': 'readthedocs'})
-
-    for i in range(len(wiki_links)):
-        if 'documentation' not in predictions.keys():
-            predictions['documentation'] = []
-        predictions['documentation'].append({'excerpt': wiki_links[i], 'confidence': [1.0],
-                                             'technique': 'Regular expression', 'type': 'wiki'})
-
-    if category:
-        predictions['category'] = category
-
-    for headers in header_predictions:
-        if headers not in predictions.keys():
-            predictions[headers] = header_predictions[headers]
-        else:
-            for h in header_predictions[headers]:
-                predictions[headers].insert(0, h)
-    print("Merging successful. \n")
-    return predictions
-
-
-def format_output(git_data, repo_data, repo_type):
-    """
-    Function takes metadata, readme text predictions, bibtex citations and path to the output file
-    Parameters
-    ----------
-    git_data GitHub obtained data
-    repo_data Data extracted from the code repo by SOMEF
-
-    Returns
-    -------
-    json representation of the categories found in file
-    """
-    text_technique = 'GitHub API'
-    if repo_type is constants.RepositoryType.GITLAB:
-        text_technique = 'GitLab API'
-    print("formatting output")
-
-    for i in git_data.keys():
-        if i == 'description':
-            if 'description' not in repo_data.keys():
-                repo_data['description'] = []
-            if git_data[i] != "":
-                repo_data['description'].append(
-                    {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technique})
-        else:
-            keys = repo_data.keys
-            if i in constants.file_exploration:
-                if i == 'hasExecutableNotebook':
-                    repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration',
-                                    'format': 'jupyter notebook'}
-                elif i == 'hasBuildFile':
-                    docker_files = []
-                    docker_compose = []
-                    for data in git_data[i]:
-                        if data.lower().endswith('docker-compose.yml'):
-                            docker_compose.append(data)
-                        else:
-                            docker_files.append(data)
-                    repo_data[i] = []
-                    if len(docker_files) > 0:
-                        repo_data[i].append({'excerpt': docker_files, 'confidence': [1.0],
-                                             'technique': 'File Exploration',
-                                             'format': 'Docker file'})
-                    if len(docker_compose) > 0:
-                        repo_data[i].append({'excerpt': docker_compose, 'confidence': [1.0],
-                                             'technique': 'File Exploration',
-                                             'format': 'Docker compose file'})
-                else:
-                    if i in repo_data:
-                        repo_data[i].append(
-                            {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'})
-                    else:
-                        repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
-            elif git_data[i] != "" and git_data[i] != []:
-                repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technique}
-    # remove empty categories from json
-    return remove_empty_elements(repo_data)
+# def format_output(git_data, repo_data, repo_type):
+#     """
+#     Function takes metadata, readme text predictions, bibtex citations and path to the output file
+#     Parameters
+#     ----------
+#     git_data GitHub obtained data
+#     repo_data Data extracted from the code repo by SOMEF
+#
+#     Returns
+#     -------
+#     json representation of the categories found in file
+#     """
+#     text_technique = 'GitHub API'
+#     if repo_type is constants.RepositoryType.GITLAB:
+#         text_technique = 'GitLab API'
+#     print("formatting output")
+#
+#     for i in git_data.keys():
+#         if i == 'description':
+#             if 'description' not in repo_data.keys():
+#                 repo_data['description'] = []
+#             if git_data[i] != "":
+#                 repo_data['description'].append(
+#                     {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technique})
+#         else:
+#             keys = repo_data.keys
+#             if i in constants.file_exploration:
+#                 if i == 'hasExecutableNotebook':
+#                     repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration',
+#                                     'format': 'jupyter notebook'}
+#                 elif i == 'hasBuildFile':
+#                     docker_files = []
+#                     docker_compose = []
+#                     for data in git_data[i]:
+#                         if data.lower().endswith('docker-compose.yml'):
+#                             docker_compose.append(data)
+#                         else:
+#                             docker_files.append(data)
+#                     repo_data[i] = []
+#                     if len(docker_files) > 0:
+#                         repo_data[i].append({'excerpt': docker_files, 'confidence': [1.0],
+#                                              'technique': 'File Exploration',
+#                                              'format': 'Docker file'})
+#                     if len(docker_compose) > 0:
+#                         repo_data[i].append({'excerpt': docker_compose, 'confidence': [1.0],
+#                                              'technique': 'File Exploration',
+#                                              'format': 'Docker compose file'})
+#                 else:
+#                     if i in repo_data:
+#                         repo_data[i].append(
+#                             {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'})
+#                     else:
+#                         repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
+#             elif git_data[i] != "" and git_data[i] != []:
+#                 repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technique}
+#     # remove empty categories from json
+#     return remove_empty_elements(repo_data)
 
 
 def remove_empty_elements(d):
@@ -237,10 +108,10 @@ def remove_empty_elements(d):
         return {k: v for k, v in ((k, remove_empty_elements(v)) for k, v in d.items()) if not empty(v)}
 
 
-def save_json(git_data, repo_data, outfile):
-    """Performs some combinations and saves the final json Object in output file"""
-    repo_data = format_output(git_data, repo_data)
-    json_export.save_json_output(repo_data, outfile, None)
+# def save_json(git_data, repo_data, outfile):
+#     """Performs some combinations and saves the final json Object in output file"""
+#     repo_data = format_output(git_data, repo_data)
+#     json_export.save_json_output(repo_data, outfile, None)
 
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
@@ -319,7 +190,6 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             sys.exit()
         with open(doc_src, 'r', encoding="UTF-8") as doc_fh:
             readme_text = doc_fh.read()
-        repository_metadata = {}
     try:
         unfiltered_text = readme_text
         repository_metadata, string_list = header_analysis.extract_categories(unfiltered_text, repository_metadata)
@@ -340,7 +210,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 readme_source = readme_source[constants.PROP_RESULT][constants.PROP_VALUE]
             except:
                 readme_source = "README.md"
-            repository_metadata = regular_expressions.extract_bibtex(readme_text, repository_metadata, readme_source)
+            repository_metadata = regular_expressions.extract_bibtex(unfiltered_text, repository_metadata, readme_source)
             repository_metadata = regular_expressions.extract_doi_badges(unfiltered_text, repository_metadata,
                                                                          readme_source)
             repository_metadata = regular_expressions.extract_title(unfiltered_text, repository_metadata, readme_source)
@@ -432,7 +302,7 @@ def run_cli(*,
                                      doc_src=doc_src, keep_tmp=keep_tmp)
 
     if output is not None:
-        json_export.save_json_output(repo_data, output, missing, pretty=pretty)
+        json_export.save_json_output(repo_data.results, output, missing, pretty=pretty)
 
     if graph_out is not None:
         logging.info("Generating Knowledge Graph")
@@ -448,4 +318,4 @@ def run_cli(*,
             out_file.write(data_graph.g.serialize(format=graph_format, encoding="UTF-8"))
 
     if codemeta_out is not None:
-        json_export.save_codemeta_output(repo_data, codemeta_out, pretty=pretty)
+        json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty)

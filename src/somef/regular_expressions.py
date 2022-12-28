@@ -94,7 +94,8 @@ def extract_readthedocs(readme_text, repository_metadata: Result, readme_source)
     for link in list(dict.fromkeys(readthedocs_links)):
         result = {
             constants.PROP_TYPE: constants.URL,
-            constants.PROP_VALUE: link
+            constants.PROP_VALUE: link,
+            constants.PROP_FORMAT: constants.FORMAT_READTHEDOCS
         }
         try:
             # if name of the repo is known then compare against the readthedocs one. Only add it if it's similar/same
@@ -116,7 +117,7 @@ def extract_readthedocs(readme_text, repository_metadata: Result, readme_source)
 
 def extract_support_channels(readme_text, repository_metadata: Result, readme_source) -> Result:
     """
-    Function to extract readthedocs links from text
+    Function to extract support channels links from text
     Parameters
     ----------
     @param readme_text: raw text of the readme file
@@ -251,7 +252,8 @@ def extract_wiki_links(unfiltered_text, repo_url, repository_metadata: Result, r
         repository_metadata.add_result(constants.CAT_DOCUMENTATION,
                                        {
                                            constants.PROP_TYPE: constants.URL,
-                                           constants.PROP_VALUE: link
+                                           constants.PROP_VALUE: link,
+                                           constants.PROP_FORMAT: constants.FORMAT_WIKI
                                        },
                                        1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
     return repository_metadata

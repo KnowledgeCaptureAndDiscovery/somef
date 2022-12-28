@@ -37,11 +37,12 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Releases**: Pointer to the available versions of a software component
 - **Changelog**: Description of the changes between versions
 - **Issue tracker**: Link where to open issues for the target repository
+- **Package distribution**: Links to package sites like pypi in case the repository has a package available.
 - **Programming languages**: Languages used in the repository
-- **Repository Status**: Repository status as it is described in [repostatus.org](https://www.repostatus.org/)
+- **Repository Status**: Repository status as it is described in [repostatus.org](https://www.repostatus.org/).
 - **Stargazers count**: Total number of stargazers of the project
-- **Forks count**: Number of forks of the project
-- **Forks url**: Links to forks made of the project
+- **Forks count**: Number of forks of the project.
+- **Forks url**: Links to forks made of the project.
 - **Code of Conduct**: Link to the code of conduct of the project
 - **Scripts**: Snippets of code contained in the repository.
 - **Support channels**: Help channels one can use to get support about the target software component.

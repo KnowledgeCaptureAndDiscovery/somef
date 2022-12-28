@@ -9,7 +9,7 @@ from ..utils import constants
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 
 
-class TestRegExp(unittest.TestCase):
+class TestSupervisedClassification(unittest.TestCase):
 
     def test_run_category_classification(self):
         """Test to check if category classification runs correctly."""

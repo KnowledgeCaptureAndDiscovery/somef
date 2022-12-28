@@ -24,17 +24,20 @@ def run_category_classification(readme_text: str, threshold: float, results: Res
     df = pd.DataFrame([readme_text], columns=['Text'])
     preprocessing.Preprocessor(df).run()
     text = [df['Text'][0]]
-    for model_file in (Path(__file__).parent / 'rolf/models').iterdir():
-        with open(model_file, 'rb') as f:
-            model = pickle.load(f)
-            cat = model.predict(text).tolist()[0]
-            prob = max(model.predict_proba(text).tolist()[0])
-            if cat != 'Other' and prob > threshold:
-                results.add_result(constants.CAT_APPLICATION_DOMAIN,
-                                   {
-                                       constants.PROP_TYPE: constants.STRING,
-                                       constants.PROP_VALUE: cat
-                                   }, prob, constants.TECHNIQUE_SUPERVISED_CLASSIFICATION)
+    try:
+        for model_file in (Path(__file__).parent / 'rolf/models').iterdir():
+            with open(model_file, 'rb') as f:
+                model = pickle.load(f)
+                cat = model.predict(text).tolist()[0]
+                prob = max(model.predict_proba(text).tolist()[0])
+                if cat != 'Other' and prob > threshold:
+                    results.add_result(constants.CAT_APPLICATION_DOMAIN,
+                                       {
+                                           constants.PROP_TYPE: constants.STRING,
+                                           constants.PROP_VALUE: cat
+                                       }, prob, constants.TECHNIQUE_SUPERVISED_CLASSIFICATION)
+    except Exception as e:
+        logging.error("Error when applying supervised classification "+str(e))
     return results
 
 
@@ -130,22 +133,25 @@ def run_classifiers(excerpts, file_paths):
 
     """
     score_dict = {}
-    if len(excerpts) > 0:
-        text_to_classifier = []
-        text_to_results = []
-        for key in excerpts.keys():
-            text_to_classifier.append(key)
-            text_to_results.append(excerpts[key])
-        for category in constants.supervised_categories:
-            if category not in file_paths.keys():
-                sys.exit("Error: Category " + category + " file path not present in config.json")
-            file_name = file_paths[category]
-            if not path.exists(file_name):
-                sys.exit(f"Error: File or Directory {file_name} does not exist")
-            logging.info("Classifying excerpts for the category"+ category)
-            classifier = pickle.load(open(file_name, 'rb'))
-            scores = classifier.predict_proba(text_to_classifier)
-            score_dict[category] = {'excerpt': text_to_results, 'confidence': scores[:, 1]}
-            #logging.info("Excerpt classification successful category"+ category)
+    try:
+        if len(excerpts) > 0:
+            text_to_classifier = []
+            text_to_results = []
+            for key in excerpts.keys():
+                text_to_classifier.append(key)
+                text_to_results.append(excerpts[key])
+            for category in constants.supervised_categories:
+                if category not in file_paths.keys():
+                    sys.exit("Error: Category " + category + " file path not present in config.json")
+                file_name = file_paths[category]
+                if not path.exists(file_name):
+                    sys.exit(f"Error: File or Directory {file_name} does not exist")
+                logging.info("Classifying excerpts for the category"+ category)
+                classifier = pickle.load(open(file_name, 'rb'))
+                scores = classifier.predict_proba(text_to_classifier)
+                score_dict[category] = {'excerpt': text_to_results, 'confidence': scores[:, 1]}
+                #logging.info("Excerpt classification successful category"+ category)
+    except Exception as e:
+        logging.error("Error while running supervised classifiers on README "+str(e))
 
     return score_dict
