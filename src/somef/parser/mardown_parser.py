@@ -56,7 +56,7 @@ def extract_content_per_header(original_text, headers):
     if len(text_tokenized) == 1:
         return text_tokenized[0]
     top_index = get_position(0, text_tokenized, top)
-    # si hay algo antes de la primera cabecera, no se procesa porque no está relacionado con ninguna cabecera
+    # do not process the text above all other headers, as it does not belong to one
     if top_index > 0:
         none_header_content = get_text(0, top_index, text_tokenized)
         none_header_content = regular_expressions.remove_links_images(none_header_content)
@@ -91,6 +91,8 @@ def get_position(init_index, text_tokenized, text):
     while init_index < len(text_tokenized):
         val = text_tokenized[init_index]
         val = remove_hash(val).strip()
+        # Since we read the headers with HTML there could be encoding conversions line ;amp that could be lost
+        val = markdown.markdown(val).replace('<p>', '').replace('</p>', '').strip()
         if val.startswith(text):
             return init_index
         init_index += 1

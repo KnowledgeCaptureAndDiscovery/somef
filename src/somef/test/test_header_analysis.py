@@ -96,3 +96,15 @@ class TestHeaderAnalysis(unittest.TestCase):
             element = json.results[constants.CAT_DESCRIPTION]
             confidence = element[0][constants.PROP_CONFIDENCE]
             assert confidence == 1
+
+    def test_issue_465(self):
+        """
+        Test targeted towards creating the right excerpts when breaking a problematic file. Requirements should
+        only return a single line.
+        """
+        with open(test_data_path + "test_465.md", "r") as data_file:
+            file_text = data_file.read()
+            json_test, results = extract_categories_using_headers(file_text, Result())
+            #print(json_test.results[constants.CAT_REQUIREMENTS])
+            reqs = json_test.results[constants.CAT_REQUIREMENTS][0][constants.PROP_RESULT][constants.PROP_VALUE]
+            assert reqs.replace('\n', '') == "Python 2.7 and 3.4+"

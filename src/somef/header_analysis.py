@@ -207,7 +207,7 @@ def extract_categories_using_headers(text, repository_metadata: Result):
     logging.info('Labeling headers.')
     if data.empty:
         logging.warning("File to analyze has no headers")
-        return {}, [text]
+        return repository_metadata, [text]
     data['Group'] = data['Header'].apply(lambda row: label_header(row))
     data['GroupParent'] = data['ParentHeader'].apply(lambda row: label_parent_headers(row))
     for i in data.index:
