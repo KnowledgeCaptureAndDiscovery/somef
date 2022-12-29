@@ -323,8 +323,9 @@ def extract_categories(repo_data, repository_metadata: Result):
         string_list = data.loc[data['Group'].isna(), ['Content']].values.squeeze().tolist()
         if type(string_list) != list:
             string_list = [string_list]
-        string_list.append(none_header_content.strip())
-        logging.info("Information extracted.")
+        if none_header_content is not None and none_header_content != "":
+            string_list.append(none_header_content.strip())
+        logging.info("Header information extracted.")
         return repository_metadata, string_list
     except Exception as e:
         logging.error("Error while extracting headers: ", str(e))

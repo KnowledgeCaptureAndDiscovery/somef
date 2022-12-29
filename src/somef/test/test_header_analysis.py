@@ -92,7 +92,6 @@ class TestHeaderAnalysis(unittest.TestCase):
         with open(test_data_path + "README-mapshaper.md", "r") as data_file:
             file_text = data_file.read()
             json, results = extract_categories(file_text, Result())
-            print(json.results)
             element = json.results[constants.CAT_DESCRIPTION]
             confidence = element[0][constants.PROP_CONFIDENCE]
             assert confidence == 1
