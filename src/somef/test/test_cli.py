@@ -137,7 +137,6 @@ class TestCli(unittest.TestCase):
                           missing=False)
         text_file = open(test_data_path + "repositories/repos_oeg/test-355.json", "r")
         data = text_file.read()
-        print(data)
         text_file.close()
         assert data.find(constants.CAT_FULL_TITLE) > 0
         os.remove(test_data_path + "repositories/repos_oeg/test-355.json")
@@ -839,7 +838,6 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        print(json_content)
         issue_tracker = json_content["issueTracker"] # JSON is in Codemeta format
         assert issue_tracker == 'https://github.com/dgarijo/Widoco/issues' and len(json_content["citation"])>0  and \
                len(json_content["name"]) > 0 and len(json_content["identifier"])>0 and \
@@ -878,28 +876,6 @@ class TestCli(unittest.TestCase):
                           repo_url=None,
                           local_repo=None,
                           doc_src=test_data_path + "README-epw2rdf-contents.md",
-                          in_file=None,
-                          output=test_data_path + "test-443.json",
-                          graph_out=None,
-                          graph_format="turtle",
-                          codemeta_out=None,
-                          pretty=True,
-                          missing=True,
-                          readme_only=False)
-        text_file = open(test_data_path + "test-443.json", "r")
-        data = text_file.read()
-        text_file.close()
-        json_content = json.loads(data)
-        installation = json_content[constants.CAT_INSTALLATION]
-        assert installation is not None
-        os.remove(test_data_path + "test-443.json")
-
-    def test_issue_443_2(self):
-        somef_cli.run_cli(threshold=0.8,
-                          ignore_classifiers=False,
-                          repo_url="https://github.com/oeg-upm/awesome-semantic-web",
-                          local_repo=None,
-                          doc_src=None,
                           in_file=None,
                           output=test_data_path + "test-443.json",
                           graph_out=None,

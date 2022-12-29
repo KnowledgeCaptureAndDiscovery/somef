@@ -87,7 +87,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         for l in repo_data[constants.CAT_LICENSE]:
             if constants.PROP_NAME in l[constants.PROP_RESULT].keys():
                 l_result["name"] = l[constants.PROP_RESULT][constants.PROP_NAME]
-            if "url" not in l_result.keys() and l[constants.PROP_RESULT][constants.PROP_URL]:
+            if "url" not in l_result.keys() and constants.PROP_URL in l[constants.PROP_RESULT].keys():
                     l_result["url"] = l[constants.PROP_RESULT][constants.PROP_URL]
             # We get the first license we find from the repo
             elif l[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION \
@@ -116,13 +116,13 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     install_links = []
     if constants.CAT_INSTALLATION in repo_data:
         for inst in repo_data[constants.CAT_INSTALLATION]:
-            if inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_HEADER_ANALYSIS:
+            if inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_HEADER_ANALYSIS and constants.PROP_SOURCE in inst.keys():
                 install_links.append(inst[constants.PROP_SOURCE])
             elif inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION:
                 install_links.append(inst[constants.PROP_RESULT][constants.PROP_VALUE])
     if constants.CAT_DOCUMENTATION in repo_data:
         for inst in repo_data[constants.CAT_DOCUMENTATION]:
-            if inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_HEADER_ANALYSIS:
+            if inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_HEADER_ANALYSIS and constants.PROP_SOURCE in inst.keys():
                 install_links.append(inst[constants.PROP_SOURCE])
             elif inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION or \
                     inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_REGULAR_EXPRESSION:

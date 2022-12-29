@@ -92,6 +92,7 @@ def get_position(init_index, text_tokenized, text):
     while init_index < len(text_tokenized):
         val = text_tokenized[init_index]
         val = remove_hash(val).strip()
+        text = markdown.markdown(text).replace('<p>', '').replace('</p>', '').strip()
         # Since we read the headers with HTML there could be encoding conversions line ;amp that could be lost
         val = markdown.markdown(val).replace('<p>', '').replace('</p>', '').strip()
         if val.startswith(text):
