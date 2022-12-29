@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import markdown
@@ -36,10 +37,10 @@ def extract_title(unfiltered_text, repository_metadata: Result, readme_source) -
             break
         index += 1
     repository_metadata.add_result(constants.CAT_FULL_TITLE,
-                                   {
-                                       constants.PROP_TYPE: constants.STRING,
-                                       constants.PROP_VALUE: output
-                                   }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+                                       {
+                                           constants.PROP_TYPE: constants.STRING,
+                                           constants.PROP_VALUE: output
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
     return repository_metadata
 
 
