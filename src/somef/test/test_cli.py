@@ -821,7 +821,7 @@ class TestCli(unittest.TestCase):
         os.remove(test_data_path + "test-366.json")
 
     def test_issue_417(self):
-        """Checks for different codemeta errors"""
+        """Checks whether a repository correctly extracts to Codemeta"""
         somef_cli.run_cli(threshold=0.8,
                           ignore_classifiers=False,
                           repo_url="https://github.com/dgarijo/Widoco",
@@ -839,8 +839,15 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        issue_tracker = json_content[constants.CAT_ISSUE_TRACKER]
-        assert issue_tracker == 'https://api.github.com/repos/dgarijo/Widoco/issues'
+        print(json_content)
+        issue_tracker = json_content["issueTracker"] # JSON is in Codemeta format
+        assert issue_tracker == 'https://github.com/dgarijo/Widoco/issues' and len(json_content["citation"])>0  and \
+               len(json_content["name"]) > 0 and len(json_content["identifier"])>0 and \
+               len(json_content["description"])>0 and len(json_content["readme"])>0 and \
+               len(json_content["author"])>0 and len(json_content["buildInstructions"])>0 and \
+               len(json_content["softwareRequirements"]) > 0 and len(json_content["programmingLanguage"]) > 0 and \
+               len(json_content["keywords"]) > 0 and len(json_content["logo"]) > 0 and \
+               len(json_content["license"]) > 0 and len(json_content["dateCreated"]) > 0
         os.remove(test_data_path + "test-417.json-ld")
 
     def test_issue_428(self):
