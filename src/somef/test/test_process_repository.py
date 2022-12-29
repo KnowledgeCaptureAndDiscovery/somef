@@ -34,12 +34,26 @@ class TestProcessRepository(unittest.TestCase):
         assert len(github_data.results[constants.CAT_CONTRIBUTING_GUIDELINES]) > 0 and (
                 'license' in github_data.results.keys())
 
+    def test_coc(self):
+        """Test designed to check if code of conduct is detected"""
+        github_data = Result()
+        text, github_data = process_files.process_repository_files(test_data_repositories + "wav2letter", github_data,
+                                                                   constants.RepositoryType.LOCAL)
+        assert len(github_data.results[constants.CAT_COC]) > 0
+
+    def test_install(self):
+        """Test designed to check if installation instructions are detected"""
+        github_data = Result()
+        text, github_data = process_files.process_repository_files(test_data_repositories + "wav2letter", github_data,
+                                                                   constants.RepositoryType.LOCAL)
+        assert len(github_data.results[constants.CAT_INSTALLATION]) > 0
+
     def test_issue_218(self):
         """Test designed to check if citation files (.cff) are detected"""
         github_data = Result()
         text, github_data = process_files.process_repository_files(test_data_repositories + "captum", github_data,
                                                                    constants.RepositoryType.LOCAL)
-        assert len(github_data.results['citation']) > 0
+        assert len(github_data.results[constants.CAT_CITATION]) > 0
 
     def test_issue_285(self):
         """Test designed to test repositories with no license (somef should not break)"""

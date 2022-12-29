@@ -2,13 +2,13 @@ import logging
 import os
 import re
 import urllib
-from .utils import constants ,markdown_utils
+from .utils import constants, markdown_utils
 from . import extract_ontologies
 from .process_results import Result
 from chardet import detect
 
 
-def process_repository_files(repo_dir, metadata_result:Result, repo_type, owner="", repo_name="",
+def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner="", repo_name="",
                              repo_default_branch=""):
     """
     Method that given a folder, it recognizes whether there are notebooks, dockerfiles, docs, script files or
@@ -26,11 +26,6 @@ def process_repository_files(repo_dir, metadata_result:Result, repo_type, owner=
     -------
     @return: text of the main readme and a JSON dictionary (filtered_resp) with the findings in files
     """
-    # notebooks = []
-    # dockerfiles = []
-    # docs = []
-    # script_files = []
-    # ontologies = []
     text = ""
     try:
         for dir_path, dir_names, filenames in os.walk(repo_dir):
@@ -38,19 +33,12 @@ def process_repository_files(repo_dir, metadata_result:Result, repo_type, owner=
             for filename in filenames:
                 file_path = os.path.join(repo_relative_path, filename)
                 if filename == "Dockerfile" or filename.lower() == "docker-compose.yml":
-                    # if repo_type == constants.RepositoryType.GITHUB:
-                    #     docker_url = convert_to_raw_user_content_github(file_path, owner, repo_name, repo_default_branch)
-                    #
-                    # elif repo_type == constants.RepositoryType.GITLAB:
-                    #     docker_url = convert_to_raw_user_content_gitlab(file_path, owner, repo_name, repo_default_branch)
-                    # else:
-                    #     docker_url = os.path.join(repo_dir, file_path)
-                    docker_url = get_file_link(repo_type,file_path,owner,repo_name,repo_default_branch,repo_dir,repo_relative_path,filename)
+                    docker_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
+                                               repo_relative_path, filename)
                     if filename == "Dockerfile":
                         format_file = constants.FORMAT_DOCKERFILE
                     else:
                         format_file = constants.FORMAT_DOCKER_COMPOSE
-                    # dockerfiles.append(docker_url)
                     metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
                                                {
                                                    constants.PROP_VALUE: docker_url,
@@ -60,13 +48,8 @@ def process_repository_files(repo_dir, metadata_result:Result, repo_type, owner=
                                                1,
                                                constants.TECHNIQUE_FILE_EXPLORATION, docker_url)
                 if filename.lower().endswith(".ipynb"):
-                    # if repo_type == constants.RepositoryType.GITHUB:
-                    #     notebook_url = convert_to_raw_user_content_github(file_path, owner, repo_name, repo_default_branch)
-                    # elif repo_type == constants.RepositoryType.GITLAB:
-                    #     notebook_url = convert_to_raw_user_content_gitlab(file_path, owner, repo_name, repo_default_branch)
-                    # else:
-                    #     notebook_url = notebooks.append(os.path.join(repo_dir, file_path))
-                    notebook_url = get_file_link(repo_type,file_path,owner,repo_name,repo_default_branch,repo_dir,repo_relative_path,filename)
+                    notebook_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
+                                                 repo_relative_path, filename)
                     metadata_result.add_result(constants.CAT_EXECUTABLE_EXAMPLE,
                                                {
                                                    constants.PROP_VALUE: notebook_url,
@@ -91,7 +74,6 @@ def process_repository_files(repo_dir, metadata_result:Result, repo_type, owner=
                                     readme_url = convert_to_raw_user_content_github(filename, owner,
                                                                                     repo_name,
                                                                                     repo_default_branch)
-                                   # filtered_resp['readmeUrl'] = readme_url
                                     metadata_result.add_result(constants.CAT_README_URL,
                                                                {
                                                                    constants.PROP_VALUE: readme_url,
@@ -102,142 +84,38 @@ def process_repository_files(repo_dir, metadata_result:Result, repo_type, owner=
                         except ValueError:
                             print("README Error: error while reading file content")
                             print(f"{type(err).__name__} was raised: {err}")
-
-                if "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
-                    metadata_result = get_file_content_or_link(repo_type,file_path,owner,repo_name,repo_default_branch,
-                                                               repo_dir,repo_relative_path, filename,dir_path,
+                if "LICENCE" == filename.upper() or "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
+                    # to do (issue 530) if there are two licenses, keep the one closer to the root
+                    metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
+                                                               repo_default_branch,
+                                                               repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_LICENSE)
-                    # try:
-                        # first, get the URL of the file
-                    #     if repo_type == constants.RepositoryType.GITHUB:
-                    #         license_url = convert_to_raw_user_content_github(file_path, owner, repo_name,
-                    #                                                                           repo_default_branch)
-                    #     elif repo_type == constants.RepositoryType.GITLAB:
-                    #         license_url = convert_to_raw_user_content_gitlab(file_path, owner, repo_name,
-                    #                                                                           repo_default_branch)
-                    #     else:
-                    #         license_url = os.path.join(repo_dir, repo_relative_path, filename)
-                    #
-                    #     with open(os.path.join(dir_path, filename), "rb") as data_file:
-                    #         file_text = markdown_utils.unmark(data_file.read())
-                    #         filtered_resp["licenseText"] = file_text
-                    #         metadata_result.add_result(constants.CAT_LICENSE,
-                    #                                    {
-                    #                                        constants.PROP_VALUE: file_text,
-                    #                                        constants.PROP_TYPE: constants.STRING
-                    #                                    },
-                    #                                    1,
-                    #                                    constants.TECHNIQUE_FILE_EXPLORATION,
-                    #                                    license_url
-                    #                                    )
-                    # except:
-                    #     filtered_resp["licenseFile"] = license_url
-                    #     metadata_result.add_result(constants.CAT_LICENSE,
-                    #                                {
-                    #                                    constants.PROP_VALUE: license_url,
-                    #                                    constants.PROP_TYPE: constants.URL
-                    #                                },
-                    #                                1,
-                    #                                constants.TECHNIQUE_FILE_EXPLORATION,
-                    #                                license_url
-                    #                                )
-
                 if "CODE_OF_CONDUCT" == filename.upper() or "CODE_OF_CONDUCT.MD" == filename.upper():
-                    coc_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
-                                        repo_relative_path, filename)
-                    # if repo_type == constants.RepositoryType.GITHUB:
-                    #     coc_url = convert_to_raw_user_content_github(filename, owner, repo_name,
-                    #                                                                     repo_default_branch)
-                    #
-                    # elif repo_type == constants.RepositoryType.GITLAB:
-                    #     coc_url = convert_to_raw_user_content_gitlab(filename, owner, repo_name,
-                    #                                                                         repo_default_branch)
-                    # else:
-                    #     coc_url = os.path.join(repo_dir, repo_relative_path, filename)
-                #    filtered_resp["codeOfConduct"] = coc_url
-                    metadata_result.add_result(constants.CAT_COC,
-                                               {
-                                                   constants.PROP_VALUE: coc_url,
-                                                   constants.PROP_TYPE: constants.URL
-                                               },
-                                               1,
-                                               constants.TECHNIQUE_FILE_EXPLORATION
-                                               )
-
+                    metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
+                                                               repo_default_branch,
+                                                               repo_dir, repo_relative_path, filename, dir_path,
+                                                               metadata_result, constants.CAT_COC)
                 if "CONTRIBUTING" == filename.upper() or "CONTRIBUTING.MD" == filename.upper():
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_CONTRIBUTING_GUIDELINES)
-                    # if repo_type == constants.RepositoryType.GITHUB:
-                    #     contrib_url = convert_to_raw_user_content_github(file_path, owner, repo_name,repo_default_branch)
-                    # elif repo_type == constants.RepositoryType.GITLAB:
-                    #     contrib_url = convert_to_raw_user_content_gitlab(file_path,owner, repo_name,repo_default_branch)
-                    # else:
-                    #     contrib_url = os.path.join(repo_dir, repo_relative_path, filename)
-                    # try:
-                    #     with open(os.path.join(dir_path, filename), "r") as data_file:
-                    #         file_text = markdown_utils.unmark(data_file.read())
-                    #         filtered_resp["contributingGuidelines"] = file_text
-                    #         metadata_result.add_result(constants.CAT_CONTRIBUTING_GUIDELINES,
-                    #                                    {
-                    #                                        constants.PROP_VALUE: file_text,
-                    #                                        constants.PROP_TYPE: constants.STRING
-                    #                                    },
-                    #                                    1,
-                    #                                    constants.TECHNIQUE_FILE_EXPLORATION,
-                    #                                    contrib_url
-                    #                                    )
-                    # except:
-                    #     metadata_result.add_result(constants.CAT_CONTRIBUTING_GUIDELINES,
-                    #                                {
-                    #                                    constants.PROP_VALUE: contrib_url,
-                    #                                    constants.PROP_TYPE: constants.URL
-                    #                                },
-                    #                                1,
-                    #                                constants.TECHNIQUE_FILE_EXPLORATION,
-                    #                                )
 
                 if "ACKNOWLEDGMENT" in filename.upper() or "ACKNOWLEDGEMENT" in filename.upper():
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_ACKNOWLEDGEMENT)
-                    # try:
-                    #     with open(os.path.join(dir_path, filename), "r") as data_file:
-                    #         file_text = data_file.read()
-                    #         filtered_resp["acknowledgement"] = markdown_utils.unmark(file_text)
-                    # except ValueError:
-                    #     if repo_type == constants.RepositoryType.GITHUB:
-                    #         filtered_resp["acknowledgmentsFile"] = convert_to_raw_user_content_github(filename, owner,
-                    #                                                                                   repo_name,
-                    #                                                                                   repo_default_branch)
-                    #     elif repo_type == constants.RepositoryType.GITLAB:
-                    #         filtered_resp["acknowledgmentsFile"] = convert_to_raw_user_content_gitlab(filename, owner,
-                    #                                                                                   repo_name,
-                    #                                                                                   repo_default_branch)
-                    #     else:
-                    #         filtered_resp["acknowledgmentsFile"] = os.path.join(repo_dir, repo_relative_path, filename)
                 if "CONTRIBUTORS" == filename.upper() or "CONTRIBUTORS.MD" == filename.upper():
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_CONTRIBUTORS)
-                    # try:
-                    #     with open(os.path.join(dir_path, filename), "r") as data_file:
-                    #         file_text = data_file.read()
-                    #         filtered_resp["contributors"] = markdown_utils.unmark(file_text)
-                    # except ValueError:
-                    #     if repo_type == constants.RepositoryType.GITHUB:
-                    #         filtered_resp["contributorsFile"] = convert_to_raw_user_content_github(filename, owner,
-                    #                                                                                repo_name,
-                    #                                                                                repo_default_branch)
-                    #     elif repo_type == constants.RepositoryType.GITLAB:
-                    #         filtered_resp["contributorsFile"] = convert_to_raw_user_content_gitlab(filename, owner,
-                    #                                                                                repo_name,
-                    #                                                                                repo_default_branch)
-                    #     else:
-                    #         filtered_resp["contributorsFile"] = os.path.join(repo_dir, repo_relative_path, filename)
+                if "INSTALL" in filename.upper() and filename.upper().endswith("MD"):
+                    metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
+                                                               repo_default_branch,
+                                                               repo_dir, repo_relative_path, filename, dir_path,
+                                                               metadata_result, constants.CAT_INSTALLATION)
                 # TO DO: double-check the formats and create a proper publication object (issue 207)
                 if "CITATION" == filename.upper() or "CITATION.BIB" == filename.upper():
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
@@ -251,54 +129,26 @@ def process_repository_files(repo_dir, metadata_result:Result, repo_type, owner=
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_CITATION,
                                                                constants.FORMAT_CFF)
-                # if "CITATION" == filename.upper() or "CITATION.CFF" == filename.upper() or "CITATION.BIB" == filename.upper():
-                #     try:
-                #         with open(os.path.join(dir_path, filename), "r") as data_file:
-                #             file_text = data_file.read()
-                #             filtered_resp["citation"] = markdown_utils.unmark(file_text)
-                #     except ValueError:
-                #         if repo_type == constants.RepositoryType.GITHUB:
-                #             filtered_resp["citationFile"] = convert_to_raw_user_content_github(filename, owner,
-                #                                                                                repo_name,
-                #                                                                                repo_default_branch)
-                #         elif repo_type == constants.RepositoryType.GITLAB:
-                #             filtered_resp["citationFile"] = convert_to_raw_user_content_gitlab(filename, owner,
-                #                                                                                repo_name,
-                #                                                                                repo_default_branch)
-                #         else:
-                #             filtered_resp["citationFile"] = os.path.join(repo_dir, repo_relative_path, filename)
-
                 if filename.endswith(".sh"):
                     sh_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
-                                            repo_relative_path, filename)
+                                           repo_relative_path, filename)
                     metadata_result.add_result(constants.CAT_HAS_SCRIPT_FILE,
                                                {
                                                    constants.PROP_VALUE: sh_url,
                                                    constants.PROP_TYPE: constants.URL
-                                               },
-                                               1,
-                                               constants.TECHNIQUE_FILE_EXPLORATION
+                                               }, 1, constants.TECHNIQUE_FILE_EXPLORATION
                                                )
-                    # if repo_type == constants.RepositoryType.GITHUB:
-                    #     script_files.append(convert_to_raw_user_content_github(file_path, owner, repo_name, repo_default_branch))
-                    # elif repo_type == constants.RepositoryType.GITLAB:
-                    #     script_files.append(convert_to_raw_user_content_gitlab(file_path, owner, repo_name, repo_default_branch))
-                    # else:
-                    #     script_files.append(os.path.join(repo_dir, file_path))
-
                 if filename.endswith(".ttl") or filename.endswith(".owl") or filename.endswith(".nt") or filename. \
                         endswith(".xml"):
                     uri = extract_ontologies.is_file_ontology(os.path.join(repo_dir, file_path))
                     if uri is not None:
                         onto_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
-                                               repo_relative_path, filename)
+                                                 repo_relative_path, filename)
                         metadata_result.add_result(constants.CAT_ONTOLOGIES,
                                                    {
                                                        constants.PROP_VALUE: onto_url,
                                                        constants.PROP_TYPE: constants.URL
-                                                   },
-                                                   1,
-                                                   constants.TECHNIQUE_FILE_EXPLORATION
+                                                   }, 1, constants.TECHNIQUE_FILE_EXPLORATION
                                                    )
 
             # TO DO: Improve this a bit, as just returning the docs folder is not that informative
@@ -327,24 +177,9 @@ def process_repository_files(repo_dir, metadata_result:Result, repo_type, owner=
                                                        {
                                                            constants.PROP_VALUE: docs_url,
                                                            constants.PROP_TYPE: constants.URL
-                                                       },
-                                                       1,
-                                                       constants.TECHNIQUE_FILE_EXPLORATION
+                                                       }, 1, constants.TECHNIQUE_FILE_EXPLORATION
                                                        )
                             break
-
-        # if len(notebooks) > 0:
-        #     filtered_resp["hasExecutableNotebook"] = notebooks
-        # if len(dockerfiles) > 0:
-        #     filtered_resp["hasBuildFile"] = dockerfiles
-        # if len(docs) > 0:
-        #     filtered_resp["hasDocumentation"] = docs
-        # if len(script_files) > 0:
-        #     filtered_resp["hasScriptFile"] = script_files
-        # if len(ontologies) > 0:
-        #     filtered_resp["ontologies"] = ontologies
-        # print (metadata_result.results)
-        # return text, filtered_resp, metadata_result
         return text, metadata_result
     except TypeError:
         logging.error("Error when opening the repository files")
@@ -352,7 +187,7 @@ def process_repository_files(repo_dir, metadata_result:Result, repo_type, owner=
 
 
 def get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir, repo_relative_path,
-                     filename):
+                  filename):
     """
     Function to return the URL (or path if not possible) of a given file
     Parameters
@@ -377,8 +212,9 @@ def get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, r
     else:
         return os.path.join(repo_dir, repo_relative_path, filename)
 
+
 def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir, repo_relative_path,
-                     filename, dir_path, metadata_result:Result, category, format_result=""):
+                             filename, dir_path, metadata_result: Result, category, format_result=""):
     """
     This method will return to the JSON file the contents of the file or its link if it cannot process the contents
     Parameters
@@ -398,34 +234,28 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
 
     Returns
     -------
-
+    @returns String with the file content or url link to the file
     """
-    url = get_file_link(repo_type,file_path, owner,repo_name,repo_default_branch,repo_dir,repo_relative_path,filename)
+    url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir, repo_relative_path,
+                        filename)
     try:
         with open(os.path.join(dir_path, filename), "r") as data_file:
-            file_text = markdown_utils.unmark(data_file.read())
+            file_text = data_file.read()
             result = {
-                       constants.PROP_VALUE: file_text,
-                       constants.PROP_TYPE: constants.FILE_DUMP
-                   }
-            if format_result!= "":
+                constants.PROP_VALUE: file_text,
+                constants.PROP_TYPE: constants.FILE_DUMP
+            }
+            if format_result != "":
                 result[constants.PROP_FORMAT] = format_result
-            metadata_result.add_result(category,
-                                       result,
-                                       1,
-                                       constants.TECHNIQUE_FILE_EXPLORATION,
-                                       url
-                                       )
+            metadata_result.add_result(category, result, 1, constants.TECHNIQUE_FILE_EXPLORATION, url)
     except:
         metadata_result.add_result(category,
                                    {
                                        constants.PROP_VALUE: url,
                                        constants.PROP_TYPE: constants.URL
-                                   },
-                                   1,
-                                   constants.TECHNIQUE_FILE_EXPLORATION,
-                                   )
+                                   }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
     return metadata_result
+
 
 def convert_to_raw_user_content_github(partial, owner, repo_name, repo_ref):
     """Converts GitHub paths into raw.githubuser content URLs, accessible by users"""
