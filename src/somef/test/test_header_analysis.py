@@ -4,7 +4,7 @@ import unittest
 
 from pathlib import Path
 
-from ..header_analysis import extract_header_content, extract_categories_using_headers, extract_bash_code
+from ..header_analysis import extract_header_content, extract_categories, extract_bash_code
 from ..process_results import Result
 from ..utils import constants
 
@@ -35,7 +35,7 @@ class TestHeaderAnalysis(unittest.TestCase):
         """Parser checks in case header are underlined (e.g., '___')"""
         with open(test_data_path + "test_extract_header_content_underline.txt", "r") as data_file:
             text = data_file.read()
-            result, non_header_content  = extract_header_content(text)
+            result, non_header_content = extract_header_content(text)
             print(result)
             assert len(result.index) == 3
 
@@ -43,7 +43,7 @@ class TestHeaderAnalysis(unittest.TestCase):
         """More markdown checks to see if all categories are recognized."""
         with open(test_data_path + "widoco_readme.md", "r") as data_file:
             file_text = data_file.read()
-            result, list = extract_categories_using_headers(file_text, Result())
+            result, list = extract_categories(file_text, Result())
             # At least 5 categories are extracted from the header analysis
             assert len(result.results) >= 5
 
@@ -71,7 +71,7 @@ class TestHeaderAnalysis(unittest.TestCase):
         """Test to check excerpt division and classification"""
         with open(test_data_path + "README-manim.md", "r") as data_file:
             file_text = data_file.read()
-            json_results, results = extract_categories_using_headers(file_text, Result())
+            json_results, results = extract_categories(file_text, Result())
             element = results[0]
             split = element.split("\n")
             assert len(split) > 1
@@ -81,7 +81,7 @@ class TestHeaderAnalysis(unittest.TestCase):
         """Test to see if the original title of a section is returned"""
         with open(test_data_path + "README-manim.md", "r") as data_file:
             file_text = data_file.read()
-            json, results = extract_categories_using_headers(file_text, Result())
+            json, results = extract_categories(file_text, Result())
             element = json.results[constants.CAT_DOCUMENTATION]
             elem = element[0][constants.PROP_RESULT]
             title = elem.get(constants.PROP_ORIGINAL_HEADER)
@@ -91,7 +91,7 @@ class TestHeaderAnalysis(unittest.TestCase):
         """Checks that the confidence value of fields extracted using header extraction technique is 1.0"""
         with open(test_data_path + "README-mapshaper.md", "r") as data_file:
             file_text = data_file.read()
-            json, results = extract_categories_using_headers(file_text, Result())
+            json, results = extract_categories(file_text, Result())
             print(json.results)
             element = json.results[constants.CAT_DESCRIPTION]
             confidence = element[0][constants.PROP_CONFIDENCE]
@@ -104,7 +104,6 @@ class TestHeaderAnalysis(unittest.TestCase):
         """
         with open(test_data_path + "test_465.md", "r") as data_file:
             file_text = data_file.read()
-            json_test, results = extract_categories_using_headers(file_text, Result())
-            #print(json_test.results[constants.CAT_REQUIREMENTS])
+            json_test, results = extract_categories(file_text, Result())
             reqs = json_test.results[constants.CAT_REQUIREMENTS][0][constants.PROP_RESULT][constants.PROP_VALUE]
             assert reqs.replace('\n', '') == "Python 2.7 and 3.4+"

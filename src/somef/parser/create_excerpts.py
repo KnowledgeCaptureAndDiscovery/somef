@@ -1,6 +1,6 @@
 from io import StringIO
 
-
+import logging
 from markdown import Markdown
 from ..utils import markdown_utils
 from . import mardown_parser
@@ -57,11 +57,10 @@ def create_excerpts(string_list):
     -------
     Extracted excerpts
     """
-    print("Splitting text into valid excerpts for classification")
+    logging.info("Splitting text into valid excerpts for classification")
     string_list = markdown_utils.remove_bibtex(string_list)
-    # divisions = createExcerpts.split_into_excerpts(string_list)
     divisions = mardown_parser.extract_blocks_excerpts(string_list)
-    print("Text Successfully split. \n")
+    logging.info("Text Successfully split. \n")
     output = {}
     for division in divisions:
         original = division

@@ -1,13 +1,9 @@
-## Main function: header_analysis(text)
-## input file: readme files text data
-## output file: json files with categories extracted using header analysis; other text data cannot be extracted
 import logging
 import re
 import string
 
 import numpy as np
 import pandas as pd
-import sys
 from textblob import Word
 
 from .process_results import Result
@@ -54,6 +50,9 @@ group.update({constants.CAT_DESCRIPTION: description})
 
 contributor = [Word("contributor").synsets[0]]
 group.update({constants.CAT_CONTRIBUTORS: contributor})
+
+contributing = [Word("contributing").synsets[1]]
+group.update({constants.CAT_CONTRIBUTING_GUIDELINES: contributing})
 
 documentation = [Word("documentation").synsets[1]]
 group.update({constants.CAT_DOCUMENTATION: documentation})
@@ -191,72 +190,72 @@ def clean_html(text):
     return cleantext
 
 
-def extract_categories_using_headers(text, repository_metadata: Result):
-    """
-    Main function to extract categories using headers
-    Parameters
-    ----------
-    @param text: readme text to process.
-    @param repository_metadata: Result object with the repository metadata
-
-    Returns
-    -------
-    @returns: A Result object with the repository metadata
-    """
-    data, none_header_content = extract_header_content(text)
-    logging.info('Labeling headers.')
-    if data.empty:
-        logging.warning("File to analyze has no headers")
-        return repository_metadata, [text]
-    data['Group'] = data['Header'].apply(lambda row: label_header(row))
-    data['GroupParent'] = data['ParentHeader'].apply(lambda row: label_parent_headers(row))
-    for i in data.index:
-        if len(data['Group'][i]) == 0 and len(data['GroupParent'][i]) > 0:
-            data.at[i, 'Group'] = data['GroupParent'][i]
-    data = data.drop(columns=['GroupParent'])
-    if len(data['Group'].iloc[0]) == 0:
-        data['Group'].iloc[0] = ['unknown']
-    groups = data.apply(lambda x: pd.Series(x['Group']), axis=1).stack().reset_index(level=1, drop=True)
-
-    groups.name = 'Group'
-    data = data.drop('Group', axis=1).join(groups)
-    if data['Group'].iloc[0] == 'unknown':
-        data['Group'].iloc[0] = np.NaN
-
-    # to json
-    group = data.loc[(data['Group'] != 'None') & pd.notna(data['Group'])]
-    # group = group.reindex(columns=['Content', 'Group'])
-    # group[constants.PROP_CONFIDENCE] = [[1.0]] * len(group)
-    group.rename(columns={'Content': constants.PROP_VALUE}, inplace=True)
-    group.rename(columns={'Header': constants.PROP_ORIGINAL_HEADER}, inplace=True)
-    group.rename(columns={'ParentHeader': constants.PROP_PARENT_HEADER}, inplace=True)
-    # group[constants.PROP_TECHNIQUE] = constants.TECHNIQUE_HEADER_ANALYSIS
-    # group['original header'] = 'NaN'
-    for index, row in group.iterrows():
-        source = ""
-        if constants.CAT_README_URL in repository_metadata.results.keys():
-            source = repository_metadata.results[constants.CAT_README_URL][0]
-            source = source[constants.PROP_RESULT][constants.PROP_VALUE]
-        parent_header = ""
-        if row[constants.PROP_PARENT_HEADER] != "":
-            parent_header = row.loc[constants.PROP_PARENT_HEADER]
-        result = {
-            constants.PROP_VALUE: row.loc[constants.PROP_VALUE],
-            constants.PROP_TYPE: constants.TEXT_EXCERPT,
-            constants.PROP_ORIGINAL_HEADER: row.loc[constants.PROP_ORIGINAL_HEADER]
-        }
-        if parent_header != "" and len(parent_header) > 0:
-            result[constants.PROP_PARENT_HEADER] = parent_header
-        if source != "":
-            repository_metadata.add_result(row.Group, result, 1, constants.TECHNIQUE_HEADER_ANALYSIS, source)
-        else:
-            repository_metadata.add_result(row.Group, result, 1, constants.TECHNIQUE_HEADER_ANALYSIS)
-
-    # strings without tag (they will be classified)
-    str_list = data.loc[data['Group'].isna(), ['Content']].values.squeeze().tolist()
-    if type(str_list) != list:
-        str_list = [str_list]
-    return repository_metadata, str_list
+# def extract_categories_using_headers(text, repository_metadata: Result):
+#     """
+#     Main function to extract categories using headers
+#     Parameters
+#     ----------
+#     @param text: readme text to process.
+#     @param repository_metadata: Result object with the repository metadata
+#
+#     Returns
+#     -------
+#     @returns: A Result object with the repository metadata
+#     """
+#     data, none_header_content = extract_header_content(text)
+#     logging.info('Labeling headers.')
+#     if data.empty:
+#         logging.warning("File to analyze has no headers")
+#         return repository_metadata, [text]
+#     data['Group'] = data['Header'].apply(lambda row: label_header(row))
+#     data['GroupParent'] = data['ParentHeader'].apply(lambda row: label_parent_headers(row))
+#     for i in data.index:
+#         if len(data['Group'][i]) == 0 and len(data['GroupParent'][i]) > 0:
+#             data.at[i, 'Group'] = data['GroupParent'][i]
+#     data = data.drop(columns=['GroupParent'])
+#     if len(data['Group'].iloc[0]) == 0:
+#         data['Group'].iloc[0] = ['unknown']
+#     groups = data.apply(lambda x: pd.Series(x['Group']), axis=1).stack().reset_index(level=1, drop=True)
+#
+#     groups.name = 'Group'
+#     data = data.drop('Group', axis=1).join(groups)
+#     if data['Group'].iloc[0] == 'unknown':
+#         data['Group'].iloc[0] = np.NaN
+#
+#     # to json
+#     group = data.loc[(data['Group'] != 'None') & pd.notna(data['Group'])]
+#     # group = group.reindex(columns=['Content', 'Group'])
+#     # group[constants.PROP_CONFIDENCE] = [[1.0]] * len(group)
+#     group.rename(columns={'Content': constants.PROP_VALUE}, inplace=True)
+#     group.rename(columns={'Header': constants.PROP_ORIGINAL_HEADER}, inplace=True)
+#     group.rename(columns={'ParentHeader': constants.PROP_PARENT_HEADER}, inplace=True)
+#     # group[constants.PROP_TECHNIQUE] = constants.TECHNIQUE_HEADER_ANALYSIS
+#     # group['original header'] = 'NaN'
+#     for index, row in group.iterrows():
+#         source = ""
+#         if constants.CAT_README_URL in repository_metadata.results.keys():
+#             source = repository_metadata.results[constants.CAT_README_URL][0]
+#             source = source[constants.PROP_RESULT][constants.PROP_VALUE]
+#         parent_header = ""
+#         if row[constants.PROP_PARENT_HEADER] != "":
+#             parent_header = row.loc[constants.PROP_PARENT_HEADER]
+#         result = {
+#             constants.PROP_VALUE: row.loc[constants.PROP_VALUE],
+#             constants.PROP_TYPE: constants.TEXT_EXCERPT,
+#             constants.PROP_ORIGINAL_HEADER: row.loc[constants.PROP_ORIGINAL_HEADER]
+#         }
+#         if parent_header != "" and len(parent_header) > 0:
+#             result[constants.PROP_PARENT_HEADER] = parent_header
+#         if source != "":
+#             repository_metadata.add_result(row.Group, result, 1, constants.TECHNIQUE_HEADER_ANALYSIS, source)
+#         else:
+#             repository_metadata.add_result(row.Group, result, 1, constants.TECHNIQUE_HEADER_ANALYSIS)
+#
+#     # strings without tag (they will be classified)
+#     str_list = data.loc[data['Group'].isna(), ['Content']].values.squeeze().tolist()
+#     if type(str_list) != list:
+#         str_list = [str_list]
+#     return repository_metadata, str_list
 
 
 def extract_categories(repo_data, repository_metadata: Result):
@@ -264,17 +263,67 @@ def extract_categories(repo_data, repository_metadata: Result):
     Function that adds category information extracted using header information
     Parameters
     ----------
-    repo_data data to use the header analysis
+    @param repo_data: data to use the header analysis
+    @param repository_metadata: Result object with the results found so far in the repo
 
     Returns
     -------
-    Returns json with the information added.
+    @return Result with the information added.
     """
     logging.info("Extracting information using headers")
     if repo_data is None or repo_data == "" or len(repo_data) == 0:
-        return {}, []
+        return repository_metadata, []
     try:
-        repository_metadata, string_list = extract_categories_using_headers(repo_data, repository_metadata)
+        data, none_header_content = extract_header_content(repo_data)
+        logging.info('Labeling headers.')
+        if data.empty:
+            logging.warning("File to analyze has no headers")
+            return repository_metadata, [repo_data]
+        data['Group'] = data['Header'].apply(lambda row: label_header(row))
+        data['GroupParent'] = data['ParentHeader'].apply(lambda row: label_parent_headers(row))
+        for i in data.index:
+            if len(data['Group'][i]) == 0 and len(data['GroupParent'][i]) > 0:
+                data.at[i, 'Group'] = data['GroupParent'][i]
+        data = data.drop(columns=['GroupParent'])
+        if len(data['Group'].iloc[0]) == 0:
+            data['Group'].iloc[0] = ['unknown']
+        groups = data.apply(lambda x: pd.Series(x['Group']), axis=1).stack().reset_index(level=1, drop=True)
+
+        groups.name = 'Group'
+        data = data.drop('Group', axis=1).join(groups)
+        if data['Group'].iloc[0] == 'unknown':
+            data['Group'].iloc[0] = np.NaN
+
+        # to json
+        group = data.loc[(data['Group'] != 'None') & pd.notna(data['Group'])]
+        group.rename(columns={'Content': constants.PROP_VALUE}, inplace=True)
+        group.rename(columns={'Header': constants.PROP_ORIGINAL_HEADER}, inplace=True)
+        group.rename(columns={'ParentHeader': constants.PROP_PARENT_HEADER}, inplace=True)
+        for index, row in group.iterrows():
+            source = ""
+            if constants.CAT_README_URL in repository_metadata.results.keys():
+                source = repository_metadata.results[constants.CAT_README_URL][0]
+                source = source[constants.PROP_RESULT][constants.PROP_VALUE]
+            parent_header = ""
+            if row[constants.PROP_PARENT_HEADER] != "":
+                parent_header = row.loc[constants.PROP_PARENT_HEADER]
+            result = {
+                constants.PROP_VALUE: row.loc[constants.PROP_VALUE],
+                constants.PROP_TYPE: constants.TEXT_EXCERPT,
+                constants.PROP_ORIGINAL_HEADER: row.loc[constants.PROP_ORIGINAL_HEADER]
+            }
+            if parent_header != "" and len(parent_header) > 0:
+                result[constants.PROP_PARENT_HEADER] = parent_header
+            if source != "":
+                repository_metadata.add_result(row.Group, result, 1, constants.TECHNIQUE_HEADER_ANALYSIS, source)
+            else:
+                repository_metadata.add_result(row.Group, result, 1, constants.TECHNIQUE_HEADER_ANALYSIS)
+
+        # strings without tag (they will be classified)
+        string_list = data.loc[data['Group'].isna(), ['Content']].values.squeeze().tolist()
+        if type(string_list) != list:
+            string_list = [string_list]
+        string_list.append(none_header_content.strip())
         logging.info("Information extracted.")
         return repository_metadata, string_list
     except Exception as e:

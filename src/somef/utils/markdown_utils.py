@@ -1,7 +1,9 @@
+import logging
 from io import StringIO
 from markdown import Markdown
 from ..utils import constants
 import re
+
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
@@ -46,5 +48,5 @@ def remove_bibtex(string_list):
             end = element.find("```", init + 3)
             substring = element[init:end + 3]
             string_list[x] = element.replace(substring, "")
-    print("Extraction of bibtex citation from readme completed. \n")
+    logging.info("Extraction of bibtex citation from readme completed. \n")
     return string_list

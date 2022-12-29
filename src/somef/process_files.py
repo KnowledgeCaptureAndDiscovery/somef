@@ -68,7 +68,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                 try:
                                     text = data_file_text.decode("utf-8")
                                 except UnicodeError as err:
-                                    print(f"{type(err).__name__} was raised: {err} Trying other encodings...")
+                                    logging.error(f"{type(err).__name__} was raised: {err} Trying other encodings...")
                                     text = data_file_text.decode(detect(data_file_text)["encoding"])
                                 if repo_type == constants.RepositoryType.GITHUB:
                                     readme_url = convert_to_raw_user_content_github(filename, owner,
@@ -82,8 +82,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                                1,
                                                                constants.TECHNIQUE_FILE_EXPLORATION)
                         except ValueError:
-                            print("README Error: error while reading file content")
-                            print(f"{type(err).__name__} was raised: {err}")
+                            logging.error("README Error: error while reading file content")
+                            logging.error(f"{type(err).__name__} was raised: {err}")
                 if "LICENCE" == filename.upper() or "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
                     # to do (issue 530) if there are two licenses, keep the one closer to the root
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,

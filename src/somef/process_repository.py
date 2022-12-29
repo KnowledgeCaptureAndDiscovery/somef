@@ -30,7 +30,7 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
         response = response.json()
         if 'message' in response and 'API rate limit exceeded' in response['message']:
             rate_limited = True
-            print(f"rate limited. Backing off for {initial_backoff} seconds")
+            logging.warning(f"rate limited. Backing off for {initial_backoff} seconds")
             time.sleep(initial_backoff)
             # increase the backoff for next time
             initial_backoff *= backoff_rate
@@ -65,7 +65,7 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
     path_components = url.path.split('/')
 
     if len(path_components) < 3:
-        print("Gitlab link is not correct.")
+        logging.error("Gitlab link is not correct.")
         return " ", {}
 
     owner = path_components[1]
@@ -75,7 +75,7 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
 
     project_id = get_project_id(repository_url)
     project_api_url = f"https://gitlab.com/api/v4/projects/{project_id}"
-    print(f"Downloading {project_api_url}")
+    logging.info(f"Downloading {project_api_url}")
     details = requests.get(project_api_url)
     project_details = details.json()
     date = details.headers["date"]
@@ -86,7 +86,7 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
 
     if len(path_components) >= 5:
         if not path_components[4] == "tree":
-            print(
+            logging.error(
                 "GitLab link is not correct. \nThe correct format is https://gitlab.com/{owner}/{repo_name}.")
 
             return " ", {}
@@ -105,10 +105,10 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
 
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
-            print("Error: repository name is incorrect")
+            logging.error("Error: repository name is incorrect")
         else:
             message = general_resp['message']
-            print("Error: " + message)
+            logging.error("Error: " + message)
 
         raise GithubUrlError
 
@@ -154,7 +154,7 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
 
     keywords = []
     if 'message' in topics_resp.keys():
-        print("Topics Error: " + topics_resp['message'])
+        logging.error("Topics Error: " + topics_resp['message'])
     elif topics_resp and 'names' in topics_resp.keys():
         keywords = topics_resp['names']
 
@@ -188,7 +188,7 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
     # get programming languages
     if 'languages_url' in project_details.keys():
         if "message" in project_details['languages_url']:
-            print("Languages Error: " + project_details['languages_url']["message"])
+            logging.error("Languages Error: " + project_details['languages_url']["message"])
         else:
             result = {
                 constants.PROP_VALUE: list(project_details['languages_url']),
@@ -202,7 +202,7 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
             constants.PROP_TYPE: constants.URL
         }, 1, constants.TECHNIQUE_GITLAB_API)
 
-    print("Repository information successfully loaded. \n")
+    logging.info("Repository information successfully loaded. \n")
     return repo_metadata, owner, repo_name, default_branch
 
 
@@ -226,7 +226,7 @@ def download_gitlab_files(directory, owner, repo_name, repo_branch, repo_ref):
     repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_branch}/{repo_name}-{repo_branch}.zip"
     if len(path_components) == 4:
         repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_branch}/{path_components[3]}.zip"
-    print(f"Downloading {repo_archive_url}")
+    logging.info(f"Downloading {repo_archive_url}")
     repo_download = requests.get(repo_archive_url)
     repo_zip = repo_download.content
 
@@ -352,10 +352,10 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
         general_resp, date = rate_limit_get(repo_api_base_url, headers=header)
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
-            print("Error: Repository name is private or incorrect")
+            logging.error("Error: Repository name is private or incorrect")
         else:
             message = general_resp['message']
-            print("Error: " + message)
+            logging.error("Error: " + message)
 
         raise GithubUrlError
 
@@ -408,7 +408,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     if not ignore_api_metadata:
         languages, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
         if "message" in languages:
-            print("Languages Error: " + languages["message"])
+            logging.error("Error while retrieving languages: " + languages["message"])
         else:
             filtered_resp['languages'] = list(languages.keys())
             for l, s in languages.items():
@@ -425,7 +425,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
         releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
                                              headers=header)
         if isinstance(releases_list, dict) and 'message' in releases_list.keys():
-            print("Releases Error: " + releases_list['message'])
+            logging.error("Releases Error: " + releases_list['message'])
         else:
             release_list_filtered = [do_crosswalk(release, constants.release_crosswalk_table) for release in
                                      releases_list]
@@ -449,7 +449,6 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
                 repository_metadata.add_result(constants.CAT_RELEASES, release_obj, 1,
                                                constants.TECHNIQUE_GITHUB_API)
     logging.info("Repository information successfully loaded.\n")
-    # print(filtered_resp)
     return repository_metadata, owner, repo_name, default_branch
 
 
@@ -473,7 +472,7 @@ def do_crosswalk(data, crosswalk_table):
         if value is not None:
             output[somef_key] = value
         else:
-            print(f"Error: key {path} not present in github repository")
+            logging.error(f"Error: key {path} not present in github repository")
     return output
 
 
@@ -520,12 +519,12 @@ def download_github_files(directory, owner, repo_name, repo_ref):
     """
     # download the repo at the selected branch with the link
     repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip"
-    print(f"Downloading {repo_archive_url}")
+    logging.info(f"Downloading {repo_archive_url}")
     repo_download = requests.get(repo_archive_url)
     if repo_download.status_code == 404:
-        print(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+        logging.error(f"Error: Archive request failed with HTTP {repo_download.status_code}")
         repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/main.zip"
-        print(f"Trying to download {repo_archive_url}")
+        logging.info(f"Trying to download {repo_archive_url}")
         repo_download = requests.get(repo_archive_url)
 
     if repo_download.status_code != 200:
@@ -543,27 +542,15 @@ def download_github_files(directory, owner, repo_name, repo_ref):
         zip_ref.extractall(repo_extract_dir)
 
     repo_folders = os.listdir(repo_extract_dir)
-    # assert (len(repo_folders) == 1)
 
     repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
 
     return repo_dir
-    # return process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.GITHUB,
-    #                                owner, repo_name, repo_ref)
-
-
-# def load_local_repository_metadata(local_repo):
-#     """Function to apply somef to a local repository (already downloaded)"""
-#     filtered_resp = {}
-#     repo_dir = os.path.abspath(local_repo)
-#     text, filtered_resp = process_repository_files(repo_dir, filtered_resp, constants.RepositoryType.LOCAL)
-#     print("Local repository information successfully loaded. \n")
-#     return text, filtered_resp
 
 
 def get_project_id(repository_url):
     """Function to download a repository, given its URL"""
-    print(f"Downloading {repository_url}")
+    logging.info(f"Downloading {repository_url}")
     response = requests.get(repository_url)
     response_str = str(response.content.decode('utf-8'))
     init = response_str.find('\"project_id\":')

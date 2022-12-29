@@ -1,3 +1,5 @@
+import logging
+
 import markdown
 import re
 import pandas as pd
@@ -61,7 +63,6 @@ def extract_content_per_header(original_text, headers):
         none_header_content = get_text(0, top_index, text_tokenized)
         none_header_content = regular_expressions.remove_links_images(none_header_content)
         none_header_content = regular_expressions.remove_html_tags(none_header_content)
-        #print(none_header_content)
     offset = 1
     if not text_tokenized[top_index].startswith('#'):
         offset = 2
@@ -267,8 +268,6 @@ def extract_text_excerpts_header(original_text):
                         header_content = header_content[1:]
                     content.append(header_content)
                     output[top] = header_content
-                # else:
-                    # print('No se procesa-->' + top)
                 top = bottom
                 top_index = bottom_index
 
@@ -432,7 +431,7 @@ def update_parents(new_header, parents):
             else:
                 return parent, parent_list
     except ValueError:
-        print("Error when retrieving the parent header list")
+        logging.error("Error when retrieving the parent header list")
 
     return parent, parent_list
 
