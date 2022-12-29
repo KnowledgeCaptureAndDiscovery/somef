@@ -4,6 +4,7 @@ import unittest
 import validators
 from pathlib import Path
 from .. import somef_cli
+from ..utils import constants
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
@@ -79,7 +80,7 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-281.json", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("missingCategories") > 0
+        assert data.find(constants.CAT_MISSING) > 0
         os.remove(test_data_path + "test-281.json")
 
     def test_issue_200(self):
@@ -98,7 +99,7 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-200.json", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("parentHeader") > 0
+        assert data.find(constants.PROP_PARENT_HEADER) > 0
         os.remove(test_data_path + "test-200.json")
 
     def test_issue_343(self):
@@ -117,7 +118,7 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-343.json", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("parentHeader") > 0
+        assert data.find(constants.PROP_PARENT_HEADER) > 0
         os.remove(test_data_path + "test-343.json")
 
     def test_issue_355(self):
@@ -136,9 +137,8 @@ class TestCli(unittest.TestCase):
                           missing=False)
         text_file = open(test_data_path + "repositories/repos_oeg/test-355.json", "r")
         data = text_file.read()
-        print(data)
         text_file.close()
-        assert data.find("longTitle") > 0
+        assert data.find(constants.CAT_FULL_TITLE) > 0
         os.remove(test_data_path + "repositories/repos_oeg/test-355.json")
 
     def test_issue_150(self):
@@ -158,7 +158,7 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-150.json-ld", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("acknowledgement") == -1
+        assert data.find(constants.CAT_ACKNOWLEDGEMENT) == -1
         os.remove(test_data_path + "test-150.json-ld")
 
     def test_issue_346(self):
@@ -196,7 +196,7 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-241.json", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("packageDistribution") > 0
+        assert data.find(constants.CAT_PACKAGE_DISTRIBUTION) > 0
         os.remove(test_data_path + "test-241.json")
 
     def test_issue_380(self):
@@ -215,7 +215,7 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-380.json", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("installation") > 0
+        assert data.find(constants.CAT_INSTALLATION) > 0
         os.remove(test_data_path + "test-380.json")
 
     def test_issue_379(self):
@@ -235,7 +235,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        description = json_content['description']
+        description = json_content[constants.CAT_DESCRIPTION]
         assert len(description) > 0
         os.remove(test_data_path + "test-379.json")
 
@@ -279,7 +279,7 @@ class TestCli(unittest.TestCase):
 
     def test_issue_378(self):
         """Checks classification of a header based on what was written in upper level headers"""
-        somef_cli.run_cli(threshold=0.8,
+        somef_cli.run_cli(threshold=0.9,
                           ignore_classifiers=False,
                           repo_url=None,
                           doc_src=test_data_path + "README-easytv-annotator.md",
@@ -294,11 +294,14 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        installation = json_content['installation']
+        installation = json_content[constants.CAT_INSTALLATION]
         assert_true = False
+        print(installation)
         for install in installation:
-            if 'parentHeader' in install.keys():
-                if install['originalHeader'] == "Hard way" and "Installation" in install['parentHeader']:
+            result_install = install[constants.PROP_RESULT]
+            if constants.PROP_PARENT_HEADER in result_install.keys():
+                if result_install[constants.PROP_ORIGINAL_HEADER] == "Hard way" and \
+                        "Installation" in result_install[constants.PROP_PARENT_HEADER]:
                     assert_true = True
         assert assert_true
         os.remove(test_data_path + "test-378.json")
@@ -320,15 +323,17 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        installation = json_content['installation']
-        assert_true = False
+        installation = json_content[constants.CAT_INSTALLATION]
+        final_result = False
         for install in installation:
-            if 'parentHeader' in install.keys():
-                if install['originalHeader'] == "Easy way" and "Installation" in install['parentHeader'] \
-                        and "easytv-annotator" in install["parentHeader"]:
-                    assert_true = True
-        assert assert_true
+            install_result = install[constants.PROP_RESULT]
+            if constants.PROP_PARENT_HEADER in install_result.keys():
+                if install_result[constants.PROP_ORIGINAL_HEADER] == "Easy way" and \
+                        "Installation" in install_result[constants.PROP_PARENT_HEADER] \
+                        and "easytv-annotator" in install_result[constants.PROP_PARENT_HEADER]:
+                    final_result = True
         os.remove(test_data_path + "test-378-2.json")
+        assert final_result
 
     def test_issue_260(self):
         """Checks if colab notebooks are detected"""
@@ -346,7 +351,7 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-260.json", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("executableExample") > 0
+        assert data.find(constants.CAT_EXECUTABLE_EXAMPLE) > 0
         os.remove(test_data_path + "test-260.json")
 
     def test_issue_319_1(self):
@@ -366,7 +371,7 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-319-1.json", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("citation file format") > 0
+        assert data.find(constants.FORMAT_CFF) > 0
         os.remove(test_data_path + "test-319-1.json")
 
     def test_issue_388(self):
@@ -387,7 +392,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         json_content = json.loads(data)
         text_file.close()
-        assert len(json_content["ontologies"]["excerpt"]) == 2
+        assert len(json_content[constants.CAT_ONTOLOGIES]) == 2
         os.remove(test_data_path + "test-388.json")
 
     def test_issue_319_2(self):
@@ -407,7 +412,7 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-319-2.json", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("jupyter notebook") > 0
+        assert data.find(constants.FORMAT_JUPYTER_NB) > 0
         os.remove(test_data_path + "test-319-2.json")
 
     def test_issue_385(self):
@@ -427,7 +432,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        usage = json_content['usage']
+        usage = json_content[constants.CAT_USAGE]
         assert len(usage) == 3
         os.remove(test_data_path + "test-385.json")
 
@@ -435,7 +440,8 @@ class TestCli(unittest.TestCase):
         """Checks that repostatus has confidence (always 1.0)"""
         somef_cli.run_cli(threshold=0.8,
                           ignore_classifiers=False,
-                          repo_url="https://github.com/dgarijo/Widoco",
+                          repo_url=None,
+                          local_repo=test_data_repositories + "Widoco",
                           doc_src=None,
                           in_file=None,
                           output=test_data_path + "test-398.json",
@@ -448,9 +454,9 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        repo_status = json_content['repoStatus']
-        confidence = repo_status['confidence']
-        assert len(confidence) == 1
+        repo_status = json_content[constants.CAT_STATUS][0]
+        confidence = repo_status[constants.PROP_CONFIDENCE]
+        assert confidence == 1
         os.remove(test_data_path + "test-398.json")
 
     # def test_issue_393(self):
@@ -492,7 +498,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        acknowledgement = json_content['acknowledgement']
+        acknowledgement = json_content[constants.CAT_ACKNOWLEDGEMENT]
         assert acknowledgement is not None
         os.remove(test_data_path + "test-314.json")
 
@@ -514,7 +520,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        image = json_content['image']
+        image = json_content[constants.CAT_IMAGE]
         assert image is not None
         os.remove(test_data_path + "test-314-1.json")
 
@@ -536,7 +542,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        description = json_content['description']
+        description = json_content[constants.CAT_DESCRIPTION]
         assert description is not None
         os.remove(test_data_path + "test-314-2.json")
 
@@ -558,7 +564,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        description = json_content['description']
+        description = json_content[constants.CAT_DESCRIPTION]
         assert description is not None
         os.remove(test_data_path + "test-314-3.json")
 
@@ -573,12 +579,12 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        description = json_content['description']
+        description = json_content[constants.CAT_DESCRIPTION]
         assert description is not None
         os.remove(test_data_path + "test-314-2.json")
 
     def test_issue_403(self):
-        """Checks that the readme returned by somef is correct"""
+        """Checks that the readme link returned by somef is correct"""
         somef_cli.run_cli(threshold=0.8,
                           ignore_classifiers=False,
                           repo_url="https://github.com/oeg-upm/wot-hive",
@@ -595,13 +601,14 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        readme_url = json_content['readmeUrl']
-        excerpt = readme_url['excerpt']
+        readme_url = json_content[constants.CAT_README_URL][0]
+        excerpt = readme_url[constants.PROP_RESULT][constants.PROP_VALUE]
         assert excerpt == 'https://raw.githubusercontent.com/oeg-upm/wot-hive/main/README.md'
         os.remove(test_data_path + "test-403.json")
 
     def test_issue_408(self):
-        """Checks that the documentation links (docs) are properly found"""
+        """Checks that the documentation links (docs) are found only if the docs folder has documents that seem like
+        documentation"""
         somef_cli.run_cli(threshold=0.8,
                           ignore_classifiers=False,
                           repo_url=None,
@@ -622,28 +629,6 @@ class TestCli(unittest.TestCase):
             "https://github.com/oeg-upm/bimerr-epw/tree/master/Code/TDATA2RDFANDV/static/rest_framework/docs") == -1
         os.remove(test_data_path + "test-408.json")
 
-    def test_issue_408_1(self):
-        """Checks that the documentation links (docs) are properly found"""
-        somef_cli.run_cli(threshold=0.8,
-                          ignore_classifiers=False,
-                          repo_url="https://github.com/oeg-upm/bimerr-epw/",
-                          local_repo=None,
-                          doc_src=None,
-                          in_file=None,
-                          output=test_data_path + "test-408-1.json",
-                          graph_out=None,
-                          graph_format="turtle",
-                          codemeta_out=None,
-                          pretty=True,
-                          missing=True,
-                          readme_only=False)
-        text_file = open(test_data_path + "test-408-1.json", "r")
-        data = text_file.read()
-        text_file.close()
-        assert data.find(
-            "https://github.com/oeg-upm/bimerr-epw/tree/master/Code/TDATA2RDFANDV/static/rest_framework/docs") == -1
-        os.remove(test_data_path + "test-408-1.json")
-
     def test_issue_225_406(self):
         """Checks if wiki links are detected"""
         somef_cli.run_cli(threshold=0.8,
@@ -662,7 +647,8 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-225.json", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("\"type\": \"wiki\"")
+        print(data)
+        assert data.find("\""+constants.PROP_FORMAT+"\": \""+constants.FORMAT_WIKI+"\"")
         os.remove(test_data_path + "test-225.json")
 
     def test_issue_406(self):
@@ -683,7 +669,7 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-406.json", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("\"type\": \"readthedocs\"")
+        assert data.find("\""+constants.PROP_FORMAT+"\": \""+constants.FORMAT_READTHEDOCS+"\"") >= 0
         os.remove(test_data_path + "test-406.json")
 
     def test_issue_255(self):
@@ -708,7 +694,7 @@ class TestCli(unittest.TestCase):
         os.remove(test_data_path + "test-255.json")
 
     def test_issue_255_1(self):
-        """Tests if somef can detect wiki articles"""
+        """Tests if somef can detect the abscence of wikis if a repo does not have it"""
         somef_cli.run_cli(threshold=0.8,
                           ignore_classifiers=False,
                           repo_url="https://github.com/PyLops/pylops/",
@@ -809,7 +795,7 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-353.json", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("description") >= 0
+        assert data.find(constants.CAT_DESCRIPTION) >= 0
         os.remove(test_data_path + "test-353.json")
 
     def test_issue_366(self):
@@ -830,11 +816,11 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-366.json", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("Docker file") >= 0
+        assert data.find(constants.FORMAT_DOCKERFILE) >= 0
         os.remove(test_data_path + "test-366.json")
 
     def test_issue_417(self):
-        """Checks for different codemeta errors"""
+        """Checks whether a repository correctly extracts to Codemeta"""
         somef_cli.run_cli(threshold=0.8,
                           ignore_classifiers=False,
                           repo_url="https://github.com/dgarijo/Widoco",
@@ -852,35 +838,18 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        issue_tracker = json_content['issueTracker']
-        assert issue_tracker == 'https://api.github.com/repos/dgarijo/Widoco/issues'
+        issue_tracker = json_content["issueTracker"] # JSON is in Codemeta format
+        assert issue_tracker == 'https://github.com/dgarijo/Widoco/issues' and len(json_content["citation"])>0  and \
+               len(json_content["name"]) > 0 and len(json_content["identifier"])>0 and \
+               len(json_content["description"])>0 and len(json_content["readme"])>0 and \
+               len(json_content["author"])>0 and len(json_content["buildInstructions"])>0 and \
+               len(json_content["softwareRequirements"]) > 0 and len(json_content["programmingLanguage"]) > 0 and \
+               len(json_content["keywords"]) > 0 and len(json_content["logo"]) > 0 and \
+               len(json_content["license"]) > 0 and len(json_content["dateCreated"]) > 0
         os.remove(test_data_path + "test-417.json-ld")
 
-    def test_issue_382(self):
-        """Checks a given github repo works fine (contact section)"""
-        somef_cli.run_cli(threshold=0.8,
-                          ignore_classifiers=False,
-                          repo_url="https://github.com/oeg-upm/mapeathor",
-                          local_repo=None,
-                          doc_src=None,
-                          in_file=None,
-                          output=test_data_path + "test-382.json",
-                          graph_out=None,
-                          graph_format="turtle",
-                          codemeta_out=None,
-                          pretty=True,
-                          missing=True,
-                          readme_only=False)
-        text_file = open(test_data_path + "test-382.json", "r")
-        data = text_file.read()
-        text_file.close()
-        json_content = json.loads(data)
-        contact = json_content['contact']
-        assert contact is not None
-        os.remove(test_data_path + "test-382.json")
-
     def test_issue_428(self):
-        """Checks a given github repo works fine (contact section)"""
+        """Checks if the text before the main header is passed on to the classifiers"""
         somef_cli.run_cli(threshold=0.8,
                           ignore_classifiers=False,
                           repo_url=None,
@@ -898,7 +867,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         assert data.find(
-            "Manim is an engine for precise programmatic animations, designed for creating explanatory math videos.") > 0
+           "Manim is an engine for precise programmatic animations, designed for creating explanatory math videos.") > 0
         os.remove(test_data_path + "test-428.json")
 
     def test_issue_443(self):
@@ -919,29 +888,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        installation = json_content['installation']
-        assert installation is not None
-        os.remove(test_data_path + "test-443.json")
-
-    def test_issue_443_2(self):
-        somef_cli.run_cli(threshold=0.8,
-                          ignore_classifiers=False,
-                          repo_url="https://github.com/oeg-upm/awesome-semantic-web",
-                          local_repo=None,
-                          doc_src=None,
-                          in_file=None,
-                          output=test_data_path + "test-443.json",
-                          graph_out=None,
-                          graph_format="turtle",
-                          codemeta_out=None,
-                          pretty=True,
-                          missing=True,
-                          readme_only=False)
-        text_file = open(test_data_path + "test-443.json", "r")
-        data = text_file.read()
-        text_file.close()
-        json_content = json.loads(data)
-        installation = json_content['installation']
+        installation = json_content[constants.CAT_INSTALLATION]
         assert installation is not None
         os.remove(test_data_path + "test-443.json")
 
@@ -963,7 +910,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        description = json_content['description']
+        description = json_content[constants.CAT_DESCRIPTION]
         assert description is not None
         os.remove(test_data_path + "test-443.json")
 
@@ -985,7 +932,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        description = json_content['description']
+        description = json_content[constants.CAT_DESCRIPTION]
         assert description is not None
         os.remove(test_data_path + "test-457.json")
 
@@ -1007,5 +954,5 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         json_content = json.loads(data)
         text_file.close()
-        assert len(json_content["acknowledgement"]) == 2
+        assert len(json_content[constants.CAT_ACKNOWLEDGEMENT]) == 2
         os.remove(test_data_path + "repositories/repos_oeg/test-445.json")

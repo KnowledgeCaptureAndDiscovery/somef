@@ -1,14 +1,28 @@
+import logging
 import os
 import re
 import markdown
 import requests
 import validators
 from .utils import constants
+from .process_results import Result
 from urllib.parse import urlparse
 
 
-def extract_title(unfiltered_text):
-    """Regexp to extract title (first header) from a repository"""
+def extract_title(unfiltered_text, repository_metadata: Result, readme_source) -> Result:
+    """
+    Regexp to extract title (first header) from a repository
+    Parameters
+    ----------
+    @param unfiltered_text: repo text
+    @param repository_metadata: Result with the extractions so far
+    @param readme_source: url to the file used (for provenance)
+
+    Returns
+    -------
+    @returns a Result including the title (if found)
+
+    """
     html_text = markdown.markdown(unfiltered_text)
     splitted = html_text.split("\n")
     index = 0
@@ -22,7 +36,12 @@ def extract_title(unfiltered_text):
                 output = re.sub(regex, '', line)
             break
         index += 1
-    return output
+    repository_metadata.add_result(constants.CAT_FULL_TITLE,
+                                       {
+                                           constants.PROP_TYPE: constants.STRING,
+                                           constants.PROP_VALUE: output
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+    return repository_metadata
 
 
 def extract_title_old(unfiltered_text):
@@ -53,33 +72,62 @@ def extract_title_old(unfiltered_text):
     return title
 
 
-def extract_readthedocs(readme_text) -> object:
+def extract_readthedocs(readme_text, repository_metadata: Result, readme_source) -> Result:
     """
     Function to extract readthedocs links from text
     Parameters
     ----------
-    unfiltered_text text readme
+    @param readme_text: raw text of the readme file
+    @param repository_metadata: Result where to deposit the findings of the README
+    @param readme_source: URL of the README file
 
     Returns
     -------
-    Links to the readthedocs documentation
+    @return Result including links to the readthedocs documentation
     """
     readthedocs_links = re.findall(constants.REGEXP_READTHEDOCS, readme_text)
-    print("Extraction of readthedocs links from readme completed.\n")
-    # remove duplicates (links like [readthedocs](readthedocs) are found twice
-    return list(dict.fromkeys(readthedocs_links))
+    name = ""
+    try:
+        name = repository_metadata.results[constants.CAT_NAME][0]
+        name = name[constants.PROP_RESULT][constants.PROP_VALUE]
+    except:
+        pass
+    for link in list(dict.fromkeys(readthedocs_links)):
+        result = {
+            constants.PROP_TYPE: constants.URL,
+            constants.PROP_VALUE: link,
+            constants.PROP_FORMAT: constants.FORMAT_READTHEDOCS
+        }
+        try:
+            # if name of the repo is known then compare against the readthedocs one. Only add it if it's similar/same
+            name_in_link = re.findall('https://([^.]+)\.readthedocs\.io', link)
+            name_in_link = name_in_link[0]
+            if name == "" or name_in_link.lower() == name.lower():
+                repository_metadata.add_result(constants.CAT_DOCUMENTATION, result, 1,
+                                               constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+            else:
+                repository_metadata.add_result(constants.CAT_RELATED_DOCUMENTATION, result, 1,
+                                               constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+        except:
+            # add link as a regular doc link if we cannot retrieve name or there is an error
+            repository_metadata.add_result(constants.CAT_DOCUMENTATION, result, 1,
+                                           constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+
+    return repository_metadata
 
 
-def extract_support_channels(readme_text):
+def extract_support_channels(readme_text, repository_metadata: Result, readme_source) -> Result:
     """
-    Function to extract Gitter Chat, Reddit and Discord links from text
+    Function to extract support channels links from text
     Parameters
     ----------
-    readme_text text readme
+    @param readme_text: raw text of the readme file
+    @param repository_metadata: Result where to deposit the findings of the README
+    @param readme_source: URL of the README file
 
     Returns
     -------
-    Link to the Gitter Chat
+    @return Result including links to the support channels (Gitter, reddit, discord)
     """
     results = []
 
@@ -102,18 +150,41 @@ def extract_support_channels(readme_text):
         repo_status = readme_text[init + 1:end]
         results.append(repo_status)
 
-    return results
+    for link in results:
+        repository_metadata.add_result(constants.CAT_SUPPORT_CHANNELS,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: link,
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+
+    return repository_metadata
 
 
-def extract_repo_status(unfiltered_text):
-    """Extracts the repostatus.org badge from a given text"""
+def extract_repo_status(unfiltered_text, repository_metadata: Result, readme_source) -> Result:
+    """
+    Function takes readme text as input and extracts the repostatus.org badge
+
+    Parameters
+    ----------
+    @param unfiltered_text: Text of the readme
+    @param repository_metadata: Result with all the processed results so far
+    @param readme_source: source to the readme file used
+    """
+
     repo_status = ""
     init = unfiltered_text.find("[![Project Status:")
     if init > 0:
         end = unfiltered_text.find("](", init)
         repo_status = unfiltered_text[init + 3:end]
         repo_status = repo_status.replace("Project Status: ", "")
-    return repo_status
+        short_status = repo_status[0:repo_status.find(" ")].lower()
+        repository_metadata.add_result(constants.CAT_STATUS,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: "https://www.repostatus.org/#" + short_status,
+                                           constants.PROP_DESCRIPTION: repo_status
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+    return repository_metadata
 
 
 def extract_arxiv_links(unfiltered_text):
@@ -133,7 +204,20 @@ def extract_arxiv_links(unfiltered_text):
     return results
 
 
-def extract_wiki_links(unfiltered_text, repo_url):
+def extract_wiki_links(unfiltered_text, repo_url, repository_metadata: Result, readme_source) -> Result:
+    """
+
+    Parameters
+    ----------
+    @param unfiltered_text: text from readme
+    @param repo_url: repository URL
+    @param repository_metadata: results found in the repository so far
+    @param readme_source: readme URL/path
+
+    Returns
+    -------
+    @return a Result with the wiki documentation links found in the README
+    """
     """Extracts wiki links from a given text"""
     links = re.findall(r"\[[^\]]*\]\((.*?)?\)", unfiltered_text)
     output = []
@@ -141,13 +225,15 @@ def extract_wiki_links(unfiltered_text, repo_url):
     for link in links:
         if validators.url(link):
             if link.endswith("/wiki"):
-                output.append(link)
+                if link not in output:
+                    output.append(link)
             else:
                 ends = unfiltered_text.find("(" + link + ")") - 1
                 if unfiltered_text[:ends].find("[") != -1:
                     position = unfiltered_text[:ends].rindex("[") + 1
                     if unfiltered_text[position:ends].find("wiki") >= 0:
-                        output.append(link)
+                        if link not in output:
+                            output.append(link)
             unfiltered_text = unfiltered_text[ends + len(link):]
 
     # to check if a wiki url is available in the repository
@@ -158,208 +244,144 @@ def extract_wiki_links(unfiltered_text, repo_url):
             repo_url = repo_url + "/wiki"
         wiki = requests.get(repo_url, allow_redirects=False)
         if wiki.status_code == 200:
-            output.append(repo_url)
+            # sometimes the repo starts with caps
+            links_in_list = [x.lower() for x in output]
+            if repo_url.lower() not in links_in_list:
+                output.append(repo_url)
 
-    return list(dict.fromkeys(output))
-
-
-# TO DO: join with image detection in a single method
-# def extract_logo(unfiltered_text, repo_url):
-#     """Extracts logos from a given text"""
-#     logo = ""
-#     index_logo = unfiltered_text.lower().find("![logo]")
-#     if index_logo >= 0:
-#         init = unfiltered_text.find("(", index_logo)
-#         end = unfiltered_text.find(")", init)
-#         logo = unfiltered_text[init + 1:end]
-#     else:
-#         # This is problematic if alt label is used
-#         # TO DO
-#         result = [_.start() for _ in re.finditer("<img src=", unfiltered_text)]
-#         if len(result) > 0:
-#             for index_img in result:
-#                 init = unfiltered_text.find("\"", index_img)
-#                 end = unfiltered_text.find("\"", init + 1)
-#                 img = unfiltered_text[init + 1:end]
-#                 if img.find("logo") > 0:
-#                     logo = img
-#     # processing for those github links that do not resolve correctly
-#     if logo.startswith("http"):
-#         if logo.find("github.com") > 0:
-#             logo = logo.replace("/blob", "")
-#             logo = logo.replace("github.com", "raw.githubusercontent.com")
-#     #processing for those logos that are relative paths
-#     if logo != "" and not logo.startswith("http") and repo_url is not None:
-#         if repo_url.find("github.com") > 0:
-#             if repo_url.find("/tree/") > 0:
-#                 repo_url = repo_url.replace("/tree/", "/")
-#             else:
-#                 repo_url = repo_url + "/master/"
-#             repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-#             if not repo_url.endswith("/"):
-#                 repo_url = repo_url + "/"
-#             logo = repo_url + logo
-#         else:
-#             if not repo_url.endswith("/"):
-#                 repo_url = repo_url + "/"
-#             logo = repo_url + logo
-#     print(logo)
-#     return logo
+    for link in output:
+        repository_metadata.add_result(constants.CAT_DOCUMENTATION,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: link,
+                                           constants.PROP_FORMAT: constants.FORMAT_WIKI
+                                       },
+                                       1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+    return repository_metadata
 
 
-def extract_images(unfiltered_text, repo_url, local_repo):
-    """Extracts logos and images from a given text"""
+def extract_images(unfiltered_text, repo_url, local_repo, repository_metadata: Result, readme_source, def_branch) -> Result:
+    """
+    Function that takes readme text as input and extracts logos and images
+
+    Parameters
+    ----------
+    @param unfiltered_text: Text of the readme
+    @param repo_url: Repository URL
+    @param local_repo: Local repo path
+    @param repository_metadata: Result with all the processed results so far
+    @param readme_source: source to the readme file used
+    @param def_branch: default branch of the repo
+
+    Returns
+    -------
+    A Result object with the logos and images from the given text
+    """
     logo = ""
-    has_logo = False
     images = []
-    repo = False
     repo_name = ""
     if repo_url is not None and repo_url != "":
         url = urlparse(repo_url)
         path_components = url.path.split('/')
         repo_name = path_components[2]
-        repo = True
 
     html_text = markdown.markdown(unfiltered_text)
     img_md = re.findall(constants.REGEXP_IMAGES, html_text)
-    result = [_.start() for _ in re.finditer("<img ", html_text)]
+    img_html = [_.start() for _ in re.finditer("<img ", html_text)]
     for img in img_md:
-        img = img[1] # the 0 position is the name used in the link
+        img = img[1]  # the 0 position is the name used in the link
         # if the image contains jitpack.io, the element is not processed
         if img.find("jitpack.io") > 0 or img.find("/badge") >= 0 or img.find("/travis-ci.") >= 0 \
                 or img.find("img.shields.io") >= 0:
-            None
-        elif not has_logo and repo:
+            pass
+        elif logo == "" and repo_url is not None:
             start = img.rindex("/")
             if img.find(repo_name, start) > 0:
-                logo = rename_github_image(img, repo_url, local_repo)
-                has_logo = True
+                logo = rename_github_image(img, repo_url, local_repo, def_branch)
             elif get_alt_text_md(html_text, img) == repo_name or get_alt_text_md(html_text, img).upper() == "LOGO":
-                logo = rename_github_image(img, repo_url, local_repo)
-                has_logo = True
+                logo = rename_github_image(img, repo_url, local_repo, def_branch)
             else:
                 start = img.rindex("/")
                 if img.upper().find("LOGO", start) > 0:
-                    logo = rename_github_image(img, repo_url, local_repo)
-                    has_logo = True
+                    logo = rename_github_image(img, repo_url, local_repo, def_branch)
                 else:
-                    images.append(rename_github_image(img, repo_url, local_repo))
+                    images.append(rename_github_image(img, repo_url, local_repo, def_branch))
         else:
-            images.append(rename_github_image(img, repo_url, local_repo))
-    for index_img in result:
+            images.append(rename_github_image(img, repo_url, local_repo, def_branch))
+
+    for index_img in img_html:
         init = html_text.find("src=\"", index_img)
         end = html_text.find("\"", init + 5)
         img = html_text[init + 5:end]
         # if the image contains jitpack.io, the element is not processed
         if img.find("jitpack.io") > 0 or img.find("/badge") >= 0 or img.find("/travis-ci.") >= 0 \
                 or img.find("img.shields.io") >= 0:
-            None
-        elif not has_logo and repo:
+            pass
+        elif logo == "" and repo_url is not None:
             start = 0
             if img.find("/") > 0:
                 start = img.rindex("/")
             image_name = img[start:]
             if image_name.find(repo_name) > 0 or image_name.upper().find("LOGO") > 0:
-                logo = rename_github_image(img, repo_url, local_repo)
-                has_logo = True
+                logo = rename_github_image(img, repo_url, local_repo, def_branch)
             elif get_alt_text_img(html_text, index_img) == repo_name or get_alt_text_img(html_text,
                                                                                          index_img).upper() == "LOGO":
-                logo = rename_github_image(img, repo_url, local_repo)
-                has_logo = True
+                logo = rename_github_image(img, repo_url, local_repo, def_branch)
             else:
-                images.append(rename_github_image(img, repo_url, local_repo))
+                images.append(rename_github_image(img, repo_url, local_repo, def_branch))
         else:
             start = img.rindex("/")
             if img.upper().find("LOGO", start) > 0:
-                logo = rename_github_image(img, repo_url, local_repo)
-                has_logo = True
+                logo = rename_github_image(img, repo_url, local_repo, def_branch)
             else:
-                images.append(rename_github_image(img, repo_url, local_repo))
-
-    return logo, images
-
-
-# TO DO: join with logo detection
-# def extract_images_old(unfiltered_text, repo_url):
-#     """Extracts images from a given text"""
-#     logo = ""
-#     images = []
-#     html_text = markdown.markdown(unfiltered_text)
-#     # print(html_text)
-#     result = [_.start() for _ in re.finditer("<img ", html_text)]
-#     if len(result) > 0:
-#         for index_img in result:
-#             init = html_text.find("src=\"", index_img)
-#             end = html_text.find("\"", init + 5)
-#             img = html_text[init + 5:end]
-#             if img.find("logo") < 0:
-#                 if not img.startswith("http") and repo_url is not None:
-#                     if repo_url.find("/tree/") > 0:
-#                         repo_url = repo_url.replace("/tree/", "/")
-#                     else:
-#                         repo_url = repo_url + "/master/"
-#                     repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-#                     if not repo_url.endswith("/"):
-#                         repo_url = repo_url + "/"
-#                     img = repo_url + img
-#                 images.append(img)
-#             else:
-#                 if not img.startswith("http") and repo_url is not None:
-#                     if repo_url.find("/tree/") > 0:
-#                         repo_url = repo_url.replace("/tree/", "/")
-#                     else:
-#                         repo_url = repo_url + "/master/"
-#                     repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
-#                     if not repo_url.endswith("/"):
-#                         repo_url = repo_url + "/"
-#                     img = repo_url + img
-#                 logo = img
-#
-#     if logo == "" and repo_url != "" and repo_url != None:
-#         print(repo_url)
-#         url = urlparse(repo_url)
-#         path_components = url.path.split('/')
-#         repo_name = path_components[2]
-#
-#         for image in images:
-#             start = image.rindex("/")
-#             if image.find(repo_name, start) > 0:
-#                 logo = image
-#                 images.remove(image)
-#                 break
-#
-#     return logo, images
+                images.append(rename_github_image(img, repo_url, local_repo, def_branch))
+    if logo != "":
+        repository_metadata.add_result(constants.CAT_LOGO,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: logo
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+    for image in images:
+        repository_metadata.add_result(constants.CAT_IMAGE,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: image
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+    return repository_metadata
 
 
-# def extract_support(unfiltered_text):
-#     """Extracts support channels (reddit, discord, gitter) from a given text"""
-#     results = []
-#     init = unfiltered_text.find(constants.REGEXP_REDDIT)
-#     if init > 0:
-#         end = unfiltered_text.find(")", init)
-#         repo_status = unfiltered_text[init + 1:end]
-#         results.append(repo_status)
-#
-#     init = unfiltered_text.find(constants.REGEXP_DISCORD)
-#     if init > 0:
-#         end = unfiltered_text.find(")", init)
-#         repo_status = unfiltered_text[init + 1:end]
-#         results.append(repo_status)
-#
-#     return results
+def extract_package_distributions(unfiltered_text, repository_metadata: Result, readme_source) -> Result:
+    """
+    Function that takes readme text as input (cleaned from markdown notation) and runs a regex expression on top of it.
+    Extracts package distributions from a given text
 
+    Parameters
+    ----------
+    @param unfiltered_text: Text of the readme
+    @param repository_metadata: Result with all the processed results so far
+    @param readme_source: source to the readme file used
 
-def extract_package_distributions(unfiltered_text):
-    """Extracts package distributions from a given text"""
+    Returns
+    -------
+    A Result object with the package distributions found in the repo (Python packages for now)
+    """
     output = ""
     index_package_distribution = unfiltered_text.find(constants.REGEXP_PYPI)
+    # If not found, we try again with the other regexp
+    if index_package_distribution <= 0:
+        index_package_distribution = unfiltered_text.find(constants.REGEXP_PYPI_2)
     if index_package_distribution > 0:
         init = unfiltered_text.find(")](", index_package_distribution)
         end = unfiltered_text.find(")", init + 3)
         package_distribution = unfiltered_text[init + 3:end]
         output = requests.get(package_distribution).url
+        repository_metadata.add_result(constants.CAT_PACKAGE_DISTRIBUTION,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: output
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
 
-    return output
+    return repository_metadata
 
 
 def extract_colab_links(text):
@@ -405,7 +427,7 @@ def remove_links_images(text):
     links = re.findall(constants.REGEXP_LINKS, text)
     for link in links:
         link_text = link[1]
-        pos = text.find("("+link_text+")")
+        pos = text.find("(" + link_text + ")")
         if pos != -1:
             init = text[:pos].rindex("[")
             end = text[pos:].index(")")
@@ -416,64 +438,116 @@ def remove_links_images(text):
     return text.strip()
 
 
-def extract_bibtex(readme_text) -> object:
+def extract_bibtex(readme_text, repository_metadata: Result, readme_source) -> Result:
     """
     Function takes readme text as input (cleaned from markdown notation) and runs a regex expression on top of it.
     Returns list of bibtex citations
+
+    Parameters
+    ----------
+    @param readme_text: Text of the readme
+    @param repository_metadata: Result with all the processed results so far
+    @param readme_source: source to the readme file used
+
+    Returns
+    -------
+    @returns Result object with the bibtex associated with this software component
     """
     citations = re.findall(constants.REGEXP_BIBTEX, readme_text)
-    return citations
+    for c in citations:
+        # try to detect the doi with a regular expression. We should improve this to load an existing library
+        result = {
+            constants.PROP_VALUE: c,
+            constants.PROP_TYPE: constants.TEXT_EXCERPT,
+            constants.PROP_FORMAT: constants.FORMAT_BIB
+        }
+        doi_text = ""
+        if c.find('https://doi.org/') >= 0 or c.find('doi ') >= 0:
+            text_citation = c
+            if text_citation.find("https://doi.org/") >= 0:
+                doi_pos = text_citation.find("doi.org/")
+                starts = text_citation[:doi_pos].rindex("http")
+                ends = text_citation[starts:].find("}")
+                doi_text = text_citation[starts:starts + ends]
+            elif text_citation.find("doi") >= 0:
+                doi_pos = text_citation.find("doi")
+                starts = text_citation[doi_pos:].find("{")
+                ends = text_citation[starts + doi_pos:].find("}")
+                doi_text = "https://doi.org/" + text_citation[starts + doi_pos + 1:doi_pos + starts + ends]
+        if doi_text != "":
+            result[constants.PROP_DOI] = doi_text
+        repository_metadata.add_result(constants.CAT_CITATION, result, 1, constants.TECHNIQUE_REGULAR_EXPRESSION,
+                                       readme_source)
+    return repository_metadata
 
 
-def extract_dois(readme_text) -> object:
+def extract_doi_badges(readme_text, repository_metadata: Result, source) -> Result:
     """
     Function that takes the text of a readme file and searches if there are any DOIs badges.
     Parameters
     ----------
-    readme_text Text of the readme
-
+    @param readme_text: Text of the readme
+    @param repository_metadata: Result with all the findings in the repo
+    @param source: source file on top of which the extraction is performed (provenance)
     Returns
     -------
-    DOIs/identifiers associated with this software component
+    @returns Result with the DOI badges found
     """
     # regex = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
     # regex = r'\[\!\[DOI\]\(.+\)\]\(([^)]+)\)'
-    dois = re.findall(constants.REGEXP_DOI, readme_text)
-    print("Extraction of DOIS from readme completed.\n")
-    return dois
+    doi_badges = re.findall(constants.REGEXP_DOI, readme_text)
+    # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
+    for doi in doi_badges:
+        repository_metadata.add_result(constants.CAT_IDENTIFIER,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: doi[1]
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+    return repository_metadata
 
 
-def extract_binder_links(readme_text) -> object:
+def extract_binder_links(readme_text, repository_metadata: Result, source) -> Result:
     """
-    Function that does a regex to extract binder links used as reference in the readme.
-    There could be multiple binder links for one reprository
+    Function that does a regex to extract binder and colab links used as reference in the readme.
+    There could be multiple binder links for one repository
     Parameters
     ----------
-    readme_text
-
+    @param readme_text: Text of the readme
+    @param repository_metadata: Result with all the findings in the repo
+    @param source: source file on top of which the extraction is performed (provenance)
     Returns
     -------
     Links with binder notebooks/scripts that are ready to be executed.
     """
-    binder_links = re.findall(constants.REGEXP_BINDER, readme_text)
-    print("Extraction of Binder links from readme completed.\n")
+    links = re.findall(constants.REGEXP_BINDER, readme_text, re.IGNORECASE)
+    binder_links = [result[1] for result in links]
     # extract binder links and remove duplicates
     binder_links += extract_colab_links(readme_text)
-    return list(dict.fromkeys(binder_links))
+    for link in list(dict.fromkeys(binder_links)):
+        repository_metadata.add_result(constants.CAT_EXECUTABLE_EXAMPLE,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: link
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+    return repository_metadata
 
 
-def rename_github_image(img, repo_url, local_repo):
+def rename_github_image(img, repo_url, local_repo, default_branch):
     """Renames GitHub image links so they can be accessed raw"""
     if img.startswith("http"):
+        if "/raw/" in img:
+            # raw link is already in there: do nothing
+            return img
         if img.find("github.com") > 0:
             img = img.replace("/blob", "")
             img = img.replace("github.com", "raw.githubusercontent.com")
-    if not img.startswith("http") and ((repo_url is not None and repo_url != "") or (local_repo is not None and local_repo != "")):
+    if not img.startswith("http") and (
+            (repo_url is not None and repo_url != "") or (local_repo is not None and local_repo != "")):
         if repo_url is not None and repo_url != "":
             if repo_url.find("/tree/") > 0:
                 repo_url = repo_url.replace("/tree/", "/")
             else:
-                repo_url = repo_url + "/master/"
+                repo_url = repo_url + "/"+default_branch+"/"
             repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
             if not repo_url.endswith("/"):
                 repo_url = repo_url + "/"

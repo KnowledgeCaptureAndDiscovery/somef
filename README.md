@@ -37,19 +37,19 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Releases**: Pointer to the available versions of a software component
 - **Changelog**: Description of the changes between versions
 - **Issue tracker**: Link where to open issues for the target repository
+- **Package distribution**: Links to package sites like pypi in case the repository has a package available.
 - **Programming languages**: Languages used in the repository
-- **Repository Status**: Repository status as it is described in [repostatus.org](https://www.repostatus.org/)
-- **Arxiv Links**: Links to Arxiv articles
+- **Repository Status**: Repository status as it is described in [repostatus.org](https://www.repostatus.org/).
 - **Stargazers count**: Total number of stargazers of the project
-- **Forks count**: Number of forks of the project
-- **Forks url**: Links to forks made of the project
+- **Forks count**: Number of forks of the project.
+- **Forks url**: Links to forks made of the project.
 - **Code of Conduct**: Link to the code of conduct of the project
 - **Scripts**: Snippets of code contained in the repository.
 - **Support channels**: Help channels one can use to get support about the target software component.
 - **Images**: Images used to illustrate the software component.
 - **Logo**: Main logo used to represent the target software component.
 - **Ontologies**: URL and path to the ontology files present in the repository.
-- **Category**: The category of the repository. Current supported categories include: Astrophisics, Audio, Computer vision, Graphs, Natural language processing, Reinforcement learning, Semantc web, Sequential. These categories have been extracted from [awesome lists](https://github.com/topics/awesome-list) and [Papers with code](https://paperswithcode.com/). Find more information in our [documentation](https://somef.readthedocs.io/en/latest/).
+- **Application domain**: The application domain of the repository. Current supported domains include: Astrophisics, Audio, Computer vision, Graphs, Natural language processing, Reinforcement learning, Semantc web, Sequential. Domains are not mutually exclusive. These domains have been extracted from [awesome lists](https://github.com/topics/awesome-list) and [Papers with code](https://paperswithcode.com/). Find more information in our [documentation](https://somef.readthedocs.io/en/latest/).
 
 
 We use different supervised classifiers, header analysis, regular expressions and the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description](https://somef.readthedocs.io/en/latest/output/)
@@ -240,10 +240,11 @@ Options:
                                   is easy to compare to another JSON output
                                   file.
 
-  -m, --missing                   JSON report with the missing metadata fields
-                                  SOMEF was not able to find. The report will
-                                  be placed in  $PATH_missing.json, where
-                                  $PATH is -o, -c or -g.
+  -m, --missing                   The JSON will include a field 
+                                  somef_missing_categories to report with the 
+                                  missing metadata fields that SOMEF was not 
+                                  able to find.
+
   -kt, --keep_tmp PATH            SOMEF will NOT delete the temporary folder
                                   where files are stored for analysis. Files
                                   will be stored at the

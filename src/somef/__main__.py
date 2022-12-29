@@ -142,7 +142,7 @@ def configure(auto, base_uri):
     "-m",
     is_flag=True,
     default=False,
-    help="""The JSON will include a category missingCategories to report with the missing metadata fields SOMEF was not 
+    help="""The JSON will include a field missing_categories to report with the missing metadata fields SOMEF was not 
     able to find. """
 )
 @click.option(

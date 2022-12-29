@@ -8,10 +8,11 @@ def is_file_ontology(file_path):
     This method is in a separate file in case we want to extract additional metadata if required
     Parameters
     ----------
-    file_path path of the candidate ontology
+    @param file_path: path of the candidate ontology
 
-    Returns the URI of the target ontology (if there is one)
+    Returns
     -------
+    @return: The URI of the target ontology (if there is one)
     """
     # load in rdf lib
     try:
@@ -28,6 +29,6 @@ def is_file_ontology(file_path):
         for r in g.query(q1):
             # print("Found that %s is an ontology" % file_path)
             return r.onto
-    except:
+    except Exception:
         # If the candidate file could not be read, pass
         pass

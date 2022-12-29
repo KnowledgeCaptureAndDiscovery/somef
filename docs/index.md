@@ -51,11 +51,11 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Images**: Images used to illustrate the software component.
 - **Logo**: Main logo used to represent the target software component.
 - **Ontologies**: URL and path to the ontology files present in the repository.
-- **Category**: The category of the repository <sup>[1](#myfootnote1)</sup> 
+- **Application domain**: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects)<sup>[1](#myfootnote1)</sup> 
 
 SOMEF uses the [Software  Description Ontology](https://w3id.org/okn/o/sd), which extends [Schema.org](https://schema.org) and [Codemeta](https://codemeta.github.io/terms/) to represent all the categories listed above. To see different export options please see [the getting started page](https://somef.readthedocs.io/en/latest/usage/).
 
-<a name="myfootnote1">1</a> The available categories currently are the followings: 
+<a name="myfootnote1">1</a> The available application domains currently are: 
 
 - **Astrophisics**: a branch of space science that applies the laws of physics and chemistry to seek to understand the universe and our place in it. The field explores topics such as the birth, life and death of stars, planets, galaxies, nebulae and other objects in the universe.
 - **Audio**: a process of transforming, exploring, and interpreting audio signals recorded by digital devices.

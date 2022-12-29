@@ -1,6 +1,4 @@
-## Main function: header_analysis(text)
-## input file: readme files text data
-## output file: json files with categories extracted using header analysis; other text data cannot be extracted
+import logging
 import re
 import string
 
@@ -8,7 +6,9 @@ import numpy as np
 import pandas as pd
 from textblob import Word
 
+from .process_results import Result
 from .parser import mardown_parser
+from .utils import constants
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -17,28 +17,28 @@ group = dict()
 
 # Word("citation").synsets[2] -> Includes ack, which is not the right sense
 citation = [Word("citation").synsets[3], Word("reference").synsets[1], Word("cite").synsets[3]]
-group.update({"citation": citation})
+group.update({constants.CAT_CITATION: citation})
 
 ack = [Word("acknowledgement").synsets[0]]
-group.update({"acknowledgement": ack})
+group.update({constants.CAT_ACKNOWLEDGEMENT: ack})
 
 run = [Word("run").synsets[9], Word("run").synsets[34], Word("execute").synsets[4]]
-group.update({"run": run})
+group.update({constants.CAT_RUN: run})
 
 install = [Word("installation").synsets[0], Word("install").synsets[0], Word("setup").synsets[1],
            Word("prepare").synsets[0], Word("preparation").synsets[0], Word("manual").synsets[0],
            Word("guide").synsets[2], Word("guide").synsets[9]]
-group.update({"installation": install})
+group.update({constants.CAT_INSTALLATION: install})
 
 download = [Word("download").synsets[0]]
-group.update({"download": download})
+group.update({constants.CAT_DOWNLOAD: download})
 
 requirement = [Word("requirement").synsets[2], Word("prerequisite").synsets[0], Word("prerequisite").synsets[1],
                Word("dependency").synsets[0], Word("dependent").synsets[0]]
-group.update({"requirement": requirement})
+group.update({constants.CAT_REQUIREMENTS: requirement})
 
 contact = [Word("contact").synsets[9]]
-group.update({"contact": contact})
+group.update({constants.CAT_CONTACT: contact})
 
 description = [Word("description").synsets[0], Word("description").synsets[1],
                Word("introduction").synsets[3], Word("introduction").synsets[6],
@@ -46,16 +46,19 @@ description = [Word("description").synsets[0], Word("description").synsets[1],
                Word("initiation").synsets[1],
                #               Word("overview").synsets[0],
                Word("summary").synsets[0], Word("summary").synsets[2]]
-group.update({"description": description})
+group.update({constants.CAT_DESCRIPTION: description})
 
 contributor = [Word("contributor").synsets[0]]
-group.update({"contributor": contributor})
+group.update({constants.CAT_CONTRIBUTORS: contributor})
+
+contributing = [Word("contributing").synsets[1]]
+group.update({constants.CAT_CONTRIBUTING_GUIDELINES: contributing})
 
 documentation = [Word("documentation").synsets[1]]
-group.update({"documentation": documentation})
+group.update({constants.CAT_DOCUMENTATION: documentation})
 
 license = [Word("license").synsets[3], Word("license").synsets[0]]
-group.update({"license": license})
+group.update({constants.CAT_LICENSE: license})
 
 usage = [Word("usage").synsets[0], Word("example").synsets[0], Word("example").synsets[5],
          # Word("implement").synsets[1],Word("implementation").synsets[1],
@@ -63,7 +66,7 @@ usage = [Word("usage").synsets[0], Word("example").synsets[0], Word("example").s
          Word("tutorial").synsets[1],
          Word("start").synsets[0], Word("start").synsets[4], Word("started").synsets[0],
          Word("started").synsets[1], Word("started").synsets[7], Word("started").synsets[8]]
-group.update({"usage": usage})
+group.update({constants.CAT_USAGE: usage})
 
 # update = [Word("updating").synsets[0], Word("updating").synsets[3]]
 # group.update({"update": update})
@@ -72,27 +75,26 @@ group.update({"usage": usage})
 # Word("issues").synsets[0],
 faq = [Word("errors").synsets[5], Word("problems").synsets[0],
        Word("problems").synsets[2], Word("faq").synsets[0]]
-group.update({"faq": faq})
+group.update({constants.CAT_FAQ: faq})
 
 support = [Word("support").synsets[7], Word("help").synsets[0], Word("help").synsets[9], Word("report").synsets[0],
            Word("report").synsets[6]]
-group.update({"support": support})
+group.update({constants.CAT_SUPPORT: support})
 
 
 def extract_bash_code(text):
     """Function to detect code blocks"""
-    splitted = text.split("```")
+    split = text.split("```")
     output = []
-    if (len(splitted) >= 3):
-        for index, value in enumerate(splitted):
+    if len(split) >= 3:
+        for index, value in enumerate(split):
             if index % 2 == 1:
-                output.append(splitted[index])
+                output.append(split[index])
     return output
 
 
 def extract_header_content(text):
     """Function designed to extract headers and contents of text and place it in a dataframe"""
-    print('Extracting headers and content.')
     header = []
     headers = mardown_parser.extract_headers(text)
     for key in headers.keys():
@@ -188,64 +190,75 @@ def clean_html(text):
     return cleantext
 
 
-def extract_categories_using_headers(text):
-    """Main function to extract categories using headers"""
-    data, none_header_content = extract_header_content(text)
-    print('Labeling headers.')
-    if data.empty:
-        print("File to analyze has no headers")
-        return {}, [text]
-    data['Group'] = data['Header'].apply(lambda row: label_header(row))
-    data['GroupParent'] = data['ParentHeader'].apply(lambda row: label_parent_headers(row))
-    for i in data.index:
-        if len(data['Group'][i]) == 0 and len(data['GroupParent'][i]) > 0:
-            data.at[i, 'Group'] = data['GroupParent'][i]
-    data = data.drop(columns=['GroupParent'])
-    if len(data['Group'].iloc[0]) == 0:
-        data['Group'].iloc[0] = ['unknown']
-    groups = data.apply(lambda x: pd.Series(x['Group']), axis=1).stack().reset_index(level=1, drop=True)
+def extract_categories(repo_data, repository_metadata: Result):
+    """
+    Function that adds category information extracted using header information
+    Parameters
+    ----------
+    @param repo_data: data to use the header analysis
+    @param repository_metadata: Result object with the results found so far in the repo
 
-    groups.name = 'Group'
-    data = data.drop('Group', axis=1).join(groups)
-    if data['Group'].iloc[0] == 'unknown':
-        data['Group'].iloc[0] = np.NaN
+    Returns
+    -------
+    @return Result with the information added.
+    """
+    logging.info("Extracting information using headers")
+    if repo_data is None or repo_data == "" or len(repo_data) == 0:
+        return repository_metadata, []
+    try:
+        data, none_header_content = extract_header_content(repo_data)
+        logging.info('Labeling headers.')
+        if data.empty:
+            logging.warning("File to analyze has no headers")
+            return repository_metadata, [repo_data]
+        data['Group'] = data['Header'].apply(lambda row: label_header(row))
+        data['GroupParent'] = data['ParentHeader'].apply(lambda row: label_parent_headers(row))
+        for i in data.index:
+            if len(data['Group'][i]) == 0 and len(data['GroupParent'][i]) > 0:
+                data.at[i, 'Group'] = data['GroupParent'][i]
+        data = data.drop(columns=['GroupParent'])
+        if len(data['Group'].iloc[0]) == 0:
+            data['Group'].iloc[0] = ['unknown']
+        groups = data.apply(lambda x: pd.Series(x['Group']), axis=1).stack().reset_index(level=1, drop=True)
 
-    # to json
-    group = data.loc[(data['Group'] != 'None') & pd.notna(data['Group'])]
-    # group = group.reindex(columns=['Content', 'Group'])
-    group['confidence'] = [[1.0]] * len(group)
-    group.rename(columns={'Content': 'excerpt'}, inplace=True)
-    group.rename(columns={'Header': 'originalHeader'}, inplace=True)
-    group.rename(columns={'ParentHeader': 'parentHeader'}, inplace=True)
-    group['technique'] = 'Header extraction'
-    # group['original header'] = 'NaN'
-    group_json = group.groupby('Group').apply(lambda x: x.to_dict('r')).to_dict()
-    for key in group_json.keys():
-        for ind in range(len(group_json[key])):
-            del group_json[key][ind]['Group']
+        groups.name = 'Group'
+        data = data.drop('Group', axis=1).join(groups)
+        if data['Group'].iloc[0] == 'unknown':
+            data['Group'].iloc[0] = np.NaN
 
-    # for key in group_json.keys():
-    #     for ind in range(len(group_json[key])):
-    #         print(group_json[key][ind]['excerpt'])
+        # to json
+        group = data.loc[(data['Group'] != 'None') & pd.notna(data['Group'])]
+        group.rename(columns={'Content': constants.PROP_VALUE}, inplace=True)
+        group.rename(columns={'Header': constants.PROP_ORIGINAL_HEADER}, inplace=True)
+        group.rename(columns={'ParentHeader': constants.PROP_PARENT_HEADER}, inplace=True)
+        for index, row in group.iterrows():
+            source = ""
+            if constants.CAT_README_URL in repository_metadata.results.keys():
+                source = repository_metadata.results[constants.CAT_README_URL][0]
+                source = source[constants.PROP_RESULT][constants.PROP_VALUE]
+            parent_header = ""
+            if row[constants.PROP_PARENT_HEADER] != "":
+                parent_header = row.loc[constants.PROP_PARENT_HEADER]
+            result = {
+                constants.PROP_VALUE: row.loc[constants.PROP_VALUE],
+                constants.PROP_TYPE: constants.TEXT_EXCERPT,
+                constants.PROP_ORIGINAL_HEADER: row.loc[constants.PROP_ORIGINAL_HEADER]
+            }
+            if parent_header != "" and len(parent_header) > 0:
+                result[constants.PROP_PARENT_HEADER] = parent_header
+            if source != "":
+                repository_metadata.add_result(row.Group, result, 1, constants.TECHNIQUE_HEADER_ANALYSIS, source)
+            else:
+                repository_metadata.add_result(row.Group, result, 1, constants.TECHNIQUE_HEADER_ANALYSIS)
 
-    print('Converting to json files.')
-
-    # strings without tag (they will be classified)
-    str_list = data.loc[data['Group'].isna(), ['Content']].values.squeeze().tolist()
-    if type(str_list) != list:
-        str_list = [str_list]
-
-    if none_header_content != None:
-        str_list.append(none_header_content)
-
-    # remove empty field parentHeader
-    for key in group_json.keys():
-        elements = group_json[key]
-        new_elements = []
-        for element in elements:
-            if element['parentHeader'] == "":
-                del element['parentHeader']
-            new_elements.append(element)
-        group_json[key] = new_elements
-
-    return group_json, str_list
+        # strings without tag (they will be classified)
+        string_list = data.loc[data['Group'].isna(), ['Content']].values.squeeze().tolist()
+        if type(string_list) != list:
+            string_list = [string_list]
+        if none_header_content is not None and none_header_content != "":
+            string_list.append(none_header_content.strip())
+        logging.info("Header information extracted.")
+        return repository_metadata, string_list
+    except Exception as e:
+        logging.error("Error while extracting headers: ", str(e))
+        return repository_metadata, [repo_data]

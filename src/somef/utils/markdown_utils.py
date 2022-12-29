@@ -1,6 +1,9 @@
+import logging
 from io import StringIO
 from markdown import Markdown
-from .. import regular_expressions
+from ..utils import constants
+import re
+
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
@@ -38,12 +41,12 @@ def remove_bibtex(string_list):
         The strings list without bibtex blocks
         """
     for x, element in enumerate(string_list):
-        bib_references = regular_expressions.extract_bibtex(element)
+        bib_references = re.findall(constants.REGEXP_BIBTEX, element)
         if len(bib_references) > 0:
             top = element.find(bib_references[0])
             init = element.rfind("```", 0, top)
             end = element.find("```", init + 3)
             substring = element[init:end + 3]
             string_list[x] = element.replace(substring, "")
-    print("Extraction of bibtex citation from readme completed. \n")
+    logging.info("Extraction of bibtex citation from readme completed. \n")
     return string_list
