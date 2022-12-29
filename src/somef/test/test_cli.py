@@ -862,7 +862,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         assert data.find(
-            "Manim is an engine for precise programmatic animations, designed for creating explanatory math videos.") > 0
+           "Manim is an engine for precise programmatic animations, designed for creating explanatory math videos.") > 0
         os.remove(test_data_path + "test-428.json")
 
     def test_issue_443(self):

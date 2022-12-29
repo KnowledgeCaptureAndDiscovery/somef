@@ -14,106 +14,6 @@ from .export.data_to_graph import DataGraph
 from .export import json_export
 
 
-def is_in_excerpts_headers(text, set_excerpts):
-    """
-    Function that checks if some text is included in a set of excerpts
-    Parameters
-    ----------
-    text: text to look for
-    set_excerpts: existing set of excerpts
-
-    Returns
-    -------
-    True if the text is included in the excerpts, False otherwise.
-    """
-    set_text = set(text.split())
-    for excerpt in set_excerpts:
-        set_excerpt = set(excerpt.split())
-        if set_text.issubset(set_excerpt):
-            return True, excerpt
-
-    return False, None
-
-
-# def format_output(git_data, repo_data, repo_type):
-#     """
-#     Function takes metadata, readme text predictions, bibtex citations and path to the output file
-#     Parameters
-#     ----------
-#     git_data GitHub obtained data
-#     repo_data Data extracted from the code repo by SOMEF
-#
-#     Returns
-#     -------
-#     json representation of the categories found in file
-#     """
-#     text_technique = 'GitHub API'
-#     if repo_type is constants.RepositoryType.GITLAB:
-#         text_technique = 'GitLab API'
-#     print("formatting output")
-#
-#     for i in git_data.keys():
-#         if i == 'description':
-#             if 'description' not in repo_data.keys():
-#                 repo_data['description'] = []
-#             if git_data[i] != "":
-#                 repo_data['description'].append(
-#                     {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technique})
-#         else:
-#             keys = repo_data.keys
-#             if i in constants.file_exploration:
-#                 if i == 'hasExecutableNotebook':
-#                     repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration',
-#                                     'format': 'jupyter notebook'}
-#                 elif i == 'hasBuildFile':
-#                     docker_files = []
-#                     docker_compose = []
-#                     for data in git_data[i]:
-#                         if data.lower().endswith('docker-compose.yml'):
-#                             docker_compose.append(data)
-#                         else:
-#                             docker_files.append(data)
-#                     repo_data[i] = []
-#                     if len(docker_files) > 0:
-#                         repo_data[i].append({'excerpt': docker_files, 'confidence': [1.0],
-#                                              'technique': 'File Exploration',
-#                                              'format': 'Docker file'})
-#                     if len(docker_compose) > 0:
-#                         repo_data[i].append({'excerpt': docker_compose, 'confidence': [1.0],
-#                                              'technique': 'File Exploration',
-#                                              'format': 'Docker compose file'})
-#                 else:
-#                     if i in repo_data:
-#                         repo_data[i].append(
-#                             {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'})
-#                     else:
-#                         repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': 'File Exploration'}
-#             elif git_data[i] != "" and git_data[i] != []:
-#                 repo_data[i] = {'excerpt': git_data[i], 'confidence': [1.0], 'technique': text_technique}
-#     # remove empty categories from json
-#     return remove_empty_elements(repo_data)
-
-
-def remove_empty_elements(d):
-    """recursively remove empty lists, empty dicts, or None elements from a dictionary"""
-
-    def empty(x):
-        return x is None or x == {} or x == []
-
-    if not isinstance(d, (dict, list)):
-        return d
-    elif isinstance(d, list):
-        return [v for v in (remove_empty_elements(v) for v in d) if not empty(v)]
-    else:
-        return {k: v for k, v in ((k, remove_empty_elements(v)) for k, v in d.items()) if not empty(v)}
-
-
-# def save_json(git_data, repo_data, outfile):
-#     """Performs some combinations and saves the final json Object in output file"""
-#     repo_data = format_output(git_data, repo_data)
-#     json_export.save_json_output(repo_data, outfile, None)
-
-
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
                  ignore_github_metadata=False, readme_only=False, keep_tmp=None) -> Result:
     """
@@ -194,11 +94,10 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         unfiltered_text = readme_text
         repository_metadata, string_list = header_analysis.extract_categories(unfiltered_text, repository_metadata)
         readme_text = markdown_utils.unmark(readme_text)
-        repository_metadata = supervised_classification.run_category_classification(unfiltered_text, threshold,
-                                                                                    repository_metadata)
-        # print(string_list)
-        excerpts = create_excerpts.create_excerpts(string_list)
-        if not ignore_classifiers or unfiltered_text != '':
+        if not ignore_classifiers and unfiltered_text != '':
+            repository_metadata = supervised_classification.run_category_classification(unfiltered_text, threshold,
+                                                                                        repository_metadata)
+            excerpts = create_excerpts.create_excerpts(string_list)
             excerpts_headers = mardown_parser.extract_text_excerpts_header(unfiltered_text)
             header_parents = mardown_parser.extract_headers_parents(unfiltered_text)
             score_dict = supervised_classification.run_classifiers(excerpts, file_paths)
