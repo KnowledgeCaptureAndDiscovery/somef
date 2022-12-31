@@ -1,0 +1,752 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix map: <http://mapping.example.com/> .
+@prefix ma: <http://www.w3.org/ns/ma-ont#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sd: <https://w3id.org/okn/o/sd#> .
+@prefix schema: <https://schema.org/> .
+
+map:map_Agent_000 rml:logicalSource map:source_000 ;
+	rdf:type rr:TriplesMap ;
+	rdfs:label "Agent" ;
+	rr:predicateObjectMap map:pom_044, map:pom_045 ;
+	rr:subjectMap map:s_003 .
+
+map:map_Agent_release_000 rml:logicalSource map:source_001 ;
+	rdf:type rr:TriplesMap ;
+	rdfs:label "Agent_release" ;
+	rr:predicateObjectMap map:pom_046, map:pom_047 ;
+	rr:subjectMap map:s_004 .
+
+map:map_License_000 rml:logicalSource map:source_000 ;
+	rdf:type rr:TriplesMap ;
+	rdfs:label "License" ;
+	rr:predicateObjectMap map:pom_036, map:pom_037, map:pom_038, map:pom_039 ;
+	rr:subjectMap map:s_001 .
+
+map:map_SoftwareVersion_000 rml:logicalSource map:source_001 ;
+	rdf:type rr:TriplesMap ;
+	rdfs:label "SoftwareVersion" ;
+	rr:predicateObjectMap map:pom_048, map:pom_049, map:pom_050, map:pom_051, map:pom_052, map:pom_053, map:pom_054, map:pom_055, map:pom_056, map:pom_057, map:pom_058 ;
+	rr:subjectMap map:s_005 .
+
+map:map_Software_000 rml:logicalSource map:source_000 ;
+	rdf:type rr:TriplesMap ;
+	rdfs:label "Software" ;
+	rr:predicateObjectMap map:pom_000, map:pom_001, map:pom_002, map:pom_003, map:pom_004, map:pom_005, map:pom_006, map:pom_007, map:pom_008, map:pom_009, map:pom_010, map:pom_011, map:pom_012, map:pom_013, map:pom_014, map:pom_015, map:pom_016, map:pom_017, map:pom_018, map:pom_019, map:pom_020, map:pom_021, map:pom_022, map:pom_023, map:pom_024, map:pom_025, map:pom_026, map:pom_027, map:pom_028, map:pom_029, map:pom_030, map:pom_031, map:pom_032, map:pom_033, map:pom_034, map:pom_035 ;
+	rr:subjectMap map:s_000 .
+
+map:map_SourceCode_000 rml:logicalSource map:source_000 ;
+	rdf:type rr:TriplesMap ;
+	rdfs:label "SourceCode" ;
+	rr:predicateObjectMap map:pom_040, map:pom_041, map:pom_042, map:pom_043 ;
+	rr:subjectMap map:s_002 .
+
+map:om_000 rdf:type rr:ObjectMap ;
+	rr:constant "https://w3id.org/okn/o/sd#Software" ;
+	rr:termType rr:IRI .
+
+map:om_001 rml:reference "description" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_002 rml:reference "full_name" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_003 rml:reference "citation" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_004 rml:reference "issue_tracker" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_005 rml:reference "acknowledgement" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_006 rml:reference "installation" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_007 rml:reference "invocation" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_008 rml:reference "usage" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_009 rml:reference "download_url" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_010 rml:reference "requirements" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_011 rml:reference "contact" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_012 rml:reference "contributing_guidelines" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_013 rml:reference "support" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_014 rml:reference "keywords" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_015 rml:reference "faq" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_016 rml:reference "executable_example" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_017 rml:reference "code_of_conduct" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_018 rml:reference "date_created" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:dateTime ;
+	rr:termType rr:Literal .
+
+map:om_019 rml:reference "date_updated" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:dateTime ;
+	rr:termType rr:Literal .
+
+map:om_020 rml:reference "documentation" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_021 rml:reference "has_build_file" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_022 rml:reference "identifier" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_023 rml:reference "issue_tracker" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_024 rml:reference "full_title" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_025 rml:reference "readme_url" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_026 rml:reference "contributing_guidelines" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_027 rml:reference "executable_example" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_028 rml:reference "has_script_file" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_029 rml:reference "invocation" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_030 rml:reference "run" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_031 rml:reference "citation" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_032 rdf:type rr:ObjectMap ;
+	rr:template "https://w3id.org/okn/i/License/{name}" ;
+	rr:termType rr:IRI .
+
+map:om_033 rdf:type rr:ObjectMap ;
+	rr:template "https://w3id.org/okn/i/SoftwareSource/{name}" ;
+	rr:termType rr:IRI .
+
+map:om_034 rdf:type rr:ObjectMap ;
+	rr:template "https://w3id.org/okn/i/Agent/{owner.name}" ;
+	rr:termType rr:IRI .
+
+map:om_035 rdf:type rr:ObjectMap ;
+	rr:template "https://w3id.org/okn/i/Release/{releases_ids}" ;
+	rr:termType rr:IRI .
+
+map:om_036 rdf:type rr:ObjectMap ;
+	rr:constant "https://schema.org/CreativeWork" ;
+	rr:termType rr:IRI .
+
+map:om_037 rml:reference "license.name" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_038 rml:reference "license.url" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_039 rdf:type rr:ObjectMap ;
+	rr:template "https://spdx.org/licenses/{license.spdx_id}" ;
+	rr:termType rr:IRI .
+
+map:om_040 rdf:type rr:ObjectMap ;
+	rr:constant "https://schema.org/SoftwareSourceCode" ;
+	rr:termType rr:IRI .
+
+map:om_041 rml:reference "full_name" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_042 rml:reference "code_repository" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_043 rml:reference "programming_languages" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_044 rdf:type rr:ObjectMap ;
+	rr:template "https://schema.org/{owner.type}" ;
+	rr:termType rr:IRI .
+
+map:om_045 rml:reference "owner.value" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_046 rdf:type rr:ObjectMap ;
+	rr:constant "https://schema.org/Person" ;
+	rr:termType rr:IRI .
+
+map:om_047 rml:reference "author.name" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_048 rdf:type rr:ObjectMap ;
+	rr:constant "https://w3id.org/okn/o/sd#SoftwareVersion" ;
+	rr:termType rr:IRI .
+
+map:om_049 rml:reference "name" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_050 rml:reference "tag" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_051 rml:reference "value" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_052 rml:reference "description" ;
+	rdf:type rr:ObjectMap ;
+	rr:termType rr:Literal .
+
+map:om_053 rml:reference "tarball_url" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_054 rml:reference "zipball_url" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_055 rml:reference "html_url" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:anyURI ;
+	rr:termType rr:Literal .
+
+map:om_056 rml:reference "date_created" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:dateTime ;
+	rr:termType rr:Literal .
+
+map:om_057 rml:reference "date_published" ;
+	rdf:type rr:ObjectMap ;
+	rr:datatype xsd:dateTime ;
+	rr:termType rr:Literal .
+
+map:om_058 rdf:type rr:ObjectMap ;
+	rr:template "https://w3id.org/okn/i/Agent/{author.name}" ;
+	rr:termType rr:IRI .
+
+map:pm_000 rdf:type rr:PredicateMap ;
+	rr:constant rdf:type .
+
+map:pm_001 rdf:type rr:PredicateMap ;
+	rr:constant sd:description .
+
+map:pm_002 rdf:type rr:PredicateMap ;
+	rr:constant sd:name .
+
+map:pm_003 rdf:type rr:PredicateMap ;
+	rr:constant sd:citation .
+
+map:pm_004 rdf:type rr:PredicateMap ;
+	rr:constant sd:issueTracker .
+
+map:pm_005 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasAcknowledgments .
+
+map:pm_006 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasInstallationInstructions .
+
+map:pm_007 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasExecutionCommand .
+
+map:pm_008 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasUsageNotes .
+
+map:pm_009 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasDownloadUrl .
+
+map:pm_010 rdf:type rr:PredicateMap ;
+	rr:constant sd:softwareRequirements .
+
+map:pm_011 rdf:type rr:PredicateMap ;
+	rr:constant sd:contactDetails .
+
+map:pm_012 rdf:type rr:PredicateMap ;
+	rr:constant sd:contributionInstructions .
+
+map:pm_013 rdf:type rr:PredicateMap ;
+	rr:constant sd:supportDetails .
+
+map:pm_014 rdf:type rr:PredicateMap ;
+	rr:constant sd:keywords .
+
+map:pm_015 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasFAQ .
+
+map:pm_016 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasExecutableNotebook .
+
+map:pm_017 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasCodeOfConduct .
+
+map:pm_018 rdf:type rr:PredicateMap ;
+	rr:constant sd:dateCreated .
+
+map:pm_019 rdf:type rr:PredicateMap ;
+	rr:constant sd:dateModified .
+
+map:pm_020 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasDocumentation .
+
+map:pm_021 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasBuildFile .
+
+map:pm_022 rdf:type rr:PredicateMap ;
+	rr:constant sd:identifier .
+
+map:pm_023 rdf:type rr:PredicateMap ;
+	rr:constant sd:issueTracker .
+
+map:pm_024 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasLongName .
+
+map:pm_025 rdf:type rr:PredicateMap ;
+	rr:constant sd:readme .
+
+map:pm_026 rdf:type rr:PredicateMap ;
+	rr:constant sd:contributingGuidelines .
+
+map:pm_027 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasExample .
+
+map:pm_028 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasSupportScriptLocation .
+
+map:pm_029 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasExecutableInstructions .
+
+map:pm_030 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasExecutableInstructions .
+
+map:pm_031 rdf:type rr:PredicateMap ;
+	rr:constant sd:referencePublication .
+
+map:pm_032 rdf:type rr:PredicateMap ;
+	rr:constant schema:license .
+
+map:pm_033 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasSourceCode .
+
+map:pm_034 rdf:type rr:PredicateMap ;
+	rr:constant sd:author .
+
+map:pm_035 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasVersion .
+
+map:pm_036 rdf:type rr:PredicateMap ;
+	rr:constant rdf:type .
+
+map:pm_037 rdf:type rr:PredicateMap ;
+	rr:constant sd:name .
+
+map:pm_038 rdf:type rr:PredicateMap ;
+	rr:constant sd:url .
+
+map:pm_039 rdf:type rr:PredicateMap ;
+	rr:constant owl:sameAs .
+
+map:pm_040 rdf:type rr:PredicateMap ;
+	rr:constant rdf:type .
+
+map:pm_041 rdf:type rr:PredicateMap ;
+	rr:constant sd:name .
+
+map:pm_042 rdf:type rr:PredicateMap ;
+	rr:constant sd:codeRepository .
+
+map:pm_043 rdf:type rr:PredicateMap ;
+	rr:constant sd:programmingLanguage .
+
+map:pm_044 rdf:type rr:PredicateMap ;
+	rr:constant rdf:type .
+
+map:pm_045 rdf:type rr:PredicateMap ;
+	rr:constant schema:name .
+
+map:pm_046 rdf:type rr:PredicateMap ;
+	rr:constant rdf:type .
+
+map:pm_047 rdf:type rr:PredicateMap ;
+	rr:constant schema:name .
+
+map:pm_048 rdf:type rr:PredicateMap ;
+	rr:constant rdf:type .
+
+map:pm_049 rdf:type rr:PredicateMap ;
+	rr:constant sd:name .
+
+map:pm_050 rdf:type rr:PredicateMap ;
+	rr:constant sd:hasVersionId .
+
+map:pm_051 rdf:type rr:PredicateMap ;
+	rr:constant sd:url .
+
+map:pm_052 rdf:type rr:PredicateMap ;
+	rr:constant sd:description .
+
+map:pm_053 rdf:type rr:PredicateMap ;
+	rr:constant sd:downloadUrl .
+
+map:pm_054 rdf:type rr:PredicateMap ;
+	rr:constant sd:downloadUrl .
+
+map:pm_055 rdf:type rr:PredicateMap ;
+	rr:constant sd:downloadUrl .
+
+map:pm_056 rdf:type rr:PredicateMap ;
+	rr:constant sd:dateCreated .
+
+map:pm_057 rdf:type rr:PredicateMap ;
+	rr:constant sd:datePublished .
+
+map:pm_058 rdf:type rr:PredicateMap ;
+	rr:constant sd:author .
+
+map:pom_000 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_000 ;
+	rr:predicateMap map:pm_000 .
+
+map:pom_001 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_001 ;
+	rr:predicateMap map:pm_001 .
+
+map:pom_002 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_002 ;
+	rr:predicateMap map:pm_002 .
+
+map:pom_003 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_003 ;
+	rr:predicateMap map:pm_003 .
+
+map:pom_004 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_004 ;
+	rr:predicateMap map:pm_004 .
+
+map:pom_005 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_005 ;
+	rr:predicateMap map:pm_005 .
+
+map:pom_006 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_006 ;
+	rr:predicateMap map:pm_006 .
+
+map:pom_007 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_007 ;
+	rr:predicateMap map:pm_007 .
+
+map:pom_008 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_008 ;
+	rr:predicateMap map:pm_008 .
+
+map:pom_009 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_009 ;
+	rr:predicateMap map:pm_009 .
+
+map:pom_010 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_010 ;
+	rr:predicateMap map:pm_010 .
+
+map:pom_011 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_011 ;
+	rr:predicateMap map:pm_011 .
+
+map:pom_012 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_012 ;
+	rr:predicateMap map:pm_012 .
+
+map:pom_013 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_013 ;
+	rr:predicateMap map:pm_013 .
+
+map:pom_014 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_014 ;
+	rr:predicateMap map:pm_014 .
+
+map:pom_015 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_015 ;
+	rr:predicateMap map:pm_015 .
+
+map:pom_016 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_016 ;
+	rr:predicateMap map:pm_016 .
+
+map:pom_017 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_017 ;
+	rr:predicateMap map:pm_017 .
+
+map:pom_018 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_018 ;
+	rr:predicateMap map:pm_018 .
+
+map:pom_019 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_019 ;
+	rr:predicateMap map:pm_019 .
+
+map:pom_020 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_020 ;
+	rr:predicateMap map:pm_020 .
+
+map:pom_021 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_021 ;
+	rr:predicateMap map:pm_021 .
+
+map:pom_022 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_022 ;
+	rr:predicateMap map:pm_022 .
+
+map:pom_023 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_023 ;
+	rr:predicateMap map:pm_023 .
+
+map:pom_024 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_024 ;
+	rr:predicateMap map:pm_024 .
+
+map:pom_025 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_025 ;
+	rr:predicateMap map:pm_025 .
+
+map:pom_026 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_026 ;
+	rr:predicateMap map:pm_026 .
+
+map:pom_027 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_027 ;
+	rr:predicateMap map:pm_027 .
+
+map:pom_028 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_028 ;
+	rr:predicateMap map:pm_028 .
+
+map:pom_029 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_029 ;
+	rr:predicateMap map:pm_029 .
+
+map:pom_030 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_030 ;
+	rr:predicateMap map:pm_030 .
+
+map:pom_031 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_031 ;
+	rr:predicateMap map:pm_031 .
+
+map:pom_032 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_032 ;
+	rr:predicateMap map:pm_032 .
+
+map:pom_033 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_033 ;
+	rr:predicateMap map:pm_033 .
+
+map:pom_034 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_034 ;
+	rr:predicateMap map:pm_034 .
+
+map:pom_035 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_035 ;
+	rr:predicateMap map:pm_035 .
+
+map:pom_036 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_036 ;
+	rr:predicateMap map:pm_036 .
+
+map:pom_037 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_037 ;
+	rr:predicateMap map:pm_037 .
+
+map:pom_038 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_038 ;
+	rr:predicateMap map:pm_038 .
+
+map:pom_039 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_039 ;
+	rr:predicateMap map:pm_039 .
+
+map:pom_040 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_040 ;
+	rr:predicateMap map:pm_040 .
+
+map:pom_041 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_041 ;
+	rr:predicateMap map:pm_041 .
+
+map:pom_042 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_042 ;
+	rr:predicateMap map:pm_042 .
+
+map:pom_043 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_043 ;
+	rr:predicateMap map:pm_043 .
+
+map:pom_044 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_044 ;
+	rr:predicateMap map:pm_044 .
+
+map:pom_045 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_045 ;
+	rr:predicateMap map:pm_045 .
+
+map:pom_046 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_046 ;
+	rr:predicateMap map:pm_046 .
+
+map:pom_047 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_047 ;
+	rr:predicateMap map:pm_047 .
+
+map:pom_048 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_048 ;
+	rr:predicateMap map:pm_048 .
+
+map:pom_049 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_049 ;
+	rr:predicateMap map:pm_049 .
+
+map:pom_050 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_050 ;
+	rr:predicateMap map:pm_050 .
+
+map:pom_051 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_051 ;
+	rr:predicateMap map:pm_051 .
+
+map:pom_052 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_052 ;
+	rr:predicateMap map:pm_052 .
+
+map:pom_053 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_053 ;
+	rr:predicateMap map:pm_053 .
+
+map:pom_054 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_054 ;
+	rr:predicateMap map:pm_054 .
+
+map:pom_055 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_055 ;
+	rr:predicateMap map:pm_055 .
+
+map:pom_056 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_056 ;
+	rr:predicateMap map:pm_056 .
+
+map:pom_057 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_057 ;
+	rr:predicateMap map:pm_057 .
+
+map:pom_058 rdf:type rr:PredicateObjectMap ;
+	rr:objectMap map:om_058 ;
+	rr:predicateMap map:pm_058 .
+
+map:rules_000 <http://rdfs.org/ns/void#exampleResource> map:map_Agent_000, map:map_Agent_release_000, map:map_License_000, map:map_SoftwareVersion_000, map:map_Software_000, map:map_SourceCode_000 ;
+	rdf:type <http://rdfs.org/ns/void#Dataset> .
+
+map:s_000 rdf:type rr:SubjectMap ;
+	rr:template "https://w3id.org/okn/i/Software/{name}" .
+
+map:s_001 rdf:type rr:SubjectMap ;
+	rr:template "https://w3id.org/okn/i/License/{name}" .
+
+map:s_002 rdf:type rr:SubjectMap ;
+	rr:template "https://w3id.org/okn/i/SoftwareSource/{name}" .
+
+map:s_003 rdf:type rr:SubjectMap ;
+	rr:template "https://w3id.org/okn/i/Agent/{owner.value}" .
+
+map:s_004 rdf:type rr:SubjectMap ;
+	rr:template "https://w3id.org/okn/i/Agent/{author.name}" .
+
+map:s_005 rdf:type rr:SubjectMap ;
+	rr:template "https://w3id.org/okn/i/Release/{release_id}" .
+
+map:source_000 rml:iterator "$" ;
+	rml:referenceFormulation ql:JSONPath ;
+	rml:source "somef_2.json" ;
+	rdf:type rml:LogicalSource ;
+	rdfs:label "main-source" .
+
+map:source_001 rml:iterator "$.releases[*]" ;
+	rml:referenceFormulation ql:JSONPath ;
+	rml:source "somef_2.json" ;
+	rdf:type rml:LogicalSource ;
+	rdfs:label "rel" .
+
