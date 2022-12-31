@@ -10,6 +10,7 @@ class Result:
     Class designed to store results found by SOMEF.
     For more information, see the output JSON documentation at: docs/output.md
     """
+
     def __init__(self):
         """
         init method for the main object to return.
@@ -17,7 +18,7 @@ class Result:
         """
         self.results = {
             constants.PROP_PROVENANCE: {
-                constants.PROP_SOMEF_VERSION:__version__,
+                constants.PROP_SOMEF_VERSION: __version__,
                 constants.PROP_SOMEF_SCHEMA_VERSION: "1.0.0",
                 constants.PROP_DATE: datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             },
@@ -35,7 +36,7 @@ class Result:
         @param source: source file used for the extraction (if any)
         """
         # Sanity check: a result must have a type and a value
-        if isinstance(result,dict)  and \
+        if isinstance(result, dict) and \
                 constants.PROP_VALUE in result.keys() and \
                 constants.PROP_TYPE in result.keys():
             result = {constants.PROP_RESULT: result,
@@ -53,11 +54,11 @@ class Result:
         else:
             logging.error("Tried to add a result without value or type. Discarding it ...")
 
-    def consolidate_results(self):
-        # TO DO: for each category where we may reduce/ improve the results, do so.
-        # For example, here is where we would detect if there are redundant citation files, and we would create a single
-        # publication object.
-
-        # if multiple licenses are found, keep only the outmost one.
-
-        return self.results
+    # def consolidate_results(self):
+    #   # TO DO: for each category where we may reduce/ improve the results, do so.
+    #   # For example, here is where we would detect if there are redundant citation files, and we would create a single
+    #   # publication object.
+    #
+    #     # if multiple licenses are found, keep only the outmost one.
+    #
+    #     return self.results

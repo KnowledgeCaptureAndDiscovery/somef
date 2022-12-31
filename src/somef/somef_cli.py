@@ -10,7 +10,7 @@ from . import header_analysis, regular_expressions, process_repository, configur
 from .process_results import Result
 from .utils import constants, markdown_utils
 from .parser import mardown_parser, create_excerpts
-from .export.data_to_graph import DataGraph
+from .export.turtle_export import DataGraph
 from .export import json_export
 
 
@@ -183,8 +183,7 @@ def run_cli(*,
             repo_set.remove(remove_url)
         if len(repo_set) > 0:
             repo_data = [cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
-                                      keep_tmp=keep_tmp) for repo_url
-                         in repo_set]
+                                      keep_tmp=keep_tmp) for repo_url in repo_set]
         else:
             return None
 
@@ -204,17 +203,15 @@ def run_cli(*,
         json_export.save_json_output(repo_data.results, output, missing, pretty=pretty)
 
     if graph_out is not None:
-        logging.info("Generating Knowledge Graph")
+        logging.info("Generating triples...")
         data_graph = DataGraph()
         if multiple_repos:
             for repo in repo_data:
-                data_graph.add_somef_data(repo)
+                data_graph.somef_data_to_graph(repo.results)
         else:
-            data_graph.add_somef_data(repo_data)
+            data_graph.somef_data_to_graph(repo_data.results)
 
-        logging.info("Saving Knowledge Graph ttl data to", graph_out)
-        with open(graph_out, "wb") as out_file:
-            out_file.write(data_graph.g.serialize(format=graph_format, encoding="UTF-8"))
+        data_graph.export_to_file(graph_out, graph_format)
 
     if codemeta_out is not None:
         json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty)
