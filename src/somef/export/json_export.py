@@ -1,8 +1,6 @@
 import json
 from dateutil import parser as date_parser
 from ..utils import constants
-from .data_to_graph import DataGraph
-from ..process_results import Result
 
 
 def save_json_output(repo_data, out_path, missing, pretty=False):

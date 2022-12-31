@@ -115,7 +115,7 @@ def classify(scores, threshold, excerpts_headers, header_parents, repository_met
             repository_metadata.add_result(ele, result, confidence / num_elems,
                                            constants.TECHNIQUE_SUPERVISED_CLASSIFICATION,
                                            source)
-    logging.info("All excerpts below the threshold have been removed. \n")
+    logging.info("All excerpts below the threshold have been removed.")
     return repository_metadata
 
 

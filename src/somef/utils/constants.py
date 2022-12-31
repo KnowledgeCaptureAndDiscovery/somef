@@ -1,4 +1,6 @@
 from enum import Enum
+import os
+from pathlib import Path
 
 # constants about SOMEF configuration
 CONF_AUTHORIZATION = "Authorization"
@@ -122,6 +124,7 @@ PROP_HTML_URL = "html_url"
 PROP_NAME = "name"
 PROP_ORIGINAL_HEADER = "original_header"
 PROP_PARENT_HEADER = "parent_header"
+PROP_RELEASE_ID = "release_id"
 PROP_SIZE = "size"
 PROP_SPDX_ID = "spdx_id"
 PROP_TAG = "tag"
@@ -167,9 +170,6 @@ GITHUB_DOMAIN = "github.com"
 GITHUB_ACCEPT_HEADER = "application/vnd.github.v3+json"
 GITHUB_API = "https://api.github.com/repos"
 
-# GitLab metadata fields
-
-
 # Crosswalk to retrieve easily contents of interest from the GitHub response
 github_crosswalk_table = {
     CAT_CODE_REPOSITORY: "html_url",
@@ -189,7 +189,7 @@ github_crosswalk_table = {
     CAT_FORK_COUNTS: "forks_count"
 }
 
-# Mapping for
+# Mapping for releases
 release_crosswalk_table = {
     PROP_TAG: 'tag_name',
     PROP_NAME: 'name',
@@ -200,6 +200,7 @@ release_crosswalk_table = {
     PROP_ZIPBALL_URL: 'zipball_url',
     PROP_HTML_URL: 'html_url',
     PROP_URL: 'url',
+    PROP_RELEASE_ID: 'id',
     PROP_DATE_CREATED: 'created_at',
     PROP_DATE_PUBLISHED: "published_at",
 }
@@ -210,11 +211,14 @@ categories_files_header = [CAT_INSTALLATION, CAT_CITATION, CAT_ACKNOWLEDGEMENT, 
                            CAT_FAQ, CAT_SUPPORT, CAT_IDENTIFIER, CAT_HAS_EXECUTABLE_NOTEBOOK, CAT_HAS_BUILD_FILE,
                            CAT_EXECUTABLE_EXAMPLE]
 
-# This will not be needed anymore. REMOVE
-file_exploration = ['hasExecutableNotebook', 'hasBuildFile', 'hasDocumentation', 'codeOfConduct',
-                    'contributingGuidelines', 'licenseFile', 'licenseText', 'acknowledgement',
-                    'contributors', 'hasScriptFile', 'ontologies']
+MAPPING_CONFIG = """
+                    [DataSource1]
+                    mappings: $PATH
+                    file_path: $DATA
+                 """
 
+mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "rml.ttl"
+AUX_RELEASES_IDS = "releases_ids"
 
 class RepositoryType(Enum):
     GITHUB = 1

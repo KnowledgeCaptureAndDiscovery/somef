@@ -13,7 +13,7 @@ install_requires = [
     "nltk==3.6.6",
     "numpy==1.22.0",
     "pandas==1.3.4",
-    "rdflib==6.0.2",
+    "rdflib>=6.0.2",
     "rdflib-jsonld==0.6.2",
     "requests>=2.22.0",
     "scikit-learn==1.0",
@@ -25,7 +25,8 @@ install_requires = [
     "contractions>=0.1.66",
     "chardet==5.0.0",
     "imbalanced-learn>=0.8.1",
-    "pytest"
+    "pytest",
+    "morph-kgc>=2.3.1"
 ]
 
 

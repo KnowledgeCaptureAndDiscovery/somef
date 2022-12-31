@@ -181,6 +181,7 @@ The table below summarizes all types and their corresponding properties:
 | **name** | License, Release,  User, Publication, Programming_language | String | Title or name used to designate the release, license user, programming language or publication. |
 | **original_header** | Text_excerpt | String | If the result value is extracted from a markdown file like a README, the original header of that section is also returned. |
 | **parent_header** | Text_excerpt | [String] | If the result value is extracted from a markdown file like a README, the parent header(s) of the current section are also returned (in case they exist). |
+| **release_id** | Release | String | Id of a software release. |
 | **size** | Programming_language | Number | File size content (bytes) of a code repository using a given programming language |
 | **spdx_id** | License | String | Spdx id corresponding to this license |
 | **tag** | Release | String | named version of a release |
