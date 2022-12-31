@@ -225,9 +225,75 @@ In this case, SOMEF was not able to find a description or a citation in the targ
 
 
 ## Turtle format 
-RDF represents information in triples (subject, predicate and object), where the subject is the entity to be described (in this case a code repository), the predicate is the property describing the subject (e.g., `description`) and the object is the value obtained (which can be an object or a literal). Representing the provenance information returned by SOMEF is therefore challenging, and would require adopting reification mechanisms that make the output more complex. Therefore we simplify the output by providing our best guess for each of the extracted fields.
+RDF represents information in triples (subject, predicate and object), where the subject is the entity to be described (in this case a code repository), the predicate is the property describing the subject (e.g., `description`) and the object is the value obtained (which can be an object or a literal). Representing the provenance information returned by SOMEF is therefore challenging, and would require adopting reification mechanisms that make the output more complex. Therefore we simplify the output by providing our _best guess_ for each of the extracted fields. This is done by analyzing the results, comparing those that may be redundant or come from the same files, and removing those with low confidence or included in other fields.
 
-Our RDF representation uses the [Software Description Ontology](https://w3id.org/okn/o/sd/). The `excerpt` and `confidence` fields are ommitted in this representation (every category with confidence above the threshold specified when running SOMEF will be included in the results). 
+Our RDF representation uses the [Software Description Ontology](https://w3id.org/okn/o/sd/). The `result`, `provenance` and `confidence` fields are ommitted in this representation (every category with confidence above the threshold specified when running SOMEF will be included in the results). 
+
+Below you can see an example of a software represented in sd:
+```
+@prefix ns1: <https://w3id.org/okn/o/sd#> .
+@prefix ns2: <https://schema.org/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+## SOFTWARE METADATA
+
+<https://w3id.org/okn/i/Software/mapeathor> a ns1:Software ;
+    ns2:license <https://w3id.org/okn/i/License/mapeathor> ;
+    ns1:contactDetails """- [Ana Iglesias-Molina](https://github.com/anaigmo) - [ana.iglesiasm@upm.es](mailto:ana.iglesiasm@upm.es)...
+""" ;
+    ns1:dateCreated "2019-06-09T19:45:24+00:00"^^xsd:dateTime ;
+    ns1:dateModified "2022-11-03T15:19:23+00:00"^^xsd:dateTime ;
+    ns1:description "Translator of spreadsheet mappings into R2RML, RML or YARRRML";
+    ns1:hasBuildFile "https://raw.githubusercontent.com/oeg-upm/mapeathor/master/Dockerfile"^^xsd:anyURI,
+    ns1:hasDocumentation "https://github.com/oeg-upm/Mapeathor/wiki"^^xsd:anyURI ;
+    ns1:hasDownloadUrl "https://github.com/oeg-upm/mapeathor/releases"^^xsd:anyURI ;
+    ns1:hasExecutableInstructions """The easiest way of running Mapeathor is using the [web service](https://morph.oeg.fi.upm.es/demo/mapeathor) and the [Swagger](https://morph.oeg.fi.upm.es/tool/mapeathor/swagger/) instance. For CLI lovers, the service is available as a [PyPi package](https://pypi.org/project/mapeathor/) and Docker image. The instructions of the latest can be found in the [wiki](https://github.com/oeg-upm/Mapeathor/wiki).
+""" ;
+    ns1:hasLongName "Mapeathor" ;
+    ns1:hasSourceCode <https://w3id.org/okn/i/SoftwareSource/mapeathor> ;
+    ns1:hasUsageNotes """##Example
+A more detailed explanation is provided in the [wiki](https://github.com/oeg-upm/Mapeathor/wiki);
+    ns1:hasVersion <https://w3id.org/okn/i/Release/21580066>;
+    ns1:identifier "https://doi.org/10.5281/zenodo.5973906"^^xsd:anyURI ;
+    ns1:issueTracker "https://api.github.com/repos/oeg-upm/mapeathor/issues"^^xsd:anyURI ;
+    ns1:keywords "data-integration, knowledge-graph, r2rml, rml" ;
+    ns1:name "oeg-upm/mapeathor" ;
+    ns1:readme "https://raw.githubusercontent.com/oeg-upm/mapeathor/master/README.md"^^xsd:anyURI .
+
+## LICENSE INFORMATION
+
+<https://w3id.org/okn/i/License/mapeathor> a ns2:CreativeWork ;
+    owl:sameAs <https://spdx.org/licenses/Apache-2.0> ;
+    ns1:name "Apache License 2.0" ;
+    ns1:url "https://raw.githubusercontent.com/oeg-upm/mapeathor/master/LICENSE"^^xsd:anyURI .
+
+## INFORMATION ON RELEASES
+
+<https://w3id.org/okn/i/Release/21580066> a ns1:SoftwareVersion ;
+    ns1:author <https://w3id.org/okn/i/Agent/anaigmo> ;
+    ns1:dateCreated "2019-11-08T15:24:55+00:00"^^xsd:dateTime ;
+    ns1:datePublished "2019-11-19T10:26:47+00:00"^^xsd:dateTime ;
+    ns1:downloadUrl "https://api.github.com/repos/oeg-upm/mapeathor/tarball/v1.0"^^xsd:anyURI,
+        "https://api.github.com/repos/oeg-upm/mapeathor/zipball/v1.0"^^xsd:anyURI,
+        "https://github.com/oeg-upm/mapeathor/releases/tag/v1.0"^^xsd:anyURI ;
+    ns1:hasVersionId "v1.0" ;
+    ns1:name "First template" ;
+    ns1:url "https://api.github.com/repos/oeg-upm/mapeathor/releases/21580066"^^xsd:anyURI .
+
+## INFORMATION ON SOURCE CODE
+<https://w3id.org/okn/i/SoftwareSource/mapeathor> a ns2:SoftwareSourceCode ;
+    ns1:codeRepository "https://github.com/oeg-upm/mapeathor"^^xsd:anyURI ;
+    ns1:name "oeg-upm/mapeathor" ;
+    ns1:programmingLanguage "Dockerfile",
+        "Python" .
+
+## INFORMATION ON AUTHORS
+<https://w3id.org/okn/i/Agent/anaigmo> a ns2:Person ;
+    ns2:name "anaigmo" .
+
+```
+As shown in the Turtle snippet above, SOMEF represents the software as an entity, its relationship with each release (software version), the license found in the repository and the Person who owns it.
 
 ## Codemeta format 
-JSON-LD representation following the [Codemeta specification](https://codemeta.github.io/) (which itself extends [Schema.org](https://schema.org/)). The `excerpt` and `confidence` fields are ommitted in this representation (every category with confidence above the threshold specified when running SOMEF will be included in the results). In addition, any metadata category outside from what is defined in Codemeta will be avoided.
+JSON-LD representation following the [Codemeta specification](https://codemeta.github.io/) (which itself extends [Schema.org](https://schema.org/)). The `result`, `provenance` and `confidence` fields are ommitted in this representation (every category with confidence above the threshold specified when running SOMEF will be included in the results). In addition, any metadata category outside from what is defined in Codemeta will be avoided.
