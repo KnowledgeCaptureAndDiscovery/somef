@@ -1,0 +1,142 @@
+{
+  "code_repository": [
+    "https://github.com/dgarijo/Widoco"
+  ],
+  "owner":
+    {
+    "value": "dgarijo",
+    "type": "Person"
+
+    },
+  "date_created": [
+    "2013-07-15T15:51:51Z"
+  ],
+  "date_updated": [
+    "2022-12-18T20:05:20Z"
+  ],
+  "license":
+    {
+      "spdx_id": "Apache-2.0",
+      "name": "Apache License 2.0",
+      "url": "https://raw.githubusercontent.com/dgarijo/Widoco/master/LICENSE"
+    },
+  "description": [
+    "Wizard for documenting ontologies. WIDOCO is a step by step generator of HTML templates with the documentation of your ontology. It uses the LODE environment to create part of the template.",
+    "WIDOCO helps you to publish and create an enriched and customized documentation of your ontology, by following a series of steps in a wizard. We extend the LODE framework by Silvio Peroni to describe the classes, properties and data properties of the ontology, the OOPS! webservice by María Poveda to print an evaluation and the Licensius service by Victor Rodriguez Doncel to determine the license URI and title being used. In addition, we use WebVowl to visualize the ontology and have extended Bubastis to show a complete changelog between different versions of your ontology.\n\nFeatures of WIDOCO:\n* Automatic documentation of the terms in your ontology (based on [LODE](http://www.essepuntato.it/lode/)). Now you can use Markdown on your class descriptions (see [example](doc/gallery/index.html))\n* Automatic annotation in JSON-LD snippets of the html produced.\n* Association of a provenance page which includes the history of your vocabulary (W3C PROV-O compliant).\n* Metadata extraction from the ontology plus the means to complete it on the fly when generating your ontology. Check the [best practice document](http://dgarijo.github.io/Widoco/doc/bestPractices/index-en.html) to know more about the terms recognized by WIDOCO.\n* Guidelines on the main sections that your document should have and how to complete them.\n* Integration with diagram creators ([WebVOWL](http://vowl.visualdataweb.org/webvowl/)).\n* Automatic changelog of differences between the actual and the previous version of the ontology (based on [Bubastis](http://www.ebi.ac.uk/efo/bubastis/)).\n* Separation of the sections of your html page so you can write them independently and replace only those needed.\n* Content negotiation and serialization of your ontology according to [W3C best practices](https://www.w3.org/TR/swbp-vocab-pub/)\n* Evaluation reports of your ontology (using the [OOPS! web service](http://oops.linkeddata.es/))\n* Integration with license metadata services ([Licensius](http://licensius.com/)) to automatically describe the license used in your ontology.\n",
+    "WIDOCO helps you to publish and create an enriched and customized documentation of your ontology automatically, by following a series of steps in a GUI. \n",
+    "There are two alternative ways for making WIDOCO get your vocabulary metadata annotations and use them automatically to document the ontology. \n* The recommended way: add them in your OWL file. For guidelines on which ones to include, follow our [best practices document](https://w3id.org/widoco/bestPractices), which indicates which ones we recommend.\n* Alternatively, edit the project properties of /config/config.properties. This is a key-value pair file with metadata properties. Some people consider it easier than adding the property annotations to the OWL file, although I recommend doing the former option. Note that the character ; is used for lists (for instance first author; second author; third author).\n \n",
+    "For a complete list of the current improvements and next features, check the [project open issues](https://github.com/dgarijo/Widoco/issues) and [milestones](https://github.com/dgarijo/Widoco/milestones) in the repository.\n \n",
+    "Contributions to address any of the current issues are welcome. In order to push your contribution, just **push your pull request to the develop branch**. The master branch has only the code associated to the latest release.\n \n"
+  ],
+  "name": [
+    "Widoco"
+  ],
+  "full_name": [
+    "dgarijo/Widoco"
+  ],
+  "issue_tracker": [
+    "https://api.github.com/repos/dgarijo/Widoco/issues"
+  ],
+  "forks_url": [
+    "https://api.github.com/repos/dgarijo/Widoco/forks"
+  ],
+  "stargazers_count": [
+    204
+  ],
+  "keywords": [
+    "documentation, metadata, ontology, ontology-diagram, ontology-evaluation, wizard"
+  ],
+  "forks_count": [
+    73
+  ],
+  "download_url": [
+    "https://github.com/dgarijo/Widoco/releases"
+  ],
+  "programming_languages": [
+    "Java",
+    "XSLT",
+    "CSS",
+    "JavaScript",
+    "HTML",
+    "Dockerfile"
+  ],
+  "releases_ids": [
+    3701886, 3701887
+    ],
+  "releases": [
+    {
+      "type": "Release",
+      "release_id": 3701886,
+      "value": "https://api.github.com/repos/dgarijo/Widoco/releases/64724790",
+      "tag": "v1.4.17",
+      "name": "WIDOCO 1.4.17: Update OOPS! Web service. GitHub actions",
+      "author": {
+        "name": "dgarijo",
+        "type": "User"
+      },
+      "description": "This version fixes OOPS! (newest URL) and sets up GitHub actions so users with different versions of Java can use Widoco.\r\n\r\n## What's Changed\r\n* update readme and pom with proper versions by @dgarijo in https://github.com/dgarijo/Widoco/pull/502\r\n* switch import fonts to always use https scheme by @renefritze in https://github.com/dgarijo/Widoco/pull/509\r\n* [ci] setup gh actions + dependabot by @renefritze in https://github.com/dgarijo/Widoco/pull/507\r\n* Github actions set up by @renefritze  by @dgarijo in https://github.com/dgarijo/Widoco/pull/512\r\n\r\n## New Contributors\r\n* @renefritze made their first contribution in https://github.com/dgarijo/Widoco/pull/509\r\n\r\n**Full Changelog**: https://github.com/dgarijo/Widoco/compare/v1.4.16...v1.4.17",
+      "tarball_url": "https://api.github.com/repos/dgarijo/Widoco/tarball/v1.4.17",
+      "zipball_url": "https://api.github.com/repos/dgarijo/Widoco/zipball/v1.4.17",
+      "html_url": "https://github.com/dgarijo/Widoco/releases/tag/v1.4.17",
+      "url": "https://api.github.com/repos/dgarijo/Widoco/releases/64724790",
+      "date_created": "2022-04-19T10:57:14Z",
+      "date_published": "2022-04-19T11:10:33Z"
+    },
+    {
+      "type": "Release",
+      "release_id": 3701887,
+      "value": "https://api.github.com/repos/dgarijo/Widoco/releases/62144298",
+      "tag": "v1.4.16",
+      "name": "WIDOCO 1.4.16: Support for German and Dutch",
+      "author": {
+        "name": "dgarijo",
+        "type": "User"
+      },
+      "description": "This version of WIDOCO includes support for German and Dutch (thanks to Flores Bakker), extraction of metadata from local authors and organizations URIs (if you describe authors and their organizations in your ontology, WIDOCO will automatically detect it) and additional support for adding images in your documentation.\r\n \r\n## What's Changed\r\n* Fix/duplicate namespace declarations by @pmcb55 in https://github.com/dgarijo/Widoco/pull/471\r\n* Only show legend entries if relevant by @pmcb55 in https://github.com/dgarijo/Widoco/pull/472\r\n* Dockerize project by @ccamel in https://github.com/dgarijo/Widoco/pull/479\r\n* Support for adding images with GUI by @dgarijo in https://github.com/dgarijo/Widoco/pull/492\r\n* Fix #262 by @dgarijo in https://github.com/dgarijo/Widoco/pull/493\r\n* German translation by @JohnnyMoonlight in https://github.com/dgarijo/Widoco/pull/494\r\n* Support for it and de by @dgarijo in https://github.com/dgarijo/Widoco/pull/495\r\n* Fix #498 by @engapa in https://github.com/dgarijo/Widoco/pull/500\r\n\r\n## New Contributors\r\n* @ccamel made their first contribution in https://github.com/dgarijo/Widoco/pull/479\r\n* @JohnnyMoonlight made their first contribution in https://github.com/dgarijo/Widoco/pull/494\r\n* @engapa made their first contribution in https://github.com/dgarijo/Widoco/pull/500\r\n\r\n**Full Changelog**: https://github.com/dgarijo/Widoco/compare/v1.4.15...v1.4.16",
+      "tarball_url": "https://api.github.com/repos/dgarijo/Widoco/tarball/v1.4.16",
+      "zipball_url": "https://api.github.com/repos/dgarijo/Widoco/zipball/v1.4.16",
+      "html_url": "https://github.com/dgarijo/Widoco/releases/tag/v1.4.16",
+      "url": "https://api.github.com/repos/dgarijo/Widoco/releases/62144298",
+      "date_created": "2022-03-17T21:38:26Z",
+      "date_published": "2022-03-17T22:13:15Z"
+    }
+  ],
+  "contributing_guidelines": [
+    "## Contribution guidelines\nContributions to address any of the current issues are welcome. In order to push your contribution, just **push your pull request to the develop branch**. The master branch has only the code associated to the latest release. \n"
+  ],
+  "has_build_file": [
+    "https://raw.githubusercontent.com/dgarijo/Widoco/master/Dockerfile"
+  ],
+  "readme_url": [
+    "https://raw.githubusercontent.com/dgarijo/Widoco/master/README.md"
+  ],
+  "citation": [
+    "https://doi.org/10.1007/978-3-319-68204-4_9"
+  ],
+  "download": [
+    "##Downloading the executable\nTo download WIDOCO, you need to download a JAR executable file. Check the latest release for more details: (https://github.com/dgarijo/WIDOCO/releases/latest).\n"
+  ],
+  "requirements": [
+    "Just add the dependency and repository to your `pom.xml` file as follows. See the [WIDOCO JitPack](https://jitpack.io/#dgarijo/Widoco) page to find alternative means to incorporate WIDOCO to your project.\n\n```xml\n<dependencies>\n  <dependency>\n      <groupId>com.github.dgarijo</groupId>\n      <artifactId>Widoco</artifactId>\n      <version>v1.4.16</version>\n  </dependency>\n</dependencies>\n\n[ ... ]\n\n<repositories>\n\t<repository>\n\t    <id>jitpack.io</id>\n\t    <url>https://jitpack.io</url>\n\t</repository>\n</repositories>\n```\n",
+    "You will need Java 1.8 or higher (SDK 1.8 or JRE 8) for WIDOCO to work\nOtherwise, you will probably experience an Unsupported major.minor version 52.0 exception when executing the JAR file.\n"
+  ],
+  "usage": [
+    "##Examples\nExamples of the features of WIDOCO can be seen on [the gallery](http://dgarijo.github.io/Widoco/doc/gallery/)\n##GUI Tutorial\nA tutorial explaining the main features of the GUI can be found [here](http://dgarijo.github.io/Widoco/doc/tutorial/)    \n##JAR execution\nDownload the latest `.jar` [WIDOCO available release](https://github.com/dgarijo/WIDOCO/releases/latest) (it will be something like `widoco-VERSION-jar-with-dependencies.jar`). Then just double click the `.jar` file.\n\nYou may also execute WIDOCO through the command line. Usage:\n```bash\njava -jar widoco-VERSION-jar-with-dependencies.jar [OPTIONS]\n```\n##Docker execution\nFirst build the image using the `Dockerfile` in project folder:\n\n```bash\ndocker build -t dgarijo/widoco .\n```\n\nYou can now execute WIDOCO through the command line. Usage:\n\n```bash\ndocker run -ti --rm dgarijo/widoco [OPTIONS]\n```\n\nIf you want to share data between the Docker Container and your Host, for instance to load a local ontology file (from PATH), you will need to mount the container\nwith host directories. For instance:\n\n```bash\ndocker run -ti --rm \\\n  -v `pwd`/test:/usr/local/widoco/in \\\n  -v `pwd`/target/generated-doc:/usr/local/widoco/out \\\n  dgarijo/widoco -ontFile in/bne.ttl -outFolder out -rewriteAll\n```\n##Options\n`-ontFile PATH`  [required (unless -ontURI is used)]: Load a local ontology file (from PATH) to document. This option is incompatible with -ontURI\n\n`-ontURI  URI`   [required (unless -ontFile is used)]: Load an ontology to document from its URI. This option is incompatible with -ontFile\n\n`-outFolder folderName`: Specifies the name of the folder where to save the documentation. By default is \"myDocumentation\"\n\n`-confFile PATH`: Load your own configuration file for the ontology metadata. Incompatible with -getOntologyMetadata\n\n`-getOntologyMetadata`: Extract ontology metadata from the given ontology\n\n`-oops`: Create an html page with the evaluation from the OOPS service (http://oops.linkeddata.es/)\n\n`-rewriteAll`: Replace any existing files when documenting an ontology (e.g., from a previous execution)\n\n`-crossRef`: ONLY generate the overview and cross reference sections. The index document will NOT be generated. The htaccess, provenance page, etc., will not be generated unless requested by other flags. This flag is intended to be used only after a first version of the documentation exists.\n\n`-saveConfig PATH`: Save a configuration file on PATH with the properties of a given ontology\n\n`-useCustomStyle`: Export the documentation using alternate css files (by Daniel Vila).\n\n`-lang LANG1-LANG2`: Generate documentation in multiple languages (separated by -). Note that if the language is not supported, the system will load the labels in english. For example: en-pt-es\n\n`-includeImportedOntologies`: Indicates whether the terms of the imported ontologies of the current ontology should be documented as well or not.\n\n`-htaccess`: Create a bundle for publication ready to be deployed on your Apache server.\n\n`-webVowl`: Create a visualization based on WebVowl (http://vowl.visualdataweb.org/webvowl/index.html#) in the documentation.\n\n`-licensius`: Use the Licensius web services (http://licensius.com/apidoc/index.html) to retrieve license metadata. Only works if the -getOntologyMetadata  flag is enabled.\n\n`-ignoreIndividuals`: Individuals will not be included in the documentation.\n\n`-includeAnnotationProperties`: Include annotation properties defined in your ontology in the documentation (by default they are not included)\n\n`-analytics CODE`: Add a code snippet for Google analytics to track your HTML documentation. You need to add your CODE next to the flag. For example: UA-1234\n\n`-doNotDisplaySerializations`: The serializations of the ontology will not be displayed.\n\n`-displayDirectImportsOnly`: Only those imported ontologies that are directly imported in the ontology being documented.\n\n`-rewriteBase PATH`: Change the default rewrite base path. The default value is /. This flag can only be used with the htaccess option.\n\n`-excludeIntroduction`: Skip the introduction section in the documentation.\n\n`-uniteSections`: Write all HTML sections into a single HTML document.\n\n`-noPlaceHolderText`: Do not add any placeholder text (this will remove intro, abstract (if empty) and description sections).\n\n`--help`: Shows a help message and exits.\n\n"
+  ],
+  "documentation": ["https://readthedocslink.com/widoco"],
+  "application_domain": [
+    "Semantic web"
+  ],
+  "identifier": [
+    "https://zenodo.org/badge/latestdoi/11427075"
+  ],
+  "full_title": [
+    "WIzard for DOCumenting Ontologies (WIDOCO)"
+  ],
+  "repository_status": [
+    "https://www.repostatus.org/#active"
+  ],
+  "logo": [
+    "https://raw.githubusercontent.com/dgarijo/Widoco/master/src/main/resources/logo/logo2.png"
+  ]
+}
