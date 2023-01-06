@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import json
 import sys
+import logging
 
 from .utils import constants
 
@@ -83,3 +84,4 @@ def configure(authorization="",
         credentials_file.parent.chmod(0o700)
         credentials_file.chmod(0o600)
         json.dump(data, fh)
+        logging.info("Configuration file saved at "+os.path.dirname(credentials_file))
