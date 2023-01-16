@@ -64,18 +64,18 @@ def configure(authorization="",
     ).expanduser()
     os.makedirs(str(credentials_file.parent), exist_ok=True)
 
-    if credentials_file.exists():
-        with credentials_file.open("r") as fh:
-            data = json.load(fh)
-    else:
-        data = {
-            constants.CONF_AUTHORIZATION: "token " + authorization,
-            constants.CONF_DESCRIPTION: description,
-            constants.CONF_INVOCATION: invocation,
-            constants.CONF_INSTALLATION: installation,
-            constants.CONF_CITATION: citation,
-            constants.CONF_BASE_URI: base_uri
-        }
+    # if credentials_file.exists():
+    #     with credentials_file.open("r") as fh:
+    #         data = json.load(fh)
+    # else:
+    data = {
+        constants.CONF_AUTHORIZATION: "token " + authorization,
+        constants.CONF_DESCRIPTION: description,
+        constants.CONF_INVOCATION: invocation,
+        constants.CONF_INSTALLATION: installation,
+        constants.CONF_CITATION: citation,
+        constants.CONF_BASE_URI: base_uri
+    }
 
     if data[constants.CONF_AUTHORIZATION] == "token ":
         del data[constants.CONF_AUTHORIZATION]
