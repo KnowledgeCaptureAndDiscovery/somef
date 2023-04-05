@@ -84,7 +84,13 @@ docker run -it --rm -v $PWD/:/out kcapd/somef /bin/bash
 If you move any files produced by somef into `/out`, then you will be able to see them in your current directory.
 
 ## Configure
-Before running SOMEF, you must configure it appropriately. Run
+Before running SOMEF, you must configure it appropriately. Run:
+
+```bash
+python -m nltk.downloader wordnet
+python -m nltk.downloader omw-1.4
+```
+To download two wordnet modules needed. Then run:
 
 ```bash
 somef configure
