@@ -7,7 +7,6 @@ import logging
 from . import configuration
 from .utils import constants
 from . import __version__
-from . import somef_cli
 
 
 class URLParamType(click.types.StringParamType):
@@ -153,5 +152,7 @@ def configure(auto, base_uri):
     desired path"""
 )
 def describe(**kwargs):
+    # import so missing packages get installed when appropriate
+    from . import somef_cli
     somef_cli.run_cli(**kwargs)
     click.secho(f"Success", fg="green")

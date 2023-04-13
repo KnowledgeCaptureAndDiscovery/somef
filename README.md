@@ -166,9 +166,14 @@ docker run -it --rm -v $PWD/:/out kcapd/somef /bin/bash
 If you move any files produced by somef into `/out`, then you will be able to see them in your current directory.
 
 
-## Usage
+## Configure
 
-Before running SOMEF for the first time, you must **configure** it appropriately (you only need to do this once). Run
+Before running SOMEF for the first time, you must **configure** it appropriately (you only need to do this once). Run:
+```bash
+python -m nltk.downloader wordnet
+python -m nltk.downloader omw-1.4
+```
+To download two wordnet modules needed. Then run:
 
 ```bash
 somef configure
@@ -205,7 +210,7 @@ Options:
 ### Updating SOMEF
 If you update SOMEF to a newer version, we recommend you `configure` again the library (by running `somef configure`). The rationale is that different versions may rely on classifiers which may be stored in a different path. 
 
-### Run SOMEF
+## Usage
 
 ```bash
 $ somef describe --help

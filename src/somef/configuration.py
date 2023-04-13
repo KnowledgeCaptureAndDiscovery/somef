@@ -58,6 +58,8 @@ def configure(authorization="",
     import nltk
     nltk.download('wordnet')
     nltk.download('omw-1.4')
+    nltk.download('punkt')
+    nltk.download('stopwords')
 
     credentials_file = Path(
         os.getenv("SOMEF_CONFIGURATION_FILE", constants.__DEFAULT_SOMEF_CONFIGURATION_FILE__)
