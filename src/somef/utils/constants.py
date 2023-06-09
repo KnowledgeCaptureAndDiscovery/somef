@@ -77,6 +77,7 @@ CAT_STARS = "stargazers_count"
 CAT_SUPPORT = "support"
 CAT_SUPPORT_CHANNELS = "support_channels"
 CAT_USAGE = "usage"
+CAT_WORKFLOWS = "workflows"
 
 # Special category: missing categories
 CAT_MISSING = "somef_missing_categories"

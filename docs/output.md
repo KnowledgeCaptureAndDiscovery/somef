@@ -111,6 +111,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `support`: Guidelines and links of where to obtain support for a software component.
 - `support_channels`: Help channels one can use to get support about the target software component.
 - `usage`: Usage examples and considerations of a code repository.
+- `workflows`: URL and path to the workflow files present in the repository.
 
 The following table summarized the properties used to describe a `category`:
 
