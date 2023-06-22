@@ -187,13 +187,27 @@ def extract_repo_status(unfiltered_text, repository_metadata: Result, readme_sou
     return repository_metadata
 
 
-def extract_arxiv_links(unfiltered_text):
-    """Extracts arxiv links from a given text"""
+def extract_arxiv_links(unfiltered_text,repository_metadata: Result, readme_source) -> Result:
+    """
+    Regexp to extract arxiv url from a repository
+    Parameters
+    ----------
+    @param unfiltered_text: repo text
+    @param repository_metadata: Result with the extractions so far
+    @param readme_source: url to the file used (for provenance)
+
+    Returns
+    -------
+    @returns a Result including the arxiv TODO url? 
+    """
+    arxiv_desc = ""
     result_links = [m.start() for m in re.finditer('https://arxiv.org/', unfiltered_text)]
     result_refs = [m.start() for m in re.finditer('arXiv:', unfiltered_text)]
     results = []
     for position in result_links:
-        end = unfiltered_text.find(')', position)
+        end = unfiltered_text.find(')',position)
+        if end < 0:
+            end = unfiltered_text.find('}',position)
         link = unfiltered_text[position:end]
         results.append(link)
     for position in result_refs:
@@ -201,7 +215,16 @@ def extract_arxiv_links(unfiltered_text):
         link = unfiltered_text[position:end]
         results.append(link.replace('arXiv:', 'https://arxiv.org/abs/'))
 
-    return results
+    for link in set(results):
+        repository_metadata.add_result(constants.CAT_RELATED_PAPERS,
+                                        {
+                                            constants.PROP_TYPE: constants.URL,
+                                            constants.PROP_VALUE: link,
+                                            constants.PROP_DESCRIPTION: arxiv_desc
+                                        }, 
+                                        1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source
+                                    )
+    return repository_metadata
 
 
 def extract_wiki_links(unfiltered_text, repo_url, repository_metadata: Result, readme_source) -> Result:
