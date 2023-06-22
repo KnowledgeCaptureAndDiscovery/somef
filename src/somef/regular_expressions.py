@@ -198,7 +198,7 @@ def extract_arxiv_links(unfiltered_text,repository_metadata: Result, readme_sour
 
     Returns
     -------
-    @returns a Result including the arxiv TODO url? 
+    @returns a Result including the arxiv url 
     """
     arxiv_desc = ""
     result_links = [m.start() for m in re.finditer('https://arxiv.org/', unfiltered_text)]
