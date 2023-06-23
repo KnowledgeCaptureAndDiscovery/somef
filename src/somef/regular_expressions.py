@@ -200,7 +200,6 @@ def extract_arxiv_links(unfiltered_text,repository_metadata: Result, readme_sour
     -------
     @returns a Result including the arxiv url 
     """
-    arxiv_desc = ""
     result_links = [m.start() for m in re.finditer('https://arxiv.org/', unfiltered_text)]
     result_refs = [m.start() for m in re.finditer('arXiv:', unfiltered_text)]
     results = []
@@ -219,9 +218,8 @@ def extract_arxiv_links(unfiltered_text,repository_metadata: Result, readme_sour
         repository_metadata.add_result(constants.CAT_RELATED_PAPERS,
                                         {
                                             constants.PROP_TYPE: constants.URL,
-                                            constants.PROP_VALUE: link,
-                                            constants.PROP_DESCRIPTION: arxiv_desc
-                                        }, 
+                                            constants.PROP_VALUE: link
+                                        },
                                         1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source
                                     )
     return repository_metadata
