@@ -53,6 +53,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Ontologies**: URL and path to the ontology files present in the repository.
 - **Application domain**: The application domain of the repository. Current supported domains include: Astrophisics, Audio, Computer vision, Graphs, Natural language processing, Reinforcement learning, Semantc web, Sequential. Domains are not mutually exclusive. These domains have been extracted from [awesome lists](https://github.com/topics/awesome-list) and [Papers with code](https://paperswithcode.com/). Find more information in our [documentation](https://somef.readthedocs.io/en/latest/).
 - **Workflows**: URL and path to the workflow files present in the repository.
+- **Related papers**: URL to possible related papers within the repository stated within the readme file.
 
 
 We use different supervised classifiers, header analysis, regular expressions and the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description](https://somef.readthedocs.io/en/latest/output/)
