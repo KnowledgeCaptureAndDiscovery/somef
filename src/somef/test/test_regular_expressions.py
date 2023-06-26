@@ -175,13 +175,31 @@ class TestRegExp(unittest.TestCase):
             print(img)
             assert len(img) == 2
 
-    # Test commented out because arxiv links with no context has demonstrated not to be useful
-    # def test_issue_181(self):
-    #     """Test designed to check if arxiv papers are detected"""
-    #     with open(test_data_path + "test_issue_181.txt", "r") as data_file:
-    #         test_text = data_file.read()
-    #         arxiv_links = regular_expressions.extract_arxiv_links(test_text)
-    #         assert len(arxiv_links) > 0
+    #Test commented out because arxiv links with no context has demonstrated not to be useful
+    def test_issue_181(self):
+        """Test designed to check if arxiv papers are detected"""
+        with open(test_data_path + "test_issue_181.txt", "r") as data_file:
+            test_text = data_file.read()
+            result = regular_expressions.extract_arxiv_links(test_text, Result(), test_data_path + "test_issue_181.txt")
+            arxiv_urls = result.results[constants.CAT_RELATED_PAPERS]
+            assert len(arxiv_urls) > 0
+    def test_issue_181_2(self):
+        """Test designed to check if arxiv papers are detected"""
+        with open(test_data_path + "test_issue_181_2.txt", "r") as data_file:
+            test_text = data_file.read()
+            result = regular_expressions.extract_arxiv_links(test_text, Result(), test_data_path + "test_issue_181_2.txt")
+            arxiv_url = result.results[constants.CAT_RELATED_PAPERS][0]['result']['value']
+            expected_result = "https://arxiv.org/abs/2203.01044"
+            self.assertEquals(expected_result,arxiv_url)
+    def test_issue_181_3(self):
+        """Test to test arxiv as embedded url, including same in bibtex"""
+        with open(test_data_path + "test_issue_181_3.txt", "r") as data_file:
+            test_text = data_file.read()
+            result = regular_expressions.extract_arxiv_links(test_text, Result(),
+                                                             test_data_path + "test_issue_181_3.txt")
+            arxiv_url = result.results[constants.CAT_RELATED_PAPERS][0]['result']['value']
+            expected_result = "https://arxiv.org/abs/1907.11111"
+            self.assertEquals(expected_result, arxiv_url)
 
     def test_issue_270(self):
         """Test designed to check if support channels are detected"""
