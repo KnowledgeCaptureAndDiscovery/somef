@@ -6,7 +6,7 @@ from .utils import constants, markdown_utils
 from . import extract_ontologies,extract_workflows
 from .process_results import Result
 from chardet import detect
-from get_web_dependencies import get_web_dependencies,check_web_dependencies_requirements
+
 
 def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner="", repo_name="",
                              repo_default_branch=""):
