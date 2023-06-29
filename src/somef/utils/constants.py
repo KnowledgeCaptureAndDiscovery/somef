@@ -227,3 +227,27 @@ class RepositoryType(Enum):
     GITHUB = 1
     GITLAB = 2
     LOCAL = 3
+
+#Licenses included in the Open Source Software Category
+licenses= [
+    "GNU General Public License (GPL)",
+    "MIT License",
+    "Apache License 2.0",
+    "BSD 2-Clause License",
+    "BSD 3-Clause License",
+    "Mozilla Public License 2.0",
+    "Creative Commons Attribution License (CC-BY)",
+    "Creative Commons Attribution-ShareAlike License (CC-BY-SA)",
+    "Eclipse Public License (EPL)",
+    "GNU Lesser General Public License (LGPL)",
+    "GNU Affero General Public License (AGPL)",
+    "Common Development and Distribution License (CDDL)",
+    "The Unlicense",
+    "zlib License",
+    "PostgreSQL License",
+    "Microsoft Public License (MS-PL)",
+    "Open Software License 3.0 (OSL-3.0)",
+    "Apple Public Source License (APSL)",
+    "GNU Free Documentation License (GFDL)",
+    "SIL Open Font License (OFL)"
+]

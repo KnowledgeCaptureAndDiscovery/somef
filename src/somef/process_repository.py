@@ -128,6 +128,13 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
     if 'license' in general_resp:
         if "name" in general_resp['license']:
             license_result[constants.PROP_NAME] = general_resp["license"]["name"]
+            if general_resp["license"]["name"] in constants.licenses:
+                metadata_result.add_result(constants.CAT_SCORE,
+                            {
+                                constants.PROP_VALUE: 2.5,
+                                constants.PROP_TYPE: constants.NUMBER
+                                constants.CAT_DESCRIPTION:"Score out of 10 for FAIR Assesment"
+                            }, 1, constants.TECHNIQUE_GITLAB_API)
         if "url" in general_resp['license']:
             license_result[constants.PROP_VALUE] = general_resp["license"]["url"]
         # for k in ('name', 'url'):

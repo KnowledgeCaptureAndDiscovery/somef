@@ -345,4 +345,12 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
             score=regular_expressions.score_FAIR(test_text,Result())
             result=score.results[constants.CAT_SCORE]
             assert len(result)>0 and result[0][constants.PROP_RESULT][
-                constants.PROP_VALUE] >=0
+                constants.PROP_VALUE] >0
+    def test_doi_extraction(self):
+        """test designed to see if the readme file contains any DOI's"""
+        with open(test_data_path + "README-tensorflow-2.6.0.md","r") as data_file:
+            test_text=data_file.read()
+            doi=regular_expressions.extract_doi(test_text,Result())
+            result=doi.results[constants.CAT_SCORE]
+            assert len(result)>0 and result[0][constants.PROP_RESULT][
+                constants.PROP_VALUE] > 0

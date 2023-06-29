@@ -529,8 +529,27 @@ def extract_doi_badges(readme_text, repository_metadata: Result, source) -> Resu
                                            constants.PROP_TYPE: constants.URL,
                                            constants.PROP_VALUE: doi[1]
                                        }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+    if doi_badges:
+        repository_metadata.add_result(constants.CAT_SCORE,
+                                {
+                                    constants.PROP_TYPE: constants.NUMBER,
+                                    constants.PROP_VALUE: 1,
+                                    constants.PROP_DESCRIPTION:"Score out of 10 for FAIR assesment"
+                                }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
     return repository_metadata
 
+def extract_doi(readme_text,repository_metadata:Result):
+
+    pattern = r'\b(10[.][0-9]{4,}(?:[.][0-9]+)*/(?:(?!["&\'<>])\S)+)\b'
+    matches = re.findall(pattern, readme_text)
+    if matches:
+        repository_metadata.add_result(constants.CAT_SCORE,
+                        {
+                            constants.PROP_TYPE: constants.NUMBER,
+                            constants.PROP_VALUE: 1,
+                            constants.PROP_DESCRIPTION:"Score out of 10 for FAIR assesment"
+                        }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
+    return repository_metadata
 
 def extract_binder_links(readme_text, repository_metadata: Result, source) -> Result:
     """

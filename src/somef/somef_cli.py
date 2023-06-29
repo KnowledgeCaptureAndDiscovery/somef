@@ -112,6 +112,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             repository_metadata = regular_expressions.extract_bibtex(unfiltered_text, repository_metadata, readme_source)
             repository_metadata = regular_expressions.extract_doi_badges(unfiltered_text, repository_metadata,
                                                                          readme_source)
+            repository_metadata = regular_expressions.extract_doi(unfiltered_text, repository_metadata)                                                             
             repository_metadata = regular_expressions.extract_title(unfiltered_text, repository_metadata, readme_source)
             repository_metadata = regular_expressions.extract_binder_links(unfiltered_text, repository_metadata,
                                                                            readme_source)

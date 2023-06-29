@@ -123,12 +123,24 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_CITATION,
                                                                constants.FORMAT_BIB)
+                    metadata_result.add_result(constants.CAT_SCORE,
+                            {
+                                constants.PROP_VALUE: 1.5,
+                                constants.PROP_TYPE: constants.NUMBER
+                                constants.CAT_DESCRIPTION:"Score out of 10 for FAIR Assesment"
+                            }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
                 if "CITATION.CFF" == filename.upper():
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_CITATION,
                                                                constants.FORMAT_CFF)
+                    metadata_result.add_result(constants.CAT_SCORE,
+                            {
+                                constants.PROP_VALUE: 1.5,
+                                constants.PROP_TYPE: constants.NUMBER
+                                constants.CAT_DESCRIPTION:"Score out of 10 for FAIR Assesment"
+                            }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
                 if filename.endswith(".sh"):
                     sh_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
                                            repo_relative_path, filename)
