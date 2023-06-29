@@ -163,22 +163,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                     {
                                                         constants.PROP_VALUE: "Workflow",
                                                     }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
-                if filename == "requirements.txt":
-                    requirements_path=os.path.join(dir_path, filename)
-                    result=check_web_dependencies_requirements(requirements_path)
-                    if result not None:
-                        metadata_result.add_result(constants.CAT_CATEGORY,
-                                                    {
-                                                        constants.PROP_VALUE: "Web_Application",
-                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
-                if filename == "package.json" or filename == "composer.json" or filename == "Gemfile" or filename == "pom.xml":
-                    requirements_path=os.path.join(dir_path, filename)
-                    result=get_web_dependencies(requirements_path)
-                    if result not None:
-                        metadata_result.add_result(constants.CAT_CATEGORY,
-                                                    {
-                                                        constants.PROP_VALUE: "Web_Application",
-                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
+
             for dir_name in dir_names:
                 if dir_name.lower() == "docs":
                     if repo_relative_path == ".":
