@@ -338,3 +338,11 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
             result = repo_status.results[constants.CAT_PACKAGE_DISTRIBUTION]
             assert len(result) > 0 and "https://pypi.org/project/inspect4py" in result[0][constants.PROP_RESULT][
                 constants.PROP_VALUE]
+    def test_scoring_system(self):
+        """test designed to see if the readme file is scored correctly"""
+        with open(test_data_path + "README-pytorch.md","r") as data_file:
+            test_text=data_file.read()
+            score=regular_expressions.score_FAIR(test_text,Result())
+            result=score.results[constants.CAT_SCORE]
+            assert len(result)>0 and result[0][constants.PROP_RESULT][
+                constants.PROP_VALUE] >=0

@@ -383,6 +383,32 @@ def extract_package_distributions(unfiltered_text, repository_metadata: Result, 
 
     return repository_metadata
 
+def score_FAIR(unfiltered_text,repository_metadata : Result):
+    score=0
+    section_titles = {
+    'installation': [r'instal', r'setup'],
+    'configuration': [r'config', r'setup',r'custom'],
+    'usage': [r'usage', r'example',r'use'],
+    'requirements': [r'requirement', r'prerequisite',r'require'],
+    'citation': [r'citation', r'reference',r'cite']
+    }
+    regex_patterns = {title: r'##\s*(' + '|'.join([rf'\b{variation}\w*' for variation in variations]) + r')'
+                  for title, variations in section_titles.items()}
+    section_contents = {}
+    for title, pattern in regex_patterns.items():
+        match = re.search(pattern, unfiltered_text, re.IGNORECASE)
+        if match:
+        # Get the content following the section title
+            section_contents[title] = unfiltered_text[match.end():].strip()
+            score+= 1        
+    repository_metadata.add_result(constants.CAT_SCORE,
+                                       {
+                                           constants.PROP_TYPE: constants.NUMBER,
+                                           constants.PROP_VALUE: score,
+                                           constants.PROP_DESCRIPTION: "Readme FAIR score out of 5"
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION)
+    return repository_metadata
+
 
 def extract_colab_links(text):
     """
