@@ -129,7 +129,7 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
         if "name" in general_resp['license']:
             license_result[constants.PROP_NAME] = general_resp["license"]["name"]
             if general_resp["license"]["name"] in constants.licenses:
-                metadata_result.add_result(constants.CAT_SCORE,
+                repository_metadata.add_result(constants.CAT_SCORE,
                             {
                                 constants.PROP_VALUE: 2.5,
                                 constants.PROP_TYPE: constants.NUMBER
