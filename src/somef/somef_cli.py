@@ -129,7 +129,9 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             repository_metadata = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo,
                                                                      repository_metadata, readme_source, def_branch)
             logging.info("Completed extracting regular expressions")
-            return repository_metadata
+        repository_metadata=check_repository_type(local_folder,repository_metadata) 
+        return repository_metadata
+
 
     except Exception as e:
         logging.error("Error processing repository " + str(e))

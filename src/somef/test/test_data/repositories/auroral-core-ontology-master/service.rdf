@@ -1,0 +1,27 @@
+@prefix ns1: < https://auroral.iot.linkeddata.es/def/core# > .
+@prefix ns2: < https://www.w3.org/2019/wot/td# > .
+@prefix ns3: < http://lexvo.org/ontology# > .
+@prefix xsd: < http://www.w3.org/2001/XMLSchema# > .
+
+ns1:Service1 a ns1:Service ;
+    ns2:title "accomodationService"^^xsd:string ;
+    ns2:description "service for accomodation"^^xsd:string ;
+    ns2:created "12-01-2022T12:10:14"^^xsd:dateTime ;
+    ns2:modified "12-01-2023T11:05:34"^^xsd:dateTime ;
+    ns1:provider "Luxactive"^^xsd:string ;
+    ns1:currentStatus "available"^^xsd:string ;
+    ns1:hasDomain ns1:Tourism ;
+    ns1:hasSubDomain "Musuemvisit"^^xsd:string
+    ns1:hasRequirement "Photo not allowed"^^xsd:string .
+    ns1:serviceFree true ; 
+    ns1:numberOfDownload 15 ;
+    ns1:versionOfservice "version1"^^xsd:string ;
+    ns1:hasFunctionality "Guide in Musuem"^^xsd:string ;
+    ns3:language   ns3:English ; 
+    ns3:language   ns3:Spanich ; 
+    ns1:applicableToGeographicArea  ns1:PlaceService1 ;
+
+ns1:PlaceService1 a ns1:Place
+    ns1:code "codeCountry"^^xsd:string ;
+    ns1:name "nameCountry"^^xsd:string ;
+    

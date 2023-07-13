@@ -872,3 +872,24 @@ class TestCli(unittest.TestCase):
         text_file.close()
         assert len(json_content[constants.CAT_ACKNOWLEDGEMENT]) == 2
         os.remove(test_data_path + "repositories/repos_oeg/test-445.json")
+
+    def test_categorization(self):
+        """Checks that the categorization is done properly"""
+        somef_cli.run_cli(threshold=0.9,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=None,
+                          local_repo=test_data_repositories + "JAFFA-master",
+                          in_file=None,
+                          output=test_data_path + "repositories/repos_oeg/test-category.json",
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=False)
+        text_file = open(test_data_path + "repositories/repos_oeg/test-category.json", "r")
+        data = text_file.read()
+        text_file.close()
+
+        assert data.find(constants.CAT_TYPE) >= 0
+        os.remove(test_data_path + "repositories/repos_oeg/test-category.json")

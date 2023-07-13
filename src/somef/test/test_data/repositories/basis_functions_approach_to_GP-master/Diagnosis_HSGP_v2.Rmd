@@ -1,0 +1,938 @@
+---
+title: 'HSGP model diagnosis tool'
+# subtitle: 'Diagnosis tool'
+date: "`r format(Sys.Date())`."
+output:
+  bookdown::html_document2:
+    theme: readable
+    toc: yes
+    toc_depth: 3
+    # toc_float:
+    #   collapsed: false
+    #   smooth_scroll: true
+    code_download: yes
+    number_sections: true
+    df_print: paged # kable #
+---
+
+<style type="text/css">
+body, td{ font-size: 16px; }
+code.r{ font-size: 12px; }
+pre{ font-size: 12px }
+h1.title {
+  font-size: 32px;
+  color: Black;
+}
+h1 { /* Header 1 */
+  font-size: 20px;
+  color: Black;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+  color: Black;
+}
+h3 { /* Header 3 */
+    font-size: 18px;
+  color: Black;
+}
+#TOC {
+  color: DarkBlue;
+  font-size: 16px;
+}
+</style>
+
+```{r, setup, include=FALSE}
+knitr::opts_chunk$set(
+  comment = ''
+)
+```
+
+The report with the reviewers' comments and our responses and thoughts to them can be found at [link](https://docs.google.com/document/d/1aDvI598Z6PNqRlPWrzsnqrXDYC5k_w9bdV_D_vJRgH4/edit). 
+
+- This notebook addresses the task of automatizing diagnosis required by the reviewers in **comments 1), 2), 3)**.
+
+- **Comment 13)** suggests:
+
+1. Build a user guide with the iterative steps to perform the diagnosis using the diagnosis tool we have developed in comments 1), 2) and 3).
+
+2. Propose how much user has to increase $m$ in each iteration of the diagnosis.
+
+- **Comment 4.1)** relates to make the application of the method to periodic kernels more explicit in the main text; move the approximation for periodic kernels and its diagnosis' Figure from the appendix to the main text.
+
+- **Comment 4.2)** is a specific comment about writing the steps the user needs to do in order to make HSGPs work for a new kernel (i.e., we need Fourier transform of the kernel). Kernel combinations that satisfy the requirements can also be used.
+
+- **Comments 5) and 11)** are general comments about the general goal of the work. Maybe these could be the last comments to be addressed.
+
+- **Comments 7), 9), 10), 15) and 16)** are about:
+
+1. Make the diagnosis prominent in all the case studies
+
+2. Make more clear how the dimensionality affects to our approach
+
+3.  Move at least one 2D case study to the main text and investigate whether the diagnosis in multi-D cases can be done by just inspecting each single dimension independently.
+
+- **Comment 8)** is a specific comment about the text-length of the first case study. It can be addressed after addressing comment 7).
+
+- About **Comment 12)** we have already made some discussion in the revision document.
+
+- **Comment 14)** is about restructering some parts of the paper.
+
+- **Comments 17) and 18)** are specific comments about comparing our approach with variational methods and Nystrom. Aki already made some discussion about this in the revision document.
+
+
+
+```{r echo=TRUE, results='hold'}  
+library(RColorBrewer)
+library(reshape2)
+library(ggplot2)
+library(latex2exp)
+library(gridExtra)
+library(mgcv)
+```
+
+As said before, this notebook addresses the task of automatizing diagnosis required by the reviewers in **comments 1), 2), 3)**.
+
+# Sampling parameter values
+
+Half input domain $S$
+
+```{r, eval=TRUE, echo=TRUE}
+S <- 3
+S
+```
+
+Number of basis functions ($m$)
+
+```{r, eval=TRUE, echo=TRUE}
+m <- c(seq(2,40,1),seq(42,70,2),seq(75,130,5),seq(140,200,10))
+m
+```
+
+Lenghtscale $l$ normalized by the half input domain $S$
+
+```{r, eval=TRUE, echo=TRUE}
+l <- seq(0.01, 8, by=0.01) / S
+```
+
+Boundary factor $c$
+
+```{r, eval=TRUE, echo=TRUE}
+c <- c(seq(1.125, 3, length.out=16), seq(4, 6, length.out= 3))
+c
+```
+
+# Squared exponential covariance function: Empirical relationships among $m$, $l$ and $c$
+
+## Loading calculated areas under the kernel curves
+
+Area under the GP kernel curve
+
+```{r, eval=TRUE, echo=TRUE}
+load("area_gp.rData")
+str(area_gp)
+```
+
+Difference (error) between the area under the GP kernel curve and the area under the HSGP kernel curve
+
+```{r, eval=TRUE, echo=TRUE}
+load("area_diff.rData")
+str(area_diff)
+```
+
+### Error ratio
+
+Proportion of the difference of areas (*area_diff*) within the area under the GP kernel curve (*area_gp*)
+
+```{r eval=TRUE}
+e_ratio <- area_diff/area_gp
+str(e_ratio)
+```
+
+## Empirical relationships: Minimun $m$ given $l$ and $c$
+
+Table with the number of basis functions $m$ needed as a function of $l$ and $c$.
+
+```{r eval=TRUE}
+obsM <- array(NA,c(length(l),length(c)))
+for(i in 1:length(l)){
+  for(j in 1:length(c)){
+    obsM[i,j] <- if(which.max(e_ratio[i,,j]<0.005)==which.min(e_ratio[i,,j]<0.005))
+                    NA 
+                  else
+                    m[which.max(e_ratio[i,,j]<0.01)]
+  }
+}
+dimnames(obsM)[[2]] <- as.character(c)
+
+obsM <- data.frame(l=l, obsM)
+names(obsM) <- c("l", as.character(c))
+round(obsM, 3)
+```
+
+Plot of the empirical relationships:
+
+```{r empirical, fig.cap="Empirical relationships between m, l and c for the squared exponential kernel. Right side plot is in the log scale for m and l.", echo=FALSE, eval=TRUE, warning=FALSE, fig.height=4, fig.width=10}
+obsM_melt <- melt(obsM, id.vars= "l", measure.vars= as.character(c), variable.name = "c", value.name = "m")
+obsM_melt <- obsM_melt[obsM_melt$c %in% c(1.25,1.5,2,3,4,5,6) & obsM_melt$l < 8,] # %in% c(1.25,2,3,4)
+
+p1 <- ggplot(obsM_melt, aes(l, m, color = as.factor(c))) +
+  geom_line(size=0.8) + 
+  theme_classic() + 
+  theme(legend.position=c(.8,.7), axis.title.y = element_text(angle = 0, vjust=0.5), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  scale_color_brewer("c", palette="PuBu") +
+  labs(y = "m", x = "l")
+
+p2 <- ggplot(obsM_melt, aes(log(l), log(m), color = as.factor(c))) +
+  geom_line(size=0.8) +
+  theme_classic() + 
+  theme(legend.position="none", axis.title.y = element_text(angle = 0, vjust=0.5), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  scale_color_brewer("c", palette="PuBu") +  #palette="OrRd"
+  labs(y = "log(m)", x = "log(l)") 
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### Relationship between allowed $l$ depending on $c$ and vice versa
+
+As a function of $c$ there is a maximun $l$ valid for HSGP approach and, the other way around, as a function of $l$ there is a minimum $c$ valid for HSGP approach.
+
+* Data of this relationship:
+
+```{r eval=TRUE, echo=FALSE}
+max_l_ind <- apply(!is.na(obsM[,!(names(obsM) %in% c("l","5","6"))]), 2, function(x) max(which(x)))
+max_l <- l[max_l_ind]
+max_l <- data.frame(c=c[!(c %in% c("5","6"))], l=max_l)
+max_l
+```
+
+* Functions for this relationship: 
+
+```{r eval=TRUE, fig.height=3, fig.width=7, echo=FALSE}
+model_1 <- lm(l ~ c, data=max_l)
+# summary(model_1)
+
+p1 <- ggplot(max_l, aes(c, l)) +
+  geom_point(size=2) + 
+  geom_line(data= max_l, aes(c, model_1$fitted.values), col="red", size=1) +
+  theme_classic() + 
+  theme(axis.title.y = element_text(angle = 0, vjust=0.5), plot.title = element_text(hjust = 0.5), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  labs(y = "l", x = "c", title = TeX(c("$l \\, \\leq \\, -0.67 + 0.69 \\, c")))
+
+model_2 <- lm(c ~ l, data=max_l)
+# summary(model_2)
+
+p2 <- ggplot(max_l, aes(l, c)) +
+  geom_point(size=2) + 
+  geom_line(data= max_l, aes(l, model_2$fitted.values), col="red", size=1) +
+  theme_classic() + 
+  theme(axis.title.y = element_text(angle = 0, vjust=0.5), plot.title = element_text(hjust = 0.5), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  labs(y = "c", x = "l", title = TeX(c("$c \\, \\geq \\, 0.97 + 1.45 \\, l")))
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### Relationship between allowed $m$ depending on $c$ and vice versa
+
+As a function of $c$ there is a minimum $m$ valid for HSGP approach and, the other way around, as a function of $m$ there is a minimum $c$ valid for HSGP approach.
+
+* Data of this relationship:
+
+```{r eval=TRUE, echo=FALSE}
+min_m_ind <- apply(as.matrix(obsM[,!(names(obsM) %in% c("l","5","6"))]), 2, function(x) min(x, na.rm = TRUE))
+min_m <- data.frame(c=c[!(c %in% c("5","6"))], m=as.vector(min_m_ind))
+
+min_m <- data.frame(c=c(4,aggregate(min_m, by=list(min_m$m), min)[, c("c")]), m=c(3,aggregate(min_m, by=list(min_m$m), min)[, c("m")]))
+min_m
+```
+
+* Functions for this relationship: 
+
+```{r eval=TRUE, fig.height=6, fig.width=10, echo=FALSE}
+min_m$log_c2 <- log(min_m$c) * log(min_m$c)
+model_1 <- lm(log(m) ~ log(c) + log_c2, data=min_m)
+# summary(model_1)
+
+p1 <- ggplot(min_m, aes(log(c), log(m))) +
+  geom_point(size=2) + 
+  geom_line(data= min_m, aes(log(c), (model_1$fitted.values)), col="red", size=1) +
+  theme_classic() +
+  theme(axis.title.y = element_text(angle = 0, vjust=0.5), plot.title = element_text(hjust = 0.5, size=11), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  labs(y = "log(m)", x = "log(c)", title = TeX(c("$log(m) \\, \\geq \\, 3.730 - 4.711 \\, log(c) + 2.047 \\, log(c)^2")))
+
+min_m$m[min_m$c==2.5] <- 3.5
+min_m$log_m2 <- log(min_m$m) * log(min_m$m)
+min_m$log_m3 <- log(min_m$m) * log(min_m$m) * log(min_m$m)
+model_2 <- lm(log(c) ~ log(m) + log_m2 + log_m3, data=min_m)
+# summary(model_2)
+
+p2 <- ggplot(min_m, aes(log(m), log(c))) +
+  geom_point(size=2) + 
+  geom_line(data= min_m, aes(log(m), model_2$fitted.values), col="red", size=1) +
+  theme_classic() + 
+  theme(axis.title.y = element_text(angle = 0, vjust=0.5), plot.title = element_text(hjust = 0.5, size=11), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  labs(y = "log(c)", x = "log(m)", title = TeX(c("$log(c) \\, \\geq \\, 5.456 - 6.008 \\, log(m) + 2.370 \\, log(m)^2 - 0.316 \\, log(m)^3")))
+
+#exp(3.7304 - 4.71*log(c) + 2.05*log(c)^2))
+p3 <- ggplot(min_m, aes(c, m)) +
+  geom_point(size=2) + 
+  geom_line(data= min_m, aes(c, 41.6958*c^(2.047*log(c)-4.711)), col="red", size=1) +
+  theme_classic() +
+  theme(axis.title.y = element_text(angle = 0, vjust=0.5), plot.title = element_text(hjust = 0.5, size=11), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  labs(y = "m", x = "c", title = TeX(c("$m \\, \\geq \\, \\41.696 \\, c^{2.047 \\, log(c) \\, - \\, 4.711}")))
+
+#exp(5.456 - 6.008*log(m) + 2.370*log(m)^2 - 0.316*log(m)^3)
+p4 <- ggplot(min_m, aes(m, c)) +
+  geom_point(size=2) + 
+  geom_line(data= min_m, aes(m, 234.159*m^(-0.316 * log(m)^2 + 2.370*log(m) - 6.008)), col="red", size=1) +
+  theme_classic() + 
+  theme(axis.title.y = element_text(angle = 0, vjust=0.5), plot.title = element_text(hjust = 0.5, size=11), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  labs(y = "c", x = "m", title = TeX(c("$c \\, \\geq \\, 234.159 \\, m^{-0.316 \\, log(m)^2 \\, + \\,  2.370 \\, log(m) \\,  - \\, 6.008}")))
+
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+## Adjusted function for the empirical relationships {#sec-model}
+
+Due to the number of basis functions $m$ is an integer variable and $l$ is a continuous variable, the relationship between $m$ and $l$ has a part that looks like stairs (see \@ref(fig:empirical)). In order to fit a function on these relationships it is better not to include this stairs like part in the fitting data set.
+
+```{r echo=FALSE, eval=TRUE, warning=FALSE, fig.height=3, fig.width=5}
+# Filtering vector to remove the stairs like part from the fitting data set
+ind_stairs <- (obsM_melt$c==1.25 & log(obsM_melt$l)<(-2.4)) | (obsM_melt$c==1.5 & log(obsM_melt$l)<(-2.3)) | (obsM_melt$c==2 & log(obsM_melt$l)<(-2)) | (obsM_melt$c==3 & log(obsM_melt$l)<(-1.7)) | (obsM_melt$c==4 & log(obsM_melt$l)<(-1.5)) | (obsM_melt$c==5 & log(obsM_melt$l)<(-1.3)) | (obsM_melt$c==6 & log(obsM_melt$l)<(-1.2))
+```
+
+
+### Linear function: $\; log(m) \sim a + b \cdot log(l) + c \cdot log(c), \;$ where  $\; c \, \geq \, 0.97 + 1.45 \, l$
+
+Model fit
+
+```{r echo=FALSE, eval=TRUE, warning=FALSE, fig.height=3, fig.width=5, echo=FALSE}
+obsM_melt$c <- as.numeric(as.character(obsM_melt$c))
+
+model <- lm(log(m) ~ log(l) + log(c), data=obsM_melt[ind_stairs, ])
+summary(model)
+
+par(mgp=c(1.5,0.5,0), mai=c(0.7,0.5,0.3,0.1))
+plot(model$model$'log(m)', model$residuals, cex=0.7)
+abline(h=0, lty=2, col="gray")
+```
+
+Overlay the fitted functions to the empirical relationships
+
+```{r echo=FALSE, eval=TRUE, fig.height=15, fig.width=15, warning=FALSE}
+pred <- predict.lm(model, obsM_melt[!is.na(obsM_melt$m),], na.action = na.exclude)
+pred <- as.data.frame(pred)
+
+obsM_melt$type <- "Observed relationships"
+pred$type <- "Fitted relationships"
+model$model$type <- "Fitted relationships"
+
+p1 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(log(l), log(m), group = as.factor(c), color = type)) +
+  geom_line(size=1) + 
+  geom_line(data=pred, aes(log(obsM_melt[!is.na(obsM_melt$m),]$l), pred, group = as.factor(obsM_melt[!is.na(obsM_melt$m),]$c), color = type), size=1, linetype=2) + 
+  theme_classic() + 
+  theme(legend.position=c(.5,.95), axis.title.y = element_text(angle = 0, vjust=0.5, size=16), axis.title.x = element_text(size=16), axis.text = element_text(size=14), legend.text = element_text(size=18), legend.key.size = unit(1, 'cm'), legend.key.height = unit(1, 'cm'), legend.key.width = unit(1, 'cm')) +
+  scale_color_brewer("", palette="Set1", labels = unname(TeX(c("$\\left. 0.55 - 1.05 \\, log(l) + log(c) \\, \\right| \\, c \\, \\geq \\, 0.97 + 1.45 \\, l", "Empirical relationships (m_{obs})")))) +
+  labs(y = "log(m)", x = "log(l)")  +
+  coord_cartesian(ylim = c(0, 6))
+
+p2 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(x=log(l), y=log(m) - pred$pred, color = as.factor(c))) +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position= "none", axis.title = element_text(size=16), axis.text = element_text(size=14)) +
+  facet_grid(rows=vars(c)) +
+  labs(x = "log(l)", y = TeX("$log(m_{obs}) \\, - \\, \\left(0.55 - 1.05 \\, log(l) + log(c)\\right)$"), title = "Empirical - Fitted")
+
+p3 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(l, m, group = as.factor(c), color = type)) +
+  geom_line(size=1) + 
+  geom_line(data=pred, aes(obsM_melt[!is.na(obsM_melt$m),]$l, exp(pred), group = as.factor(obsM_melt[!is.na(obsM_melt$m),]$c), color = type), size=1, linetype=2) + 
+  theme_classic() + 
+  theme(legend.position=c(.73,.85), axis.title.y = element_text(angle = 0, vjust=0.5, size=16), axis.title.x = element_text(size=14), axis.text = element_text(size=16), legend.text = element_text(size=18), legend.key.size = unit(1, 'cm'), legend.key.height = unit(1, 'cm'), legend.key.width = unit(1, 'cm')) +
+  scale_color_brewer("", palette="Set1", labels = unname(TeX(c("$\\left. 1.73 \\, \\frac{c}{l^{1.05}} \\, \\right| \\, c \\, \\geq \\, 0.97 + 1.45 \\, l", "Empirical relationships (m_{obs})")))) +
+  labs(y = "m", x = "l")  +
+  coord_cartesian(ylim = c(0, 100))
+
+p4 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(x=l, y=m - exp(pred$pred), color = as.factor(c))) +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position= "none", axis.title = element_text(size=16), axis.text = element_text(size=14)) +
+  facet_grid(rows=vars(c)) +
+  labs(x = "l", y = TeX(c("$m_{obs} \\, - \\left(\\, 1.73 \\, \\frac{c}{l^{1.05}}\\right)")), title = "Empirical - Fitted")
+
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+### Approximation of the fitted function by $2 \frac{c}{l}$
+
+```{r echo=FALSE, eval=TRUE, fig.height=15, fig.width=15, warning=FALSE}
+pred2 <- pred
+pred2$pred = 0.69 - log(obsM_melt[!is.na(obsM_melt$m),]$l) + log(obsM_melt[!is.na(obsM_melt$m),]$c)
+
+p1 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(log(l), log(m), fill = as.factor(c), color = type)) +
+  geom_line(size=0.8) + 
+  geom_line(data=pred2, aes(log(obsM_melt[!is.na(obsM_melt$m),]$l), pred, fill = as.factor(obsM_melt[!is.na(obsM_melt$m),]$c), color = type), size=0.8, linetype=2) + 
+  theme_classic() + 
+  theme(legend.position=c(.65,.85), axis.title.y = element_text(angle = 0, vjust=0.5, size=16), axis.title.x = element_text(size=16), axis.text = element_text(size=16), legend.text = element_text(size=18), legend.key.size = unit(1, 'cm'), legend.key.height = unit(1, 'cm'), legend.key.width = unit(1, 'cm')) +
+  scale_color_brewer("", palette="Set1", labels = unname(TeX(c("$\\left. 0.69 - log(l) + log(c) \\, \\right| \\, c \\, \\geq \\, 0.97 + 1.45 \\, l", "Empirical relationships (m_{obs})")))) +
+  labs(y = "log(m)", x = "log(l)")  +
+  coord_cartesian(ylim = c(0, 6))
+
+p2 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(x=log(l), y=log(m) - pred2$pred, color = as.factor(c))) +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position= "none", axis.title = element_text(size=16), axis.text = element_text(size=14)) +
+  facet_grid(rows=vars(c)) +
+  labs(x = "log(l)", y = TeX("$log(m_{obs}) \\, - \\, \\left(0.69 - log(l) + log(c)\\right)$"), title = "Empirical - Fitted")
+
+p3 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(l, m, fill = as.factor(c), color = type)) +
+  geom_line(size=0.8) + 
+  geom_line(data=pred2, aes(obsM_melt[!is.na(obsM_melt$m),]$l, exp(pred), fill = as.factor(obsM_melt[!is.na(obsM_melt$m),]$c), color = type), size=0.8, linetype=2) + 
+  theme_classic() + 
+  theme(legend.position=c(.73,.85), axis.title.y = element_text(angle = 0, vjust=0.5, size=16), axis.title.x = element_text(size=16), axis.text = element_text(size=16), legend.text = element_text(size=18), legend.key.size = unit(1, 'cm'), legend.key.height = unit(1, 'cm'), legend.key.width = unit(1, 'cm')) +
+  scale_color_brewer("", palette="Set1", labels = unname(TeX(c("$\\left. 2 \\, \\frac{c}{l} \\, \\right| \\, c \\, \\geq \\, 0.97 + 1.45 \\, l", "Empirical relationships (m_{obs})")))) +
+  labs(y = "m", x = "l")  +
+  coord_cartesian(ylim = c(0, 100))
+
+p4 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(x=l, y=m - exp(pred2$pred), color = as.factor(c))) +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position= "none", axis.title = element_text(size=16), axis.text = element_text(size=14)) +
+  facet_grid(rows=vars(c)) +
+  labs(x = "l", y = TeX(c("$m_{obs} \\, - \\, \\left(2 \\, \\frac{c}{l}\\right)")), title = "Empirical - Fitted")
+
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+# Mattern-$\nu=3/2$ covariance function: Empirical relationship among $m$, $l$ and $c$
+
+## Loading calculated areas under the kernel curves
+
+Area under the GP kernel curve
+
+```{r, eval=TRUE, echo=TRUE}
+load("area_gp_Matern.rData")
+str(area_gp)
+```
+
+Difference (error) between the area under the GP kernel curve and the area under the HSGP kernel curve
+
+```{r, eval=TRUE, echo=TRUE}
+load("area_diff_Matern.rData")
+str(area_diff)
+```
+
+### Error ratio
+
+Proportion of the difference of areas (*area_diff*) within the area under the GP kernel curve (*area_gp*)
+
+```{r eval=TRUE}
+e_ratio <- area_diff/area_gp
+str(e_ratio)
+```
+
+## Empirical relationships: minimun $m$ given $l$ and $c$
+
+Table with the number of basis functions $m$ needed as a function of $l$ and $c$.
+
+```{r eval=TRUE}
+obsM <- array(NA,c(length(l),length(c)))
+for(i in 1:length(l)){
+  for(j in 1:length(c)){
+    obsM[i,j] <- if(which.max(e_ratio[i,,j]<0.005)==which.min(e_ratio[i,,j]<0.005))
+                    NA 
+                  else
+                    m[which.max(e_ratio[i,,j]<0.01)]
+  }
+}
+dimnames(obsM)[[2]] <- as.character(c)
+
+obsM <- data.frame(l=l, obsM)
+names(obsM) <- c("l", as.character(c))
+round(obsM, 3)
+```
+
+Plot of the empirical relationships:
+
+```{r empirical-relationships-Mattern32, fig.cap="Empirical relationships between m, l and c for the Mattern-3/2 kernel. Right side plot is in the log scale for m and l.", echo=FALSE, eval=TRUE, warning=FALSE, fig.height=4, fig.width=10}
+obsM_melt <- melt(obsM, id.vars= "l", measure.vars= as.character(c), variable.name = "c", value.name = "m")
+obsM_melt <- obsM_melt[obsM_melt$c %in% c(1.5,2,2.5,3,4,5,6) & obsM_melt$l < 8,] # %in% c(1.25,2,3,4)
+
+p1 <- ggplot(obsM_melt, aes(l, m, color = as.factor(c))) +
+  geom_line(size=0.8) + 
+  theme_classic() + 
+  theme(legend.position="none", axis.title.y = element_text(angle = 0, vjust=0.5), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  scale_color_brewer("c", palette="PuBu") +
+  labs(y = "m", x = "l")
+
+p2 <- ggplot(obsM_melt, aes(log(l), log(m), color = as.factor(c))) +
+  geom_line(size=0.8) +
+  theme_classic() + 
+  theme(legend.position="none", axis.title.y = element_text(angle = 0, vjust=0.5), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  scale_color_brewer("c", palette="PuBu") +  #palette="OrRd"
+  labs(y = "log(m)", x = "log(l)") +
+  coord_cartesian(ylim = c(0, 5))
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### Relationship between allowed $l$ depending on $c$ and vice versa
+
+As a function of $c$ there is a maximun $l$ valid for HSGP approach and, the other way around, as a function of $l$ there is a minimum $c$ valid for HSGP approach.
+
+* Data of this relationship:
+
+```{r eval=TRUE, echo=FALSE}
+max_l_ind <- apply(!is.na(obsM[,!(names(obsM) %in% c("l","5","6"))]), 2, function(x) max(which(x)))
+max_l <- l[max_l_ind]
+max_l <- data.frame(c=c[!(c %in% c("5","6"))], l=max_l)
+max_l
+```
+
+* Functions for this relationship: 
+
+```{r eval=TRUE, fig.height=3, fig.width=7, echo=FALSE}
+model_1 <- lm(l ~ c, data=max_l)
+# summary(model_1)
+
+p1 <- ggplot(max_l, aes(c, l)) +
+  geom_point(size=2) + 
+  geom_line(data= max_l, aes(c, model_1$fitted.values), col="red", size=1) +
+  theme_classic() + 
+  theme(axis.title.y = element_text(angle = 0, vjust=0.5), plot.title = element_text(hjust = 0.5), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  labs(y = "l", x = "c", title = TeX(c("$l \\, \\leq \\, -0.49 + 0.50 \\, c")))
+
+model_2 <- lm(c ~ l, data=max_l)
+# summary(model_2)
+
+p2 <- ggplot(max_l, aes(l, c)) +
+  geom_point(size=2) + 
+  geom_line(data= max_l, aes(l, model_2$fitted.values), col="red", size=1) +
+  theme_classic() + 
+  theme(axis.title.y = element_text(angle = 0, vjust=0.5), plot.title = element_text(hjust = 0.5), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  labs(y = "c", x = "l", title = TeX(c("$c \\, \\geq \\, 0.98 + 2.01 \\, l")))
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+### Relationship between allowed $m$ depending on $c$ and vice versa
+
+As a function of $c$ there is a minimum $m$ valid for HSGP approach and, the other way around, as a function of $m$ there is a minimum $c$ valid for HSGP approach.
+
+* Data of this relationship:
+
+```{r eval=TRUE, echo=FALSE}
+min_m_ind <- apply(as.matrix(obsM[,!(names(obsM) %in% c("l","5","6"))]), 2, function(x) min(x, na.rm = TRUE))
+min_m <- data.frame(c=c[!(c %in% c("5","6"))], m=as.vector(min_m_ind))
+
+min_m <- data.frame(c=c(4,aggregate(min_m, by=list(min_m$m), min)[, c("c")]), m=c(9,aggregate(min_m, by=list(min_m$m), min)[, c("m")]))
+min_m
+```
+
+* Functions for this relationship: 
+
+```{r eval=TRUE, fig.height=6, fig.width=10, echo=FALSE}
+min_m$log_c2 <- log(min_m$c) * log(min_m$c)
+model_1 <- lm(log(m) ~ log(c) + log_c2, data=min_m)
+# summary(model_1)
+
+p1 <- ggplot(min_m, aes(log(c), log(m))) +
+  geom_point(size=2) + 
+  geom_line(data= min_m, aes(log(c), (model_1$fitted.values)), col="red", size=1) +
+  theme_classic() +
+  theme(axis.title.y = element_text(angle = 0, vjust=0.5), plot.title = element_text(hjust = 0.5, size=11), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  labs(y = "log(m)", x = "log(c)", title = TeX(c("$log(m) \\, \\geq \\, 4.742 - 4.239 \\, log(c) + 1.767 \\, log(c)^2")))
+
+min_m$m[min_m$c==3] <- 9.5
+min_m$log_m2 <- log(min_m$m) * log(min_m$m)
+min_m$log_m3 <- log(min_m$m) * log(min_m$m) * log(min_m$m)
+model_2 <- lm(log(c) ~ log(m) + log_m2 + log_m3, data=min_m)
+# summary(model_2)
+
+p2 <- ggplot(min_m, aes(log(m), log(c))) +
+  geom_point(size=2) + 
+  geom_line(data= min_m, aes(log(m), model_2$fitted.values), col="red", size=1) +
+  theme_classic() + 
+  theme(axis.title.y = element_text(angle = 0, vjust=0.5), plot.title = element_text(hjust = 0.5, size=11), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  labs(y = "log(c)", x = "log(m)", title = TeX(c("$log(c) \\, \\geq \\, 10.369 - 7.634 \\, log(m) + 1.963 \\, log(m)^2 - 0.172 \\, log(m)^3")))
+
+#exp(4.742 - 4.239 * log(c) + 1.767 * log(c)^2)
+p3 <- ggplot(min_m, aes(c, m)) +
+  geom_point(size=2) + 
+  geom_line(data= min_m, aes(c, 114.6633*c^(1.7667*log(c)-4.2385)), col="red", size=1) +
+  theme_classic() +
+  theme(axis.title.y = element_text(angle = 0, vjust=0.5), plot.title = element_text(hjust = 0.5, size=11), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  labs(y = "m", x = "c", title = TeX(c("$m \\, \\geq \\, \\114.663 \\, c^{1.767 \\, log(c) \\, - \\, 4.239}")))
+
+#exp(10.369 - 7.634 * log(m) + 1.963 * log(m)^2 - 0.172 * log(m)^3)
+p4 <- ggplot(min_m, aes(m, c)) +
+  geom_point(size=2) + 
+  geom_line(data= min_m, aes(m, 31868.07*m^(-0.1722*log(m)^2 + 1.9633*log(m) - 7.6338)), col="red", size=1) +
+  theme_classic() + 
+  theme(axis.title.y = element_text(angle = 0, vjust=0.5), plot.title = element_text(hjust = 0.5, size=11), axis.title = element_text(size=12), axis.text = element_text(size=10)) +
+  labs(y = "c", x = "m", title = TeX(c("$c \\, \\geq \\, 31868.07 \\, m^{-0.172 \\, log(m)^2 \\, + \\,  1.963 \\, log(m) \\,  - \\, 7.634}")))
+
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+## Adjusted function for the empirical relationships {#sec-model-Mattern}
+
+Due to the number of basis functions $m$ is an integer variable and $l$ is a continuous variable, the relationship between $m$ and $l$ has a part that looks like stairs (see \@ref(fig:empirical-relationships-Mattern32). In order to fit a function on these relationships it is better not to include this stairs like part in the fitting data set.
+
+```{r echo=FALSE, eval=TRUE, warning=FALSE, fig.height=3, fig.width=5}
+# Filtering vector to remove the stairs like part from the fitting data set
+ind_stairs <- log(obsM_melt$m)>3.7
+```
+
+### Linear function: $log(m) \sim a + b \cdot log(l) + c \cdot log(c), \;$ where  $\; c \, \geq \, 0.98 + 2.01 \, l$
+
+Model fit
+
+```{r echo=FALSE, eval=TRUE, warning=FALSE, fig.height=3, fig.width=5}
+obsM_melt$c <- as.numeric(as.character(obsM_melt$c))
+
+model <- lm(log(m) ~ log(l) + log(c), data=obsM_melt[ind_stairs, ])
+summary(model)
+
+par(mgp=c(1.5,0.5,0), mai=c(0.7,0.5,0.3,0.1))
+plot(model$fitted.values, model$residuals, cex=0.7)
+abline(h=0, lty=2, col="gray")
+```
+
+Overlay the fitted model to the observed relationships
+
+```{r echo=FALSE, eval=TRUE, fig.height=15, fig.width=15, warning=FALSE}
+pred <- predict.lm(model, obsM_melt[!is.na(obsM_melt$m),], na.action = na.exclude)
+pred <- as.data.frame(pred)
+
+obsM_melt$type <- "Observed relationships"
+pred$type <- "Fitted relationships"
+
+p1 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(log(l), log(m), fill = as.factor(c), color = type)) +
+  geom_line(size=0.8) + 
+  geom_line(data=pred, aes(log(obsM_melt[!is.na(obsM_melt$m),]$l), pred, fill = as.factor(obsM_melt[!is.na(obsM_melt$m),]$c), color = type), size=0.8, linetype=2) + 
+  theme_classic() + 
+  theme(legend.position=c(.5,.95), axis.title.y = element_text(angle = 0, vjust=0.5, size=16), axis.title.x = element_text(size=16), axis.text = element_text(size=16), legend.text = element_text(size=18), legend.key.size = unit(1, 'cm'), legend.key.height = unit(1, 'cm'), legend.key.width = unit(1, 'cm')) +
+  scale_color_brewer("", palette="Set1", labels = unname(TeX(c("$\\left. 1.20 - 1.08 \\, log(l) + 0.99 \\, log(c) \\, \\right| \\, c \\, \\geq \\, 0.98 + 2.01 \\, l", "Empirical relationships (m_{obs})")))) +
+  labs(y = "log(m)", x = "log(l)")  +
+  coord_cartesian(ylim = c(0, 6))
+
+p2 <- ggplot(obsM_melt, aes(x=log(l), y=log(m) - pred$pred, color = as.factor(c))) +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position= "none", axis.title = element_text(size=16), axis.text = element_text(size=14)) +
+  facet_grid(rows=vars(c)) +
+  labs(x = "log(l)", y = TeX("$log(m_{obs}) \\, - \\, \\left(1.20 - 1.08 \\, log(l) + 0.99 \\, log(c)\\right)$"), title = "Empirical - Fitted")
+
+p3 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(l, m, fill = as.factor(c), color = type)) +
+  geom_line(size=0.8) + 
+  geom_line(data=pred, aes(obsM_melt[!is.na(obsM_melt$m),]$l, exp(pred), fill = as.factor(obsM_melt[!is.na(obsM_melt$m),]$c), color = type), size=0.8, linetype=2) + 
+  theme_classic() + 
+  theme(legend.position=c(.5,.6), axis.title.y = element_text(angle = 0, vjust=0.5, size=16), axis.title.x = element_text(size=16), axis.text = element_text(size=16), legend.text = element_text(size=18), legend.key.size = unit(1, 'cm'), legend.key.height = unit(1, 'cm'), legend.key.width = unit(1, 'cm')) +
+  scale_color_brewer("", palette="Set1", labels = unname(TeX(c("$\\left. 3.32 \\, \\frac{c^{0.99}}{l^{1.08}} \\, \\right| \\, c \\, \\geq \\, 0.98 + 2.01 \\, l", "Empirical relationships (m_{obs})")))) +
+  labs(y = "m", x = "l")  +
+  coord_cartesian(ylim = c(0, 100))
+
+p4 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(x=l, y=m - exp(pred$pred), color = as.factor(c))) +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position= "none", axis.title = element_text(size=16), axis.text = element_text(size=14)) +
+  facet_grid(rows=vars(c)) +
+  labs(x = "l", y = TeX(c("$m_{obs} \\, - \\left(\\, 3.32 \\, \\frac{c^{0.99}}{l^{1.08}}\\right)")), title = "Empirical - Fitted")
+
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+### Approximation of the fitted model by $3.32 \frac{c}{l^{1.08}}$
+
+```{r echo=FALSE, eval=TRUE, fig.height=15, fig.width=15, warning=FALSE}
+pred2 <- pred
+pred2$pred = 1.204 - 1.084*log(obsM_melt[!is.na(obsM_melt$m),]$l) + log(obsM_melt[!is.na(obsM_melt$m),]$c)
+
+p1 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(log(l), log(m), fill = as.factor(c), color = type)) +
+  geom_line(size=0.8) + 
+  geom_line(data=pred2, aes(log(obsM_melt[!is.na(obsM_melt$m),]$l), pred, fill = as.factor(obsM_melt[!is.na(obsM_melt$m),]$c), color = type), size=0.8, linetype=2) + 
+  theme_classic() + 
+  theme(legend.position=c(.5,.95), axis.title.y = element_text(angle = 0, vjust=0.5, size=16), axis.title.x = element_text(size=16), axis.text = element_text(size=16), legend.text = element_text(size=18), legend.key.size = unit(1, 'cm'), legend.key.height = unit(1, 'cm'), legend.key.width = unit(1, 'cm')) +
+  scale_color_brewer("", palette="Set1", labels = unname(TeX(c("$\\left. 1.20 - 1.08 \\, log(l) + \\, log(c) \\, \\right| \\, c \\, \\geq \\, 0.98 + 2.01 \\, l", "Empirical relationships (m_{obs})")))) +
+  labs(y = "log(m)", x = "log(l)")  +
+  coord_cartesian(ylim = c(0, 6))
+
+p2 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(x=log(l), y=log(m) - pred2$pred, color = as.factor(c))) +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position= "none", axis.title = element_text(size=16), axis.text = element_text(size=14)) +
+  facet_grid(rows=vars(c)) +
+  labs(x = "log(l)", y = TeX("$log(m_{obs}) \\, - \\, \\left(1.20 - 1.08 \\, log(l) + \\, log(c)\\right)$"), title = "Empirical - Fitted")
+
+p3 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(l, m, fill = as.factor(c), color = type)) +
+  geom_line(size=0.8) + 
+  geom_line(data=pred2, aes(obsM_melt[!is.na(obsM_melt$m),]$l, exp(pred), fill = as.factor(obsM_melt[!is.na(obsM_melt$m),]$c), color = type), size=0.8, linetype=2) + 
+  theme_classic() + 
+  theme(legend.position=c(.5,.6), axis.title.y = element_text(angle = 0, vjust=0.5, size=16), axis.title.x = element_text(size=16), axis.text = element_text(size=16), legend.text = element_text(size=18), legend.key.size = unit(1, 'cm'), legend.key.height = unit(1, 'cm'), legend.key.width = unit(1, 'cm')) +
+  scale_color_brewer("", palette="Set1", labels = unname(TeX(c("$\\left. 3.32 \\, \\frac{c}{l^{1.08}} \\, \\right| \\, c \\, \\geq \\, 0.98 + 2.01 \\, l", "Empirical relationships (m_{obs})")))) +
+  labs(y = "m", x = "l")  +
+  coord_cartesian(ylim = c(0, 100))
+
+p4 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(x=l, y=m - exp(pred2$pred), color = as.factor(c))) +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position= "none", axis.title = element_text(size=16), axis.text = element_text(size=14)) +
+  facet_grid(rows=vars(c)) +
+  labs(x = "l", y = TeX(c("$m_{obs} \\, - \\left(\\, 3.32 \\, \\frac{c}{l^{1.08}}\\right)")), title = "Empirical - Fitted")
+
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+### Approximation of the fitted model by $3.32 \frac{c}{l}$
+
+```{r echo=FALSE, eval=TRUE, fig.height=15, fig.width=15, warning=FALSE}
+pred2 <- pred
+pred2$pred = 1.204 - log(obsM_melt[!is.na(obsM_melt$m),]$l) + log(obsM_melt[!is.na(obsM_melt$m),]$c)
+
+p1 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(log(l), log(m), fill = as.factor(c), color = type)) +
+  geom_line(size=0.8) + 
+  geom_line(data=pred2, aes(log(obsM_melt[!is.na(obsM_melt$m),]$l), pred, fill = as.factor(obsM_melt[!is.na(obsM_melt$m),]$c), color = type), size=0.8, linetype=2) + 
+  theme_classic() + 
+  theme(legend.position=c(.5,.95), axis.title.y = element_text(angle = 0, vjust=0.5, size=16), axis.title.x = element_text(size=16), axis.text = element_text(size=16), legend.text = element_text(size=18), legend.key.size = unit(1, 'cm'), legend.key.height = unit(1, 'cm'), legend.key.width = unit(1, 'cm')) +
+  scale_color_brewer("", palette="Set1", labels = unname(TeX(c("$\\left. 1.20 - \\, log(l) + \\, log(c) \\, \\right| \\, c \\, \\geq \\, 0.98 + 2.01 \\, l", "Empirical relationships (m_{obs})")))) +
+  labs(y = "log(m)", x = "log(l)")  +
+  coord_cartesian(ylim = c(0, 6))
+
+p2 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(x=log(l), y=log(m) - pred2$pred, color = as.factor(c))) +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position= "none", axis.title = element_text(size=16), axis.text = element_text(size=14)) +
+  facet_grid(rows=vars(c)) +
+  labs(x = "log(l)", y = TeX("$log(m_{obs}) \\, - \\, \\left(1.20 - \\, log(l) + \\, log(c)\\right)$"), title = "Empirical - Fitted")
+
+p3 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(l, m, fill = as.factor(c), color = type)) +
+  geom_line(size=0.8) + 
+  geom_line(data=pred2, aes(obsM_melt[!is.na(obsM_melt$m),]$l, exp(pred), fill = as.factor(obsM_melt[!is.na(obsM_melt$m),]$c), color = type), size=0.8, linetype=2) + 
+  theme_classic() + 
+  theme(legend.position=c(.5,.6), axis.title.y = element_text(angle = 0, vjust=0.5, size=16), axis.title.x = element_text(size=16), axis.text = element_text(size=16), legend.text = element_text(size=18), legend.key.size = unit(1, 'cm'), legend.key.height = unit(1, 'cm'), legend.key.width = unit(1, 'cm')) +
+  scale_color_brewer("", palette="Set1", labels = unname(TeX(c("$\\left. 3.32 \\, \\frac{c}{l} \\, \\right| \\, c \\, \\geq \\, 0.98 + 2.01 \\, l", "Empirical relationships (m_{obs})")))) +
+  labs(y = "m", x = "l")  +
+  coord_cartesian(ylim = c(0, 100))
+
+p4 <- ggplot(obsM_melt[!is.na(obsM_melt$m),], aes(x=l, y=m - exp(pred2$pred), color = as.factor(c))) +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position= "none", axis.title = element_text(size=16), axis.text = element_text(size=14)) +
+  facet_grid(rows=vars(c)) +
+  labs(x = "l", y = TeX(c("$m_{obs} \\, - \\left(\\, 3.32 \\, \\frac{c}{l}\\right)")), title = "Empirical - Fitted")
+
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+# Squared exponential periodic covariance function: Empirical relationship among $m$ and $l$
+
+## Setting parameters values
+
+Number of basis functions ($m$)
+
+```{r eval=TRUE, message=FALSE, size='small', warn=FALSE}
+m <- c(seq(1,40,1),seq(42,70,2),seq(75,130,5),seq(140,200,10))
+m
+```
+
+Lenghtscale ($l$)
+
+```{r eval=TRUE, message=FALSE, size='small', warn=FALSE}
+l <- c(seq(0.04,0.1,0.01),seq(0.12,2,0.02),seq(2.03,4,0.03),seq(4.04,5,0.04))
+round(l,3)
+```
+
+## Loading calculated areas under the kernel curves
+
+Area under the GP kernel curve
+
+```{r, eval=TRUE, echo=TRUE}
+load("area_gp_periodic.rData")
+str(area_gp)
+```
+
+Difference (error) between the area under the GP kernel curve and the area under the HSGP kernel curve
+
+```{r, eval=TRUE, echo=TRUE}
+load("area_diff_periodic.rData")
+str(area_diff)
+```
+
+### Error ratio
+
+Proportion of the difference of areas (*area_diff*) within the area under the GP kernel curve (*area_gp*)
+
+```{r eval=TRUE}
+e_ratio <- area_diff/area_gp
+str(e_ratio)
+```
+
+## Empirical relationships: minimun $m$ given $l$
+
+```{r eval=TRUE}
+obsM <- vector()
+for(r in 1:length(l)){
+    obsM[r] <- if(which.max(e_ratio[r,]<0.005)==which.min(e_ratio[r,]<0.005)){
+                    if(which.max(e_ratio[r,]<0.005)==1){
+                      1} 
+                    else{
+                      NA}}
+                else{
+                  m[which.max(e_ratio[r,]<0.005)]}
+}
+
+obsM <- data.frame(l=l, m=obsM)
+round(obsM, 3)
+```
+
+Plot of the empirical relationships:
+
+```{r empirical-relationships-periodic, fig.cap="Empirical relationships between m and l for the periodic kernel. Right side plot is in the log scale for m and l.", echo=FALSE, eval=TRUE, warning=FALSE, fig.height=4, fig.width=10}
+p1 <- ggplot(obsM, aes(l, m)) +
+  geom_line(size=0.8) + 
+  theme_classic() + theme(legend.position=c(.8,.7), axis.title.y = element_text(angle = 0, vjust=0.5)) +
+  scale_color_brewer(palette="PuBu") +
+  labs(y = "m", x = "l") +
+  coord_cartesian(ylim = c(0, 100))
+
+p2 <- ggplot(obsM, aes(log(l), log(m))) +
+  geom_line(size=0.8) +
+  theme_classic() + theme(legend.position="none", axis.title.y = element_text(angle = 0, vjust=0.5)) +
+  scale_color_brewer(palette="PuBu") +  #palette="OrRd"
+  labs(y = "log(m)", x = "log(l)") +
+  coord_cartesian(ylim = c(0, 5))
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+## Adjusted function for the empirical relationships {#sec-model-periodic}
+
+Due to the number of basis functions $m$ is an integer variable and $l$ is a continuous variable, the relationship between $m$ and $l$ has a part that looks like stairs (see \@ref(fig:empirical-relationships-periodic). In order to fit a function on these relationships it is better not to include this stairs like part in the fitting data set.
+
+```{r echo=TRUE, eval=TRUE, warning=FALSE, fig.height=3, fig.width=5}
+# Filtering vector to remove the stairs like part from the fitting data set
+ind_stairs <- log(obsM$m)>2.3
+```
+
+### Linear model: $log(m) \sim a + b \cdot log(l)$
+
+Model fit
+
+```{r echo=FALSE, eval=TRUE, warning=FALSE, fig.height=3, fig.width=5}
+model <- lm(log(m) ~ log(l), data=obsM[ind_stairs, ])
+summary(model)
+
+par(mgp=c(1.5,0.5,0), mai=c(0.7,0.5,0.3,0.1))
+plot(model$fitted.values, model$residuals, cex=0.7)
+abline(h=0, lty=2, col="gray")
+```
+
+Overlay the fitted model to the observed relationships
+
+```{r echo=FALSE, eval=TRUE, fig.height=10, fig.width=15, warning=FALSE}
+pred <- predict.lm(model, obsM, na.action = na.exclude)
+pred <- as.data.frame(pred)
+
+obsM$type <- "Observed relationships"
+pred$type <- "Fitted relationships"
+
+p1 <- ggplot(obsM, aes(log(l), log(m), color = type)) +
+  geom_line(size=0.8) + 
+  geom_line(data=pred, aes(log(obsM$l), pred, color = type), size=0.8, linetype=2) + 
+  theme_classic() + 
+  theme(legend.position=c(.5,.95), axis.title.y = element_text(angle = 0, vjust=0.5, size=16), axis.title.x = element_text(size=16), axis.text = element_text(size=16), legend.text = element_text(size=18), legend.key.size = unit(1, 'cm'), legend.key.height = unit(1, 'cm'), legend.key.width = unit(1, 'cm')) +
+  scale_color_brewer("", palette="Set1", labels = unname(TeX(c("$1.20 - 1.05 \\, log(l)", "Empirical relationships (m_{obs})")))) +
+  labs(y = "log(m)", x = "log(l)")  +
+  coord_cartesian(ylim = c(0, 6))
+
+p2 <- ggplot(obsM, aes(x=log(l), y= log(m) - pred$pred)) +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position= "none", axis.title = element_text(size=16), axis.text = element_text(size=14)) +
+  labs(x = "log(l)", y = TeX("$log(m_{obs}) \\, - \\, \\left(1.20 - 1.05 \\, log(l)\\right)$"), title = "Empirical - Fitted")
+
+p3 <- ggplot(obsM, aes(l, m, color = type)) +
+  geom_line(size=0.8) + 
+  geom_line(data=pred, aes(obsM$l, exp(pred), color = type), size=0.8, linetype=2) + 
+  theme_classic() + 
+  theme(legend.position=c(.5,.75), axis.title.y = element_text(angle = 0, vjust=0.5, size=16), axis.title.x = element_text(size=16), axis.text = element_text(size=16), legend.text = element_text(size=18), legend.key.size = unit(1, 'cm'), legend.key.height = unit(1, 'cm'), legend.key.width = unit(1, 'cm')) +
+  scale_color_brewer("", palette="Set1", labels = unname(TeX(c("$3.31 \\, \\frac{1}{l^{1.05}}", "Empirical relationships (m_{obs})")))) +
+  labs(y = "m", x = "l")  +
+  coord_cartesian(ylim = c(0, 100))
+
+p4 <- ggplot(obsM, aes(x=l, y= m - exp(pred$pred))) +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position= "none", axis.title = element_text(size=16), axis.text = element_text(size=12)) +
+  labs(x = "l", y = TeX(c("$m_{obs} \\, - \\left(\\, 3.31 \\, \\frac{1}{l^{1.05}}\\right)")), title = "Empirical - Fitted")
+
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+### Approximation of the fitted model by $3.31 \, \frac{1}{l}$
+
+```{r echo=FALSE, eval=TRUE, fig.height=10, fig.width=15, warning=FALSE}
+pred2 <- pred
+pred2$pred = 1.20 - 1*log(obsM$l)
+
+p1 <- ggplot(obsM, aes(log(l), log(m), color = type)) +
+  geom_line(size=0.8) + 
+  geom_line(data=pred2, aes(log(obsM$l), pred, color = type), size=0.8, linetype=2) + 
+  theme_classic() + 
+  theme(legend.position=c(.5,.95), axis.title.y = element_text(angle = 0, vjust=0.5, size=16), axis.title.x = element_text(size=16), axis.text = element_text(size=16), legend.text = element_text(size=18), legend.key.size = unit(1, 'cm'), legend.key.height = unit(1, 'cm'), legend.key.width = unit(1, 'cm')) +
+  scale_color_brewer("", palette="Set1", labels = unname(TeX(c("$1.20 - log(l)", "Empirical relationships (m_{obs})")))) +
+  labs(y = "log(m)", x = "log(l)")  +
+  coord_cartesian(ylim = c(0, 6))
+
+p2 <- ggplot(obsM, aes(x=log(l), y= log(m) - pred2$pred)) +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position= "none", axis.title = element_text(size=16), axis.text = element_text(size=14)) +
+  labs(x = "log(l)", y = TeX("$log(m_{obs}) \\, - \\, \\left(1.20 - log(l)\\right)$"), title = "Empirical - Fitted")
+
+p3 <- ggplot(obsM, aes(l, m, color = type)) +
+  geom_line(size=0.8) + 
+  geom_line(data=pred2, aes(obsM$l, exp(pred), color = type), size=0.8, linetype=2) + 
+  theme_classic() + 
+  theme(legend.position=c(.5,.75), axis.title.y = element_text(angle = 0, vjust=0.5, size=16), axis.title.x = element_text(size=16), axis.text = element_text(size=16), legend.text = element_text(size=18), legend.key.size = unit(1, 'cm'), legend.key.height = unit(1, 'cm'), legend.key.width = unit(1, 'cm')) +
+  scale_color_brewer("", palette="Set1", labels = unname(TeX(c("$3.31 \\, \\frac{1}{l}", "Empirical relationships (m_{obs})")))) +
+  labs(y = "m", x = "l")  +
+  coord_cartesian(ylim = c(0, 100))
+
+p4 <- ggplot(obsM, aes(x=l, y= m - exp(pred2$pred))) +
+  geom_point() +
+  theme_bw() +
+  theme(legend.position= "none", axis.title = element_text(size=16), axis.text = element_text(size=14)) +
+  labs(x = "l", y = TeX(c("$m_{obs} \\, - \\left(3.31 \\, \\frac{1}{l}\\right)")), title = "Empirical - Fitted")
+
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+# On whether there is theoretical evidence on the coefficients of the fitted functions.
+
+As the approximate covariance function is a series expansion of eigenfunctions $\phi_j(x)$ scaled by the spectral density $S_{\ell}(\sqrt{\lambda_j})$:
+
+$$
+k(x,x') = \sum_{j=1}^m S_{\ell}(\sqrt{\lambda_j}) \phi_j(x) \phi_j(x')
+$$
+
+From Michael's work I extract that the rapid convergence of this series expansion mainly depends on how rapidly $S_{\ell}(\sqrt{\lambda_j})$ goes to zero as a function of $j$ \,($m$ is the number of basis functions), and depending on the lenght-scale $\ell$.
+
+- $\sqrt{λ_j} = \frac{j \pi}{2L}$ is monotonically increasing in $j$. The velocity of the increase depends on $L$ (or equivalently on the boundary factor $c$).
+
+- $S(\omega)= \alpha\,(\sqrt{2\pi})  \ell \exp(-\frac{1}{2}\ell^2 \omega^\intercal \omega)$, with $\omega=\sqrt{λ_j}$, goes to zero as $\omega$ increases.
+
+```{r spectral-densities, echo=FALSE, fig.cap="", out.width = '50%', fig.align='center'}
+knitr::include_graphics("img/spectral_densities.jpg")
+```
+
+- The $j$ component $\,S_{\ell}(\sqrt{\lambda_j}) \phi_j(x) \phi_j(x') = S_{\ell}(\sqrt{\lambda_j}) \sqrt{\frac{1}{L}} sin\left(\sqrt{\lambda_j}(x+L)\right) \sqrt{\frac{1}{L}} sin\left(\sqrt{\lambda_j}(x'+L)\right)$ becomes close to zero when $S_{\ell}(\sqrt{\lambda_j}) \frac{1}{L}$ is close to zero.
+
+I guess a theoretical derivation of the minimum $m$ that makes the last component $S_{\theta}(\sqrt{\lambda_j}) \phi_j(x) \phi_j(x')$, with $j=m$, of the series expansion $k(x,x')$ equal to zero mi be quite complex. An empirical approximation to determine that minimum $m$ as a function of $\ell$ and $c$ might be more practical. However, I guess that it would mostly be equivalent to what we have done in our paper by looking at the differences between the areas under the curves of the exact and approximate covariance functions as a function $m$, $\ell$ and $c$.
+
+
+# Next steps {#sec-next-steps}
+
+1. Build a user guide with the iterative steps to perform the diagnosis.
+
+2. Propose how much user has to increase $m$ in each iteration of the diagnosis.
+
