@@ -1,0 +1,1082 @@
+---
+title: '3D simulated case study: Diagnosis of the HSGP approximation'
+author: 'Gabriel Riutort-Mayol'
+date: "`r format(Sys.Date())`."
+output:
+  bookdown::html_document2:
+    theme: readable
+    toc: yes
+    toc_depth: 4
+    number_sections: true
+    toc_float: 
+      collapsed: true
+    code_download: yes
+    df_print: kable
+---
+
+<style type="text/css">
+body, td{ font-size: 14px; }
+code.r{ font-size: 12px; }
+pre{ font-size: 12px }
+h1.title {
+  font-size: 24px;
+  color: Black;
+}
+h1 { /* Header 1 */
+  font-size: 22px;
+  color: Black;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+  color: Black;
+}
+h3 { /* Header 3 */
+    font-size: 14px;
+  color: Black;
+}
+h4 { /* Header 4 */
+    font-size: 14px;
+  color: Black;
+}
+#TOC {
+  color: DarkBlue;
+  font-size: 16px;
+}
+</style>
+
+This notebook implements the HSGP model fit and diagnosis on the 3D dataset in case study 5.3 '*Simulated data for 2D and 3D functions*' in [Riutort-Mayol, G., Bürkner, P. C., Andersen, M. R., Solin, A., & Vehtari, A. (2020; updated in 2022). Practical Hilbert space approximate Bayesian Gaussian processes for probabilistic programming. arXiv preprint arXiv:2004.11408.](https://arxiv.org/pdf/2004.11408.pdf)
+
+```{r include=FALSE, eval=TRUE}
+knitr::opts_chunk$set(echo = TRUE, comment="")
+```
+
+# Load packages
+
+```{r message=FALSE, warn=FALSE, eval=TRUE}
+library(rstan)
+library(cmdstanr)
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = FALSE)
+library(posterior)
+library(bayesplot)
+library(RColorBrewer)
+library(ggplot2)
+```
+
+# Synthetic dataset
+
+A synthetic dataset $\boldsymbol{y}$ with a true data generating function $f(\boldsymbol{x})$, with $\boldsymbol{x}_i \in {\rm I\!R}^3$, where $f(\boldsymbol{x})$ is a Gaussian process (GP) with a squared exponential kernel. Gaussian errors $\boldsymbol{\epsilon}$ are added to $f(\boldsymbol{x})$ to form the final synthetic noisy dataset $\boldsymbol{y}$.
+
+\begin{align*}
+\begin{split}
+\boldsymbol{y} &= \boldsymbol{f} + \boldsymbol{\epsilon} \\
+\boldsymbol{\epsilon} &\sim \text{Normal}(\boldsymbol{0}, \sigma^2 \boldsymbol{I}) \\
+f(\boldsymbol{x}) &\sim \text{GP}(0, k(\boldsymbol{x}, \boldsymbol{x}', \theta)),
+\end{split}
+\end{align*}
+
+where $k(\boldsymbol{x}, \boldsymbol{x}', \theta)$ is a squared exponential kernel as a function of input values $\boldsymbol{x}$ and parameters $\theta=(\alpha,\boldsymbol{\ell})$, where $\alpha$ is the marginal variance of the GP function and $\boldsymbol{\ell}=(\ell_1,\ell_2,\ell_3)$ the lengthscale of the kernel for dimensions 1, 2 and 3, respectively.
+
+## Draw the true data generative function $f(x)$ from a GP 
+
+### Input predictive space
+
+Matrix of 3D-predictive input points `x_pred`
+
+```{r eval=TRUE}
+x_pred <- expand.grid(x1= seq(-1,1,by=0.2), x2= seq(-1,1,by=0.2), x3= seq(-1,1,by=0.2))  
+str(x_pred)
+```
+
+Length of `x_pred` (`N_pred`)
+
+```{r eval=TRUE}
+N_pred <- dim(x_pred)[1]
+N_pred
+```
+
+Number of dimensions `D`
+
+```{r eval=TRUE}
+D <- 3
+D
+```
+
+Half range `S` of every input dimension
+
+```{r eval=TRUE, message=FALSE, warn=FALSE}
+S1 <- abs((max(x_pred$x1) - min(x_pred$x1))/2)
+S1
+S2 <- abs((max(x_pred$x2) - min(x_pred$x2))/2)
+S2
+S3 <- abs((max(x_pred$x3) - min(x_pred$x3))/2)
+S3
+```
+
+### Draw $f(x)$ using Stan
+
+Marginal variance `gpscale` ($\alpha$) and multivariate lengthscale `lscale` ($\boldsymbol{\ell}$)
+
+```{r eval=TRUE}
+gpscale <- 1
+lscale <- vector()
+lscale[1] <- 0.1
+lscale[2] <- 0.3
+lscale[3] <- 0.4
+```
+
+Random variable `eta` to simulate from the GP
+
+```{r eval=TRUE}
+seed <- 88646
+set.seed(seed)
+eta <- rnorm(N_pred, 0, 1)
+```
+
+Data to be passed to Stan
+
+```{r eval=TRUE}
+standata <- list(D= D, 
+                 N_pred= N_pred, 
+                 x_pred= x_pred,
+                 gpscale= gpscale, 
+                 lscale= lscale, 
+                 eta= eta)
+```
+
+Model sampling
+
+```{r eval=TRUE, results=FALSE, message=FALSE, warn=FALSE}
+simuGP_mod <- cmdstanr::cmdstan_model(stan_file = "stancode_SIMU_3D.stan")
+fit_SIMU <- simuGP_mod$sample(data= standata,
+                                iter_warmup=1,
+                                iter_sampling=1,
+                                chains=1, thin=1, init=0.5,
+                                fixed_param=TRUE)
+fit_SIMU <- read_stan_csv(fit_SIMU$output_files())
+```
+
+## Adding noise to $f(x)$
+
+```{r eval=TRUE}
+f_true <- extract(fit_SIMU, pars="f_true", permuted = TRUE, inc_warmup = FALSE, include = TRUE)$f_true[1,]
+set.seed(1234)
+y_pred <- f_true + rnorm(N_pred, 0, 0.2)
+```
+
+## Noisy data set
+
+```{r eval=TRUE}
+nobs <- 300 
+set.seed(4567)
+vv_sample <- sample(1:N_pred, nobs)
+N_sample <- length(vv_sample)
+```
+
+# GP model fitting
+
+## Data
+
+Data to Stan
+
+```{r eval=TRUE}
+standata_GP <- list(D= D, 
+                    N_sample= N_sample,
+                    vv_sample= vv_sample,
+                    N_pred= N_pred, 
+                    x_pred= x_pred, 
+                    y_pred= y_pred) 
+str(standata_GP)
+```
+
+## Model fitting
+
+Model fitting
+
+```{r eval=TRUE, results=FALSE, message=FALSE, warn=FALSE}
+GP_mod <- cmdstanr::cmdstan_model(stan_file = "stancode_GP_marginalized_3D.stan")
+fit_GP <- GP_mod$sample(data= standata_GP,
+                          iter_warmup=50,
+                          iter_sampling=50,
+                          chains=4, thin=1, init=2,
+                          save_warmup=TRUE)
+fit_GP <- read_stan_csv(fit_GP$output_files())
+```
+
+Summaries and simulation chains for the variables after warmup
+
+```{r fig.height=5, fig.width=10, eval=TRUE}
+param = c("lscale","gpscale","sigma")
+print(summary(fit_GP, pars = param, probs = c(0.025, 0.5, 0.975))$summary)
+traceplot(fit_GP, pars = param, include = TRUE, unconstrain = FALSE, inc_warmup = FALSE, window = NULL, nrow = NULL, ncol = NULL)
+```
+
+## Posterior predictive distribution
+
+```{r eval=TRUE}
+f_gp <- summary(fit_GP, pars = c("f_pred"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary[,c(1,4,6)]
+```
+
+# Functional relationships among $m$, $\ell$ and $c$ parameters in the HSGP approach
+
+Relationship among the number of basis functions $m$, the lengthscale $\ell$ and the boundary factor $c$ for a **squared exponential kernel** in the HSGP approach:
+
+$$\begin{align*}
+m= 1.75 \frac{c}{\frac{\ell}{S}} \;\; \Leftrightarrow \;\; \frac{\ell}{S}= 1.75 \, \frac{c}{m}  (\#eq:m-l-QE)
+\end{align*}$$
+
+```{r eval=TRUE}
+m_QE <- function(c,l,S) ceiling(1.75 * c / (l/S))  
+l_QE <- function(c,m,S) round(S * 1.75 * c / m, 3)   
+```
+
+with 
+
+$$\begin{align*}
+c \, \geq \, 3.2 \, \frac{\ell}{S}\;\; \& \;\;c \, \geq \frac{1}{2}  (\#eq:c-QE)
+\end{align*}$$
+
+as a function of $\ell$ and $S$, where $S$ is the half range of the input domain
+
+```{r eval=TRUE}
+c_vs_l_QE <- function(l,S){
+    c =  3.2*l/S
+    if(c < 1.2)
+      c = 1.2
+  c
+}
+```
+
+# Lengthscale diagnostic
+
+The HSGP lengthscale diagnostic is defined as:
+
+$$\begin{align*}
+\hat{\ell} + 0.01 \geq \ell  (\#eq:diagnostic)
+\end{align*}$$
+
+```{r eval=TRUE}
+diagnostic <- function(l,l_hat) l_hat + 0.01 >= l
+```
+
+# HSGP fit and diagnosis
+
+Initializing programming objects.
+
+```{r eval=TRUE}
+standata <- list()
+fit<- list()
+diagnosis <- list()
+
+l1 <- vector()  # lengthscale for dimension 1
+l2 <- vector()  # lengthscale for dimension 2
+l3 <- vector()  # lengthscale for dimension 3
+c1 <- vector()  # boundary factor for dimension 1
+c2 <- vector()  # boundary factor for dimension 2
+c3 <- vector()  # boundary factor for dimension 3
+m1 <- vector()  # number of basis functions for dimension 1
+m2 <- vector()  # number of basis functions for dimension 2
+m3 <- vector()  # number of basis functions for dimension 3
+l_hat1 <- vector()  # HSGP lengthscale estimate for dimension 1
+l_hat2 <- vector()  # HSGP lengthscale estimate for dimension 2
+l_hat3 <- vector()  # HSGP lengthscale estimate for dimension 3
+check1 <- vector()  # Diagnostic for dimension 1
+check2 <- vector()  # Diagnostic for dimension 2
+check3 <- vector()  # Diagnostic for dimension 3
+rmse_gp <- vector()  # root mean square error of GP model
+rmse <- vector()  # root mean square error of HSGP model
+eR <- vector()  # coefficient of determination of HSGP model
+elpd <- vector()  # expected log predictive density of HSGP model
+```
+
+## Iteration 1
+
+```{r eval=TRUE}
+i <- 1
+print(paste("Iteration i =", i), quote = FALSE)
+```
+
+### Setting $m$, $\ell$ and $c$
+
+If iteration $i=1$:
+
+1. Making a first guess for lengthscale $\ell_i$
+
+2. The boundary factor $c_i$ has to fulfill equation \@ref(eq:c-QE)
+
+3. The number of basis functions $m_i$ has to fulfill equation \@ref(eq:m-l-QE)
+
+```{r eval=TRUE}
+if(i==1){
+  l1[i] <- 0.5
+  c1[i] <- c_vs_l_QE(l=l1[i], S1)
+  m1[i] <- m_QE(c=c1[i], l=l1[i], S=S1)
+  
+  l2[i] <- 0.5
+  c2[i] <- c_vs_l_QE(l=l2[i], S2)
+  m2[i] <- m_QE(c=c2[i], l=l2[i], S=S2)
+  
+  l3[i] <- 1
+  c3[i] <- c_vs_l_QE(l=l3[i], S3)
+  m3[i] <- m_QE(c=c3[i], l=l3[i], S=S3)
+}
+```
+
+### Matrix of $D$-tuples
+
+Matrix of $D$-tuples as in equation (10) in the [paper](https://arxiv.org/pdf/2004.11408.pdf)
+
+```{r eval=TRUE}
+indices <- matrix(NA, m1[i]*m2[i]*m3[i], D)
+mm=0;
+for (r in 1:m1[i]){
+	for (s in 1:m2[i]){
+		for (t in 1:m3[i]){
+			mm = mm+1
+			indices[mm,] = c(r, s, t)
+		}
+	}
+}
+```
+
+### Data to be passed to Stan
+
+```{r eval=TRUE, message=FALSE, warn=FALSE}
+standata[[i]] <- list(D= D, 
+                      M= c(m1[i],m2[i],m3[i]), 
+                      M_nD= m1[i]*m2[i]*m3[i], 
+                      indices= indices,
+                      L= c(c1[i], c2[i], c3[i]) * c(S1, S2, S3), 
+                      x_pred= x_pred, 
+                      y_pred= y_pred, 
+                      N_sample= N_sample, 
+                      N_pred= N_pred, 
+                      vv_sample= vv_sample
+)
+str(standata[[i]])
+```
+
+### Model fitting
+
+Model fitting
+
+```{r eval=TRUE, results=FALSE, message=FALSE, warn=FALSE}
+hsgp_mod <- cmdstanr::cmdstan_model(stan_file = "stancode_HSGP_3D.stan")
+fit[[i]] <- hsgp_mod$sample(data= standata[[i]],
+                                iter_warmup=100,
+                                iter_sampling=150,
+                                chains=4, thin=3, init=0.5,
+                                # adapt_delta=0.99,
+                                save_warmup=TRUE)
+fit[[i]] <- rstan::read_stan_csv(fit[[i]]$output_files())
+```
+
+Summaries and simulation chains of variable estimates
+
+```{r fig.height=5, fig.width=10, eval=TRUE}
+param = c("lscale","gpscale","noise")
+summary(fit[[i]], pars = param, probs = c(0.025, 0.5, 0.975))$summary
+traceplot(fit[[i]], pars = param, include = TRUE, unconstrain = FALSE, inc_warmup = FALSE, window = NULL, nrow = NULL, ncol = NULL)
+```
+
+### Model evaluation
+
+Root mean square error `rmse`, Bayesian $R^2$ (Coefficient of determination) `eR`, and expected log predictive density `elpd`.
+
+```{r eval=TRUE}
+f_hsgp <- summary(fit[[i]], pars = c("f"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary[,c(1,4,6)]
+
+# rmse against data
+residual <- standata[[i]]$y_pred[vv_sample] - f_hsgp[,1]
+rmse[i] <- round(sqrt(mean(residual^2)), 2)
+
+# rmse against gp
+residual_gp <- f_gp[vv_sample,1] - f_hsgp[,1]
+rmse_gp[i] <- round(sqrt(mean(residual_gp^2)), 2)
+
+# Coefficient of determination R^2
+noise <- as.matrix(fit[[i]], pars = c("noise"))
+sd_f <- apply(as.matrix(fit[[i]], pars = c("f")), 1, sd)
+eR[i] <- round(median(sd_f^2/(sd_f^2 + noise^2)), 2)
+
+# elpd
+elpd[i] <- round(median(summary(fit[[i]], pars = c("elpd"))$summary[,1]), 2)
+```
+
+### Diagnosis
+
+Lengthscale estimate $\hat{\ell}_i$ in the HSGP approximation
+
+```{r eval=TRUE}
+l_hat1[i] <- round(summary(fit[[i]], pars = "lscale[1]", probs = c(0.05, 0.95))$summary[,1], 2)
+l_hat2[i] <- round(summary(fit[[i]], pars = "lscale[2]", probs = c(0.05, 0.95))$summary[,1], 2)
+l_hat3[i] <- round(summary(fit[[i]], pars = "lscale[3]", probs = c(0.05, 0.95))$summary[,1], 2)
+```
+
+Check the diagnostic of whether $\, \hat{\ell}_i + 0.01 \geq \ell_i$ \@ref(eq:diagnostic)
+
+```{r eval=TRUE}
+check1[i] <- diagnostic(l1[i], l_hat1[i])
+check2[i] <- diagnostic(l2[i], l_hat2[i])
+check3[i] <- diagnostic(l3[i], l_hat3[i])
+```
+
+Summary diagnosis table
+
+  - `rmse_gp` refers to the root mean square error of the HSGP function with the GP function as the reference.
+
+  - `rmse` refers to the root mean square error of the HSGP function with the true function as the reference.
+
+```{r eval=TRUE}
+diagnosis[[i]] <- data.frame(iter= c(i, i, i),
+                              Dim= c("D1", "D2", "D3"),
+                              l= c(l1[i], l2[i], l3[i]),
+                              c= c(c1[i], c2[i], c3[i]),
+                              m= c(m1[i], m2[i], m3[i]),
+                              l_hat= c(l_hat1[i], l_hat2[i], l_hat3[i]),
+                              'l_hat > l' = c(check1[i], check2[i], check3[i]),
+                              rsme_gp = c(NA, rmse_gp[i], NA),
+                              rsme = c(NA, rmse[i], NA),
+                              R2 = c(NA, eR[i], NA),
+                              elpd = c(NA, elpd[i], NA))
+names(diagnosis[[i]]) <- c("iter", "Dim", "l", "c", "m", "l_hat", "l_hat + 0.01 > l", "rmse_gp", "rmse", "R^2", "elpd")
+
+if(i==1){ 
+  diagnosis[[i]]
+}else{
+  diagnosis[[i]] <- rbind(diagnosis[[i-1]],diagnosis[[i]])
+  diagnosis[[i]]
+}
+```
+
+## Iteration 2
+
+```{r eval=TRUE}
+i <- 2
+print(paste("Iteration i =", i), quote = FALSE)
+```
+
+### Setting $m$, $\ell$ and $c$
+
+If the diagnostic $\hat{\ell}_{i-1} + 0.01 \geq \ell_{i-1}$ \@ref(eq:diagnostic) is TRUE and iteration $i=2$:
+
+1. Update $m_i = m_{i-1} + 2$
+    
+2. The boundary factor $c_i$ has to fulfill \@ref(eq:c-QE) where $c(\cdot)$ is evaluated as a function of $\hat{\ell}_{i-1}$
+    
+3. The lengthscale $\ell_i$ has to fulfill \@ref(eq:m-l-QE)
+    
+```{r eval=TRUE}
+if(diagnostic(l1[i-1], l_hat1[i-1]) & i==2){
+  m1[i] <- m1[i-1] + 2
+  c1[i] <- c_vs_l_QE(l=l_hat1[i-1], S=S1)
+  l1[i] <- l_QE(c=c1[i], m=m1[i], S=S1)
+}
+
+if(diagnostic(l2[i-1], l_hat2[i-1]) & i==2){
+  m2[i] <- m2[i-1] + 2
+  c2[i] <- c_vs_l_QE(l=l_hat2[i-1], S=S2)
+  l2[i] <- l_QE(c=c2[i], m=m2[i], S=S2)
+}
+
+if(diagnostic(l3[i-1], l_hat3[i-1]) & i==2){  
+  m3[i] <- m3[i-1] + 2
+  c3[i] <- c_vs_l_QE(l=l_hat3[i-1], S=S3)
+  l3[i] <- l_QE(c=c3[i], m=m3[i], S=S3)
+}
+```
+
+If the diagnostic $\hat{\ell}_{i-1} + 0.01 \geq \ell_{i-1}$ \@ref(eq:diagnostic) is FALSE: 
+
+1. Update $\ell_i = \hat{\ell}_{i-1}$
+    
+2. The boundary factor $c_i$ has to fulfill \@ref(eq:c-QE)
+    
+3. The number of basis functions $m_i$ as a function of $\ell_i$ and $c_i$ by using \@ref(eq:m-l-QE)
+
+```{r eval=TRUE}
+if(!diagnostic(l1[i-1], l_hat1[i-1])){
+  l1[i] <- l_hat1[i-1]
+  c1[i] <- c_vs_l_QE(l=l1[i], S=S1)
+  m1[i] <- m_QE(c=c1[i], l=l1[i], S=S1)
+}
+
+if(!diagnostic(l2[i-1], l_hat2[i-1])){  
+  l2[i] <- l_hat2[i-1]
+  c2[i] <- c_vs_l_QE(l=l2[i], S=S2)
+  m2[i] <- m_QE(c=c2[i], l=l2[i], S=S2)
+}
+
+if(!diagnostic(l3[i-1], l_hat3[i-1])){  
+  l3[i] <- l_hat3[i-1]
+  c3[i] <- c_vs_l_QE(l=l3[i], S=S3)
+  m3[i] <- m_QE(c=c3[i], l=l3[i], S=S3)
+}
+```
+    
+### Matrix of $D$-tuples
+
+Matrix of $D$-tuples as in equation (10) in the [paper](https://arxiv.org/pdf/2004.11408.pdf)
+
+```{r eval=TRUE}
+indices <- matrix(NA, m1[i]*m2[i]*m3[i], D)
+mm=0;
+for (r in 1:m1[i]){
+	for (s in 1:m2[i]){
+		for (t in 1:m3[i]){
+			mm = mm+1
+			indices[mm,] = c(r, s, t)
+		}
+	}
+}
+```
+
+### Data to be passed to Stan
+
+```{r eval=TRUE}
+standata[[i]] <- list(D= D, 
+                      M= c(m1[i],m2[i],m3[i]), 
+                      M_nD= m1[i]*m2[i]*m3[i], 
+                      indices= indices,
+                      L= c(c1[i], c2[i], c3[i]) * c(S1, S2, S3), 
+                      x_pred= x_pred, 
+                      y_pred= y_pred, 
+                      N_sample= N_sample, 
+                      N_pred= N_pred, 
+                      vv_sample= vv_sample
+)
+str(standata[[i]])
+```
+
+### Model fitting
+
+Model fitting
+
+```{r eval=TRUE, results=FALSE, message=FALSE, warn=FALSE}
+hsgp_mod <- cmdstanr::cmdstan_model(stan_file = "stancode_HSGP_3D.stan")
+fit[[i]] <- hsgp_mod$sample(data= standata[[i]],
+                                iter_warmup=100,
+                                iter_sampling=150,
+                                chains=4, thin=3, init=0.5,
+                                adapt_delta=0.99,
+                                save_warmup=TRUE)
+fit[[i]] <- rstan::read_stan_csv(fit[[i]]$output_files())
+```
+
+Summaries and simulation chains of variable estimates
+
+```{r fig.height=5, fig.width=10, eval=TRUE}
+param = c("lscale","gpscale","noise")
+summary(fit[[i]], pars = param, probs = c(0.025, 0.5, 0.975))$summary
+traceplot(fit[[i]], pars = param, include = TRUE, unconstrain = FALSE, inc_warmup = FALSE, window = NULL, nrow = NULL, ncol = NULL)
+```
+
+### Model evaluation
+
+Root mean square error `rmse`, Bayesian $R^2$ (Coefficient of determination) `eR`, and expected log predictive density `elpd`.
+
+```{r eval=TRUE}
+f_hsgp <- summary(fit[[i]], pars = c("f"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary[,c(1,4,6)]
+
+# rmse against data
+residual <- standata[[i]]$y_pred[vv_sample] - f_hsgp[,1]
+rmse[i] <- round(sqrt(mean(residual^2)), 2)
+
+# rmse against gp
+residual_gp <- f_gp[vv_sample,1] - f_hsgp[,1]
+rmse_gp[i] <- round(sqrt(mean(residual_gp^2)), 2)
+
+# Coefficient of determination R^2
+noise <- as.matrix(fit[[i]], pars = c("noise"))
+sd_f <- apply(as.matrix(fit[[i]], pars = c("f")), 1, sd)
+eR[i] <- round(median(sd_f^2/(sd_f^2 + noise^2)), 2)
+
+# elpd
+elpd[i] <- round(median(summary(fit[[i]], pars = c("elpd"))$summary[,1]), 2)
+```
+
+### Diagnosis
+
+Lengthscale estimate $\hat{\ell}_i$ in the HSGP approximation
+
+```{r eval=TRUE}
+l_hat1[i] <- round(summary(fit[[i]], pars = "lscale[1]", probs = c(0.05, 0.95))$summary[,1], 2)
+l_hat2[i] <- round(summary(fit[[i]], pars = "lscale[2]", probs = c(0.05, 0.95))$summary[,1], 2)
+l_hat3[i] <- round(summary(fit[[i]], pars = "lscale[3]", probs = c(0.05, 0.95))$summary[,1], 2)
+```
+
+Check the diagnostic of whether $\, \hat{\ell}_i + 0.01 \geq \ell_i$ \@ref(eq:diagnostic)
+
+```{r eval=TRUE}
+check1[i] <- diagnostic(l1[i], l_hat1[i])
+check2[i] <- diagnostic(l2[i], l_hat2[i])
+check3[i] <- diagnostic(l3[i], l_hat3[i])
+```
+
+Summary diagnosis table
+
+  - `rmse_gp` refers to the root mean square error of the HSGP function with the GP function as the reference.
+
+  - `rmse` refers to the root mean square error of the HSGP function with the true function as the reference.
+
+```{r eval=TRUE}
+diagnosis[[i]] <- data.frame(iter= c(i, i, i),
+                              Dim= c("D1", "D2", "D3"),
+                              l= c(l1[i], l2[i], l3[i]),
+                              c= c(c1[i], c2[i], c3[i]),
+                              m= c(m1[i], m2[i], m3[i]),
+                              l_hat= c(l_hat1[i], l_hat2[i], l_hat3[i]),
+                              'l_hat > l' = c(check1[i], check2[i], check3[i]),
+                              rsme_gp = c(NA, rmse_gp[i], NA),
+                              rsme = c(NA, rmse[i], NA),
+                              R2 = c(NA, eR[i], NA),
+                              elpd = c(NA, elpd[i], NA))
+names(diagnosis[[i]]) <- c("iter", "Dim", "l", "c", "m", "l_hat", "l_hat + 0.01 > l", "rmse_gp", "rmse", "R^2", "elpd")
+
+if(i==1){ 
+  diagnosis[[i]]
+}else{
+  diagnosis[[i]] <- rbind(diagnosis[[i-1]],diagnosis[[i]])
+  diagnosis[[i]]
+}
+```
+
+## Iteration 3
+
+```{r eval=TRUE}
+i <- 3
+print(paste("Iteration i =", i), quote = FALSE)
+```
+
+### Setting $m$, $\ell$ and $c$
+
+If the diagnostic $\hat{\ell}_{i-1} + 0.01 \geq \ell_{i-1}$ \@ref(eq:diagnostic) is TRUE and iteration $i>2$ and diagnostic $\hat{\ell}_{i-2} + 0.01 \geq \ell_{i-2}$ \@ref(eq:diagnostic) is FALSE:
+
+1. Update $m_i = m_{i-1} + 2$
+    
+2. The boundary factor $c_i$ has to fulfill \@ref(eq:c-QE) where $c(\cdot)$ is evaluated as a function of $\hat{\ell}_{i-1}$
+    
+3. The lengthscale $\ell_i$ has to fulfill \@ref(eq:m-l-QE)
+    
+```{r eval=TRUE}
+if(diagnostic(l1[i-1], l_hat1[i-1]) & i>2 & !diagnostic(l1[i-2], l_hat1[i-2])){
+  m1[i] <- m1[i-1] + 2
+  c1[i] <- c_vs_l_QE(l=l_hat1[i-1], S=S1)
+  l1[i] <- l_QE(c=c1[i], m=m1[i], S=S1)
+}
+
+if(diagnostic(l2[i-1], l_hat2[i-1]) & i>2 & !diagnostic(l2[i-2], l_hat2[i-2])){  
+  m2[i] <- m2[i-1] + 2
+  c2[i] <- c_vs_l_QE(l=l_hat2[i-1], S=S2)
+  l2[i] <- l_QE(c=c2[i], m=m2[i], S=S2)
+}
+
+if(diagnostic(l3[i-1], l_hat3[i-1]) & i>2 & !diagnostic(l3[i-2], l_hat3[i-2])){  
+  m3[i] <- m3[i-1] + 2
+  c3[i] <- c_vs_l_QE(l=l_hat3[i-1], S=S3)
+  l3[i] <- l_QE(c=c3[i], m=m3[i], S=S3)
+}
+```
+
+If the diagnostic $\hat{\ell}_{i-1} + 0.01 \geq \ell_{i-1}$ \@ref(eq:diagnostic) is TRUE and iteration $i>2$ and diagnostic $\hat{\ell}_{i-2} + 0.01 \geq \ell_{i-2}$ \@ref(eq:diagnostic) is TRUE:
+
+1. Update $m_i = m_{i-1}$
+    
+2. Update $c_i = c_{i-1}$
+    
+3. Update $\ell_i = \ell_{i-1}$
+    
+```{r eval=TRUE}
+if(diagnostic(l1[i-1], l_hat1[i-1]) & i>2 & diagnostic(l1[i-2], l_hat1[i-2])){
+  m1[i] <- m1[i-1]
+  c1[i] <- c1[i-1]
+  l1[i] <- l1[i-1]
+}
+
+if(diagnostic(l2[i-1], l_hat2[i-1]) & i>2 & diagnostic(l2[i-2], l_hat2[i-2])){  
+  m2[i] <- m2[i-1]
+  c2[i] <- c2[i-1]
+  l2[i] <- l2[i-1]
+}
+
+if(diagnostic(l3[i-1], l_hat3[i-1]) & i>2 & diagnostic(l3[i-2], l_hat3[i-2])){  
+  m3[i] <- m3[i-1]
+  c3[i] <- c3[i-1]
+  l3[i] <- l3[i-1]
+}
+```
+
+If the diagnostic $\hat{\ell}_{i-1} + 0.01 \geq \ell_{i-1}$ \@ref(eq:diagnostic) is FALSE: 
+
+1. Update $\ell_i = \hat{\ell}_{i-1}$
+    
+2. The boundary factor $c_i$ has to fulfill \@ref(eq:c-QE)
+    
+3. The number of basis functions $m_i$ as a function of $\ell_i$ and $c_i$ by using \@ref(eq:m-l-QE)
+
+```{r eval=TRUE}
+if(!diagnostic(l1[i-1], l_hat1[i-1])){
+  l1[i] <- l_hat1[i-1]
+  c1[i] <- c_vs_l_QE(l=l1[i], S=S1)
+  m1[i] <- m_QE(c=c1[i], l=l1[i], S=S1)
+}
+
+if(!diagnostic(l2[i-1], l_hat2[i-1])){
+  l2[i] <- l_hat2[i-1]
+  c2[i] <- c_vs_l_QE(l=l2[i], S=S2)
+  m2[i] <- m_QE(c=c2[i], l=l2[i], S=S2)
+}
+
+if(!diagnostic(l3[i-1], l_hat3[i-1])){
+  l3[i] <- l_hat3[i-1]
+  c3[i] <- c_vs_l_QE(l=l3[i], S=S3)
+  m3[i] <- m_QE(c=c3[i], l=l3[i], S=S3)
+}
+```
+    
+### Matrix of $D$-tuples
+
+Matrix of $D$-tuples as in equation (10) in the [paper](https://arxiv.org/pdf/2004.11408.pdf)
+
+```{r eval=TRUE}
+indices <- matrix(NA, m1[i]*m2[i]*m3[i], D)
+mm=0;
+for (r in 1:m1[i]){
+	for (s in 1:m2[i]){
+		for (t in 1:m3[i]){
+			mm = mm+1
+			indices[mm,] = c(r, s, t)
+		}
+	}
+}
+```
+
+### Data to be passed to Stan
+
+```{r eval=TRUE}
+standata[[i]] <- list(D= D, 
+                      M= c(m1[i],m2[i],m3[i]), 
+                      M_nD= m1[i]*m2[i]*m3[i], 
+                      indices= indices,
+                      L= c(c1[i], c2[i], c3[i]) * c(S1, S2, S3), 
+                      x_pred= x_pred, 
+                      y_pred= y_pred, 
+                      N_sample= N_sample, 
+                      N_pred= N_pred, 
+                      vv_sample= vv_sample
+)
+str(standata[[i]])
+```
+
+### Model fitting
+
+Model fitting
+
+```{r eval=TRUE, results=FALSE, message=FALSE, warn=FALSE}
+hsgp_mod <- cmdstanr::cmdstan_model(stan_file = "stancode_HSGP_3D.stan")
+fit[[i]] <- hsgp_mod$sample(data= standata[[i]],
+                                iter_warmup=100,
+                                iter_sampling=150,
+                                chains=4, thin=3, init=0.5,
+                                adapt_delta=0.99,
+                                save_warmup=TRUE)
+fit[[i]] <- rstan::read_stan_csv(fit[[i]]$output_files())
+```
+
+Summaries and simulation chains of variable estimates
+
+```{r fig.height=5, fig.width=10, eval=TRUE}
+param = c("lscale","gpscale","noise")
+summary(fit[[i]], pars = param, probs = c(0.025, 0.5, 0.975))$summary
+traceplot(fit[[i]], pars = param, include = TRUE, unconstrain = FALSE, inc_warmup = FALSE, window = NULL, nrow = NULL, ncol = NULL)
+```
+
+### Model evaluation
+
+Root mean square error `rmse`, Bayesian $R^2$ (Coefficient of determination) `eR`, and expected log predictive density `elpd`.
+
+```{r eval=TRUE}
+f_hsgp <- summary(fit[[i]], pars = c("f"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary[,c(1,4,6)]
+
+# rmse against data
+residual <- standata[[i]]$y_pred[vv_sample] - f_hsgp[,1]
+rmse[i] <- round(sqrt(mean(residual^2)), 2)
+
+# rmse against gp
+residual_gp <- f_gp[vv_sample,1] - f_hsgp[,1]
+rmse_gp[i] <- round(sqrt(mean(residual_gp^2)), 2)
+
+# Coefficient of determination R^2
+noise <- as.matrix(fit[[i]], pars = c("noise"))
+sd_f <- apply(as.matrix(fit[[i]], pars = c("f")), 1, sd)
+eR[i] <- round(median(sd_f^2/(sd_f^2 + noise^2)), 2)
+
+# elpd
+elpd[i] <- round(median(summary(fit[[i]], pars = c("elpd"))$summary[,1]), 2)
+```
+
+### Diagnosis
+
+Lengthscale estimate $\hat{\ell}_i$ in the HSGP approximation
+
+```{r eval=TRUE}
+l_hat1[i] <- round(summary(fit[[i]], pars = "lscale[1]", probs = c(0.05, 0.95))$summary[,1], 2)
+l_hat2[i] <- round(summary(fit[[i]], pars = "lscale[2]", probs = c(0.05, 0.95))$summary[,1], 2)
+l_hat3[i] <- round(summary(fit[[i]], pars = "lscale[3]", probs = c(0.05, 0.95))$summary[,1], 2)
+```
+
+Check the diagnostic of whether $\, \hat{\ell}_i + 0.01 \geq \ell_i$ \@ref(eq:diagnostic)
+
+```{r eval=TRUE}
+check1[i] <- diagnostic(l1[i], l_hat1[i])
+check2[i] <- diagnostic(l2[i], l_hat2[i])
+check3[i] <- diagnostic(l3[i], l_hat3[i])
+```
+
+Summary diagnosis table
+
+  - `rmse_gp` refers to the root mean square error of the HSGP function with the GP function as the reference.
+
+  - `rmse` refers to the root mean square error of the HSGP function with the true function as the reference.
+
+```{r eval=TRUE}
+diagnosis[[i]] <- data.frame(iter= c(i, i, i),
+                              Dim= c("D1", "D2", "D3"),
+                              l= c(l1[i], l2[i], l3[i]),
+                              c= c(c1[i], c2[i], c3[i]),
+                              m= c(m1[i], m2[i], m3[i]),
+                              l_hat= c(l_hat1[i], l_hat2[i], l_hat3[i]),
+                              'l_hat > l' = c(check1[i], check2[i], check3[i]),
+                              rsme_gp = c(NA, rmse_gp[i], NA),
+                              rsme = c(NA, rmse[i], NA),
+                              R2 = c(NA, eR[i], NA),
+                              elpd = c(NA, elpd[i], NA))
+names(diagnosis[[i]]) <- c("iter", "Dim", "l", "c", "m", "l_hat", "l_hat + 0.01 > l", "rmse_gp", "rmse", "R^2", "elpd")
+
+if(i==1){ 
+  diagnosis[[i]]
+}else{
+  diagnosis[[i]] <- rbind(diagnosis[[i-1]],diagnosis[[i]])
+  diagnosis[[i]]
+}
+```
+
+## Iteration 4
+
+```{r eval=TRUE}
+i <- 4
+print(paste("Iteration i =", i), quote = FALSE)
+```
+
+### Setting $m$, $\ell$ and $c$
+
+If the diagnostic $\hat{\ell}_{i-1} + 0.01 \geq \ell_{i-1}$ \@ref(eq:diagnostic) is TRUE and iteration $i>2$ and diagnostic $\hat{\ell}_{i-2} + 0.01 \geq \ell_{i-2}$ \@ref(eq:diagnostic) is FALSE:
+
+1. Update $m_i = m_{i-1} + 2$
+    
+2. The boundary factor $c_i$ has to fulfill \@ref(eq:c-QE) where $c(\cdot)$ is evaluated as a function of $\hat{\ell}_{i-1}$
+    
+3. The lengthscale $\ell_i$ has to fulfill \@ref(eq:m-l-QE)
+    
+```{r eval=TRUE}
+if(diagnostic(l1[i-1], l_hat1[i-1]) & i>2 & !diagnostic(l1[i-2], l_hat1[i-2])){
+  m1[i] <- m1[i-1] + 2
+  c1[i] <- c_vs_l_QE(l=l_hat1[i-1], S=S1)
+  l1[i] <- l_QE(c=c1[i], m=m1[i], S=S1)
+}
+
+if(diagnostic(l2[i-1], l_hat2[i-1]) & i>2 & !diagnostic(l2[i-2], l_hat2[i-2])){  
+  m2[i] <- m2[i-1] + 2
+  c2[i] <- c_vs_l_QE(l=l_hat2[i-1], S=S2)
+  l2[i] <- l_QE(c=c2[i], m=m2[i], S=S2)
+}
+
+if(diagnostic(l3[i-1], l_hat3[i-1]) & i>2 & !diagnostic(l3[i-2], l_hat3[i-2])){  
+  m3[i] <- m3[i-1] + 2
+  c3[i] <- c_vs_l_QE(l=l_hat3[i-1], S=S3)
+  l3[i] <- l_QE(c=c3[i], m=m3[i], S=S3)
+}
+```
+
+If the diagnostic $\hat{\ell}_{i-1} + 0.01 \geq \ell_{i-1}$ \@ref(eq:diagnostic) is TRUE and iteration $i>2$ and diagnostic $\hat{\ell}_{i-2} + 0.01 \geq \ell_{i-2}$ \@ref(eq:diagnostic) is TRUE:
+
+1. Update $m_i = m_{i-1}$
+    
+2. Update $c_i = c_{i-1}$
+    
+3. Update $\ell_i = \ell_{i-1}$
+    
+```{r eval=TRUE}
+if(diagnostic(l1[i-1], l_hat1[i-1]) & i>2 & diagnostic(l1[i-2], l_hat1[i-2])){
+  m1[i] <- m1[i-1]
+  c1[i] <- c1[i-1]
+  l1[i] <- l1[i-1]
+}
+
+if(diagnostic(l2[i-1], l_hat2[i-1]) & i>2 & diagnostic(l2[i-2], l_hat2[i-2])){  
+  m2[i] <- m2[i-1]
+  c2[i] <- c2[i-1]
+  l2[i] <- l2[i-1]
+}
+
+if(diagnostic(l3[i-1], l_hat3[i-1]) & i>2 & diagnostic(l3[i-2], l_hat3[i-2])){  
+  m3[i] <- m3[i-1]
+  c3[i] <- c3[i-1]
+  l3[i] <- l3[i-1]
+}
+```
+
+If the diagnostic $\hat{\ell}_{i-1} + 0.01 \geq \ell_{i-1}$ \@ref(eq:diagnostic) is FALSE: 
+
+1. Update $\ell_i = \hat{\ell}_{i-1}$
+    
+2. The boundary factor $c_i$ has to fulfill \@ref(eq:c-QE)
+    
+3. The number of basis functions $m_i$ as a function of $\ell_i$ and $c_i$ by using \@ref(eq:m-l-QE)
+
+```{r eval=TRUE}
+if(!diagnostic(l1[i-1], l_hat1[i-1])){
+  l1[i] <- l_hat1[i-1]
+  c1[i] <- c_vs_l_QE(l=l1[i], S=S1)
+  m1[i] <- m_QE(c=c1[i], l=l1[i], S=S1)
+}
+
+if(!diagnostic(l2[i-1], l_hat2[i-1])){
+  l2[i] <- l_hat2[i-1]
+  c2[i] <- c_vs_l_QE(l=l2[i], S=S2)
+  m2[i] <- m_QE(c=c2[i], l=l2[i], S=S2)
+}
+
+if(!diagnostic(l3[i-1], l_hat3[i-1])){
+  l3[i] <- l_hat3[i-1]
+  c3[i] <- c_vs_l_QE(l=l3[i], S=S3)
+  m3[i] <- m_QE(c=c3[i], l=l3[i], S=S3)
+}
+```
+    
+### Matrix of $D$-tuples
+
+Matrix of $D$-tuples as in equation (10) in the [paper](https://arxiv.org/pdf/2004.11408.pdf)
+
+```{r eval=TRUE}
+indices <- matrix(NA, m1[i]*m2[i]*m3[i], D)
+mm=0;
+for (r in 1:m1[i]){
+	for (s in 1:m2[i]){
+		for (t in 1:m3[i]){
+			mm = mm+1
+			indices[mm,] = c(r, s, t)
+		}
+	}
+}
+```
+
+### Data to be passed to Stan
+
+```{r eval=TRUE}
+standata[[i]] <- list(D= D, 
+                      M= c(m1[i],m2[i],m3[i]), 
+                      M_nD= m1[i]*m2[i]*m3[i], 
+                      indices= indices,
+                      L= c(c1[i], c2[i], c3[i]) * c(S1, S2, S3), 
+                      x_pred= x_pred, 
+                      y_pred= y_pred, 
+                      N_sample= N_sample, 
+                      N_pred= N_pred, 
+                      vv_sample= vv_sample
+)
+str(standata[[i]])
+```
+
+### Model fitting
+
+Model fitting
+
+```{r eval=TRUE, results=FALSE, message=FALSE, warn=FALSE}
+hsgp_mod <- cmdstanr::cmdstan_model(stan_file = "stancode_HSGP_3D.stan")
+fit[[i]] <- hsgp_mod$sample(data= standata[[i]],
+                                iter_warmup=100,
+                                iter_sampling=150,
+                                chains=4, thin=3, init=0.5,
+                                adapt_delta=0.99,
+                                save_warmup=TRUE)
+fit[[i]] <- rstan::read_stan_csv(fit[[i]]$output_files())
+```
+
+Summaries and simulation chains of variable estimates
+
+```{r fig.height=5, fig.width=10, eval=TRUE}
+param = c("lscale","gpscale","noise")
+summary(fit[[i]], pars = param, probs = c(0.025, 0.5, 0.975))$summary
+traceplot(fit[[i]], pars = param, include = TRUE, unconstrain = FALSE, inc_warmup = FALSE, window = NULL, nrow = NULL, ncol = NULL)
+```
+
+### Model evaluation
+
+Root mean square error `rmse`, Bayesian $R^2$ (Coefficient of determination) `eR`, and expected log predictive density `elpd`.
+
+```{r eval=TRUE}
+f_hsgp <- summary(fit[[i]], pars = c("f"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary[,c(1,4,6)]
+
+# rmse against data
+residual <- standata[[i]]$y_pred[vv_sample] - f_hsgp[,1]
+rmse[i] <- round(sqrt(mean(residual^2)), 2)
+
+# rmse against gp
+residual_gp <- f_gp[vv_sample,1] - f_hsgp[,1]
+rmse_gp[i] <- round(sqrt(mean(residual_gp^2)), 2)
+
+# Coefficient of determination R^2
+noise <- as.matrix(fit[[i]], pars = c("noise"))
+sd_f <- apply(as.matrix(fit[[i]], pars = c("f")), 1, sd)
+eR[i] <- round(median(sd_f^2/(sd_f^2 + noise^2)), 2)
+
+# elpd
+elpd[i] <- round(median(summary(fit[[i]], pars = c("elpd"))$summary[,1]), 2)
+```
+
+### Diagnosis
+
+Lengthscale estimate $\hat{\ell}_i$ in the HSGP approximation
+
+```{r eval=TRUE}
+l_hat1[i] <- round(summary(fit[[i]], pars = "lscale[1]", probs = c(0.05, 0.95))$summary[,1], 2)
+l_hat2[i] <- round(summary(fit[[i]], pars = "lscale[2]", probs = c(0.05, 0.95))$summary[,1], 2)
+l_hat3[i] <- round(summary(fit[[i]], pars = "lscale[3]", probs = c(0.05, 0.95))$summary[,1], 2)
+```
+
+Check the diagnostic of whether $\, \hat{\ell}_i + 0.01 \geq \ell_i$ \@ref(eq:diagnostic)
+
+```{r eval=TRUE}
+check1[i] <- diagnostic(l1[i], l_hat1[i])
+check2[i] <- diagnostic(l2[i], l_hat2[i])
+check3[i] <- diagnostic(l3[i], l_hat3[i])
+```
+
+Summary diagnosis table
+
+  - `rmse_gp` refers to the root mean square error of the HSGP function with the GP function as the reference.
+
+  - `rmse` refers to the root mean square error of the HSGP function with the true function as the reference.
+
+```{r eval=TRUE}
+diagnosis[[i]] <- data.frame(iter= c(i, i, i),
+                              Dim= c("D1", "D2", "D3"),
+                              l= c(l1[i], l2[i], l3[i]),
+                              c= c(c1[i], c2[i], c3[i]),
+                              m= c(m1[i], m2[i], m3[i]),
+                              l_hat= c(l_hat1[i], l_hat2[i], l_hat3[i]),
+                              'l_hat > l' = c(check1[i], check2[i], check3[i]),
+                              rsme_gp = c(NA, rmse_gp[i], NA),
+                              rsme = c(NA, rmse[i], NA),
+                              R2 = c(NA, eR[i], NA),
+                              elpd = c(NA, elpd[i], NA))
+names(diagnosis[[i]]) <- c("iter", "Dim", "l", "c", "m", "l_hat", "l_hat + 0.01 > l", "rmse_gp", "rmse", "R^2", "elpd")
+
+if(i==1){ 
+  diagnosis[[i]]
+}else{
+  diagnosis[[i]] <- rbind(diagnosis[[i-1]],diagnosis[[i]])
+  diagnosis[[i]]
+}
+```

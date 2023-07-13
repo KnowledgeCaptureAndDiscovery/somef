@@ -1,0 +1,119 @@
+body{
+	padding-top: 100px;
+	font-family: "Comic Sans MS";
+	background-color: #EEEEEE;
+}
+
+h1{
+	font-family: "Arial Black" !important;
+}
+
+.bio-tab{
+	background-color: #F4F4F5;
+	padding: 10px;
+}
+
+
+.curve-edge{
+	border-radius: 10%
+}
+
+.font-80px{
+	font-size: 80px;
+}
+
+.font-12px{
+	font-size: 12px;
+}
+
+.footer{
+	background-color: white;
+	
+	padding: 10px;
+	margin-bottom: 25px;
+}
+
+.font-comic{
+	font-family: "Comic Sans MS";
+}
+
+.font-impact{
+	font-family: "impact";
+	font-size: 30px;	
+}
+
+.hover-pink{}
+.hover-pink:hover{
+	background-color: pink;
+	cursor: pointer;
+}
+
+.img-size{
+	width: 100%;
+	height: 300px;
+}
+
+.img-size-lg{
+	width: 100%;
+	height: 550px;
+}
+
+.img-size-xs{
+	width: 100%;
+	height: 90px;
+}
+
+.img-circle{
+	border-radius:50%;
+}
+
+.list{
+	background-color: white;
+	margin-bottom: 20px;
+	border-radius: 10%;
+}
+
+.margin-top50{
+	margin-top: 50px;
+}
+
+.margin-right20{
+	margin-right: 20px;
+}
+
+.margin-bottom50{
+	margin-bottom: 50px;
+}
+.margin-left20
+{
+	margin-left:20px;
+}
+.navbar{
+	background-color: #00a65a;
+	border-color: #00a65a;
+}
+
+.product-tab{
+	background-color: #FFF;
+	width: 100%;
+	padding: 0px;
+	margin-bottom: 25px;
+}
+
+.text-white{
+	color: white !important;
+}
+.text-red{
+	color:red !important;
+}
+.text-center{
+	text-align: center;
+}
+
+.text-justify{
+	text-align: justify;
+}
+.thumbnail{
+	width:50px;
+	height: 50px;
+}

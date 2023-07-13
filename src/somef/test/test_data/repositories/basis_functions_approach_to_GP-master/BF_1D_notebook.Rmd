@@ -1,0 +1,1041 @@
+---
+title: "Basis functions approximations for reduced-rank Gaussian process regresion: The uni-dimensional case"
+output: html_document
+---
+
+```{r message=FALSE, warning=FALSE}
+library(viridis)
+library(rstan)
+library(rstanarm)
+library(brms)
+library(gtools)
+```
+
+Gaussian Processes are flexible non-parametric stochastic models for $D$-dimensional functions. However, a Gaussian process model suffer from observational dimensionality $(N)$, where the inversion of the covariance matrix requires of $O(N^3)$ computational expenses. This notebook deals with the implementation of an approximate eigendecomposition of the covariance function of a one-dimesional Gaussian process model. The method is based on interpreting the covariance function as the kernel of a pseudo-differential operator and approximating it using Hilbert space methods. This results in a reduced-rank approximation for the covariance function (Solin and Särkkä, 2018), and the computational requeriments becomes $O(N\cdot M + M)$, where M is the number of basis functions used in  the approximation. Comparison of this approximated framework with the full Gaussian process and a splines-based model is carried out.
+
+## Simulated data
+
+True function from which simulate noisy observations.
+
+$$
+\mathcal{F}(x) = \frac{1}{10} \cdot (x/10+1.7)^3 + \frac{2}{5} \cdot (x/10+1.7)^2 + \frac{1}{5} \cdot \sin((x/10+1.7)^3)
+$$
+
+```{r echo=TRUE}
+F <- function(x) 1/10*(x/10+1.7)^3 - 2/5*(x/10+1.7)^2 + 1/5*sin((x/10+1.7)^3)
+```
+
+Simulating a set of $N$ observations $y_i$, $i=1,\dots,N$, from the true function $\mathcal{F}$ in the input dimension $x \in \left[-0.5,0.5\right]$, and contaninate these simulations with Gaussian noise.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+x <- seq(-5,5,0.1) 
+N <- length(x)
+set.seed(4321)
+y <-  F(x) + rnorm(N, 0, 0.08)
+```
+
+We choose $N1$ observations out of the $N$ observations to be the training data set, and $N2$ out of the $N$ observations to be the test. The objects $ind1$ and $ind2$ contain the indices of the training and test data, respectively.
+ 
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+vv2 <- (x>(-1)&x<1.2)|x>3.8
+ind1= which(!vv2)
+ind2= which(vv2)
+N1= length(ind1)
+N2= length(ind2)
+```
+
+The following figure shows the true function and the simulated noisy observations. The vertical grey dashed lines divide the training and test observations.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+plot(x, y, cex=0.6, pch=19)
+lines(x, F(x), lwd=2, col="grey")
+abline(v=c(x[ind2[1]],x[ind2[17]],x[ind1[N1]]), lty=2, col="grey")
+legend("topright", legend=c("true function F","noisy simulations"), lty=c(1,NA), lwd=c(2,NA), pch=c(NA,19), pt.cex=c(NA,0.6), col=c("grey",1), cex=1)
+```
+
+### Gaussian process model
+
+First of all, we model and adjust the noisy observations using a Gaussian process model. The noisy observations $\mathbf{y}$ are modelled as an underlying latent Gaussian process prior model $\mathbf{f}$ plus a Gaussian noise $\mathbf{e}$, and estimated using Bayesian inference with Hamiltion Monte Carlo (HMC) methods.
+
+$$\mathbf{f}  \sim \text{GP}(0,k(\mathbf{x};\theta))$$
+$$\mathbf{y} = \mathbf{f} + \mathbf{e}$$
+$$\mathbf{e} \sim \mathtt{N}(0,\sigma^2I)$$
+We use, for instant, the squared exponential covariance function $k$:
+
+$$
+k(x,x';\theta)=\alpha^2 \exp\left( -\frac{1}{2\rho^2}(x-x')^2\right)
+$$
+
+```{r echo=TRUE}
+cov_GP <- function(alpha, rho, d) { alpha^2*exp(-1/(2*rho^2)*d^2) }
+```
+
+The following figure shows the covariance function $k$ as a function of $d=|x-x'|$, for different values of the lengthscale $\rho=\{0.1,0.3,0.5,1,2,4\}$, and for the magnitud $\alpha=1$:
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+rho <- c(0.1,0.3,0.5,1,2,4)     #lengthscale
+alpha <- 1                      #magnitud
+
+d <- seq(0,5,0.01)
+COV_GP <- matrix(NA,length(d),length(rho))
+for(i in 1:length(rho)){ 
+  COV_GP[,i] <- cov_GP(alpha, rho[i], d)
+}
+
+par(mfrow=c(1,2))
+matplot(d, COV_GP, col=1:length(rho), lwd=2, type="l", lty=1, main="Squared Exponential Covariance Function", cex.lab=1, ylab="covariance", xlab="|x - x'|")
+legend("topright", legend=as.character(rho), col=1:length(rho), lty=c(1), lwd=2, title=expression(rho), cex=1)
+```
+
+Data for Stan software.
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+standata_GP <- list(x= as.matrix(x), y= y, N= N, ind1= ind1, N1= N1, ind2= ind2, N2= N2)
+```
+
+The Stan code for the regular Gaussian process model: 'https://github.com/gabriuma/basis_functions_approach_to_GP/blob/master/uni_dimensional/simulated_dataset/stancode_GP_1dim.stan'
+
+Adjust the model using Stan software and the function 'stan' from the R-package 'rstan'.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+stanout_GP <- stan(file= ".../stancode_GP_1dim.stan", data= standata_GP, iter= 1000,  warmup= 500, chains= 1, thin= 1, algorithm= "NUTS")
+```
+
+Store the estimates of the hyperparameters $\alpha$ (magnitud) and $\rho$ (lengthscale), the posterior of the latent function $f$, the predictions for training and test data, and the log predictive densities for the test data, in separated objects. Histograms and autocorrelation plots of the hyperparameters $alpha$, $rho$, and $sigma$ are shown.
+
+```{r echo=TRUE, fig.height=5, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+alpha_GP <- summary(stanout_GP, pars = c("alpha"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+rho_GP <- summary(stanout_GP, pars = c("rho"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+sigma_GP <- summary(stanout_GP, pars = c("sigma"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+f_GP <- summary(stanout_GP, pars = c("f"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+y_predict_GP <- summary(stanout_GP, pars = c("y_predict"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+log_y_predict_GP <- summary(stanout_GP, pars = c("log_y_predict"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+
+par(mfcol=c(2,3))
+hist(extract(stanout_GP, pars=c("rho"))$rho, main="rho (lengthscale)", xlab="", cex.lab=1, cex.main=1, breaks=20, cex.main=1)
+plot(stan_ac(stanout_GP, pars = c("rho"))$data$ac, type="h", ylab="autocorrelation")
+hist(extract(stanout_GP, pars=c("alpha"))$alpha, main="alpha (magnitud)", xlab="", cex.lab=1, cex.main=1, breaks=20, cex.main=1)
+plot(stan_ac(stanout_GP, pars = c("alpha"))$data$ac, type="h", ylab="autocorrelation")
+hist(extract(stanout_GP, pars=c("sigma"))$sigma, main="sigma (residual std)", xlab="", cex.lab=1, cex.main=1, breaks=20, cex.main=1)
+plot(stan_ac(stanout_GP, pars = c("sigma"))$data$ac, type="h", ylab="autocorrelation")
+```
+
+Computing the mean square error, the expected log predictive density, and the time of computation in seconds per iteration for test data. The effective number of samples for the hyper-parameters and the latent function are also computed. Plots of these quantities will be shown further in this notebook.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+mse_GP <- sqrt(sum((y[ind2] - y_predict_GP[ind2])^2)/N2)
+elpd_GP <- sum(log_y_predict_GP[ind2,1])/N2
+time_GP <- get_elapsed_time(stanout_GP)[2]/(stanout_GP@sim$iter - stanout_GP@sim$warmup)
+
+neff_alpha_GP <- alpha_GP[,7]/(stanout_GP@sim$iter - stanout_GP@sim$warmup)
+neff_rho_GP <- rho_GP[,7]/(stanout_GP@sim$iter - stanout_GP@sim$warmup)
+neff_f_GP <- mean(f_GP[,7])/(stanout_GP@sim$iter - stanout_GP@sim$warmup)
+neff_sigma_GP <- mean(sigma_GP[,7])/(stanout_GP@sim$iter - stanout_GP@sim$warmup)
+```
+
+The following figures show the predictive distribution for training and test data, superimposed to the true function and observations. The vertical grey dashed lines divide the training and test observations.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+plot(x, y, cex=0.6, pch=19)
+lines(x, F(x), lwd=2, col="grey")
+matplot(x, cbind(f_GP[,1],f_GP[,c(4,6)]), add=TRUE, col=2, type="l", lty=c(1,2,2), lwd=2)
+abline(v=c(x[ind2[1]],x[ind2[17]],x[ind1[N1]]), lty=2, col="grey")
+legend("bottomleft", legend=c("true function F","noisy simulations","mean GP model","95% bands GP model"), lty=c(1,NA,1,2), lwd=c(2,NA,2,2), pch=c(NA,19,NA,NA), pt.cex=c(NA,0.6,NA,NA), col=c("grey",1,2,2), cex=1)
+```
+
+
+### Basis functions approximation to a Gaussian process model
+
+The Hilbert space approximations for the covariance operator leads to the approximation of the covariance function $k(x,x')$ in the form:
+
+$$
+k(x,x')=\sum_m S(\sqrt{\lambda_m}) \cdot \phi_m(x) \cdot \phi_m(x').
+$$
+
+In the previous equation, $\phi_m(x)$ is the $m$'th eigenfunction of the Laplacian,
+
+$$
+\phi_m(x)=L^{-1/2} \cdot \sin(\frac{\pi m}{2L} (x+L)),
+$$
+
+```{r echo=TRUE}
+phi <- function(L, m, x) { 1/sqrt(L)*sin((m*pi)/(2*L) * (x+L)) }
+```
+
+and $S(\sqrt(\lambda_m))$ is the spectral density, as a function of $\sqrt(\lambda_m)$, of the squared exponential covariance function $k$,
+
+$$
+S(\sqrt{\lambda_m})=\alpha^2\sqrt{2\pi}\cdot\rho\cdot e^{-0.5\rho^2 \sqrt{\lambda_m}^2},
+$$
+
+```{r echo=TRUE}
+spd <- function(alpha, rho, w) { (alpha^2)*sqrt(2*pi)*rho*exp(-0.5*(rho^2)*(w^2)) }
+```
+
+and $\lambda_m$ is the $m$'th eigenvalue,
+
+$$
+\lambda_m =(\frac{\pi m}{2L})^2,
+$$
+
+```{r echo=TRUE}
+lambda <- function(L,m) { ((m*pi)/(2*L))^2 }
+```
+
+where $m=1,\dots,M$, with $M$ the number of basis functions, and $L$ is the extended range of the input data so that $x\in \{L,-L\}$.
+
+The following figure shows the set of the first 5 basis functions $\phi_m$ ($m=1,\dots,M=5$) with $L= \frac{5}{2}\cdot \max(\mathbf{x})$.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+L <- 5/2*max(x)
+M <- 5
+
+vv <- seq(min(x)-L, max(x)+L,0.01)
+PHI <- matrix(NA,length(vv),M)
+for (m in 1:M){ PHI[,m] = phi(L, m, vv); }
+
+par(mfrow=c(1,2))
+matplot(vv, PHI, type="l", lty=1, col=1:M, ylab=expression(phi[m]), xlab="x", cex.lab=1.5)
+legend("topleft", legend=as.character(1:M), col=1:M, lty=1, title="m", lwd=2)
+```
+
+The values of the spectral density $S(\sqrt(\lambda_m))$, as a function of $m$ $(m=1,\cdots,M)$, for different values of the lengthscale $\rho$, and a fixed value of $\alpha=1$.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+L <- 5/2*max(x)
+M <- 40
+alpha <- 1
+rho <- c(0.1,1,2,5,10)
+S <- matrix(NA, M, length(rho))
+for (i in 1:length(rho)){ S[,i] = spd(alpha, rho[i], sqrt(lambda(L, 1:M))); }
+
+par(mfrow=c(1,2))
+matplot(1:M, S, type="l", pch=1, lty=1, lwd=2, ylab=expression(S[j]), xlab="m", cex.lab=1.5, col=1:length(rho), mgp= c(2, 0.5, 0))
+legend("topright", legend=as.character(rho), col=1:length(rho), lty=1, lwd=2, title=expression(rho))
+```
+
+In this way, the full covariance matrix $K(\mathbf{x})$ of the Gaussian process can be approximated as:
+
+$$
+K(X,X')=\Phi \Delta \Phi^\intercal,
+$$
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+covfun_BF <- function(M, alpha, rho, L, x) { 
+	cc <- vector()
+	for(m in 1:M){ 
+		cc[m] <- spd(alpha, rho, sqrt(lambda(L,m))) * phi(L, m, 0) * phi(L, m, x)
+	}
+	sum(cc);
+}
+```
+
+where $\Phi \in \mathbb{R}^{N\times M}$ is the matrix of eigenvalues $\phi_m(x)$ with $m=1,\cdots,M$ and $x\in \mathbb{R}^N$,
+
+$$
+\Phi=
+  \left[ {\begin{array}{ccc}
+   \phi_1(x^1) & \cdots & \phi_M(x^1)  \\
+    \vdots &\ddots & \vdots  \\ 
+    \phi_1(x^N) & \cdots & \phi_M(x^N) \\
+  \end{array} } \right],
+$$
+and $\Delta \in \text{diag}(\mathbb{R}^{M\times M})$ is the diagonal matrix with the spectral density of the $M$ eigenvalues
+
+$$
+\Delta = 
+  \begin{bmatrix}
+    S(\sqrt{\lambda_1}) & & \\
+    & \ddots & \\
+    & & S(\sqrt{\lambda_M})
+  \end{bmatrix}
+$$
+
+Now, we can re-define the Gaussian process model as
+
+$$ \mathbf{y} \sim \text{GP}(0,\Phi \Delta \Phi^\intercal + \sigma^2 I), $$
+which implies the observation model to be
+
+$$ \mathbf{y} = \Phi \Delta^{1/2} \mathbf{\beta} + \mathbf{e}, $$
+where
+
+$$ \mathbf{\beta} \sim \mathtt{N}(0,I); \hspace{5mm} I\in \mathbb{R}^{M\times M} $$
+$$ \mathbf{e} \sim \mathtt{N}(0,\sigma^2 I); \hspace{5mm} I\in \mathbb{R}^{N\times N} $$
+The aproximate covariance functions for different number of basis functions $M$, with specific values of the hyperparameters $\alpha=1$ and $\rho=1$, and with $L= \frac{5}{2}\cdot \max(\mathbf{x})$:
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+M <- c(4,10,30,50,70)  #different number of basis functions
+alpha <- 1
+rho <- 1
+L <- 5/2*max(x)
+
+d <- seq(0,rho*10,0.01)
+cov_BF <- matrix(NA, length(d), length(M))
+for(m in 1:length(M)){
+	for(i in 1:length(d)){
+		cov_BF[i,m] <- covfun_BF(M[m], alpha, rho, L, d[i])
+	}
+}
+
+par(mfrow=c(1,2))
+plot(d, cov_GP(alpha, rho, d), col=2, lwd=3, type="l", lty=2, ylim=c(-0.2,1), ylab="covariance", cex.main=0.8, xlab="|x - x'|")
+matplot(d, cov_BF, type="l", add=TRUE, col=c(3:(2+length(M))), lty=1)
+legend("topright", legend=paste("M =",as.character(M)), col=c(3:(2+length(M))), lty=1, lwd=1, title="Basis functions cov_func")
+legend(x=3.5, y=1.045, legend="GP cov_func", col=2, lty=2, lwd=3, seg.len=3)
+```
+
+#### Application to the simulated dataset:
+
+We are going to apply this reduced-rank GP model to the simulated dataset. First of all, we stablish a collection of different values for the number of basis functions in the approximation, in order to find out which is the optimal number of basis functions to aproximate the full covariance matrix.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+M <- c(2,4,6,10,20,30,40)  #different number of basis functions
+M
+```
+
+Different datasets for the Stan software are defined, one for each one of the different numbers of basis functions. We establish a set of observations for training $N1$ and another one for test $N2$, out of the total number of observations $N$. The object $ind1$ contains the indices for the training data.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+standata_BF <- list()
+for(j in 1:length(M)){  # different numbers of basis functions
+  standata_BF[[j]] <- list(M= M[j], L= 5/2*max(x), x= x, y= y, N= N, ind1= ind1, N1= N1, ind2= ind2, N2= N2)
+}
+```
+
+The Stan code for the reduced-rank Gaussian process model: 'https://github.com/gabriuma/basis_functions_approach_to_GP/blob/master/uni_dimensional/simulated_dataset/stancode_BF_1dim.stan'
+
+Adjust the model using Stan software and the function 'stan' from the R-package 'rstan'. Different adjustments are performed, one for each one of the different numbers of basis functions.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+stanout_BF <- list()
+for(j in 1:length(M)){  #different number of basis functions
+stanout_BF[[j]] <- stan(file = ".../stancode_BF_1dim.stan", data= standata_BF[[j]], iter= 10000,  warmup= 5000, chains= 1, thin= 1, algorithm= "NUTS", verbose= FALSE)
+}
+```
+
+Store the results for the hyperparameters $\alpha$ (magnitud), $\rho$ (lengthscale), and $sigma$ (residual std), the posterior distribution of the latent function $f$, the predictive distribution for training and test data, and the log predictive densities for the test data. Plots of these three parameters, $\alpha$, $\rho$, and $sigma$, as a function of the number of basis functions, are conputed.
+
+```{r echo=TRUE, fig.height=2.5, fig.width=9, message=FALSE, warning=FALSE, paged.print=FALSE}
+f_BF <- list()
+y_predict_BF <- list()
+log_y_predict_BF <- list()
+rho_BF <- matrix(NA,length(M),8)
+alpha_BF <- matrix(NA,length(M),8)
+sigma_BF <- matrix(NA,length(M),8)
+
+par(mfrow=c(1,3))
+for(j in 1:length(M)){  #different number of basis functions
+  	f_BF[[j]] <- summary(stanout_BF[[j]], pars = c("f"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+  	y_predict_BF[[j]] <- summary(stanout_BF[[j]], pars = c("y_predict"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+  	log_y_predict_BF[[j]] <- summary(stanout_BF[[j]], pars = c("log_y_predict"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+  
+  	rho_BF[j,] <- summary(stanout_BF[[j]], pars = c("rho"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+  	alpha_BF[j,] <- summary(stanout_BF[[j]], pars = c("alpha"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+  	sigma_BF[j,] <- summary(stanout_BF[[j]], pars = c("sigma"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+}
+
+matplot(M,rho_BF[,c(1,4,6)], xlab="M", type="l", lty=c(1,2,2), col=4, ylab="rho", cex.lab=1.5)
+matplot(M,alpha_BF[,c(1,4,6)], xlab="M", type="l", lty=c(1,2,2), col=4, ylab="alpha", cex.lab=1.5)
+matplot(M,sigma_BF[,c(1,4,6)], xlab="M", type="l", lty=c(1,2,2), col=4, ylab="sigma", cex.lab=1.5)
+```
+
+Histogram plots of these three parameters, $\alpha$, $\rho$, and $sigma$.
+
+```{r echo=TRUE, fig.height=2.5, fig.width=9, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,3))
+for(j in 1:length(M)){	
+  	hist(extract(stanout_BF[[j]], pars=c("rho"))$rho, main=paste("rho ;  M =",M[j]), xlab="", cex.lab=1, cex.main=1, breaks=20, cex.main=1)
+  	hist(extract(stanout_BF[[j]], pars=c("alpha"))$alpha, main=paste("alpha ; M =",M[j]), xlab="", cex.lab=1, cex.main=1, breaks=20, cex.main=1)
+ 	  hist(extract(stanout_BF[[j]], pars=c("sigma"))$sigma, main=paste("sigma ;  M =",M[j]), xlab="", cex.lab=1, cex.main=1, breaks=20, cex.main=1)
+}
+```
+
+Autocorrelation plots of these three parameters, $\alpha$, $\rho$, and $sigma$ are conputed.
+
+```{r echo=TRUE, fig.height=2.5, fig.width=9, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfcol=c(1,3))
+for(j in 1:length(M)){	
+  	plot(stan_ac(stanout_BF[[j]], pars = c("rho"))$data$ac, type="h", ylab="autocorrelation", main=paste("rho ;  M =",M[j]))
+  	plot(stan_ac(stanout_BF[[j]], pars = c("alpha"))$data$ac, type="h", ylab="autocorrelation", main=paste("rho ;  M =",M[j]))
+ 	  plot(stan_ac(stanout_BF[[j]], pars = c("sigma"))$data$ac, type="h", ylab="autocorrelation", main=paste("rho ;  M =",M[j]))
+}
+```
+
+Computing the mean square error and the expected log predictive density for the test data, the time of computation in seconds per iteration, and the proportion of the effective number of samples for the hyperparameters. All these quantities are computed as function of the number of basis functions $M$. Plots of these quantities will be shown before.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+mse_BF <- vector()
+elpd_BF <- vector()
+time_BF <- vector()
+msegp_BF <- vector()
+neff_alpha_BF <- vector()
+neff_rho_BF <- vector()
+neff_f_BF <- vector()
+neff_sigma_BF <- vector()
+for(j in 1:length(M)){  #different number of basis functions
+  mse_BF[j] <- sqrt(sum((y[ind2] - y_predict_BF[[j]][ind2])^2)/N2)
+  elpd_BF[j] <- sum(log_y_predict_BF[[j]][ind2,1])/N2
+  time_BF[j] <- get_elapsed_time(stanout_BF[[j]])[2]/(stanout_BF[[j]]@sim$iter - stanout_BF[[j]]@sim$warmup)
+
+  msegp_BF[j] <- sqrt(sum((y_predict_GP[[j]][ind2] - y_predict_BF[[j]][ind2])^2)/N2)
+  
+  neff_alpha_BF[j] <- alpha_BF[j,7]/(stanout_BF[[j]]@sim$iter - stanout_BF[[j]]@sim$warmup)
+  neff_rho_BF[j] <- rho_BF[j,7]/(stanout_BF[[j]]@sim$iter - stanout_BF[[j]]@sim$warmup)
+  neff_f_BF[j] <- mean(f_BF[[j]][,7])/(stanout_BF[[j]]@sim$iter - stanout_BF[[j]]@sim$warmup)
+  neff_sigma_BF[j] <- mean(sigma_BF[j,7])/(stanout_BF[[j]]@sim$iter - stanout_BF[[j]]@sim$warmup)
+}
+```
+
+In the following figure, we show the posterior values of the latent function $f$ for training and test data, as function of the number of basis functions $M$, jointly with the posteriors of the full Gaussian Process model. The vertical grey dashed line divide the training and test data sets.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+for(j in 1:length(M)){ 
+	# True function and observed data
+	plot(x, y, cex=0.6, pch=19, xlab="x", ylab="y", cex.axis=1)
+	lines(x, F(x), lwd=2, col="grey")
+	#GP model
+	matplot(x, cbind(f_GP[,1],f_GP[,c(4,6)]), add=TRUE, col=2, type="l", lwd=2, lty=c(1,2,2))
+	abline(v=c(x[ind2[1]],x[ind2[17]],x[ind1[N1]]), lty=2, col="grey")
+	#BF model
+	matplot(x, cbind(f_BF[[j]][,1],f_BF[[j]][,c(4,6)]), add=TRUE, col=4, type="l", lty=c(1,2,2), lwd=2)
+
+	legend("topright", legend=c(paste("BF model, M =",M[j]),"GP model"), lty=c(1), lwd=c(2,2), col=c(4,2), cex=1.2)
+}
+```
+
+The following figure shows the aproximate covariance function for the different number of basis functions $M$, with the estimated values of $\alpha$ (magnitud) and $\rho$ (lengthscale):
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+L <- 5/2*max(x)
+
+d <- seq(0,rho_GP[,1]*10,0.01)
+cov_BF <- matrix(NA, length(d), length(M))
+for(m in 1:length(M)){
+	for(i in 1:length(d)){
+		cov_BF[i,m] <- covfun_BF(M[m], alpha_BF[m,1], rho_BF[m,1], L, d[i])
+	}
+}
+
+par(mfrow=c(1,2))
+plot(d, cov_GP(alpha_GP[,1], rho_GP[,1], d), lty=2, col=2, lwd=3, type="l", ylim=c(min(cov_BF),max(cov_BF)), ylab="covarince", xlab="|x - x'|")
+matplot(d, cov_BF, type="l", add=TRUE, col=c(3:(2+length(M))), lty=1)
+
+legend("topright", legend=paste("M=",as.character(M)), col=c(3:(2+length(M))), lty=1, lwd=2, title="Basis function cov_func")
+legend("top", legend="GP cov_func", col=2, lty=2, lwd=3)
+
+plot(d, cov_GP(alpha_GP[,1], rho_GP[,1], d), lty=2, col=2, lwd=3, type="l", ylim=c(-0.1,0.1)+c(min(cov_GP(alpha_GP[,1], rho_GP[,1], d)),max(cov_GP(alpha_GP[,1], rho_GP[,1], d))), ylab="covarince", xlab="|x - x'|")
+matplot(d, cov_BF, type="l", add=TRUE, col=c(3:(2+length(M))), lty=1)
+```
+
+### Smooth splines model
+
+We are going to fit a smooth spline model (using function 's' of the R-package 'mgcv') in order to do comparison to the Basis function approach.
+
+The function 'make_standata' of the R-package 'brms' is used to get the data. A bunch of datasets, one for each one of the different number of knots $kn$, are obtained for this smooth spline model.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+kn <- c(2,3,4,6,8,10,15,20)  #different number of knots
+
+standata_SP <- list()
+for(j in 1:length(kn)){  #different number of knots
+	standata_SP[[j]] <- make_standata(y ~ s(x, k=2+kn[j]), data= data.frame(x= x, y= y))
+	standata_SP[[j]]$N1 <- N1
+	standata_SP[[j]]$ind1 <- ind1
+}
+```
+
+In the same way, the function 'make_stancode' of the R-package 'brms' is used to build the main body of the Stan code for this smooth spline model.
+
+```{r}
+stancode_SP <- make_stancode(y ~ s(x, k=2+2), data= data.frame(x= x, y= y))
+```
+
+Then, the code is polished to be adapted to the data, yielding to the final code: 'https://github.com/gabriuma/basis_functions_approach_to_GP/blob/master/uni_dimensional/simulated_dataset/stancode_SP_1dim.stan'
+
+Adjust the model using Stan software and the function 'stan' from the R-package 'rstan'. Different adjustments are performed, one for each one of the different numbers of knots.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+stanout_SP <- list()
+for(j in 1:length(kn)){  #different number of knots
+    stanout_SP[[j]] <- stan(file = ".../stancode_SP_1dim.stan", data= standata_SP[[j]], iter= 2000,  warmup= 1000, chains= 1, thin= 1, algorithm= "NUTS")
+}
+```
+
+Store the posteriors distribution of the latent function $f$, the predictive distribution for training and test data, and the log predictive densities for the test data, as well as the parameters $sds_1_1$ and $sigma$ of the spline model. Plots for these two parameters, $sds_1_1$ and $sigma$, as a function of the number of knots $kn$ are conputed.
+
+```{r echo=TRUE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE, paged.print=FALSE}
+f_SP <- list()
+y_SP <- list()
+log_y_SP <- list()
+sds_1_1_SP <- matrix(NA,length(kn),8)
+sigma_SP <- matrix(NA,length(kn),8)
+
+par(mfcol=c(1,2))
+for(j in 1:length(kn)){  #different number of knots
+  	f_SP[[j]] <- summary(stanout_SP[[j]], pars = c("mu"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+  	y_SP[[j]] <- summary(stanout_SP[[j]], pars = c("y_predict"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+  	log_y_SP[[j]] <- summary(stanout_SP[[j]], pars = c("log_y_predict"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+    sds_1_1_SP[j,] <- summary(stanout_SP[[j]], pars = c("sds_1_1"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+    sigma_SP[j,] <- summary(stanout_SP[[j]], pars = c("sigma"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+}
+
+matplot(kn,sds_1_1_SP[,c(1,4,6)], xlab="kn", type="l", lty=c(1,2,2), col=4, ylab="sds_1_1", cex.lab=0.7)
+matplot(kn,sigma_SP[,c(1,4,6)], xlab="kn", type="l", lty=c(1,2,2), col=4, ylab="sigma", cex.lab=0.7)
+```
+
+Histogram plots of the parameters $sds_1_1$ and $sigma$.
+
+```{r echo=TRUE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+for(j in 1:length(M)){	
+  	hist(extract(stanout_SP[[j]], pars=c("sds_1_1"))$sds_1_1, main=paste("sds_1_1 ;  kn =",kn[j]), xlab="", cex.lab=0.7, cex.main=0.7, breaks=20)
+ 	  hist(extract(stanout_SP[[j]], pars=c("sigma"))$sigma, main=paste("sigma ;  kn =",kn[j]), xlab="", cex.lab=0.7, cex.main=0.7, breaks=20)
+}
+```
+
+Autocorrelation plots of the parameters $sd_1_1$ and $sigma$.
+
+```{r echo=TRUE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfcol=c(1,2))
+for(j in 1:length(M)){	
+  	plot(stan_ac(stanout_SP[[j]], pars = c("sds_1_1"))$data$ac, type="h", ylab="autocorrelation", main=paste("sds_1_1 ;  kn =",kn[j]), cex.main=0.7, cex.lab=0.7)
+ 	  plot(stan_ac(stanout_SP[[j]], pars = c("sigma"))$data$ac, type="h", ylab="autocorrelation", main=paste("sigma ;  kn =",kn[j]), cex.main=0.7, cex.lab=0.7)
+}
+```
+
+Computing the mean square error and the expected log predictive density for the test data, the time of computation in seconds per iteration, and the proportion of the effective number of samples for some of the parameters. All these quantities are computed as function of the number of knots $kn$. Plots of these quantities will be shown before.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+mse_SP <- vector()
+elpd_SP <- vector()
+time_SP <- vector()
+neff_zs_1_1_SP <- vector()
+neff_sds_1_1_SP <- vector()
+neff_sigma_SP <- vector()
+neff_f_SP <- vector()
+
+for(j in 1:length(kn)){  #different number of knots
+  mse_SP[j] <- sqrt(sum((y[ind2] - y_SP[[j]][ind2,1])^2)/N2)
+  elpd_SP[j] <- sum(log_y_SP[[j]][ind2,1])/N2
+  time_SP[j] <- get_elapsed_time(stanout_SP[[j]])[2]/(stanout_SP[[j]]@sim$iter - stanout_SP[[j]]@sim$warmup)
+  
+  neff_sds_1_1_SP[j] <- sds_1_1_SP[j,7]/(stanout_SP[[j]]@sim$iter - stanout_SP[[j]]@sim$warmup)
+  neff_f_SP[j] <- mean(f_SP[[j]][,7])/(stanout_SP[[j]]@sim$iter - stanout_SP[[j]]@sim$warmup)
+  neff_sigma_SP[j] <- mean(sigma_SP[j,7])/(stanout_SP[[j]]@sim$iter - stanout_SP[[j]]@sim$warmup)
+}
+```
+
+In the following figure, we show the posterior values of the latent function $f$ for training and test data, as function of the number of knots $kn$, jointly with the posteriors of the Basis functions approach model and the full Gaussian process model. The vertical grey dashed line divide the training and test data sets.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+for(j in 1:length(kn)){  #different number of knots
+  # True function and observations
+  plot(x, y, cex=0.6, pch=19, xlab="", ylab="", cex.axis=1)
+  lines(x, F(x), lwd=2, col="grey")
+  # GP model
+  matplot(x, cbind(f_GP[,1],f_GP[,c(4,6)]), add=TRUE, col=2, type="l", lwd=2, lty=c(1,2,2))
+  # BF model
+  matplot(x, cbind(f_BF[[5]][,1],f_BF[[5]][,c(4,6)]), add=TRUE, col=4, type="l", lwd=2, lty=c(1,2,2))
+  # SP model
+  matplot(x, cbind(f_SP[[j]][,1],f_SP[[j]][,c(4,6)]), add=TRUE, col="green3", type="l", lwd=2, lty=c(1,2,2))
+ 
+  abline(v=c(x[ind2[1]],x[ind2[17]],x[ind1[N1]]), lty=2, col="grey")
+  legend("topright", legend=c(paste("Spline model, knots =",kn[j]),"BF model","GP model"), lty=c(1), lwd=c(2), pch=c(NA), pt.cex=c(NA), col=c("green3", 4, 2), cex=1.2)
+}
+```
+
+
+### MSE, ELPD, computation time and effective number of samples
+
+Mean square error as a function of the number of basis functions, in the case of the Basis function model, and as a function of knots, in the case of the Splines model.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+
+matplot(kn, mse_SP[1:length(kn)], type="b", col="green3", lwd=1, lty=1, pch=1, xlab="M ; Knots", ylab="MSE", xlim=c(0,60), ylim=c(0,0.30))
+matplot(kn, mse_SP[1:length(kn)], type="b", col="green3", lwd=1, lty=2, pch=1, add=TRUE)
+matplot(kn, mse_SP[1:length(kn)], type="b", col="green3", lwd=1, lty=2, pch=1, add=TRUE)
+
+matplot(M, mse_BF[1:length(M)], type="b", col=4, lwd=1, lty=1, pch=1, add=TRUE)
+matplot(M, mse_BF[1:length(M)], type="b", col=4, lwd=1, lty=2, pch=1, add=TRUE)
+matplot(M, mse_BF[1:length(M)], type="b", col=4, lwd=1, lty=2, pch=1, add=TRUE)
+
+abline(h= mse_GP, col=2, lwd=1, lty=1)
+abline(h= mse_GP, lwd=1, col=2, lty=2)
+abline(h= mse_GP, lwd=1, col=2, lty=2)
+
+legend("topright", legend=c("GP model","BF model","Splines model"), col=c(2,4,"green3"), lty=c(1,1,1), lwd=1)
+```
+
+Expected log predictive density as a function of the number of basis functions, in the case of the Basis function model, and as a function of knots, in the case of the Splines model.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+
+matplot(kn, elpd_SP[1:length(kn)], type="b", col="green3", lwd=1, lty=1, pch=1, xlab="M ; Knots", ylab="ELPD", xlim=c(0,60), ylim=c(-4,2))
+
+matplot(M, elpd_BF[1:length(M)], type="b", col=4, lwd=1, lty=1, pch=1, ylim=c(-15,4), add=TRUE)
+
+abline(h= elpd_GP, col=2, lwd=1, lty=1)
+
+legend("bottomright", legend=c("GP model","BF model","Splines model"), col=c(2,4,"green3"), lty=c(1,1,1), lwd=1)
+```
+
+Time-consuming of the models as a function of the number of basis functions in the case of the Basis functions model, and as a function of the knots in the case of the Splines model.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+
+matplot(kn[1:8], time_SP[1:length(kn[1:8])], type="b", col="green3", lwd=1, lty=1, pch=1,xlab="M ; knots", ylab="seconds per iter", ylim=c(0,0.15), xlim=c(0,100))
+matplot(M, time_BF[1:length(M)], type="b", col=4, lty=1, pch=1, add=TRUE)
+abline(h= time_GP, col=2, lty=1)
+
+legend("topright", legend=c("GP model","BF model","SP model"), col=c(2,4,"green3"), lty=c(1,1,1), lwd=1)
+
+matplot(M, time_BF[1:length(M)]/time_GP, type="b", col=4, lty=1, pch=1, ylab="", xlab="M", xlim=c(0,100), ylim=c(0,1))
+matplot(kn, time_SP[1:length(kn)]/time_GP, type="b", col="green3", lty=1, pch=1, ylab="time_SP / time_GP", xlab="knots", xlim=c(0,100), ylim=c(0,1), add=TRUE)
+
+legend("topright", legend=c("time_BF / time_GP", "time_BF / time_GP"), col=c(4,"green3"), lty=c(1), lwd=1)
+```
+
+Plots of the proportion of effective number of samples of the parameters magnitud and lengthscale for the GP and BF models, of the latent function for the GP, BF, and Splines models, and of the parameteres $zs_1_1$ and $sds_1_1$ for the Splines models.
+
+```{r echo=TRUE, fig.height=15, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(3,2))
+# alpha (magnitud)
+matplot(M, neff_alpha_BF[1:length(M)], type="b", col=4, lwd=1, lty=1, pch=1, ylim=c(0,1), ylab="effective nº of samples", main="magnitud", xlab="M", xlim=c(0,100), cex.lab=1.5, cex.main=1.5)
+abline(h= neff_alpha_GP, col=2, lwd=1, lty=1)
+legend("topright", legend=c("GP model","BF model"), col=c(2,4,"green3"), lty=c(1,1,1), lwd=1, cex=1.5)
+
+# rho (lengthscale)
+matplot(M, neff_rho_BF[1:length(M)], type="b", col=4, lwd=1, lty=1, pch=1, ylim=c(0,1), ylab="effective nº of samples", main="lengthscale", xlab="M", xlim=c(0,100), cex.lab=1.5, cex.main=1.5)
+abline(h= neff_rho_GP, col=2, lwd=1, lty=1)
+legend("topright", legend=c("GP model","BF model"), col=c(2,4,"green3"), lty=c(1,1,1), lwd=1, cex=1.5)
+
+# latent function f
+matplot(M, neff_f_BF[1:length(M)], type="b", col=4, lwd=1, lty=1, pch=1, ylim=c(0,1), ylab="effective nº of samples", main="latent function f", xlab="M ; Knots", xlim=c(0,100), cex.lab=1.5, cex.main=1.5)
+matplot(kn, neff_f_SP[1:length(kn)], type="b", col="green3", lwd=1, lty=1, pch=1,add=TRUE)
+abline(h= neff_f_GP, col=2, lwd=1, lty=1)
+legend("topright", legend=c("GP model","BF model","SP model"), col=c(2,4,"green3"), lty=c(1,1,1), lwd=1, cex=1.5)
+
+# sds_1_1
+matplot(kn, neff_sds_1_1_SP[1:length(kn)], type="b", col="green3", lwd=1, lty=1, pch=1, ylim=c(0,1), ylab="effective nº of samples", main="sds_1_1", xlab="Knots", xlim=c(0,100), cex.lab=1.5, cex.main=1.5)
+legend("topright", legend=c("SP model"), col=c("green3"), lty=c(1,1,1), lwd=1, cex=1.5)
+
+# sigma
+matplot(kn, neff_sigma_SP[1:length(kn)], type="b", col="green3", lwd=1, lty=1, pch=1, ylim=c(0,1.2), ylab="effective nº of samples", main="sigma", xlab="M ; Knots", xlim=c(0,100), cex.lab=1.5, cex.main=1.5)
+matplot(M, neff_sigma_BF[1:length(M)], type="b", col="4", lwd=1, lty=1, pch=1, add=TRUE)
+abline(h= neff_sigma_GP, col=2, lwd=1, lty=1)
+legend("topright", legend=c("GP model","BF model","SP model"), col=c(2,4,"green3"), lty=c(1,1,1), lwd=1, cex=1.5)
+```
+
+
+## Real Gay-data set
+
+This dataset ('https://github.com/gabriuma/basis_functions_approach_to_GP/blob/master/uni_dimensional/gay_dataset/gay_sum.rData') relates the proportion of support for same-sex marriage to the age. 
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+load(".../gay_sum.rData")
+str(gay_sum[[1]])
+```
+
+$y$ are the counts and $n$ the trials of these binomial observations. $age$ is a covariate.
+
+```{r fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+plot(gay_sum[[1]]$age/sd(gay_sum[[1]]$age), gay_sum[[1]]$y/gay_sum[[1]]$n, ylim=c(0,.65), xlab="Age", ylab="y/n", type="p", main="Raw data from a national survey", pch=1, cex=2*sqrt(gay_sum[[1]]$n/max(gay_sum[[1]]$n)))
+```
+
+Prepare the data to be fitted using the regular Gaussian proccess model and Stan software. The $age$ input variable is scaled by being divided by its standard deviation and renamed as $x$. We choose a set of observations $N1$ for training and another set $N2$ for testing, out of the total number of observations $N$. The objects $ind1$ and $ind2$ contains the indices for the training and test data, respectively.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+y <- gay_sum[[1]]$y
+n <- gay_sum[[1]]$n
+x <- gay_sum[[1]]$age/sd(gay_sum[[1]]$age)
+
+vv2 <- (x>(1.7)&x<(2.3))|x>3.6
+ind1= which(!vv2)
+ind2= which(vv2)
+N1= length(ind1)
+N2= length(ind2)
+N= length(x)
+```
+
+### Gaussian process model
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+standata_GP <- list(x= as.matrix(x), y= y, n= n, ind1= ind1, N1= N1, ind2= ind2, N2= N2, N= N)
+```
+
+The Stan code for the regular Gaussian process model: 'https://github.com/gabriuma/basis_functions_approach_to_GP/blob/master/uni_dimensional/gay_dataset/stancode_GP_1dim.stan'
+
+Adjust the model using Stan software and the function 'stan' from the R-package 'rstan'.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+stanout_GP <- stan(file= ".../stancode_GP_1dim.stan", data= standata_GP, iter= 3000,  warmup= 2000, chains= 1, thin= 1, algorithm= "NUTS")
+```
+
+Store the estimate values of the hyperparameters $\alpha$ (magnitud) and $\rho$ (lengthscale), the posterior distribution of the latent function $f$, the predictive distribution for training and test data, and the log predictive densities for the test data, in separated vectors. A litle summary extract of everyone of these outcomes are shown.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+alpha_GP <- summary(stanout_GP, pars = c("alpha"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+rho_GP <- summary(stanout_GP, pars = c("rho"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+f_GP <- summary(stanout_GP, pars = c("f"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+y_predict_GP <- summary(stanout_GP, pars = c("y_predict"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+log_y_predict_GP <- summary(stanout_GP, pars = c("log_y_predict"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+
+par(mfcol=c(2,3))
+hist(extract(stanout_GP, pars=c("rho"))$rho, main="rho (lengthscale)", xlab="", cex.lab=1, cex.main=1, breaks=20, cex.main=1)
+plot(stan_ac(stanout_GP, pars = c("rho"))$data$ac, type="h", ylab="autocorrelation")
+hist(extract(stanout_GP, pars=c("alpha"))$alpha, main="alpha (magnitud)", xlab="", cex.lab=1, cex.main=1, breaks=20, cex.main=1)
+plot(stan_ac(stanout_GP, pars = c("alpha"))$data$ac, type="h", ylab="autocorrelation")
+hist(extract(stanout_GP, pars=c("sigma"))$sigma, main="sigma (residual std)", xlab="", cex.lab=1, cex.main=1, breaks=20, cex.main=1)
+plot(stan_ac(stanout_GP, pars = c("sigma"))$data$ac, type="h", ylab="autocorrelation")
+```
+
+Computing the mean square error, the expected log predictive density, the time of computation in seconds per iteration, and the proportion of effective number of samples of some parameters, over the test data:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+mse_GP <- sqrt(sum((y[ind2]/n[ind2] - inv.logit(f_GP[ind2]))^2)/N2)
+elpd_GP <- sum(log_y_predict_GP[ind2,1])/N2
+time_GP <- get_elapsed_time(stanout_GP)[2]/(stanout_GP@sim$iter - stanout_GP@sim$warmup)
+
+neff_alpha_GP <- alpha_GP[,7]/(stanout_GP@sim$iter - stanout_GP@sim$warmup)
+neff_rho_GP <- rho_GP[,7]/(stanout_GP@sim$iter - stanout_GP@sim$warmup)
+neff_f_GP <- mean(f_GP[,7])/(stanout_GP@sim$iter - stanout_GP@sim$warmup)
+neff_sigma_GP <- mean(sigma_GP[,7])/(stanout_GP@sim$iter - stanout_GP@sim$warmup)
+```
+
+The following figure shows the predictive distribution for training and test data, superimposed to the true function and observed data. The vertical grey dashed line divide the training and predicting data sets.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+plot(x, y/n, cex=0.4, xaxt= "n")
+axis(side = 1, at = seq(1,4,0.5), labels = round(seq(1,4,0.5) * sd(gay_sum[[1]]$age)))
+matplot(x, inv.logit(f_GP[,c(1,4,6)]), add=TRUE, col=2, type="l", lty=c(1,2,2))
+abline(v=c(x[ind2[1]],x[ind2[10]],x[ind1[N1]]), lty=2, col="grey")
+legend("topright", legend=c("GP model"), lty=c(1), col=c(2), cex=1)
+```
+
+### Basis function approach model
+
+We are going to apply the model based on basis functions to approach the covariance function. First of all, we stablish a collection of different values $M$ for the number of basis functions in the approximation, in order to find out which is the optimal number of basis functions.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+M <- c(10,20,30,40,60,80,100)  #different number of basis functions
+M
+```
+
+Different datasets for the Stan software are defined, one for each one of the numbers of basis fucntions (components of M). We establish a set of observations for training $N1$ and another one for test $N2$, out of the total number of observations $N$. The object $ind1$ contains the indices for the training data.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+standata_BF <- list()
+for(j in 1:length(M)){  #different number of basis functions
+    standata_BF[[j]] <- list(M= M[j], L= 5/2*max(x), x= x, y= y, n= n, ind1= ind1, N1= N1, ind2= ind2, N2= N2, N= N)
+}
+```
+
+The Stan code for this basis function approach model: 'https://github.com/gabriuma/basis_functions_approach_to_GP/blob/master/uni_dimensional/gay_dataset/stancode_BF_1dim.stan'
+
+Adjust the model using Stan software and the function 'stan' from the R-package 'rstan'. Different adjustments are performed, one for each one of the different numbers of basis functions.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+stanout_BF <- list()
+for(j in 1:length(M)){  #different number of basis functions
+  stanout_BF[[j]] <- stan(file = ".../stancode_BF_1dim.stan", data= standata_BF[[j]], iter= 10000,  warmup= 5000, chains= 1, thin= 1, algorithm= "NUTS", verbose= FALSE)
+}
+```
+
+Store the results of the hyperparameters $\alpha$ (magnitud) and $\rho$ (lengthscale), the posterior distribution of the latent function $f$, the predictive distribution for training and test data, and the log predictive densities for the test data, in separated vectors and for each one of the different number $M$ of basis functions. Plots of the parameters $rho$ and $alpha$ as a function of the number of basis functions are shown.
+
+```{r echo=TRUE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE, paged.print=FALSE}
+f_BF <- list()
+y_predict_BF <- list()
+log_y_predict_BF <- list()
+rho_BF <- matrix(NA,length(M),8)
+alpha_BF <- matrix(NA,length(M),8) 
+
+par(mfcol=c(1,2))
+for(j in 1:length(M)){  #different number of basis functions
+    f_BF[[j]] <- summary(stanout_BF[[j]], pars = c("f"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+    y_predict_BF[[j]] <- summary(stanout_BF[[j]], pars = c("y_predict"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+    log_y_predict_BF[[j]] <- summary(stanout_BF[[j]], pars = c("log_y_predict"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+
+    rho_BF[j,] <- summary(stanout_BF[[j]], pars = c("rho"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+    alpha_BF[j,] <- summary(stanout_BF[[j]], pars = c("alpha"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+}
+
+matplot(M,rho_BF[,c(1,4,6)], xlab="M", type="l", lty=c(1,2,2), col=4, ylab="rho", cex.lab=0.7)
+matplot(M,alpha_BF[,c(1,4,6)], xlab="M", type="l", lty=c(1,2,2), col=4, ylab="alpha", cex.lab=0.7)
+```
+
+Histogram plots of the parameters $\alpha$ and $\rho$.
+
+```{r echo=TRUE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+for(j in 1:length(M)){	
+  	hist(extract(stanout_BF[[j]], pars=c("rho"))$rho, main=paste("rho ;  M =",M[j]), xlab="", cex.lab=0.7, cex.main=1, breaks=20, cex.main=0.7)
+  	hist(extract(stanout_BF[[j]], pars=c("alpha"))$alpha, main=paste("alpha ; M =",M[j]), xlab="", cex.lab=0.7, cex.main=1, breaks=20, cex.main=0.7)
+}
+```
+
+
+Autocorrelation plots of the parameters $\alpha$ and $\rho$.
+
+```{r echo=TRUE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfcol=c(1,2))
+for(j in 1:length(M)){	
+  	plot(stan_ac(stanout_BF[[j]], pars = c("rho"))$data$ac, type="h", ylab="autocorrelation", main=paste("rho ;  M =",M[j]), cex.lab=0.7, cex.main=0.7)
+  	plot(stan_ac(stanout_BF[[j]], pars = c("alpha"))$data$ac, type="h", ylab="autocorrelation", main=paste("alpha ;  M =",M[j]), cex.lab=0.7, cex.main=0.7)
+}
+```
+
+Computing the mean square error and the expected log predictive density for the test data, the time of computation in seconds per iteration, and the effective number of iterations for the hyperparameters and latent function, as function of the number of basis functions $M$:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+mse_BF <- vector()
+elpd_BF <- vector()
+time_BF <- vector()
+mseGP_BF <- vector()
+neff_alpha_BF <- vector()
+neff_rho_BF <- vector()
+neff_f_BF <- vector()
+
+for(j in 1:length(M)){  #different number of basis functions
+  mse_BF[j] <- sqrt(sum((y[ind2]/n[ind2] - inv.logit(f_BF[[j]][ind2,1]))^2)/N2)
+  elpd_BF[j] <- sum(log_y_predict_BF[[j]][ind2,1])/N2
+  time_BF[j] <- get_elapsed_time(stanout_BF[[j]])[2]/(stanout_BF[[j]]@sim$iter - stanout_BF[[j]]@sim$warmup)
+
+  mseGP_BF[j] <- sqrt(sum((inv.logit(f_GP[ind2,1]) - inv.logit(f_BF[[j]][ind2,1]))^2)/N2)
+  
+  neff_alpha_BF[j] <- alpha_BF[j,7]/(stanout_BF[[j]]@sim$iter - stanout_BF[[j]]@sim$warmup)
+  neff_rho_BF[j] <- rho_BF[j,7]/(stanout_BF[[j]]@sim$iter - stanout_BF[[j]]@sim$warmup)
+  neff_f_BF[j] <- mean(f_BF[[j]][,7])/(stanout_BF[[j]]@sim$iter - stanout_BF[[j]]@sim$warmup)
+}
+```
+
+In the following figure, we show the posterior values of the latent function $f$ for training and test data, as function of the number of basis functions $M$, and superimposed the true function and observed data. The vertical grey dashed line divide the training and test data sets.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+for(j in 1:length(M)){  #different number of basis functions
+  plot(x, y/n, cex=0.4, xlab="",ylab="",cex.axis=1)
+    matplot(x, inv.logit(f_GP[,c(1,4,6)]), add=TRUE, col=2, type="l", lty=c(1,2,2), lwd=c(2,1,1))
+  abline(v=c(x[ind2[1]],x[ind2[10]],x[ind1[N1]]), lty=2, col="grey")
+    
+  matplot(x, inv.logit(f_BF[[j]][,c(1,4,6)]), add=TRUE, col=4, type="l", lty=c(1,2,2), lwd=c(2,1,1))
+
+    legend("topright", legend=c(paste("BF model, M =",M[j]),"GP model"), lty=c(1), lwd=c(2), pch=c(NA), pt.cex=c(NA), col=c(4,2), cex=1.2)
+}
+```
+
+The following figure shows the estimated aproximate covariance function for the different numbers $M$ of basis functions :
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+L <- 5/2*max(x)
+
+d <- seq(0,rho_GP[,1]*10,0.01)
+cov_BF <- matrix(NA, length(d), length(M))
+for(m in 1:length(M)){
+    for(i in 1:length(d)){
+        cov_BF[i,m] <- covfun_BF(M[m], alpha_BF[m,1], rho_BF[m,1], L, d[i])
+    }
+}
+
+par(mfrow=c(1,2))
+plot(d, cov_GP(alpha_GP[,1], rho_GP[,1], d), col=2, lwd=3, lty=2, type="l", ylim=c(min(cov_BF),max(cov_BF)), ylab="covariance", main="Approximation and full covariance functions")
+matplot(d, cov_BF, type="l", add=TRUE, col=c(3:(2+length(M))), lty=1, lwd=1)
+
+legend("topright", legend=paste("M=",as.character(M)), col=c(3:(2+length(M))), lty=1, lwd=1, title="BF cov_func", cex=1)
+legend("top", legend="GP cov_func", col=2, lty=2, lwd=3, cex=1, seg.len= 3)
+
+plot(d, cov_GP(alpha_GP[,1], rho_GP[,1], d), col=2, lwd=3, lty=2, type="l", ylim=c(-0.2,0.5), ylab="covariance", main="Approximation and full covariance functions")
+matplot(d, cov_BF, type="l", add=TRUE, col=c(3:(2+length(M))), lty=1, lwd=1)
+```
+
+
+### Smooth splines model
+
+We are going to fit a smooth spline model (using function 's' of the R-package 'mgcv) in order to do comparison to the Basis function approach.
+
+Following, the function 'make_standata' of the R-package 'brms' is used to obtain different datasets, one for each one of the different number $kn$ of knots, for this smooth spline model.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+kn <- c(2,3,4,6,8,10,15,20)  #different number of knots
+
+standata_SP <- list()
+for(j in 1:length(kn)){  #different number of knots
+	standata_SP[[j]] <- make_standata(y | trials(n) ~ s(x, k=2+kn[j]), family = binomial("logit"), data.frame(x= x, y= y, n= n))
+	standata_SP[[j]]$N1 <- N1
+	standata_SP[[j]]$ind1 <- ind1
+}
+```
+
+In the same way, the function 'make_stancode' of the R-package 'brms' is used to build the main body of the Stan code for this smooth spline model.
+```{r}
+stancode_SP <- make_stancode(y | trials(n) ~ s(x, k=2+kn[j]), family = binomial("logit"), data.frame(x= x, y= y, n= n))
+```
+
+Then, the code is polished to adapt it to the data, yielding to the final code: 'https://github.com/gabriuma/basis_functions_approach_to_GP/blob/master/uni_dimensional/gay_dataset/stancode_SP_1dim.stan'
+
+Adjust the model using Stan software and the function 'stan' from the R-package 'rstan'. Different adjustments are performed, one for each one of the different numbers of knots.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+stanout_SP <- list()
+for(j in 1:length(kn)){  #different number of knots
+  stanout_SP[[j]] <- stan(file = ".../stancode_SP_1dim.stan", data= standata_SP[[j]], iter = 10000,  warmup = 5000, chains=1, thin=1, algorithm = "NUTS")
+}
+```
+
+Storing marginal posterior and predictive distribution of parameters.
+
+```{r echo=TRUE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE, paged.print=FALSE}
+f_SP <- list()
+y_SP <- list()
+log_y_SP <- list()
+time_SP <- list()
+zs_1_1_SP <- list()
+sds_1_1_SP <- matrix(NA,length(kn),8)
+
+par(mfcol=c(1,2))
+for(j in 1:length(kn)){  #different number of knots
+  f_SP[[j]] <- summary(stanout_SP[[j]], pars = c("mu"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+  y_SP[[j]] <- summary(stanout_SP[[j]], pars = c("y_predict"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+  log_y_SP[[j]] <- summary(stanout_SP[[j]], pars = c("log_y_predict"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+  
+	time_SP[[j]] <- sum(get_elapsed_time(stanout_SP[[j]])[2])/(stanout_SP[[j]]@sim$iter - stanout_SP[[j]]@sim$warmup)
+  zs_1_1_SP[[j]] <- summary(stanout_SP[[j]], pars = c("zs_1_1"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+  sds_1_1_SP[j,] <- summary(stanout_SP[[j]], pars = c("sds_1_1"), probs = c(0.025, 0.5, 0.975), digits_summary = 4)$summary
+}
+
+matplot(kn,sds_1_1_SP[,c(1,4,6)], xlab="kn", type="l", lty=c(1,2,2), col=4, ylab="sds_1_1", cex.lab=0.7)
+```
+
+Histogram plots of the parameter $sds_1_1$.
+
+```{r echo=TRUE, fig.height=2.5, fig.width=9, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,3))
+for(j in 1:length(M)){	
+  	hist(extract(stanout_SP[[j]], pars=c("sds_1_1"))$sds_1_1, main=paste("sds_1_1 ;  kn =",kn[j]), xlab="", cex.lab=1, cex.main=1, breaks=20)
+}
+```
+
+
+Autocorrelation plots of the parameter $sds_1_1$.
+
+```{r echo=TRUE, fig.height=2.5, fig.width=9, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfcol=c(1,3))
+for(j in 1:length(M)){	
+  	plot(stan_ac(stanout_SP[[j]], pars = c("sds_1_1"))$data$ac, type="h", ylab="autocorrelation", main=paste("sds_1_1 ;  kn =",kn[j]), cex.main=1, cex.lab=1)
+}
+```
+
+Computing the mean square error and the expected log predictive density for the test data, the time of computation in seconds per iteration, and the effective number of iteratons for the hyperparameters and latent function, as function of the number of basis functions $M$:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+mse_SP <- vector()
+elpd_SP <- vector()
+time_SP <- vector()
+neff_sds_1_1_SP <- vector()
+neff_f_GP <- vector()
+
+for(j in 1:length(kn)){  #different number of knots
+  mse_SP[j] <- sqrt(sum((y[ind2]/n[ind2] - inv.logit(f_SP[[j]][ind2]))^2)/N2)
+  elpd_SP[j] <- sum(log_y_SP[[j]][ind2,1])/N2
+  time_SP[j] <- sum(get_elapsed_time(stanout_SP[[j]])[2])/(stanout_SP[[j]]@sim$iter - stanout_SP[[j]]@sim$warmup)
+  
+  neff_sds_1_1_SP[j] <- sds_1_1_SP[j,7]/(stanout_SP[[j]]@sim$iter - stanout_SP[[j]]@sim$warmup)
+  neff_f_SP[j] <- mean(f_SP[[j]][,7])/(stanout_SP[[j]]@sim$iter - stanout_SP[[j]]@sim$warmup)
+}
+```
+
+Plot of the posterior distribution for the laten function, using different values $kn$ of the number of knots. The vertical grey dashed line divide the training and test data sets.
+
+```{r fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+for(j in 1:length(kn)){  #different number of knots
+  plot(x, y/n, cex=0.6, pch= 19,  xlab="x",ylab="y/n",cex.axis=1)
+  matplot(x, inv.logit(f_GP[,c(1,4,6)]), add=TRUE, col=2, lwd=2, lty=c(1,2,2), type="l")
+  matplot(x, inv.logit(f_BF[[6]][,c(1,4,6)]), add=TRUE, col=4, lwd=2, lty=c(1,2,2), type="l")
+  matplot(x, inv.logit(f_SP[[j]][,c(1,4,6)]), add=TRUE, col="green3", lwd=2, lty=c(1,2,2), type="l")
+  abline(v=c(x[ind2[1]],x[ind2[10]],x[ind1[N1]]), lty=2, col="grey")
+  legend("topright", legend=c(paste("Splines model, knots =",kn[j]),"BF model","GP model"), lty=c(1), lwd=c(2), pch=c(NA), pt.cex=c(NA), col=c("green3",4,2), cex=1.2)
+}
+```
+
+### MSE, ELPD, computation time and effective number of samples
+
+Mean square error as a function of the number of basis functions in the case of the Basis function model, and as a function of knots in the case of the Splines model.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+
+#SP model
+matplot(kn, mse_SP[1:length(kn)], type="b", col="green3", lwd=1, lty=1, pch=1, ylim=c(0,0.30), xlab="M ; knots", ylab="MSE", xlim=c(0,100))
+#BF model
+matplot(M, mse_BF[1:length(M)], type="b", col=4, lwd=1, lty=1, pch=1, add= TRUE)
+#GP model
+abline(h= mse_GP, col=2, lwd=1, lty=1)
+
+legend("topright", legend=c("GP model","BF model","Splines model"), col=c(2,4,"green3"), lty=c(1,1,1), lwd=1)
+```
+
+Expected log predictive density as a function of the number of basis functions, in the case of the Basis function model, and as a function of knots, in the case of the Splines model.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+
+matplot(kn, elpd_SP[1:length(kn)], type="b", col="green3", lwd=1, lty=1, pch=1,ylim=c(-9,-1),xlab="M ; knots", ylab="ELPD", xlim=c(0,100))
+
+matplot(M, elpd_BF[1:length(M)], type="b", col=4, lwd=1, lty=1, pch=1, ylim=c(-15,4), add=TRUE)
+
+abline(h= elpd_GP, col=2, lwd=1, lty=1)
+
+legend("bottomright", legend=c("GP model","BF model","Splines model"), col=c(2,4,"green3"), lty=c(1,1,1), lwd=1)
+```
+
+Time-consuming of the models as a function of the number of basis functions in the case of the Basis functions model, and as a function of the knots in the case of the Splines model.
+
+```{r echo=TRUE, fig.height=5, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(1,2))
+
+matplot(kn, time_SP[1:length(kn)], type="b", col="green3", lwd=1, lty=1, pch=1,xlab="M ; knots", ylab="seconds per iter", ylim=c(0,0.1), xlim=c(0,100))
+matplot(M, time_BF[1:length(M)], type="b", col=4, lty=1, pch=1, add=TRUE)
+abline(h= time_GP, col=2, lty=1)
+
+legend("topright", legend=c("GP model","BF model","SP model"), col=c(2,4,"green3"), lty=c(1,1,1), lwd=1)
+
+matplot(M, time_BF[1:length(M)]/time_GP, type="b", col=4, lty=1, pch=1, ylab="", xlab="M", xlim=c(0,100), ylim=c(0,1))
+matplot(kn, time_SP[1:length(kn)]/time_GP, type="b", col="green3", lty=1, pch=1, ylab="time_SP / time_GP", xlab="knots", xlim=c(0,100), ylim=c(0,1), add=TRUE)
+
+legend("topright", legend=c("time_BF / time_GP", "time_BF / time_GP"), col=c(4,"green3"), lty=c(1), lwd=1)
+```
+
+Plots of the proportion of effective number of samples of the parameters magnitud and lengthscale for the GP and BF models, of the latent function for the GP, BF and Splines models, and of the parameteres $zs_1_1$ and $sds_1_1$ for the Splines models.
+
+```{r echo=TRUE, fig.height=15, fig.width=15, message=FALSE, warning=FALSE, paged.print=FALSE}
+par(mfrow=c(3,2))
+# alpha (magnitud)
+matplot(M, neff_alpha_BF[1:length(M)], type="b", col=4, lwd=1, lty=1, pch=1, ylim=c(0,1), ylab="effective nº of samples", main="magnitud", xlab="M", xlim=c(0,100), cex.lab=1.5, cex.main=1.5)
+abline(h= neff_alpha_GP, col=2, lwd=1, lty=1)
+legend("topright", legend=c("GP model","BF model"), col=c(2,4,"green3"), lty=c(1,1,1), lwd=1, cex=1.5)
+
+# rho (lengthscale)
+matplot(M, neff_rho_BF[1:length(M)], type="b", col=4, lwd=1, lty=1, pch=1, ylim=c(0,1), ylab="effective nº of samples", main="lengthscale", xlab="M", xlim=c(0,100), cex.lab=1.5, cex.main=1.5)
+abline(h= neff_rho_GP, col=2, lwd=1, lty=1)
+legend("topright", legend=c("GP model","BF model"), col=c(2,4,"green3"), lty=c(1,1,1), lwd=1, cex=1.5)
+
+# latent function f
+matplot(M, neff_f_BF[1:length(M)], type="b", col=4, lwd=1, lty=1, pch=1, ylim=c(0,1), ylab="effective nº of samples", main="latent function", xlab="M ; knots", xlim=c(0,100), cex.lab=1.5, cex.main=1.5)
+matplot(kn[1:8], neff_f_SP[1:length(kn[1:8])], type="b", col="green3", lwd=1, lty=1, pch=1,add=TRUE)
+abline(h= neff_f_GP, col=2, lwd=1, lty=1)
+legend("topright", legend=c("GP model","BF model","SP model"), col=c(2,4,"green3"), lty=c(1,1,1), lwd=1, cex=1.5)
+
+# sds_1_1
+matplot(kn, neff_sds_1_1_SP[1:length(kn)], type="b", col="green3", lwd=1, lty=1, pch=1, ylim=c(0,1), ylab="effective nº of samples", main="sds_1_1", xlab="knots", xlim=c(0,100), cex.lab=1.5, cex.main=1.5)
+legend("topright", legend=c("SP model"), col=c("green3"), lty=c(1,1,1), lwd=1, cex=1.5)
+```

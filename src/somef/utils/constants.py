@@ -79,6 +79,7 @@ CAT_SUPPORT = "support"
 CAT_SUPPORT_CHANNELS = "support_channels"
 CAT_USAGE = "usage"
 CAT_WORKFLOWS = "workflows"
+CAT_TYPE="type"
 
 # Special category: missing categories
 CAT_MISSING = "somef_missing_categories"
@@ -166,6 +167,7 @@ TECHNIQUE_FILE_EXPLORATION = "file_exploration"
 TECHNIQUE_CODE_CONFIG_PARSER = "code_parser"
 TECHNIQUE_GITHUB_API = "GitHub_API"
 TECHNIQUE_GITLAB_API = "GitLab_API"
+TECHNIQUE_HEURISTICS = "software_type_heuristics"
 
 # GitHub properties
 GITHUB_DOMAIN = "github.com"
