@@ -228,3 +228,8 @@ class RepositoryType(Enum):
     GITHUB = 1
     GITLAB = 2
     LOCAL = 3
+
+# Media/script/non-software sets
+media_extensions = ('.rData','.bib','.csv','.xlx','.stan','.tex','.rst','.md','.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.mp4', '.avi', '.mkv', '.wmv', '.flv', '.mov', '.mp3', '.wav', '.wma', '.flac', '.aac', '.ogg', '.pdf' )
+script_extensions = ('.py','.exe','.sh', '.bat', '.cmd', '.jar', '.cpp', '.c', '.h', '.hpp', '.java', '.cs', '.vb', '.php', '.pl', '.rb')
+extensions_accepted = (".iml",".gitignore",".md",".txt", ".pdf",  ".xlsx",".xlx",  ".csv",  ".tsv", ".yaml",".yml",  ".jpg",   ".png",   ".gif",   ".wav",   ".mp3",   ".avi",   ".tiff", ".svg",".properties",".css",".html",".xml",".js",".json",".rst",".ttl","",".woff",".woff2",".scss",".prettierrc",".lock",".jsonld",".dot",".graphml",".drawio",".ttl",".nt",".owl",".htaccess",".conf",".cfg",".owl2",".nq",".n3",".trig",".rdf",".icon")    

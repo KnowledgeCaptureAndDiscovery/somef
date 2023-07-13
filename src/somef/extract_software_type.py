@@ -5,71 +5,72 @@ from chardet import detect
 import re
 from .extract_workflows import is_file_workflow
 from .process_results import Result
+from .utils import constants
 
-media_extensions = ('.rData','.bib','.csv','.xlx','.stan','.tex','.html','.css','.rst','.md','.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.mp4', '.avi', '.mkv', '.wmv', '.flv', '.mov', '.mp3', '.wav', '.wma', '.flac', '.aac', '.ogg', '.pdf' )
+#media_extensions = ('.rData','.bib','.csv','.xlx','.stan','.tex','.rst','.md','.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.mp4', '.avi', '.mkv', '.wmv', '.flv', '.mov', '.mp3', '.wav', '.wma', '.flac', '.aac', '.ogg', '.pdf' )
 
 def check_repository_type(path_repo,title,metadata_result:Result):
     """ Function that adds the metadata result in the JSON 
-        output depending on the software type"""
+        output depending on the software type or if the repository is not considered software"""
     if check_extras(path_repo):
-        metadata_result.add_result(constants.TYPE,
+        metadata_result.add_result(constants.CAT_TYPE,
                                     {
-                                        constants.PROP_VALUE: 'https://www.britannica.com/technology/software',
-                                        constants.PROP_TYPE: constants.URL,
+                                        constants.PROP_VALUE: 'non-software',
+                                        constants.PROP_TYPE: constants.STRING,
 
                                     },
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
     elif check_static_websites(path_repo):
-        metadata_result.add_result(constants.TYPE,
+        metadata_result.add_result(constants.CAT_TYPE,
                                     {
-                                        constants.PROP_VALUE: 'https://www.britannica.com/technology/software',
-                                        constants.PROP_TYPE: constants.URL,
+                                        constants.PROP_VALUE: 'static-website',
+                                        constants.PROP_TYPE: constants.STRING,
                                         
                                     },
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
     elif check_ontologies(path_repo):
-        metadata_result.add_result(constants.TYPE,
+        metadata_result.add_result(constants.CAT_TYPE,
                                     {
-                                        constants.PROP_VALUE: 'https://en.wikipedia.org/wiki/Ontology_(information_science)',
-                                        constants.PROP_TYPE: constants.URL,
+                                        constants.PROP_VALUE: 'ontology',
+                                        constants.PROP_TYPE: constants.STRING,
                                         
                                     },
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
     elif check_notebooks(path_repo):
-        metadata_result.add_result(constants.TYPE,
+        metadata_result.add_result(constants.CAT_TYPE,
                                     {
-                                        constants.PROP_VALUE: 'https://w3id.org/software-types#Notebook_Application',
-                                        constants.PROP_TYPE: constants.URL,
+                                        constants.PROP_VALUE: 'notebook-application',
+                                        constants.PROP_TYPE: constants.STRING,
                                         
                                     },
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
     elif check_workflow(path_repo):
-        metadata_result.add_result(constants.TYPE,
+        metadata_result.add_result(constants.CAT_TYPE,
                                     {
-                                        constants.PROP_VALUE: 'https://biotools.readthedocs.io/en/latest/curators_guide.html?highlight=workflow#tool-type',
-                                        constants.PROP_TYPE: constants.URL,
+                                        constants.PROP_VALUE: 'workflow',
+                                        constants.PROP_TYPE: constants.STRING,
                                         
                                     },
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
     elif check_command_line(path_repo):
-        metadata_result.add_result(constants.TYPE,
+        metadata_result.add_result(constants.CAT_TYPE,
                                     {
-                                        constants.PROP_VALUE: 'https://w3id.org/software-types#Commandline_Application',
-                                        constants.PROP_TYPE: constants.URL,
+                                        constants.PROP_VALUE: 'commandline-application',
+                                        constants.PROP_TYPE: constants.STRING,
                                         
                                     },
                                     0.82,
                                     constants.TECHNIQUE_HEURISTICS)
     else:
-        metadata_result.add_result(constants.TYPE,
+        metadata_result.add_result(constants.CAT_TYPE,
                                     {
-                                        constants.PROP_VALUE: 'https://www.britannica.com/technology/software',
-                                        constants.PROP_TYPE: constants.URL,
+                                        constants.PROP_VALUE: 'uncategorized',
+                                        constants.PROP_TYPE: constants.STRING,
                                         
                                     },
                                     1,
@@ -79,21 +80,25 @@ def check_repository_type(path_repo,title,metadata_result:Result):
 
 def check_notebooks(path_repo):
     """Function which checks if the specified repository is a Notebook Application
-       depending on the extensions present and number of notebooks which contain code"""
+       depending on the extensions present and number of notebooks which contain code
+
+       @useful_percentage_notebooks: this variable denotes the percentage of notebook files
+       that can be considered useful in terms of running a program. The threshold is set above 40% in order 
+       to omit repositories which are used more for explanatory reasons instead of actual running of code."""
     total_notebooks = 0
     code_notebooks = 0
     total_files=0
-    script_extensions = ('.py','.exe','.sh', '.bat', '.cmd', '.jar', '.cpp', '.c', '.h', '.hpp', '.java', '.cs', '.vb', '.php', '.pl', '.rb')
+    #script_extensions = ('.py','.exe','.sh', '.bat', '.cmd', '.jar', '.cpp', '.c', '.h', '.hpp', '.java', '.cs', '.vb', '.php', '.pl', '.rb')
     
 
     bad_extensions=False
     for root, dirs, files in os.walk(path_repo):
         for file in files:
-            if file.endswith(media_extensions):
+            if file.endswith(constants.media_extensions):
                 continue
             else:
                 total_files+=1
-            if file.endswith(script_extensions):
+            if file.endswith(constants.script_extensions):
                 bad_extensions=True
 
             if file.endswith((".ipynb", ".rmd",'.Rmd',".jl")):
@@ -124,8 +129,8 @@ def check_notebooks(path_repo):
                 except Exception as e:
                     print(f"Error reading notebook file {notebook_path}: {str(e)}")
                     pass
-
-    if code_notebooks/total_notebooks>=0.5 and bad_extensions==False:
+    useful_percentage_notebooks=code_notebooks/total_notebooks
+    if useful_percentage_notebooks>=0.4 and bad_extensions==False:
         return True
     else:
         return False
@@ -136,7 +141,7 @@ def check_ontologies(path_repo):
        and the non-existence of script files"""
     extensions = set()
     onto_extensions=set()
-    extensions_accepted = [".iml",".gitignore",".md",".txt", ".pdf",  ".xlsx",".xlx",  ".csv",  ".tsv", ".yaml",".yml",  ".jpg",   ".png",   ".gif",   ".wav",   ".mp3",   ".avi",   ".tiff", ".svg",".properties",".css",".html",".xml",".js",".json",".rst",".ttl","",".woff",".woff2",".scss",".prettierrc",".lock",".jsonld",".dot",".graphml",".drawio",".ttl",".nt",".owl",".htaccess",".conf",".cfg",".owl2",".nq",".n3",".trig",".rdf",".icon"]
+    #extensions_accepted = [".iml",".gitignore",".md",".txt", ".pdf",  ".xlsx",".xlx",  ".csv",  ".tsv", ".yaml",".yml",  ".jpg",   ".png",   ".gif",   ".wav",   ".mp3",   ".avi",   ".tiff", ".svg",".properties",".css",".html",".xml",".js",".json",".rst",".ttl","",".woff",".woff2",".scss",".prettierrc",".lock",".jsonld",".dot",".graphml",".drawio",".ttl",".nt",".owl",".htaccess",".conf",".cfg",".owl2",".nq",".n3",".trig",".rdf",".icon"]
     archive_extensions = [".zip", ".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tar.Z", ".rar", ".7z", ".gz", ".bz2", ".xz", ".Z"]
     for root, dirs, files in os.walk(path_repo):
         for file in files:
@@ -146,15 +151,12 @@ def check_ontologies(path_repo):
             else:
                 extensions.add(ext)
     for element in list(extensions):
-        if element not in extensions_accepted or (element in archive_extensions and onto_extensions is None):
-            print("here")
+        if element not in constants.extensions_accepted or (element in archive_extensions and onto_extensions is None):
             return False
-    if not any(ext not in list(onto_extensions) for ext in [".ttl",".nt", ".owl", ".rdf", ".owl2"]):
-        print("here2")
+    if not any(ext not in list(onto_extensions) for ext in [".ttl",".nt", ".owl", ".rdf", ".owl2"]): 
         return False
 
-    if onto_extensions is None:
-        print("here3")
+    if onto_extensions is None:  
         return False
     return True
 
@@ -193,8 +195,8 @@ def check_extras(path_repo):
     """Function which detects if a repository is non-software by checking against
        software related files"""
     extensions = set()
-    extensions_accepted = [".iml",".gitignore",".md",".txt", ".pdf",  ".xlsx",".xlx",  ".csv",  ".tsv", ".yaml",".yml",  ".jpg",   ".png",   ".gif",   ".wav",   ".mp3",   ".avi",   ".tiff", ".svg",".properties",".css",".html",".xml",".js",".json",".rst",".ttl","",".woff",".woff2",".scss",".prettierrc",".lock",".jsonld",".dot",".graphml"]
-    archive_extensions = [".zip", ".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tar.Z", ".rar", ".7z", ".gz", ".bz2", ".xz", ".Z"]
+    extensions_accepted = (".iml",".gitignore",".md",".txt", ".pdf",  ".xlsx",".xlx",  ".csv",  ".tsv", ".yaml",".yml",  ".jpg",   ".png",   ".gif",   ".wav",   ".mp3",   ".avi",   ".tiff", ".svg",".properties",".css",".html",".xml",".js",".json",".rst",".ttl","",".woff",".woff2",".scss",".prettierrc",".lock",".jsonld",".dot",".graphml")
+    archive_extensions = (".zip", ".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tar.Z", ".rar", ".7z", ".gz", ".bz2", ".xz", ".Z")
     for root, dirs, files in os.walk(path_repo):
         for file in files:
             _, ext = os.path.splitext(file)
@@ -219,7 +221,7 @@ def check_static_websites(path_repo):
     for root, dirs, files in os.walk(path_repo):
         for file in files:
             _, ext = os.path.splitext(file)
-            if ext not in media_extensions:
+            if ext not in constants.media_extensions:
                 nr_files+=1
             if ext in [".js",".css",".html",".scss"]:
                 static_web_files+=1
@@ -228,16 +230,7 @@ def check_static_websites(path_repo):
         return True
     else:
         return False
-    # for size in repository_metadata['languages'][constants.PROP_SIZE]:
-    #     sums+=size
-    #     if repository_metadata['languages'][constants.PROP_VALUE] in ["JavaScript","CSS","HTML"]:
-    #         website_size+=size
-    
 
-    # if check_extras(path_repo) and percentage>=0.4 and website_size/sums>=0.6:
-    #     return True
-    # else:
-    #     return False
 
 def check_workflow(repo_path,title):
     """Function which checks inside text for presence of repository being a workflow and analysis of the 

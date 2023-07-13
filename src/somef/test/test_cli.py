@@ -891,5 +891,5 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
 
-        assert data.find(constants.CAT_TYPE) >= 0
+        assert data.find(constants.CAT_TYPE) > 0
         os.remove(test_data_path + "repositories/repos_oeg/test-category.json")
