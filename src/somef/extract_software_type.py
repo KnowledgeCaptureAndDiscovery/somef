@@ -146,7 +146,7 @@ def check_ontologies(path_repo):
     queries = 0
     onto = 0
     extensions = set()
-    onto_extensions=set()
+    onto_extensions=[]
     Onto_rdf=False
     extensions_accepted = [".rq",".sparql",".plantilla",".htm",".graffle",".bkp",".pack",".idx",".iml",".gitignore", ".yaml",".yml",".tiff",".properties",".css",".html",".xml",".js",".json",".rst",".ttl","",".woff",".woff2",".scss",".prettierrc",".lock",".jsonld",".dot",".graphml",".drawio",".ttl",".nt",".owl",".htaccess",".conf",".cfg",".owl2",".nq",".n3",".trig",".rdf",".sample"]
     archive_extensions=set()
@@ -162,7 +162,7 @@ def check_ontologies(path_repo):
             if ext in [".ttl",".nt",".owl",".htaccess",".conf",".cfg",".owl2",".nq",".n3",".trig"]:
                 onto+=1
                 #print(ext)
-                onto_extensions.add(ext)
+                onto_extensions.append(ext)
                 extensions.add(ext)
             elif ext in [".zip", ".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tar.Z", ".rar", ".7z", ".gz", ".bz2", ".xz", ".Z"]:
                 archive_extensions.add(ext)
