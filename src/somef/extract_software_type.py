@@ -34,7 +34,7 @@ def check_repository_type(path_repo,title,metadata_result:Result):
                                     },
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
-    elif check_ontologies(path_repo):
+    elif check_ontologies(path_repo,title):
         metadata_result.add_result(constants.CAT_TYPE,
                                     {
                                         constants.PROP_VALUE: 'ontology',
@@ -140,9 +140,11 @@ def check_notebooks(path_repo):
         return False
 
 
-def check_ontologies(path_repo):
+def check_ontologies(path_repo,title):
     """Function which detects if repository is an Ontology based on files present
        and the non-existence of script files"""
+    words = re.split(r"[\s_-]", title)
+    pattern = r"\b({})\s+ontology\b".format("|".join(re.escape(word) for word in words))
     queries = 0
     onto = 0
     extensions = set()
@@ -155,6 +157,17 @@ def check_ontologies(path_repo):
         for file in files:
             file_path = os.path.join(repo_relative_path, file)
             _, ext = os.path.splitext(file)
+            filename_no_ext = os.path.splitext(file)[0]
+            if "README" == filename_no_ext.upper():
+                if repo_relative_path == ".":
+                        with open(os.path.join(path_repo,file_path), "r") as data_file:
+                            data_file_text = data_file.read()
+                            try:
+                                matches = re.findall(pattern, data_file_text, re.IGNORECASE)
+                                if matches:
+                                    return True
+                            except:
+                                continue
             if ext in constants.media_extensions:
                 continue
             if ext == ".rq":

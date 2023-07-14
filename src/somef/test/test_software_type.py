@@ -10,12 +10,12 @@ class TestEXTRAS(unittest.TestCase):
 
     def test_true_ontology(self):
         path = test_data_repositories + "auroral-core-ontology-master"
-        result = check_ontologies(path)
+        result = check_ontologies(path,"auroral-core-ontology-master")
         assert result
      
     def test_false_ontology(self):
         path = test_data_repositories + "sprint-main"
-        result = check_ontologies(path)
+        result = check_ontologies(path,"sprint-main")
         assert (result is False)
     
     def test_true_notebooks(self):
