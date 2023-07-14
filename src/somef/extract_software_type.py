@@ -6,8 +6,12 @@ import re
 from .extract_workflows import is_file_workflow
 from .process_results import Result
 from .utils import constants
+import rdflib
+from rdflib import Graph, RDF, OWL
+import xml.sax
+from rdflib.plugins.parsers.notation3 import BadSyntax
+import json
 
-#media_extensions = ('.rData','.bib','.csv','.xlx','.stan','.tex','.rst','.md','.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.mp4', '.avi', '.mkv', '.wmv', '.flv', '.mov', '.mp3', '.wav', '.wma', '.flac', '.aac', '.ogg', '.pdf' )
 
 def check_repository_type(path_repo,title,metadata_result:Result):
     """ Function that adds the metadata result in the JSON 
@@ -139,26 +143,39 @@ def check_notebooks(path_repo):
 def check_ontologies(path_repo):
     """Function which detects if repository is an Ontology based on files present
        and the non-existence of script files"""
+    queries = 0
+    onto = 0
     extensions = set()
     onto_extensions=set()
-    #extensions_accepted = [".iml",".gitignore",".md",".txt", ".pdf",  ".xlsx",".xlx",  ".csv",  ".tsv", ".yaml",".yml",  ".jpg",   ".png",   ".gif",   ".wav",   ".mp3",   ".avi",   ".tiff", ".svg",".properties",".css",".html",".xml",".js",".json",".rst",".ttl","",".woff",".woff2",".scss",".prettierrc",".lock",".jsonld",".dot",".graphml",".drawio",".ttl",".nt",".owl",".htaccess",".conf",".cfg",".owl2",".nq",".n3",".trig",".rdf",".icon"]
-    archive_extensions = [".zip", ".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tar.Z", ".rar", ".7z", ".gz", ".bz2", ".xz", ".Z"]
+    Onto_rdf=False
+    extensions_accepted = [".rq",".sparql",".plantilla",".htm",".graffle",".bkp",".pack",".idx",".iml",".gitignore", ".yaml",".yml",".tiff",".properties",".css",".html",".xml",".js",".json",".rst",".ttl","",".woff",".woff2",".scss",".prettierrc",".lock",".jsonld",".dot",".graphml",".drawio",".ttl",".nt",".owl",".htaccess",".conf",".cfg",".owl2",".nq",".n3",".trig",".rdf",".sample"]
+    archive_extensions=set()
     for root, dirs, files in os.walk(path_repo):
+        repo_relative_path = os.path.relpath(root, path_repo)
         for file in files:
+            file_path = os.path.join(repo_relative_path, file)
             _, ext = os.path.splitext(file)
-            if ext in [".ttl",".nt",".owl",".htaccess",".conf",".cfg",".owl2",".nq",".n3",".trig",".rdf"]:
+            if ext in constants.media_extensions:
+                continue
+            if ext == ".rq":
+                queries+=1
+            if ext in [".ttl",".nt",".owl",".htaccess",".conf",".cfg",".owl2",".nq",".n3",".trig"]:
+                onto+=1
+                #print(ext)
                 onto_extensions.add(ext)
+                extensions.add(ext)
+            elif ext in [".zip", ".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tar.Z", ".rar", ".7z", ".gz", ".bz2", ".xz", ".Z"]:
+                archive_extensions.add(ext)
             else:
                 extensions.add(ext)
-    for element in list(extensions):
-        if element not in constants.extensions_accepted or (element in archive_extensions and onto_extensions is None):
-            return False
-    if not any(ext not in list(onto_extensions) for ext in [".ttl",".nt", ".owl", ".rdf", ".owl2"]): 
-        return False
+            if file.endswith(".rdf"):
+                if Onto_rdf==False:
+                    Onto_rdf=check_ontology_schema(os.path.join(path_repo,file_path))
+    bad_extensions =any(element not in extensions_accepted for element in extensions)
 
-    if onto_extensions is None:  
-        return False
-    return True
+    if ((Onto_rdf and ".rdf" in extensions) or len(onto_extensions)>1 ) and ((bad_extensions==False) and ((archive_extensions is not None and onto_extensions is None)==False) and queries<=(onto/2)):
+        return True
+    return False
 
 def check_command_line(path_repo):
     """Function which detects if repository is a Commandline Application
@@ -300,3 +317,37 @@ def check_name(filename):
         return False
     elif (not pattern1.search(filename) and not pattern2.search(filename)) or (not pattern1.search(filename) and pattern2.search(filename)):
         return False
+
+def check_ontology_schema(file_path):
+    supported_formats = ["xml", "turtle", "nt", "json-ld"]
+    for format in supported_formats:
+        try:
+            graph = rdflib.Graph()
+            graph.parse(file_path, format=format)
+            #print(f"Successfully parsed {file_path} using format: {format}")
+            if has_ontology_schema(graph):
+                #print(f"The file {file_path} contains an ontology schema.")
+                return True
+            else:
+                #print(f"The file {file_path} does not contain an ontology schema.")
+                return False
+        except (FileNotFoundError, rdflib.exceptions.ParserError, xml.sax._exceptions.SAXParseException, BadSyntax, json.decoder.JSONDecodeError,xml.parsers.expat.ExpatError):
+            #print(f"Failed to parse {file_path} using format: {format}")
+            continue
+    #print(f"No supported format could parse {file_path}")
+    return False
+
+def has_ontology_schema(graph):
+    return any(
+        len(list(graph.subjects(rdflib.RDF.type, term))) > 0
+        for term in [
+            rdflib.OWL.Class,
+            rdflib.OWL.ObjectProperty,
+            rdflib.OWL.DatatypeProperty,
+            rdflib.RDFS.Class,
+            rdflib.RDFS.Resource,
+            rdflib.RDFS.subClassOf,
+            rdflib.RDFS.domain,
+            rdflib.OWL.complementOf,
+        ]
+    )
