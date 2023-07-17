@@ -9,13 +9,13 @@ test_data_repositories = str(Path(__file__).parent / "test_data"/ "repositories"
 class TestEXTRAS(unittest.TestCase):
 
     def test_true_ontology(self):
-        path = test_data_repositories + "auroral-core-ontology-master"
-        result = check_ontologies(path,"auroral-core-ontology-master")
+        path = test_data_repositories + "auroral-ontology-core"
+        result = check_ontologies(path)
         assert result
      
     def test_false_ontology(self):
         path = test_data_repositories + "sprint-main"
-        result = check_ontologies(path,"sprint-main")
+        result = check_ontologies(path)
         assert (result is False)
     
     def test_true_notebooks(self):
@@ -44,7 +44,7 @@ class TestEXTRAS(unittest.TestCase):
         assert result
 
     def test_false_extra(self):
-        path = test_data_repositories + "auroral-core-ontology-master"
+        path = test_data_repositories + "ipynb-master"
         result = check_extras(path)
         assert result is False
 

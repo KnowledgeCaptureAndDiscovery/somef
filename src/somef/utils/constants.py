@@ -230,6 +230,7 @@ class RepositoryType(Enum):
     LOCAL = 3
 
 # Media/script/non-software sets
-media_extensions = ('.txt','.tsv','.ico','.rData','.bib','.csv','.xlx','.xlsx','.stan','.tex','.html','.css','.rst','.md','.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.mp4', '.avi', '.mkv', '.wmv', '.flv', '.mov', '.mp3', '.wav', '.wma', '.flac', '.aac', '.ogg', '.pdf',".icon",".ico" )
-script_extensions = ('.py','.exe','.sh', '.bat', '.cmd', '.jar', '.cpp', '.c', '.h', '.hpp', '.java', '.cs', '.vb', '.php', '.pl', '.rb')
-extensions_accepted = (".iml",".gitignore",".md",".txt", ".pdf",  ".xlsx",".xlx",  ".csv",  ".tsv", ".yaml",".yml",  ".jpg",   ".png",   ".gif",   ".wav",   ".mp3",   ".avi",   ".tiff", ".svg",".properties",".css",".html",".xml",".js",".json",".rst",".ttl","",".woff",".woff2",".scss",".prettierrc",".lock",".jsonld",".dot",".graphml",".drawio",".ttl",".nt",".owl",".htaccess",".conf",".cfg",".owl2",".nq",".n3",".trig",".rdf",".icon")    
+#archive_extensions = (".zip", ".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tar.Z", ".rar", ".7z", ".gz", ".bz2", ".xz", ".Z")
+code_extensions = (".sql",".ddl",".psql",".mysql",".oracle",".plsql",".py",".ipynb",".java",".jar",".bash",".sh",".cs",".dll",".cpp",".c",".php",".phtml",".ps1",".rs",".go",".kt",".rb",".pl",".lua",".dart",".groovy",".asm",".swift",".R")
+ontology_extensions=(".rdf",".ttl",".owl",".nt",".owl2",".nq",".n3",".rdfs") 
+media_files=(".mp4",".mp3",".wav",".bmp",".gif",".png",".jpeg",".jpg",".svg",".webp",".xls",".xlsx",".ico",".webm",".wmv",".txt")
