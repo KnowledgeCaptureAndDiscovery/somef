@@ -259,7 +259,7 @@ def check_workflow(repo_path,title):
                     continue
             if check_name(file)==True:
                 return True
-    if list!=[] and good_workflows!=0:
+    if list!=[]:
         return True
     else:
         return False
