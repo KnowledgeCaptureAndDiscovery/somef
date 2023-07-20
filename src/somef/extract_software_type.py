@@ -14,16 +14,8 @@ from .extract_ontologies import is_file_ontology
 def check_repository_type(path_repo,title,metadata_result:Result):
     """ Function that adds the metadata result in the JSON 
         output depending on the software type or if the repository is not considered software"""
-    if check_extras(path_repo):
-        metadata_result.add_result(constants.CAT_TYPE,
-                                    {
-                                        constants.PROP_VALUE: 'non-software',
-                                        constants.PROP_TYPE: constants.STRING,
 
-                                    },
-                                    1,
-                                    constants.TECHNIQUE_HEURISTICS)
-    elif check_static_websites(path_repo):
+    if check_static_websites(path_repo,Result):
         metadata_result.add_result(constants.CAT_TYPE,
                                     {
                                         constants.PROP_VALUE: 'static-website',
@@ -32,7 +24,7 @@ def check_repository_type(path_repo,title,metadata_result:Result):
                                     },
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
-    elif check_ontologies(path_repo,title):
+    elif check_ontologies(path_repo):
         metadata_result.add_result(constants.CAT_TYPE,
                                     {
                                         constants.PROP_VALUE: 'ontology',
@@ -50,7 +42,7 @@ def check_repository_type(path_repo,title,metadata_result:Result):
                                     },
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
-    elif check_workflow(path_repo):
+    elif check_workflow(path_repo,title):
         metadata_result.add_result(constants.CAT_TYPE,
                                     {
                                         constants.PROP_VALUE: 'workflow',
@@ -68,6 +60,16 @@ def check_repository_type(path_repo,title,metadata_result:Result):
                                     },
                                     0.82,
                                     constants.TECHNIQUE_HEURISTICS)
+
+    elif check_extras(path_repo):
+        metadata_result.add_result(constants.CAT_TYPE,
+                                    {
+                                        constants.PROP_VALUE: 'non-software',
+                                        constants.PROP_TYPE: constants.STRING,
+
+                                    },
+                                    1,
+                                    constants.TECHNIQUE_HEURISTICS)
     else:
         metadata_result.add_result(constants.CAT_TYPE,
                                     {
@@ -75,8 +77,7 @@ def check_repository_type(path_repo,title,metadata_result:Result):
                                         constants.PROP_TYPE: constants.STRING,
                                         
                                     },
-                                    1,
-                                    constants.TECHNIQUE_HEURISTICS)
+                                    1,constants.TECHNIQUE_HEURISTICS)
     return metadata_result
 
 
@@ -183,29 +184,52 @@ def check_extras(path_repo):
     return True
 
 
-def check_static_websites(path_repo):
+def check_static_websites(path_repo,repo_metadata:Result):
     """Function that analyzes byte size of js,css,html languages and checks if 
        repository contains files not associated with static websites
     """
+    print(path_repo)
     nr_files=0
     web_files=0
+    total_size=0
+    web_size=0
     for root, dirs, files in os.walk(path_repo):
         for file in files:
+            file_path = os.path.join(root, file)
+            total_size+=os.path.getsize(file_path)
             if file.endswith(constants.media_files):
                 continue
-            if file.endswith(constants.code_extensions) or file.endswith(constants.ontology_extensions):
+            elif file.endswith(constants.code_extensions) or file.endswith(constants.ontology_extensions):
                 return False
-            elif file.endswith((".js",".css",".html",".scss")):
+            elif file.endswith((".js",".css",".scss",".html")):
                 web_files+=1
             nr_files+=1
-    if web_files>0:
-        percentage=web_files/nr_files
-    else:
-        percentage=0
-    if percentage>=0.8:
-        return True
-    else:
-        return False
+    try:
+        web_languages = ["JavaScript", "SCSS", "CSS", "HTML"]
+        languages=Result[constants.CAT_PROGRAMMING_LANGUAGES]
+        for language in languages:
+            language_name = language[constants.PROP_RESULT][constants.PROP_NAME]
+            if language_name in web_languages:
+                web_size+=language[constants.PROP_RESULT][constants.PROP_SIZE]
+        if web_size>0:
+            print("percentages: ",web_size/total_size)
+            if web_size/total_size>0.8:
+                return True
+            else:
+                return False
+    except Exception as e:
+        print(e)
+    return False
+    # except:
+    #     if web_files>0:
+    #         percentage=web_files/nr_files
+    #     else:
+    #         percentage=0
+    #     print(percentage,web_files)
+    #     if percentage>=0.5:
+    #         return True
+    #     else:
+    #         return False
 
 
 def check_workflow(repo_path,title):

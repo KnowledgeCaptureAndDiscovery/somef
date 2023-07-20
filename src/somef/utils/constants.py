@@ -79,7 +79,7 @@ CAT_SUPPORT = "support"
 CAT_SUPPORT_CHANNELS = "support_channels"
 CAT_USAGE = "usage"
 CAT_WORKFLOWS = "workflows"
-CAT_TYPE="type"
+CAT_TYPE = "type"
 
 # Special category: missing categories
 CAT_MISSING = "somef_missing_categories"

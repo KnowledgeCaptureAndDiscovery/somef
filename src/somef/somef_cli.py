@@ -12,6 +12,7 @@ from .utils import constants, markdown_utils
 from .parser import mardown_parser, create_excerpts
 from .export.turtle_export import DataGraph
 from .export import json_export
+from .extract_software_type import check_repository_type
 
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
@@ -129,7 +130,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             repository_metadata = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo,
                                                                      repository_metadata, readme_source, def_branch)
             logging.info("Completed extracting regular expressions")
-        repository_metadata=check_repository_type(local_folder,repository_metadata) 
+        repository_metadata = check_repository_type(local_folder,repo_name,repository_metadata) 
         return repository_metadata
 
 
