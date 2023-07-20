@@ -15,7 +15,7 @@ def check_repository_type(path_repo,title,metadata_result:Result):
     """ Function that adds the metadata result in the JSON 
         output depending on the software type or if the repository is not considered software"""
 
-    if check_static_websites(path_repo,Result):
+    if check_static_websites(path_repo,metadata_result):
         metadata_result.add_result(constants.CAT_TYPE,
                                     {
                                         constants.PROP_VALUE: 'static-website',
@@ -70,14 +70,6 @@ def check_repository_type(path_repo,title,metadata_result:Result):
                                     },
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
-    else:
-        metadata_result.add_result(constants.CAT_TYPE,
-                                    {
-                                        constants.PROP_VALUE: 'uncategorized',
-                                        constants.PROP_TYPE: constants.STRING,
-                                        
-                                    },
-                                    1,constants.TECHNIQUE_HEURISTICS)
     return metadata_result
 
 
