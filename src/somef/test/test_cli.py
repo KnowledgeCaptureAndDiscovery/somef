@@ -877,7 +877,7 @@ class TestCli(unittest.TestCase):
         """Checks that the categorization is done properly"""
         somef_cli.run_cli(threshold=0.6,
                           ignore_classifiers=False,
-                          repo_url="https://github.com/histaff/website-static",
+                          repo_url="https://github.com/Oshlack/JAFFA",
                           doc_src=None,
                           local_repo=None, #test_data_repositories + "website-static-master",
                           in_file=None,
@@ -893,5 +893,5 @@ class TestCli(unittest.TestCase):
         json_content = json.loads(data)
         repo_status = json_content[constants.CAT_TYPE][0]
         repo_type = repo_status[constants.PROP_RESULT][constants.PROP_VALUE]
-        assert repo_type == "static-website"
+        assert repo_type == "workflow"
         os.remove(test_data_path + "repositories/repos_oeg/test-category.json")
