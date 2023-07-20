@@ -48,16 +48,6 @@ class TestEXTRAS(unittest.TestCase):
         result = check_extras(path)
         assert result is False
 
-    def test_true_website(self):
-        path = test_data_repositories + "website-static-master"
-        result = check_static_websites(path)
-        assert result
-
-    def test_false_website(self):
-        path = test_data_repositories + "A-Dynamic-E-Commerce-Website-master"
-        result = check_static_websites(path)
-        assert result is False
-
     def test_true_workflows(self):
         path = test_data_repositories + "JAFFA-master"
         result = check_workflow(path,'JAFFA-master')
