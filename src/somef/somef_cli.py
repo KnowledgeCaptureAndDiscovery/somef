@@ -61,6 +61,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                                                repo_type, owner,
                                                                                                repo_name,
                                                                                                def_branch)
+                repository_metadata = check_repository_type(local_folder,repo_name,full_repository_metadata) 
             else:  # Use a temp directory
                 with tempfile.TemporaryDirectory() as temp_dir:
                     local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
@@ -70,6 +71,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                                                    repo_type, owner,
                                                                                                    repo_name,
                                                                                                    def_branch)
+                    repository_metadata = check_repository_type(local_folder,repo_name,full_repository_metadata) 
             if readme_text == "":
                 logging.warning("README document does not exist in the target repository")
         except process_repository.GithubUrlError:
@@ -131,7 +133,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                      repository_metadata, readme_source, def_branch)
             repository_metadata = regular_expressions.extract_arxiv_links(unfiltered_text,repository_metadata,readme_source)
             logging.info("Completed extracting regular expressions")
-        repository_metadata = check_repository_type(local_folder,repo_name,repository_metadata) 
+
         return repository_metadata
 
 
