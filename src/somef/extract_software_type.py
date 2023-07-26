@@ -110,7 +110,7 @@ def check_ontologies(path_repo):
             if file.endswith(constants.code_extensions):
                 return False
             elif file.endswith(constants.ontology_extensions):
-                if ontology==False:
+                if not ontology:
                     ontology=is_file_ontology(os.path.join(path_repo,file_path))
     return ontology
 
@@ -295,10 +295,7 @@ def is_notebook_code(file_path):
             if cell['source'].strip():
                 num_code_cells += 1
                 has_code = True
-    if has_code and num_code_cells / num_total_cells >= 0.55:
-        return True
-    else:
-        return False
+    return has_code
 
 def has_code_in_rmd(file_path):
     with open(file_path, 'r') as file:
