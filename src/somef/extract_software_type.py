@@ -190,24 +190,27 @@ def check_static_websites(path_repo,repo_metadata:Result):
                     return False
     try:
         languages=repo_metadata[constants.CAT_PROGRAMMING_LANGUAGES]
+        print(languages)
         for language in languages:
             language_name = language[constants.PROP_RESULT][constants.PROP_NAME]
+            print(language_name)
             if language_name.lower() =="javascript":
                 js_size+=language[constants.PROP_RESULT][constants.PROP_SIZE]
+                print(js_size)
             elif language_name.lower()== "scss" or language_name.lower()== "css":
                 css_size+=language[constants.PROP_RESULT][constants.PROP_SIZE]
             total_size+=language[constants.PROP_RESULT][constants.PROP_SIZE]
-
-        if html_file>0:
-            if js_size>0 and css_size==0:          
-                if js_size/total_size<0.91:
-                    return True
-            elif js_size==0 and css_size>0:
-                if css_size/total_size<0.798:
-                    return True
-            return True
     except Exception as e:
         print(e)
+    if html_file>0:
+        if js_size>0 and css_size==0:          
+            if js_size/total_size<0.91:
+                return True
+        elif js_size==0 and css_size>0:
+            if css_size/total_size<0.798:
+                return True
+        return True
+
     return False
 
 
