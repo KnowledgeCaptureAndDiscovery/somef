@@ -879,7 +879,7 @@ class TestCli(unittest.TestCase):
                           ignore_classifiers=False,
                           repo_url="https://github.com/Oshlack/JAFFA",
                           doc_src=None,
-                          local_repo=None, #test_data_repositories + "website-static-master",
+                          local_repo=None,
                           in_file=None,
                           output=test_data_path + "repositories/repos_oeg/test-category.json",
                           graph_out=None,

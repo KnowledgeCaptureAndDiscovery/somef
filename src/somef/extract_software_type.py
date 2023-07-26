@@ -7,6 +7,7 @@ from .extract_workflows import is_file_workflow
 from .process_results import Result
 from .utils import constants
 from .extract_ontologies import is_file_ontology
+import pdb
 
 
 
@@ -14,13 +15,12 @@ from .extract_ontologies import is_file_ontology
 def check_repository_type(path_repo,title,metadata_result:Result):
     """ Function that adds the metadata result in the JSON 
         output depending on the software type or if the repository is not considered software"""
-
+    
     if check_static_websites(path_repo,metadata_result):
         metadata_result.add_result(constants.CAT_TYPE,
                                     {
                                         constants.PROP_VALUE: 'static-website',
-                                        constants.PROP_TYPE: constants.STRING,
-                                        
+                                        constants.PROP_TYPE: constants.STRING
                                     },
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
@@ -28,8 +28,7 @@ def check_repository_type(path_repo,title,metadata_result:Result):
         metadata_result.add_result(constants.CAT_TYPE,
                                     {
                                         constants.PROP_VALUE: 'ontology',
-                                        constants.PROP_TYPE: constants.STRING,
-                                        
+                                        constants.PROP_TYPE: constants.STRING
                                     },
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
@@ -37,8 +36,7 @@ def check_repository_type(path_repo,title,metadata_result:Result):
         metadata_result.add_result(constants.CAT_TYPE,
                                     {
                                         constants.PROP_VALUE: 'notebook-application',
-                                        constants.PROP_TYPE: constants.STRING,
-                                        
+                                        constants.PROP_TYPE: constants.STRING
                                     },
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
@@ -46,8 +44,7 @@ def check_repository_type(path_repo,title,metadata_result:Result):
         metadata_result.add_result(constants.CAT_TYPE,
                                     {
                                         constants.PROP_VALUE: 'workflow',
-                                        constants.PROP_TYPE: constants.STRING,
-                                        
+                                        constants.PROP_TYPE: constants.STRING
                                     },
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
@@ -55,8 +52,7 @@ def check_repository_type(path_repo,title,metadata_result:Result):
         metadata_result.add_result(constants.CAT_TYPE,
                                     {
                                         constants.PROP_VALUE: 'commandline-application',
-                                        constants.PROP_TYPE: constants.STRING,
-                                        
+                                        constants.PROP_TYPE: constants.STRING                                        
                                     },
                                     0.82,
                                     constants.TECHNIQUE_HEURISTICS)
@@ -65,8 +61,7 @@ def check_repository_type(path_repo,title,metadata_result:Result):
         metadata_result.add_result(constants.CAT_TYPE,
                                     {
                                         constants.PROP_VALUE: 'non-software',
-                                        constants.PROP_TYPE: constants.STRING,
-
+                                        constants.PROP_TYPE: constants.STRING
                                     },
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
@@ -77,20 +72,14 @@ def check_notebooks(path_repo):
     """Function which checks if the specified repository is a Notebook Application
        depending on the extensions present and number of notebooks which contain code
 
-       @useful_percentage_notebooks: this variable denotes the percentage of notebook files
-       that can be considered useful in terms of running a program. The threshold is set above 30% in order 
-       to omit repositories which are used more for explanatory reasons instead of actual running of code ."""
-    total_notebooks = 0
+       The function checks for presence of more than one code_notebook inside the repo and checks against code 
+       extensions present returning true if both conditions are fulfilled ."""
     code_notebooks = 0
     total_files=0
 
     bad_extensions=False
     for root, dirs, files in os.walk(path_repo):
         for file in files:
-            if file.endswith(constants.media_files):
-                continue
-            total_files+=1
-
             if file.endswith((".ipynb", ".rmd",'.Rmd',".jl")):
                 notebook_path = os.path.join(root, file)
                 try:
@@ -100,23 +89,13 @@ def check_notebooks(path_repo):
                     elif file.endswith(".rmd") or file.endswith('.Rmd'):
                         if has_code_in_rmd(notebook_path):
                             code_notebooks += 1
-                    elif file.endswith('.jl'):
-                        code_notebooks +=1
-
-                    total_notebooks += 1
                 except Exception as e:
                     print(f"Error reading notebook file {notebook_path}: {str(e)}")
                     pass
             if file.endswith(constants.code_extensions):
                 bad_extensions=True
-    if code_notebooks>0:
-        useful_percentage_notebooks=code_notebooks/total_notebooks
-    else:
-        useful_percentage_notebooks=0
-    if useful_percentage_notebooks>=0.3 and bad_extensions==False:
-        return True
-    else:
-        return False
+    if code_notebooks>1:
+        return (not bad_extensions)
 
 
 def check_ontologies(path_repo):
@@ -127,7 +106,7 @@ def check_ontologies(path_repo):
         repo_relative_path = os.path.relpath(root, path_repo)
         for file in files:
             file_path = os.path.join(repo_relative_path, file)
-            print(os.path.join(repo_relative_path,file_path))
+            #print(os.path.join(repo_relative_path,file_path))
             if file.endswith(constants.code_extensions):
                 return False
             elif file.endswith(constants.ontology_extensions):
@@ -149,7 +128,7 @@ def check_command_line(path_repo):
             if "README" == filename_no_ext.upper():
                 if repo_relative_path == ".":
                     
-                        print(os.path.join(dir_path, filename))
+                        #print(os.path.join(dir_path, filename))
                         with open(os.path.join(dir_path, filename), "r") as data_file:
                             data_file_text = data_file.read()
                             try:
@@ -171,8 +150,15 @@ def check_extras(path_repo):
        software related files"""
     for root, dirs, files in os.walk(path_repo):
         for file in files:
+            notebook_path = os.path.join(root, file)
             if file.endswith(constants.code_extensions) or file.endswith(constants.ontology_extensions):
                 return False
+            elif file.endswith(".ipynb"):
+                if is_notebook_code(notebook_path):
+                    return False
+            elif file.endswith(".rmd") or file.endswith('.Rmd'):
+                        if has_code_in_rmd(notebook_path):
+                            return False
     return True
 
 
@@ -180,54 +166,59 @@ def check_static_websites(path_repo,repo_metadata:Result):
     """Function that analyzes byte size of js,css,html languages and checks if 
        repository contains files not associated with static websites
     """
-    print(path_repo)
+    #print(path_repo)
     nr_files=0
     web_files=0
     total_size=0
-    web_size=0
+    js_size=0
+    css_size=0
+    html_file=0
     for root, dirs, files in os.walk(path_repo):
         for file in files:
             file_path = os.path.join(root, file)
-            total_size+=os.path.getsize(file_path)
-            if file.endswith(constants.media_files):
-                continue
-            elif file.endswith(constants.code_extensions) or file.endswith(constants.ontology_extensions):
+            if file.endswith(constants.code_extensions) or file.endswith(constants.ontology_extensions) or file.lower() in (('bower.json','package.json')):
                 return False
-            elif file.endswith((".js",".css",".scss",".html")):
+            elif file.endswith((".js",".css",".scss")):
                 web_files+=1
-            nr_files+=1
+            elif file.endswith(".html"):
+                html_file+=1
+            elif file.endswith(".ipynb"):
+                if is_notebook_code(file_path):
+                    return False
+            elif file.endswith(".rmd") or file.endswith('.Rmd'):
+                if has_code_in_rmd(file_path):
+                    return False
     try:
-        web_languages = ["JavaScript", "SCSS", "CSS", "HTML"]
-        languages=Result[constants.CAT_PROGRAMMING_LANGUAGES]
+        languages=repo_metadata[constants.CAT_PROGRAMMING_LANGUAGES]
         for language in languages:
             language_name = language[constants.PROP_RESULT][constants.PROP_NAME]
-            if language_name in web_languages:
-                web_size+=language[constants.PROP_RESULT][constants.PROP_SIZE]
-        if web_size>0:
-            print("percentages: ",web_size/total_size)
-            if web_size/total_size>0.8:
-                return True
-            else:
-                return False
+            if language_name.lower() =="javascript":
+                js_size+=language[constants.PROP_RESULT][constants.PROP_SIZE]
+            elif language_name.lower()== "scss" or language_name.lower()== "css":
+                css_size+=language[constants.PROP_RESULT][constants.PROP_SIZE]
+            total_size+=language[constants.PROP_RESULT][constants.PROP_SIZE]
+
+        if html_file>0:
+            if js_size>0 and css_size==0:          
+                if js_size/total_size<0.91:
+                    return True
+            elif js_size==0 and css_size>0:
+                if css_size/total_size<0.798:
+                    return True
+            return True
     except Exception as e:
         print(e)
     return False
-    # except:
-    #     if web_files>0:
-    #         percentage=web_files/nr_files
-    #     else:
-    #         percentage=0
-    #     print(percentage,web_files)
-    #     if percentage>=0.5:
-    #         return True
-    #     else:
-    #         return False
+
 
 
 def check_workflow(repo_path,title):
     """Function which checks inside text for presence of repository being a workflow and analysis of the 
        files inside to check if they are correct workflow files. Also checks for repositories with no information
        the name of the files which might point to it being a workflow.
+       PARAMETERS:
+       @repo_path(path to the repository directory)
+       @title(title of the repository)
      """
     list=[]
     total_workflows=0
