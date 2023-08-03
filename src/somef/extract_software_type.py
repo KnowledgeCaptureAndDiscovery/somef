@@ -165,6 +165,10 @@ def check_extras(path_repo):
 def check_static_websites(path_repo,repo_metadata:Result):
     """Function that analyzes byte size of js,css,html languages and checks if 
        repository contains files not associated with static websites
+
+       The evaluation numbers were extracted from the analysis of 997 css repositories representing libraries nad 998 js repos containing libraries
+       with control repositories .
+       
     """
     #print(path_repo)
     nr_files=0
