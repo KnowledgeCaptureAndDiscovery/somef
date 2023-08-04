@@ -127,9 +127,9 @@ def check_command_line(path_repo):
             filename_no_ext = os.path.splitext(filename)[0]
             if "README" == filename_no_ext.upper():
                 if repo_relative_path == ".":
-                    
+                    try:
                         #print(os.path.join(dir_path, filename))
-                        with open(os.path.join(dir_path, filename), "r") as data_file:
+                        with open(os.path.join(dir_path, filename), "r", encoding="utf-8") as data_file:
                             data_file_text = data_file.read()
                             try:
                                 cmd_match2=re.search(pattern_commandline,data_file_text)
@@ -139,7 +139,8 @@ def check_command_line(path_repo):
                                     return True
                             except:
                                 return False
-                    
+                    except:
+                        pass
 
     return False   
 

@@ -7,6 +7,11 @@ from ..extract_software_type import check_ontologies,check_notebooks,check_comma
 test_data_repositories = str(Path(__file__).parent / "test_data"/ "repositories") + os.path.sep
 
 class TestEXTRAS(unittest.TestCase):
+    """The following tests are made to check the workings of the classification
+        Each category has two tests with the format test_result-of-test_type 
+        in orded to identify what each of them does.
+        e.g: test_true_ontology runs the check_ontologies function on auroral-ontology-core which 
+        is an ontology and returns true so the assert passes."""
 
     def test_true_ontology(self):
         path = test_data_repositories + "auroral-ontology-core"
