@@ -306,8 +306,10 @@ def is_notebook_code(file_path):
     return has_code
 
 def has_code_in_rmd(file_path):
-    with open(file_path, 'r') as file:
-        content = file.read()
-        if "```{r" in content or "```{python" in content or "```{bash" in content:
-            return True
-    return False
+    try:
+        with open(file_path, 'r') as file:
+            content = file.read()
+            if "```{r" in content or "```{python" in content or "```{bash" in content:
+                return True
+    except:
+        return False
