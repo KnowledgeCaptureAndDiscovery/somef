@@ -49,6 +49,8 @@ def check_repository_type(path_repo,title,metadata_result:Result):
                                     1,
                                     constants.TECHNIQUE_HEURISTICS)
     elif check_command_line(path_repo):
+        """The 0.82 confidence result is from running the analysis on 300 repos and showing the precision 
+            of the heuristic"""
         metadata_result.add_result(constants.CAT_TYPE,
                                     {
                                         constants.PROP_VALUE: 'commandline-application',
@@ -80,7 +82,7 @@ def check_notebooks(path_repo):
     bad_extensions=False
     for root, dirs, files in os.walk(path_repo):
         for file in files:
-            if file.endswith((".ipynb", ".rmd",'.Rmd',".jl")):
+            if file.endswith((".ipynb", ".rmd",'.Rmd')):
                 notebook_path = os.path.join(root, file)
                 try:
                     if file.endswith(".ipynb"):
@@ -231,7 +233,6 @@ def check_workflow(repo_path,title):
     list=[]
     total_workflows=0
     good_workflows=0
-    extensions=('.ga','.cwl','.nf','.knwf','.t2flow','.dag','.kar','.wdl',".smk",".snake")
     for root, dirs, files in os.walk(repo_path):
         repo_relative_path = os.path.relpath(root, repo_path)
         for file in files:
@@ -264,7 +265,7 @@ def check_workflow(repo_path,title):
                     except:
                         continue
 
-            if file.endswith(extensions) or file =="Snakefile":
+            if file.endswith(constants.workflow_extensions) or file =="Snakefile":
                 total_workflows+=1
                 file_path = os.path.join(root, file)
                 if is_file_workflow(file_path):
