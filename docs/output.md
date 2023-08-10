@@ -113,7 +113,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `support_channels`: Help channels one can use to get support about the target software component.
 - `usage`: Usage examples and considerations of a code repository.
 - `workflows`: URL and path to the workflow files present in the repository.
-
+- `type`: URL of definition and type of software category
 The following table summarized the properties used to describe a `category`:
 
 | Property | Mandatory? | Expected value | Definition |
@@ -213,6 +213,7 @@ The techniques can be of several types:
 - `GitLab_API`: the result was obtained from the GitLab API.
 - `regular_expression`: the result was obtained after performing regular expressions on the files in the repository.
 - `code_parser`: the result was obtained from code configuration files with metadata markup. 
+- `software_type_heuristics`: returns the software type obtained from analysis of the repository based on various heuristics such as README, code and extension analysis.Software types included:Commandline Application, Notebook Application, Ontology, Workflow.Non-Software types: Static Website, Uncategorized. 
 
 ### Missing categories
 If SOMEF is run with the `-m` flag, a report of the categories that the program was not able to find is returned. The format for this field is slightly different than the rest, providing a list of the missing categories. An example can be seen below:

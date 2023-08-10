@@ -1,0 +1,13 @@
+site_name: Mapping OWL to OAS
+nav:
+  - Mapping: mapping.md
+  - Implementations: implementations.md
+theme:
+  name: material
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true

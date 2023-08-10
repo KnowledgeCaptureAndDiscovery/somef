@@ -79,6 +79,7 @@ CAT_SUPPORT = "support"
 CAT_SUPPORT_CHANNELS = "support_channels"
 CAT_USAGE = "usage"
 CAT_WORKFLOWS = "workflows"
+CAT_TYPE = "type"
 
 # Special category: missing categories
 CAT_MISSING = "somef_missing_categories"
@@ -166,6 +167,7 @@ TECHNIQUE_FILE_EXPLORATION = "file_exploration"
 TECHNIQUE_CODE_CONFIG_PARSER = "code_parser"
 TECHNIQUE_GITHUB_API = "GitHub_API"
 TECHNIQUE_GITLAB_API = "GitLab_API"
+TECHNIQUE_HEURISTICS = "software_type_heuristics"
 
 # GitHub properties
 GITHUB_DOMAIN = "github.com"
@@ -226,3 +228,9 @@ class RepositoryType(Enum):
     GITHUB = 1
     GITLAB = 2
     LOCAL = 3
+
+# Media/script/non-software sets
+workflow_extensions=('.ga','.cwl','.nf','.knwf','.t2flow','.dag','.kar','.wdl',".smk",".snake")
+code_extensions = (".jl",".sql",".ddl",".psql",".mysql",".oracle",".plsql",".py",".java",".jar",".bash",".sh",".cs",".dll",".cpp",".c",".php",".phtml",".ps1",".rs",".go",".kt",".rb",".pl",".lua",".dart",".groovy",".asm",".swift",".R",".r")
+ontology_extensions=(".rdf",".ttl",".owl",".nt",".owl2",".nq",".n3",".rdfs") 
+media_files=(".mp4",".mp3",".wav",".bmp",".gif",".png",".jpeg",".jpg",".svg",".webp",".xls",".xlsx",".ico",".webm",".wmv",".txt")
