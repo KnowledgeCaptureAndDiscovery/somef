@@ -3,11 +3,11 @@
 
 <img src="docs/logo.png" alt="logo" width="150"/>
 
-A command line interface for automatically extracting relevant information from readme files.
+A command line interface for automatically extracting relevant metadata from code repositories (readme, configuration files, documentation, etc.).
 
 **Demo:** See a [demo running somef as a service](https://somef.linkeddata.es), through the [SOMEF-Vider tool](https://github.com/SoftwareUnderstanding/SOMEF-Vider/). 
 
-**Authors:** Daniel Garijo, Allen Mao, Miguel Ángel García Delgado, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang, Aidan Kelley and Jenifer Tabita Ciuciu-Kiss.
+**Authors:** Daniel Garijo, Allen Mao, Miguel Ángel García Delgado, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang, Aidan Kelley, Jenifer Tabita Ciuciu-Kiss and Luca Angheluta.
 
 ## Features
 Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the following categories (if present):
