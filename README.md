@@ -75,7 +75,7 @@ Journal publication (preferred):
     month = {11},
     issn = {2641-3337},
     doi = {10.1162/qss_a_00167},
-    url = {https://doi.org/10.1162/qss\_a\_00167},
+    url = {https://doi.org/10.1162/qss_a_00167},
     eprint = {https://direct.mit.edu/qss/article-pdf/doi/10.1162/qss\_a\_00167/1971225/qss\_a\_00167.pdf},
 }
 ```
