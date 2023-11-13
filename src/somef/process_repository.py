@@ -593,7 +593,6 @@ class GithubUrlError(Exception):
     # print("The URL provided seems to be incorrect")
     pass
 
-# tpronk said on 2023-11-09: the function below doesn't seem to be invoked anywhere in SOMEF
 def get_readme_content(readme_url):
     """Function to retrieve the content of a readme file given its URL (github)"""
     readme_url = readme_url.replace("/blob/", "/raw/")
