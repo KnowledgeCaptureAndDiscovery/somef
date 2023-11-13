@@ -570,7 +570,7 @@ def download_github_files(directory, owner, repo_name, repo_ref, authorization):
 def get_project_id(repository_url):
     """Function to download a repository, given its URL"""
     logging.info(f"Downloading {repository_url}")
-    response, date = rate_limit_get(repository_url, headers=header_template(authorization))
+    response = requests.get(repository_url)
     response_str = str(response.content.decode('utf-8'))
     init = response_str.find('\"project_id\":')
     project_id = "-1"
