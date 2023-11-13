@@ -16,7 +16,7 @@ from .extract_software_type import check_repository_type
 
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
-                 ignore_github_metadata=False, readme_only=False, keep_tmp=None) -> Result:
+                 ignore_github_metadata=False, readme_only=False, keep_tmp=None, authorization=None) -> Result:
     """
     Main function to get the data through the command line
     Parameters
@@ -29,6 +29,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     @param ignore_github_metadata: flag used to avoid doing extra requests to the GitHub API
     @param readme_only: flag to indicate that only the readme should be analyzed
     @param keep_tmp: path where to store TMP files in case SOMEF is instructed to keep them
+    @param authorization: GitHub authorization token
 
     Returns
     -------
@@ -46,16 +47,18 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 repository_metadata,
                 repo_url,
                 ignore_github_metadata,
-                repo_type)
+                repo_type,
+                authorization
+                )
             # download files and obtain path to download folder
             if readme_only:
                 # download readme only with the information above
-                readme_text = process_repository.download_readme(owner, repo_name, def_branch, repo_type)
+                readme_text = process_repository.download_readme(owner, repo_name, def_branch, repo_type, authorization)
 
             elif keep_tmp is not None:  # save downloaded files locally
                 os.makedirs(keep_tmp, exist_ok=True)
                 local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
-                                                                            keep_tmp, repo_url)
+                                                                            keep_tmp, repo_url, authorization)
                 readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
                                                                                                repository_metadata,
                                                                                                repo_type, owner,
@@ -65,7 +68,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             else:  # Use a temp directory
                 with tempfile.TemporaryDirectory() as temp_dir:
                     local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
-                                                                                temp_dir, repo_url)
+                                                                                temp_dir, repo_url, authorization)
                     readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
                                                                                                    repository_metadata,
                                                                                                    repo_type, owner,

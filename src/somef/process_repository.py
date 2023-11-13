@@ -11,6 +11,19 @@ from .utils import constants
 from . import configuration
 from .process_results import Result
 
+# Constructs a template HTTP header, which:
+# - has a key for the authorization token if passed via the authorization argument, otherwise
+# - has a key for the authorization token if specified via config, otherwise
+# - has not key for the authorization token
+def header_template(authorization=None):
+    header = {}
+    file_paths = configuration.get_configuration_file()
+    if authorization is not None:
+        header[constants.CONF_AUTHORIZATION] = authorization
+    elif constants.CONF_AUTHORIZATION in file_paths.keys():
+        header[constants.CONF_AUTHORIZATION] = file_paths[constants.CONF_AUTHORIZATION]
+    return header
+
 
 # the same as requests.get(args).json(), but protects against rate limiting
 def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
@@ -20,14 +33,14 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
     date = ""
     while rate_limited:
         response = requests.get(*args, **kwargs)
-        data = response
-        date = data.headers["date"]
-        rate_limit_remaining = data.headers["x-ratelimit-remaining"]
-        epochtime = int(data.headers["x-ratelimit-reset"])
-        date_reset = datetime.fromtimestamp(epochtime)
-        logging.info("Remaining GitHub API requests: " + rate_limit_remaining + " ### Next rate limit reset at: " + str(
+        date = response.headers["Date"]
+        # Show rate limit information if available
+        if "X-RateLimit-Remaining" in response.headers:
+            rate_limit_remaining = response.headers["X-RateLimit-Remaining"]
+            epochtime = int(response.headers["X-RateLimit-Reset"])
+            date_reset = datetime.fromtimestamp(epochtime)
+            logging.info("Remaining GitHub API requests: " + rate_limit_remaining + " ### Next rate limit reset at: " + str(
             date_reset))
-        response = response.json()
         if 'message' in response and 'API rate limit exceeded' in response['message']:
             rate_limited = True
             logging.warning(f"rate limited. Backing off for {initial_backoff} seconds")
@@ -248,7 +261,7 @@ def download_gitlab_files(directory, owner, repo_name, repo_branch, repo_ref):
         return None
 
 
-def download_readme(owner, repo_name, default_branch, repo_type):
+def download_readme(owner, repo_name, default_branch, repo_type, authorization):
     """
     Method that given a repository owner, name and default branch, it downloads the readme content only.
     The readme is assumed to be README.md
@@ -273,11 +286,12 @@ def download_readme(owner, repo_name, default_branch, repo_type):
         logging.error("Repository type not supported")
         return None
     logging.info(f"Downloading {primary_url}")
-    repo_download = requests.get(primary_url)
+
+    repo_download, date = rate_limit_get(primary_url, headers=header_template(authorization))
     if repo_download.status_code == 404:
         logging.error(f"Error: Archive request failed with HTTP {repo_download.status_code}")
         logging.info(f"Trying to download {secondary_url}")
-        repo_download = requests.get(secondary_url)
+        repo_download, date = rate_limit_get(secondary_url, headers=header_template(authorization))
     if repo_download.status_code != 200:
         logging.error(f"Error: Archive request failed with HTTP {repo_download.status_code}")
         return None
@@ -287,7 +301,7 @@ def download_readme(owner, repo_name, default_branch, repo_type):
 
 
 def load_online_repository_metadata(repository_metadata: Result, repository_url, ignore_api_metadata=False,
-                                    repo_type=constants.RepositoryType.GITHUB):
+                                    repo_type=constants.RepositoryType.GITHUB, authorization=None):
     """
     Function uses the repository_url provided to load required information from GitHub or Gitlab.
     Information kept from the repository is written in keep_keys.
@@ -297,6 +311,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     @param repo_type: type of the repository (GITLAB, GITHUB or LOCAL)
     @param ignore_api_metadata: true if you do not want to do an additional request to the target API
     @param repository_url: target repository URL.
+    @param authorization: GitHub authorization token
 
     Returns
     -------
@@ -309,11 +324,9 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
         return None
 
     logging.info(f"Loading Repository {repository_url} Information....")
-    # Read from the config file the right token information
-    header = {}
-    file_paths = configuration.get_configuration_file()
-    if constants.CONF_AUTHORIZATION in file_paths.keys():
-        header[constants.CONF_AUTHORIZATION] = file_paths[constants.CONF_AUTHORIZATION]
+    
+    # Create template header with optional authorization token
+    header = header_template(authorization)
     header['accept'] = constants.GITHUB_ACCEPT_HEADER
 
     # load general response of the repository
@@ -349,7 +362,8 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     general_resp = {}
     date = ""
     if not ignore_api_metadata:
-        general_resp, date = rate_limit_get(repo_api_base_url, headers=header)
+        general_resp_raw, date = rate_limit_get(repo_api_base_url, headers=header)
+        general_resp = general_resp_raw.json()
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
             logging.error("Error: Repository name is private or incorrect")
@@ -406,7 +420,8 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
             repository_metadata.add_result(category, result, 1, constants.TECHNIQUE_GITHUB_API)
     # get languages
     if not ignore_api_metadata:
-        languages, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
+        languages_raw, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
+        languages = languages_raw.json()
         if "message" in languages:
             logging.error("Error while retrieving languages: " + languages["message"])
         else:
@@ -422,8 +437,9 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
                                                constants.TECHNIQUE_GITHUB_API)
 
         # get releases
-        releases_list, date = rate_limit_get(repo_api_base_url + "/releases",
+        releases_list_raw, date = rate_limit_get(repo_api_base_url + "/releases",
                                              headers=header)
+        releases_list = releases_list_raw.json()
         if isinstance(releases_list, dict) and 'message' in releases_list.keys():
             logging.error("Releases Error: " + releases_list['message'])
         else:
@@ -476,7 +492,7 @@ def do_crosswalk(data, crosswalk_table):
     return output
 
 
-def download_repository_files(owner, repo_name, default_branch, repo_type, target_dir, repo_ref=None):
+def download_repository_files(owner, repo_name, default_branch, repo_type, target_dir, repo_ref=None, authorization=None):
     """
     Given a repository, this method will download its files and return the readme text
     Parameters
@@ -487,6 +503,7 @@ def download_repository_files(owner, repo_name, default_branch, repo_type, targe
     @param owner: owner of the repo
     @param target_dir: directory where to download files
     @param repo_ref: URL of the target repository (needed in some specific repos)
+    @param authorization: GitHub authorization token
 
     Returns
     -------
@@ -495,7 +512,7 @@ def download_repository_files(owner, repo_name, default_branch, repo_type, targe
     """
 
     if repo_type == constants.RepositoryType.GITHUB:
-        return download_github_files(target_dir, owner, repo_name, default_branch)
+        return download_github_files(target_dir, owner, repo_name, default_branch, authorization)
     elif repo_type == constants.RepositoryType.GITLAB:
         return download_gitlab_files(target_dir, owner, repo_name, default_branch, repo_ref)
     else:
@@ -503,7 +520,7 @@ def download_repository_files(owner, repo_name, default_branch, repo_type, targe
         return None
 
 
-def download_github_files(directory, owner, repo_name, repo_ref):
+def download_github_files(directory, owner, repo_name, repo_ref, authorization):
     """
     Download all repository files from a GitHub repository
     Parameters
@@ -512,6 +529,7 @@ def download_github_files(directory, owner, repo_name, repo_ref):
     repo_name: name of the repo
     owner: GitHub owner
     directory: directory where to extract all downloaded files
+    authorization: GitHub authorization token
 
     Returns
     -------
@@ -520,15 +538,16 @@ def download_github_files(directory, owner, repo_name, repo_ref):
     # download the repo at the selected branch with the link
     repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip"
     logging.info(f"Downloading {repo_archive_url}")
-    repo_download = requests.get(repo_archive_url)
+    repo_download, date = rate_limit_get(repo_archive_url, headers=header_template(authorization))
     if repo_download.status_code == 404:
         logging.error(f"Error: Archive request failed with HTTP {repo_download.status_code}")
         repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/main.zip"
         logging.info(f"Trying to download {repo_archive_url}")
-        repo_download = requests.get(repo_archive_url)
+        repo_download, date = rate_limit_get(repo_archive_url, headers=header_template(authorization)) 
 
     if repo_download.status_code != 200:
         sys.exit(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+
     repo_zip = repo_download.content
 
     repo_name_full = owner + "_" + repo_name
@@ -573,7 +592,6 @@ def get_project_id(repository_url):
 class GithubUrlError(Exception):
     # print("The URL provided seems to be incorrect")
     pass
-
 
 def get_readme_content(readme_url):
     """Function to retrieve the content of a readme file given its URL (github)"""
