@@ -299,20 +299,24 @@ def process_blocks_header(headers_content):
             if piece.startswith('<') or piece.startswith('['):
                 if p_block:
                     s_row = pd.Series([join_elements(p_text), header], index=df.columns)
-                    df = df.append(s_row, ignore_index=True)
+                    # df = df.append(s_row, ignore_index=True)
+                    df = pd.concat([df, pd.DataFrame([s_row])], ignore_index=True)
                     p_text.clear()
                     p_block = False
                 if b_block:
                     s_row = pd.Series([join_elements(b_text), header], index=df.columns)
-                    df = df.append(s_row, ignore_index=True)
+                    # df = df.append(s_row, ignore_index=True)
+                    df = pd.concat([df, pd.DataFrame([s_row])], ignore_index=True)
                     b_text.clear()
                     b_block = False
                 s_row = pd.Series([piece, header], index=df.columns)
-                df = df.append(s_row, ignore_index=True)
+                # df = df.append(s_row, ignore_index=True)
+                df = pd.concat([df, pd.DataFrame([s_row])], ignore_index=True)
             elif piece.find('BASH') != -1:
                 if p_block:
                     s_row = pd.Series([join_elements(p_text), header], index=df.columns)
-                    df = df.append(s_row, ignore_index=True)
+                    # df = df.append(s_row, ignore_index=True)
+                    df = pd.concat([df, pd.DataFrame([s_row])], ignore_index=True)
                     p_text.clear()
                     p_block = False
                 index_bash = piece.find('BASH')
@@ -325,17 +329,20 @@ def process_blocks_header(headers_content):
                     elif b_block:
                         b_text.append(piece)
                         s_row = pd.Series([join_elements(b_text), header], index=df.columns)
-                        df = df.append(s_row, ignore_index=True)
+                        # df = df.append(s_row, ignore_index=True)
+                        df = pd.concat([df, pd.DataFrame([s_row])], ignore_index=True)
                         b_text.clear()
                         b_block = False
                     else:
                         s_row = pd.Series([piece, header], index=df.columns)
-                        df = df.append(s_row, ignore_index=True)
+                        # df = df.append(s_row, ignore_index=True)
+                        df = pd.concat([df, pd.DataFrame([s_row])], ignore_index=True)
             else:
                 if len(piece) > 0:
                     if b_block:
                         s_row = pd.Series([join_elements(b_text), header], index=df.columns)
-                        df = df.append(s_row, ignore_index=True)
+                        # df = df.append(s_row, ignore_index=True)
+                        df = pd.concat([df, pd.DataFrame([s_row])], ignore_index=True)
                         b_text.clear()
                         b_block = False
                     if index + 1 < limit and block_pieces[index + 1].startswith("BASH"):
@@ -349,31 +356,37 @@ def process_blocks_header(headers_content):
                     else:
                         if p_block:
                             s_row = pd.Series([join_elements(p_text), header], index=df.columns)
-                            df = df.append(s_row, ignore_index=True)
+                            # df = df.append(s_row, ignore_index=True)
+                            df = pd.concat([df, pd.DataFrame([s_row])], ignore_index=True)
                             p_text.clear()
                             p_block = False
                         s_row = pd.Series([piece, header], index=df.columns)
-                        df = df.append(s_row, ignore_index=True)
+                        # df = df.append(s_row, ignore_index=True)
+                        df = pd.concat([df, pd.DataFrame([s_row])], ignore_index=True)
                 else:
                     if p_block:
                         s_row = pd.Series([join_elements(p_text), header], index=df.columns)
-                        df = df.append(s_row, ignore_index=True)
+                        # df = df.append(s_row, ignore_index=True)
+                        df = pd.concat([df, pd.DataFrame([s_row])], ignore_index=True)
                         p_text.clear()
                         p_block = False
                     if b_block:
                         s_row = pd.Series([join_elements(b_text), header], index=df.columns)
-                        df = df.append(s_row, ignore_index=True)
+                        # df = df.append(s_row, ignore_index=True)
+                        df = pd.concat([df, pd.DataFrame([s_row])], ignore_index=True)
                         b_text.clear()
                         b_block = False
             index += 1
         if p_block:
             s_row = pd.Series([join_elements(p_text), header], index=df.columns)
-            df = df.append(s_row, ignore_index=True)
+            # df = df.append(s_row, ignore_index=True)
+            df = pd.concat([df, pd.DataFrame([s_row])], ignore_index=True)
             p_text.clear()
             p_block = False
         if b_block:
             s_row = pd.Series([join_elements(b_text), header], index=df.columns)
-            df = df.append(s_row, ignore_index=True)
+            # df = df.append(s_row, ignore_index=True)
+            df = pd.concat([df, pd.DataFrame([s_row])], ignore_index=True)
             b_text.clear()
             b_block = False
     return df

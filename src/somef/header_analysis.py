@@ -104,8 +104,11 @@ def extract_header_content(text):
     parent_headers = mardown_parser.extract_headers_parents(text)
     # into dataframe
     df = pd.DataFrame(columns=['Header', 'Content', 'ParentHeader'])
-    for i, j in zip(header, content):
-        df = df.append({'Header': i, 'Content': j, 'ParentHeader': parent_headers[i]}, ignore_index=True)
+    dfs = [pd.DataFrame({'Header': [i], 'Content': [j], 'ParentHeader': [parent_headers.get(i, None)]}) for i, j in
+           zip(header, content)]
+    df = pd.concat(dfs, ignore_index=True)
+    # for i, j in zip(header, content):
+    #     df = df.append({'Header': i, 'Content': j, 'ParentHeader': parent_headers[i]}, ignore_index=True)
     df['Content'].replace('', np.nan, inplace=True)
     df.dropna(subset=['Content'], inplace=True)
     return df, none_header_content
