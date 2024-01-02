@@ -3,7 +3,7 @@ import os
 import re
 import urllib
 from .utils import constants, markdown_utils
-from . import extract_ontologies,extract_workflows
+from . import extract_ontologies, extract_workflows
 from .process_results import Result
 from chardet import detect
 
@@ -32,6 +32,11 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
             repo_relative_path = os.path.relpath(dir_path, repo_dir)
             for filename in filenames:
                 file_path = os.path.join(repo_relative_path, filename)
+                # ignore image files that may have  correct name
+                if filename.lower().endswith(".jpg") or filename.lower().endswith(".jpeg") or \
+                        filename.lower().endswith(".svg") or filename.lower().endswith(".png") or \
+                        filename.lower().endswith(".gif"):
+                    continue
                 if filename == "Dockerfile" or filename.lower() == "docker-compose.yml":
                     docker_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
                                                repo_relative_path, filename)
@@ -100,8 +105,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_CONTRIBUTING_GUIDELINES)
-
-                if "ACKNOWLEDGMENT" in filename.upper() or "ACKNOWLEDGEMENT" in filename.upper():
+                if "ACKNOWLEDGMENT" in filename.upper() or "ACKNOWLEDGEMENT.MD" == filename.upper():
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
@@ -150,15 +154,20 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                        constants.PROP_TYPE: constants.URL
                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION
                                                    )
-                if filename.endswith(".ga") or filename.endswith(".cwl") or filename.endswith(".nf") or (filename.endswith(".snake") or filename.endswith(".smk")  or "Snakefile"==filename_no_ext) or filename.endswith(".knwf") or filename.endswith(".t2flow") or filename.endswith(".dag") or filename.endswith(".kar") or filename.endswith(".wdl"):
+                if filename.endswith(".ga") or filename.endswith(".cwl") or filename.endswith(".nf") or (
+                        filename.endswith(".snake") or filename.endswith(
+                        ".smk") or "Snakefile" == filename_no_ext) or filename.endswith(".knwf") or filename.endswith(
+                        ".t2flow") or filename.endswith(".dag") or filename.endswith(".kar") or filename.endswith(
+                        ".wdl"):
                     analysis = extract_workflows.is_file_workflow(os.path.join(repo_dir, file_path))
-                    if analysis == True:
-                        Workflow_url=get_file_link(repo_type,file_path,owner,repo_name,repo_default_branch,repo_dir,repo_relative_path,filename) 
+                    if analysis:
+                        workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
+                                                     repo_dir, repo_relative_path, filename)
                         metadata_result.add_result(constants.CAT_WORKFLOWS,
-                                                    {
-                                                        constants.PROP_VALUE: Workflow_url,
-                                                        constants.PROP_TYPE: constants.URL
-                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
+                                                   {
+                                                       constants.PROP_VALUE: workflow_url,
+                                                       constants.PROP_TYPE: constants.URL
+                                                   }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
             # TO DO: Improve this a bit, as just returning the docs folder is not that informative
             for dir_name in dir_names:
                 if dir_name.lower() == "docs":

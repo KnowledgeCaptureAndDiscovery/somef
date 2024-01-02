@@ -852,6 +852,33 @@ class TestCli(unittest.TestCase):
         assert description is not None
         os.remove(test_data_path + "test-457.json")
 
+    def test_issue_556(self):
+        """
+        This test assesses whether documentation links that have been commented out are ignored
+        """
+        out_file = "test-556.json"
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          local_repo=None,
+                          doc_src=test_data_path + "README-TINTO.md",
+                          in_file=None,
+                          output=test_data_path + out_file,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=True,
+                          readme_only=False)
+        text_file = open(test_data_path + out_file, "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        doc = json_content[constants.CAT_DOCUMENTATION][0]
+        doc = doc['result']['value'] # the actual value found
+        assert ("<!--- **[Read the documentation]" not in doc)
+        os.remove(test_data_path + out_file)
+
     def test_issue_445(self):
         """Checks that ACKs are recognized both in files and in headers, and combined appropriately"""
         somef_cli.run_cli(threshold=0.9,
@@ -872,6 +899,30 @@ class TestCli(unittest.TestCase):
         text_file.close()
         assert len(json_content[constants.CAT_ACKNOWLEDGEMENT]) == 2
         os.remove(test_data_path + "repositories/repos_oeg/test-445.json")
+
+    def test_issue_567(self):
+        """Checks that an image file called ACKNOWLEDGEMENTS is not recognized as ACK.
+        Motivated by https://github.com/KnowledgeCaptureAndDiscovery/somef/issues/567
+        """
+        out_file = "repositories/software_catalog/test-567.json"
+        somef_cli.run_cli(threshold=0.9,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=None,
+                          local_repo=test_data_repositories + "software_catalog",
+                          in_file=None,
+                          output=test_data_path + out_file,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=False)
+        text_file = open(test_data_path + out_file, "r")
+        data = text_file.read()
+        json_content = json.loads(data)
+        text_file.close()
+        assert constants.CAT_ACKNOWLEDGEMENT not in json_content
+        os.remove(test_data_path + "repositories/software_catalog/test-567.json")
 
     def test_categorization(self):
         """Checks that the categorization is done properly"""
