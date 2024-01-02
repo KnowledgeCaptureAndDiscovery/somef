@@ -36,8 +36,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Owner type**: Type of the owner, user or organization, of the repository
 - **Keywords**: set of terms used to commonly identify a software component
 - **Source code**: Link to the source code (typically the repository where the readme can be found)
-- **Releases**: Pointer to the available versions of a software component
-- **Changelog**: Description of the changes between versions
+- **Releases** (GitHub only): Pointer to the available versions of a software component. For each release, somef will track its description, author, name, date of publication, date of creation, the link to the html page of the release, the id of the release and a link to the tarball zip and code of the release.
 - **Issue tracker**: Link where to open issues for the target repository
 - **Package distribution**: Links to package sites like pypi in case the repository has a package available.
 - **Programming languages**: Languages used in the repository
