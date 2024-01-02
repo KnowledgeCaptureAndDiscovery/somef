@@ -873,6 +873,30 @@ class TestCli(unittest.TestCase):
         assert len(json_content[constants.CAT_ACKNOWLEDGEMENT]) == 2
         os.remove(test_data_path + "repositories/repos_oeg/test-445.json")
 
+    def test_issue_567(self):
+        """Checks that an image file called ACKNOWLEDGEMENTS is not recognized as ACK.
+        Motivated by https://github.com/KnowledgeCaptureAndDiscovery/somef/issues/567
+        """
+        out_file = "repositories/software_catalog/test-567.json"
+        somef_cli.run_cli(threshold=0.9,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=None,
+                          local_repo=test_data_repositories + "software_catalog",
+                          in_file=None,
+                          output=test_data_path + out_file,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=False)
+        text_file = open(test_data_path + out_file, "r")
+        data = text_file.read()
+        json_content = json.loads(data)
+        text_file.close()
+        assert constants.CAT_ACKNOWLEDGEMENT not in json_content
+        os.remove(test_data_path + "repositories/software_catalog/test-567.json")
+
     def test_categorization(self):
         """Checks that the categorization is done properly"""
         somef_cli.run_cli(threshold=0.6,
