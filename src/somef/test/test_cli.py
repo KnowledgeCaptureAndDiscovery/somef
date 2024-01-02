@@ -852,6 +852,33 @@ class TestCli(unittest.TestCase):
         assert description is not None
         os.remove(test_data_path + "test-457.json")
 
+    def test_issue_556(self):
+        """
+        This test assesses whether documentation links that have been commented out are ignored
+        """
+        out_file = "test-556.json"
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          local_repo=None,
+                          doc_src=test_data_path + "README-TINTO.md",
+                          in_file=None,
+                          output=test_data_path + out_file,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=True,
+                          readme_only=False)
+        text_file = open(test_data_path + out_file, "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        doc = json_content[constants.CAT_DOCUMENTATION][0]
+        doc = doc['result']['value'] # the actual value found
+        assert ("<!--- **[Read the documentation]" not in doc)
+        os.remove(test_data_path + out_file)
+
     def test_issue_445(self):
         """Checks that ACKs are recognized both in files and in headers, and combined appropriately"""
         somef_cli.run_cli(threshold=0.9,
