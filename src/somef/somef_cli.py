@@ -16,7 +16,8 @@ from .extract_software_type import check_repository_type
 
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
-                 ignore_github_metadata=False, readme_only=False, keep_tmp=None, authorization=None) -> Result:
+                 ignore_github_metadata=False, readme_only=False, keep_tmp=None, authorization=None,
+                 ignore_test_folder=True) -> Result:
     """
     Main function to get the data through the command line
     Parameters
@@ -30,6 +31,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     @param readme_only: flag to indicate that only the readme should be analyzed
     @param keep_tmp: path where to store TMP files in case SOMEF is instructed to keep them
     @param authorization: GitHub authorization token
+    @param ignore_test_folder: Ignore contents of test folders
 
     Returns
     -------
@@ -63,7 +65,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                                                repository_metadata,
                                                                                                repo_type, owner,
                                                                                                repo_name,
-                                                                                               def_branch)
+                                                                                               def_branch,
+                                                                                               ignore_test_folder)
                 repository_metadata = check_repository_type(local_folder,repo_name,full_repository_metadata) 
             else:  # Use a temp directory
                 with tempfile.TemporaryDirectory() as temp_dir:
@@ -73,7 +76,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                                                    repository_metadata,
                                                                                                    repo_type, owner,
                                                                                                    repo_name,
-                                                                                                   def_branch)
+                                                                                                   def_branch,
+                                                                                                   ignore_test_folder)
                     repository_metadata = check_repository_type(local_folder,repo_name,full_repository_metadata) 
             if readme_text == "":
                 logging.warning("README document does not exist in the target repository")
@@ -84,7 +88,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         try:
             readme_text, full_repository_metadata = process_files.process_repository_files(local_repo,
                                                                                            repository_metadata,
-                                                                                           repo_type)
+                                                                                           repo_type,
+                                                                                           ignore_test_folder)
             if readme_text == "":
                 logging.warning("Warning: README document does not exist in the local repository")
         except process_repository.GithubUrlError:
@@ -167,7 +172,8 @@ def run_cli(*,
             codemeta_out=None,
             pretty=False,
             missing=False,
-            keep_tmp=None
+            keep_tmp=None,
+            ignore_test_folder=True
             ):
     """Function to run all the required components of the cli for a repository"""
     # check if it is a valid url
@@ -194,7 +200,7 @@ def run_cli(*,
             repo_set.remove(remove_url)
         if len(repo_set) > 0:
             repo_data = [cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
-                                      keep_tmp=keep_tmp) for repo_url in repo_set]
+                                      keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder) for repo_url in repo_set]
         else:
             return None
 
@@ -202,13 +208,13 @@ def run_cli(*,
         if repo_url:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                      ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
-                                     keep_tmp=keep_tmp)
+                                     keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder)
         elif local_repo:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
-                                     local_repo=local_repo, keep_tmp=keep_tmp)
+                                     local_repo=local_repo, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder)
         else:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
-                                     doc_src=doc_src, keep_tmp=keep_tmp)
+                                     doc_src=doc_src, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder)
 
     if output is not None:
         json_export.save_json_output(repo_data.results, output, missing, pretty=pretty)

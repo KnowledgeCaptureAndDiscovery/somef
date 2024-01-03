@@ -9,7 +9,7 @@ from chardet import detect
 
 
 def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner="", repo_name="",
-                             repo_default_branch=""):
+                             repo_default_branch="", ignore_test_folder=True):
     """
     Method that given a folder, it recognizes whether there are notebooks, dockerfiles, docs, script files or
     ontologies.
@@ -21,6 +21,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
     @param owner: owner of the repo (only for github/gitlab repos)
     @param repo_name: repository name (only for github/gitlab repos)
     @param repo_default_branch: branch (only for github/gitlab repos)
+    @param ignore_test_folder: flag to ignore the contents of test folders (e.g., licenses)
 
     Returns
     -------
@@ -30,6 +31,10 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
     try:
         for dir_path, dir_names, filenames in os.walk(repo_dir):
             repo_relative_path = os.path.relpath(dir_path, repo_dir)
+            # if this is a test folder, we ignore it (except for the root repo)
+            if ignore_test_folder and repo_relative_path != "." and "test" in repo_relative_path.lower():
+                # skip this file if it's in a test folder, or inside one
+                continue
             for filename in filenames:
                 file_path = os.path.join(repo_relative_path, filename)
                 # ignore image files that may have  correct name

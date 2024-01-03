@@ -151,6 +151,13 @@ def configure(auto, base_uri):
     help="""SOMEF will NOT delete the temporary folder where files are stored for analysis. Files will be stored at the
     desired path"""
 )
+@click.option(
+    "--ignore_test_folder",
+    "-itf",
+    is_flag=True,
+    default=True,
+    help="""SOMEF will ignore the contents of all files within folders named test (True by default)"""
+)
 def describe(**kwargs):
     # import so missing packages get installed when appropriate
     from . import somef_cli

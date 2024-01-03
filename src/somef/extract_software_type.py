@@ -38,14 +38,15 @@ def check_repository_type(path_repo, title, metadata_result: Result):
                                    },
                                    1,
                                    constants.TECHNIQUE_HEURISTICS)
-    elif check_workflow(path_repo, title):
-        metadata_result.add_result(constants.CAT_TYPE,
-                                   {
-                                       constants.PROP_VALUE: 'workflow',
-                                       constants.PROP_TYPE: constants.STRING
-                                   },
-                                   1,
-                                   constants.TECHNIQUE_HEURISTICS)
+    # commenting out this heuristic, as if a repository contains other files apart from workflows, it may not be a wf
+    # elif check_workflow(path_repo, title):
+    #     metadata_result.add_result(constants.CAT_TYPE,
+    #                                {
+    #                                    constants.PROP_VALUE: 'workflow',
+    #                                    constants.PROP_TYPE: constants.STRING
+    #                                },
+    #                                1,
+    #                                constants.TECHNIQUE_HEURISTICS)
     elif check_command_line(path_repo):
         """The 0.82 confidence result is from running the analysis on 300 repos and showing the precision 
             of the heuristic"""
@@ -235,12 +236,10 @@ def check_workflow(repo_path, title):
     for root, dirs, files in os.walk(repo_path):
         repo_relative_path = os.path.relpath(root, repo_path)
         for file in files:
-            file_path = os.path.join(repo_relative_path, file)
             filename_no_ext = os.path.splitext(file)[0]
             if "README" == filename_no_ext.upper():
                 if repo_relative_path == ".":
                     try:
-
                         with open(os.path.join(root, file), "r") as readme_file:
                             readme_contents = readme_file.read()
 
@@ -274,7 +273,7 @@ def check_workflow(repo_path, title):
                     good_workflows += 1
                 else:
                     continue
-            if check_name(file) == True:
+            if check_name(file):
                 return True
     if list != []:
         return True
