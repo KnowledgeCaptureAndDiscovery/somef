@@ -50,3 +50,19 @@ def remove_bibtex(string_list):
             string_list[x] = element.replace(substring, "")
     logging.info("Extraction of bibtex citation from readme completed. \n")
     return string_list
+
+
+def remove_comments(html_text):
+    """
+    Function designed to remove HTML comments from a markdown file
+    Parameters
+    ----------
+    html_text input HTML text
+
+    Returns
+    -------
+    Markdown with no HTML comments
+    """
+    comment_pattern = r'<!--(.*?)-->'
+    html_without_comments = re.sub(comment_pattern, '', html_text, flags=re.DOTALL)
+    return html_without_comments
