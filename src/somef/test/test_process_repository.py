@@ -174,3 +174,12 @@ class TestProcessRepository(unittest.TestCase):
         text, github_data = process_files.process_repository_files(test_data_repositories + "corpuser", github_data,
                                                                    constants.RepositoryType.LOCAL)
         assert len(text) > 0
+
+    def test_issue_526(self):
+        """
+        Test designed to see if the files under 'test' repos are ignored. This is a flag.
+        """
+        github_data = Result()
+        text, github_data = process_files.process_repository_files(test_data_repositories + "Widoco", github_data,
+                                                                   constants.RepositoryType.LOCAL)
+        assert len(github_data.results[constants.CAT_CITATION]) == 1

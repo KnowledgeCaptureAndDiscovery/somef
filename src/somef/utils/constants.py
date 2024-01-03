@@ -23,7 +23,7 @@ REGEXP_GITTER = "[![Gitter chat]"
 REGEXP_PYPI = "[![PyPI]"
 REGEXP_PYPI_2 = "[![Latest PyPI version]"
 REGEXP_COLAB = "https://colab.research.google.com/drive"
-REGEXP_BIBTEX_FAST = r'@\w+{(?:[^{}]*{[^{}]*}[^{}]*)*}'  # does not deal with nested curly brackets
+# needed to cleanup bibtext files.
 REGEXP_BIBTEX = r'\@[a-zA-Z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title][.\n\S\s]+?\n\}'
 REGEXP_DOI = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
 REGEXP_LINKS = r"\[(.*?)?\]\(([^)]+)\)"
