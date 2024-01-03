@@ -26,7 +26,8 @@ install_requires = [
     "chardet==5.0.0",
     "imbalanced-learn>=0.8.1",
     "pytest",
-    "morph-kgc>=2.3.1"
+    "morph-kgc>=2.3.1",
+    "bibtexparser==1.4.1"
 ]
 
 
