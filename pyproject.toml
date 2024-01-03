@@ -19,6 +19,7 @@ requires = [
     "inflect>=5.4.0",
     "contractions>=0.1.66",
     "imblearn>=0.0",
-    "morph-kgc"
+    "morph-kgc",
+    "bibtexparser"
 ]
 build-backend = "setuptools.build_meta"

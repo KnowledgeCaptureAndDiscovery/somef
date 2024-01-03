@@ -23,6 +23,7 @@ REGEXP_GITTER = "[![Gitter chat]"
 REGEXP_PYPI = "[![PyPI]"
 REGEXP_PYPI_2 = "[![Latest PyPI version]"
 REGEXP_COLAB = "https://colab.research.google.com/drive"
+REGEXP_BIBTEX_FAST = r'@\w+{(?:[^{}]*{[^{}]*}[^{}]*)*}'  # does not deal with nested curly brackets
 REGEXP_BIBTEX = r'\@[a-zA-Z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title][.\n\S\s]+?\n\}'
 REGEXP_DOI = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
 REGEXP_LINKS = r"\[(.*?)?\]\(([^)]+)\)"
@@ -133,6 +134,8 @@ PROP_TAG = "tag"
 PROP_URL = "url"
 PROP_ZIPBALL_URL = "zipball_url"
 PROP_TARBALL_URL = "tarball_url"
+# Publications
+PROP_TITLE = "title"
 
 # Format:
 FORMAT_BIB = "bibtex"

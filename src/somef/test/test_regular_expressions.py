@@ -20,6 +20,29 @@ class TestRegExp(unittest.TestCase):
             result = c.results[constants.CAT_CITATION][0]
             assert "@inproceedings" in result["result"]["value"]
 
+    def test_issue_553(self):
+        """
+        Test designed to check if a bibtex and the corresponding DOI with a repository that was problematic
+        Source: https://github.com/KnowledgeCaptureAndDiscovery/somef/issues/553
+        """
+        with open(test_data_path + "README-devilog.md", "r") as data_file:
+            test_text = data_file.read()
+            c = regular_expressions.extract_bibtex(test_text, Result(), test_data_path + "test_extract_bibtex1.txt")
+            result = c.results[constants.CAT_CITATION][0]
+            doi = result["result"]["doi"]
+            assert "@inproceedings" in result["result"]["value"] and doi == "10.1109/ICECCME55909.2022.9988605"
+
+    def test_issue_553_2(self):
+        """
+        Test designed to check if a bibtex and the corresponding DOI with a repository that was problematic
+        In this case, a quote block is not used. Instead, curly brackets are used with multiple levels of nesting
+        """
+        with open(test_data_path + "README-GENI.md", "r") as data_file:
+            test_text = data_file.read()
+            c = regular_expressions.extract_bibtex(test_text, Result(), test_data_path + "test_extract_bibtex2.txt")
+            result = c.results[constants.CAT_CITATION][0]
+            assert "@article" in result["result"]["value"]
+
     def test_extract_dois(self):
         """Test designed to check if doi links are detected"""
         with open(test_data_path + "test_extract_dois.txt", "r") as data_file:

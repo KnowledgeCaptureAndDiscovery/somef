@@ -180,7 +180,7 @@ The table below summarizes all types and their corresponding properties:
 | **date_created** | Release | Date | Date of creation of a release |
 | **date_published** | Release | Date | Date of publication of a release |
 | **html_url** | Release | Url | link to the HTML representation of a release |
-| **name** | License, Release,  User, Publication, Programming_language | String | Title or name used to designate the release, license user, programming language or publication. |
+| **name** | License, Release,  User, Programming_language | String | Title or name used to designate the release, license user, programming language or publication. |
 | **original_header** | Text_excerpt | String | If the result value is extracted from a markdown file like a README, the original header of that section is also returned. |
 | **parent_header** | Text_excerpt | [String] | If the result value is extracted from a markdown file like a README, the parent header(s) of the current section are also returned (in case they exist). |
 | **release_id** | Release | String | Id of a software release. |
@@ -188,6 +188,7 @@ The table below summarizes all types and their corresponding properties:
 | **spdx_id** | License | String | Spdx id corresponding to this license |
 | **tag** | Release | String | named version of a release |
 | **tarball_url** | Release | Url | URL to the tar ball file where to download a software release |
+| **title** | Publication | String | Title of the publication |
 | **url** | Release, Publication, License | Url | Uniform resource locator of the resource |
 | **zipball_url** | Release | Url | URL to the zip file where to download a software release |
 

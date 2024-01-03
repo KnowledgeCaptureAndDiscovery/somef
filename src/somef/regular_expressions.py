@@ -7,6 +7,7 @@ import validators
 from .utils import constants
 from .process_results import Result
 from urllib.parse import urlparse
+import bibtexparser
 
 
 def extract_title(unfiltered_text, repository_metadata: Result, readme_source) -> Result:
@@ -37,10 +38,10 @@ def extract_title(unfiltered_text, repository_metadata: Result, readme_source) -
             break
         index += 1
     repository_metadata.add_result(constants.CAT_FULL_TITLE,
-                                       {
-                                           constants.PROP_TYPE: constants.STRING,
-                                           constants.PROP_VALUE: output
-                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+                                   {
+                                       constants.PROP_TYPE: constants.STRING,
+                                       constants.PROP_VALUE: output
+                                   }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
     return repository_metadata
 
 
@@ -187,7 +188,7 @@ def extract_repo_status(unfiltered_text, repository_metadata: Result, readme_sou
     return repository_metadata
 
 
-def extract_arxiv_links(unfiltered_text,repository_metadata: Result, readme_source) -> Result:
+def extract_arxiv_links(unfiltered_text, repository_metadata: Result, readme_source) -> Result:
     """
     Regexp to extract arxiv url from a repository
     Parameters
@@ -204,9 +205,9 @@ def extract_arxiv_links(unfiltered_text,repository_metadata: Result, readme_sour
     result_refs = [m.start() for m in re.finditer('arXiv:', unfiltered_text)]
     results = []
     for position in result_links:
-        end = unfiltered_text.find(')',position)
+        end = unfiltered_text.find(')', position)
         if end < 0:
-            end = unfiltered_text.find('}',position)
+            end = unfiltered_text.find('}', position)
         link = unfiltered_text[position:end]
         results.append(link)
     for position in result_refs:
@@ -216,12 +217,12 @@ def extract_arxiv_links(unfiltered_text,repository_metadata: Result, readme_sour
 
     for link in set(results):
         repository_metadata.add_result(constants.CAT_RELATED_PAPERS,
-                                        {
-                                            constants.PROP_TYPE: constants.URL,
-                                            constants.PROP_VALUE: link
-                                        },
-                                        1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source
-                                    )
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: link
+                                       },
+                                       1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source
+                                       )
     return repository_metadata
 
 
@@ -281,7 +282,8 @@ def extract_wiki_links(unfiltered_text, repo_url, repository_metadata: Result, r
     return repository_metadata
 
 
-def extract_images(unfiltered_text, repo_url, local_repo, repository_metadata: Result, readme_source, def_branch) -> Result:
+def extract_images(unfiltered_text, repo_url, local_repo, repository_metadata: Result, readme_source,
+                   def_branch) -> Result:
     """
     Function that takes readme text as input and extracts logos and images
 
@@ -474,31 +476,30 @@ def extract_bibtex(readme_text, repository_metadata: Result, readme_source) -> R
     -------
     @returns Result object with the bibtex associated with this software component
     """
-    citations = re.findall(constants.REGEXP_BIBTEX, readme_text)
-    for c in citations:
-        # try to detect the doi with a regular expression. We should improve this to load an existing library
+    bib_database = bibtexparser.loads(readme_text)
+    entries = bib_database.entries
+    for entry in entries:
+        # dumping the found fields does not seem to work, so rebuilding the object:
+        exported_bibtex = f"@{entry['ENTRYTYPE']}{{{entry['ID']},\n"
+        for key, value in entry.items():
+            if key not in ('ENTRYTYPE', 'ID'):
+                exported_bibtex += f"    {key} = {{{value}}},\n"
+        exported_bibtex += "}"
         result = {
-            constants.PROP_VALUE: c,
+            constants.PROP_VALUE: exported_bibtex,
             constants.PROP_TYPE: constants.TEXT_EXCERPT,
             constants.PROP_FORMAT: constants.FORMAT_BIB
         }
-        doi_text = ""
-        if c.find('https://doi.org/') >= 0 or c.find('doi ') >= 0:
-            text_citation = c
-            if text_citation.find("https://doi.org/") >= 0:
-                doi_pos = text_citation.find("doi.org/")
-                starts = text_citation[:doi_pos].rindex("http")
-                ends = text_citation[starts:].find("}")
-                doi_text = text_citation[starts:starts + ends]
-            elif text_citation.find("doi") >= 0:
-                doi_pos = text_citation.find("doi")
-                starts = text_citation[doi_pos:].find("{")
-                ends = text_citation[starts + doi_pos:].find("}")
-                doi_text = "https://doi.org/" + text_citation[starts + doi_pos + 1:doi_pos + starts + ends]
-        if doi_text != "":
-            result[constants.PROP_DOI] = doi_text
-        repository_metadata.add_result(constants.CAT_CITATION, result, 1, constants.TECHNIQUE_REGULAR_EXPRESSION,
-                                       readme_source)
+        if constants.PROP_DOI in entry:
+            result[constants.PROP_DOI] = entry[constants.PROP_DOI]
+        if constants.PROP_TITLE in entry:
+            result[constants.PROP_TITLE] = entry[constants.PROP_TITLE]
+        if constants.PROP_AUTHOR in entry:
+            result[constants.PROP_AUTHOR] = entry[constants.PROP_AUTHOR]
+        if constants.PROP_URL in entry:
+            result[constants.PROP_URL] = entry[constants.PROP_URL]
+        repository_metadata.add_result(constants.CAT_CITATION, result, 1,
+                                       constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
     return repository_metadata
 
 
@@ -568,7 +569,7 @@ def rename_github_image(img, repo_url, local_repo, default_branch):
             if repo_url.find("/tree/") > 0:
                 repo_url = repo_url.replace("/tree/", "/")
             else:
-                repo_url = repo_url + "/"+default_branch+"/"
+                repo_url = repo_url + "/" + default_branch + "/"
             repo_url = repo_url.replace("github.com", "raw.githubusercontent.com")
             if not repo_url.endswith("/"):
                 repo_url = repo_url + "/"
