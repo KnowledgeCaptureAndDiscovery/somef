@@ -97,44 +97,46 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         with open(doc_src, 'r', encoding="UTF-8") as doc_fh:
             readme_text = doc_fh.read()
     try:
-        unfiltered_text = readme_text
-        repository_metadata, string_list = header_analysis.extract_categories(unfiltered_text, repository_metadata)
-        readme_text = markdown_utils.unmark(readme_text)
-        if not ignore_classifiers and unfiltered_text != '':
-            repository_metadata = supervised_classification.run_category_classification(unfiltered_text, threshold,
+        readme_unfiltered_text = readme_text
+        # remove html comments from unfiltered text (to avoid detecting commented out (wrong) metadata
+        readme_unfiltered_text = markdown_utils.remove_comments(readme_unfiltered_text)
+        repository_metadata, string_list = header_analysis.extract_categories(readme_unfiltered_text, repository_metadata)
+        readme_text_unmarked = markdown_utils.unmark(readme_text)
+        if not ignore_classifiers and readme_unfiltered_text != '':
+            repository_metadata = supervised_classification.run_category_classification(readme_unfiltered_text, threshold,
                                                                                         repository_metadata)
             excerpts = create_excerpts.create_excerpts(string_list)
-            excerpts_headers = mardown_parser.extract_text_excerpts_header(unfiltered_text)
-            header_parents = mardown_parser.extract_headers_parents(unfiltered_text)
+            excerpts_headers = mardown_parser.extract_text_excerpts_header(readme_unfiltered_text)
+            header_parents = mardown_parser.extract_headers_parents(readme_unfiltered_text)
             score_dict = supervised_classification.run_classifiers(excerpts, file_paths)
             repository_metadata = supervised_classification.classify(score_dict, threshold, excerpts_headers,
                                                                      header_parents, repository_metadata)
-        if readme_text != "":
+        if readme_text_unmarked != "":
             try:
                 readme_source = repository_metadata.results[constants.CAT_README_URL][0]
                 readme_source = readme_source[constants.PROP_RESULT][constants.PROP_VALUE]
             except:
                 readme_source = "README.md"
-            repository_metadata = regular_expressions.extract_bibtex(unfiltered_text, repository_metadata, readme_source)
-            repository_metadata = regular_expressions.extract_doi_badges(unfiltered_text, repository_metadata,
+            repository_metadata = regular_expressions.extract_bibtex(readme_unfiltered_text, repository_metadata, readme_source)
+            repository_metadata = regular_expressions.extract_doi_badges(readme_unfiltered_text, repository_metadata,
                                                                          readme_source)
-            repository_metadata = regular_expressions.extract_title(unfiltered_text, repository_metadata, readme_source)
-            repository_metadata = regular_expressions.extract_binder_links(unfiltered_text, repository_metadata,
+            repository_metadata = regular_expressions.extract_title(readme_unfiltered_text, repository_metadata, readme_source)
+            repository_metadata = regular_expressions.extract_binder_links(readme_unfiltered_text, repository_metadata,
                                                                            readme_source)
-            repository_metadata = regular_expressions.extract_readthedocs(unfiltered_text, repository_metadata,
+            repository_metadata = regular_expressions.extract_readthedocs(readme_unfiltered_text, repository_metadata,
                                                                           readme_source)
-            repository_metadata = regular_expressions.extract_repo_status(unfiltered_text, repository_metadata,
+            repository_metadata = regular_expressions.extract_repo_status(readme_unfiltered_text, repository_metadata,
                                                                           readme_source)
-            repository_metadata = regular_expressions.extract_wiki_links(unfiltered_text, repo_url, repository_metadata,
+            repository_metadata = regular_expressions.extract_wiki_links(readme_unfiltered_text, repo_url, repository_metadata,
                                                                          readme_source)
-            repository_metadata = regular_expressions.extract_support_channels(unfiltered_text, repository_metadata,
+            repository_metadata = regular_expressions.extract_support_channels(readme_unfiltered_text, repository_metadata,
                                                                                readme_source)
-            repository_metadata = regular_expressions.extract_package_distributions(unfiltered_text,
+            repository_metadata = regular_expressions.extract_package_distributions(readme_unfiltered_text,
                                                                                     repository_metadata,
                                                                                     readme_source)
-            repository_metadata = regular_expressions.extract_images(unfiltered_text, repo_url, local_repo,
+            repository_metadata = regular_expressions.extract_images(readme_unfiltered_text, repo_url, local_repo,
                                                                      repository_metadata, readme_source, def_branch)
-            repository_metadata = regular_expressions.extract_arxiv_links(unfiltered_text,repository_metadata,readme_source)
+            repository_metadata = regular_expressions.extract_arxiv_links(readme_unfiltered_text,repository_metadata,readme_source)
             logging.info("Completed extracting regular expressions")
 
         return repository_metadata

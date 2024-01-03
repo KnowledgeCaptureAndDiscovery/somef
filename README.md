@@ -30,8 +30,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Download URL**: URL where to download the target software (typically the installer, package or a tarball to a stable version)
 - **DOI**: Digital Object Identifier associated with the software (if any)
 - **DockerFile**: Build file(s) to create a Docker image for the target software
-- **Notebooks**: Jupyter notebooks included in a repository
-- **Executable notebooks**: Jupyter notebooks ready for execution (e.g., through myBinder)
+- **Executable examples**: Jupyter notebooks ready for execution (e.g., files, or through myBinder/colab links)
 - **Owner**: Name of the user or organization in charge of the repository
 - **Owner type**: Type of the owner, user or organization, of the repository
 - **Keywords**: set of terms used to commonly identify a software component

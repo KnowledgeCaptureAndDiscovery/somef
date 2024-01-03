@@ -79,14 +79,13 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `documentation`: Where to find additional documentation about a software component.
 - `download`: Download instructions included in the repository.
 - `download_url`: URL where to download the target software (typically the installer, package or a tarball to a stable version)
-- `executable_example`: Jupyter notebooks ready for execution (e.g., through myBinder)
+- `executable_example`: Jupyter notebooks ready for execution (e.g., through myBinder, colab or files)
 - `faq`: Frequently asked questions about a software component
 - `forks_count`: Number of forks of the project at the time of the extraction.
 - `forks_url`: Links to forks made of the project (GitHub only)
 - `full_name`: Name + owner (owner/name) (if available)
 - `full_title`: If the repository has a short name, we will attempt to extract the longer version of the repository name. For example, a repository may be called "Widoco", but the longer title is "Wizard for documenting ontologies".
-- `has_build_file`: Build file to create a Docker image for the target software
-- `has_executable_notebook`: Jupyter notebooks included in a repository. 
+- `has_build_file`: Build file to create a Docker image for the target software 
 - `has_script_file`: Snippets of code contained in the repository.
 - `identifier`: Identifiers detected within a repository (e.g., Digital Object Identifier).
 - `images`: Images used to illustrate the software component.

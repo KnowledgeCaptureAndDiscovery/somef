@@ -854,7 +854,9 @@ class TestCli(unittest.TestCase):
 
     def test_issue_556(self):
         """
-        This test assesses whether documentation links that have been commented out are ignored
+        This test assesses whether documentation links that have been commented in the readme out are ignored.
+        In a nutshell, this test verifies that all comments are gone.
+        Source: https://github.com/KnowledgeCaptureAndDiscovery/somef/issues/556
         """
         out_file = "test-556.json"
         somef_cli.run_cli(threshold=0.8,
@@ -875,7 +877,7 @@ class TestCli(unittest.TestCase):
         text_file.close()
         json_content = json.loads(data)
         doc = json_content[constants.CAT_DOCUMENTATION][0]
-        doc = doc['result']['value'] # the actual value found
+        doc = doc['result']['value']  # the actual value found in the document
         assert ("<!--- **[Read the documentation]" not in doc)
         os.remove(test_data_path + out_file)
 
