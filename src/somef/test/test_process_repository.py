@@ -183,3 +183,16 @@ class TestProcessRepository(unittest.TestCase):
         text, github_data = process_files.process_repository_files(test_data_repositories + "Widoco", github_data,
                                                                    constants.RepositoryType.LOCAL)
         assert len(github_data.results[constants.CAT_CITATION]) == 1
+
+    def test_issue_530(self):
+        """
+        Test designed to see if repositories with two licenses or citation files get only the outer license or cff.
+        This test also applies for COC and contributing guidelines
+        """
+        github_data = Result()
+        text, github_data = process_files.process_repository_files(test_data_repositories + "Widoco", github_data,
+                                                                   constants.RepositoryType.LOCAL)
+        licenses = github_data.results[constants.CAT_LICENSE]
+        citation = github_data.results[constants.CAT_CITATION]
+        assert len(licenses) == 1 and "LICENSE" in licenses[0]["source"] and \
+            len(citation) == 1 and "example_onto" not in citation[0]["source"]
