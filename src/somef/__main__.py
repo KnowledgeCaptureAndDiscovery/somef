@@ -20,6 +20,7 @@ def cli():
     # Logging setup
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(levelname)s-%(message)s',
                         datefmt='%d-%b-%y %H:%M:%S')
+    logging.getLogger("bibtexparser").setLevel(logging.WARNING)
 
 
 @cli.command(help="Configure GitHub credentials and classifiers file path")
