@@ -54,6 +54,29 @@ class Result:
         else:
             logging.error("Tried to add a result without value or type. Discarding it ...")
 
+    def edit_hierarchical_result(self, category, result, confidence, technique, source=""):
+        """
+        Method to edit a resource that is supposed to be unique with a higher up in the hierarchy.
+        For example, if there are 2 licenses or citation files, we only take the upper level one.
+        The value replaced is the one in the same category and technique
+        Parameters
+        ----------
+        category: category of the result
+        result: new result value
+        confidence: confidence value
+        technique: in this case, file exploration
+        source: new source link
+
+        Returns
+        -------
+        N/A edits the  metadata result
+        """
+        for entry in self.results[category]:
+            if entry[constants.PROP_SOURCE] is not None and entry[constants.PROP_TECHNIQUE] is constants.TECHNIQUE_FILE_EXPLORATION:
+                if source != "":
+                    entry[constants.PROP_RESULT] = result
+                    entry[constants.PROP_SOURCE] = source
+
     # def consolidate_results(self):
     #   # TO DO: for each category where we may reduce/ improve the results, do so.
     #   # For example, here is where we would detect if there are redundant citation files, and we would create a single

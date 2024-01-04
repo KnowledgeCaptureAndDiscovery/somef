@@ -12,7 +12,7 @@ install_requires = [
     "matplotlib==3.5.0",
     "nltk==3.6.6",
     "numpy==1.22.0",
-    "pandas==1.3.4",
+    "pandas>=2.0.0",
     "rdflib>=6.0.2",
     "rdflib-jsonld==0.6.2",
     "requests>=2.22.0",
@@ -27,7 +27,8 @@ install_requires = [
     "imbalanced-learn>=0.8.1",
     "pytest",
     "morph-kgc>=2.3.1",
-    "bibtexparser==1.4.1"
+    "bibtexparser==1.4.1",
+    "nbformat>=5.9.2"
 ]
 
 

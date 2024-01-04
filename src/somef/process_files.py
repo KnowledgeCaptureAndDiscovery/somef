@@ -2,6 +2,7 @@ import logging
 import os
 import re
 import urllib
+from urllib.parse import urlparse
 from .utils import constants, markdown_utils
 from . import extract_ontologies, extract_workflows
 from .process_results import Result
@@ -95,7 +96,6 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             logging.error("README Error: error while reading file content")
                             logging.error(f"{type(err).__name__} was raised: {err}")
                 if "LICENCE" == filename.upper() or "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
-                    # to do (issue 530) if there are two licenses, keep the one closer to the root
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
@@ -260,6 +260,28 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
     """
     url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir, repo_relative_path,
                         filename)
+    # do not add result if a file under the same category exist. Only for license, citation, COC, contribution, README
+    replace = False
+    results = metadata_result.results
+    try:
+        if category in results:
+            # check category exists, using the file exploration technique, and retrieve source
+            if category in [constants.CAT_CITATION, constants.CAT_LICENSE, constants.CAT_COC, constants.CAT_README_URL,
+                        constants.CAT_CONTRIBUTING_GUIDELINES]:
+                for entry in results[category]:
+                    if (entry[constants.PROP_SOURCE] is not None and
+                            entry[constants.PROP_TECHNIQUE] is constants.TECHNIQUE_FILE_EXPLORATION):
+                        new_file_path = extract_directory_path(url)
+                        existing_path = extract_directory_path(entry[constants.PROP_SOURCE])
+                        if new_file_path.startswith(existing_path):
+                            # the existing file is higher, ignore this one
+                            return metadata_result
+                        else:
+                            # replace result in hierarchy (below)
+                            replace = True
+                        break
+    except Exception:
+        logging.warning("Error when trying to determine if redundant files exist")
     try:
         with open(os.path.join(dir_path, filename), "r") as data_file:
             file_text = data_file.read()
@@ -269,14 +291,41 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
             }
             if format_result != "":
                 result[constants.PROP_FORMAT] = format_result
-            metadata_result.add_result(category, result, 1, constants.TECHNIQUE_FILE_EXPLORATION, url)
+            if replace:
+                metadata_result.edit_hierarchical_result(category, result, 1, constants.TECHNIQUE_FILE_EXPLORATION, url)
+            else:
+                metadata_result.add_result(category, result, 1, constants.TECHNIQUE_FILE_EXPLORATION, url)
     except:
-        metadata_result.add_result(category,
-                                   {
-                                       constants.PROP_VALUE: url,
-                                       constants.PROP_TYPE: constants.URL
-                                   }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
+        if replace:
+            metadata_result.edit_hierarchical_result(category,
+                                                     {
+                                           constants.PROP_VALUE: url,
+                                           constants.PROP_TYPE: constants.URL
+                                       }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
+        else:
+            metadata_result.add_result(category,
+                                       {
+                                           constants.PROP_VALUE: url,
+                                           constants.PROP_TYPE: constants.URL
+                                       }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
     return metadata_result
+
+
+def extract_directory_path(path):
+    """
+    Method to extract a directorr or URL path without the file name
+    Parameters
+    ----------
+    path: file path
+
+    Returns
+    -------
+    the URL/file path without the name of the file
+    """
+    if os.path.exists(path):
+        return os.path.dirname(os.path.abspath(path))
+    else:
+        return os.path.dirname(urlparse(path).path)
 
 
 def convert_to_raw_user_content_github(partial, owner, repo_name, repo_ref):
