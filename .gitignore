@@ -15,3 +15,4 @@ env_3.9/*
 src/somef/create_corpus_for_NER.py
 src/somef.egg-info/*
 local_tests/*
+Dockerfile_old

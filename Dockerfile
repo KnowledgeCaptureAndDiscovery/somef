@@ -1,4 +1,4 @@
-from python:3.9
+from python:3.10
 
 RUN git clone https://github.com/KnowledgeCaptureAndDiscovery/somef
 
