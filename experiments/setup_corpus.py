@@ -18,7 +18,7 @@ def build_corpora():
 def build_corpus(selected_category):
     categories_df = {cat: pd.read_csv(f'./training_corpus/{cat}.csv') for cat in categories}
     negative_sample_size = int(len(categories_df[selected_category]) / 4)
-    print(f"Selected Category: {selected_category}")
+    print(f"Selected Category: {selected_category}. Negative sample size for category: {negative_sample_size}")
     for category in categories_df:
         categories_df[category].drop('URL', axis=1, inplace=True)
         # add negative samples to a category from the other ones
@@ -26,7 +26,7 @@ def build_corpus(selected_category):
             categories_df[category] = categories_df[category].sample(negative_sample_size)
         categories_df[category] = categories_df[category].assign(**{selected_category: category == selected_category})
         print("{} has {} samples;".format(category, len(categories_df[category])))
-        print(categories_df[category].head())
+        # print(categories_df[category].head())
     treebank_background = pd.DataFrame(
         map(lambda sent: ' '.join(sent), random.sample(list(treebank.sents()), negative_sample_size)),
         columns=["excerpt"]).assign(description=False)

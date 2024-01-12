@@ -70,7 +70,7 @@ def evaluate_category(corpora,category):
         X = corpora[category].excerpt
         Y = corpora[category][category]
         #print(X)
-        for e in Y:
+        for e in X:
             print(e)
         #Y = Y.astype(int)
         x_train, x_test, y_train, y_test = train_test_split(X, Y, stratify=Y, test_size=0.2)
