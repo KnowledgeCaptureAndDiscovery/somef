@@ -25,8 +25,8 @@ for index, row in eval_data_header.iterrows():
         result_to_attach += p + ";"
     # remove the last ;
     result_to_attach = result_to_attach[:-1]
-    predictions.append(result_to_attach.replace("installation", "install").replace("requirement", "requirements")
-                       .replace("acknowledgement", "ack"))
+    predictions.append(result_to_attach.replace("installation", "install").replace("acknowledgement", "ack")
+                       .replace("contributing_guidelines", "contribute").replace("contributors", "contributor"))
 
 eval_data_header.insert(3, "Prediction", predictions, True)
 
@@ -134,7 +134,7 @@ for index, row in eval_data_header.iterrows():
                 if p not in label_list:  # if p in label, it has already been annotated
                     summary[p]["incorrect"] += 1
 
-    else:  # label is empty: There is not annotation: error.
+    else:  # label is empty: There is not an annotation: error.
         if prediction_list:
             for p in prediction_list:
                 summary[p]["incorrect"] += 1

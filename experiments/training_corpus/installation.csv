@@ -347,10 +347,6 @@ https://github.com/facebook/react,Allen Mao,Add React to a Website as a <script>
 https://github.com/facebook/react,Allen Mao,Create a New React App if you're looking for a powerful JavaScript toolchain.
 https://github.com/facebook/react,Allen Mao,"You can use React as a <script> tag from a CDN, or as a react package on npm."
 https://github.com/geopandas/geopandas/,Allen Mao,See the installation docs for all details. GeoPandas depends on the following packages:
-https://github.com/geopandas/geopandas/,Allen Mao,pandas
-https://github.com/geopandas/geopandas/,Allen Mao,shapely
-https://github.com/geopandas/geopandas/,Allen Mao,fiona
-https://github.com/geopandas/geopandas/,Allen Mao,pyproj
 https://github.com/geopandas/geopandas/,Allen Mao,"Further, descartes and matplotlib are optional dependencies, required for plotting, and rtree is an optional dependency, required for spatial joins. rtree requires the C library libspatialindex."
 https://github.com/geopandas/geopandas/,Allen Mao,"Those packages depend on several low-level libraries for geospatial analysis, which can be a challenge to install. Therefore, we recommend to install GeoPandas using the conda package manager. See the installation docs for more details."
 https://github.com/google/sg2im/,Allen Mao,Setup
@@ -409,13 +405,6 @@ https://github.com/hezhangsprinter/DID-MDN,Allen Mao,Install Torch vision from t
 https://github.com/hiroharu-kato/neural_renderer,Allen Mao,sudo python setup.py install
 https://github.com/iannesbitt/readgssi,Allen Mao,requirements
 https://github.com/iannesbitt/readgssi,Allen Mao,Strongly recommended to install via anaconda:
-https://github.com/iannesbitt/readgssi,Allen Mao,obspy
-https://github.com/iannesbitt/readgssi,Allen Mao,numpy
-https://github.com/iannesbitt/readgssi,Allen Mao,h5py
-https://github.com/iannesbitt/readgssi,Allen Mao,Install via pip:
-https://github.com/iannesbitt/readgssi,Allen Mao,pynmea2
-https://github.com/iannesbitt/readgssi,Allen Mao,geopy
-https://github.com/iannesbitt/readgssi,Allen Mao,pytz
 https://github.com/iannesbitt/readgssi,Allen Mao,installation
 https://github.com/iannesbitt/readgssi,Allen Mao,"Once you have anaconda running, installing requirements is pretty easy."
 https://github.com/iannesbitt/readgssi,Allen Mao,conda config --add channels conda-forge
@@ -855,7 +844,6 @@ https://github.com/scikit-image/scikit-image,Rosna Thomas,"If you plan to develo
 https://github.com/scikit-image/scikit-image,Rosna Thomas,$ pip install -e .  # Do this once to add package to Python path
 https://github.com/scikit-image/scikit-image,Rosna Thomas,"Every time you modify Cython files, also run:"
 https://github.com/scikit-image/scikit-image,Rosna Thomas,$ python setup.py build_ext -i  # Build binary extensions
-https://github.com/scikit-learn/scikit-learn,Rosna Thomas,~~~~~~~~~~~~
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,scikit-learn requires:
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,Python (>= 3.5)
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,NumPy (>= 1.11.0)
@@ -868,11 +856,9 @@ https://github.com/scikit-learn/scikit-learn,Rosna Thomas,Matplotlib (>= 1.5.1).
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,"required. A few examples require scikit-image >= 0.12.3, a few examples require"
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,pandas >= 0.18.0.
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,User installation
-https://github.com/scikit-learn/scikit-learn,Rosna Thomas,~~~~~~~~~~~~~~~~~
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,"If you already have a working installation of numpy and scipy,"
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,the easiest way to install scikit-learn is using pip   ::
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,pip install -U scikit-learn
-https://github.com/scikit-learn/scikit-learn,Rosna Thomas,or conda::
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,conda install scikit-learn
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,The documentation includes more detailed installation instructions &lt;http://scikit-learn.org/stable/install.html&gt;_.
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,Changelog
@@ -918,13 +904,3 @@ https://github.com/tensorflow/magenta,Rosna Thomas,"Next, follow the Manual Inst
 https://github.com/tensorflow/magenta,Rosna Thomas,magenta-gpu package instead of the magenta package:
 https://github.com/tensorflow/magenta,Rosna Thomas,pip install magenta-gpu
 https://github.com/tensorflow/magenta,Rosna Thomas,The only difference between the two packages is that magenta-gpu depends on
-https://github.com/tensorflow/magenta,Rosna Thomas,tensorflow-gpu instead of tensorflow.
-https://github.com/tensorflow/magenta,Rosna Thomas,Magenta should now have access to your GPU.
-https://github.com/tensorflow/magenta,Rosna Thomas,Using Magenta
-https://github.com/tensorflow/magenta,Rosna Thomas,"You can now train our various models and use them to generate music, audio, and images. You can"
-https://github.com/tensorflow/magenta,Rosna Thomas,find instructions for each of the models by exploring the models directory.
-https://github.com/tensorflow/magenta,Rosna Thomas,"To get started, create your own melodies with TensorFlow using one of the various configurations of our Melody RNN model; a recurrent neural network for predicting melodies."
-https://github.com/tensorflow/magenta,Rosna Thomas,Playing a MIDI Instrument
-https://github.com/tensorflow/magenta,Rosna Thomas,"After you've trained one of the models above, you can use our MIDI interface to play with it interactively."
-https://github.com/tensorflow/magenta,Rosna Thomas,"We also have created several demos that provide a UI for this interface, making it easier to use (e.g., the browser-based AI Jam)."
-https://github.com/tensorflow/magenta,Rosna Thomas,Development Environment

@@ -69,6 +69,10 @@ def evaluate_category(corpora,category):
     for name in evaluation_text:
         X = corpora[category].excerpt
         Y = corpora[category][category]
+        #print(X)
+        for e in Y:
+            print(e)
+        #Y = Y.astype(int)
         x_train, x_test, y_train, y_test = train_test_split(X, Y, stratify=Y, test_size=0.2)
         pipeline = pipelines[name]
         pipeline.fit(x_train, y_train)

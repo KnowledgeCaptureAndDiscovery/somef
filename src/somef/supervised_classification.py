@@ -151,6 +151,7 @@ def run_classifiers(excerpts, file_paths):
                 classifier = pickle.load(open(file_name, 'rb'))
                 scores = classifier.predict_proba(text_to_classifier)
                 score_dict[category] = {'excerpt': text_to_results, 'confidence': scores[:, 1]}
+                print(score_dict)
                 # logging.info("Excerpt classification successful category"+ category)
     except Exception as e:
         logging.error("Error while running supervised classifiers on README " + str(e))

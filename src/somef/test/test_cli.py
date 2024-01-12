@@ -103,8 +103,6 @@ class TestCli(unittest.TestCase):
         assert data.find(constants.CAT_FULL_TITLE) > 0
         os.remove(test_data_path + "repositories/repos_oeg/test-355.json")
 
-
-
     def test_issue_346(self):
         """Checks if acks are properly detected"""
         somef_cli.run_cli(threshold=0.8,
@@ -592,7 +590,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         print(data)
-        assert data.find("\""+constants.PROP_FORMAT+"\": \""+constants.FORMAT_WIKI+"\"")
+        assert data.find("\"" + constants.PROP_FORMAT + "\": \"" + constants.FORMAT_WIKI + "\"")
         os.remove(test_data_path + "test-225.json")
 
     def test_issue_406(self):
@@ -613,7 +611,7 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-406.json", "r")
         data = text_file.read()
         text_file.close()
-        assert data.find("\""+constants.PROP_FORMAT+"\": \""+constants.FORMAT_READTHEDOCS+"\"") >= 0
+        assert data.find("\"" + constants.PROP_FORMAT + "\": \"" + constants.FORMAT_READTHEDOCS + "\"") >= 0
         os.remove(test_data_path + "test-406.json")
 
     def test_issue_255(self):
@@ -763,7 +761,6 @@ class TestCli(unittest.TestCase):
         assert data.find(constants.FORMAT_DOCKERFILE) >= 0
         os.remove(test_data_path + "test-366.json")
 
-
     def test_issue_428(self):
         """Checks if the text before the main header is passed on to the classifiers"""
         somef_cli.run_cli(threshold=0.8,
@@ -783,7 +780,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         assert data.find(
-           "Manim is an engine for precise programmatic animations, designed for creating explanatory math videos.") > 0
+            "Manim is an engine for precise programmatic animations, designed for creating explanatory math videos.") > 0
         os.remove(test_data_path + "test-428.json")
 
     def test_issue_443(self):
@@ -950,3 +947,29 @@ class TestCli(unittest.TestCase):
         print(repo_type)
         assert repo_type == "ontology"
         os.remove(test_data_path + "repositories/repos_oeg/test-category.json")
+
+    def test_redundant_files(self):
+        """
+        This test checks if the redundant files for the repository TEC-Toolkit/CFO work correctly.
+        An error was detected in this repo
+        """
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url="https://github.com/Tec-Toolkit/ECFO",
+                          local_repo=None,
+                          doc_src=None,
+                          in_file=None,
+                          output=test_data_path + "test-ecfo.json",
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=True,
+                          readme_only=False)
+        text_file = open(test_data_path + "test-ecfo.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        t = json_content[constants.CAT_TYPE][0]
+        assert t[constants.PROP_RESULT][constants.PROP_VALUE] == "ontology"
+        os.remove(test_data_path + "test-ecfo.json")
