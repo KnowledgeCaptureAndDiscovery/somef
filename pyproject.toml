@@ -22,7 +22,7 @@ requires = [
     "imbalanced-learn>=0.11.0",
     "imblearn>=0.0",
     "pytest",
-    "morph-kgc=2.3.1",
+    "morph-kgc>=2.3.1",
     "nbformat>=5.9.2",
     "bibtexparser==1.4.1"
 ]
