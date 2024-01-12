@@ -161,9 +161,9 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                    )
                 if filename.endswith(".ga") or filename.endswith(".cwl") or filename.endswith(".nf") or (
                         filename.endswith(".snake") or filename.endswith(
-                        ".smk") or "Snakefile" == filename_no_ext) or filename.endswith(".knwf") or filename.endswith(
-                        ".t2flow") or filename.endswith(".dag") or filename.endswith(".kar") or filename.endswith(
-                        ".wdl"):
+                    ".smk") or "Snakefile" == filename_no_ext) or filename.endswith(".knwf") or filename.endswith(
+                    ".t2flow") or filename.endswith(".dag") or filename.endswith(".kar") or filename.endswith(
+                    ".wdl"):
                     analysis = extract_workflows.is_file_workflow(os.path.join(repo_dir, file_path))
                     if analysis:
                         workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
@@ -267,9 +267,9 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
         if category in results:
             # check category exists, using the file exploration technique, and retrieve source
             if category in [constants.CAT_CITATION, constants.CAT_LICENSE, constants.CAT_COC, constants.CAT_README_URL,
-                        constants.CAT_CONTRIBUTING_GUIDELINES]:
+                            constants.CAT_CONTRIBUTING_GUIDELINES]:
                 for entry in results[category]:
-                    if (entry[constants.PROP_SOURCE] is not None and
+                    if (constants.PROP_SOURCE in entry and
                             entry[constants.PROP_TECHNIQUE] is constants.TECHNIQUE_FILE_EXPLORATION):
                         new_file_path = extract_directory_path(url)
                         existing_path = extract_directory_path(entry[constants.PROP_SOURCE])
@@ -280,8 +280,8 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                             # replace result in hierarchy (below)
                             replace = True
                         break
-    except Exception:
-        logging.warning("Error when trying to determine if redundant files exist")
+    except Exception as e:
+        logging.warning("Error when trying to determine if redundant files exist " + str(e))
     try:
         with open(os.path.join(dir_path, filename), "r") as data_file:
             file_text = data_file.read()
@@ -299,9 +299,9 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
         if replace:
             metadata_result.edit_hierarchical_result(category,
                                                      {
-                                           constants.PROP_VALUE: url,
-                                           constants.PROP_TYPE: constants.URL
-                                       }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
+                                                         constants.PROP_VALUE: url,
+                                                         constants.PROP_TYPE: constants.URL
+                                                     }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
         else:
             metadata_result.add_result(category,
                                        {

@@ -51,7 +51,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 ignore_github_metadata,
                 repo_type,
                 authorization
-                )
+            )
             # download files and obtain path to download folder
             if readme_only:
                 # download readme only with the information above
@@ -67,7 +67,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                                                repo_name,
                                                                                                def_branch,
                                                                                                ignore_test_folder)
-                repository_metadata = check_repository_type(local_folder,repo_name,full_repository_metadata) 
+                repository_metadata = check_repository_type(local_folder, repo_name, full_repository_metadata)
             else:  # Use a temp directory
                 with tempfile.TemporaryDirectory() as temp_dir:
                     local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
@@ -78,7 +78,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                                                    repo_name,
                                                                                                    def_branch,
                                                                                                    ignore_test_folder)
-                    repository_metadata = check_repository_type(local_folder,repo_name,full_repository_metadata) 
+                    repository_metadata = check_repository_type(local_folder, repo_name, full_repository_metadata)
             if readme_text == "":
                 logging.warning("README document does not exist in the target repository")
         except process_repository.GithubUrlError:
@@ -105,10 +105,12 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         readme_unfiltered_text = readme_text
         # remove html comments from unfiltered text (to avoid detecting commented out (wrong) metadata
         readme_unfiltered_text = markdown_utils.remove_comments(readme_unfiltered_text)
-        repository_metadata, string_list = header_analysis.extract_categories(readme_unfiltered_text, repository_metadata)
+        repository_metadata, string_list = header_analysis.extract_categories(readme_unfiltered_text,
+                                                                              repository_metadata)
         readme_text_unmarked = markdown_utils.unmark(readme_text)
         if not ignore_classifiers and readme_unfiltered_text != '':
-            repository_metadata = supervised_classification.run_category_classification(readme_unfiltered_text, threshold,
+            repository_metadata = supervised_classification.run_category_classification(readme_unfiltered_text,
+                                                                                        threshold,
                                                                                         repository_metadata)
             excerpts = create_excerpts.create_excerpts(string_list)
             excerpts_headers = mardown_parser.extract_text_excerpts_header(readme_unfiltered_text)
@@ -122,26 +124,31 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 readme_source = readme_source[constants.PROP_RESULT][constants.PROP_VALUE]
             except:
                 readme_source = "README.md"
-            repository_metadata = regular_expressions.extract_bibtex(readme_unfiltered_text, repository_metadata, readme_source)
+            repository_metadata = regular_expressions.extract_bibtex(readme_unfiltered_text, repository_metadata,
+                                                                     readme_source)
             repository_metadata = regular_expressions.extract_doi_badges(readme_unfiltered_text, repository_metadata,
                                                                          readme_source)
-            repository_metadata = regular_expressions.extract_title(readme_unfiltered_text, repository_metadata, readme_source)
+            repository_metadata = regular_expressions.extract_title(readme_unfiltered_text, repository_metadata,
+                                                                    readme_source)
             repository_metadata = regular_expressions.extract_binder_links(readme_unfiltered_text, repository_metadata,
                                                                            readme_source)
             repository_metadata = regular_expressions.extract_readthedocs(readme_unfiltered_text, repository_metadata,
                                                                           readme_source)
             repository_metadata = regular_expressions.extract_repo_status(readme_unfiltered_text, repository_metadata,
                                                                           readme_source)
-            repository_metadata = regular_expressions.extract_wiki_links(readme_unfiltered_text, repo_url, repository_metadata,
+            repository_metadata = regular_expressions.extract_wiki_links(readme_unfiltered_text, repo_url,
+                                                                         repository_metadata,
                                                                          readme_source)
-            repository_metadata = regular_expressions.extract_support_channels(readme_unfiltered_text, repository_metadata,
+            repository_metadata = regular_expressions.extract_support_channels(readme_unfiltered_text,
+                                                                               repository_metadata,
                                                                                readme_source)
             repository_metadata = regular_expressions.extract_package_distributions(readme_unfiltered_text,
                                                                                     repository_metadata,
                                                                                     readme_source)
             repository_metadata = regular_expressions.extract_images(readme_unfiltered_text, repo_url, local_repo,
                                                                      repository_metadata, readme_source, def_branch)
-            repository_metadata = regular_expressions.extract_arxiv_links(readme_unfiltered_text,repository_metadata,readme_source)
+            repository_metadata = regular_expressions.extract_arxiv_links(readme_unfiltered_text, repository_metadata,
+                                                                          readme_source)
             logging.info("Completed extracting regular expressions")
 
         return repository_metadata
@@ -200,7 +207,8 @@ def run_cli(*,
             repo_set.remove(remove_url)
         if len(repo_set) > 0:
             repo_data = [cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
-                                      keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder) for repo_url in repo_set]
+                                      keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder) for repo_url in
+                         repo_set]
         else:
             return None
 

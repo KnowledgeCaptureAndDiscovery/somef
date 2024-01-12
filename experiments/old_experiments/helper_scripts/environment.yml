@@ -1,0 +1,11 @@
+name: sm2kg
+dependencies:
+  - numpy
+  - pandas
+  - scikit-learn
+  - requests
+  - nltk
+  - markdown
+  - jupyter
+  - matplotlib
+  - beautifulsoup4
