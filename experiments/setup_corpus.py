@@ -31,10 +31,13 @@ def build_corpus(selected_category):
         map(lambda sent: ' '.join(sent), random.sample(list(treebank.sents()), negative_sample_size)),
         columns=["excerpt"]).assign(description=False)
     # print("Treebank has {} samples.".format(len(treebank_background)))
-    # print("categories_df")
+    # Rename the column to match the corpus when merging
+    treebank_background = treebank_background.rename(columns={'description': selected_category})
+    # print(categories_df)
     corpus = pd.concat(categories_df.values(), ignore_index=True, sort=False)
     #corpus.append(treebank_background, ignore_index=True, sort=False)
     corpus = pd.concat([corpus, treebank_background], ignore_index=True, sort=False)
     corpus.fillna(value='', inplace=True)
+    # print(corpus)
     return corpus
 

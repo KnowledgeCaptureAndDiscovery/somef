@@ -1,0 +1,977 @@
+,Repo,Header,Label,Prediction
+0,LibGEOS.jl-README.md,LibGEOS.jl,,
+1,LibGEOS.jl-README.md,Installation,install,install
+2,Flow-Guided-Feature-Aggregation-README.md, Flow-Guided Feature Aggregation for Video Object Detection,long_title,
+3,Flow-Guided-Feature-Aggregation-README.md, Introduction,description,description
+4,Flow-Guided-Feature-Aggregation-README.md, Disclaimer,,
+5,Flow-Guided-Feature-Aggregation-README.md, License,license,license
+6,Flow-Guided-Feature-Aggregation-README.md, Citing Flow-Guided Feature Aggregation,citation,citation
+7,Flow-Guided-Feature-Aggregation-README.md, Main Results,,
+8,Flow-Guided-Feature-Aggregation-README.md, Requirements: Software,requirements,requirements
+9,Flow-Guided-Feature-Aggregation-README.md, Requirements: Hardware,requirements,requirements
+10,Flow-Guided-Feature-Aggregation-README.md, Installation,install,install
+11,Flow-Guided-Feature-Aggregation-README.md, Demo,usage,usage
+12,Flow-Guided-Feature-Aggregation-README.md, Preparation for Training & Testing,,install
+13,Flow-Guided-Feature-Aggregation-README.md, Usage,usage,usage
+14,Flow-Guided-Feature-Aggregation-README.md, Misc.,,
+15,Flow-Guided-Feature-Aggregation-README.md, FAQ,faq,faq
+16,empymod-README.md,"   
+",,
+17,empymod-README.md,"More information
+",,
+18,empymod-README.md,"Features
+",,
+19,empymod-README.md,"Installation
+",install,install
+20,empymod-README.md,"Citation
+",citation,citation
+21,empymod-README.md,"License information
+",license,license
+22,vue-devtools-README.md, vue-devtools,,
+23,vue-devtools-README.md, Installation,install,install
+24,vue-devtools-README.md, Important Usage Notes,usage,usage
+25,vue-devtools-README.md, Open component in editor,,
+26,vue-devtools-README.md, Manual Installation,install,install
+27,vue-devtools-README.md, Development,,
+28,vue-devtools-README.md, Quick Start in chrome,usage,usage
+29,vue-devtools-README.md, Testing as Firefox addon,,
+30,vue-devtools-README.md, Common problems and how to fix,faq,faq;install
+31,vue-devtools-README.md, License,license,license
+32,pyro-ppl-pyro-README.md, Installing a stable Pyro release,install,install
+33,pyro-ppl-pyro-README.md, Installing Pyro dev branch,install,install
+34,pyro-ppl-pyro-README.md, Running Pyro from a Docker Container,run,run
+35,pyro-ppl-pyro-README.md, Citation,citation,citation
+36,LapSRN-README.md, Deep Laplacian Pyramid Networks for Fast and Accurate Super-Resolution (CVPR 2017),long_title,
+37,LapSRN-README.md, Table of Contents,,
+38,LapSRN-README.md, Introduction,description,description
+39,LapSRN-README.md, Citation,citation,citation
+40,LapSRN-README.md, Requirements and Dependencies,requirements,requirements
+41,LapSRN-README.md, Installation,install,install
+42,LapSRN-README.md, Start MATLAB,,usage
+43,LapSRN-README.md, Test Pre-trained Models,,
+44,LapSRN-README.md, Training LapSRN,,
+45,LapSRN-README.md, Training MS-LapSRN,,
+46,LapSRN-README.md, Third-Party Implementation,,
+47,bootstrap-README.md, Table of contents,,
+48,bootstrap-README.md, Quick start,,usage
+49,bootstrap-README.md, Status,,
+50,bootstrap-README.md, What's included,,
+51,bootstrap-README.md, Bugs and feature requests,support,
+52,bootstrap-README.md, Documentation,documentation,documentation
+53,bootstrap-README.md, Running documentation locally,run,run;documentation
+54,bootstrap-README.md, Documentation for previous releases,documentation,documentation
+55,bootstrap-README.md, Contributing,contribute,
+56,bootstrap-README.md, Community,,
+57,bootstrap-README.md, Versioning,,
+58,bootstrap-README.md, Creators,,
+59,bootstrap-README.md, Thanks,ack,
+60,bootstrap-README.md, Backers,ack,
+61,bootstrap-README.md, Sponsors,,
+62,bootstrap-README.md, Copyright and license,license,license
+63,facebookresearch-wav2letter-README.md, wav2letter++,,
+64,facebookresearch-wav2letter-README.md, Building wav2letter++,install,
+65,facebookresearch-wav2letter-README.md, Full documentation,documentation,documentation
+66,facebookresearch-wav2letter-README.md, Citation,citation,citation
+67,facebookresearch-wav2letter-README.md, Join the wav2letter community,contact,
+68,facebookresearch-wav2letter-README.md, License,license,license
+69,apsg-README.md, APSG - python package for structural geologists,long_title,
+70,apsg-README.md, PyPI,,
+71,apsg-README.md, Upgrading via pip,install,
+72,apsg-README.md, Installing APSG from the source distribution,install,install
+73,apsg-README.md, Conda,,
+74,apsg-README.md, Current release info,,
+75,apsg-README.md, Installing apsg,install,install
+76,apsg-README.md, Master version,,
+77,apsg-README.md, Getting started,usage,usage
+78,apsg-README.md, Documentation,documentation,documentation
+79,apsg-README.md, Contributing,contribute,
+80,apsg-README.md, Donate,,
+81,apsg-README.md, License,license,license
+82,DCPDN-README.md, Densely Connected Pyramid Dehazing Network (CVPR'2018),long_title,
+83,DCPDN-README.md, Prerequisites:,requirements,requirements
+84,DCPDN-README.md, Installation:,install,install
+85,DCPDN-README.md, Demo using pre-trained model,usage,usage
+86,DCPDN-README.md, Training (Fine-tuning),,
+87,DCPDN-README.md, Testing,,
+88,DCPDN-README.md, Reproduce,,
+89,DCPDN-README.md, Dataset,,
+90,DCPDN-README.md, How to creat your own testing samples,,
+91,DCPDN-README.md, Extension,,
+92,DCPDN-README.md, Acknowledgments,ack,ack
+93,gempy-README.md," <p align=""left""><img src=""docs/logos/gempy1.png"" width=""300""></p>",,
+94,gempy-README.md, What is it,description,
+95,gempy-README.md, Table of Contents,,
+96,gempy-README.md, GemPy v2.0 beta release,,
+97,gempy-README.md, What is new,,
+98,gempy-README.md, Features,description,
+99,gempy-README.md, Sandbox,,
+100,gempy-README.md, Remote Geomod: From GoogleEarth to 3-D Geology,long_title,
+101,gempy-README.md, Getting Started,usage,usage
+102,gempy-README.md, Dependencies,requirements,requirements
+103,gempy-README.md, Conflictive packages.,,
+104,gempy-README.md, Installation,install,install
+105,gempy-README.md, PyPi ,,
+106,gempy-README.md, New in GemPy 2.0: Docker image,,
+107,gempy-README.md, Pull Docker image from DockerHub,,
+108,gempy-README.md, Manual,documentation,install
+109,gempy-README.md, Windows installation guide (Jun 2019),install,install
+110,gempy-README.md, Documentation,documentation,documentation
+111,gempy-README.md, References,,citation
+112,sentinelsat-README.md, connect to the API,,
+113,sentinelsat-README.md, download single scene by known product id,,download
+114,sentinelsat-README.md," search by polygon, time, and Hub query keywords",,
+115,sentinelsat-README.md, download all results from the search,,download
+116,sentinelsat-README.md, GeoJSON FeatureCollection containing footprints and metadata of the scenes,,
+117,sentinelsat-README.md, GeoPandas GeoDataFrame with the metadata of the scenes and the footprints as geometries,,
+118,sentinelsat-README.md," Get basic information about the product: its title, file size, MD5 sum, date, footprint and",,usage
+119,sentinelsat-README.md, its download url,,download
+120,sentinelsat-README.md, Get the product's full metadata available on the server,,usage
+121,sentinelsat-README.md, same result as query above,,
+122,DeepMVS-README.md, DeepMVS: Learning Multi-View Stereopsis,,
+123,DeepMVS-README.md, Requirements,requirements,requirements
+124,DeepMVS-README.md, Instructions,usage,
+125,DeepMVS-README.md, Requirements,requirements,requirements
+126,DeepMVS-README.md, Instructions,usage,
+127,DeepMVS-README.md, License,license,license
+128,Shapely-README.md,"Shapely
+",,
+129,Shapely-README.md,"Requirements
+",requirements,requirements
+130,Shapely-README.md,"Installing Shapely 1.6
+",install,install
+131,Shapely-README.md,"Built distributions
+",,
+132,Shapely-README.md,"Source distributions
+",,
+133,Shapely-README.md,"Usage
+",usage,usage
+134,Shapely-README.md,"Integration
+",,
+135,Shapely-README.md,"Development and Testing
+",,
+136,Shapely-README.md,"Support
+",support,support
+137,nextflow-io-nextflow-README.md,Quick overview,,
+138,nextflow-io-nextflow-README.md,"Rationale
+",,
+139,nextflow-io-nextflow-README.md,"Download the package
+",download,download
+140,nextflow-io-nextflow-README.md,"Download from Conda
+",download,download
+141,nextflow-io-nextflow-README.md,"Documentation
+",documentation,documentation
+142,nextflow-io-nextflow-README.md,"HPC Schedulers
+",,
+143,nextflow-io-nextflow-README.md,Cloud support,,support
+144,nextflow-io-nextflow-README.md,"Containers
+",,
+145,nextflow-io-nextflow-README.md,"Conda environments
+",install,
+146,nextflow-io-nextflow-README.md,"Environment Modules
+",,
+147,nextflow-io-nextflow-README.md,"Community
+",support,
+148,nextflow-io-nextflow-README.md,"Required dependencies
+",requirements,requirements
+149,nextflow-io-nextflow-README.md,"Build from source
+",install,
+150,nextflow-io-nextflow-README.md,"Known compilation problems
+",,faq
+151,nextflow-io-nextflow-README.md,"IntelliJ IDEA
+",,
+152,nextflow-io-nextflow-README.md,"Contributing
+",contribute,
+153,nextflow-io-nextflow-README.md,"Build servers
+",,
+154,nextflow-io-nextflow-README.md,"License
+",license,license
+155,nextflow-io-nextflow-README.md,"Citations
+",citation,citation
+156,nextflow-io-nextflow-README.md,"Credits
+",,citation
+157,scikit-image-scikit-image-README.md, scikit-image: Image processing in Python,long_title,
+158,scikit-image-scikit-image-README.md, Installation from binaries,install,install
+159,scikit-image-scikit-image-README.md, Installation from source,install,install
+160,scikit-image-scikit-image-README.md, License (Modified BSD),license,license
+161,scikit-image-scikit-image-README.md, Citation,citation,citation
+162,CU-Net-README.md, Overview,description,
+163,CU-Net-README.md, Prerequisites,requirements,requirements
+164,CU-Net-README.md, Training,,
+165,CU-Net-README.md, Validation,,
+166,CU-Net-README.md, Model Options,,
+167,CU-Net-README.md, Project Page,project_page,
+168,CU-Net-README.md, Citation,citation,citation
+169,pyGeoPressure-README.md, pyGeoPressure -->,,
+170,pyGeoPressure-README.md, Features,description,
+171,pyGeoPressure-README.md, Installation,install,install
+172,pyGeoPressure-README.md, Pore Pressure Prediction using well log data,,
+173,pyGeoPressure-README.md, Documentation,documentation,documentation
+174,pyGeoPressure-README.md, Report Bugs,,support
+175,pyGeoPressure-README.md, Suggest Enhancements,,
+176,pyGeoPressure-README.md, Submit Pull Requests,,
+177,pyGeoPressure-README.md, Support,support,support
+178,pyGeoPressure-README.md, License,license,license
+179,Fiona-README.md," Open a file for reading. We'll call this the ""source.""",,
+180,Fiona-README.md," The file we'll write to, the ""destination"", must be initialized",,
+181,Fiona-README.md," with a coordinate system, a format driver name, and",,
+182,Fiona-README.md, a record schema.  We can get initial values from the open,,usage
+183,Fiona-README.md, collection's ``meta`` property and then modify them as,,
+184,Fiona-README.md, desired.,,
+185,Fiona-README.md," Open an output file, using the same format driver and",,
+186,Fiona-README.md, coordinate reference system as the source. The ``meta``,,citation
+187,Fiona-README.md, mapping fills in the keyword parameters of fiona.open().,,
+188,Fiona-README.md, Process only the records intersecting a box.,,
+189,Fiona-README.md, Get a point on the boundary of the record's,,usage
+190,Fiona-README.md, geometry.,,
+191,Fiona-README.md, Write the record out.,,
+192,Fiona-README.md, The destination's contents are flushed to disk and the file is,,
+193,Fiona-README.md, closed when its ``with`` block ends. This effectively,,
+194,Fiona-README.md, executes ``dst.flush(); dst.close()``.,,run
+195,Fiona-README.md, Output:,,
+196,Fiona-README.md," (u'coutwildrnp', 67)",,
+197,Fiona-README.md, Output:,,
+198,Fiona-README.md," (0, u'coutwildrnp', 67)",,
+199,Fiona-README.md, Output:,,
+200,Fiona-README.md, [u'bar'],,
+201,Fiona-README.md,1,,
+202,Fiona-README.md, Polygon,,
+203,Fiona-README.md," OrderedDict([(u'PERIMETER', 1.22107), (u'FEATURE2', None), (u'NAME', u'Mount Naomi Wilderness'), (u'FEATURE1', u'Wilderness'), (u'URL', u'http://www.wilderness.net/index.cfm?fuse=NWPS&sec=wildView&wname=Mount%20Naomi'), (u'AGBUR', u'FS'), (u'AREA', 0.0179264), (u'STATE_FIPS', u'49'), (u'WILDRNP020', 332), (u'STATE', u'UT')])",,
+204,Fiona-README.md, Output:,,
+205,Fiona-README.md," (0, u'coutwildrnp', 67)",,
+206,Fiona-README.md, Output:,,
+207,Fiona-README.md,67,,
+208,sg2im-README.md, sg2im,,
+209,sg2im-README.md, Model,,
+210,sg2im-README.md, Setup,install,install
+211,sg2im-README.md, Pretrained Models,,
+212,sg2im-README.md, Running Models,run,run
+213,sg2im-README.md, (Optional): GraphViz,,
+214,sg2im-README.md, Training new models,,
+215,pyvista-README.md,"Highlights
+",,
+216,pyvista-README.md,"Overview of Features
+",description,
+217,pyvista-README.md,"Documentation
+",documentation,documentation
+218,pyvista-README.md,"Installation
+",install,install
+219,pyvista-README.md,"Connections
+",,
+220,pyvista-README.md,"Authors
+",,
+221,pyvista-README.md,"Contributing
+",contribute,
+222,pyvista-README.md,"Citing PyVista
+",citation,citation
+223,ICNet-README.md, ICNet for Real-Time Semantic Segmentation on High-Resolution Images,long_title,
+224,ICNet-README.md, Introduction,description,description
+225,ICNet-README.md, Usage,usage,usage
+226,ICNet-README.md, Citation,citation,citation
+227,ICNet-README.md, Questions,faq,
+228,neural_renderer-README.md, Neural 3D Mesh Renderer (CVPR 2018),long_title,
+229,neural_renderer-README.md, For PyTorch users,,
+230,neural_renderer-README.md, Installation,install,install
+231,neural_renderer-README.md, Running examples,usage,run;usage
+232,neural_renderer-README.md, Example 1: Drawing an object from multiple viewpoints,usage,usage
+233,neural_renderer-README.md, Example 2: Optimizing vertices,usage,usage
+234,neural_renderer-README.md, Example 3: Optimizing textures,usage,usage
+235,neural_renderer-README.md, Example 4: Finding camera parameters,usage,usage
+236,neural_renderer-README.md, CPU implementation?,,
+237,neural_renderer-README.md, Python3 support?,support,support
+238,neural_renderer-README.md, Citation,citation,citation
+239,harismuneer-Ultimate-Facebook-Scraper-README.md, 🔥 Ultimate Facebook Scrapper ,long_title,
+240,harismuneer-Ultimate-Facebook-Scraper-README.md, Note,,
+241,harismuneer-Ultimate-Facebook-Scraper-README.md, Sample,usage,
+242,harismuneer-Ultimate-Facebook-Scraper-README.md, Screenshot,,
+243,harismuneer-Ultimate-Facebook-Scraper-README.md, Installation,install,install
+244,harismuneer-Ultimate-Facebook-Scraper-README.md, How to Run,run,run
+245,harismuneer-Ultimate-Facebook-Scraper-README.md, Citation,citation,citation
+246,harismuneer-Ultimate-Facebook-Scraper-README.md, Important Message,,
+247,harismuneer-Ultimate-Facebook-Scraper-README.md, Authors,,
+248,harismuneer-Ultimate-Facebook-Scraper-README.md, Haris Muneer,,
+249,harismuneer-Ultimate-Facebook-Scraper-README.md, Hassaan Elahi,,
+250,harismuneer-Ultimate-Facebook-Scraper-README.md, Contributions Welcome,,
+251,harismuneer-Ultimate-Facebook-Scraper-README.md, Issues,,
+252,harismuneer-Ultimate-Facebook-Scraper-README.md, License,license,license
+253,geonotebook-README.md, GeoNotebook [![CircleCI](https://circleci.com/gh/OpenGeoscience/geonotebook.svg?style=shield)](https://circleci.com/gh/OpenGeoscience/geonotebook) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/OpenGeoscience/geonotebook),,
+254,geonotebook-README.md, Screenshots,,
+255,geonotebook-README.md, System Prerequisites,requirements,requirements
+256,geonotebook-README.md, Clone the repo:,,
+257,geonotebook-README.md," Make a virtualenv, install jupyter[notebook], install geonotebook",install,install
+258,geonotebook-README.md, Installing geonotebook for development,install,install
+259,geonotebook-README.md, Run the notebook:,run,run
+260,geonotebook-README.md, Configure the notebook:,usage,
+261,geonotebook-README.md, Run the tests,run,run
+262,geonotebook-README.md, Docker Container,,
+263,geonotebook-README.md, Vagrant Machine,,
+264,geonotebook-README.md, Tile Server,,
+265,geonotebook-README.md, Use geoserver for tile serving,,usage
+266,gitbucket-gitbucket-README.md, 4.31.2 - 7 Apr 2019,,
+267,gitbucket-gitbucket-README.md, 4.31.1 - 17 Mar 2019,,
+268,gitbucket-gitbucket-README.md, 4.31.0 - 17 Mar 2019,,
+269,gprMax-README.md,"What is gprMax?
+",,
+270,gprMax-README.md,"Using gprMax? Cite us
+",citation,citation
+271,gprMax-README.md,"Package overview
+",,
+272,gprMax-README.md,"Installation
+",install,install
+273,gprMax-README.md,"1. Install Python, required Python packages, and get gprMax source
+",install,install;usage
+274,gprMax-README.md,"2. Install a C compiler which supports OpenMP
+",install,install;support
+275,gprMax-README.md,"3. Build and install gprMax
+",install,install
+276,gprMax-README.md,"Running gprMax
+",run,run
+277,gprMax-README.md,"Optional command line arguments
+",run,
+278,gprMax-README.md,"Updating gprMax
+",,
+279,gprMax-README.md,"Updating conda and Python packages
+",,
+280,kosmtik-README.md, Kosmtik,,
+281,kosmtik-README.md, Lite,,
+282,kosmtik-README.md, Screenshot,,
+283,kosmtik-README.md, Install or Update,install,install
+284,kosmtik-README.md, Usage,usage,usage
+285,kosmtik-README.md, Configuration file,usage,
+286,kosmtik-README.md, Local config,usage,
+287,kosmtik-README.md, Example of a json file,usage,usage
+288,kosmtik-README.md, Example of a js module,usage,usage
+289,kosmtik-README.md, Custom renderers,,
+290,kosmtik-README.md, Known plugins,,
+291,tilematrix-README.md,"Tilematrix
+",,
+292,tilematrix-README.md,"Installation
+",install,install
+293,tilematrix-README.md,"Documentation
+",documentation,documentation
+294,tilematrix-README.md,"CLI
+",usage,
+295,tilematrix-README.md,"License
+",license,license
+296,gitfolio-README.md, Gitfolio  [![Tweet](https://img.shields.io/twitter/url/https/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=personal%20website%20and%20a%20blog%20for%20every%20github%20user%20&url=https://github.com/imfunniee/gitfolio) ![GitHub release](https://img.shields.io/github/release/imfunniee/gitfolio.svg?style=popout-square) ![npm](https://img.shields.io/npm/dm/gitfolio.svg?style=popout-square) ![GitHub top language](https://img.shields.io/github/languages/top/imfunniee/gitfolio.svg?style=popout-square) ![GitHub last commit](https://img.shields.io/github/last-commit/imfunniee/gitfolio.svg?style=popout-square) ![GitHub](https://img.shields.io/github/license/imfunniee/gitfolio.svg?style=popout-square),,
+297,gitfolio-README.md, personal website + blog  for every github user,,
+298,gitfolio-README.md, Let's Install,install,install
+299,gitfolio-README.md, Let's Build,install,
+300,gitfolio-README.md, Forks,,
+301,gitfolio-README.md, Sorting Repos,,
+302,gitfolio-README.md, Ordering Repos,,
+303,gitfolio-README.md, Customize Themes,,
+304,gitfolio-README.md, Customize background image,,
+305,gitfolio-README.md, Let's Publish,,
+306,gitfolio-README.md, Updating,,
+307,gitfolio-README.md, Add a Blog,,
+308,gitfolio-README.md, License,license,license
+309,two-stream-dyntex-synth-README.md, Two-Stream Convolutional Networks for Dynamic Texture Synthesis,,
+310,two-stream-dyntex-synth-README.md, Requirements,requirements,requirements
+311,two-stream-dyntex-synth-README.md, Setup,install,install
+312,two-stream-dyntex-synth-README.md, Dynamic texture synthesis,,
+313,two-stream-dyntex-synth-README.md, Example usage,usage,usage
+314,two-stream-dyntex-synth-README.md, Dynamics style transfer,,
+315,two-stream-dyntex-synth-README.md, Example usage,usage,usage
+316,two-stream-dyntex-synth-README.md, Temporally-endless dynamic texture synthesis,,
+317,two-stream-dyntex-synth-README.md, Incremental dynamic texture synthesis,,
+318,two-stream-dyntex-synth-README.md, Static texture synthesis,,
+319,two-stream-dyntex-synth-README.md, Notes,usage,
+320,two-stream-dyntex-synth-README.md, Citation,citation,citation
+321,two-stream-dyntex-synth-README.md, License,license,license
+322,PRM-README.md, PyTorch Implementation,,
+323,PRM-README.md, Prerequisites,requirements,requirements
+324,PRM-README.md, Installation,install,install
+325,PRM-README.md, Run demo,run;usage,run;usage
+326,PRM-README.md, Citation ,citation,citation
+327,tippecanoe-README.md," Linear features (world railroads), visible at all zoom levels",,
+328,tippecanoe-README.md," Discontinuous polygon features (buildings of Rhode Island), visible at all zoom levels",,
+329,tippecanoe-README.md," Continuous polygon features (states and provinces), visible at all zoom levels",,
+330,tippecanoe-README.md," Large point dataset (GPS bus locations), for visualization at all zoom levels",,
+331,tippecanoe-README.md," Clustered points (world cities), summing the clustered population, visible at all zoom levels",,
+332,tippecanoe-README.md, Show countries at low zoom levels but states at higher zoom levels,,usage
+333,tippecanoe-README.md, Represent multiple sources (Illinois and Indiana counties) as separate layers,,
+334,tippecanoe-README.md, Merge multiple sources (Illinois and Indiana counties) into the same layer,,
+335,tippecanoe-README.md, Selectively remove and replace features (Census tracts) to update a tileset,,
+336,tippecanoe-README.md, Output tileset,,
+337,tippecanoe-README.md, Tileset description and attribution,,description
+338,tippecanoe-README.md, Input files and layer names,,
+339,tippecanoe-README.md, Parallel processing of input,usage,
+340,tippecanoe-README.md, Projection of input,,
+341,tippecanoe-README.md, Zoom levels,,
+342,tippecanoe-README.md, Tile resolution,,
+343,tippecanoe-README.md, Filtering feature attributes,usage,
+344,tippecanoe-README.md, Modifying feature attributes,,
+345,tippecanoe-README.md, Filtering features by attributes,,
+346,tippecanoe-README.md, Dropping a fixed fraction of features by zoom level,,install
+347,tippecanoe-README.md, Dropping a fraction of features to keep under tile size limits,,
+348,tippecanoe-README.md, Dropping tightly overlapping features,,
+349,tippecanoe-README.md, Line and polygon simplification,,
+350,tippecanoe-README.md, Attempts to improve shared polygon boundaries,,
+351,tippecanoe-README.md, Controlling clipping to tile boundaries,,
+352,tippecanoe-README.md, Reordering features within each tile,,
+353,tippecanoe-README.md, Adding calculated attributes,,
+354,tippecanoe-README.md, Trying to correct bad source geometry,,
+355,tippecanoe-README.md, Setting or disabling tile size limits,,install
+356,tippecanoe-README.md, Temporary storage,,
+357,tippecanoe-README.md, Progress indicator,,
+358,tippecanoe-README.md, Filters,,
+359,tippecanoe-README.md, Examples:,usage,usage
+360,tippecanoe-README.md, Output tileset,,
+361,tippecanoe-README.md, Tileset description and attribution,,description
+362,tippecanoe-README.md, Layer filtering and naming,,
+363,tippecanoe-README.md, Zoom levels,,
+364,tippecanoe-README.md, Merging attributes from a CSV file,,
+365,tippecanoe-README.md, Filtering features and feature attributes,,
+366,tippecanoe-README.md, Setting or disabling tile size limits,,install
+367,tippecanoe-README.md, Options,,
+368,tippecanoe-README.md, Options,,
+369,tippecanoe-README.md, Example,usage,usage
+370,facebookresearch-ResNeXt-README.md, ResNeXt: Aggregated Residual Transformations for Deep Neural Networks,long_title,
+371,facebookresearch-ResNeXt-README.md, Table of Contents,,
+372,facebookresearch-ResNeXt-README.md, News,,
+373,facebookresearch-ResNeXt-README.md, Introduction,description,description
+374,facebookresearch-ResNeXt-README.md," Figure: Training curves on ImageNet-1K. (Left): ResNet/ResNeXt-50 with the same complexity (~4.1 billion FLOPs, ~25 million parameters); (Right): ResNet/ResNeXt-101 with the same complexity (~7.8 billion FLOPs, ~44 million parameters).",,
+375,facebookresearch-ResNeXt-README.md, Citation,citation,citation
+376,facebookresearch-ResNeXt-README.md, Requirements and Dependencies,requirements,requirements
+377,facebookresearch-ResNeXt-README.md, Training,,
+378,facebookresearch-ResNeXt-README.md, 1x Complexity Configurations Reference Table,,citation
+379,facebookresearch-ResNeXt-README.md, ImageNet Pretrained Models,,
+380,facebookresearch-ResNeXt-README.md, Single-crop (224x224) validation error rate,,faq
+381,facebookresearch-ResNeXt-README.md, Third-party re-implementations,,
+382,mapshaper-README.md, Introduction,description,description
+383,mapshaper-README.md, Command line tool,usage,
+384,mapshaper-README.md, Interactive web interface,,
+385,mapshaper-README.md, Large file support,,support
+386,mapshaper-README.md, run the command line program,run,run
+387,mapshaper-README.md, use the web UI locally,,usage
+388,mapshaper-README.md, Building and testing,install,
+389,mapshaper-README.md, License,license,license
+390,mapshaper-README.md, Acknowledgements,ack,ack
+391,reduxjs-react-redux-README.md, Installation,install,install
+392,reduxjs-react-redux-README.md, React Native,,
+393,reduxjs-react-redux-README.md, Documentation,documentation,documentation
+394,reduxjs-react-redux-README.md, How Does It Work?,,
+395,reduxjs-react-redux-README.md, License,license,license
+396,pysal-README.md,"Python Spatial Analysis Library
+",long_title,
+397,pysal-README.md,"PySAL Components
+",,
+398,pysal-README.md,"Installation
+",install,install
+399,pysal-README.md,"Documentation
+",documentation,documentation
+400,pysal-README.md,"Development
+",,
+401,pysal-README.md,"Getting Involved
+",contribute,usage
+402,pysal-README.md,"Bug reports
+",,support
+403,pysal-README.md,"License information
+",license,license
+404,vid2vid-README.md, [Project](https://tcwang0509.github.io/vid2vid/) | [YouTube(short)](https://youtu.be/5zlcXTCpQqM) | [YouTube(full)](https://youtu.be/GrP_aOSXt5U) | [arXiv](https://arxiv.org/abs/1808.06601) | [Paper(full)](https://tcwang0509.github.io/vid2vid/paper_vid2vid.pdf),,
+405,vid2vid-README.md, Video-to-Video Translation,long_title,
+406,vid2vid-README.md, Prerequisites,requirements,requirements
+407,vid2vid-README.md, Installation,install,install
+408,vid2vid-README.md, Testing ,,
+409,vid2vid-README.md, Dataset,,
+410,vid2vid-README.md, Training with Cityscapes dataset,,
+411,vid2vid-README.md, Training with face datasets,,
+412,vid2vid-README.md, Training with pose datasets,,
+413,vid2vid-README.md, Training with your own dataset,,
+414,vid2vid-README.md, More Training/Test Details,,
+415,vid2vid-README.md, Citation,citation,citation
+416,vid2vid-README.md, Acknowledgments,ack,ack
+417,scikit-learn-scikit-learn-README.md,"scikit-learn
+",,
+418,scikit-learn-scikit-learn-README.md,"Installation
+",install,install
+419,scikit-learn-scikit-learn-README.md,"Changelog
+",,
+420,scikit-learn-scikit-learn-README.md,"Development
+",,
+421,scikit-learn-scikit-learn-README.md,"Project History
+",,
+422,scikit-learn-scikit-learn-README.md,"Help and Support
+",support,support
+423,mplstereonet-README.md,mplstereonet,,
+424,mplstereonet-README.md,"Install
+",install,install
+425,mplstereonet-README.md,Basic Usage,usage,usage
+426,mplstereonet-README.md,Density Contouring,,
+427,mplstereonet-README.md,Utilities,,
+428,mplstereonet-README.md,"References
+",,citation
+429,gdal-docker-README.md, GDAL Docker Images,,
+430,gdal-docker-README.md, Usage,usage,usage
+431,RDN-README.md, Residual Dense Network for Image Super-Resolution,,
+432,RDN-README.md, Contents,,
+433,RDN-README.md, Introduction,description,description
+434,RDN-README.md, Prepare training data ,,install
+435,RDN-README.md, Begin to train,,usage
+436,RDN-README.md, Quick start,,usage
+437,RDN-README.md, The whole test pipeline,,
+438,RDN-README.md, Results,,
+439,RDN-README.md, Citation,citation,citation
+440,RDN-README.md, Acknowledgements,ack,ack
+441,pyansys-README.md, create a square area using keypoints,,
+442,pyansys-README.md, Sample *.cdb,,
+443,pyansys-README.md, Read ansys archive file,,
+444,pyansys-README.md, Print raw data from cdb,,
+445,pyansys-README.md, Create a vtk unstructured grid from the raw data and plot it,,
+446,pyansys-README.md, write this as a vtk xml file ,,
+447,pyansys-README.md, Load this from vtk,,
+448,pyansys-README.md, Load the reader from pyansys,,
+449,pyansys-README.md, Sample result file,,
+450,pyansys-README.md, Create result object by loading the result file,,
+451,pyansys-README.md, Beam natural frequencies,,
+452,pyansys-README.md, Get the 1st bending mode shape.  Results are ordered based on the sorted ,,usage
+453,pyansys-README.md, node numbering.  Note that results are zero indexed,,
+454,pyansys-README.md, Plot the displacement of Mode 0 in the x direction,,
+455,pyansys-README.md, Display node averaged stress in x direction for result 6,,
+456,pyansys-README.md, Load the reader from pyansys,,
+457,pyansys-README.md, load the full file,,
+458,pyansys-README.md, returns upper triangle only,,
+459,pyansys-README.md," make k, m full, symmetric matricies",,
+460,pyansys-README.md, condition the k matrix,,
+461,pyansys-README.md," to avoid getting the ""Factor is exactly singular"" error",,usage;faq
+462,pyansys-README.md, Solve,,
+463,pyansys-README.md, System natural frequencies,,
+464,rasterio-README.md, Read raster bands directly to Numpy arrays.,,
+465,rasterio-README.md, Combine arrays in place. Expecting that the sum will,,
+466,rasterio-README.md," temporarily exceed the 8-bit integer range, initialize it as",,
+467,rasterio-README.md, a 64-bit float (the numpy default) array. Adding other,,
+468,rasterio-README.md," arrays to it in-place converts those arrays ""up"" and",,
+469,rasterio-README.md, preserves the type of the total array.,,
+470,rasterio-README.md, Write the product as a raster band to a new 8-bit file. For,,
+471,rasterio-README.md," the new file's profile, we start with the meta attributes of",,usage
+472,rasterio-README.md," the source file, but then change the band count to 1, set the",,install
+473,rasterio-README.md," dtype to uint8, and specify LZW compression.",,
+474,rasterio-README.md, Printed:,,
+475,rasterio-README.md," (791, 718)",,
+476,rasterio-README.md," {u'units': u'm', u'no_defs': True, u'ellps': u'WGS84', u'proj': u'utm', u'zone': 18}",,
+477,rasterio-README.md," Affine(300.0379266750948, 0.0, 101985.0,",,
+478,rasterio-README.md,"        0.0, -300.041782729805, 2826915.0)",,
+479,rasterio-README.md,3,,
+480,rasterio-README.md," [1, 2, 3]",,
+481,rasterio-README.md, Printed:,,
+482,rasterio-README.md," ((100, 200), (100, 200))",,
+483,tilelive-mapnik-README.md, tilelive-mapnik,,
+484,tilelive-mapnik-README.md, Installation,install,install
+485,tilelive-mapnik-README.md, Usage,usage,usage
+486,neural-motifs-README.md," Like this work, or scene understanding in general? You might be interested in checking out my brand new dataset VCR: Visual Commonsense Reasoning, at [visualcommonsense.com](https://visualcommonsense.com)!",,
+487,neural-motifs-README.md, Bibtex,citation,
+488,neural-motifs-README.md, Setup,install,install
+489,neural-motifs-README.md, help,support,support
+490,map-vectorizer-README.md, An NYPL Labs project,,
+491,map-vectorizer-README.md, Like OCR for maps,,
+492,map-vectorizer-README.md, Example input,,usage
+493,map-vectorizer-README.md, Example output,,usage
+494,map-vectorizer-README.md, Extra feature detection,,
+495,map-vectorizer-README.md, Dependencies,requirements,requirements
+496,map-vectorizer-README.md, First run,run,run
+497,map-vectorizer-README.md, Configuring,usage,
+498,map-vectorizer-README.md, Required argument,requirements,
+499,map-vectorizer-README.md, Semi-optional arguments,usage,
+500,map-vectorizer-README.md, Optional arguments,usage,
+501,map-vectorizer-README.md, Customizing The Vectorizer to your own maps,,
+502,map-vectorizer-README.md, Templates and other files,,
+503,map-vectorizer-README.md, Other scripts,,
+504,map-vectorizer-README.md, Acknowledgements,ack,ack
+505,map-vectorizer-README.md, Change log,,
+506,microsoft-malmo-README.md, Malmö ,,
+507,microsoft-malmo-README.md, MalmoEnv ,,
+508,microsoft-malmo-README.md, Malmo as a native Python wheel ,,
+509,microsoft-malmo-README.md, Problems: ,,faq
+510,microsoft-malmo-README.md, Launching Minecraft with our Mod: ,usage,
+511,microsoft-malmo-README.md, Running a Python agent: ,run,run
+512,microsoft-malmo-README.md, Running a C++ agent: ,run,run
+513,microsoft-malmo-README.md, Running a C agent: ,run,run
+514,microsoft-malmo-README.md, Running a Java agent: ,run,run
+515,microsoft-malmo-README.md, Running an Atari agent: (Linux only) ,run,run
+516,microsoft-malmo-README.md, Citations ,citation,citation
+517,microsoft-malmo-README.md, Code of Conduct ,,
+518,mplleaflet-README.md, mplleaflet,,
+519,mplleaflet-README.md, Basic usage,usage,usage
+520,mplleaflet-README.md, IPython Notebook embedding,,
+521,mplleaflet-README.md, Other examples,,usage
+522,mplleaflet-README.md, Why mplleaflet?,,
+523,mplleaflet-README.md, Installation,install,install
+524,mplleaflet-README.md, Development,,
+525,mplleaflet-README.md, Dependencies,requirements,requirements
+526,pose-residual-network-pytorch-README.md, Pose Residual Network,long_title,
+527,pose-residual-network-pytorch-README.md, Getting Started,usage,usage
+528,pose-residual-network-pytorch-README.md, Prerequisites,requirements,requirements
+529,pose-residual-network-pytorch-README.md, Installing,install,install
+530,pose-residual-network-pytorch-README.md, Training,,
+531,pose-residual-network-pytorch-README.md, Testing,,
+532,pose-residual-network-pytorch-README.md, Results,,
+533,pose-residual-network-pytorch-README.md, Citation,citation,citation
+534,react-README.md, [React](https://reactjs.org/) &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebook/react/blob/master/LICENSE) [![npm version](https://img.shields.io/npm/v/react.svg?style=flat)](https://www.npmjs.com/package/react) [![CircleCI Status](https://circleci.com/gh/facebook/react.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/facebook/react) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://reactjs.org/docs/how-to-contribute.htmlyour-first-pull-request),,
+535,react-README.md, Installation,install,install
+536,react-README.md, Documentation,documentation,documentation
+537,react-README.md, Examples,usage,usage
+538,react-README.md, Contributing,contribute,
+539,react-README.md, [Code of Conduct](https://code.fb.com/codeofconduct),,
+540,react-README.md, [Contributing Guide](https://reactjs.org/contributing/how-to-contribute.html),contribute,
+541,react-README.md, Good First Issues,,
+542,react-README.md, License,license,license
+543,da-faster-rcnn-README.md,  Domain Adaptive Faster R-CNN for Object Detection in the Wild ,long_title,
+544,da-faster-rcnn-README.md, Acknowledgment,ack,ack
+545,da-faster-rcnn-README.md, Usage,usage,usage
+546,da-faster-rcnn-README.md, Example,usage,usage
+547,da-faster-rcnn-README.md, Other Implementation,,
+548,DBNet-README.md, News!,,
+549,DBNet-README.md, Contents,,
+550,DBNet-README.md, Introduction,description,description
+551,DBNet-README.md, Requirements,requirements,requirements
+552,DBNet-README.md, Training,,
+553,DBNet-README.md, Evaluation    ,,
+554,DBNet-README.md, Prediction,,
+555,DBNet-README.md, Baseline,,
+556,DBNet-README.md, Contributors,contributor,contributor
+557,DBNet-README.md, Citation,citation,citation
+558,DBNet-README.md, License,license,license
+559,tensorflow-magenta-README.md, Getting Started,usage,usage
+560,tensorflow-magenta-README.md, Installation,install,install
+561,tensorflow-magenta-README.md, Automated Install (w/ Anaconda),install,install
+562,tensorflow-magenta-README.md, Manual Install (w/o Anaconda),install,install
+563,tensorflow-magenta-README.md, GPU Installation,install,install
+564,tensorflow-magenta-README.md, Using Magenta,usage,
+565,tensorflow-magenta-README.md, Playing a MIDI Instrument,,
+566,tensorflow-magenta-README.md, Development Environment,,
+567,tensorflow-magenta-README.md, PIP Release,,
+568,vue-README.md, What's the difference between Patreon and OpenCollective?,,
+569,vue-README.md, Introduction,description,description
+570,vue-README.md, Browser Compatibility,,
+571,vue-README.md, Ecosystem,,
+572,vue-README.md, Documentation,documentation,documentation
+573,vue-README.md, Questions,support,
+574,vue-README.md, Issues,,
+575,vue-README.md, Changelog,,
+576,vue-README.md, Stay In Touch,contact,
+577,vue-README.md, Contribution,contribute,
+578,vue-README.md, License,license,license
+579,sequelize-sequelize-README.md, Sequelize,,
+580,sequelize-sequelize-README.md, v5 Release,,
+581,sequelize-sequelize-README.md, Table of Contents,,
+582,sequelize-sequelize-README.md, Installation,install,install
+583,sequelize-sequelize-README.md, Documentation,documentation,documentation
+584,sequelize-sequelize-README.md, Responsible disclosure,,
+585,sequelize-sequelize-README.md, Resources,,
+586,sequelize-sequelize-README.md, Tools,,
+587,sequelize-sequelize-README.md, Learning,,
+588,sequelize-sequelize-README.md, Translations,,
+589,DID-MDN-README.md, Density-aware Single Image De-raining using a Multi-stream Dense Network,long_title,
+590,DID-MDN-README.md, Prerequisites:,requirements,requirements
+591,DID-MDN-README.md, Installation:,install,install
+592,DID-MDN-README.md, Demo using pre-trained model,usage,usage
+593,DID-MDN-README.md, Training (Density-aware Deraining network using GT label),,
+594,DID-MDN-README.md, Density-estimation Training (rain-density classifier),,
+595,DID-MDN-README.md, Testing,,
+596,DID-MDN-README.md, Reproduce,,
+597,DID-MDN-README.md, Dataset,,
+598,DID-MDN-README.md, Acknowledgments,ack,ack
+599,cltk-cltk-README.md, The Classical Language Toolkit,long_title,
+600,cltk-cltk-README.md, About,description,
+601,cltk-cltk-README.md, Documentation,documentation,documentation
+602,cltk-cltk-README.md, Installation,install,install
+603,cltk-cltk-README.md, Tutorials,,usage
+604,cltk-cltk-README.md, Contributing,contribute,
+605,cltk-cltk-README.md, Citation,citation,citation
+606,cltk-cltk-README.md, Gratitude,ack,
+607,cltk-cltk-README.md, License,license,license
+608,segyio-README.md, segyio ,,
+609,segyio-README.md, Index ,,
+610,segyio-README.md, Introduction ,description,description
+611,segyio-README.md, Feature summary ,,description
+612,segyio-README.md, Getting started ,usage,usage
+613,segyio-README.md, Quick start ,,usage
+614,segyio-README.md, Get segyio ,,usage
+615,segyio-README.md, Build segyio ,install,
+616,segyio-README.md, Developers ,,
+617,segyio-README.md, Tutorial ,,usage
+618,segyio-README.md, Basics ,,description
+619,segyio-README.md, Modes ,,
+620,segyio-README.md, Mode examples ,usage,usage
+621,segyio-README.md, Project goals ,,
+622,segyio-README.md, SEG-Y Revisions ,,
+623,segyio-README.md, Contributing ,contribute,
+624,segyio-README.md, xarray integration ,,
+625,segyio-README.md, Reproducing the test data ,,
+626,segyio-README.md, Python ,,
+627,segyio-README.md, MATLAB ,,
+628,segyio-README.md, ImportError: libsegyio.so.1: cannot open shared object file,,
+629,segyio-README.md, Possible solutions,,
+630,segyio-README.md, RuntimeError: unable to find sorting,,
+631,segyio-README.md, Possible solutions,,
+632,segyio-README.md, History ,,
+633,ipyleaflet-README.md, ipyleaflet,,
+634,ipyleaflet-README.md, Usage,usage,usage
+635,ipyleaflet-README.md, Installation,install,install
+636,ipyleaflet-README.md, Installation from sources,install,install
+637,ipyleaflet-README.md, Documentation,documentation,documentation
+638,ipyleaflet-README.md, License,license,license
+639,ipyleaflet-README.md, Related projects,,
+640,omfvista-README.md, Grab a few elements of interest and plot em up!,,
+641,omfvista-README.md, Grab the active plotting window,,
+642,omfvista-README.md,  from the thresher tool,,
+643,omfvista-README.md, Add our datasets,,
+644,omfvista-README.md, Add the bounds axis,,
+645,PVGeo-README.md, Demonstrations of *PVGeo*,usage,
+646,PVGeo-README.md, Connections,,
+647,PVGeo-README.md, Getting Started,usage,usage
+648,PVGeo-README.md, Report Issues and Contribute,contribute,support
+649,PVGeo-README.md, About the Authors [![Open Source](https://img.shields.io/badge/open--source-yes-brightgreen.svg)](https://opensource.com/resources/what-open-source),,
+650,PVGeo-README.md, Linking PVGeo to ParaView,,
+651,readgssi-README.md, readgssi,,
+652,readgssi-README.md, requirements,requirements,requirements
+653,readgssi-README.md, installation,install,install
+654,readgssi-README.md, installing from source:,install,install
+655,readgssi-README.md, usage,usage,usage
+656,readgssi-README.md, CSV output,,
+657,readgssi-README.md, example 1A,usage,usage
+658,readgssi-README.md, example 1B,usage,usage
+659,readgssi-README.md, example 1C: gain can be tricky depending on your colormap,usage,usage
+660,readgssi-README.md, example 2A: no background removal,usage,usage
+661,readgssi-README.md, example 2B: horizontal mean BGR algorithm applied,usage,usage
+662,readgssi-README.md, contributors,contributor,contributor
+663,readgssi-README.md, citation suggestion:,citation,citation
+664,readgssi-README.md, known bugs:,faq,
+665,readgssi-README.md, future,,
+666,RESCAN-README.md, RESCAN: Recurrent Squeeze-and-Excitation Context Aggregation Net,long_title,
+667,RESCAN-README.md, Prerequisite,requirements,requirements
+668,RESCAN-README.md, Project Structure,,
+669,RESCAN-README.md, Best Practices,,
+670,RESCAN-README.md, Default Dataset settings,,
+671,RESCAN-README.md," Train, Test and Show",,usage
+672,RESCAN-README.md, Scripts,,
+673,RESCAN-README.md, Cite,citation,citation
+674,RESCAN-README.md, Recent Works,,
+675,Detectron-README.md, Detectron,,
+676,Detectron-README.md, Introduction,description,description
+677,Detectron-README.md, Update,,
+678,Detectron-README.md, License,license,license
+679,Detectron-README.md, Citing Detectron,citation,citation
+680,Detectron-README.md, Model Zoo and Baselines,,
+681,Detectron-README.md, Installation,install,install
+682,Detectron-README.md, Quick Start: Using Detectron,usage,usage
+683,Detectron-README.md, Getting Help,support,usage;support
+684,Detectron-README.md, References,,citation
+685,facebookresearch-pyrobot-README.md, What can you do with PyRobot?,,
+686,facebookresearch-pyrobot-README.md, Installing both PyRobot and LoCoBot dependencies,install,install;requirements
+687,facebookresearch-pyrobot-README.md, Installing just PyRobot,install,install
+688,facebookresearch-pyrobot-README.md, Getting Started,usage,usage
+689,facebookresearch-pyrobot-README.md, The Team,,
+690,facebookresearch-pyrobot-README.md, Future features,,
+691,facebookresearch-pyrobot-README.md, Citation,citation,citation
+692,facebookresearch-pyrobot-README.md, License,,license
+693,pymeshfix-README.md, Test of pymeshfix without VTK module,,
+694,pymeshfix-README.md, Performs same mesh repair while leveraging VTK's plotting/mesh loading,,
+695,pymeshfix-README.md, Read mesh from infile and output cleaned mesh to outfile,,
+696,pymeshfix-README.md, Generate vertex and face arrays of cleaned mesh,,
+697,pymeshfix-README.md, where v and f are numpy arrays or python lists,,
+698,pymeshfix-README.md, Create object from vertex and face arrays,,
+699,pymeshfix-README.md, Plot input,,
+700,pymeshfix-README.md, Repair input mesh,,
+701,pymeshfix-README.md, Access the repaired mesh with vtk,,
+702,pymeshfix-README.md," Or, access the resulting arrays directly from the object",,
+703,pymeshfix-README.md, numpy np.float array,,
+704,pymeshfix-README.md, numpy np.int32 array,,
+705,pymeshfix-README.md, View the repaired mesh (requires vtkInterface),,
+706,pymeshfix-README.md, Save the mesh,,
+707,pymeshfix-README.md, Create TMesh object,,
+708,pymeshfix-README.md," tin.load_array(v, f)  or read arrays from memory",,
+709,pymeshfix-README.md, Attempt to join nearby components,,
+710,pymeshfix-README.md, tin.join_closest_components(),,
+711,pymeshfix-README.md, Fill holes,,
+712,pymeshfix-README.md, Clean (removes self intersections),,
+713,pymeshfix-README.md, Check mesh for holes again,,
+714,pymeshfix-README.md, Clean again if necessary...,,
+715,pymeshfix-README.md, Output mesh,,
+716,pymeshfix-README.md, or return numpy arrays,,
+717,facebookresearch-DensePose-README.md, DensePose: ,,
+718,facebookresearch-DensePose-README.md, Installation,install,install
+719,facebookresearch-DensePose-README.md, Inference-Training-Testing,,
+720,facebookresearch-DensePose-README.md, Visualization of DensePose-COCO annotations:,,
+721,facebookresearch-DensePose-README.md, DensePose-COCO in 3D:,,
+722,facebookresearch-DensePose-README.md, Visualize DensePose-RCNN Results:,,
+723,facebookresearch-DensePose-README.md, DensePose-RCNN Texture Transfer:,,
+724,facebookresearch-DensePose-README.md, License,license,license
+725,facebookresearch-DensePose-README.md," <a name=""CitingDensePose""></a>Citing DensePose",citation,
+726,DaSiamRPN-README.md, DaSiamRPN,,
+727,DaSiamRPN-README.md, Introduction,description,description
+728,DaSiamRPN-README.md, Prerequisites,requirements,requirements
+729,DaSiamRPN-README.md, Pretrained model for SiamRPN,,
+730,DaSiamRPN-README.md, Detailed steps to install the prerequisites,install,install;requirements
+731,DaSiamRPN-README.md, Results,,
+732,DaSiamRPN-README.md, Demo and Test on OTB2015,usage,usage
+733,DaSiamRPN-README.md, License,license,license
+734,DaSiamRPN-README.md, Citing DaSiamRPN,citation,citation
+735,hmr-README.md, End-to-end Recovery of Human Shape and Pose,,
+736,hmr-README.md, Requirements,requirements,requirements
+737,hmr-README.md, Linux Setup with virtualenv,install,install
+738,hmr-README.md, Install TensorFlow,install,install
+739,hmr-README.md, Windows Setup with python 3 and Anaconda,install,install
+740,hmr-README.md, if you need to get chumpy ,,usage
+741,hmr-README.md, Demo,usage,usage
+742,hmr-README.md, Webcam Demo (thanks @JulesDoe!),usage,usage
+743,hmr-README.md, Training code/data,,
+744,hmr-README.md, Citation,citation,citation
+745,hmr-README.md, Opensource contributions,contribute,
+746,GPRPy-README.md, GPRPy,,
+747,GPRPy-README.md, Simplemost installation,install,install
+748,GPRPy-README.md, Running the software,run,run
+749,GPRPy-README.md, Running automatically generated scripts,run,run
+750,GPRPy-README.md, In case of trouble,,faq
+751,GPRPy-README.md, Uninstalling GPRPy,,
+752,GPRPy-README.md, News,,
+753,d3-README.md, D3: Data-Driven Documents,long_title,
+754,d3-README.md, Resources,,
+755,d3-README.md, Installing,install,install
+756,iter-reason-README.md, Iterative Visual Reasoning Beyond Convolutions,long_title,
+757,iter-reason-README.md, Disclaimer,,
+758,iter-reason-README.md, Prerequisites,requirements,requirements
+759,iter-reason-README.md, Setup and Running,run;install,install;run
+760,iter-reason-README.md, References,,citation
+761,tetgen-README.md, get cell centroids,,usage
+762,tetgen-README.md, extract cells below the 0 xy plane,,
+763,tetgen-README.md, advanced plotting,,
+764,tetgen-README.md, plot quality,,
+765,GAN_stability-README.md, GAN stability,,
+766,GAN_stability-README.md, Usage,usage,usage
+767,GAN_stability-README.md, Notes,usage,
+768,GAN_stability-README.md, celebA-HQ,,
+769,GAN_stability-README.md, Imagenet,,
+770,pylops-README.md, Objective,,
+771,pylops-README.md, Project structure,,
+772,pylops-README.md, Getting started,usage,usage
+773,pylops-README.md, From PyPi,install,
+774,pylops-README.md, From Conda-forge,install,
+775,pylops-README.md, From Docker,install,
+776,pylops-README.md, Contributing,contribute,
+777,pylops-README.md, 1. Fork and clone the repository,,
+778,pylops-README.md, 2. Install PyLops in a new Conda environment,,install
+779,pylops-README.md, Documentation,documentation,documentation
+780,pylops-README.md, History,,
+781,pylops-README.md, Contributors,contributor,contributor
+782,generator-arcgis-js-app-README.md, generator-arcgis-js-app,,
+783,generator-arcgis-js-app-README.md, What is Yeoman?,description,
+784,generator-arcgis-js-app-README.md, Yeoman Generators,,
+785,generator-arcgis-js-app-README.md, What is used?,,
+786,generator-arcgis-js-app-README.md, Usage,usage,usage
+787,generator-arcgis-js-app-README.md, Still a beta,,
+788,generator-arcgis-js-app-README.md, Notes,usage,
+789,generator-arcgis-js-app-README.md, Getting To Know Yeoman,,usage
+790,generator-arcgis-js-app-README.md, License,license,license
+791,puppeteer-README.md, Puppeteer,,
+792,puppeteer-README.md, [API](https://github.com/GoogleChrome/puppeteer/blob/v1.18.0/docs/api.md) | [FAQ](faq) | [Contributing](https://github.com/GoogleChrome/puppeteer/blob/master/CONTRIBUTING.md) | [Troubleshooting](https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md),contribute,
+793,puppeteer-README.md, What can I do?,,
+794,puppeteer-README.md, Installation,install,install
+795,puppeteer-README.md, puppeteer-core,,
+796,puppeteer-README.md, Usage,usage,usage
+797,puppeteer-README.md, Default runtime settings,,
+798,puppeteer-README.md, Resources,,
+799,puppeteer-README.md, Debugging tips,,
+800,puppeteer-README.md, Basic verbose logging,,
+801,puppeteer-README.md, Protocol traffic can be rather noisy. This example filters out all Network domain messages,,usage
+802,puppeteer-README.md, Contributing to Puppeteer,contribute,
+803,puppeteer-README.md, Q: Who maintains Puppeteer?,,
+804,puppeteer-README.md, Q: What are Puppeteer’s goals and principles?,,
+805,puppeteer-README.md, Q: Is Puppeteer replacing Selenium/WebDriver?,,
+806,puppeteer-README.md, Q: Why doesn’t Puppeteer v.XXX work with Chromium v.YYY?,,
+807,puppeteer-README.md, Q: Which Chromium version does Puppeteer use?,,usage
+808,puppeteer-README.md, Q: What’s considered a “Navigation”?,,
+809,puppeteer-README.md," Q: What’s the difference between a “trusted"" and ""untrusted"" input event?",,
+810,puppeteer-README.md, Q: What features does Puppeteer not support?,,support
+811,puppeteer-README.md, Q: I am having trouble installing / running Puppeteer in my test environment. Where should I look for help?,,faq;install;run;support
+812,puppeteer-README.md, Q: How do I try/test a prerelease version of Puppeteer?,,
+813,puppeteer-README.md, Q: I have more questions! Where do I ask?,,
+814,integral-human-pose-README.md, Integral Human Pose Regression,long_title,
+815,integral-human-pose-README.md, Introduction,description,description
+816,integral-human-pose-README.md, Disclaimer,,
+817,integral-human-pose-README.md, License,license,license
+818,integral-human-pose-README.md, Citing Papers,citation,citation
+819,integral-human-pose-README.md, Main Results,,
+820,integral-human-pose-README.md, Environment,requirements,
+821,integral-human-pose-README.md, Installation,install,install
+822,integral-human-pose-README.md, Preparation for Training & Testing,,install
+823,integral-human-pose-README.md, Extensions,,
+824,node-qa-masker-README.md, node-qa-masker,,
+825,node-qa-masker-README.md, Installation,install,install
+826,node-qa-masker-README.md, Landsat 8,,
+827,node-qa-masker-README.md, MODIS Land Products,,
+828,node-qa-masker-README.md, Looking for command line tool?,,
+829,node-qa-masker-README.md, You are a GIS guy and want something GIS?,,
+830,GANimation-README.md, [[Project]](http://www.albertpumarola.com/research/GANimation/index.html)[ [Paper]](https://arxiv.org/abs/1807.09251) ,citation,
+831,GANimation-README.md, Prerequisites,requirements,requirements
+832,GANimation-README.md, Data Preparation,,install
+833,GANimation-README.md, Run,run,run
+834,GANimation-README.md, Citation,citation,citation
+835,geojson-vt-README.md, geojson-vt &mdash; GeoJSON Vector Tiles,,
+836,geojson-vt-README.md, Demo,usage,usage
+837,geojson-vt-README.md, Usage,usage,usage
+838,geojson-vt-README.md, Options,usage,
+839,geojson-vt-README.md, Install,install,install
+840,tensorflow-README.md, Installation,install,install
+841,tensorflow-README.md, *Try your first TensorFlow program*,,
+842,tensorflow-README.md, Contribution guidelines,contribute,
+843,tensorflow-README.md, Official Builds,,
+844,tensorflow-README.md, Community Supported Builds,,
+845,tensorflow-README.md, For more information,,
+846,tensorflow-README.md, License,license,license
+847,3D-ResNets-PyTorch-README.md, Update (2018/2/21),,
+848,3D-ResNets-PyTorch-README.md, Update (2018/01/16),,
+849,3D-ResNets-PyTorch-README.md, Update (2017/11/27),,
+850,3D-ResNets-PyTorch-README.md, Summary,,description
+851,3D-ResNets-PyTorch-README.md, Citation,citation,citation
+852,3D-ResNets-PyTorch-README.md, Pre-trained models,,
+853,3D-ResNets-PyTorch-README.md, Performance of the models on Kinetics,,
+854,3D-ResNets-PyTorch-README.md, Requirements,requirements,requirements
+855,3D-ResNets-PyTorch-README.md, ActivityNet,,
+856,3D-ResNets-PyTorch-README.md, Kinetics,,
+857,3D-ResNets-PyTorch-README.md, UCF-101,,
+858,3D-ResNets-PyTorch-README.md, HMDB-51,,
+859,3D-ResNets-PyTorch-README.md, Running the code,run,run
+860,DeepGuidedFilter-README.md, Fast End-to-End Trainable Guided Filter,,install
+861,DeepGuidedFilter-README.md, Overview,,
+862,DeepGuidedFilter-README.md, Prepare Environment,requirements,install
+863,DeepGuidedFilter-README.md, Image Processing,,
+864,DeepGuidedFilter-README.md, Semantic Segmentation with Deeplab-Resnet,,
+865,DeepGuidedFilter-README.md, Saliency Detection with DSS,,
+866,DeepGuidedFilter-README.md, Monocular Depth Estimation (TensorFlow version),,
+867,DeepGuidedFilter-README.md, Install Released Version,install,install
+868,DeepGuidedFilter-README.md, Usage,usage,usage
+869,DeepGuidedFilter-README.md, Prepare Training Environment,requirements,install
+870,DeepGuidedFilter-README.md, Start to Train,,usage
+871,DeepGuidedFilter-README.md, Citation,citation,citation
+872,SRN-Deblur-README.md, Scale-recurrent Network for Deep Image Deblurring,long_title,
+873,SRN-Deblur-README.md, Our results on real data,,
+874,SRN-Deblur-README.md, Results on the testing dataset,,
+875,SRN-Deblur-README.md, More cases on real photos from previous papers:,,
+876,SRN-Deblur-README.md, Prerequisites,requirements,requirements
+877,SRN-Deblur-README.md, Installation,install,install
+878,SRN-Deblur-README.md, Testing,,
+879,SRN-Deblur-README.md, Evaluation,,
+880,SRN-Deblur-README.md, Training,,
+881,SRN-Deblur-README.md, Models,,
+882,SRN-Deblur-README.md, How to choose,,
+883,SRN-Deblur-README.md, Reference,citation,citation
+884,SRN-Deblur-README.md, Contact,contact,contact
+885,hyvr-README.md,"Introduction
+",description,description
+886,hyvr-README.md,"Installing the HyVR package
+",install,install
+887,hyvr-README.md,"Usage
+",usage,usage
+888,hyvr-README.md,Source,,
+889,hyvr-README.md,"Requirements
+",requirements,requirements
+890,hyvr-README.md,Development,,
+891,hyvr-README.md,"Problems, Bugs, Unclear Documentation
+",faq,faq;documentation
+892,lasio-README.md, lasio,,
+893,lasio-README.md, Documentation,documentation,documentation
+894,lasio-README.md, Quick start,,usage
+895,lasio-README.md, License,license,license
+896,striplog-README.md, Of course you don't need this one if you didn't install it yet.,,install
+897,striplog-README.md, Or whatever was the last version to build.,,

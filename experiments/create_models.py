@@ -40,11 +40,11 @@ pipelines = {
     'tfdtc': make_pipeline(CountVectorizer(), DecisionTreeClassifier()),
     'tflr': make_pipeline(TfidfVectorizer(), LogisticRegression(solver='liblinear')),
     'tfnb': make_pipeline(TfidfVectorizer(), MultinomialNB()),
-    'tfper': make_pipeline(TfidfVectorizer(), Perceptron(tol=1e-3, random_state=0)),
     'tfrfc': make_pipeline(TfidfVectorizer(), RandomForestClassifier()),  #(max_depth=3, random_state=0))
-    'tfsgd': make_pipeline(TfidfVectorizer(), SGDClassifier(loss='log')),
+    'tfsgd': make_pipeline(TfidfVectorizer(), SGDClassifier(loss='log_loss')),
     'tfxgb': make_pipeline(TfidfVectorizer(), XGBClassifier(use_label_encoder=False,eval_metric="logloss"))
 }
+#'tfper': make_pipeline(TfidfVectorizer(), Perceptron(tol=1e-3, random_state=0)),
 evaluation_names = ('cvlr', 'tflr', 'tfnb', 'cvnb', 'cvbb', 'tfsgd', 'tfxgb', 'tfper', 'tfrfc', 'tfdtc', 'tfada')
 evaluation_text = {
     'cvbb': '"sklearnpipeline(CountVectorizer, BernoulliBayes)", -,Allen,',
@@ -54,24 +54,24 @@ evaluation_text = {
     'tfdtc': '"sklearnpipeline(TFIDFVectorizer, DecisionTreeClassifier)", -,Allen,',
     'tflr': '"sklearnpipeline(TFIDFVectorizer, LogisticRegression)", - ,Allen,',
     'tfnb': '"sklearnpipeline(TFIDFVectorizer, NaiveBayes)", - ,Allen,',
-    'tfper': '"sklearnpipeline(TFIDFVectorizer, Perceptron)", -,Allen,',
     'tfrfc': '"sklearnpipeline(TFIDFVectorizer, RandomForestClassifier)", -,Allen,',
     'tfsgd': '"sklearnpipeline(TFIDFVectorizer, StochasticGradientDescent)",loss = \'log\',Allen,',
     'tfxgb': '"sklearnpipeline(TFIDFVectorizer, XGBClassifier)", -,Allen,'
 }
+#'tfper': '"sklearnpipeline(TFIDFVectorizer, Perceptron)", -,Allen,',
 
 def evaluate_category(corpora,category):
     dec = 3
     cv = StratifiedKFold(n_splits = 5, shuffle=True)
-    file_content = "sklearn Primitive - Citation,Hyperparameters,Input Data Used,Accuracy,Precision,Recall,F-measure,Pickle ID"
+    file_content = f"sklearn Primitive - {category},Hyperparameters,Input Data Used,Accuracy,Precision,Recall,F-measure,Pickle ID"
     limit =  0.0
     file_to_copy = ""
     for name in evaluation_text:
         X = corpora[category].excerpt
         Y = corpora[category][category]
         #print(X)
-        for e in X:
-            print(e)
+        #for e in X:
+        #    print(e)
         #Y = Y.astype(int)
         x_train, x_test, y_train, y_test = train_test_split(X, Y, stratify=Y, test_size=0.2)
         pipeline = pipelines[name]
