@@ -5,7 +5,6 @@ https://github.com/JimmySuen/integral-human-pose,Allen Mao,"title={Integral huma
 https://github.com/JimmySuen/integral-human-pose,Allen Mao,"author={Sun, Xiao and Xiao, Bin and Liang, Shuang and Wei, Yichen},"
 https://github.com/JimmySuen/integral-human-pose,Allen Mao,"journal={arXiv preprint arXiv:1711.08229},"
 https://github.com/JimmySuen/integral-human-pose,Allen Mao,year={2017}
-https://github.com/JimmySuen/integral-human-pose,Allen Mao,}
 https://github.com/JimmySuen/integral-human-pose,Allen Mao,"@article{sun2018integral,"
 https://github.com/JimmySuen/integral-human-pose,Allen Mao,"title={An Integral Pose Regression System for the ECCV2018 PoseTrack Challenge},"
 https://github.com/JimmySuen/integral-human-pose,Allen Mao,"author={Sun, Xiao and Li, Chuankang and Lin, Stephen},"
@@ -17,7 +16,6 @@ https://github.com/LMescheder/GAN_stability,Allen Mao,"title = {Which Training M
 https://github.com/LMescheder/GAN_stability,Allen Mao,"booktitle = {International Conference on Machine Learning (ICML)},"
 https://github.com/LMescheder/GAN_stability,Allen Mao,year = {2018}
 https://github.com/NVIDIA/vid2vid,Allen Mao,"If you find this useful for your research, please cite the following paper."
-https://github.com/NVIDIA/vid2vid,Allen Mao,
 https://github.com/NVIDIA/vid2vid,Allen Mao,"@inproceedings{wang2018vid2vid,"
 https://github.com/NVIDIA/vid2vid,Allen Mao,author    = {Ting-Chun Wang and Ming-Yu Liu and Jun-Yan Zhu and Guilin Liu
 https://github.com/NVIDIA/vid2vid,Allen Mao,"and Andrew Tao and Jan Kautz and Bryan Catanzaro},"
@@ -72,7 +70,6 @@ https://github.com/driving-behavior/DBNet,Allen Mao,"@InProceedings{DBNet2018,"
 https://github.com/driving-behavior/DBNet,Allen Mao,"author = {Yiping Chen and Jingkang Wang and Jonathan Li and Cewu Lu and Zhipeng Luo and HanXue and Cheng Wang},"
 https://github.com/driving-behavior/DBNet,Allen Mao,"title = {LiDAR-Video Driving Dataset: Learning Driving Policies Effectively},"
 https://github.com/driving-behavior/DBNet,Allen Mao,"booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
-https://github.com/driving-behavior/DBNet,Allen Mao,"month = {June},"
 https://github.com/empymod/empymod,Allen Mao,"If you publish results for which you used empymod, please give credit by citing Werthmüller (2017):"
 https://github.com/empymod/empymod,Allen Mao,"Werthmüller, D., 2017, An open-source full 3D electromagnetic modeler for 1D VTI media in Python: empymod: Geophysics, 82(6), WB9--WB19; DOI: 10.1190/geo2016-0626.1."
 https://github.com/empymod/empymod,Allen Mao,"All releases have a Zenodo-DOI, provided on the release-page. Also consider citing Hunziker et al. (2015) and Key (2012), without which empymod would not exist."
@@ -85,8 +82,6 @@ https://github.com/endernewton/iter-reason,Allen Mao,"@inproceedings{chen2017spa
 https://github.com/endernewton/iter-reason,Allen Mao,"author = {Xinlei Chen and Abhinav Gupta},"
 https://github.com/endernewton/iter-reason,Allen Mao,"title = {Spatial Memory for Context Reasoning in Object Detection},"
 https://github.com/endernewton/iter-reason,Allen Mao,"booktitle = {Proceedings of the International Conference on Computer Vision},"
-https://github.com/endernewton/iter-reason,Allen Mao,Year = {2017}
-https://github.com/equinor/pylops,Allen Mao,Contributors
 https://github.com/equinor/pylops,Allen Mao,"Matteo Ravasi, mrava87"
 https://github.com/equinor/pylops,Allen Mao,"Carlos da Costa, cako"
 https://github.com/equinor/pylops,Allen Mao,"Dieter Werthmüller, prisae"
@@ -268,7 +263,6 @@ https://github.com/facebookresearch/DensePose,Rosna Thomas,"  title={DensePose: 
 https://github.com/facebookresearch/DensePose,Rosna Thomas,"  author={R\{i}za Alp G\""uler, Natalia Neverova, Iasonas Kokkinos},"
 https://github.com/facebookresearch/DensePose,Rosna Thomas,"  journal={The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},"
 https://github.com/facebookresearch/DensePose,Rosna Thomas,  year={2018}
-https://github.com/facebookresearch/DensePose,Rosna Thomas,  }
 https://github.com/facebookresearch/ResNeXt,Rosna Thomas,"If you use ResNeXt in your research, please cite the paper:"
 https://github.com/facebookresearch/ResNeXt,Rosna Thomas,"@article{Xie2016,"
 https://github.com/facebookresearch/ResNeXt,Rosna Thomas,"  title={Aggregated Residual Transformations for Deep Neural Networks},"
@@ -294,24 +288,4 @@ https://github.com/scikit-image/scikit-image,Rosna Thomas,"Stéfan van der Walt,
 https://github.com/scikit-image/scikit-image,Rosna Thomas,"François Boulogne, Joshua D. Warner, Neil Yager, Emmanuelle"
 https://github.com/scikit-image/scikit-image,Rosna Thomas,"Gouillart, Tony Yu, and the scikit-image contributors."
 https://github.com/scikit-image/scikit-image,Rosna Thomas,scikit-image: Image processing in Python. PeerJ 2:e453 (2014)
-https://github.com/scikit-image/scikit-image,Rosna Thomas,https://doi.org/10.7717/peerj.453
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,"If you use scikit-learn in a scientific publication, we would appreciate citations: http://scikit-learn.org/stable/about.html#citing-scikit-learn"
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,
-,,

@@ -1,0 +1,15 @@
+category,total correct,total incorrect,total missed,precision,recall
+citation,33,7,3,0.825,0.917
+run,20,3,1,0.870,0.952
+install,72,16,10,0.818,0.878
+download,2,3,0,0.400,1.000
+requirements,29,2,2,0.935,0.935
+contact,1,0,2,1.000,0.333
+description,13,5,7,0.722,0.650
+contributor,3,0,0,1.000,1.000
+documentation,18,2,0,0.900,1.000
+license,30,0,0,1.000,1.000
+usage,55,32,20,0.632,0.733
+faq,3,6,2,0.333,0.600
+support,6,8,3,0.429,0.667
+ack,7,0,3,1.000,0.700

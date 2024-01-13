@@ -1,12 +1,12 @@
-sklearn Primitive - Citation,Hyperparameters,Input Data Used,Accuracy,Precision,Recall,F-measure,Pickle ID
-"sklearnpipeline(CountVectorizer, BernoulliBayes)", -,Allen,0.725,0.934,0.559,0.699,descvbb.p
-"sklearnpipeline(CountVectorizer, LogisticRegression)", - ,Allen,0.818,0.876,0.795,0.833,descvlr.p
-"sklearnpipeline(CountVectorizer, NaiveBayes)", -,Allen,0.816,0.776,0.955,0.856,descvnb.p
-"sklearnpipeline(TFIDFVectorizer, AdaBoostClassifier)", -,Allen,0.798,0.838,0.8,0.818,destfada.p
-"sklearnpipeline(TFIDFVectorizer, DecisionTreeClassifier)", -,Allen,0.767,0.823,0.759,0.787,destfdtc.p
-"sklearnpipeline(TFIDFVectorizer, LogisticRegression)", - ,Allen,0.827,0.802,0.926,0.859,destflr.p
-"sklearnpipeline(TFIDFVectorizer, NaiveBayes)", - ,Allen,0.779,0.728,0.982,0.836,destfnb.p
-"sklearnpipeline(TFIDFVectorizer, Perceptron)", -,Allen,0.826,0.853,0.842,0.847,destfper.p
-"sklearnpipeline(TFIDFVectorizer, RandomForestClassifier)", -,Allen,0.784,0.83,0.783,0.805,destfrfc.p
-"sklearnpipeline(TFIDFVectorizer, StochasticGradientDescent)",loss = 'log',Allen,0.847,0.875,0.857,0.865,destfsgd.p
-"sklearnpipeline(TFIDFVectorizer, XGBClassifier)", -,Allen,0.76,0.806,0.768,0.786,destfxgb.p
+sklearn Primitive - description,Hyperparameters,Input Data Used,Accuracy,Precision,Recall,F-measure,Pickle ID
+"sklearnpipeline(CountVectorizer, BernoulliBayes)", -,Allen,0.733,0.914,0.516,0.657,descvbb.p
+"sklearnpipeline(CountVectorizer, LogisticRegression)", - ,Allen,0.813,0.854,0.758,0.801,descvlr.p
+"sklearnpipeline(CountVectorizer, NaiveBayes)", -,Allen,0.784,0.716,0.954,0.816,descvnb.p
+"sklearnpipeline(TFIDFVectorizer, AdaBoostClassifier)", -,Allen,0.731,0.73,0.737,0.733,destfada.p
+"sklearnpipeline(TFIDFVectorizer, DecisionTreeClassifier)", -,Allen,0.686,0.701,0.648,0.67,destfdtc.p
+"sklearnpipeline(TFIDFVectorizer, LogisticRegression)", - ,Allen,0.802,0.788,0.836,0.809,destflr.p
+"sklearnpipeline(TFIDFVectorizer, NaiveBayes)", - ,Allen,0.775,0.695,0.982,0.814,destfnb.p
+"sklearnpipeline(TFIDFVectorizer, Perceptron)", -,Allen,0.804,0.777,0.854,0.814,destfper.p
+"sklearnpipeline(TFIDFVectorizer, RandomForestClassifier)", -,Allen,0.745,0.744,0.751,0.747,destfrfc.p
+"sklearnpipeline(TFIDFVectorizer, StochasticGradientDescent)",loss = 'log',Allen,0.815,0.799,0.843,0.82,destfsgd.p
+"sklearnpipeline(TFIDFVectorizer, XGBClassifier)", -,Allen,0.72,0.729,0.726,0.724,destfxgb.p

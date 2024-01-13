@@ -42,7 +42,6 @@ https://github.com/cgre-aachen/gempy,Allen Mao,"GemPy was designed from the begi
 https://github.com/cgre-aachen/gempy,Allen Mao,"We can, for example, include uncertainties with respect to the z-position of layer boundaries in the model space. Simple Monte Carlo simulation via PyMC will then result in different model realizations:"
 https://github.com/cgre-aachen/gempy,Allen Mao,"Theano allows the automated computation of gradients opening the door to the use of advanced gradient-based sampling methods coupling GeMpy and PyMC3 for advanced stochastic modeling. Also, the use of Theano allows making use of GPUs through cuda (see the Theano documentation for more information."
 https://github.com/cgre-aachen/gempy,Allen Mao,Making use of vtk interactivity and Qgrid (https://github.com/quantopian/qgrid) GemPy provides a functional interface to interact with input data and models.
-https://github.com/cgre-aachen/gempy,Allen Mao,Sandbox
 https://github.com/cgre-aachen/gempy,Allen Mao,"New developments in the field of augmented reality, i.e. the superimposition of real and digital objects, offer interesting and diverse possibilities that have hardly been exploited to date. The aim of the project is therefore the development and realization of an augmented reality sandbox for interaction with geoscientific data and models. In this project, methods are to be developed to project geoscientific data (such as the outcrop of a geological layer surface or geophysical measurement data) onto real surfaces."
 https://github.com/cgre-aachen/gempy,Allen Mao,"The AR Sandbox is based on a container filled with sand, the surface of which can be shaped as required. The topography of the sand surface is continuously scanned by a 3D sensor and a camera. In the computer the scanned surface is now blended with a digital geological 3D model (or other data) in real time and an image is calculated, which is projected onto the sand surface by means of a beamer. This results in an interactive model with which the user can interact in an intuitive way and which visualizes and comprehend complex three-dimensional facts in an accessible way."
 https://github.com/cgre-aachen/gempy,Allen Mao,"In addition to applications in teaching and research, this development offers great potential as an interactive exhibit with high outreach for the geosciences thanks to its intuitive operation. The finished sandbox can be used in numerous lectures and public events , but is mainly used as an interface to GemPy software and for rapid prototyping of implicit geological models."
@@ -108,17 +107,6 @@ https://github.com/facebook/react,Allen Mao,"Learn Once, Write Anywhere: We don'
 https://github.com/facebookresearch/Detectron/,Allen Mao,"Detectron is Facebook AI Research's software system that implements state-of-the-art object detection algorithms, including Mask R-CNN. It is written in Python and powered by the Caffe2 deep learning framework."
 https://github.com/facebookresearch/Detectron/,Allen Mao,"At FAIR, Detectron has enabled numerous research projects, including: Feature Pyramid Networks for Object Detection, Mask R-CNN, Detecting and Recognizing Human-Object Interactions, Focal Loss for Dense Object Detection, Non-local Neural Networks, Learning to Segment Every Thing, Data Distillation: Towards Omni-Supervised Learning, DensePose: Dense Human Pose Estimation In The Wild, and Group Normalization."
 https://github.com/facebookresearch/Detectron/,Allen Mao,"The goal of Detectron is to provide a high-quality, high-performance codebase for object detection research. It is designed to be flexible in order to support rapid implementation and evaluation of novel research. Detectron includes implementations of the following object detection algorithms:"
-https://github.com/facebookresearch/Detectron/,Allen Mao,Mask R-CNN
-https://github.com/facebookresearch/Detectron/,Allen Mao,RetinaNet
-https://github.com/facebookresearch/Detectron/,Allen Mao,Faster R-CNN
-https://github.com/facebookresearch/Detectron/,Allen Mao,RPN
-https://github.com/facebookresearch/Detectron/,Allen Mao,Fast R-CNN
-https://github.com/facebookresearch/Detectron/,Allen Mao,R-FCN
-https://github.com/facebookresearch/Detectron/,Allen Mao,using the following backbone network architectures:
-https://github.com/facebookresearch/Detectron/,Allen Mao,"ResNeXt{50,101,152}"
-https://github.com/facebookresearch/Detectron/,Allen Mao,"ResNet{50,101,152}"
-https://github.com/facebookresearch/Detectron/,Allen Mao,Feature Pyramid Networks (with ResNet/ResNeXt)
-https://github.com/facebookresearch/Detectron/,Allen Mao,VGG16
 https://github.com/facebookresearch/Detectron/,Allen Mao,"Additional backbone architectures may be easily implemented. For more details about these models, please see References below."
 https://github.com/foolwood/DaSiamRPN,Allen Mao,This repository includes PyTorch code for reproducing the results on VOT2018.
 https://github.com/foolwood/DaSiamRPN,Allen Mao,"SiamRPN formulates the task of visual tracking as a task of localization and identification simultaneously, initially described in an CVPR2018 spotlight paper. (Slides at CVPR 2018 Spotlight)"
@@ -132,7 +120,6 @@ https://github.com/google/sg2im/,Allen Mao,This is the code for the paper
 https://github.com/google/sg2im/,Allen Mao,Please note that this is not an officially supported Google product.
 https://github.com/google/sg2im/,Allen Mao,A scene graph is a structured representation of a visual scene where nodes represent objects in the scene and edges represent relationships between objects. In this paper we present and end-to-end neural network model that inputs a scene graph and outputs an image.
 https://github.com/google/sg2im/,Allen Mao,Below we show some example scene graphs along with images generated from those scene graphs using our model. By modifying the input scene graph we can exercise fine-grained control over the objects in the generated image.
-https://github.com/google/sg2im/,Allen Mao,Model
 https://github.com/google/sg2im/,Allen Mao,"The input scene graph is processed with a graph convolution network which passes information along edges to compute embedding vectors for all objects. These vectors are used to predict bounding boxes and segmentation masks for all objects, which are combined to form a coarse scene layout. The layout is passed to a cascaded refinement network (Chen an Koltun, ICCV 2017) which generates an output image at increasing spatial scales. The model is trained adversarially against a pair of discriminator networks which ensure that output images look realistic."
 https://github.com/gprMax/gprMax,Allen Mao,gprMax is open source software that simulates electromagnetic wave propagation. It solves Maxwell's equations in 3D using the Finite-Difference Time-Domain (FDTD) method. gprMax was designed for modelling Ground Penetrating Radar (GPR) but can also be used to model electromagnetic wave propagation for many other applications.
 https://github.com/gprMax/gprMax,Allen Mao,"gprMax is principally written in Python 3 with performance-critical parts written in Cython. It includes a CPU-based solver parallelised using OpenMP, and a GPU-based solver written using the NVIDIA CUDA programming model."
@@ -141,14 +128,7 @@ https://github.com/hezhangsprinter/DCPDN,Allen Mao,"We propose a new end-to-end 
 https://github.com/hezhangsprinter/DID-MDN,Allen Mao,"We present a novel density-aware multi-stream densely connected convolutional neural network-based algorithm, called DID-MDN, for joint rain density estimation and de-raining. The proposed method enables the network itself to automatically determine the rain-density information and then efficiently remove the corresponding rain-streaks guided by the estimated rain-density label. To better characterize rain-streaks with dif- ferent scales and shapes, a multi-stream densely connected de-raining network is proposed which efficiently leverages features from different scales. Furthermore, a new dataset containing images with rain-density labels is created and used to train the proposed density-aware network."
 https://github.com/hezhangsprinter/DID-MDN,Allen Mao,"To reproduce the quantitative results shown in the paper, please save both generated and target using python demo.py into the .png format and then test using offline tool such as the PNSR and SSIM measurement in Python or Matlab. In addition, please use netG.train() for testing since the batch for training is 1."
 https://github.com/hiroharu-kato/neural_renderer,Allen Mao,"This is code for the paper Neural 3D Mesh Renderer by Hiroharu Kato, Yoshitaka Ushiku, and Tatsuya Harada."
-https://github.com/hiroharu-kato/neural_renderer,Allen Mao,"For more details, please visit project page."
 https://github.com/hiroharu-kato/neural_renderer,Allen Mao,This repository only contains the core component and simple examples. Related repositories are:
-https://github.com/hiroharu-kato/neural_renderer,Allen Mao,Neural Renderer (this repository)
-https://github.com/hiroharu-kato/neural_renderer,Allen Mao,Single-image 3D mesh reconstruction
-https://github.com/hiroharu-kato/neural_renderer,Allen Mao,2D-to-3D style transfer
-https://github.com/hiroharu-kato/neural_renderer,Allen Mao,3D DeepDream
-https://github.com/hiroharu-kato/neural_renderer,Allen Mao,For PyTorch users
-https://github.com/hiroharu-kato/neural_renderer,Allen Mao,"This code is written in Chainer. For PyTorch users, there are two options."
 https://github.com/hiroharu-kato/neural_renderer,Allen Mao,"Angjoo Kanazawa & Shubham Tulsiani provides PyTorch wrapper of our renderer used in their work ""Learning Category-Specific Mesh Reconstruction from Image Collections"" (ECCV 2018)."
 https://github.com/hiroharu-kato/neural_renderer,Allen Mao,"Nikos Kolotouros provides PyTorch re-implementation of our renderer, which does not require installation of Chainer / CuPy."
 https://github.com/iannesbitt/readgssi,Allen Mao,"readgssi is a tool intended for use as an open-source reader and preprocessing module for subsurface data collected with Geophysical Survey Systems Incorporated (GSSI) ground-penetrating georadar (GPR) devices. It has the capability to read DZT and DZG files with the same pre-extension name and plot the data contained in those files. readgssi is also currently able to translate most DZT files to CSV and will be able to translate to other output formats including HDF5 (see future). Matlab code donated by Gabe Lewis, Dartmouth College Department of Earth Sciences. Python adaptation written with permission by Ian Nesbitt, University of Maine School of Earth and Climate Sciences."
@@ -160,7 +140,6 @@ https://github.com/joferkington/mplstereonet,Allen Mao,"All planar measurements 
 https://github.com/joferkington/mplstereonet,Allen Mao,"By default, a modified Kamb method with exponential smoothing [Vollmer1995] is used to estimate the orientation density distribution. Other methods (such as the ""traditional"" Kamb [Kamb1956] and ""Schmidt"" (a.k.a. 1%) methods) are available as well. The method and expected count (in standard deviations) can be controlled by the method and sigma keyword arguments, respectively."
 https://github.com/joferkington/mplstereonet,Allen Mao,mplstereonet also includes a number of utilities to parse structural measurements in either quadrant or azimuth form such that they follow the right-hand-rule.
 https://github.com/jupyter-widgets/ipyleaflet,Allen Mao,A Jupyter / Leaflet bridge enabling interactive maps in the Jupyter notebook.
-https://github.com/jwass/mplleaflet,Allen Mao,mplleaflet
 https://github.com/jwass/mplleaflet,Allen Mao,"mplleaflet is a Python library that converts a matplotlib plot into a webpage containing a pannable, zoomable Leaflet map. It can also embed the Leaflet map in an IPython notebook. The goal of mplleaflet is to enable use of Python and matplotlib for visualizing geographic data on slippy maps without having to write any Javascript or HTML. You also don't need to worry about choosing the base map content i.e., coastlines, roads, etc."
 https://github.com/jwass/mplleaflet,Allen Mao,"Normally, displaying data as longitude, latitude will cause a cartographer to cry. That's totally fine with mplleaflet, Leaflet will project your data properly."
 https://github.com/jwass/mplleaflet,Allen Mao,"Other Python libraries, basemap and folium, exist to create maps in Python. However mplleaflet allows you to leverage all matplotlib capability without having to set up the background basemap. You can use plot() to style points and lines, and you can also use more complex functions like contour(), quiver(), etc. Furthermore, with mplleaflet you no longer have to worry about setting up the basemap. Displaying continents or roads is determined automatically by the zoom level required to view the physical size of the data. You should use a different library if you need fine control over the basemap, or need a geographic projection other than spherical mercator."
@@ -169,13 +148,6 @@ https://github.com/kinverarity1/lasio/,Allen Mao,"Depending on your particular a
 https://github.com/kinverarity1/lasio/,Allen Mao,"Note this is not a package for reading LiDAR data (also called ""LAS files"")"
 https://github.com/kosmtik/kosmtik,Allen Mao,Very lite but extendable mapping framework to create Mapnik ready maps with OpenStreetMap data (and more).
 https://github.com/kosmtik/kosmtik,Allen Mao,"For now, only Carto based projects are supported (with .mml or .yml config), but in the future we hope to plug in MapCSS too."
-https://github.com/kosmtik/kosmtik,Allen Mao,Lite
-https://github.com/kosmtik/kosmtik,Allen Mao,Only the core needs:
-https://github.com/kosmtik/kosmtik,Allen Mao,project loading
-https://github.com/kosmtik/kosmtik,Allen Mao,local configuration management
-https://github.com/kosmtik/kosmtik,Allen Mao,tiles server for live feedback when coding
-https://github.com/kosmtik/kosmtik,Allen Mao,"exports to common formats (Mapnik XML, PNG…)"
-https://github.com/kosmtik/kosmtik,Allen Mao,hooks everywhere to make easy to extend it with plugins
 https://github.com/mapbox/geojson-vt,Allen Mao,"A highly efficient JavaScript library for slicing GeoJSON data into vector tiles on the fly, primarily designed to enable rendering and interacting with large geospatial datasets on the browser side (without a server)."
 https://github.com/mapbox/geojson-vt,Allen Mao,"Created to power GeoJSON in Mapbox GL JS, but can be useful in other visualization platforms like Leaflet and d3, as well as Node.js server applications."
 https://github.com/mapbox/geojson-vt,Allen Mao,"Resulting tiles conform to the JSON equivalent of the vector tile specification. To make data rendering and interaction fast, the tiles are simplified, retaining the minimum level of detail appropriate for each zoom level (simplifying shapes, filtering out tiny polygons and polylines)."
@@ -187,7 +159,6 @@ https://github.com/mapbox/rasterio,Allen Mao,"Rasterio 1.0.x works with Python v
 https://github.com/mapbox/rasterio,Allen Mao,Rasterio 1.0.x is not compatible with GDAL versions 3.0.0 or greater.
 https://github.com/mapbox/tilelive-mapnik,Allen Mao,Renderer backend for tilelive.js that uses node-mapnik to render tiles and grids from a Mapnik XML file. tilelive-mapnik implements the Tilesource API.
 https://github.com/mapbox/tippecanoe,Allen Mao,"Builds vector tilesets from large (or small) collections of GeoJSON, Geobuf, or CSV features, like these."
-https://github.com/mapbox/tippecanoe,Allen Mao,Intent
 https://github.com/mapbox/tippecanoe,Allen Mao,"The goal of Tippecanoe is to enable making a scale-independent view of your data, so that at any level from the entire world to a single building, you can see the density and texture of the data rather than a simplification from dropping supposedly unimportant features or clustering or aggregating them."
 https://github.com/mapbox/tippecanoe,Allen Mao,"If you give it all of OpenStreetMap and zoom out, it should give you back something that looks like ""All Streets"" rather than something that looks like an Interstate road atlas."
 https://github.com/mapbox/tippecanoe,Allen Mao,"If you give it all the building footprints in Los Angeles and zoom out far enough that most individual buildings are no longer discernable, you should still be able to see the extent and variety of development in every neighborhood, not just the largest downtown buildings."
@@ -215,11 +186,6 @@ https://github.com/phuang17/DeepMVS,Allen Mao,DeepMVS is a Deep Convolutional Ne
 https://github.com/phuang17/DeepMVS,Allen Mao,"If you use our codes or datasets in your work, please cite:"
 https://github.com/pysal/pysal/,Allen Mao,"PySAL, the Python spatial analysis library, is an open source cross-platform library for geospatial data science with an emphasis on geospatial vector data written in Python. It supports the development of high level applications for spatial analysis, such as"
 https://github.com/pysal/pysal/,Allen Mao,"detection of spatial clusters, hot-spots, and outliers"
-https://github.com/pysal/pysal/,Allen Mao,construction of graphs from spatial data
-https://github.com/pysal/pysal/,Allen Mao,spatial regression and statistical modeling on geographically embedded networks
-https://github.com/pysal/pysal/,Allen Mao,spatial econometrics
-https://github.com/pysal/pysal/,Allen Mao,exploratory spatio-temporal data analysis
-https://github.com/pysal/pysal/,Allen Mao,PySAL Components
 https://github.com/pysal/pysal/,Allen Mao,"explore - modules to conduct exploratory analysis of spatial and spatio-temporal data, including statistical testing on points, networks, and polygonal lattices. Also includes methods for spatial inequality and distributional dynamics."
 https://github.com/pysal/pysal/,Allen Mao,"viz - visualize patterns in spatial data to detect clusters, outliers, and hot-spots."
 https://github.com/pysal/pysal/,Allen Mao,"model - model spatial relationships in data with a variety of linear, generalized-linear, generalized-additive, and nonlinear models."
@@ -234,8 +200,6 @@ https://github.com/pyvista/pymeshfix,Allen Mao,"The input is assumed to represen
 https://github.com/pyvista/pymeshfix,Allen Mao,"One of the main reasons to bring MeshFix to Python is to allow the library to communicate to other python programs without having to use the hard drive. Therefore, this example assumes that you have a mesh within memory and wish to repair it using MeshFix."
 https://github.com/pyvista/pyvista,Allen Mao,"PyVista is a helper module for the Visualization Toolkit (VTK) that takes a different approach on interfacing with VTK through NumPy and direct array access. This package provides a Pythonic, well-documented interface exposing VTK's powerful visualization backend to facilitate rapid prototyping, analysis, and visual integration of spatially referenced datasets."
 https://github.com/pyvista/pyvista,Allen Mao,This module can be used for scientific plotting for presentations and research papers as well as a supporting module for other mesh 3D rendering dependent Python modules; see Connections for a list of projects that leverage PyVista.
-https://github.com/pyvista/pyvista,Allen Mao,Overview of Features
-https://github.com/pyvista/pyvista,Allen Mao,Embeddable rendering in Jupyter Notebooks
 https://github.com/pyvista/pyvista,Allen Mao,Filtering/plotting tools built for interactivity in Jupyter notebooks (see IPython Tools)
 https://github.com/pyvista/pyvista,Allen Mao,Direct access to mesh analysis and transformation routines (see Filters)
 https://github.com/pyvista/pyvista,Allen Mao,Intuitive plotting routines with matplotlib similar syntax (see Plotting)
@@ -264,7 +228,6 @@ https://github.com/whimian/pyGeoPressure,Allen Mao,Bowers' method and Parameter 
 https://github.com/whimian/pyGeoPressure,Allen Mao,Multivariate method and Parameter Optimization
 https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Official implementation of Fast End-to-End Trainable Guided Filter.
 https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,"Faster, Better and Lighter for image processing and dense prediction."
-https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,Overview
 https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,DeepGuidedFilter is the author's implementation of the deep learning building block for joint upsampling described in:
 https://github.com/wuhuikai/DeepGuidedFilter,Allen Mao,"Given a reference image pair in high-resolution and low-resolution, our algorithm generates high-resolution target from the low-resolution input. Through joint training with CNNs, our algorithm achieves the state-of-the-art performance while runs 10-100 times faster."
 https://github.com/yuhuayc/da-faster-rcnn,Allen Mao,"This is the implementation of our CVPR 2018 work 'Domain Adaptive Faster R-CNN for Object Detection in the Wild'. The aim is to improve the cross-domain robustness of object detection, in the screnario where training and test data are drawn from different distributions. The original paper can be found here."
@@ -274,7 +237,6 @@ https://github.com/yulunzhang/RDN,Allen Mao,"A very deep convolutional neural ne
 https://github.com/zhiqiangdon/CU-Net,Allen Mao,"The follwoing figure gives an illustration of naive dense U-Net, stacked U-Nets and coupled U-Nets (CU-Net). The naive dense U-Net and stacked U-Nets have shortcut connections only inside each U-Net. In contrast, the coupled U-Nets also have connections for semantic blocks across U-Nets. The CU-Net is a hybrid of naive dense U-Net and stacked U-Net, integrating the merits of both dense connectivity, intermediate supervisions and multi-stage top-down and bottom-up refinement. The resulted CU-Net could save ~70% parameters of the previous stacked U-Nets but with comparable accuracy."
 https://github.com/zhiqiangdon/CU-Net,Allen Mao,"If we couple each U-Net pair in multiple U-Nets, the coupling connections would have quadratic growth with respect to the U-Net number. To make the model more parameter efficient, we propose the order-K coupling to trim off the long-distance coupling connections."
 https://github.com/zhiqiangdon/CU-Net,Allen Mao,"For simplicity, each dot represents one U-Net. The red and blue lines are the shortcut connections of inside semantic blocks and outside inputs. Order-0 connectivity (Top) strings U-Nets together only by their inputs and outputs, i.e. stacked U-Nets. Order-1 connectivity (Middle) has shortcut connections for adjacent U-Nets. Similarly, order-2 connectivity (Bottom) has shortcut connections for 3 nearby U-Nets."
-https://github.com/cltk/cltk,Rosna Thomas,The Classical Language Toolkit
 https://github.com/cltk/cltk,Rosna Thomas,"The Classical Language Toolkit (CLTK) offers natural language processing (NLP) support for the languages of Ancient, Classical, and Medieval Eurasia. Greek, Latin, Akkadian, and the Germanic languages are currently most complete. The goals of the CLTK are to:"
 https://github.com/cltk/cltk,Rosna Thomas,*   compile analysis-friendly corpora;
 https://github.com/cltk/cltk,Rosna Thomas,*   collect and generate linguistic data;
@@ -291,7 +253,6 @@ https://github.com/facebookresearch/ResNeXt,Rosna Thomas,"ResNeXt is a simple, h
 https://github.com/facebookresearch/pyrobot,Rosna Thomas,"PyRobot is a light weight, high-level interface which provides hardware independent APIs for robotic manipulation and navigation. This repository also contains the low-level stack for LoCoBot, a low cost mobile manipulator hardware platform."
 https://github.com/gitbucket/gitbucket,Rosna Thomas,GitBucket is a Git web platform powered by Scala offering:
 https://github.com/gitbucket/gitbucket,Rosna Thomas,"You can try an online demo (ID: root / Pass: root) of GitBucket, and also get the latest information at GitBucket News."
-https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,🔥 Ultimate Facebook Scrapper
 https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,A bot which scrapes almost everything about a facebook user's profile including
 https://github.com/harismuneer/Ultimate-Facebook-Scraper,Rosna Thomas,"The best thing about this scraper is that the data is scraped in an organized format so that it can be used for educational/research purpose by researchers. Moreover, this scraper does not use Facebook's Graph API so there are no rate limiting issues as such. "
 https://github.com/nextflow-io/nextflow,Rosna Thomas,Nextflow is a bioinformatics workflow manager that enables the development of portable and reproducible workflows.
@@ -310,7 +271,6 @@ https://github.com/pyro-ppl/pyro,Rosna Thomas,"Minimal: Pyro is agile and mainta
 https://github.com/pyro-ppl/pyro,Rosna Thomas,"Flexible: Pyro aims for automation when you want it, control when you need it. This is accomplished through high-level abstractions to express generative and inference models, while allowing experts easy-access to customize inference."
 https://github.com/pyro-ppl/pyro,Rosna Thomas,Pyro is in a beta release.  It is developed and maintained by Uber AI Labs and community contributors.
 https://github.com/reduxjs/react-redux,Rosna Thomas,Official React bindings for Redux.
-https://github.com/reduxjs/react-redux,Rosna Thomas,Performant and flexible.
 https://github.com/scikit-image/scikit-image,Rosna Thomas,scikit-image: Image processing in Python
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,scikit-learn is a Python module for machine learning built on top of
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,SciPy and is distributed under the 3-Clause BSD license.
@@ -319,19 +279,4 @@ https://github.com/scikit-learn/scikit-learn,Rosna Thomas,"of Code project, and 
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,the About us &lt;http://scikit-learn.org/dev/about.html#authors&gt;_ page
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,for a list of core contributors.
 https://github.com/scikit-learn/scikit-learn,Rosna Thomas,It is currently maintained by a team of volunteers.
-https://github.com/scikit-learn/scikit-learn,Rosna Thomas,Website: http://scikit-learn.org
-https://github.com/tensorflow/magenta,Rosna Thomas,Magenta is a research project exploring the role of machine learning
-https://github.com/tensorflow/magenta,Rosna Thomas,in the process of creating art and music.  Primarily this
-https://github.com/tensorflow/magenta,Rosna Thomas,involves developing new deep learning and reinforcement learning
-https://github.com/tensorflow/magenta,Rosna Thomas,"algorithms for generating songs, images, drawings, and other materials. But it's also"
-https://github.com/tensorflow/magenta,Rosna Thomas,an exploration in building smart tools and interfaces that allow
-https://github.com/tensorflow/magenta,Rosna Thomas,artists and musicians to extend (not replace!) their processes using
-https://github.com/tensorflow/magenta,Rosna Thomas,these models.  Magenta was started by some researchers and engineers
-https://github.com/tensorflow/magenta,Rosna Thomas,"from the Google Brain team,"
-https://github.com/tensorflow/magenta,Rosna Thomas,but many others have contributed significantly to the project. We use
-https://github.com/tensorflow/magenta,Rosna Thomas,TensorFlow and release our models and
-https://github.com/tensorflow/magenta,Rosna Thomas,tools in open source on this GitHub.  If you’d like to learn more
-https://github.com/tensorflow/magenta,Rosna Thomas,"about Magenta, check out our blog,"
-https://github.com/tensorflow/magenta,Rosna Thomas,where we post technical details.  You can also join our discussion
-https://github.com/tensorflow/magenta,Rosna Thomas,group.
-https://github.com/tensorflow/magenta,Rosna Thomas,"This is the home for our Python TensorFlow library. To use our models in the browser with TensorFlow.js, head to the Magenta.js repository."
+https://github.com/tensorflow/magenta,Rosna Thomas,"Magenta is a research project exploring the role of machine learning in the process of creating art and music.  Primarily this involves developing new deep learning and reinforcement learning algorithms for generating songs, images, an exploration in building smart tools and interfaces that allow drawings, and other materials. But it's also artists and musicians to extend (not replace!) their processes using these models.  Magenta was started by some researchers and engineers from the Google Brain team, but many others have contributed significantly to the project. We use TensorFlow and release our models and tools in open source on this GitHub. "
