@@ -37,6 +37,11 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     -------
     @return: Dictionary with the results found by SOMEF, formatted as a Result object.
     """
+    # Set up logging
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(levelname)s-%(message)s',
+                        datefmt='%d-%b-%y %H:%M:%S', force=True)
+    logging.getLogger("bibtexparser").setLevel(logging.ERROR)
+
     file_paths = configuration.get_configuration_file()
     repo_type = constants.RepositoryType.GITHUB
     repository_metadata = Result()
@@ -152,8 +157,6 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             logging.info("Completed extracting regular expressions")
 
         return repository_metadata
-
-
     except Exception as e:
         logging.error("Error processing repository " + str(e))
         return repository_metadata
