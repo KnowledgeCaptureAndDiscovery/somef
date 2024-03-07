@@ -476,30 +476,33 @@ def extract_bibtex(readme_text, repository_metadata: Result, readme_source) -> R
     -------
     @returns Result object with the bibtex associated with this software component
     """
-    bib_database = bibtexparser.loads(readme_text)
-    entries = bib_database.entries
-    for entry in entries:
-        # dumping the found fields does not seem to work, so rebuilding the object:
-        exported_bibtex = f"@{entry['ENTRYTYPE']}{{{entry['ID']},\n"
-        for key, value in entry.items():
-            if key not in ('ENTRYTYPE', 'ID'):
-                exported_bibtex += f"    {key} = {{{value}}},\n"
-        exported_bibtex += "}"
-        result = {
-            constants.PROP_VALUE: exported_bibtex,
-            constants.PROP_TYPE: constants.TEXT_EXCERPT,
-            constants.PROP_FORMAT: constants.FORMAT_BIB
-        }
-        if constants.PROP_DOI in entry:
-            result[constants.PROP_DOI] = entry[constants.PROP_DOI]
-        if constants.PROP_TITLE in entry:
-            result[constants.PROP_TITLE] = entry[constants.PROP_TITLE]
-        if constants.PROP_AUTHOR in entry:
-            result[constants.PROP_AUTHOR] = entry[constants.PROP_AUTHOR]
-        if constants.PROP_URL in entry:
-            result[constants.PROP_URL] = entry[constants.PROP_URL]
-        repository_metadata.add_result(constants.CAT_CITATION, result, 1,
-                                       constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+    try:
+        bib_database = bibtexparser.loads(readme_text)
+        entries = bib_database.entries
+        for entry in entries:
+            # dumping the found fields does not seem to work, so rebuilding the object:
+            exported_bibtex = f"@{entry['ENTRYTYPE']}{{{entry['ID']},\n"
+            for key, value in entry.items():
+                if key not in ('ENTRYTYPE', 'ID'):
+                    exported_bibtex += f"    {key} = {{{value}}},\n"
+            exported_bibtex += "}"
+            result = {
+                constants.PROP_VALUE: exported_bibtex,
+                constants.PROP_TYPE: constants.TEXT_EXCERPT,
+                constants.PROP_FORMAT: constants.FORMAT_BIB
+            }
+            if constants.PROP_DOI in entry:
+                result[constants.PROP_DOI] = entry[constants.PROP_DOI]
+            if constants.PROP_TITLE in entry:
+                result[constants.PROP_TITLE] = entry[constants.PROP_TITLE]
+            if constants.PROP_AUTHOR in entry:
+                result[constants.PROP_AUTHOR] = entry[constants.PROP_AUTHOR]
+            if constants.PROP_URL in entry:
+                result[constants.PROP_URL] = entry[constants.PROP_URL]
+            repository_metadata.add_result(constants.CAT_CITATION, result, 1,
+                                           constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+    except Exception as e:
+        logging.warning("An error occurred when trying to extract bibtex from README " + str(e))
     return repository_metadata
 
 

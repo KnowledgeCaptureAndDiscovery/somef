@@ -1,4 +1,3 @@
-import base64
 import logging
 import os
 import zipfile
@@ -10,6 +9,7 @@ from urllib.parse import urlparse
 from .utils import constants
 from . import configuration
 from .process_results import Result
+
 
 # Constructs a template HTTP header, which:
 # - has a key for the authorization token if passed via the authorization argument, otherwise
@@ -39,8 +39,9 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
             rate_limit_remaining = response.headers["X-RateLimit-Remaining"]
             epochtime = int(response.headers["X-RateLimit-Reset"])
             date_reset = datetime.fromtimestamp(epochtime)
-            logging.info("Remaining GitHub API requests: " + rate_limit_remaining + " ### Next rate limit reset at: " + str(
-            date_reset))
+            logging.info(
+                "Remaining GitHub API requests: " + rate_limit_remaining + " ### Next rate limit reset at: " + str(
+                    date_reset))
         if 'message' in response and 'API rate limit exceeded' in response['message']:
             rate_limited = True
             logging.warning(f"rate limited. Backing off for {initial_backoff} seconds")
@@ -324,7 +325,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
         return None
 
     logging.info(f"Loading Repository {repository_url} Information....")
-    
+
     # Create template header with optional authorization token
     header = header_template(authorization)
     header['accept'] = constants.GITHUB_ACCEPT_HEADER
@@ -438,7 +439,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
 
         # get releases
         releases_list_raw, date = rate_limit_get(repo_api_base_url + "/releases",
-                                             headers=header)
+                                                 headers=header)
         releases_list = releases_list_raw.json()
         if isinstance(releases_list, dict) and 'message' in releases_list.keys():
             logging.error("Releases Error: " + releases_list['message'])
@@ -492,7 +493,8 @@ def do_crosswalk(data, crosswalk_table):
     return output
 
 
-def download_repository_files(owner, repo_name, default_branch, repo_type, target_dir, repo_ref=None, authorization=None):
+def download_repository_files(owner, repo_name, default_branch, repo_type, target_dir, repo_ref=None,
+                              authorization=None):
     """
     Given a repository, this method will download its files and return the readme text
     Parameters
@@ -543,7 +545,7 @@ def download_github_files(directory, owner, repo_name, repo_ref, authorization):
         logging.error(f"Error: Archive request failed with HTTP {repo_download.status_code}")
         repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/main.zip"
         logging.info(f"Trying to download {repo_archive_url}")
-        repo_download, date = rate_limit_get(repo_archive_url, headers=header_template(authorization)) 
+        repo_download, date = rate_limit_get(repo_archive_url, headers=header_template(authorization))
 
     if repo_download.status_code != 200:
         sys.exit(f"Error: Archive request failed with HTTP {repo_download.status_code}")
@@ -592,6 +594,7 @@ def get_project_id(repository_url):
 class GithubUrlError(Exception):
     # print("The URL provided seems to be incorrect")
     pass
+
 
 def get_readme_content(readme_url):
     """Function to retrieve the content of a readme file given its URL (github)"""
