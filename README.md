@@ -97,7 +97,7 @@ pages={3032-3037}
 
 ## Requirements
 
-- Python 3.9
+- Python 3.9 or Python 3.10 (default version support)
 
 SOMEF has been tested on Unix, MacOS and Windows Microsoft operating systems.
 
@@ -175,13 +175,6 @@ If you move any files produced by somef into `/out`, then you will be able to se
 ## Configure
 
 Before running SOMEF for the first time, you must **configure** it appropriately (you only need to do this once). Run:
-```bash
-python -m nltk.downloader wordnet
-python -m nltk.downloader omw-1.4
-python -m nltk.downloader punkt
-python -m nltk.downloader stopwords
-```
-To download two wordnet modules needed. Then run:
 
 ```bash
 somef configure
