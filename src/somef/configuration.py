@@ -7,10 +7,10 @@ import logging
 from .utils import constants
 
 path = Path(__file__).parent.absolute()
-default_description = os.path.join(str(path), "models", "description.p")
-default_invocation = os.path.join(str(path), "models", "invocation.p")
-default_installation = os.path.join(str(path), "models", "installation.p")
-default_citation = os.path.join(str(path), "models", "citation.p")
+default_description = str(path) + "/models/description.p"
+default_invocation = str(path) + "/models/invocation.p"
+default_installation = str(path) + "/models/installation.p"
+default_citation = str(path) + "/models/citation.p"
 
 
 def get_configuration_file():
