@@ -10,7 +10,7 @@ install_requires = [
     "click-option-group==0.5.3",
     "markdown==3.3.6",
     "matplotlib==3.5.0",
-    "nltk==3.6.6",
+    "nltk==3.9",
     "numpy==1.22.0",
     "pandas>=2.0.0",
     "rdflib>=6.0.2",
