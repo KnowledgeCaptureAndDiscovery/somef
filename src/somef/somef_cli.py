@@ -1,8 +1,11 @@
 import sys
+from uu import encode
+
 import validators
 import logging
 import os
 import tempfile
+import urllib.parse
 
 from os import path
 from . import header_analysis, regular_expressions, process_repository, configuration, process_files, \
@@ -200,18 +203,34 @@ def run_cli(*,
         # convert to a set to ensure uniqueness (we don't want to get the same data multiple times)
         repo_set = set(repo_list)
         # check if the urls in repo_set if are valid
-        remove_urls = []
+        urls_to_process = []
         for repo_elem in repo_set:
-            if not validators.url(repo_elem):
-                logging.error("Not a valid repository url. Please check the url provided: " + repo_elem)
-                remove_urls.append(repo_elem)
-        # remove non valid urls in repo_set
-        for remove_url in remove_urls:
-            repo_set.remove(remove_url)
-        if len(repo_set) > 0:
-            repo_data = [cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
-                                      keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder) for repo_url in
-                         repo_set]
+            repo_elem = repo_elem.strip()
+            if validators.url(repo_elem):
+                urls_to_process.append(repo_elem)
+            else:
+                logging.error(repo_elem +" is not a valid repository url. Please check the url provided ")
+        if len(urls_to_process) > 0:
+            # repo_data = [cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
+            #                           keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder) for repo_url in
+            #              urls_to_process]
+            for repo_url in urls_to_process:
+                try:
+                    encoded_url = urllib.parse.quote(repo_url, safe='')
+                    encoded_url = encoded_url.replace(".","") #removing dots just in case
+                    repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
+                                             ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
+                                             keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder)
+                    if output is not None:
+                        output = output.replace(".json","")
+                        output = output + "_" + encoded_url + ".json"
+                        json_export.save_json_output(repo_data.results, output, missing, pretty=pretty)
+                    if codemeta_out is not None:
+                        codemeta_out = codemeta_out.replace(".json", "")
+                        codemeta_out = codemeta_out + "_" + encoded_url + ".json"
+                        json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty)
+                except:
+                    logging.error("Error when processing repo: " + repo_url)
         else:
             return None
 
@@ -227,8 +246,10 @@ def run_cli(*,
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
                                      doc_src=doc_src, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder)
 
-    if output is not None:
-        json_export.save_json_output(repo_data.results, output, missing, pretty=pretty)
+        if output is not None:
+            json_export.save_json_output(repo_data.results, output, missing, pretty=pretty)
+        if codemeta_out is not None:
+            json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty)
 
     if graph_out is not None:
         logging.info("Generating triples...")
@@ -241,5 +262,4 @@ def run_cli(*,
 
         data_graph.export_to_file(graph_out, graph_format)
 
-    if codemeta_out is not None:
-        json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty)
+

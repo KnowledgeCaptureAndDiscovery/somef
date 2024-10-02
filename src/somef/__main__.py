@@ -97,7 +97,9 @@ def configure(auto, base_uri):
     "--in_file",
     "-i",
     type=click.Path(exists=True),
-    help="A file of newline separated links to GitHub/Gitlab repositories to process in bulk"
+    help=""""A file of newline separated links to GitHub/Gitlab repositories to process in bulk. Each repository will be 
+         stored in a different file called $out_$url.json where $out is the name selected as out file and $url is the
+         url of the target repository (url encoded)"""
 )
 @optgroup.group('Output', cls=RequiredAnyOptionGroup)
 @optgroup.option(
