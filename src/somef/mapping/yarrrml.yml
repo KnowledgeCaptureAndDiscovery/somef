@@ -1,9 +1,11 @@
 prefixes:
   sd: "https://w3id.org/okn/o/sd#"
   schema: "https://schema.org/"
+  xsd: "http://www.w3.org/2001/XMLSchema#"
+  owl: "http://www.w3.org/2002/07/owl#"
 sources:
-  main-source: ['somef_2.json~jsonpath', '$']
-  rel: ['somef_2.json~jsonpath', '$.releases[*]']
+  main-source: ["somef_2.json~jsonpath", "$"]
+  rel: ["somef_2.json~jsonpath", "$.releases[*]"]
 mappings:
   Software:
     sources:
