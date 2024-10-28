@@ -145,7 +145,7 @@ class DataGraph:
                 # if it is not a list, just get the excerpt
                 else:
                     out[key] = value[constants.PROP_RESULT][constants.PROP_VALUE]
-        print(out)
+        # print(json.dumps(out))
         return out
 
     @staticmethod
