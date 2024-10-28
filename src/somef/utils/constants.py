@@ -222,7 +222,7 @@ MAPPING_CONFIG = """
                     file_path: $DATA
                  """
 
-mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "rml.ttl"
+mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "yarrrml.yml"
 AUX_RELEASES_IDS = "releases_ids"
 
 class RepositoryType(Enum):
