@@ -37,12 +37,14 @@ class DataGraph:
         if constants.CAT_FULL_NAME not in data.keys():
             data['fullName'] = data['name']
         # save JSON in temp file
-        temp_file = "tmp"+current_date.strftime("%Y%m%d%H%M%S")+".json"
-        with open(temp_file, 'w') as output:
-            json.dump(data, output)
-        result_graph = self.apply_mapping(constants.mapping_path, output.name)
+        # temp_file = "tmp"+current_date.strftime("%Y%m%d%H%M%S")+".json"
+        # with open(temp_file, 'w') as output:
+        #     json.dump(data, output)
+        # result_graph = self.apply_mapping(constants.mapping_path, output.name)
+        data_content = json.dumps(data)
+        result_graph = self.apply_mapping(constants.mapping_path, data_content)
         self.g += self.g + result_graph
-        os.remove(output.name)
+        # os.remove(output.name)
         # temp_file = tempfile.NamedTemporaryFile()
         # with open(temp_file.name, 'w') as output:
         #     json.dump(data, output)
@@ -149,7 +151,41 @@ class DataGraph:
         return out
 
     @staticmethod
-    def apply_mapping(mapping_path, data_path) -> Graph:
+    def apply_mapping(mapping_path, data) -> Graph:
+  
+        """
+        Given a mapping file and JSON content this method returns the MORPH-KGC materialization for the mapping
+        Parameters
+        ----------
+        @param mapping_path: file path of the mapping
+        @param data: string json content
+        Returns
+        -------
+        An RDF graph with the desired triples
+        """
+        
+        import io
+   
+        with tempfile.NamedTemporaryFile(delete=False, mode='w', suffix='.json') as temp_json_file:
+            temp_json_file.write(data)
+            temp_json_file_path = temp_json_file.name
+            
+        data_file = temp_json_file_path
+
+        # Modifica la configuración para usar el contenido JSON directamente
+        config = constants.MAPPING_CONFIG
+        
+        config = config.replace("$PATH", mapping_path).replace("$DATA", data_file)
+        
+        result_graph = morph_kgc.materialize(config)
+        
+        # option sending dictionary. In revision because just works with rml instead (not with main-source) of yml
+        # result_graph = morph_kgc.materialize(config, data)
+        
+        return result_graph
+    
+    # @staticmethod
+    # def apply_mapping(mapping_path, data_path) -> Graph:
         """
         Given a mapping file and a data file, this method returns the MORPH-KGC materialization for the mapping
         Parameters
@@ -162,10 +198,10 @@ class DataGraph:
         An RDF graph with the desired triples
         """
         # mini test for morph-kgc
-        config = constants.MAPPING_CONFIG
-        # TO DO: Change RML URIs if they have been changed in the configuration.
-        config = config.replace("$PATH", mapping_path).replace("$DATA", data_path)
-        return morph_kgc.materialize(config)
+        # config = constants.MAPPING_CONFIG
+        # # TO DO: Change RML URIs if they have been changed in the configuration.
+        # config = config.replace("$PATH", mapping_path).replace("$DATA", data_path)
+        # return morph_kgc.materialize(config)
 
     def export_to_file(self, path, graph_format):
         """
