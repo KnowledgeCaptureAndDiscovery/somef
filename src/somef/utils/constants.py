@@ -222,9 +222,16 @@ MAPPING_CONFIG = """
                     file_path: $DATA
                  """
 
+MAPPING_CONFIG_DICT = """
+                    [DataSource1]
+                    mappings: $PATH
+                 """
+       
+# YML by default          
 mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "yarrrml.yml"
+ 
+# mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "rml.ttl"
 
-#mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "rml.ttl"
 AUX_RELEASES_IDS = "releases_ids"
 
 class RepositoryType(Enum):
