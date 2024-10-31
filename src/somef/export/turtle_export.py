@@ -171,14 +171,14 @@ class DataGraph:
             temp_json_file_path = temp_json_file.name
             
         data_file = temp_json_file_path
-
+        
         # Modifica la configuración para usar el contenido JSON directamente
         config = constants.MAPPING_CONFIG
         
         config = config.replace("$PATH", mapping_path).replace("$DATA", data_file)
         
         result_graph = morph_kgc.materialize(config)
-        
+        os.remove(temp_json_file_path)
         # option sending dictionary. In revision because just works with rml instead (not with main-source) of yml
         # result_graph = morph_kgc.materialize(config, data)
         

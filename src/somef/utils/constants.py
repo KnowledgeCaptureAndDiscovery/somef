@@ -226,7 +226,8 @@ MAPPING_CONFIG_DICT = """
                     [DataSource1]
                     mappings: $PATH
                  """
-                 
+       
+# YML by default          
 mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "yarrrml.yml"
  
 # mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "rml.ttl"
