@@ -216,21 +216,23 @@ categories_files_header = [CAT_INSTALLATION, CAT_CITATION, CAT_ACKNOWLEDGEMENT, 
                            CAT_CONTACT, CAT_DESCRIPTION, CAT_CONTRIBUTORS, CAT_DOCUMENTATION, CAT_LICENSE, CAT_USAGE,
                            CAT_FAQ, CAT_SUPPORT, CAT_IDENTIFIER, CAT_HAS_BUILD_FILE, CAT_EXECUTABLE_EXAMPLE]
 
+# Config to materialize with yarrrml.yml.
 MAPPING_CONFIG = """
                     [DataSource1]
                     mappings: $PATH
                     file_path: $DATA
                  """
-
+                 
+# Config to materialize with rml.ttl.
 MAPPING_CONFIG_DICT = """
                     [DataSource1]
                     mappings: $PATH
                  """
        
 # YML by default          
-mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "yarrrml.yml"
+# mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "yarrrml.yml"
  
-# mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "rml.ttl"
+mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "rml_1.ttl"
 
 AUX_RELEASES_IDS = "releases_ids"
 
