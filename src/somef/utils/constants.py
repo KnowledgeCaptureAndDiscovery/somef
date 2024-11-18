@@ -232,7 +232,7 @@ MAPPING_CONFIG_DICT = """
 # YML by default          
 # mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "yarrrml.yml"
  
-mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "rml_1.ttl"
+mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "rml.ttl"
 
 AUX_RELEASES_IDS = "releases_ids"
 
