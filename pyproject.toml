@@ -1,29 +1,41 @@
+[tool.poetry]
+name = "somef"
+version = "0.1.0"
+description = ""
+authors = ["Jenifer Tabita Ciuciu-Kiss <jenifer.tabita.ciuciu.kiss@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.12"
+bs4 = "^0.0.1"
+click = "^8.1.7"
+click-option-group = "^0.5.6"
+matplotlib = "^3.8.2"
+nltk = "^3.8.1"
+numpy = "^1.26.3"
+pandas = "^2.1.4"
+rdflib = "^7.0.0"
+textblob = "^0.17.1"
+validators = "^0.22.0"
+xgboost = "^2.0.3"
+scipy = "^1.11.4"
+inflect = "^7.0.0"
+contractions = "^0.1.73"
+chardet = "^5.2.0"
+imbalanced-learn = "^0.11.0"
+pytest = "^7.4.4"
+morph-kgc = "^2.6.4"
+bibtexparser = "^1.4.1"
+nbformat = "^5.9.2"
+markdown = "^3.5.2"
+rdflib-jsonld = "^0.6.2"
+requests = "^2.31.0"
+scikit-learn = "^1.3.2"
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+somef = "somef.__main__:cli"
+
 [build-system]
-requires = [
-    "bs4==0.0.1",
-    "Click==7.0",
-    "click-option-group==0.5.3",
-    "markdown==3.3.6",
-    "matplotlib==3.5.0",
-    "nltk==3.6.5",
-    "numpy>=1.21.4",
-    "pandas>=2.0.0",
-    "rdflib>=6.0.2",
-    "rdflib-jsonld==0.6.2",
-    "requests>=2.22.0",
-    "scikit-learn>=1.0",
-    "textblob==0.17.1",
-    "validators==0.18.2",
-    "xgboost==1.5.0",
-    "scipy>=1.7.1",
-    "inflect>=5.4.0",
-    "contractions>=0.1.66",
-    "chardet==5.0.0",
-    "imbalanced-learn>=0.11.0",
-    "imblearn>=0.0",
-    "pytest",
-    "morph-kgc>=2.3.1",
-    "nbformat>=5.9.2",
-    "bibtexparser==1.4.1"
-]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core>=1.1.10"]
+build-backend = "poetry.core.masonry.api"
