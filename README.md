@@ -1,16 +1,18 @@
 # Software Metadata Extraction Framework (SOMEF)
-[![Documentation Status](https://readthedocs.org/projects/somef/badge/?version=latest)](https://somef.readthedocs.io/en/latest/?badge=latest) 
-[![Python](https://img.shields.io/pypi/pyversions/somef.svg?style=plastic)](https://badge.fury.io/py/somef) [![PyPI](https://badge.fury.io/py/somef.svg)](https://badge.fury.io/py/somef) [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)  [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+
+[![Documentation Status](https://readthedocs.org/projects/somef/badge/?version=latest)](https://somef.readthedocs.io/en/latest/?badge=latest)
+[![Python](https://img.shields.io/pypi/pyversions/somef.svg?style=plastic)](https://badge.fury.io/py/somef) [![PyPI](https://badge.fury.io/py/somef.svg)](https://badge.fury.io/py/somef) [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb) [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
 <img src="docs/logo.png" alt="logo" width="150"/>
 
 A command line interface for automatically extracting relevant metadata from code repositories (readme, configuration files, documentation, etc.).
 
-**Demo:** See a [demo running somef as a service](https://somef.linkeddata.es), through the [SOMEF-Vider tool](https://github.com/SoftwareUnderstanding/SOMEF-Vider/). 
+**Demo:** See a [demo running somef as a service](https://somef.linkeddata.es), through the [SOMEF-Vider tool](https://github.com/SoftwareUnderstanding/SOMEF-Vider/).
 
 **Authors:** Daniel Garijo, Allen Mao, Miguel Ángel García Delgado, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang, Aidan Kelley, Jenifer Tabita Ciuciu-Kiss and Luca Angheluta.
 
 ## Features
+
 Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the following categories (if present), listed in alphabetical order:
 
 - **Acknowledgement**: Text acknowledging funding sources or contributors
@@ -32,7 +34,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Forks count**: Number of forks of the project
 - **Forks url**: Links to forks made of the project
 - **Full name**: Name + owner (owner/name)
-- **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository  name
+- **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository name
 - **Images**: Images used to illustrate the software component
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component
@@ -57,10 +59,10 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it
 - **Workflows**: URL and path to the workflow files present in the repository
 
-
 We use different supervised classifiers, header analysis, regular expressions and the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description](https://somef.readthedocs.io/en/latest/output/)
 
 ## Documentation
+
 See full documentation at [https://somef.readthedocs.io/en/latest/](https://somef.readthedocs.io/en/latest/)
 
 ## Cite SOMEF:
@@ -83,6 +85,7 @@ Journal publication (preferred):
 ```
 
 Conference publication (first):
+
 ```
 @INPROCEEDINGS{9006447,
 author={A. {Mao} and D. {Garijo} and S. {Fakhraei}},
@@ -101,9 +104,10 @@ pages={3032-3037}
 
 SOMEF has been tested on Unix, MacOS and Windows Microsoft operating systems.
 
-If you face any issues when installing SOMEF, please make sure you have installed the following packages: `build-essential`, `libssl-dev`,  `libffi-dev` and `python3-dev`. 
+If you face any issues when installing SOMEF, please make sure you have installed the following packages: `build-essential`, `libssl-dev`, `libffi-dev` and `python3-dev`.
 
 ## Install from Pypi
+
 SOMEF [is available in Pypi!](https://pypi.org/project/somef/) To install it just type:
 
 ```
@@ -111,6 +115,7 @@ pip install somef
 ```
 
 ## Install from GitHub
+
 To run SOMEF, please follow the next steps:
 
 Clone this GitHub repository
@@ -119,11 +124,44 @@ Clone this GitHub repository
 git clone https://github.com/KnowledgeCaptureAndDiscovery/somef.git
 ```
 
-Install somef (you should be in the folder that you just cloned). Note that for Python 3.7 and 3.8 the module Cython should be installed in advanced (through the command: `pip install Cython`).
+For better dependency management, it is necessary to have Poetry installed beforehand. It can be installed as follows:
 
 ```
-cd somef
-pip install -e .
+curl -sSL https://install.python-poetry.org | python3 -
+```
+
+This option is recommended over installing Poetry with pip install.
+
+Now Poetry will handle the installation of SOMEF and all its dependencies configured in the TOML file.
+
+Test the correct installation of poetry
+
+```
+poetry --version
+```
+
+We can first review the list of libraries and dependencies configured as necessary for the operation.
+
+```
+poetry show
+```
+
+Install somef and all their dependencies.
+
+```
+poetry install
+```
+
+With the following instruction, we can see the environments available in the project and which one is currently active.
+
+```
+poetry env list
+```
+
+And this way, we enter the virtual environment established by Poetry. Once inside the environment, we can perform the installation test for SOMEF detailed later.
+
+```
+poetry shell
 ```
 
 Test SOMEF installation
@@ -147,11 +185,13 @@ Commands:
 ```
 
 ## Installing through Docker
+
 We provide a Docker image with SOMEF already installed. To run through Docker, you may build the Dockerfile provided in the repository by running:
 
 ```bash
 docker build -t somef .
 ```
+
 Or just use the Docker image already built in [DockerHub](https://hub.docker.com/r/kcapd/somef):
 
 ```bash
@@ -169,8 +209,8 @@ And you will be ready to use SOMEF (see section below). If you want to have acce
 ```bash
 docker run -it --rm -v $PWD/:/out kcapd/somef /bin/bash
 ```
-If you move any files produced by somef into `/out`, then you will be able to see them in your current directory.
 
+If you move any files produced by somef into `/out`, then you will be able to see them in your current directory.
 
 ## Configure
 
@@ -196,6 +236,7 @@ For showing help about the available options, run:
 ```bash
 somef configure --help
 ```
+
 Which displays:
 
 ```bash
@@ -209,7 +250,8 @@ Options:
 ```
 
 ### Updating SOMEF
-If you update SOMEF to a newer version, we recommend you `configure` again the library (by running `somef configure`). The rationale is that different versions may rely on classifiers which may be stored in a different path. 
+
+If you update SOMEF to a newer version, we recommend you `configure` again the library (by running `somef configure`). The rationale is that different versions may rely on classifiers which may be stored in a different path.
 
 ## Usage
 
@@ -246,9 +288,9 @@ Options:
                                   is easy to compare to another JSON output
                                   file.
 
-  -m, --missing                   The JSON will include a field 
-                                  somef_missing_categories to report with the 
-                                  missing metadata fields that SOMEF was not 
+  -m, --missing                   The JSON will include a field
+                                  somef_missing_categories to report with the
+                                  missing metadata fields that SOMEF was not
                                   able to find.
 
   -kt, --keep_tmp PATH            SOMEF will NOT delete the temporary folder
@@ -261,6 +303,7 @@ Options:
 ```
 
 ## Usage example:
+
 The following command extracts all metadata available from [https://github.com/dgarijo/Widoco/](https://github.com/dgarijo/Widoco/).
 
 ```bash
@@ -269,16 +312,14 @@ somef describe -r https://github.com/dgarijo/Widoco/ -o test.json -t 0.8
 
 Try SOMEF in Binder with our sample notebook: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)
 
-
 ## Contribute:
 
 If you want to contribute with a pull request, please do so by submitting it to the `dev` branch.
 
-
 ## Next features:
+
 To see upcoming features, please have a look at our [open issues](https://github.com/KnowledgeCaptureAndDiscovery/somef/issues) and [milestones](https://github.com/KnowledgeCaptureAndDiscovery/somef/milestones)
 
 ## Extending SOMEF categories:
 
 To run a classifier with an additional category or remove an existing one, a corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in `cli.py`.
-
