@@ -149,6 +149,7 @@ class DataGraph:
         # print(json.dumps(out))
         return out
 
+
     @staticmethod
     def apply_mapping(mapping_path, data) -> Graph:
   
@@ -175,7 +176,16 @@ class DataGraph:
         # config = config.replace("$PATH", mapping_path).replace("$DATA", data_file)
         # result_graph = morph_kgc.materialize(config)
         # os.remove(temp_json_file_path)
-        
+
+        # in case parameter 'data' be a path. Example: test_turtle_Export/test_basic_mapping_export
+
+        if isinstance(data, str): 
+            try:
+                with open(data, 'r') as file: 
+                    data = json.load(file) 
+            except (json.JSONDecodeError, FileNotFoundError) as e: 
+                return None
+            
         # option sending directly the dictionary to materialize. IMPORTANT: just works with rml.ttl, not yml.
         config = constants.MAPPING_CONFIG_DICT
         config = config.replace("$PATH", mapping_path)
@@ -184,28 +194,33 @@ class DataGraph:
             'data_complete': data
         }
 
-        result_graph = morph_kgc.materialize(config, data_complete)
+        try: 
+            result_graph = morph_kgc.materialize(config, data_complete) 
+        except Exception as e: 
+            print("Error materialize:") 
+            print(e) 
+            raise
 
         return result_graph
     
     # @staticmethod
     # def apply_mapping(mapping_path, data_path) -> Graph:
-        """
-        Given a mapping file and a data file, this method returns the MORPH-KGC materialization for the mapping
-        Parameters
-        ----------
-        @param mapping_path: file path of the mapping
-        @param data_path: file path with the JSON data to transform
+    #     """
+    #     Given a mapping file and a data file, this method returns the MORPH-KGC materialization for the mapping
+    #     Parameters
+    #     ----------
+    #     @param mapping_path: file path of the mapping
+    #     @param data_path: file path with the JSON data to transform
 
-        Returns
-        -------
-        An RDF graph with the desired triples
-        """
-        # mini test for morph-kgc
-        # config = constants.MAPPING_CONFIG
-        # # TO DO: Change RML URIs if they have been changed in the configuration.
-        # config = config.replace("$PATH", mapping_path).replace("$DATA", data_path)
-        # return morph_kgc.materialize(config)
+    #     Returns
+    #     -------
+    #     An RDF graph with the desired triples
+    #     """
+    #     # mini test for morph-kgc
+    #     config = constants.MAPPING_CONFIG
+    #     # # TO DO: Change RML URIs if they have been changed in the configuration.
+    #     config = config.replace("$PATH", mapping_path).replace("$DATA", data_path)
+    #     return morph_kgc.materialize(config)
 
     def export_to_file(self, path, graph_format):
         """
