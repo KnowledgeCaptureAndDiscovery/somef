@@ -158,12 +158,24 @@ With the following instruction, we can see the environments available in the pro
 poetry env list
 ```
 
-And this way, we enter the virtual environment established by Poetry. Once inside the environment, we can perform the installation test for SOMEF detailed later.
+Now we need to access our virtual environment, to do so you have to install the [poetry plugin shell](https://github.com/python-poetry/poetry-plugin-shell) and run the following possible commands:
 
+- If you want to install the `shell` plugin is via the `self add` command of Poetry
+```
+poetry self add poetry-plugin-shell
+```
+- or if you used pipx to install Poetry: 
+```
+pipx inject poetry poetry-plugin-shell
+```
+- otherwise if you used pip install:
+```
+pip install poetry-plugin-shell
+```
+After `shell` is set up, you can run the following comand to access the virtual environment
 ```
 poetry shell
 ```
-
 Test SOMEF installation
 
 ```bash
