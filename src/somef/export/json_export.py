@@ -38,7 +38,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     @param outfile: path where to save the codemeta file
     @param pretty: option to show the JSON results in a nice format
     """
-
     def format_date(date_string):
         date_object = date_parser.parse(date_string)
         return date_object.strftime("%Y-%m-%d")
@@ -67,8 +66,12 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     author_name = None
     if constants.CAT_OWNER in repo_data:
         author_name = repo_data[constants.CAT_OWNER][0][constants.PROP_RESULT][constants.PROP_VALUE]
+    
+    # add a check for the existence of the 'description' property, similar way to most properties in the method.
+    descriptions = None
+    if constants.CAT_DESCRIPTION in repo_data:
+        descriptions = repo_data[constants.CAT_DESCRIPTION]
 
-    descriptions = repo_data[constants.CAT_DESCRIPTION]
     descriptions_text = []
     if descriptions is not None:
         descriptions.sort(key=lambda x: (x[constants.PROP_CONFIDENCE] + (1 if x[constants.PROP_TECHNIQUE] == constants.GITHUB_API else 0)),
@@ -85,12 +88,30 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         for l in repo_data[constants.CAT_LICENSE]:
             if constants.PROP_NAME in l[constants.PROP_RESULT].keys():
                 l_result["name"] = l[constants.PROP_RESULT][constants.PROP_NAME]
+            # else:
+            #     print(f"PROP_NAME key not found in: {l[constants.PROP_RESULT].keys()}")
+
+            # change this structure because is posible l_result["url"] doesnt exist
+            # if "url" not in l_result.keys() and constants.PROP_URL in l[constants.PROP_RESULT].keys(): 
+            #     l_result["url"] = l[constants.PROP_RESULT][constants.PROP_URL] 
+            # # We get the first license we find from the repo 
+            # elif l[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION and constants.PROP_SOURCE in l.keys() and "api.github.com" in l_result["url"]: 
+            #     l_result["url"] = l[constants.PROP_SOURCE]
+
+            # checking if PROP_URL is in the keys PROP_RESULT and key "url" is not in results
             if "url" not in l_result.keys() and constants.PROP_URL in l[constants.PROP_RESULT].keys():
-                    l_result["url"] = l[constants.PROP_RESULT][constants.PROP_URL]
-            # We get the first license we find from the repo
-            elif l[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION \
-                    and constants.PROP_SOURCE in l.keys() and "api.github.com" in l_result["url"]:
-                l_result["url"] = l[constants.PROP_SOURCE]
+                l_result["url"] = l[constants.PROP_RESULT][constants.PROP_URL]
+            # else:
+            #     print(f"PROP_URL key not found in: {l[constants.PROP_RESULT].keys()}")
+        
+            # Thist block run if url is not found in the previous 
+            if l[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION and constants.PROP_SOURCE in l.keys():
+                if "url" in l_result and "api.github.com" in l_result["url"]:
+                    l_result["url"] = l[constants.PROP_SOURCE]
+            else:
+                if "url" not in l_result.keys() and constants.PROP_URL in l[constants.PROP_RESULT].keys():
+                        l_result["url"] = l[constants.PROP_RESULT][constants.PROP_URL]
+
         codemeta_output["license"] = l_result
     if code_repository is not None:
         codemeta_output["codeRepository"] = code_repository
@@ -118,6 +139,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                 install_links.append(inst[constants.PROP_SOURCE])
             elif inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION:
                 install_links.append(inst[constants.PROP_RESULT][constants.PROP_VALUE])
+
     if constants.CAT_DOCUMENTATION in repo_data:
         for inst in repo_data[constants.CAT_DOCUMENTATION]:
             if inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_HEADER_ANALYSIS and constants.PROP_SOURCE in inst.keys():
