@@ -140,15 +140,13 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             elif inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION:
                 install_links.append(inst[constants.PROP_RESULT][constants.PROP_VALUE])
 
-    #  Documentation is not part of buildInstructions
-
-    # if constants.CAT_DOCUMENTATION in repo_data:
-    #     for inst in repo_data[constants.CAT_DOCUMENTATION]:
-    #         if inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_HEADER_ANALYSIS and constants.PROP_SOURCE in inst.keys():
-    #             install_links.append(inst[constants.PROP_SOURCE])
-    #         elif inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION or \
-    #                 inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_REGULAR_EXPRESSION:
-    #             install_links.append(inst[constants.PROP_RESULT][constants.PROP_VALUE])
+    if constants.CAT_DOCUMENTATION in repo_data:
+        for inst in repo_data[constants.CAT_DOCUMENTATION]:
+            if inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_HEADER_ANALYSIS and constants.PROP_SOURCE in inst.keys():
+                install_links.append(inst[constants.PROP_SOURCE])
+            elif inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION or \
+                    inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_REGULAR_EXPRESSION:
+                install_links.append(inst[constants.PROP_RESULT][constants.PROP_VALUE])
     if len(install_links) > 0:
         # remove duplicates and generate codemeta
         install_links = list(set(install_links))
