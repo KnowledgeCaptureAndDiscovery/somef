@@ -5,11 +5,10 @@ import time
 import requests
 import sys
 from datetime import datetime
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote
 from .utils import constants
 from . import configuration
 from .process_results import Result
-
 
 # Constructs a template HTTP header, which:
 # - has a key for the authorization token if passed via the authorization argument, otherwise
@@ -24,6 +23,17 @@ def header_template(authorization=None):
         header[constants.CONF_AUTHORIZATION] = file_paths[constants.CONF_AUTHORIZATION]
     return header
 
+
+def is_gitlab(gitlab_server):
+    api_url = f"https://{gitlab_server}/api/v4/projects"
+    try:
+        response = requests.get(api_url, timeout=5)
+        print(response.status_code)
+        if response.status_code in [200, 401, 403]: 
+            return True
+    except requests.RequestException:
+        pass
+    return False
 
 # the same as requests.get(args).json(), but protects against rate limiting
 def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
@@ -72,9 +82,11 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
     if repository_url[-1] == '/':
         repository_url = repository_url[:-1]
     url = urlparse(repository_url)
-    if url.netloc != 'gitlab.com':
-        logging.error("Repository must come from Gitlab")
-        return " ", {}
+
+    # if url.netloc != 'gitlab.com':
+    # if "gitlab" not in url.netloc:
+    #     logging.error("Repository must come from Gitlab")
+    #     return " ", {}
 
     path_components = url.path.split('/')
 
@@ -87,8 +99,19 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
     if len(path_components) == 4:
         repo_name = repo_name + '/' + path_components[3]
 
-    project_id = get_project_id(repository_url)
-    project_api_url = f"https://gitlab.com/api/v4/projects/{project_id}"
+    # could be gitlab.com or some gitlab self-hosted GitLab servers like gitlab.in2p3.fr
+    if repository_url.rfind("gitlab.com") > 0:
+        project_id = get_project_id(repository_url, False)
+        project_api_url = f"https://gitlab.com/api/v4/projects/{project_id}"
+    else:
+        project_path = url.path.lstrip("/")  # "gammalearn/gammalearn"
+        encoded_project_path = quote(project_path, safe="") # Codifica "/" como "%2F"
+        # Build url of api to get id
+        api_url = f"https://{url.netloc}/api/v4/projects/{encoded_project_path}"
+        project_id = get_project_id(api_url, True)
+        logging.info(f'Project_id: {project_id}')
+        project_api_url = f"https://{url.netloc}/api/v4/projects/{project_id}"
+    
     logging.info(f"Downloading {project_api_url}")
     details = requests.get(project_api_url)
     project_details = details.json()
@@ -237,9 +260,11 @@ def download_gitlab_files(directory, owner, repo_name, repo_branch, repo_ref):
     """
     url = urlparse(repo_ref)
     path_components = url.path.split('/')
-    repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_branch}/{repo_name}-{repo_branch}.zip"
+
+    repo_archive_url = f"https://{url.netloc}/{owner}/{repo_name}/-/archive/{repo_branch}/{repo_name}-{repo_branch}.zip"
     if len(path_components) == 4:
-        repo_archive_url = f"https://gitlab.com/{owner}/{repo_name}/-/archive/{repo_branch}/{path_components[3]}.zip"
+            repo_archive_url = f"https://{url.netloc}/{owner}/{repo_name}/-/archive/{repo_branch}/{path_components[3]}.zip"
+
     logging.info(f"Downloading {repo_archive_url}")
     repo_download = requests.get(repo_archive_url)
     repo_zip = repo_download.content
@@ -334,6 +359,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     if repository_url[-1] == '/':
         repository_url = repository_url[:-1]
     url = urlparse(repository_url)
+
     if url.netloc != constants.GITHUB_DOMAIN:
         logging.error("Repository must be from Github")
         return repository_metadata, "", "", ""
@@ -569,24 +595,44 @@ def download_github_files(directory, owner, repo_name, repo_ref, authorization):
     return repo_dir
 
 
-def get_project_id(repository_url):
-    """Function to download a repository, given its URL"""
+def get_project_id(repository_url,self_hosted):
+    """
+    Function to download a repository, given its URL
+    Parameters:
+    -------
+    repository_url = url repository
+    self_hosted = boolean that indicate if there es gitlab.com or a selfhosted server
+    -------
+    """
+
     logging.info(f"Downloading {repository_url}")
     response = requests.get(repository_url)
-    response_str = str(response.content.decode('utf-8'))
-    init = response_str.find('\"project_id\":')
     project_id = "-1"
-    start = init + len("\"project_id\":")
-    if init >= 0:
-        end = 0
-        end_bracket = response_str.find("}", start)
-        comma = response_str.find(",", start)
-        if comma != -1 and comma < end_bracket:
-            end = comma
+
+    if self_hosted:
+        if response.status_code == 200:
+            projects = response.json()
+            if isinstance(projects, dict) and "id" in projects:
+                project_id = projects["id"]
+        elif response.status_code in [401, 403]:
+            logging.error("Access denied. Authentication may be required.")
         else:
-            end = end_bracket
-        if end >= 0:
-            project_id = response_str[start:end]
+            logging.error(f"Unexpected error. Status code: {response.status_code}")
+    else:
+        response_str = str(response.content.decode('utf-8'))
+        init = response_str.find('\"project_id\":')
+    
+        start = init + len("\"project_id\":")
+        if init >= 0:
+            end = 0
+            end_bracket = response_str.find("}", start)
+            comma = response_str.find(",", start)
+            if comma != -1 and comma < end_bracket:
+                end = comma
+            else:
+                end = end_bracket
+            if end >= 0:
+                project_id = response_str[start:end]
     return project_id
 
 
