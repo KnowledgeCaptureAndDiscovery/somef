@@ -16,7 +16,7 @@ from .parser import mardown_parser, create_excerpts
 from .export.turtle_export import DataGraph
 from .export import json_export
 from .extract_software_type import check_repository_type
-
+from urllib.parse import urlparse, quote
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
                  ignore_github_metadata=False, readme_only=False, keep_tmp=None, authorization=None,
@@ -51,7 +51,28 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     def_branch = "main"
     if repo_url is not None:
         try:
-            if repo_url.rfind("gitlab.com") > 0:
+
+            """
+            It is necessary to make changes to all methods related to GitLab because, until now, 
+            they only worked with repositories on GitLab.com but not with self-hosted GitLab servers like gitlab.in2p3.fr, for example. 
+            We are going to split the process so that it also takes these servers into account.
+            """
+
+            """
+            The only sure way to know if a server is from GitLab is by checking its API. 
+            GitLab servers are usually of the type gitlab.com, gitlab.in2p3.fr, or even salsa.debian.org, 
+            so you cannot discriminate solely with the string 'gitlab'.
+            """
+            url = urlparse(repo_url)
+            servidor = url.netloc
+            bGitLab = False
+            if process_repository.is_gitlab(servidor):
+                logging.info(f"{servidor} is GitLab.")
+                bGitLab = True
+
+            if bGitLab:
+            # if repo_url.rfind("gitlab") > 0:
+            # if repo_url.rfind("gitlab.com") > 0:
                 repo_type = constants.RepositoryType.GITLAB
             repository_metadata, owner, repo_name, def_branch = process_repository.load_online_repository_metadata(
                 repository_metadata,
