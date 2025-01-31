@@ -15,7 +15,7 @@ classifiers = [
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = ">=3.9,<=3.13"
 bs4 = "^0.0.1"
 click = "^8.1.7"
 click-option-group = "^0.5.6"
