@@ -41,8 +41,6 @@ rdflib-jsonld = "^0.6.2"
 requests = "^2.31.0"
 scikit-learn = "1.3.2"
 
-[tool.poetry.dev-dependencies]
-
 [tool.poetry.scripts]
 somef = "somef.__main__:cli"
 
