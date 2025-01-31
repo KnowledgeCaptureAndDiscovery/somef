@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "somef"
-version = "0.9.6"
+version = "0.9.7"
 description = "SOftware Metadata Extraction Framework: A tool for automatically extracting relevant software information from readme files."
 authors = ["Daniel Garijo <daniel.garijo@upm.es>"]
 packages = [
     { include = "somef", from = "src" }
 ]
 classifiers = [ 
-    "Programming Language :: Python :: 3.9", 
+    "Programming Language :: Python :: 3.10", 
     "Operating System :: OS Independent", 
     "License :: OSI Approved :: MIT License", 
     "Topic :: Software Development :: Libraries :: Python Modules"
