@@ -59,6 +59,7 @@ def configure(authorization="",
     nltk.download('wordnet')
     nltk.download('omw-1.4')
     nltk.download('punkt')
+    nltk.download('punkt_tab')
     nltk.download('stopwords')
 
     credentials_file = Path(
