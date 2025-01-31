@@ -86,7 +86,9 @@ CAT_MISSING = "somef_missing_categories"
 
 # list of those categories to be analyzed with supervised classification.
 # supervised_categories = [CAT_DESCRIPTION, CAT_CITATION, CAT_INSTALLATION, CAT_INVOCATION]
-supervised_categories = [CAT_DESCRIPTION, CAT_INSTALLATION, CAT_INVOCATION]
+# update jan 2025: only description is run, since the installation classifier is a bit noisy.
+# we prioritize returning high precision, since some users get confused otherwise.
+supervised_categories = [CAT_DESCRIPTION]
 
 # list with all categories
 all_categories = [CAT_APPLICATION_DOMAIN, CAT_ACKNOWLEDGEMENT, CAT_CITATION, CAT_CONTRIBUTORS,

@@ -124,7 +124,7 @@ Clone this GitHub repository
 git clone https://github.com/KnowledgeCaptureAndDiscovery/somef.git
 ```
 
-For better dependency management, it is necessary to have Poetry installed beforehand. It can be installed as follows:
+We use [Poetry](https://python-poetry.org/) to ensure library compatibility. It can be installed as follows:
 
 ```
 curl -sSL https://install.python-poetry.org | python3 -
@@ -132,43 +132,23 @@ curl -sSL https://install.python-poetry.org | python3 -
 
 This option is recommended over installing Poetry with pip install.
 
-Now Poetry will handle the installation of SOMEF and all its dependencies configured in the TOML file.
+Now Poetry will handle the installation of SOMEF and all its dependencies configured in the `toml` file.
 
-Test the correct installation of poetry
+To test the correct installation of poetry run:
 
 ```
 poetry --version
 ```
 
-We can first review the list of libraries and dependencies configured as necessary for the operation.
-
-```
-poetry show
-```
-
 Install somef and all their dependencies.
 
 ```
+cd /somef
 poetry install
 ```
 
-With the following instruction, we can see the environments available in the project and which one is currently active.
+Now we need to access our virtual environment, to do so you have to install the [poetry plugin shell](https://github.com/python-poetry/poetry-plugin-shell) and run the following command:
 
-```
-poetry env list
-```
-
-Now we need to access our virtual environment, to do so you have to install the [poetry plugin shell](https://github.com/python-poetry/poetry-plugin-shell) and run the following possible commands:
-
-- If you want to install the `shell` plugin is via the `self add` command of Poetry
-```
-poetry self add poetry-plugin-shell
-```
-- or if you used pipx to install Poetry: 
-```
-pipx inject poetry poetry-plugin-shell
-```
-- otherwise if you used pip install:
 ```
 pip install poetry-plugin-shell
 ```
