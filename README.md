@@ -193,13 +193,13 @@ docker pull kcapd/somef
 Then, to run your image just type:
 
 ```bash
-docker run -it kcapd/somef /bin/bash
+docker run --rm -it kcapd/somef 
 ```
 
 And you will be ready to use SOMEF (see section below). If you want to have access to the results we recommend [mounting a volume](https://docs.docker.com/storage/volumes/). For example, the following command will mount the current directory as the `out` folder in the Docker image:
 
 ```bash
-docker run -it --rm -v $PWD/:/out kcapd/somef /bin/bash
+docker run -it --rm -v $PWD/:/out kcapd/somef 
 ```
 
 If you move any files produced by somef into `/out`, then you will be able to see them in your current directory.
