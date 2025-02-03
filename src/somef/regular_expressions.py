@@ -8,7 +8,7 @@ from .utils import constants
 from .process_results import Result
 from urllib.parse import urlparse
 import bibtexparser
-
+from bs4 import BeautifulSoup
 
 def extract_title(unfiltered_text, repository_metadata: Result, readme_source) -> Result:
     """
@@ -266,10 +266,16 @@ def extract_wiki_links(unfiltered_text, repo_url, repository_metadata: Result, r
             repo_url = repo_url + "/wiki"
         wiki = requests.get(repo_url, allow_redirects=False)
         if wiki.status_code == 200:
-            # sometimes the repo starts with caps
-            links_in_list = [x.lower() for x in output]
-            if repo_url.lower() not in links_in_list:
-                output.append(repo_url)
+            soup = BeautifulSoup(wiki.text, "html.parser")
+            a_tag = soup.find('a', href=lambda href: href and 'wiki/_new' in href)
+            if a_tag and a_tag.find('span', text="Create the first page"):
+                logging.info("Wiki 200 without content. NOT added to output")                      
+            else:
+                logging.info("Wiki 200 with content. Added to output")
+                # sometimes the repo starts with caps
+                links_in_list = [x.lower() for x in output]
+                if repo_url.lower() not in links_in_list:
+                    output.append(repo_url)
 
     for link in output:
         repository_metadata.add_result(constants.CAT_DOCUMENTATION,
