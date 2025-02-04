@@ -79,7 +79,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         descriptions_text = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in descriptions]
 
     codemeta_output = {
-        "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+        "@context": "https://doi.org/10.5063/schema/codemeta-3.0",
         "@type": "SoftwareSourceCode"
     }
     if constants.CAT_LICENSE in repo_data:
@@ -142,6 +142,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
     if constants.CAT_DOCUMENTATION in repo_data:
         for inst in repo_data[constants.CAT_DOCUMENTATION]:
+
             if inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_HEADER_ANALYSIS and constants.PROP_SOURCE in inst.keys():
                 install_links.append(inst[constants.PROP_SOURCE])
             elif inst[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION or \
@@ -167,11 +168,16 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         for cit in repo_data[constants.CAT_CITATION]:
             if constants.PROP_DOI in cit[constants.PROP_RESULT].keys():
                 url_cit.append(cit[constants.PROP_RESULT][constants.PROP_DOI])
+
+            # CITATION.CFF is not a publication
+            #TODO: comentar esto para que no aparezca citation.cff en esta categoría
             elif constants.PROP_FORMAT in cit[constants.PROP_RESULT].keys() \
-                    and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == constants.FORMAT_CFF:
+                     and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == constants.FORMAT_CFF:
                 url_cit.append(cit[constants.PROP_SOURCE])
         if len(url_cit) > 0:
+            #TODO: comentar esto para que no aparezca citation.cff en esta categoría
             codemeta_output["citation"] = url_cit
+            #codemeta_output["referencePublication"] = url_cit
     if constants.CAT_IDENTIFIER in repo_data:
         codemeta_output["identifier"] = repo_data[constants.CAT_IDENTIFIER][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_README_URL in repo_data:
