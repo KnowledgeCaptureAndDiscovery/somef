@@ -167,11 +167,12 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         for cit in repo_data[constants.CAT_CITATION]:
             if constants.PROP_DOI in cit[constants.PROP_RESULT].keys():
                 url_cit.append(cit[constants.PROP_RESULT][constants.PROP_DOI])
-            elif constants.PROP_FORMAT in cit[constants.PROP_RESULT].keys() \
-                    and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == constants.FORMAT_CFF:
-                url_cit.append(cit[constants.PROP_SOURCE])
+            # citation.cff is not documentation
+            # elif constants.PROP_FORMAT in cit[constants.PROP_RESULT].keys() \
+            #         and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == constants.FORMAT_CFF:
+            #     url_cit.append(cit[constants.PROP_SOURCE])
         if len(url_cit) > 0:
-            codemeta_output["citation"] = url_cit
+            codemeta_output["referencePublication"] = url_cit
     if constants.CAT_IDENTIFIER in repo_data:
         codemeta_output["identifier"] = repo_data[constants.CAT_IDENTIFIER][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_README_URL in repo_data:
