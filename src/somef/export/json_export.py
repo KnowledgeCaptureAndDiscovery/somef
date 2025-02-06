@@ -1,4 +1,5 @@
 import json
+import re
 from dateutil import parser as date_parser
 from ..utils import constants
 
@@ -58,7 +59,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
     # def release_path(path):
     #     return DataGraph.resolve_path(latest_release, path)
-
     code_repository = None
     if constants.CAT_CODE_REPOSITORY in repo_data:
         code_repository = repo_data[constants.CAT_CODE_REPOSITORY][0][constants.PROP_RESULT][constants.PROP_VALUE]
@@ -164,14 +164,31 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         ]
     if constants.CAT_CITATION in repo_data:
         url_cit = []
+        codemeta_output["referencePublication"] = []
+        scholarlyArticle = {}
         for cit in repo_data[constants.CAT_CITATION]:
+            scholarlyArticle = {"@type": "ScholarlyArticle"} 
             if constants.PROP_DOI in cit[constants.PROP_RESULT].keys():
-                url_cit.append(cit[constants.PROP_RESULT][constants.PROP_DOI])
-            elif constants.PROP_FORMAT in cit[constants.PROP_RESULT].keys() \
-                    and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == constants.FORMAT_CFF:
-                url_cit.append(cit[constants.PROP_SOURCE])
-        if len(url_cit) > 0:
-            codemeta_output["citation"] = url_cit
+                # url_cit.append(cit[constants.PROP_RESULT][constants.PROP_DOI])
+                scholarlyArticle[constants.CAT_IDENTIFIER] = cit[constants.PROP_RESULT][constants.PROP_DOI]
+            # elif constants.PROP_FORMAT in cit[constants.PROP_RESULT].keys() \
+            #         and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == constants.FORMAT_CFF:
+            #     url_cit.append(cit[constants.PROP_SOURCE])
+            
+            if constants.PROP_URL in cit[constants.PROP_RESULT].keys():
+                scholarlyArticle[constants.PROP_URL] = cit[constants.PROP_RESULT][constants.PROP_URL]
+            # if constants.PROP_AUTHOR in cit[constants.PROP_RESULT].keys():
+            #     scholarlyArticle[constants.PROP_AUTHOR] = cit[constants.PROP_RESULT][constants.PROP_AUTHOR]
+            if constants.PROP_TITLE in cit[constants.PROP_RESULT].keys():
+                scholarlyArticle[constants.PROP_NAME] = cit[constants.PROP_RESULT][constants.PROP_TITLE]    
+            if len(scholarlyArticle) > 1:  # Debe tener más que solo "@type"
+                # look por information in values as pagination, issn and others
+                scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle)
+                codemeta_output["referencePublication"].append(scholarlyArticle)
+
+        # if len(url_cit) > 0:
+        #     codemeta_output["citation"] = url_cit
+
     if constants.CAT_IDENTIFIER in repo_data:
         codemeta_output["identifier"] = repo_data[constants.CAT_IDENTIFIER][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_README_URL in repo_data:
@@ -192,6 +209,37 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     # now, prune out the variables that are None
     save_json_output(pruned_output, outfile, None, pretty=pretty)
 
+def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle):
+    """
+    Extract datePublished, issn and pagination fromg BibTeX and append to scholarlyArticle object
+    
+    Params:
+        - bibtex_entry (str): Entrada BibTeX en formato string.
+        - scholarlyArticle (dict): Diccionario donde se almacenarán los datos extraídos.
+    """
+
+    # regular expresions properties
+    issn_match = re.search(r'issn\s*=\s*{([\d-]+)}', bibtex_entry)
+    year_match = re.search(r'year\s*=\s*{(\d{4})}', bibtex_entry)
+    month_match = re.search(r'month\s*=\s*{(\d{1,2})}', bibtex_entry)
+    pages_match = re.search(r'pages\s*=\s*{([\d-]+)}', bibtex_entry)
+
+    issn = issn_match.group(1) if issn_match else None
+    year = year_match.group(1) if year_match else None
+    month = month_match.group(1) if month_match else None
+    pagination = pages_match.group(1) if pages_match else None
+
+    date_published = f"{year}-{month.zfill(2)}" if year and month else year  # Zfill asegura 2 dígitos en mes
+
+    if issn:
+        scholarlyArticle["issn"] = issn
+    if date_published:
+        scholarlyArticle["datePublished"] = date_published
+    if pagination:
+        scholarlyArticle["pagination"] = pagination
+
+
+    return scholarlyArticle
 
 def create_missing_fields(result):
     """Function to create a small report with the categories SOMEF was not able to find.
