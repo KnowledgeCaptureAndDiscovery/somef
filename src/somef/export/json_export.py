@@ -39,6 +39,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     @param outfile: path where to save the codemeta file
     @param pretty: option to show the JSON results in a nice format
     """
+    
     def format_date(date_string):
         date_object = date_parser.parse(date_string)
         return date_object.strftime("%Y-%m-%d")
@@ -79,7 +80,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         descriptions_text = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in descriptions]
 
     codemeta_output = {
-        "@context": "https://doi.org/10.5063/schema/codemeta-3.0",
+        "@context": "https://w3id.org/codemeta/v3.0",
         "@type": "SoftwareSourceCode"
     }
     if constants.CAT_LICENSE in repo_data:
@@ -220,10 +221,10 @@ def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle):
     """
 
     # regular expresions properties
-    issn_match = re.search(r'issn\s*=\s*{([\d-]+)}', bibtex_entry)
-    year_match = re.search(r'year\s*=\s*{(\d{4})}', bibtex_entry)
-    month_match = re.search(r'month\s*=\s*{(\d{1,2})}', bibtex_entry)
-    pages_match = re.search(r'pages\s*=\s*{([\d-]+)}', bibtex_entry)
+    issn_match = re.search(constants.REGEXP_ISSN, bibtex_entry)
+    year_match = re.search(constants.REGEXP_YEAR, bibtex_entry)
+    month_match = re.search(constants.REGEXP_MONTH, bibtex_entry)
+    pages_match = re.search(constants.REGEXP_PAGES, bibtex_entry)
 
     issn = issn_match.group(1) if issn_match else None
     year = year_match.group(1) if year_match else None
