@@ -28,8 +28,11 @@ REGEXP_BIBTEX = r'\@[a-zA-Z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title
 REGEXP_DOI = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
 REGEXP_LINKS = r"\[(.*?)?\]\(([^)]+)\)"
 REGEXP_IMAGES = r"!\[(.*?)?\]\((.*?)?\)"
+REGEXP_ISSN = r'issn\s*=\s*{([\d-]+)}'
+REGEXP_YEAR = r'year\s*=\s*{(\d{4})}'
+REGEXP_MONTH = r'month\s*=\s*{(\d{1,2})}'
+REGEXP_PAGES = r'pages\s*=\s*{([\d-]+)}'
 # r"!\[[^\]]*\]\((.*?)?\)"
-
 
 # Categories recognized by SOMEF (they all start by CAT_
 CAT_APPLICATION_DOMAIN = "application_domain"
