@@ -36,11 +36,15 @@ def extract_title(unfiltered_text, repository_metadata: Result, readme_source) -
                 output = re.sub(regex, '', line)
             break
         index += 1
-    repository_metadata.add_result(constants.CAT_FULL_TITLE,
+
+    # If the output is empty or none, the category doesn't make sense and shouldn't be displayed in the final result
+    if has_valid_output(output):
+        repository_metadata.add_result(constants.CAT_FULL_TITLE,
                                    {
                                        constants.PROP_TYPE: constants.STRING,
                                        constants.PROP_VALUE: output
                                    }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+
     return repository_metadata
 
 
@@ -92,26 +96,33 @@ def extract_readthedocs(readme_text, repository_metadata: Result, readme_source)
         name = name[constants.PROP_RESULT][constants.PROP_VALUE]
     except:
         pass
-    for link in list(dict.fromkeys(readthedocs_links)):
-        result = {
-            constants.PROP_TYPE: constants.URL,
-            constants.PROP_VALUE: link,
-            constants.PROP_FORMAT: constants.FORMAT_READTHEDOCS
-        }
-        try:
-            # if name of the repo is known then compare against the readthedocs one. Only add it if it's similar/same
-            name_in_link = re.findall('https://([^.]+)\.readthedocs\.io', link)
-            name_in_link = name_in_link[0]
-            if name == "" or name_in_link.lower() == name.lower():
+
+    if has_valid_links(readthedocs_links):
+
+        for link in list(dict.fromkeys(readthedocs_links)):
+
+            if not has_valid_link(link):
+                continue  
+
+            result = {
+                constants.PROP_TYPE: constants.URL,
+                constants.PROP_VALUE: link,
+                constants.PROP_FORMAT: constants.FORMAT_READTHEDOCS
+            }
+            try:
+                # if name of the repo is known then compare against the readthedocs one. Only add it if it's similar/same
+                name_in_link = re.findall('https://([^.]+)\.readthedocs\.io', link)
+                name_in_link = name_in_link[0]
+                if name == "" or name_in_link.lower() == name.lower():
+                    repository_metadata.add_result(constants.CAT_DOCUMENTATION, result, 1,
+                                                constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+                else:
+                    repository_metadata.add_result(constants.CAT_RELATED_DOCUMENTATION, result, 1,
+                                                constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+            except:
+                # add link as a regular doc link if we cannot retrieve name or there is an error
                 repository_metadata.add_result(constants.CAT_DOCUMENTATION, result, 1,
-                                               constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
-            else:
-                repository_metadata.add_result(constants.CAT_RELATED_DOCUMENTATION, result, 1,
-                                               constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
-        except:
-            # add link as a regular doc link if we cannot retrieve name or there is an error
-            repository_metadata.add_result(constants.CAT_DOCUMENTATION, result, 1,
-                                           constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+                                            constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
 
     return repository_metadata
 
@@ -405,7 +416,10 @@ def extract_package_distributions(unfiltered_text, repository_metadata: Result, 
         end = unfiltered_text.find(")", init + 3)
         package_distribution = unfiltered_text[init + 3:end]
         output = requests.get(package_distribution).url
-        repository_metadata.add_result(constants.CAT_PACKAGE_DISTRIBUTION,
+
+        # If the output is empty or none, the category doesn't make sense and shouldn't be displayed in the final result
+        if has_valid_output(output):
+            repository_metadata.add_result(constants.CAT_PACKAGE_DISTRIBUTION,
                                        {
                                            constants.PROP_TYPE: constants.URL,
                                            constants.PROP_VALUE: output
@@ -616,3 +630,15 @@ def get_alt_text_html(text, image):
         stop = text.find("\"", start) - 1
         return text[start:stop]
     return ""
+
+def has_valid_output(text):
+    """Returns True if text is not None, not empty, and not 'null'."""
+    return bool(text and text.strip().lower() != "null")
+
+def has_valid_link(link):
+    """Returns True if the link is a non-empty, non-null string."""
+    return isinstance(link, str) and link.strip().lower() not in ["", "none", "null"]
+
+def has_valid_links(link_list):
+    """Returns True if the list has at least one valid link."""
+    return any(has_valid_link(link) for link in link_list)
