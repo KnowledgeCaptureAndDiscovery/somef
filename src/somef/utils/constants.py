@@ -181,6 +181,8 @@ GITHUB_DOMAIN = "github.com"
 GITHUB_ACCEPT_HEADER = "application/vnd.github.v3+json"
 GITHUB_API = "https://api.github.com/repos"
 
+# Spdx url
+SPDX_BASE = "https://spdx.org/licenses/"
 # Crosswalk to retrieve easily contents of interest from the GitHub response
 github_crosswalk_table = {
     CAT_CODE_REPOSITORY: "html_url",

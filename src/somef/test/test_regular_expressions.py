@@ -379,3 +379,12 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
             result = repo_status.results[constants.CAT_PACKAGE_DISTRIBUTION]
             assert len(result) > 0 and "https://pypi.org/project/inspect4py" in result[0][constants.PROP_RESULT][
                 constants.PROP_VALUE]
+            
+    def test_issue_700(self):
+        """Test designed to check empty value should not lead to a category in title """
+        with open(test_data_path + "README-ci-sample-project.md", "r") as data_file:
+            test_text = data_file.read()
+            c = regular_expressions.extract_title(test_text, Result(),
+                                                  test_data_path + "README-ci-sample-project.md")
+
+            assert constants.CAT_FULL_TITLE not in c.results, "Category CAT_FULL_TITLE should be absent if there is no valid title."
