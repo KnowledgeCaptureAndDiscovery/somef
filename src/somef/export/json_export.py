@@ -39,7 +39,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     @param outfile: path where to save the codemeta file
     @param pretty: option to show the JSON results in a nice format
     """
-    
+
     def format_date(date_string):
         date_object = date_parser.parse(date_string)
         return date_object.strftime("%Y-%m-%d")
@@ -112,6 +112,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             else:
                 if "url" not in l_result.keys() and constants.PROP_URL in l[constants.PROP_RESULT].keys():
                         l_result["url"] = l[constants.PROP_RESULT][constants.PROP_URL]
+            if constants.PROP_SPDX_ID in l[constants.PROP_RESULT].keys():
+                l_result["spdx_id"] = constants.SPDX_BASE + l[constants.PROP_RESULT][constants.PROP_SPDX_ID]
 
         codemeta_output["license"] = l_result
     if code_repository is not None:
