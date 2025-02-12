@@ -30,7 +30,10 @@ class TestJSONExport(unittest.TestCase):
         text_file.close()
         json_content = json.loads(data)
         issue_tracker = json_content["issueTracker"]  # JSON is in Codemeta format
-        assert issue_tracker == 'https://github.com/dgarijo/Widoco/issues' and len(json_content["citation"]) > 0 and \
+        
+        #len(json_content["citation"]) 
+        #codemeta category citation is now referencePublication
+        assert issue_tracker == 'https://github.com/dgarijo/Widoco/issues' and len(json_content["referencePublication"]) > 0 and \
                len(json_content["name"]) > 0 and len(json_content["identifier"]) > 0 and \
                len(json_content["description"]) > 0 and len(json_content["readme"]) > 0 and \
                len(json_content["author"]) > 0 and len(json_content["buildInstructions"]) > 0 and \
@@ -97,6 +100,36 @@ class TestJSONExport(unittest.TestCase):
         assert data.find(constants.CAT_MISSING) > 0
         os.remove(test_data_path + "test-281.json")
 
+    def test_issue_629(self):
+        """Checks if citattion have news properties """
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=None,
+                          local_repo=test_data_repositories + "Widoco",
+                          in_file=None,
+                          output=test_data_path + "test_issue_629.json",
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=True)
+        
+        with open(test_data_path + "test_issue_629.json", "r") as text_file:
+            data = json.load(text_file) 
+
+
+        citation = data.get("citation", [])
+
+        assert citation, "No 'citation' found in JSON"
+        assert any(
+            entry.get("result", {}).get("format") == "cff" and
+            "doi" in entry.get("result", {}) and
+            "title" in entry.get("result", {})
+            for entry in citation
+        ), "Citation.cff must have doi and title"
+
+        os.remove(test_data_path + "test_issue_629.json")
 
 if __name__ == '__main__':
     unittest.main()
