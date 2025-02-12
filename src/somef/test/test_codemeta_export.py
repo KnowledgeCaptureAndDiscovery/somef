@@ -8,6 +8,30 @@ test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 
 class TestCodemetaExport(unittest.TestCase):
     
+    @classmethod
+    def setUpClass(cls):
+        """Ejecuta somef_cli una sola vez y guarda el JSON"""
+        cls.json_file = test_data_path + "test_json_codemeta_export.json"
+        
+        somef_cli.run_cli(
+            threshold=0.8,
+            ignore_classifiers=False,
+            repo_url="https://github.com/tpronk/somef-demo-repo/",
+            doc_src=None,
+            in_file=None,
+            output=None,
+            graph_out=None,
+            graph_format="turtle",
+            codemeta_out=cls.json_file,
+            pretty=True,
+            missing=True,
+            readme_only=True
+        )
+
+        with open(cls.json_file, "r") as f:
+            cls.json_content = json.load(f)
+
+
     def test_codemeta_version(self):
         """Checks if codemeta version is v3"""
         somef_cli.run_cli(threshold=0.8,
@@ -118,6 +142,28 @@ class TestCodemetaExport(unittest.TestCase):
         f"'CITATION.cff' found in referencePublication: {reference_publications}"
 
         os.remove(json_file_path)
+    
+    def test_last_release(self):
+        """Checks that if exist the last release and notes"""
+        assert "releaseNotes" in self.json_content and "softwareVersion" in self.json_content, "Missing releaseNotes or softwareVersion in JSON"
+    
+    def test_spdx_id(self):
+        """Checks that if exist the spdfx in license"""
+        assert "license" in self.json_content, "Missing 'license' field in JSON"
+        assert "spdx_id" in self.json_content["license"], "Missing 'spdx_id' in license"
+    
+    @classmethod
+    def tearDownClass(cls):
+        """delete temp file JSON just if all the test pass"""
+        if os.path.exists(cls.json_file):  # Verifica que el archivo exista
+            try:
+                os.remove(cls.json_file)
+                print(f"Deleted {cls.json_file}")  # Mensaje para confirmar la eliminación
+            except Exception as e:
+                print(f"Failed to delete {cls.json_file}: {e}")  # Captura errores de eliminación
 
-
+                
+if __name__ == "__main__":
+    unittest.main()
+ 
     
