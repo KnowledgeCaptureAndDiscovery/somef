@@ -3,6 +3,7 @@ import re
 import yaml
 from dateutil import parser as date_parser
 from ..utils import constants
+from datetime import datetime
 
 
 def save_json_output(repo_data, out_path, missing, pretty=False):
@@ -136,6 +137,30 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["programmingLanguage"] = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in repo_data[constants.CAT_PROGRAMMING_LANGUAGES]]
     if constants.CAT_REQUIREMENTS in repo_data:
         codemeta_output["softwareRequirements"] = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in repo_data[constants.CAT_REQUIREMENTS]]
+    if constants.CAT_RELEASES in repo_data:
+        
+        latest_date = None
+        latest_version = None
+        latest_description = None
+        latest_release_link = None
+
+        for l in repo_data[constants.CAT_RELEASES]:
+            release_date_str = l[constants.PROP_RESULT].get(constants.PROP_DATE_PUBLISHED)
+
+            if release_date_str:
+                release_date = datetime.fromisoformat(release_date_str.replace("Z", "+00:00"))
+            
+                if latest_date is None or release_date > latest_date:
+                    latest_date = release_date
+                    latest_version = l[constants.PROP_RESULT].get(constants.PROP_TAG)
+                    latest_description = l[constants.PROP_RESULT].get(constants.PROP_DESCRIPTION)
+                    latest_release_link = l[constants.PROP_RESULT].get(constants.PROP_VALUE)
+
+        if latest_description is not None:
+            codemeta_output["releaseNotes"] = latest_description
+        if latest_version is not None:
+            codemeta_output["softwareVersion"] = latest_version
+
     install_links = []
     if constants.CAT_INSTALLATION in repo_data:
         for inst in repo_data[constants.CAT_INSTALLATION]:
