@@ -1,5 +1,6 @@
 import json
 import re
+import yaml
 from dateutil import parser as date_parser
 from ..utils import constants
 
@@ -169,27 +170,59 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     if constants.CAT_CITATION in repo_data:
         url_cit = []
         codemeta_output["referencePublication"] = []
-        scholarlyArticle = {}
+        scholarlyArticles = {}
         for cit in repo_data[constants.CAT_CITATION]:
             scholarlyArticle = {"@type": "ScholarlyArticle"} 
-            if constants.PROP_DOI in cit[constants.PROP_RESULT].keys():
-                # url_cit.append(cit[constants.PROP_RESULT][constants.PROP_DOI])
-                scholarlyArticle[constants.CAT_IDENTIFIER] = cit[constants.PROP_RESULT][constants.PROP_DOI]
-            # elif constants.PROP_FORMAT in cit[constants.PROP_RESULT].keys() \
-            #         and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == constants.FORMAT_CFF:
-            #     url_cit.append(cit[constants.PROP_SOURCE])
-            
-            if constants.PROP_URL in cit[constants.PROP_RESULT].keys():
-                scholarlyArticle[constants.PROP_URL] = cit[constants.PROP_RESULT][constants.PROP_URL]
-            # if constants.PROP_AUTHOR in cit[constants.PROP_RESULT].keys():
-            #     scholarlyArticle[constants.PROP_AUTHOR] = cit[constants.PROP_RESULT][constants.PROP_AUTHOR]
-            if constants.PROP_TITLE in cit[constants.PROP_RESULT].keys():
-                scholarlyArticle[constants.PROP_NAME] = cit[constants.PROP_RESULT][constants.PROP_TITLE]    
-            if len(scholarlyArticle) > 1:  # Debe tener más que solo "@type"
+
+            doi = None
+            title = None
+            is_bibtex = False
+
+            if constants.PROP_FORMAT in cit[constants.PROP_RESULT] and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == "cff":
+                yaml_content = yaml.safe_load(cit[constants.PROP_RESULT]["value"])
+                preferred_citation = yaml_content.get("preferred-citation", {})
+
+                title = normalize_title(preferred_citation.get("title", None))
+                doi = preferred_citation.get("doi", None)
+                url = preferred_citation.get("url", None) 
+                if url:
+                    final_url = url
+                elif doi:
+                    final_url = f"https://doi.org/{doi}"
+                scholarlyArticle[constants.PROP_NAME] = title 
+                scholarlyArticle[constants.CAT_IDENTIFIER] = doi 
+                scholarlyArticle[constants.PROP_URL] = final_url
+            else:
+                if constants.PROP_DOI in cit[constants.PROP_RESULT].keys():
+                    doi = cit[constants.PROP_RESULT][constants.PROP_DOI]
+                    scholarlyArticle[constants.CAT_IDENTIFIER] = cit[constants.PROP_RESULT][constants.PROP_DOI]
+                # elif constants.PROP_FORMAT in cit[constants.PROP_RESULT].keys() \
+                #         and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == constants.FORMAT_CFF:
+                #     url_cit.append(cit[constants.PROP_SOURCE])
+                
+                if constants.PROP_URL in cit[constants.PROP_RESULT].keys():
+                    scholarlyArticle[constants.PROP_URL] = cit[constants.PROP_RESULT][constants.PROP_URL]
+                # if constants.PROP_AUTHOR in cit[constants.PROP_RESULT].keys():
+                #     scholarlyArticle[constants.PROP_AUTHOR] = cit[constants.PROP_RESULT][constants.PROP_AUTHOR]
+                if constants.PROP_TITLE in cit[constants.PROP_RESULT].keys():
+                    title = normalize_title(cit[constants.PROP_RESULT][constants.PROP_TITLE])
+                    scholarlyArticle[constants.PROP_NAME] = cit[constants.PROP_RESULT][constants.PROP_TITLE]    
+                is_bibtex = True
+
+            if len(scholarlyArticle) > 1:  
                 # look por information in values as pagination, issn and others
                 scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle)
-                codemeta_output["referencePublication"].append(scholarlyArticle)
 
+                key = (doi, title)
+
+                if key in scholarlyArticles:
+                    if is_bibtex:
+                        codemeta_output["referencePublication"].remove(scholarlyArticles[key])
+                        codemeta_output["referencePublication"].append(scholarlyArticle)
+                        scholarlyArticles[key] = scholarlyArticle
+                else:
+                    codemeta_output["referencePublication"].append(scholarlyArticle)
+                    scholarlyArticles[key] = scholarlyArticle
         # if len(url_cit) > 0:
         #     codemeta_output["citation"] = url_cit
 
@@ -254,3 +287,6 @@ def create_missing_fields(result):
         if c not in repo_data:
             missing.append(c)
     return missing
+
+def normalize_title(title):
+    return re.sub(r"\s+", " ", title.strip().lower()) if title else None

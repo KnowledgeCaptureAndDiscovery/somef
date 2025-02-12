@@ -2,6 +2,7 @@ import logging
 import os
 import re
 import urllib
+import yaml
 from urllib.parse import urlparse
 from .utils import constants, markdown_utils
 from . import extract_ontologies, extract_workflows
@@ -132,7 +133,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_CITATION,
                                                                constants.FORMAT_BIB)
-                if "CITATION.CFF" == filename.upper():
+                if "CITATION.CFF" == filename.upper():         
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
@@ -285,10 +286,41 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
     try:
         with open(os.path.join(dir_path, filename), "r") as data_file:
             file_text = data_file.read()
+
             result = {
                 constants.PROP_VALUE: file_text,
                 constants.PROP_TYPE: constants.FILE_DUMP
             }
+            
+            # Properties extraction from cff
+            if format_result == 'cff':
+                yaml_content = yaml.safe_load(file_text)
+                preferred_citation = yaml_content.get("preferred-citation", {})
+
+                title = preferred_citation.get("title", None)
+                doi = preferred_citation.get("doi", None)
+                url = preferred_citation.get("url", None) 
+                authors = preferred_citation.get("authors", [])
+
+                if url:
+                    final_url = url
+                elif doi:
+                    final_url = f"https://doi.org/{doi}"
+
+                author_names = ", ".join(
+                    f"{a.get('given-names', '').strip()} {a.get('family-names', '').strip()}".strip()
+                    for a in authors if a.get('given-names') and a.get('family-names')
+                ) or None  
+
+                if title:
+                    result[constants.PROP_TITLE] = title
+                if author_names:
+                    result[constants.PROP_AUTHOR] = author_names
+                if final_url:
+                    result[constants.PROP_URL] = final_url
+                if doi:
+                    result[constants.PROP_DOI] = doi   
+
             if format_result != "":
                 result[constants.PROP_FORMAT] = format_result
             if replace:
