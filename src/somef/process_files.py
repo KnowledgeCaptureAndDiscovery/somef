@@ -133,7 +133,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_CITATION,
                                                                constants.FORMAT_BIB)
-                if "CITATION.CFF" == filename.upper():         
+                if "CITATION.CFF" == filename.upper():       
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
@@ -299,11 +299,11 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
 
                 title = preferred_citation.get("title", None)
                 doi = preferred_citation.get("doi", None)
-                url = preferred_citation.get("url", None) 
+                url_citation = preferred_citation.get("url", None) 
                 authors = preferred_citation.get("authors", [])
 
                 if url:
-                    final_url = url
+                    final_url = url_citation
                 elif doi:
                     final_url = f"https://doi.org/{doi}"
 
@@ -323,6 +323,7 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
 
             if format_result != "":
                 result[constants.PROP_FORMAT] = format_result
+
             if replace:
                 metadata_result.edit_hierarchical_result(category, result, 1, constants.TECHNIQUE_FILE_EXPLORATION, url)
             else:
