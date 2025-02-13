@@ -150,7 +150,7 @@ class TestCodemetaExport(unittest.TestCase):
     def test_spdx_id(self):
         """Checks that if exist the spdfx in license"""
         assert "license" in self.json_content, "Missing 'license' field in JSON"
-        assert "spdx_id" in self.json_content["license"], "Missing 'spdx_id' in license"
+        assert "identifier" in self.json_content["license"], "Missing 'identifier' in license"
     
     @classmethod
     def tearDownClass(cls):
