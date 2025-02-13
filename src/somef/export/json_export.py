@@ -83,7 +83,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
 
     codemeta_output = {
-        "@context": "https://w3id.org/codemeta/v3.0",
+        "@context": "https://w3id.org/codemeta/3.0",
         "@type": "SoftwareSourceCode"
     }
     if constants.CAT_LICENSE in repo_data:
