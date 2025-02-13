@@ -81,6 +81,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                           reverse=True)
         descriptions_text = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in descriptions]
 
+
     codemeta_output = {
         "@context": "https://w3id.org/codemeta/v3.0",
         "@type": "SoftwareSourceCode"
@@ -115,7 +116,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                 if "url" not in l_result.keys() and constants.PROP_URL in l[constants.PROP_RESULT].keys():
                         l_result["url"] = l[constants.PROP_RESULT][constants.PROP_URL]
             if constants.PROP_SPDX_ID in l[constants.PROP_RESULT].keys():
-                l_result["spdx_id"] = constants.SPDX_BASE + l[constants.PROP_RESULT][constants.PROP_SPDX_ID]
+                l_result["identifier"] = constants.SPDX_BASE + l[constants.PROP_RESULT][constants.PROP_SPDX_ID]
 
         codemeta_output["license"] = l_result
     if code_repository is not None:
