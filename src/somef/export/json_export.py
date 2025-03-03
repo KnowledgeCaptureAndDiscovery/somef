@@ -252,6 +252,12 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         # if len(url_cit) > 0:
         #     codemeta_output["citation"] = url_cit
 
+    if constants.CAT_STATUS in repo_data:
+        url_status = repo_data[constants.CAT_STATUS][0]['result'].get('value', '')
+        status = url_status.split('#')[-1] if '#' in url_status else None
+        if status:
+            codemeta_output["developmentStatus"] = status
+
     if constants.CAT_IDENTIFIER in repo_data:
         codemeta_output["identifier"] = repo_data[constants.CAT_IDENTIFIER][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_README_URL in repo_data:

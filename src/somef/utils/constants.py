@@ -183,6 +183,10 @@ GITHUB_API = "https://api.github.com/repos"
 
 # Spdx url
 SPDX_BASE = "https://spdx.org/licenses/"
+
+# Development status. 
+DEVELOPMENT_STATUS = "developmentStatus"
+
 # Crosswalk to retrieve easily contents of interest from the GitHub response
 github_crosswalk_table = {
     CAT_CODE_REPOSITORY: "html_url",
