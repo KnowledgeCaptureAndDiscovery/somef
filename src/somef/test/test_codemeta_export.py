@@ -54,7 +54,7 @@ class TestCodemetaExport(unittest.TestCase):
         data = text_file.read()
         text_file.close()
 
-        assert "https://w3id.org/codemeta/v3.0" in json.dumps(data), \
+        assert "https://w3id.org/codemeta/3.0" in json.dumps(data), \
         "Json must be contained codemeta version 3"
 
         os.remove(json_file_path)
@@ -151,6 +151,14 @@ class TestCodemetaExport(unittest.TestCase):
         """Checks that if exist the spdfx in license"""
         assert "license" in self.json_content, "Missing 'license' field in JSON"
         assert "identifier" in self.json_content["license"], "Missing 'identifier' in license"
+    
+    def test_development_status(self):
+        """Checks that if exist the repository status"""
+        assert "developmentStatus" in self.json_content, "Missing developmentStatus in JSON"
+
+    def test_date_published(self):
+        """Checks that if exist the first date published"""
+        assert "datePublished" in self.json_content, "Missing first date published in JSON"
     
     @classmethod
     def tearDownClass(cls):
