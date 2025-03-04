@@ -143,7 +143,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         latest_date = None
         latest_version = None
         latest_description = None
-        latest_release_link = None
+        oldest_date = None
+        oldest_version = None
 
         for l in repo_data[constants.CAT_RELEASES]:
             release_date_str = l[constants.PROP_RESULT].get(constants.PROP_DATE_PUBLISHED)
@@ -155,12 +156,17 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                     latest_date = release_date
                     latest_version = l[constants.PROP_RESULT].get(constants.PROP_TAG)
                     latest_description = l[constants.PROP_RESULT].get(constants.PROP_DESCRIPTION)
-                    latest_release_link = l[constants.PROP_RESULT].get(constants.PROP_VALUE)
+
+                if oldest_date is None or release_date < oldest_date:
+                    oldest_date = release_date
+                    oldest_version = l[constants.PROP_RESULT].get(constants.PROP_TAG)
 
         if latest_description is not None:
             codemeta_output["releaseNotes"] = latest_description
         if latest_version is not None:
             codemeta_output["softwareVersion"] = latest_version
+        if oldest_date is not None:
+            codemeta_output["datePublished"] = format_date(oldest_date.isoformat())
 
     install_links = []
     if constants.CAT_INSTALLATION in repo_data:
@@ -197,6 +203,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         url_cit = []
         codemeta_output["referencePublication"] = []
         scholarlyArticles = {}
+        author_orcids = {}
+
         for cit in repo_data[constants.CAT_CITATION]:
             scholarlyArticle = {"@type": "ScholarlyArticle"} 
 
@@ -207,6 +215,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             if constants.PROP_FORMAT in cit[constants.PROP_RESULT] and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == "cff":
                 yaml_content = yaml.safe_load(cit[constants.PROP_RESULT]["value"])
                 preferred_citation = yaml_content.get("preferred-citation", {})
+                authors = yaml_content.get("authors", [])
 
                 title = normalize_title(preferred_citation.get("title", None))
                 doi = preferred_citation.get("doi", None)
@@ -215,9 +224,34 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                     final_url = url
                 elif doi:
                     final_url = f"https://doi.org/{doi}"
+
                 scholarlyArticle[constants.PROP_NAME] = title 
                 scholarlyArticle[constants.CAT_IDENTIFIER] = doi 
                 scholarlyArticle[constants.PROP_URL] = final_url
+
+                author_list = []
+                for author in authors:
+                    family_name = author.get("family-names")
+                    given_name = author.get("given-names")
+                    orcid = author.get("orcid")
+
+                    author_entry = {
+                        "@type": "Person",
+                        "familyName": family_name,
+                        "givenName": given_name
+                    }
+
+                    if orcid:
+                        author_entry["@id"] = orcid
+
+                    if family_name and given_name and orcid:
+                        key = (family_name.lower(), given_name.lower())
+                        author_orcids[key] = orcid
+
+                    author_list.append({k: v for k, v in author_entry.items() if v is not None})  
+
+                if author_list:
+                    scholarlyArticle[constants.PROP_AUTHOR] = author_list  # Agrega la lista de autores si hay datos
             else:
                 if constants.PROP_DOI in cit[constants.PROP_RESULT].keys():
                     doi = cit[constants.PROP_RESULT][constants.PROP_DOI]
@@ -240,7 +274,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                 scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle)
 
                 key = (doi, title)
-
+                
                 if key in scholarlyArticles:
                     if is_bibtex:
                         codemeta_output["referencePublication"].remove(scholarlyArticles[key])
@@ -251,6 +285,16 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                     scholarlyArticles[key] = scholarlyArticle
         # if len(url_cit) > 0:
         #     codemeta_output["citation"] = url_cit
+            
+        for article in codemeta_output["referencePublication"]:
+            if "author" in article:
+                for author in article["author"]:
+                    family_name = author.get("familyName", "").strip()
+                    given_name = author.get("givenName", "").strip()
+                    key = (family_name.lower(), given_name.lower()) if given_name else None
+
+                    if key and key in author_orcids:
+                        author["@id"] = author_orcids[key]  # Agregar ORCID
 
     if constants.CAT_STATUS in repo_data:
         url_status = repo_data[constants.CAT_STATUS][0]['result'].get('value', '')
@@ -292,11 +336,16 @@ def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle):
     year_match = re.search(constants.REGEXP_YEAR, bibtex_entry)
     month_match = re.search(constants.REGEXP_MONTH, bibtex_entry)
     pages_match = re.search(constants.REGEXP_PAGES, bibtex_entry)
+    author_match = re.search(r'author\s*=\s*\{([^}]+)\}', bibtex_entry) 
+    orcid_match = re.search(r'orcid\s*=\s*\{([^}]+)\}', bibtex_entry)  # Buscar ORCID explícito
+    note_orcid_match = re.search(r'ORCID[:\s]*([\d-]+X?)', bibtex_entry)  #buscar en notes
 
     issn = issn_match.group(1) if issn_match else None
     year = year_match.group(1) if year_match else None
     month = month_match.group(1) if month_match else None
     pagination = pages_match.group(1) if pages_match else None
+    authors = author_match.group(1) if author_match else None
+    orcid = orcid_match.group(1) if orcid_match else None
 
     date_published = f"{year}-{month.zfill(2)}" if year and month else year  # Zfill asegura 2 dígitos en mes
 
@@ -307,6 +356,33 @@ def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle):
     if pagination:
         scholarlyArticle["pagination"] = pagination
 
+    if author_match:
+        author_list = []
+        authors = author_match.group(1).split(" and ")  # Separar múltiples autores
+
+        for author in authors:
+            parts = author.split(", ") 
+            if len(parts) == 2:
+                family_name, given_name = parts
+            else:
+                family_name = author
+                given_name = None  
+
+            author_entry = {
+                "@type": "Person",
+                "familyName": family_name.strip(),
+                "givenName": given_name.strip() if given_name else None
+            }
+            
+            # in bibtext orcid do not works correctly and in case we have several authors 
+            # if could be dificult to asign the orcid because bibtext just manage one.
+            if len(author_list) == 1 and orcid:
+                author_list[0]["@id"] = f"https://orcid.org/{orcid}"
+
+            author_list.append({k: v for k, v in author_entry.items() if v is not None})  # Filtrar valores None
+
+        if author_list:
+            scholarlyArticle["author"] = author_list  # Agregar la lista de autores
 
     return scholarlyArticle
 
