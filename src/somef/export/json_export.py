@@ -41,7 +41,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     @param outfile: path where to save the codemeta file
     @param pretty: option to show the JSON results in a nice format
     """
-
+    # print(repo_data)
     def format_date(date_string):
         date_object = date_parser.parse(date_string)
         return date_object.strftime("%Y-%m-%d")
@@ -88,7 +88,10 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     }
     if constants.CAT_LICENSE in repo_data:
         # We mix the name of the license from github API with the URL of the file (if found)
+      
         l_result = {}
+        is_gitlab = False
+
         for l in repo_data[constants.CAT_LICENSE]:
             if constants.PROP_NAME in l[constants.PROP_RESULT].keys():
                 l_result["name"] = l[constants.PROP_RESULT][constants.PROP_NAME]
@@ -101,6 +104,15 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             # # We get the first license we find from the repo 
             # elif l[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION and constants.PROP_SOURCE in l.keys() and "api.github.com" in l_result["url"]: 
             #     l_result["url"] = l[constants.PROP_SOURCE]
+            if l[constants.PROP_TECHNIQUE] == "GitLab_API" and l[constants.PROP_RESULT].get("type") == "Url":
+                is_gitlab = True               
+                l_result["url"] = l[constants.PROP_RESULT][constants.PROP_VALUE]
+            
+            if is_gitlab:
+                if l[constants.PROP_RESULT][constants.PROP_TYPE] == "File_dump":
+                    nameLicense = l[constants.PROP_RESULT][constants.PROP_VALUE]
+                    l_result["name"] = nameLicense.split("\n")[0] 
+                    break
 
             # checking if PROP_URL is in the keys PROP_RESULT and key "url" is not in results
             if "url" not in l_result.keys() and constants.PROP_URL in l[constants.PROP_RESULT].keys():
@@ -110,6 +122,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         
             # Thist block run if url is not found in the previous 
             if l[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION and constants.PROP_SOURCE in l.keys():
+
                 if "url" in l_result and "api.github.com" in l_result["url"]:
                     l_result["url"] = l[constants.PROP_SOURCE]
             else:
@@ -274,7 +287,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                 scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle)
 
                 key = (doi, title)
-                
+
                 if key in scholarlyArticles:
                     if is_bibtex:
                         codemeta_output["referencePublication"].remove(scholarlyArticles[key])
