@@ -222,6 +222,19 @@ release_crosswalk_table = {
     PROP_DATE_PUBLISHED: "published_at",
 }
 
+release_gitlab_crosswalk_table = {
+    PROP_TAG: 'tag_name',
+    PROP_NAME: 'name',
+    PROP_AUTHOR: ['author', 'username'],
+    PROP_DESCRIPTION: 'description',
+    PROP_TARBALL_URL: ['assets', 'sources'],
+    PROP_ZIPBALL_URL: ['assets', 'sources'],
+    PROP_HTML_URL: ['_links', 'self'],
+    PROP_URL: ['_links', 'self'],
+    PROP_RELEASE_ID: 'tag_name',
+    PROP_DATE_CREATED: 'created_at',
+    PROP_DATE_PUBLISHED: "released_at",
+}
 # TO DO: Assess run and download.
 categories_files_header = [CAT_INSTALLATION, CAT_CITATION, CAT_ACKNOWLEDGEMENT, "run", "download", CAT_REQUIREMENTS,
                            CAT_CONTACT, CAT_DESCRIPTION, CAT_CONTRIBUTORS, CAT_DOCUMENTATION, CAT_LICENSE, CAT_USAGE,

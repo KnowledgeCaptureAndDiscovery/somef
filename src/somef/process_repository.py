@@ -118,6 +118,42 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
     date = details.headers["date"]
 
     repo_api_base_url = f"{repository_url}"
+    # releases = get_gitlab_releases(project_id, f"https://{url.netloc}")
+    all_releases = get_all_gitlab_releases(project_api_url)
+    release_list_filtered = [do_crosswalk(release, constants.release_gitlab_crosswalk_table) for release in all_releases]
+
+    for release in release_list_filtered:
+        release_obj = {
+            constants.PROP_TYPE: constants.RELEASE,
+            constants.PROP_VALUE: release.get(constants.PROP_URL, "")
+        }
+        for category, value in release.items():
+            if category != constants.AGENT_TYPE:
+                if category == constants.PROP_AUTHOR:                 
+                    value = {
+                        constants.PROP_NAME: value,
+                        constants.PROP_TYPE: release.get(constants.AGENT_TYPE, "Person")
+                    }
+            tar_gz_entry = None
+            zip_gz_entry = None
+
+            if category == "tarball_url" and isinstance(value, list):
+                tar_gz_entry = next((item for item in value if item.get("format") == "tar.gz"), None)
+            elif category == "zipball_url" and isinstance(value, list):
+                zip_gz_entry = next((item for item in value if item.get("format") == "zip"), None)
+
+            if tar_gz_entry:
+                value = tar_gz_entry["url"]
+            elif zip_gz_entry:
+                value = zip_gz_entry["url"]
+
+            if value: 
+                release_obj[category] = value
+            else:
+                logging.warning(f"Ignoring empty value in release for {category}")
+
+        repo_metadata.add_result(constants.CAT_RELEASES, release_obj, 1, constants.TECHNIQUE_GITLAB_API)
+
 
     default_branch = None
 
@@ -510,6 +546,8 @@ def get_path(obj, path):
 
 def do_crosswalk(data, crosswalk_table):
     output = {}
+    # print('------------data realeases')
+    # print(data)
     for somef_key, path in crosswalk_table.items():
         value = get_path(data, path)
         if value is not None:
@@ -635,6 +673,87 @@ def get_project_id(repository_url,self_hosted):
                 project_id = response_str[start:end]
     return project_id
 
+def get_all_gitlab_releases(repo_api_base_url):
+    all_releases = []
+    page = 1
+
+    while True:
+        url = f"{repo_api_base_url}/releases?page={page}&per_page=100"
+        logging.info(f"Obteniendo releases desde: {url}")
+        response = requests.get(url)
+        logging.info(f"Respuesta: {response.status_code}")
+        content_type = response.headers.get("Content-Type", "")
+        if response.status_code != 200 or "application/json" not in content_type:
+            logging.error(f"Error en la respuesta o no es JSON: {response.text}")
+            break  # Termina el bucle si la respuesta no es válida
+
+        try:
+            releases = response.json()
+        except requests.exceptions.JSONDecodeError as e:
+            logging.error(f"Error al decodificar JSON: {e}. Respuesta: {response.text}")
+            break
+
+        if not releases:
+            break  # Si ya no hay releases, termina el bucle
+
+        all_releases.extend(releases)
+
+        # Verifica si hay más páginas
+        next_page = response.headers.get("X-Next-Page")
+        if not next_page:
+            break  # Si no hay más páginas, termina el bucle
+
+        page = int(next_page)
+
+    if not all_releases:
+        logging.warning("No se encontraron releases.")
+        return []
+    
+
+    # release_list_filtered = [
+    #     {
+    #         "url": release.get("description"),
+    #         "name": release.get("name"),
+    #         "tag_name": release.get("tag_name"),
+    #         "date": release.get("released_at"),
+    #     }
+    #     for release in all_releases
+    # ]
+    # print(release_list_filtered)
+    return all_releases
+
+def get_gitlab_releases(project_id, base_url):
+    """
+    Obtiene las releases de un repositorio en GitLab sin autenticación.
+    
+    :param project_id: ID del proyecto en GitLab
+    :param base_url: URL base del GitLab donde está alojado el proyecto (ej: https://gitlab.in2p3.fr)
+    :return: Lista de releases con información relevante
+    """
+    releases_url = f"{base_url}/api/v4/projects/{project_id}/releases"
+
+    logging.info(f"Obteniendo releases desde: {releases_url}")
+
+    response = requests.get(releases_url)
+    
+    if response.status_code != 200:
+        logging.error(f"Error obteniendo releases: {response.text}")
+        return []
+
+    releases_list = response.json()
+    
+    # Filtrar información relevante
+    release_list_filtered = [
+        {
+            "url": release.get("description"),
+            "name": release.get("name"),
+            "tag_name": release.get("tag_name"),
+            "date": release.get("released_at"),
+        }
+        for release in releases_list
+    ]
+    
+    return release_list_filtered
 
 # error when github url is wrong
 class GithubUrlError(Exception):
@@ -648,3 +767,4 @@ def get_readme_content(readme_url):
     readme = requests.get(readme_url)
     readme_text = readme.content.decode('utf-8')
     return readme_text
+

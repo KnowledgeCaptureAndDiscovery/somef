@@ -55,11 +55,15 @@ class TestCodemetaGitlabExport(unittest.TestCase):
         # os.remove(test_data_path + "test_gitlab.json")
         # assert self.json_content.find(constants.CAT_IDENTIFIER) > 0
         assert constants.CAT_IDENTIFIER in self.json_content, f"Missing key {constants.CAT_IDENTIFIER} in JSON"
-        
+
     def test_gitlab_license(self):
         """Checks that if exist the spdfx in license"""
         assert "license" in self.json_content, "Missing 'license' field in JSON"
         assert "url" in self.json_content["license"], "Missing 'url' in license"
+
+    def test_gitlab_release(self):
+        """Checks if there is information about releases because in GitLab, no release properties were being retrieved. """
+        assert "releaseNotes" in self.json_content, "Missing 'releaseNotes' field in JSON"
 
     @classmethod
     def tearDownClass(cls):
