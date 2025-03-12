@@ -34,6 +34,36 @@ REGEXP_MONTH = r'month\s*=\s*{(\d{1,2})}'
 REGEXP_PAGES = r'pages\s*=\s*{([\d-]+)}'
 # r"!\[[^\]]*\]\((.*?)?\)"
 
+#License spdx
+REGEXP_APACHE = r'(?i)apache\s+license\s*,?\s*version\s*2\.0'
+REGEXP_GPL3 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*3\.0'
+REGEXP_MIT = r'(?i)mit\s+license'
+REGEXP_BSD2 = r'(?i)bsd\s+2-clause\s+license'
+REGEXP_BSD3 = r'(?i)bsd\s+3-clause\s+license'
+REGEXP_BOOST = r'(?i)boost\s+software\s+license\s*,?\s*version\s*1\.0'
+REGEXP_CC0 = r'(?i)creative\s+commons\s+zero\s+v?1\.0\s+universal'
+REGEXP_EPL2 = r'(?i)eclipse\s+public\s+license\s*,?\s*version\s*2\.0'
+REGEXP_AGPL3 = r'(?i)gnu\s+affero\s+general\s+public\s+license\s*,?\s*version\s*3\.0'
+REGEXP_GPL2 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*2\.0'
+REGEXP_LGPL1 = r'(?i)gnu\s+lesser\s+general\s+public\s+license\s*,?\s*version\s*1\.0'
+REGEXP_MPL2 = r'(?i)mozilla\s+public\s+license\s*,?\s*version\s*2\.0'
+REGEXP_UNLICENSE = r'(?i)the\s+unlicense'
+
+LICENSES_DICT = {
+    "Apache License 2.0": {"regex": REGEXP_APACHE, "spdx_id": "Apache-2.0"},
+    "GNU General Public License v3.0": {"regex": REGEXP_GPL3, "spdx_id": "GPL-3.0"},
+    "MIT License": {"regex": REGEXP_MIT, "spdx_id": "MIT"},
+    "BSD 2-Clause": {"regex": REGEXP_BSD2, "spdx_id": "BSD-2-Clause"},
+    "BSD 3-Clause": {"regex": REGEXP_BSD3, "spdx_id": "BSD-3-Clause"},
+    "Boost Software License 1.0": {"regex": REGEXP_BOOST, "spdx_id": "BSL-1.0"},
+    "Creative Commons Zero v1.0": {"regex": REGEXP_CC0, "spdx_id": "CC0-1.0"},
+    "Eclipse Public License 2.0": {"regex": REGEXP_EPL2, "spdx_id": "EPL-2.0"},
+    "GNU Affero General Public License v3.0": {"regex": REGEXP_AGPL3, "spdx_id": "AGPL-3.0"},
+    "GNU General Public License v2": {"regex": REGEXP_GPL2, "spdx_id": "GPL-2.0"},
+    "GNU Lesser General Public License v1.0": {"regex": REGEXP_LGPL1, "spdx_id": "LGPL-1.0"},
+    "Mozilla Public License 2.0": {"regex": REGEXP_MPL2, "spdx_id": "MPL-2.0"},
+    "The Unlicense": {"regex": REGEXP_UNLICENSE, "spdx_id": "Unlicense"},
+}
 # Categories recognized by SOMEF (they all start by CAT_
 CAT_APPLICATION_DOMAIN = "application_domain"
 CAT_ACKNOWLEDGEMENT = "acknowledgement"

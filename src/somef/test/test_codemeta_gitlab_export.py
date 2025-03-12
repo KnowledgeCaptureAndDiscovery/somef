@@ -57,10 +57,13 @@ class TestCodemetaGitlabExport(unittest.TestCase):
         assert constants.CAT_IDENTIFIER in self.json_content, f"Missing key {constants.CAT_IDENTIFIER} in JSON"
 
     def test_gitlab_license(self):
-        """Checks that if exist the spdfx in license"""
+        """Checks that if exist the spdx in license"""
         assert "license" in self.json_content, "Missing 'license' field in JSON"
         assert "url" in self.json_content["license"], "Missing 'url' in license"
-
+        assert self.json_content["license"]["name"] == 'MIT License', "License not expected"
+        expected_identifier = "https://spdx.org/licenses/MIT"
+        assert self.json_content["license"]["identifier"] == expected_identifier, "SPDX identifier not expected"
+        
     def test_gitlab_release(self):
         """Checks if there is information about releases because in GitLab, no release properties were being retrieved. """
         assert "releaseNotes" in self.json_content, "Missing 'releaseNotes' field in JSON"

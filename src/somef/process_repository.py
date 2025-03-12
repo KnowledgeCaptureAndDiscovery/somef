@@ -4,6 +4,7 @@ import zipfile
 import time
 import requests
 import sys
+import re
 from datetime import datetime
 from urllib.parse import urlparse, quote
 from .utils import constants
@@ -198,22 +199,29 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
 
     # condense license information
     license_result = {constants.PROP_TYPE: constants.URL}
+    
     if 'license' in general_resp:
         if "name" in general_resp['license']:
             license_result[constants.PROP_NAME] = general_resp["license"]["name"]
         if "url" in general_resp['license']:
             license_result[constants.PROP_VALUE] = general_resp["license"]["url"]
+
         # for k in ('name', 'url'):
         #     if k in general_resp['license']:
         #         license_info[k] = general_resp['license'][k]
 
     # If we didn't find it, look for the license
     if constants.PROP_VALUE not in license_result or license_result[constants.PROP_VALUE] is None:
-        possible_license_url = f"{repository_url}/-/blob/master/LICENSE"
+        # possible_license_url = f"{repository_url}/-/blob/master/LICENSE"
+        possible_license_url = f"{repository_url}/-/raw/master/LICENSE"
         license_text_resp = requests.get(possible_license_url)
         if license_text_resp.status_code == 200:
-            # license_text = license_text_resp.text
+            license_text = license_text_resp.text
             license_result[constants.PROP_VALUE] = possible_license_url
+            license_info = detect_license_spdx(license_text)
+            if license_info:
+                 license_result[constants.PROP_NAME] = license_info['name']
+                 license_result[constants.PROP_SPDX_ID] = license_info['spdx_id']
 
     if constants.PROP_VALUE in license_result:
         repo_metadata.add_result(constants.CAT_LICENSE, license_result, 1, constants.TECHNIQUE_GITLAB_API)
@@ -768,3 +776,12 @@ def get_readme_content(readme_url):
     readme_text = readme.content.decode('utf-8')
     return readme_text
 
+
+def detect_license_spdx(license_text):
+    for license_name, license_info in constants.LICENSES_DICT.items():
+        if re.search(license_info["regex"], license_text, re.IGNORECASE):
+            return {
+                "name": license_name,
+                "spdx_id": f"{license_info['spdx_id']}"
+            }
+    return None

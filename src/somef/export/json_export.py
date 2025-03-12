@@ -110,8 +110,10 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             
             if is_gitlab:
                 if l[constants.PROP_RESULT][constants.PROP_TYPE] == "File_dump":
-                    nameLicense = l[constants.PROP_RESULT][constants.PROP_VALUE]
-                    l_result["name"] = nameLicense.split("\n")[0] 
+                    license_info = detect_license(l[constants.PROP_RESULT][constants.PROP_VALUE])
+                    if license_info:
+                        l_result["name"] = license_info['name']
+                        l_result["identifier"] = license_info['identifier']
                     break
 
             # checking if PROP_URL is in the keys PROP_RESULT and key "url" is not in results
@@ -411,3 +413,12 @@ def create_missing_fields(result):
 
 def normalize_title(title):
     return re.sub(r"\s+", " ", title.strip().lower()) if title else None
+
+def detect_license(license_text):
+    for license_name, license_info in constants.LICENSES_DICT.items():
+        if re.search(license_info["regex"], license_text, re.IGNORECASE):
+            return {
+                "name": license_name,
+                "identifier": f"https://spdx.org/licenses/{license_info['spdx_id']}"
+            }
+    return None
