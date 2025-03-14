@@ -25,7 +25,7 @@ class TestCodemetaExport(unittest.TestCase):
             codemeta_out=cls.json_file,
             pretty=True,
             missing=True,
-            readme_only=True
+            readme_only=False
         )
 
         with open(cls.json_file, "r") as f:
@@ -156,6 +156,13 @@ class TestCodemetaExport(unittest.TestCase):
         """Checks that if exist the repository status"""
         assert "developmentStatus" in self.json_content, "Missing developmentStatus in JSON"
 
+    def test_reference_publication_url_natural_language(self):
+
+        """Checks that referencePublication contains a ScholarlyArticle with a URL in citation natural language"""
+        assert "referencePublication" in self.json_content, "Missing referencePublication in JSON"
+        assert isinstance(self.json_content["referencePublication"], list), "referencePublication should be a list"
+        assert any("url" in pub for pub in self.json_content["referencePublication"]), "No URL found in referencePublication"
+
     def test_date_published(self):
         """Checks that if exist the first date published"""
         assert "datePublished" in self.json_content, "Missing first date published in JSON"
@@ -179,8 +186,6 @@ class TestCodemetaExport(unittest.TestCase):
 
         with open(test_data_path + "test_authors_reference.json", "r") as text_file:
             data = json.load(text_file) 
-
-
 
         expected_family_name = "Garijo"
         expected_given_name = "Daniel"

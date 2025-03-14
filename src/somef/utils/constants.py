@@ -32,7 +32,13 @@ REGEXP_ISSN = r'issn\s*=\s*{([\d-]+)}'
 REGEXP_YEAR = r'year\s*=\s*{(\d{4})}'
 REGEXP_MONTH = r'month\s*=\s*{(\d{1,2})}'
 REGEXP_PAGES = r'pages\s*=\s*{([\d-]+)}'
-# r"!\[[^\]]*\]\((.*?)?\)"
+
+# For natural language citation
+REGEXP_DOI_NATURAL = r'10\.\d{4,9}/[-._;()/:A-Za-z0-9]+'
+REGEXP_YEAR_NATURAL = r'\b(19|20)\d{2}\b'
+REGEXP_URL_NATURAL = r'https?://[^\s]+'
+REGEXP_AUTHOR_NATURAL = r'^[A-Za-z\s,]+et al\.?'
+REGEXP_TITLE_NATURAL = r'["“](.+?)["”]'
 
 #License spdx
 REGEXP_APACHE = r'(?i)apache\s+license\s*,?\s*version\s*2\.0'

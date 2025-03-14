@@ -235,6 +235,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                 title = normalize_title(preferred_citation.get("title", None))
                 doi = preferred_citation.get("doi", None)
                 url = preferred_citation.get("url", None) 
+                final_url = ''
                 if url:
                     final_url = url
                 elif doi:
@@ -274,19 +275,29 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                 # elif constants.PROP_FORMAT in cit[constants.PROP_RESULT].keys() \
                 #         and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == constants.FORMAT_CFF:
                 #     url_cit.append(cit[constants.PROP_SOURCE])
-                
+
                 if constants.PROP_URL in cit[constants.PROP_RESULT].keys():
                     scholarlyArticle[constants.PROP_URL] = cit[constants.PROP_RESULT][constants.PROP_URL]
                 # if constants.PROP_AUTHOR in cit[constants.PROP_RESULT].keys():
                 #     scholarlyArticle[constants.PROP_AUTHOR] = cit[constants.PROP_RESULT][constants.PROP_AUTHOR]
+
                 if constants.PROP_TITLE in cit[constants.PROP_RESULT].keys():
                     title = normalize_title(cit[constants.PROP_RESULT][constants.PROP_TITLE])
                     scholarlyArticle[constants.PROP_NAME] = cit[constants.PROP_RESULT][constants.PROP_TITLE]    
+
+                if constants.PROP_ORIGINAL_HEADER in cit[constants.PROP_RESULT].keys():
+                    if cit[constants.PROP_RESULT][constants.PROP_ORIGINAL_HEADER] == "Citation":
+                        if constants.PROP_SOURCE in cit.keys():
+                            scholarlyArticle[constants.PROP_URL] = cit[constants.PROP_SOURCE]
+
                 is_bibtex = True
 
             if len(scholarlyArticle) > 1:  
                 # look por information in values as pagination, issn and others
-                scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle)
+                if re.search(r'@\w+\{', cit[constants.PROP_RESULT][constants.PROP_VALUE]):  
+                    scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle)
+                else:
+                    scholarlyArticle = extract_scholarly_article_natural(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle)
 
                 key = (doi, title)
 
@@ -400,6 +411,50 @@ def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle):
             scholarlyArticle["author"] = author_list  # Agregar la lista de autores
 
     return scholarlyArticle
+
+def extract_scholarly_article_natural(citation_text, scholarly_article):
+    """
+    Extracts information from a natural language citation and structures it as a ScholarlyArticle.
+    Params:
+        - citation_text (str): The citation text in natural language.
+        - scholarly_article (dict): Dictionary where the extracted data will be stored.
+    Returns:
+        - dict: Dictionary with the extracted data in the desired format.
+    """
+
+    # regular expresions
+    doi_match = re.search(constants.REGEXP_DOI_NATURAL, citation_text)
+    year_match = re.search(constants.REGEXP_YEAR_NATURAL, citation_text)
+    url_match = re.search(constants.REGEXP_URL_NATURAL, citation_text)
+    author_match = re.search(constants.REGEXP_AUTHOR_NATURAL, citation_text)
+    title_match = re.search(constants.REGEXP_TITLE_NATURAL, citation_text)
+
+    if doi_match:
+        scholarly_article["identifier"] = doi_match.group(0)
+        scholarly_article["url"] = f"https://doi.org/{doi_match.group(0)}"
+    
+    if year_match:
+        scholarly_article["datePublished"] = year_match.group(0)
+    
+    if url_match and "url" not in scholarly_article:
+        scholarly_article["url"] = url_match.group(0)
+
+    if title_match:
+        scholarly_article["name"] = title_match.group(1)
+
+    # Authors in format surname, name 
+    if author_match:
+        authors_text = author_match.group(0).replace(" et al.", "").strip()
+        author_list = []
+        for author in authors_text.split(", "):
+            parts = author.split(" ")
+            family_name = parts[-1]
+            given_name = " ".join(parts[:-1])
+            author_list.append({"@type": "Person", "familyName": family_name, "givenName": given_name})
+
+        scholarly_article["author"] = author_list
+
+    return scholarly_article
 
 def create_missing_fields(result):
     """Function to create a small report with the categories SOMEF was not able to find.
