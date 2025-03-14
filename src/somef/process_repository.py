@@ -488,7 +488,9 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
                     constants.PROP_VALUE: value,
                     constants.PROP_TYPE: value_type
                 }
-            repository_metadata.add_result(category, result, 1, constants.TECHNIQUE_GITHUB_API)
+            
+            if (result['value']):
+                repository_metadata.add_result(category, result, 1, constants.TECHNIQUE_GITHUB_API)
     # get languages
     if not ignore_api_metadata:
         languages_raw, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
