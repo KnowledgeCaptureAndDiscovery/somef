@@ -83,7 +83,6 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
     if repository_url[-1] == '/':
         repository_url = repository_url[:-1]
     url = urlparse(repository_url)
-
     # if url.netloc != 'gitlab.com':
     # if "gitlab" not in url.netloc:
     #     logging.error("Repository must come from Gitlab")
@@ -192,9 +191,8 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
     # filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
     # filtered_resp = {"downloadUrl": f"https://gitlab.com/{owner}/{repo_name}/-/branches"}
     repo_metadata.add_result(constants.CAT_DOWNLOAD_URL,
-                             {
-                                 constants.PROP_VALUE: f"https://gitlab.com/{owner}/{repo_name}/-/branches",
-                                 constants.PROP_TYPE: constants.URL
+                             {constants.PROP_VALUE: f"https://{url.netloc}/{owner}/{repo_name}/-/branches",
+                              constants.PROP_TYPE: constants.URL
                              }, 1, constants.TECHNIQUE_GITLAB_API)
 
     # condense license information

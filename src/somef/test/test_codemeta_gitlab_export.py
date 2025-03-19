@@ -68,6 +68,11 @@ class TestCodemetaGitlabExport(unittest.TestCase):
         """Checks if there is information about releases because in GitLab, no release properties were being retrieved. """
         assert "releaseNotes" in self.json_content, "Missing 'releaseNotes' field in JSON"
 
+    def test_gitlab_continuosintegration(self):
+        """Checks if there is continuos integration file in GitLab. """
+        assert "continuousIntegration" in self.json_content, "Missing 'continuousIntegration' field in JSON"
+
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""

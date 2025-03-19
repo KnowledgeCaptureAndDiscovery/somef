@@ -41,7 +41,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     @param outfile: path where to save the codemeta file
     @param pretty: option to show the JSON results in a nice format
     """
-    # print(repo_data)
     def format_date(date_string):
         date_object = date_parser.parse(date_string)
         return date_object.strftime("%Y-%m-%d")
@@ -153,6 +152,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["programmingLanguage"] = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in repo_data[constants.CAT_PROGRAMMING_LANGUAGES]]
     if constants.CAT_REQUIREMENTS in repo_data:
         codemeta_output["softwareRequirements"] = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in repo_data[constants.CAT_REQUIREMENTS]]
+    if constants.CAT_WORKFLOWS in repo_data:
+        codemeta_output["continuousIntegration"] = repo_data[constants.CAT_WORKFLOWS][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_RELEASES in repo_data:
         
         latest_date = None

@@ -9,6 +9,7 @@ from . import extract_ontologies, extract_workflows
 from .process_results import Result
 from chardet import detect
 
+domain_gitlab = ''
 
 def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner="", repo_name="",
                              repo_default_branch="", ignore_test_folder=True):
@@ -29,6 +30,10 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
     -------
     @return: text of the main readme and a JSON dictionary (filtered_resp) with the findings in files
     """
+
+    if repo_type == constants.RepositoryType.GITLAB:      
+        domain_gitlab = extract_gitlab_domain(metadata_result, repo_type)
+
     text = ""
     try:
         for dir_path, dir_names, filenames in os.walk(repo_dir):
@@ -160,21 +165,34 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                        constants.PROP_TYPE: constants.URL
                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION
                                                    )
-                if filename.endswith(".ga") or filename.endswith(".cwl") or filename.endswith(".nf") or (
-                        filename.endswith(".snake") or filename.endswith(
-                    ".smk") or "Snakefile" == filename_no_ext) or filename.endswith(".knwf") or filename.endswith(
-                    ".t2flow") or filename.endswith(".dag") or filename.endswith(".kar") or filename.endswith(
-                    ".wdl"):
-                    analysis = extract_workflows.is_file_workflow(os.path.join(repo_dir, file_path))
-                    if analysis:
-                        workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
-                                                     repo_dir, repo_relative_path, filename)
-                        metadata_result.add_result(constants.CAT_WORKFLOWS,
-                                                   {
-                                                       constants.PROP_VALUE: workflow_url,
-                                                       constants.PROP_TYPE: constants.URL
-                                                   }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
-            # TO DO: Improve this a bit, as just returning the docs folder is not that informative
+                if repo_type == constants.RepositoryType.GITLAB: 
+                    if filename.endswith(".yml"):
+                        analysis = extract_workflows.is_file_workflow_gitlab(os.path.join(repo_dir, file_path))                  
+                        if analysis:
+                            workflow_url_gitlab = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
+                                                        repo_dir, repo_relative_path, filename)
+                            metadata_result.add_result(constants.CAT_WORKFLOWS,
+                                                       {
+                                                        constants.PROP_VALUE: workflow_url_gitlab,
+                                                        constants.PROP_TYPE: constants.URL
+                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)                
+                else:
+                    if filename.endswith(".ga") or filename.endswith(".cwl") or filename.endswith(".nf") or (
+                            filename.endswith(".snake") or filename.endswith(
+                        ".smk") or "Snakefile" == filename_no_ext) or filename.endswith(".knwf") or filename.endswith(
+                        ".t2flow") or filename.endswith(".dag") or filename.endswith(".kar") or filename.endswith(
+                        ".wdl"):
+                        analysis = extract_workflows.is_file_workflow(os.path.join(repo_dir, file_path))
+                        if analysis:
+                            workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
+                                                        repo_dir, repo_relative_path, filename)
+                            metadata_result.add_result(constants.CAT_WORKFLOWS,
+                                                    {
+                                                        constants.PROP_VALUE: workflow_url,
+                                                        constants.PROP_TYPE: constants.URL
+                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
+                 
+                # TO DO: Improve this a bit, as just returning the docs folder is not that informative
             for dir_name in dir_names:
                 if dir_name.lower() == "docs":
                     if repo_relative_path == ".":
@@ -192,7 +210,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             if repo_type == constants.RepositoryType.GITHUB:
                                 docs_url = f"https://github.com/{owner}/{repo_name}/tree/{urllib.parse.quote(repo_default_branch)}/{docs_path}"
                             elif repo_type == constants.RepositoryType.GITLAB:
-                                docs_url = f"https://gitlab.com/{owner}/{repo_name}/-/tree/{urllib.parse.quote(repo_default_branch)}/{docs_path}"
+                                docs_url = f"https://{domain_gitlab}/{owner}/{repo_name}/-/tree/{urllib.parse.quote(repo_default_branch)}/{docs_path}"
                             else:
                                 docs_url = os.path.join(repo_dir, docs_path)
                             # docs.append(docs_url)
@@ -301,6 +319,7 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 doi = preferred_citation.get("doi", None)
                 url_citation = preferred_citation.get("url", None) 
                 authors = preferred_citation.get("authors", [])
+                final_url = '';
 
                 if url:
                     final_url = url_citation
@@ -379,4 +398,16 @@ def convert_to_raw_user_content_gitlab(partial, owner, repo_name, repo_ref):
         partial = partial.replace("./", "")
     if partial.startswith(".\\"):
         partial = partial.replace(".\\", "")
-    return f"https://gitlab.com/{owner}/{repo_name}/-/blob/{repo_ref}/{urllib.parse.quote(partial)}"
+    # return f"https://gitlab.com/{owner}/{repo_name}/-/blob/{repo_ref}/{urllib.parse.quote(partial)}"
+    return f"https://{domain_gitlab}/{owner}/{repo_name}/-/blob/{repo_ref}/{urllib.parse.quote(partial)}"
+
+def extract_gitlab_domain(metadata_result, repo_type):
+    if repo_type == constants.RepositoryType.GITLAB:
+        download_url = metadata_result.results['download_url']
+        if download_url:
+            url = download_url[0]['result']['value']  
+            parsed_url = urlparse(url)
+            domain = parsed_url.netloc 
+            
+            return domain
+    return None  
