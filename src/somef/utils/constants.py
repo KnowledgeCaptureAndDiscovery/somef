@@ -83,7 +83,7 @@ CAT_SUPPORT_CHANNELS = "support_channels"
 CAT_USAGE = "usage"
 CAT_WORKFLOWS = "workflows"
 CAT_TYPE = "type"
-
+CAT_PACKAGE_FILE = "package_file"
 # Special category: missing categories
 CAT_MISSING = "somef_missing_categories"
 
@@ -150,6 +150,8 @@ FORMAT_DOCKERFILE = "dockerfile"
 FORMAT_DOCKER_COMPOSE = "docker_compose"
 FORMAT_READTHEDOCS = "readthedocs"
 FORMAT_WIKI = "wiki"
+FORMAT_POM = "pom.xml"
+FORMAT_NPM = "npm"
 
 # Result types: data types
 STRING = "String"
