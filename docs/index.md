@@ -18,6 +18,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository  name
 - **Description**: A description of what the software does.
 - **Citation**: Preferred citation (usually in `.bib` form) as the authors have stated in their readme file.
+- **ContinuousIntegration**: Link to a continuous integration service (e.g., GitHub or GitLab actions)
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component
 - **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it.
@@ -57,7 +58,7 @@ SOMEF uses the [Software  Description Ontology](https://w3id.org/okn/o/sd), whic
 
 <a name="myfootnote1">1</a> The available application domains currently are: 
 
-- **Astrophisics**: a branch of space science that applies the laws of physics and chemistry to seek to understand the universe and our place in it. The field explores topics such as the birth, life and death of stars, planets, galaxies, nebulae and other objects in the universe.
+- **Astrophysics**: a branch of space science that applies the laws of physics and chemistry to seek to understand the universe and our place in it. The field explores topics such as the birth, life and death of stars, planets, galaxies, nebulae and other objects in the universe.
 - **Audio**: a process of transforming, exploring, and interpreting audio signals recorded by digital devices.
 - **Computer vision**: a field of artificial intelligence (AI) that enables computers and systems to derive meaningful information from digital images, videos and other visual inputs — and take actions or make recommendations based on that information.
 - **Graphs**: data structures that can be ingested by various algorithms, notably neural nets, learning to perform tasks such as classification, clustering and regression.

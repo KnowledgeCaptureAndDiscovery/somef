@@ -32,8 +32,44 @@ REGEXP_ISSN = r'issn\s*=\s*{([\d-]+)}'
 REGEXP_YEAR = r'year\s*=\s*{(\d{4})}'
 REGEXP_MONTH = r'month\s*=\s*{(\d{1,2})}'
 REGEXP_PAGES = r'pages\s*=\s*{([\d-]+)}'
-# r"!\[[^\]]*\]\((.*?)?\)"
 
+# For natural language citation
+REGEXP_DOI_NATURAL = r'10\.\d{4,9}/[-._;()/:A-Za-z0-9]+'
+REGEXP_YEAR_NATURAL = r'\b(19|20)\d{2}\b'
+REGEXP_URL_NATURAL = r'https?://[^\s]+'
+REGEXP_AUTHOR_NATURAL = r'^[A-Za-z\s,]+et al\.?'
+REGEXP_TITLE_NATURAL = r'["“](.+?)["”]'
+
+#License spdx
+REGEXP_APACHE = r'(?i)apache\s+license\s*,?\s*version\s*2\.0'
+REGEXP_GPL3 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*3\.0'
+REGEXP_MIT = r'(?i)mit\s+license'
+REGEXP_BSD2 = r'(?i)bsd\s+2-clause\s+license'
+REGEXP_BSD3 = r'(?i)bsd\s+3-clause\s+license'
+REGEXP_BOOST = r'(?i)boost\s+software\s+license\s*,?\s*version\s*1\.0'
+REGEXP_CC0 = r'(?i)creative\s+commons\s+zero\s+v?1\.0\s+universal'
+REGEXP_EPL2 = r'(?i)eclipse\s+public\s+license\s*,?\s*version\s*2\.0'
+REGEXP_AGPL3 = r'(?i)gnu\s+affero\s+general\s+public\s+license\s*,?\s*version\s*3\.0'
+REGEXP_GPL2 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*2\.0'
+REGEXP_LGPL1 = r'(?i)gnu\s+lesser\s+general\s+public\s+license\s*,?\s*version\s*1\.0'
+REGEXP_MPL2 = r'(?i)mozilla\s+public\s+license\s*,?\s*version\s*2\.0'
+REGEXP_UNLICENSE = r'(?i)the\s+unlicense'
+
+LICENSES_DICT = {
+    "Apache License 2.0": {"regex": REGEXP_APACHE, "spdx_id": "Apache-2.0"},
+    "GNU General Public License v3.0": {"regex": REGEXP_GPL3, "spdx_id": "GPL-3.0"},
+    "MIT License": {"regex": REGEXP_MIT, "spdx_id": "MIT"},
+    "BSD 2-Clause": {"regex": REGEXP_BSD2, "spdx_id": "BSD-2-Clause"},
+    "BSD 3-Clause": {"regex": REGEXP_BSD3, "spdx_id": "BSD-3-Clause"},
+    "Boost Software License 1.0": {"regex": REGEXP_BOOST, "spdx_id": "BSL-1.0"},
+    "Creative Commons Zero v1.0": {"regex": REGEXP_CC0, "spdx_id": "CC0-1.0"},
+    "Eclipse Public License 2.0": {"regex": REGEXP_EPL2, "spdx_id": "EPL-2.0"},
+    "GNU Affero General Public License v3.0": {"regex": REGEXP_AGPL3, "spdx_id": "AGPL-3.0"},
+    "GNU General Public License v2": {"regex": REGEXP_GPL2, "spdx_id": "GPL-2.0"},
+    "GNU Lesser General Public License v1.0": {"regex": REGEXP_LGPL1, "spdx_id": "LGPL-1.0"},
+    "Mozilla Public License 2.0": {"regex": REGEXP_MPL2, "spdx_id": "MPL-2.0"},
+    "The Unlicense": {"regex": REGEXP_UNLICENSE, "spdx_id": "Unlicense"},
+}
 # Categories recognized by SOMEF (they all start by CAT_
 CAT_APPLICATION_DOMAIN = "application_domain"
 CAT_ACKNOWLEDGEMENT = "acknowledgement"
@@ -83,6 +119,7 @@ CAT_SUPPORT_CHANNELS = "support_channels"
 CAT_USAGE = "usage"
 CAT_WORKFLOWS = "workflows"
 CAT_TYPE = "type"
+CAT_CONTINUOS_INTEGRATION= "continuousIntegration"
 
 # Special category: missing categories
 CAT_MISSING = "somef_missing_categories"
@@ -183,6 +220,10 @@ GITHUB_API = "https://api.github.com/repos"
 
 # Spdx url
 SPDX_BASE = "https://spdx.org/licenses/"
+
+# Codeowners file
+CODEOWNERS_FILE = "CODEOWNERS"
+
 # Crosswalk to retrieve easily contents of interest from the GitHub response
 github_crosswalk_table = {
     CAT_CODE_REPOSITORY: "html_url",
@@ -218,10 +259,23 @@ release_crosswalk_table = {
     PROP_DATE_PUBLISHED: "published_at",
 }
 
+release_gitlab_crosswalk_table = {
+    PROP_TAG: 'tag_name',
+    PROP_NAME: 'name',
+    PROP_AUTHOR: ['author', 'username'],
+    PROP_DESCRIPTION: 'description',
+    PROP_TARBALL_URL: ['assets', 'sources'],
+    PROP_ZIPBALL_URL: ['assets', 'sources'],
+    PROP_HTML_URL: ['_links', 'self'],
+    PROP_URL: ['_links', 'self'],
+    PROP_RELEASE_ID: 'tag_name',
+    PROP_DATE_CREATED: 'created_at',
+    PROP_DATE_PUBLISHED: "released_at",
+}
 # TO DO: Assess run and download.
 categories_files_header = [CAT_INSTALLATION, CAT_CITATION, CAT_ACKNOWLEDGEMENT, "run", "download", CAT_REQUIREMENTS,
                            CAT_CONTACT, CAT_DESCRIPTION, CAT_CONTRIBUTORS, CAT_DOCUMENTATION, CAT_LICENSE, CAT_USAGE,
-                           CAT_FAQ, CAT_SUPPORT, CAT_IDENTIFIER, CAT_HAS_BUILD_FILE, CAT_EXECUTABLE_EXAMPLE]
+                           CAT_FAQ, CAT_SUPPORT, CAT_IDENTIFIER, CAT_HAS_BUILD_FILE, CAT_EXECUTABLE_EXAMPLE, CAT_KEYWORDS]
 
 # Config to materialize with yarrrml.yml.
 MAPPING_CONFIG = """

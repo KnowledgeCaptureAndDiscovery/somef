@@ -25,7 +25,7 @@ class TestCodemetaExport(unittest.TestCase):
             codemeta_out=cls.json_file,
             pretty=True,
             missing=True,
-            readme_only=True
+            readme_only=False
         )
 
         with open(cls.json_file, "r") as f:
@@ -54,7 +54,7 @@ class TestCodemetaExport(unittest.TestCase):
         data = text_file.read()
         text_file.close()
 
-        assert "https://w3id.org/codemeta/v3.0" in json.dumps(data), \
+        assert "https://w3id.org/codemeta/3.0" in json.dumps(data), \
         "Json must be contained codemeta version 3"
 
         os.remove(json_file_path)
@@ -152,6 +152,57 @@ class TestCodemetaExport(unittest.TestCase):
         assert "license" in self.json_content, "Missing 'license' field in JSON"
         assert "identifier" in self.json_content["license"], "Missing 'identifier' in license"
     
+    def test_development_status(self):
+        """Checks that if exist the repository status"""
+        assert "developmentStatus" in self.json_content, "Missing developmentStatus in JSON"
+
+    def test_reference_publication_url_natural_language(self):
+
+        """Checks that referencePublication contains a ScholarlyArticle with a URL in citation natural language"""
+        assert "referencePublication" in self.json_content, "Missing referencePublication in JSON"
+        assert isinstance(self.json_content["referencePublication"], list), "referencePublication should be a list"
+        assert any("url" in pub for pub in self.json_content["referencePublication"]), "No URL found in referencePublication"
+
+    def test_date_published(self):
+        """Checks that if exist the first date published"""
+        assert "datePublished" in self.json_content, "Missing first date published in JSON"
+
+    def test_author_in_reference_publication(self):
+        """Checks that if exist expected author in referencePublication"""
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=test_data_path + "README-widoco.md",
+                          in_file=None,
+                          output=None,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=test_data_path + 'test_authors_reference.json',
+                          pretty=True,
+                          missing=True)
+        json_file_path = test_data_path + "test_authors_reference.json"
+        # check if the file has been created in the correct path
+        assert os.path.exists(json_file_path), f"File {json_file_path} doesn't exist."
+
+        with open(test_data_path + "test_authors_reference.json", "r") as text_file:
+            data = json.load(text_file) 
+
+        expected_family_name = "Garijo"
+        expected_given_name = "Daniel"
+
+        found = any(
+            any(
+                author.get("familyName") == expected_family_name and author.get("givenName") == expected_given_name
+                for author in ref.get("author", [])
+            )
+            for ref in data["referencePublication"]
+        )
+        
+        assert "referencePublication" in data, "Key 'referencePublication' is missing in JSON"
+        assert isinstance(data["referencePublication"], list), "'referencePublication' is not a list"
+        assert found, f"Author {expected_given_name} {expected_family_name} not found in referencePublication"
+        os.remove(json_file_path)
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""
