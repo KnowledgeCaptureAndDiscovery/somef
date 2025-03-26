@@ -11,7 +11,7 @@ class TestCodemetaGitlabExport(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        """Ejecuta somef_cli una sola vez y guarda el JSON"""
+        """Run somef_cli just once and save the JSON"""
         cls.json_file = test_data_path + "test_json_codemeta_gitlab_export.json"
         
         somef_cli.run_cli(threshold=0.8,

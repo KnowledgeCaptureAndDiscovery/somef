@@ -119,7 +119,7 @@ CAT_SUPPORT_CHANNELS = "support_channels"
 CAT_USAGE = "usage"
 CAT_WORKFLOWS = "workflows"
 CAT_TYPE = "type"
-CAT_CONTINUOS_INTEGRATION= "continuousintegration"
+CAT_CONTINUOS_INTEGRATION= "continuousIntegration"
 
 # Special category: missing categories
 CAT_MISSING = "somef_missing_categories"
@@ -221,8 +221,8 @@ GITHUB_API = "https://api.github.com/repos"
 # Spdx url
 SPDX_BASE = "https://spdx.org/licenses/"
 
-# Development status. 
-DEVELOPMENT_STATUS = "developmentStatus"
+# Codeowners file
+CODEOWNERS_FILE = "CODEOWNERS"
 
 # Crosswalk to retrieve easily contents of interest from the GitHub response
 github_crosswalk_table = {

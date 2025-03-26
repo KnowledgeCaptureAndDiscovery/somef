@@ -132,7 +132,7 @@ class TestJSONExport(unittest.TestCase):
         os.remove(test_data_path + "test_issue_629.json")
 
     def test_issue_651(self):
-        """Checks if keywords is missing categories because is empty"""
+        """Checks if keywords is in the missing categories because is empty"""
         somef_cli.run_cli(threshold=0.8,
                           ignore_classifiers=False,
                           repo_url=None,
