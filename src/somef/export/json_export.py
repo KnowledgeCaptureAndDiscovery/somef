@@ -216,7 +216,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             }
         ]
     if constants.CAT_CITATION in repo_data:
-        url_cit = []
+        # url_cit = []
         codemeta_output["referencePublication"] = []
         scholarlyArticles = {}
         author_orcids = {}
@@ -231,16 +231,27 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             if constants.PROP_FORMAT in cit[constants.PROP_RESULT] and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == "cff":
                 yaml_content = yaml.safe_load(cit[constants.PROP_RESULT]["value"])
                 preferred_citation = yaml_content.get("preferred-citation", {})
+                doi = yaml_content.get("doi") or preferred_citation.get("doi")
+                identifiers = yaml_content.get("identifiers", [])
+                url_citation = preferred_citation.get("url") or yaml_content.get("url")
+
+                identifier_url = next((id["value"] for id in identifiers if id["type"] == "url"), None)
+                identifier_doi = next((id["value"] for id in identifiers if id["type"] == "doi"), None)
+
                 authors = yaml_content.get("authors", [])
 
-                title = normalize_title(preferred_citation.get("title", None))
-                doi = preferred_citation.get("doi", None)
-                url = preferred_citation.get("url", None) 
-                final_url = ''
-                if url:
-                    final_url = url
+                title = normalize_title(preferred_citation.get("title") or yaml_content.get("title"))
+
+                if identifier_doi:
+                    final_url = f"https://doi.org/{identifier_doi}"
                 elif doi:
                     final_url = f"https://doi.org/{doi}"
+                elif identifier_url:
+                    final_url = identifier_url
+                elif url_citation:
+                    final_url = url_citation
+                else:
+                    final_url = ''
 
                 scholarlyArticle[constants.PROP_NAME] = title 
                 scholarlyArticle[constants.CAT_IDENTIFIER] = doi 

@@ -165,6 +165,9 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                        constants.PROP_TYPE: constants.URL
                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION
                                                    )
+                if filename.upper() == constants.CODEOWNERS_FILE:
+                    codeowners_json = parse_codeowners_structured(dir_path,filename)
+
                 if repo_type == constants.RepositoryType.GITLAB: 
                     if filename.endswith(".yml"):
                         analysis = extract_workflows.is_file_workflow_gitlab(os.path.join(repo_dir, file_path))                  
@@ -314,17 +317,28 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
             if format_result == 'cff':
                 yaml_content = yaml.safe_load(file_text)
                 preferred_citation = yaml_content.get("preferred-citation", {})
+                doi = yaml_content.get("doi") or preferred_citation.get("doi")
+                identifiers = yaml_content.get("identifiers", [])
+                url_citation = preferred_citation.get("url") or yaml_content.get("url")
 
-                title = preferred_citation.get("title", None)
-                doi = preferred_citation.get("doi", None)
-                url_citation = preferred_citation.get("url", None) 
+                identifier_url = next((id["value"] for id in identifiers if id["type"] == "url"), None)
+                identifier_doi = next((id["value"] for id in identifiers if id["type"] == "doi"), None)
+    
+                title = yaml_content.get("title") or preferred_citation.get("title", None)
+                # doi = preferred_citation.get("doi", None)
+                # url_citation = preferred_citation.get("url", None) 
                 authors = preferred_citation.get("authors", [])
-                final_url = '';
 
-                if url:
-                    final_url = url_citation
+                if identifier_doi:
+                    final_url = f"https://doi.org/{identifier_doi}"
                 elif doi:
                     final_url = f"https://doi.org/{doi}"
+                elif identifier_url:
+                    final_url = identifier_url
+                elif url_citation:
+                    final_url = url_citation
+                else:
+                    final_url = ''
 
                 author_names = ", ".join(
                     f"{a.get('given-names', '').strip()} {a.get('family-names', '').strip()}".strip()
@@ -338,7 +352,7 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 if final_url:
                     result[constants.PROP_URL] = final_url
                 if doi:
-                    result[constants.PROP_DOI] = doi   
+                    result[constants.PROP_DOI] = doi  
 
             if format_result != "":
                 result[constants.PROP_FORMAT] = format_result
@@ -411,3 +425,17 @@ def extract_gitlab_domain(metadata_result, repo_type):
             
             return domain
     return None  
+
+def parse_codeowners_structured(dir_path, filename):
+    codeowners = []
+
+    with open(os.path.join(dir_path, filename), "r", encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+            if line and not line.startswith("#"):
+                parts = line.split()
+                path = parts[0]  # Primera parte es el path o patrón
+                owners = parts[1:]  # Lo demás son los propietarios
+                codeowners.append({"path": path, "owners": owners})
+
+    return {"codeowners": codeowners}
