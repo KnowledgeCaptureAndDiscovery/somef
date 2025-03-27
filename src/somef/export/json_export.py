@@ -273,7 +273,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                         if orcid:
                             author_entry["@id"] = orcid
                     elif name:
-                        # Organization
+                        # If there is only a name, we assume this to be an Organization
                         author_entry = {
                             "@type": "Organization",
                             "name": name
