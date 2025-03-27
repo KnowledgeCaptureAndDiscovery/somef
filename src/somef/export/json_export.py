@@ -262,15 +262,22 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                     family_name = author.get("family-names")
                     given_name = author.get("given-names")
                     orcid = author.get("orcid")
+                    name = author.get("name")
 
-                    author_entry = {
-                        "@type": "Person",
-                        "familyName": family_name,
-                        "givenName": given_name
-                    }
-
-                    if orcid:
-                        author_entry["@id"] = orcid
+                    if family_name and given_name:
+                        author_entry = {
+                            "@type": "Person",
+                            "familyName": family_name,
+                            "givenName": given_name
+                        }
+                        if orcid:
+                            author_entry["@id"] = orcid
+                    elif name:
+                        # If there is only a name, we assume this to be an Organization
+                        author_entry = {
+                            "@type": "Organization",
+                            "name": name
+                        }
 
                     if family_name and given_name and orcid:
                         key = (family_name.lower(), given_name.lower())
