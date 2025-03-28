@@ -101,7 +101,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                         except ValueError:
                             logging.error("README Error: error while reading file content")
                             logging.error(f"{type(err).__name__} was raised: {err}")
-                if "LICENCE" == filename.upper() or "LICENSE" == filename.upper() or "LICENSE.MD" == filename.upper():
+                if ("LICENCE" == filename.upper() or "LICENSE" == filename.upper() or "LICENSE.MD"== filename.upper()
+                        or "LICENSE.RST"== filename.upper()):
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
