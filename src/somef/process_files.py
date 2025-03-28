@@ -8,7 +8,9 @@ from .utils import constants, markdown_utils
 from . import extract_ontologies, extract_workflows
 from .process_results import Result
 from chardet import detect
-
+from .parser.pom_xml_parser import parse_pom_file
+from .parser.package_json_parser import parse_package_json_file
+from .parser.python_parser import parse_python_metadata
 domain_gitlab = ''
 
 def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner="", repo_name="",
@@ -194,7 +196,58 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                         constants.PROP_VALUE: workflow_url,
                                                         constants.PROP_TYPE: constants.URL
                                                     }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
-                 
+                            
+                 ################################### PACKAGE ##################################
+                if filename.lower() == "pom.xml":
+                    logging.info(f"############### Processing package file: {filename} ############### ")
+                    metadata_result = parse_pom_file(os.path.join(dir_path, filename), metadata_result)
+                    
+                    build_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
+                                                  repo_relative_path, filename)
+                    metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
+                                              {
+                                                  constants.PROP_VALUE: build_file_url,
+                                                  constants.PROP_TYPE: constants.URL,
+                                                  constants.PROP_FORMAT: constants.FORMAT_POM
+                                              },
+                                              1,
+                                              constants.TECHNIQUE_FILE_EXPLORATION, build_file_url)
+
+                if filename.lower() == "package.json":
+                    logging.info(f"############### Processing package file: {filename} ###############")
+                    metadata_result = parse_package_json_file(os.path.join(dir_path, filename), metadata_result)
+                    
+                    build_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
+                                                    repo_relative_path, filename)
+                    metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
+                                                {
+                                                    constants.PROP_VALUE: build_file_url,
+                                                    constants.PROP_TYPE: constants.URL,
+                                                    constants.PROP_FORMAT: constants.FORMAT_NPM
+                                                },
+                                                1,
+                                                constants.TECHNIQUE_FILE_EXPLORATION, build_file_url)
+
+                # There is a problem here, if pyproject.toml and setup.py exit in the same repo, it will only process one of them, specifically the 1st one it detected
+                if filename.lower() == "pyproject.toml":
+                    logging.info(f"############### Processing Python package file: {filename} ###############")
+                    metadata_result = parse_python_metadata(os.path.join(dir_path, filename), metadata_result)
+
+                if filename.lower() == "setup.py":
+                    logging.info(f"############### Processing Python package file: {filename} ###############")
+                    metadata_result = parse_python_metadata(os.path.join(dir_path, filename), metadata_result)
+                    
+                    build_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
+                                                  repo_relative_path, filename)
+                    metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
+                                              {
+                                                  constants.PROP_VALUE: build_file_url,
+                                                  constants.PROP_TYPE: constants.URL,
+                                                  constants.PROP_FORMAT: constants.FORMAT_SETUPTOOLS
+                                              },
+                                              1,
+                                              constants.TECHNIQUE_FILE_EXPLORATION, build_file_url)
+                ################################### PACKAGE ##################################
                 # TO DO: Improve this a bit, as just returning the docs folder is not that informative
             for dir_name in dir_names:
                 if dir_name.lower() == "docs":
