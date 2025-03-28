@@ -189,6 +189,11 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
     if default_branch is None:
         default_branch = general_resp['defaultBranch']
 
+    repo_metadata.add_result(constants.CAT_CODE_REPOSITORY,
+                             {constants.PROP_VALUE: f"https://{url.netloc}/{owner}/{repo_name}/",
+                              constants.PROP_TYPE: constants.URL
+                              }, 1, constants.TECHNIQUE_GITLAB_API)
+
     # filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
     # filtered_resp = {"downloadUrl": f"https://gitlab.com/{owner}/{repo_name}/-/branches"}
     repo_metadata.add_result(constants.CAT_DOWNLOAD_URL,
@@ -648,7 +653,7 @@ def get_project_id(repository_url,self_hosted):
     Parameters:
     -------
     repository_url = url repository
-    self_hosted = boolean that indicate if there es gitlab.com or a selfhosted server
+    self_hosted = boolean that indicate if there es gitlab.com or a self hosted server
     -------
     """
 
