@@ -10,7 +10,7 @@ class TestCodemetaExport(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
-        """Ejecuta somef_cli una sola vez y guarda el JSON"""
+        """Runs somef_cli once and saves the JSON"""
         cls.json_file = test_data_path + "test_json_codemeta_export.json"
         
         somef_cli.run_cli(
