@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 from .utils import constants, markdown_utils
 from . import extract_ontologies, extract_workflows
 from .process_results import Result
+from .regular_expressions import detect_license_spdx
 from chardet import detect
 
 domain_gitlab = ''
@@ -107,6 +108,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_LICENSE)
+
                 if "CODE_OF_CONDUCT" == filename.upper() or "CODE_OF_CONDUCT.MD" == filename.upper():
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
@@ -313,6 +315,12 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 constants.PROP_VALUE: file_text,
                 constants.PROP_TYPE: constants.FILE_DUMP
             }
+            if category is constants.CAT_LICENSE:
+                license_text = file_text
+                license_info = detect_license_spdx(license_text)
+                if license_info:
+                    result[constants.PROP_NAME] = license_info['name']
+                    result[constants.PROP_SPDX_ID] = license_info['spdx_id']
             
             # Properties extraction from cff
             if format_result == 'cff':
@@ -440,3 +448,4 @@ def parse_codeowners_structured(dir_path, filename):
                 codeowners.append({"path": path, "owners": owners})
 
     return {"codeowners": codeowners}
+

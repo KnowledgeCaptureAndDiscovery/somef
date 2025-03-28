@@ -10,6 +10,7 @@ from urllib.parse import urlparse, quote
 from .utils import constants
 from . import configuration
 from .process_results import Result
+from .regular_expressions import detect_license_spdx
 
 # Constructs a template HTTP header, which:
 # - has a key for the authorization token if passed via the authorization argument, otherwise
@@ -775,13 +776,3 @@ def get_readme_content(readme_url):
     readme = requests.get(readme_url)
     readme_text = readme.content.decode('utf-8')
     return readme_text
-
-
-def detect_license_spdx(license_text):
-    for license_name, license_info in constants.LICENSES_DICT.items():
-        if re.search(license_info["regex"], license_text, re.IGNORECASE):
-            return {
-                "name": license_name,
-                "spdx_id": f"{license_info['spdx_id']}"
-            }
-    return None
