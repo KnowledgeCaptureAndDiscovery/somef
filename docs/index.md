@@ -18,6 +18,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository  name
 - **Description**: A description of what the software does.
 - **Citation**: Preferred citation (usually in `.bib` form) as the authors have stated in their readme file.
+- **ContinuousIntegration**: Link to a continuous integration service (e.g., GitHub or GitLab actions)
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component
 - **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it.

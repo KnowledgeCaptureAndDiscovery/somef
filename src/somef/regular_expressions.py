@@ -642,3 +642,22 @@ def has_valid_link(link):
 def has_valid_links(link_list):
     """Returns True if the list has at least one valid link."""
     return any(has_valid_link(link) for link in link_list)
+
+def detect_license_spdx(license_text):
+    """
+    Function that given a license text, infers the name and spdx id in a JSON format
+    Parameters
+    ----------
+    license_text
+
+    Returns
+    -------
+    A JSON dictionary with name and spdx id
+    """
+    for license_name, license_info in constants.LICENSES_DICT.items():
+        if re.search(license_info["regex"], license_text, re.IGNORECASE):
+            return {
+                "name": license_name,
+                "spdx_id": f"{license_info['spdx_id']}"
+            }
+    return None

@@ -131,5 +131,25 @@ class TestJSONExport(unittest.TestCase):
 
         os.remove(test_data_path + "test_issue_629.json")
 
+    def test_issue_651(self):
+        """Checks if keywords is in the missing categories because is empty"""
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=test_data_path + "README-panda.md",
+                          in_file=None,
+                          output=test_data_path + "test-651.json",
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=True)
+
+        with open(test_data_path + "test-651.json", "r") as text_file:
+            data = json.load(text_file)
+
+        assert 'keywords' in data.get(constants.CAT_MISSING, []), "Keywords is not in CAT_MISSING" 
+        os.remove(test_data_path + "test-651.json")
+
 if __name__ == '__main__':
     unittest.main()

@@ -21,6 +21,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Code of Conduct**: Link to the code of conduct of the project
 - **Code repository**: Link to the GitHub/GitLab repository used for the extraction
 - **Contact**: Contact person responsible for maintaining a software component
+- **ContinuousIntegration**: Link to continuous integration service
 - **Contribution guidelines**: Text indicating how to contribute to this code repository
 - **Contributors**: Contributors to a software component
 - **Creation date**: Date when the repository was created

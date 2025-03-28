@@ -74,6 +74,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             # if repo_url.rfind("gitlab") > 0:
             # if repo_url.rfind("gitlab.com") > 0:
                 repo_type = constants.RepositoryType.GITLAB
+
             repository_metadata, owner, repo_name, def_branch = process_repository.load_online_repository_metadata(
                 repository_metadata,
                 repo_url,
@@ -81,6 +82,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 repo_type,
                 authorization
             )
+
             # download files and obtain path to download folder
             if readme_only:
                 # download readme only with the information above
@@ -242,6 +244,7 @@ def run_cli(*,
                     repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                              ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
                                              keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder)
+                    
                     if output is not None:
                         output = output.replace(".json","")
                         output = output + "_" + encoded_url + ".json"
