@@ -17,6 +17,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 
 - **Acknowledgement**: Text acknowledging funding sources or contributors
 - **Application domain**: The application domain of the repository. Current supported domains include: Astrophysics, Audio, Computer vision, Graphs, Natural language processing, Reinforcement learning, Semantc web, Sequential. Domains are not mutually exclusive. These domains have been extracted from [awesome lists](https://github.com/topics/awesome-list) and [Papers with code](https://paperswithcode.com/). Find more information in our [documentation](https://somef.readthedocs.io/en/latest/)
+- **Author**: Person or Organization responsable of the project.
 - **Citation**: Preferred citation as the authors have stated in their readme file. SOMEF recognizes Bibtex, Citation File Format files and other means by which authors cite their papers (e.g., by in-text citation)
 - **Code of Conduct**: Link to the code of conduct of the project
 - **Code repository**: Link to the GitHub/GitLab repository used for the extraction
@@ -25,6 +26,9 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Contribution guidelines**: Text indicating how to contribute to this code repository
 - **Contributors**: Contributors to a software component
 - **Creation date**: Date when the repository was created
+- **DateCreated**: Date of creation.
+- **DateModified**: Date of last release.
+- **DatePublished**: Date of first publication.
 - **Description**: A description of what the software does
 - **DockerFile**: Build file(s) to create a Docker image for the target software
 - **Documentation**: Where to find additional documentation about a software component

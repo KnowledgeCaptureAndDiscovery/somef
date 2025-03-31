@@ -171,33 +171,55 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                 if filename.upper() == constants.CODEOWNERS_FILE:
                     codeowners_json = parse_codeowners_structured(dir_path,filename)
 
-                if repo_type == constants.RepositoryType.GITLAB: 
-                    if filename.endswith(".yml"):
-                        analysis = extract_workflows.is_file_workflow_gitlab(os.path.join(repo_dir, file_path))                  
+                # if repo_type == constants.RepositoryType.GITLAB: 
+                if filename.endswith(".yml"):
+                    if repo_type == constants.RepositoryType.GITLAB: 
+                        analysis = extract_workflows.is_file_continuous_integration_gitlab(os.path.join(repo_dir, file_path))                  
                         if analysis:
                             workflow_url_gitlab = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
                                                         repo_dir, repo_relative_path, filename)
-                            metadata_result.add_result(constants.CAT_WORKFLOWS,
-                                                       {
+                            metadata_result.add_result(constants.CAT_CONTINUOS_INTEGRATION,
+                                                    {
                                                         constants.PROP_VALUE: workflow_url_gitlab,
                                                         constants.PROP_TYPE: constants.URL
-                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)                
-                else:
-                    if filename.endswith(".ga") or filename.endswith(".cwl") or filename.endswith(".nf") or (
-                            filename.endswith(".snake") or filename.endswith(
-                        ".smk") or "Snakefile" == filename_no_ext) or filename.endswith(".knwf") or filename.endswith(
-                        ".t2flow") or filename.endswith(".dag") or filename.endswith(".kar") or filename.endswith(
-                        ".wdl"):
-                        analysis = extract_workflows.is_file_workflow(os.path.join(repo_dir, file_path))
-                        if analysis:
+                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
+                        elif extract_workflows.is_file_workflow(os.path.join(repo_dir, file_path)):
+                            workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
+                                                            repo_dir, repo_relative_path, filename)
+                            metadata_result.add_result(constants.CAT_WORKFLOWS,
+                                                        {constants.PROP_VALUE: workflow_url, constants.PROP_TYPE: constants.URL},
+                                                        1, constants.TECHNIQUE_FILE_EXPLORATION)
+                            
+                    elif repo_type == constants.RepositoryType.GITHUB:
+                        if file_path.startswith(".github/workflows/"):
+                            category = constants.CAT_WORKFLOWS
+                        elif filename in [".travis.yml", "azure-pipelines.yml", "jenkinsfile"] or file_path.startswith(".circleci/"):
+                            category = constants.CAT_CONTINUOS_INTEGRATION
+                        else:
+                            category = None 
+
+                        if category:
                             workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
                                                         repo_dir, repo_relative_path, filename)
-                            metadata_result.add_result(constants.CAT_WORKFLOWS,
-                                                    {
-                                                        constants.PROP_VALUE: workflow_url,
-                                                        constants.PROP_TYPE: constants.URL
-                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
-                 
+                            metadata_result.add_result(category,
+                                                    {constants.PROP_VALUE: workflow_url, constants.PROP_TYPE: constants.URL},
+                                                    1, constants.TECHNIQUE_FILE_EXPLORATION)
+                            
+                if filename.endswith(".ga") or filename.endswith(".cwl") or filename.endswith(".nf") or (
+                        filename.endswith(".snake") or filename.endswith(
+                    ".smk") or "Snakefile" == filename_no_ext) or filename.endswith(".knwf") or filename.endswith(
+                    ".t2flow") or filename.endswith(".dag") or filename.endswith(".kar") or filename.endswith(
+                    ".wdl"):
+                    analysis = extract_workflows.is_file_workflow(os.path.join(repo_dir, file_path))
+                    if analysis:
+                        workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
+                                                    repo_dir, repo_relative_path, filename)
+                        metadata_result.add_result(constants.CAT_WORKFLOWS,
+                                                {
+                                                    constants.PROP_VALUE: workflow_url,
+                                                    constants.PROP_TYPE: constants.URL
+                                                }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
+
                 # TO DO: Improve this a bit, as just returning the docs folder is not that informative
             for dir_name in dir_names:
                 if dir_name.lower() == "docs":

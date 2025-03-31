@@ -1,9 +1,9 @@
 import json
 import re
+from datetime import datetime
 import yaml
 from dateutil import parser as date_parser
 from ..utils import constants
-from datetime import datetime
 
 
 def save_json_output(repo_data, out_path, missing, pretty=False):
@@ -86,8 +86,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         "@type": "SoftwareSourceCode"
     }
     if constants.CAT_LICENSE in repo_data:
-        # We mix the name of the license from github API with the URL of the file (if found)
-      
+        # We mix the name of the license from github API with the URL of the file (if found)  
         l_result = {}
         is_gitlab = False
 
@@ -152,8 +151,10 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["programmingLanguage"] = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in repo_data[constants.CAT_PROGRAMMING_LANGUAGES]]
     if constants.CAT_REQUIREMENTS in repo_data:
         codemeta_output["softwareRequirements"] = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in repo_data[constants.CAT_REQUIREMENTS]]
+    if constants.CAT_CONTINUOS_INTEGRATION in repo_data:
+        codemeta_output["continuousIntegration"] = repo_data[constants.CAT_CONTINUOS_INTEGRATION][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_WORKFLOWS in repo_data:
-        codemeta_output["continuousIntegration"] = repo_data[constants.CAT_WORKFLOWS][0][constants.PROP_RESULT][constants.PROP_VALUE]
+        codemeta_output["workflows"] = repo_data[constants.CAT_WORKFLOWS][0][constants.PROP_RESULT][constants.PROP_VALUE] 
     if constants.CAT_RELEASES in repo_data:
         
         latest_date = None
@@ -273,7 +274,9 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                         if orcid:
                             author_entry["@id"] = orcid
                     elif name:
-                        # If there is only a name, we assume this to be an Organization
+                        # If there is only a name, we assume this to be an Organization.
+                        # it could be not enough acurate
+
                         author_entry = {
                             "@type": "Organization",
                             "name": name
