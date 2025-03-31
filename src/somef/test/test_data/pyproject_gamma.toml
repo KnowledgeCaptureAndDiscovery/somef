@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=64.0", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gammalearn"
+dynamic = ["version"]
+description = "A framework to easily train deep learning model on Imaging Atmospheric Cherenkov Telescopes data"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [
+    { name = "M. Jacquemont", email = "jacquemont@lapp.in2p3.fr" },
+    { name = "T. Vuillaume", email = "thomas.vuillaume@lapp.in2p3.fr" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "astropy",
+    "ctapipe",
+    "ctaplot",
+    "dl1_data_handler",
+    "h5py",
+    "indexedconv",
+    "lightning",
+    "lstchain",
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "pillow",
+    "tables",
+    "pot",
+    "pytorch",
+    "scikit-image",
+    "setuptools",
+    "tensorboardX",
+    "torchaudio",
+    "torchmetrics",
+    "torchvision",
+    "tqdm",
+    "wandb",
+]
+
+[project.urls]
+"Homepage" = "https://gammalearn.pages.in2p3.fr/pages/"
+"Repository" = "https://gitlab.in2p3.fr/gammalearn/gammalearn"
+"Documentation" = "https://gammalearn.pages.in2p3.fr/gammalearn/"
+"Bug Tracker" = "https://gitlab.in2p3.fr/gammalearn/gammalearn/-/issues"
+
+[project.optional-dependencies]
+tests = [
+    "myst-parser",
+    "numpydoc",
+    "pytest",
+    "pytest-cov",
+    "recommonmark",
+    "ruff",
+    "sphinx",
+    "sphinx_rtd_theme",
+    "sphinx-argparse",
+    "sphinx-multiversion",
+    "nbsphinx",
+]
+
+[project.scripts]
+gammalearn = "gammalearn.programs.gammalearn:main"
+gl_dl1_to_dl2 = "gammalearn.programs.gl_dl1_to_dl2:main"
+
+[tool.setuptools.package-data]
+myModule = ["data/camera_parameters.h5"]
+
+[tool.setuptools.packages.find]
+include = ["gammalearn*"]
+
+[tool.setuptools_scm]
+version_file = "gammalearn/_version.py"
