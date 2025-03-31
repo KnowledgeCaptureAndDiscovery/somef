@@ -71,6 +71,7 @@ LICENSES_DICT = {
     "The Unlicense": {"regex": REGEXP_UNLICENSE, "spdx_id": "Unlicense"},
 }
 # Categories recognized by SOMEF (they all start by CAT_
+CAT_AUTHORS = "authors"
 CAT_APPLICATION_DOMAIN = "application_domain"
 CAT_ACKNOWLEDGEMENT = "acknowledgement"
 CAT_CITATION = "citation"
@@ -122,7 +123,6 @@ CAT_TYPE = "type"
 CAT_PACKAGE_ID = "package_id"
 CAT_HAS_PACKAGE_FILE = "has_package_file"
 CAT_VERSION = "version"
-CAT_AUTHORS = "authors" ## TO MERGE WIH AUTHOR
 CAT_CONTINUOUS_INTEGRATION= "continuous_integration"
 
 # Special category: missing categories
@@ -191,6 +191,12 @@ FORMAT_DOCKERFILE = "dockerfile"
 FORMAT_DOCKER_COMPOSE = "docker_compose"
 FORMAT_READTHEDOCS = "readthedocs"
 FORMAT_WIKI = "wiki"
+# Package types
+FORMAT_PYTHON_SETUP_PY = "setup.py"
+FORMAT_POM_XML = "pom.xml"
+FORMAT_PYPROJECT_TOML = "pyproject.toml"
+FORMAT_PACKAGE_JSON = "package.json"
+
 
 # Result types: data types
 STRING = "String"
@@ -206,6 +212,7 @@ RELEASE = "Release"
 LICENSE = "License"
 PUBLICATION = "Publication"
 LANGUAGE = "Programming_language"
+SOFTWARE_APPLICATION = "Software_application"
 
 # Different techniques
 TECHNIQUE_SUPERVISED_CLASSIFICATION = "supervised_classification"

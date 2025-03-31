@@ -60,18 +60,30 @@ def get_project_data(data):
         project = data["tool"]["poetry"]
     return project
 
-def parse_pyproject_toml(file_path, metadata_result: Result):
+def parse_pyproject_toml(file_path, metadata_result: Result, source):
+    """
+
+    Parameters
+    ----------
+    file_path: path to the package file being analysed
+    metadata_result: Metadata object dictionary
+    source: source of the package file (URL)
+
+    Returns
+    -------
+
+    """
     try:
         if Path(file_path).name == "pyproject.toml":
             metadata_result.add_result(
                 constants.CAT_HAS_PACKAGE_FILE,
                 {
                     "value": "pyproject.toml",
-                    "type": "python",
+                    "type": constants.URL,
                 },
                 1,
                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                file_path
+                source
             )
             with open(file_path, "rb") as f:
                 data = tomli.load(f)
@@ -87,7 +99,7 @@ def parse_pyproject_toml(file_path, metadata_result: Result):
                         },
                         1,
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                        file_path
+                        source
                     )
                 
                 if "description" in project:
@@ -99,7 +111,7 @@ def parse_pyproject_toml(file_path, metadata_result: Result):
                         },
                         1,
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                        file_path
+                        source
                     )
                 
                 if "version" in project:
@@ -112,7 +124,7 @@ def parse_pyproject_toml(file_path, metadata_result: Result):
                         },
                         1,
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                        file_path
+                        source
                     )
                 
                 dependencies = project.get("dependencies", [])
@@ -125,11 +137,11 @@ def parse_pyproject_toml(file_path, metadata_result: Result):
                                 {
                                     "value": req, 
                                     "version": version, 
-                                    "type": "dependency"
+                                    "type": constants.SOFTWARE_APPLICATION
                                 },
                                 1,
                                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                                file_path
+                                source
                             )
                 elif isinstance(dependencies, dict):
                     for name, version in dependencies.items():
@@ -140,11 +152,11 @@ def parse_pyproject_toml(file_path, metadata_result: Result):
                                 "value": req, 
                                 "name": name, 
                                 "version": version, 
-                                "type": "dependency"
+                                "type": constants.SOFTWARE_APPLICATION
                             },
                             1,
                             constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                            file_path
+                            source
                         )
                 
                 
@@ -169,7 +181,7 @@ def parse_pyproject_toml(file_path, metadata_result: Result):
                         },
                         1,
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                        file_path
+                        source
                     )
                 
                 authors = project.get("authors", [])
@@ -179,17 +191,18 @@ def parse_pyproject_toml(file_path, metadata_result: Result):
                             author_data = {
                                 "name": author.get("name"),
                                 "email": author.get("email"),
-                                "url": author.get("url"),
-                                "type": "author",
+                                "type": constants.AGENT,
                                 "value": author.get("name")
                             }
+                            if author.get("url") is not None:
+                                author_data["url"] = author.get("url")
                         else:
                 
                             parsed = parse_author_string(author)
                             author_data = {
                                 "name": parsed["name"],
                                 "email": parsed["email"],
-                                "type": "author",
+                                "type": constants.AGENT,
                                 "value": parsed["name"]
                             }
                         
@@ -198,7 +211,7 @@ def parse_pyproject_toml(file_path, metadata_result: Result):
                             author_data,
                             1,
                             constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                            file_path
+                            source
                         )
 
                 if "license" in project:
@@ -223,7 +236,7 @@ def parse_pyproject_toml(file_path, metadata_result: Result):
                         },
                         1,
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                        file_path
+                        source
                     )
                 
                 if "keywords" in project:
@@ -236,7 +249,7 @@ def parse_pyproject_toml(file_path, metadata_result: Result):
                             },
                             1,
                             constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                            file_path
+                            source
                         )
                 
     except Exception as e:
@@ -245,7 +258,19 @@ def parse_pyproject_toml(file_path, metadata_result: Result):
     return metadata_result    
     
 ################################ setup.py #########################################
-def parse_setup_py(file_path, metadata_result: Result):
+def parse_setup_py(file_path, metadata_result: Result, source):
+    """
+
+    Parameters
+    ----------
+    file_path: file path of the package files being assessed.
+    metadata_result: metadata dictionary object
+    source: source file being assessed (URL)
+
+    Returns
+    -------
+
+    """
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             try:
@@ -281,12 +306,12 @@ def parse_setup_py(file_path, metadata_result: Result):
                                         },
                                         1,
                                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                                        file_path
+                                        source
                                     )
                                 except (ValueError, SyntaxError):
                                     pass
                                     
-                            elif keyword.arg == "author" or keyword.arg == "AUTHOR":
+                            elif keyword.arg.lower() == "author" :
                                 try:
                                     if isinstance(keyword.value, ast.Name) and keyword.value.id in module_vars:
                                         value = module_vars[keyword.value.id]
@@ -298,11 +323,11 @@ def parse_setup_py(file_path, metadata_result: Result):
                                         {
                                             "name": value,
                                             "email": None,
-                                            "type": "author",
+                                            "type": constants.AGENT,
                                         },
                                         1,
                                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                                        file_path
+                                        source
                                     )
                                 except (ValueError, SyntaxError):
                                     pass
@@ -324,12 +349,12 @@ def parse_setup_py(file_path, metadata_result: Result):
                                             {
                                                 "name": None,
                                                 "email": value,
-                                                "type": "author",
+                                                "type": constants.AGENT,
                                                 "value": value
                                             },
                                             1,
                                             constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                                            file_path
+                                            source
                                         )
                                 except (ValueError, SyntaxError):
                                     pass
@@ -349,7 +374,7 @@ def parse_setup_py(file_path, metadata_result: Result):
                                         },
                                         1,
                                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                                        file_path
+                                        source
                                     )
                                 except (ValueError, SyntaxError):
                                     pass
@@ -369,7 +394,7 @@ def parse_setup_py(file_path, metadata_result: Result):
                                         },
                                         1,
                                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                                        file_path
+                                        source
                                     )
                                 except (ValueError, SyntaxError):
                                     pass
@@ -389,7 +414,7 @@ def parse_setup_py(file_path, metadata_result: Result):
                                         },
                                         1,
                                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                                        file_path
+                                        source
                                     )
                                 except (ValueError, SyntaxError):
                                     pass
@@ -417,7 +442,7 @@ def parse_setup_py(file_path, metadata_result: Result):
                                             },
                                             1,
                                             constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                                            file_path
+                                            source
                                         )
                                 except (ValueError, SyntaxError):
                                     pass
@@ -432,20 +457,21 @@ def parse_setup_py(file_path, metadata_result: Result):
                                     if isinstance(value, list):
                                         for classifier in value:
                                             if "Programming Language :: Python" in classifier:
-                                                if " :: " in classifier:
-                                                    parts = classifier.split(" :: ")
-                                                    if len(parts) > 2 and parts[1] == "Python":
-                                                        python_version = parts[2]
-                                                        metadata_result.add_result(
-                                                            constants.CAT_PROGRAMMING_LANGUAGES,
-                                                            {
-                                                                "value": f"Python {python_version}",
-                                                                "type": constants.STRING
-                                                            },
-                                                            1,
-                                                            constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                                                            file_path
-                                                        )
+                                                metadata_result.add_result(
+                                                    constants.CAT_PROGRAMMING_LANGUAGES,
+                                                    {
+                                                        "value": "Python",
+                                                        "type": constants.STRING
+                                                    },
+                                                    1,
+                                                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                                                    source
+                                                )
+                                                # TO DO extract version (if available) and add it as a "version" field
+                                                # if " :: " in classifier:
+                                                #     parts = classifier.split(" :: ")
+                                                #     if len(parts) > 2 and parts[1] == "Python":
+                                                #         python_version = parts[2]
                                                         
                                 except (ValueError, SyntaxError):
                                     pass

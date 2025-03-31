@@ -1,5 +1,7 @@
 import logging
 import lxml.etree
+from nltk.sem.hole import Constants
+
 from ..process_results import Result
 from ..utils import constants
 """
@@ -17,7 +19,19 @@ def parse_node(node):
             key = subnode.tag[len(POM_NAMESPACE) + 2 :]
             yield key, subnode
 
-def parse_pom_file(file_path, metadata_result: Result):
+def parse_pom_file(file_path, metadata_result: Result, source):
+    """
+
+    Parameters
+    ----------
+    file_path: path to the package file being analysed
+    metadata_result: metadata result where all categories are saved
+    source: Source of the file being processed
+
+    Returns
+    -------
+
+    """
     global processed_pom
     if processed_pom:
         logging.info(f"Skipping POM file {file_path} as another POM file was already processed")
@@ -76,11 +90,11 @@ def parse_pom_file(file_path, metadata_result: Result):
                 constants.CAT_PACKAGE_ID,
                 {
                     "value": identifier_value,
-                    "type": "string"
+                    "type": constants.STRING
                 },
                 1,
                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                file_path
+                source
             )
 
         if version_value:
@@ -88,23 +102,23 @@ def parse_pom_file(file_path, metadata_result: Result):
                 constants.CAT_VERSION,
                 {
                     "value": version_value,
-                    "type": "release"
+                    "type": constants.RELEASE
                 },
                 1,
                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                file_path
+                source
             )
         
         if project_data["issue_tracker"]:
             metadata_result.add_result(
-                constants.CAT_SCM,
+                constants.CAT_ISSUE_TRACKER,
                 {
                     "value": project_data["issue_tracker"],
-                    "type": "url"
+                    "type": constants.URL
                 },
                 1,
                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                file_path
+                source
             )
     
         if project_data["scm_url"]:
@@ -112,11 +126,11 @@ def parse_pom_file(file_path, metadata_result: Result):
                 constants.CAT_PACKAGE_DISTRIBUTION,
                 {
                     "value": project_data["scm_url"],
-                    "type": "url"
+                    "type": constants.URL
                 },
                 1,
                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                file_path
+                source
             )
 
         if project_data["dependencies"]	:
@@ -124,11 +138,11 @@ def parse_pom_file(file_path, metadata_result: Result):
                 constants.CAT_REQUIREMENTS ,
                 {
                     "value": project_data["dependencies"],
-                    "type": "url"
+                    "type": constants.URL
                 },
                 1,
                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                file_path
+                source
             )
         
         if project_data["developers"]	:
@@ -136,11 +150,11 @@ def parse_pom_file(file_path, metadata_result: Result):
                 constants.CAT_AUTHORS ,
                 {
                     "value": project_data["developers"],
-                    "type": "string"
+                    "type": constants.URL
                 },
                 1,
                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                file_path
+                source
             )
 
         if repositories:
@@ -148,11 +162,11 @@ def parse_pom_file(file_path, metadata_result: Result):
                 constants.CAT_PACKAGE_DISTRIBUTION,
                 {
                     "value": repositories,
-                    "type": "url"
+                    "type": constants.URL
                 },
                 1,
                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                file_path
+                source
             )
 
         metadata = {}
@@ -164,11 +178,11 @@ def parse_pom_file(file_path, metadata_result: Result):
             constants.CAT_HAS_PACKAGE_FILE,
             {
                 "value": "pom.xml",
-                "type": "maven"
+                "type": constants.URL
             },
             1,
             constants.TECHNIQUE_CODE_CONFIG_PARSER,
-            file_path
+            source
         )
         
         processed_pom = True
@@ -209,7 +223,7 @@ def parse_developers(developers_node):
                 "email": None,
                 "url": None,
                 "organization": None,
-                "type": "author"
+                "type": constants.AGENT
             }
             for key2, node2 in parse_node(node):
                 if key2 == "name" and node2.text:
@@ -224,15 +238,6 @@ def parse_developers(developers_node):
 
             if not author_data["value"]:
                 author_data["value"] = author_data["email"] or author_data["organization"]
-            
-            metadata_result.add_result(
-                constants.CAT_AUTHORS,
-                author_data,
-                1,
-                constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                file_path
-            )
-            
             dev_data.update({k: v for k, v in author_data.items() if k != "type"})
             developers.append(dev_data)
     return developers

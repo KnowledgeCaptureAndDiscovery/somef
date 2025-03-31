@@ -8,7 +8,19 @@ This code is inspired by Codemeta Project parsers, specifically nodejs.py
 https://github.com/proycon/codemetapy/blob/master/codemeta/parsers/nodejs.py
 """
 
-def parse_package_json_file(file_path, metadata_result: Result):
+def parse_package_json_file(file_path, metadata_result: Result, source):
+    """
+
+    Parameters
+    ----------
+    file_path: path of the package file being analysed
+    metadata_result: metadata object where the metadata dictionary is kept
+    source: source of the package file (URL)
+
+    Returns
+    -------
+
+    """
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
@@ -21,7 +33,7 @@ def parse_package_json_file(file_path, metadata_result: Result):
                         "type": constants.STRING},
                     1,
                     constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                    file_path
+                    source
                 )
             
             if "description" in data:
@@ -32,7 +44,7 @@ def parse_package_json_file(file_path, metadata_result: Result):
                         "type": constants.STRING},
                     1,
                     constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                    file_path
+                    source
                 )
             
             if "version" in data:
@@ -44,7 +56,7 @@ def parse_package_json_file(file_path, metadata_result: Result):
                     },
                     1,
                     constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                    file_path
+                    source
                 )
 
             repo_url = parse_repository(data.get("repository"))
@@ -56,7 +68,7 @@ def parse_package_json_file(file_path, metadata_result: Result):
                         "type": constants.URL},
                     1,
                     constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                    file_path
+                    source
                 )
             
             parsed_bugs_url = parse_bugs(data.get("bugs"))
@@ -68,35 +80,37 @@ def parse_package_json_file(file_path, metadata_result: Result):
                         "type": constants.URL},
                     1,
                     constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                    file_path
+                    source
                 )
 
             author_info = parse_author(data.get("author"))
             if author_info:
                 if isinstance(author_info, dict):
-                    metadata_result.add_result(
-                        constants.CAT_AUTHORS,
-                        {
+                    result = {
                             "name": author_info.get("name"),
                             "email": author_info.get("email"),
-                            "url": author_info.get("url"),
-                            "type": "author",
+                            "type": constants.AGENT,
                             "value": author_info.get("name")
-                        },
+                        }
+                    if author_info.get("url") is not None:
+                        result["url"] = author_info.get("url")
+                    metadata_result.add_result(
+                        constants.CAT_AUTHORS,
+                        result,
                         1,
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                        file_path
+                        source
                     )
                 else:
                     metadata_result.add_result(
                         constants.CAT_AUTHORS,
                         {
                             "name": author_info, 
-                            "type": "author",
+                            "type": constants.AGENT,
                             "value": author_info},
                         1,
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                        file_path
+                        source
                     )
             
             license_value = parse_license(data.get("license"))
@@ -109,7 +123,7 @@ def parse_package_json_file(file_path, metadata_result: Result):
                     },
                     1,
                     constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                    file_path
+                    source
                 )
             
             if "keywords" in data and isinstance(data["keywords"], list):
@@ -121,7 +135,7 @@ def parse_package_json_file(file_path, metadata_result: Result):
                             "type": constants.STRING},
                         1,
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                        file_path
+                        source
                     )
             
             deps = {}
@@ -136,22 +150,22 @@ def parse_package_json_file(file_path, metadata_result: Result):
                         "value": req, 
                         "name": name, 
                         "version": version, 
-                        "type": "dependency"
+                        "type": constants.SOFTWARE_APPLICATION
                     },
                     1,
                     constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                    file_path
+                    source
                 )
 
             metadata_result.add_result(
                 constants.CAT_HAS_PACKAGE_FILE,
                 {
                     "value": "package.json",
-                    "type": "npm",
+                    "type": constants.URL,
                 },
                 1,
                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                file_path
+                source
             )
 
     except json.JSONDecodeError as e:
