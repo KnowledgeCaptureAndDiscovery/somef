@@ -6,11 +6,12 @@ from ..process_results import Result
 from ..utils import constants
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
+test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
 
 class TestPythonParser(unittest.TestCase):
     
     def test_parse_pyproject_toml(self):
-        pyproject_path = test_data_path + "pyproject_gamma.toml"
+        pyproject_path = test_data_repositories + os.path.sep+ "gammalearn"+ os.path.sep+ "pyproject.toml"
         result = Result()
 
         metadata_result = parse_pyproject_toml(pyproject_path, result)    
@@ -24,6 +25,7 @@ class TestPythonParser(unittest.TestCase):
         print(f"Full result content: {metadata_result.results}")
         
         package_id = metadata_result.results.get(constants.CAT_PACKAGE_ID, [])
+        print(package_id)
         self.assertTrue(len(package_id) > 0, "No identifier found")
         self.assertEqual(package_id[0]["result"]["value"], "gammalearn")
         
@@ -57,7 +59,7 @@ class TestPythonParser(unittest.TestCase):
         
         self.assertIn(constants.CAT_REQUIREMENTS, result.results)
         dependencies = result.results[constants.CAT_REQUIREMENTS]
-        self.assertEqual(len(dependencies), 25) 
+        self.assertEqual(len(dependencies), 23)
 
 if __name__ == "__main__":
     unittest.main()

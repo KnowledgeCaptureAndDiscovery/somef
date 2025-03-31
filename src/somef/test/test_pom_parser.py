@@ -8,11 +8,12 @@ from somef.utils import constants
 
 # Test data for tests
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
+test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
 
 class TestPomParser(unittest.TestCase):
 
     def test_parse_pom_file(self):
-        pom_file_path = test_data_path + "pom_widoco.xml"
+        pom_file_path = test_data_repositories + os.path.sep + "Widoco" + os.path.sep + "pom.xml"
         result = Result()
     
         metadata_result = parse_pom_file(pom_file_path, result)
@@ -64,7 +65,7 @@ class TestPomParser(unittest.TestCase):
                       if r["result"].get("type") == "url" and isinstance(r["result"]["value"], str)]
         self.assertEqual(len(scm_results), 0, "SCM URL should not exist in this POM")
 
-        issue_results = metadata_result.results.get(constants.CAT_SCM, [])
+        issue_results = metadata_result.results.get(constants.CAT_ISSUE_TRACKER, [])
         self.assertEqual(len(issue_results), 0, "Issue tracker should not exist in this POM")
 
         author_results = metadata_result.results.get(constants.CAT_AUTHORS, [])

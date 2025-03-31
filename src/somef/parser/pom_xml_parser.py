@@ -33,6 +33,7 @@ def parse_pom_file(file_path, metadata_result: Result):
         group_id = None
         artifact_id = None
         version_value = None
+        repositories = None
 
         project_data = {
             "identifier": None,
