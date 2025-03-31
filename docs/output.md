@@ -67,14 +67,16 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 
 - `application_domain`: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects). See all current recognized application domains [here](https://somef.readthedocs.io/en/latest/#myfootnote1).
 - `acknowledgement`: Any text that the authors have prepared to acknnowledge the contribution from others, or project funding.
+- `author`: Person or organization responsible of the project. This property is also used to indicate the responsible entities of a publication associated with the code repository.
 - `contributors`: Contributors to a software component
 - `contributing guidelines`: Guidelines indicating how to contribute to a software component.
 - `citation`: Software citation (usually in `.bib` form) as the authors have stated in their readme file, or through a `CFF` file.
 - `code_of_conduct`: Link to the code of conduct file of the project
 - `code_repository`: Link to the source code (typically the repository where the readme can be found)
 - `contact`: Contact person responsible for maintaining a software component.
-- `continuousIntegration`: Link to continuous integration service, supported on GitHub as well as in GitLab.
+- `continuous_integration`: Link to continuous integration service, supported on GitHub as well as in GitLab.
 - `date_created`: Date when the software component was created.
+- `date_published`: Date of first release.
 - `date_updated`: Date when the software component was last updated (note that this will always be older than the date of the extraction).
 - `description`: A description of what the software component does.
 - `documentation`: Where to find additional documentation about a software component.
@@ -112,7 +114,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `support`: Guidelines and links of where to obtain support for a software component.
 - `support_channels`: Help channels one can use to get support about the target software component.
 - `usage`: Usage examples and considerations of a code repository.
-- `workflows`: URL and path to the workflow files present in the repository.
+- `workflows`: URL and path to the computational workflow files present in the repository.
 - `type`: Software type: Commandline Application, Notebook Application, Ontology, Workflow. Non-Software types: Static Website, Uncategorized
 
 The following table summarized the properties used to describe a `category`:

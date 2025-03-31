@@ -38,7 +38,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Keywords**: set of terms used to commonly identify a software component
 - **Source code**: Link to the source code (typically the repository where the readme can be found)
 - **Releases**: Pointer to the available versions of a software component
-- **Changelog**: Description of the changes between versions
+- **Changelog**: Description of the changes between versions (Description of release).
 - **Issue tracker**: Link where to open issues for the target repository
 - **Programming languages**: Languages used in the repository
 - **Repository Status**: Repository status as it is described in [repostatus.org](https://www.repostatus.org/)
