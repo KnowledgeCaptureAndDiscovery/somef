@@ -27,7 +27,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Contributors**: Contributors to a software component
 - **Creation date**: Date when the repository was created
 - **Date modified**: Date of last release.
-- **DatePublished**: Date of first publication.
+- **Date published**: Date when the project was first published (first release).
 - **Description**: A description of what the software does
 - **DockerFile**: Build file(s) to create a Docker image for the target software
 - **Documentation**: Where to find additional documentation about a software component
