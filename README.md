@@ -17,6 +17,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 
 - **Acknowledgement**: Text acknowledging funding sources or contributors
 - **Application domain**: The application domain of the repository. Current supported domains include: Astrophysics, Audio, Computer vision, Graphs, Natural language processing, Reinforcement learning, Semantc web, Sequential. Domains are not mutually exclusive. These domains have been extracted from [awesome lists](https://github.com/topics/awesome-list) and [Papers with code](https://paperswithcode.com/). Find more information in our [documentation](https://somef.readthedocs.io/en/latest/)
+- **Author**: Person or organization responsible of the project. This property is also used to indicate the responsible entities of a publication associated with the code repository.
 - **Citation**: Preferred citation as the authors have stated in their readme file. SOMEF recognizes Bibtex, Citation File Format files and other means by which authors cite their papers (e.g., by in-text citation)
 - **Code of Conduct**: Link to the code of conduct of the project
 - **Code repository**: Link to the GitHub/GitLab repository used for the extraction
@@ -25,6 +26,8 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Contribution guidelines**: Text indicating how to contribute to this code repository
 - **Contributors**: Contributors to a software component
 - **Creation date**: Date when the repository was created
+- **Date modified**: Date of last release.
+- **Date published**: Date when the project was first published (first release).
 - **Description**: A description of what the software does
 - **DockerFile**: Build file(s) to create a Docker image for the target software
 - **Documentation**: Where to find additional documentation about a software component
@@ -58,7 +61,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Scripts**: Snippets of code contained in the repository
 - **Support channels**: Help channels one can use to get support about the target software component
 - **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it
-- **Workflows**: URL and path to the workflow files present in the repository
+- **Workflows**: URL and path to the computational workflow files present in the repository
 
 We use different supervised classifiers, header analysis, regular expressions and the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description](https://somef.readthedocs.io/en/latest/output/)
 

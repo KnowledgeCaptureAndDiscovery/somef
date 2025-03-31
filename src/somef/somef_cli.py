@@ -71,10 +71,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 bGitLab = True
 
             if bGitLab:
-            # if repo_url.rfind("gitlab") > 0:
-            # if repo_url.rfind("gitlab.com") > 0:
                 repo_type = constants.RepositoryType.GITLAB
-
             repository_metadata, owner, repo_name, def_branch = process_repository.load_online_repository_metadata(
                 repository_metadata,
                 repo_url,

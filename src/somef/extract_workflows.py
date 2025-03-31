@@ -24,7 +24,7 @@ def is_file_workflow(file_path):
         except Exception:
             pass
 
-def is_file_workflow_gitlab(file_path):
+def is_file_continuous_integration_gitlab(file_path):
     """Detects if a file is a GitLab CI/CD pipeline."""
     with open(file_path, 'r') as file:
         content = file.read()
