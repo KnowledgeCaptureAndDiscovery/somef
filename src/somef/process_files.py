@@ -8,6 +8,10 @@ from .utils import constants, markdown_utils
 from . import extract_ontologies, extract_workflows
 from .process_results import Result
 from .regular_expressions import detect_license_spdx
+from .parser.pom_xml_parser import parse_pom_file
+from .parser.package_json_parser import parse_package_json_file
+from .parser.python_parser import parse_pyproject_toml
+from .parser.python_parser import parse_setup_py
 from chardet import detect
 
 domain_gitlab = ''
@@ -170,7 +174,54 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                    )
                 if filename.upper() == constants.CODEOWNERS_FILE:
                     codeowners_json = parse_codeowners_structured(dir_path,filename)
+                if filename.lower() == "pom.xml":
+                    logging.info(f"############### Processing package file: {filename} ############### ")
+                    metadata_result = parse_pom_file(os.path.join(dir_path, filename), metadata_result)
+                    
+                    build_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
+                                                  repo_relative_path, filename)
+                    metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
+                                              {
+                                                  constants.PROP_VALUE: build_file_url,
+                                                  constants.PROP_TYPE: constants.URL,
+                                                  constants.PROP_FORMAT: "maven"
+                                              },
+                                              1,
+                                              constants.TECHNIQUE_FILE_EXPLORATION, build_file_url)
 
+                if filename.lower() == "package.json":
+                    logging.info(f"############### Processing package file: {filename} ###############")
+                    metadata_result = parse_package_json_file(os.path.join(dir_path, filename), metadata_result)
+                    
+                    build_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
+                                                    repo_relative_path, filename)
+                    metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
+                                                {
+                                                    constants.PROP_VALUE: build_file_url,
+                                                    constants.PROP_TYPE: constants.URL,
+                                                    constants.PROP_FORMAT: "npm"
+                                                },
+                                                1,
+                                                constants.TECHNIQUE_FILE_EXPLORATION, build_file_url)
+
+                if filename.lower() == "pyproject.toml":
+                    logging.info(f"############### Processing Python package file: {filename} ###############")
+                    metadata_result = parse_pyproject_toml(os.path.join(dir_path, filename), metadata_result)
+
+                if filename.lower() == "setup.py":
+                    logging.info(f"############### Processing Python package file: {filename} ###############")
+                    metadata_result = parse_setup_py(os.path.join(dir_path, filename), metadata_result)
+                    
+                    build_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
+                                                  repo_relative_path, filename)
+                    metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
+                                              {
+                                                  constants.PROP_VALUE: build_file_url,
+                                                  constants.PROP_TYPE: constants.URL,
+                                                  constants.PROP_FORMAT: "setup.py"
+                                              },
+                                              1,
+                                              constants.TECHNIQUE_FILE_EXPLORATION, build_file_url)
                 # if repo_type == constants.RepositoryType.GITLAB: 
                 if filename.endswith(".yml"):
                     if repo_type == constants.RepositoryType.GITLAB: 
@@ -187,9 +238,10 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
                                                             repo_dir, repo_relative_path, filename)
                             metadata_result.add_result(constants.CAT_WORKFLOWS,
-                                                        {constants.PROP_VALUE: workflow_url, constants.PROP_TYPE: constants.URL},
-                                                        1, constants.TECHNIQUE_FILE_EXPLORATION)
-                            
+                                                    {
+                                                        constants.PROP_VALUE: workflow_url,
+                                                        constants.PROP_TYPE: constants.URL
+                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)        
                     elif repo_type == constants.RepositoryType.GITHUB:
                         # if file_path.startswith(".github/workflows/"):
                         #     category = constants.CAT_WORKFLOWS

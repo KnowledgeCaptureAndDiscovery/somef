@@ -119,6 +119,10 @@ CAT_SUPPORT_CHANNELS = "support_channels"
 CAT_USAGE = "usage"
 CAT_WORKFLOWS = "workflows"
 CAT_TYPE = "type"
+CAT_PACKAGE_ID = "package_id"
+CAT_HAS_PACKAGE_FILE = "has_package_file"
+CAT_VERSION = "version"
+CAT_AUTHORS = "authors" ## TO MERGE WIH AUTHOR
 CAT_CONTINUOUS_INTEGRATION= "continuous_integration"
 
 # Special category: missing categories
