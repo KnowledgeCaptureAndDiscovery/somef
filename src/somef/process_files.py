@@ -8,6 +8,10 @@ from .utils import constants, markdown_utils
 from . import extract_ontologies, extract_workflows
 from .process_results import Result
 from .regular_expressions import detect_license_spdx
+from .parser.pom_xml_parser import parse_pom_file
+from .parser.package_json_parser import parse_package_json_file
+from .parser.python_parser import parse_pyproject_toml
+from .parser.python_parser import parse_setup_py
 from chardet import detect
 
 domain_gitlab = ''
@@ -170,34 +174,84 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                    )
                 if filename.upper() == constants.CODEOWNERS_FILE:
                     codeowners_json = parse_codeowners_structured(dir_path,filename)
+                    # TO DO: Code owners not fully implemented yet
+                if filename.lower() == "pom.xml" or filename.lower() == "package.json" or \
+                    filename.lower() == "pyproject.toml" or filename.lower() == "setup.py":
+                        build_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
+                                                       repo_dir,
+                                                       repo_relative_path, filename)
+                        metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
+                                               {
+                                                   constants.PROP_VALUE: build_file_url,
+                                                   constants.PROP_TYPE: constants.URL,
+                                                   constants.PROP_FORMAT: filename.lower()
+                                               },
+                                               1,
+                                               constants.TECHNIQUE_FILE_EXPLORATION, build_file_url)
+                        logging.info(f"############### Processing package file: {filename} ############### ")
+                        if filename.lower() == "pom.xml":
+                            metadata_result = parse_pom_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
+                        if filename.lower() == "package.json":
+                            metadata_result = parse_package_json_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
+                        if filename.lower() == "pyproject.toml":
+                            metadata_result = parse_pyproject_toml(os.path.join(dir_path, filename), metadata_result, build_file_url)
+                        if filename.lower() == "setup.py":
+                            metadata_result = parse_setup_py(os.path.join(dir_path, filename), metadata_result, build_file_url)
 
-                if repo_type == constants.RepositoryType.GITLAB: 
-                    if filename.endswith(".yml"):
-                        analysis = extract_workflows.is_file_workflow_gitlab(os.path.join(repo_dir, file_path))                  
+                # if repo_type == constants.RepositoryType.GITLAB: 
+                if filename.endswith(".yml"):
+                    if repo_type == constants.RepositoryType.GITLAB: 
+                        analysis = extract_workflows.is_file_continuous_integration_gitlab(os.path.join(repo_dir, file_path))                  
                         if analysis:
                             workflow_url_gitlab = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
                                                         repo_dir, repo_relative_path, filename)
-                            metadata_result.add_result(constants.CAT_WORKFLOWS,
-                                                       {
+                            metadata_result.add_result(constants.CAT_CONTINUOUS_INTEGRATION,
+                                                    {
                                                         constants.PROP_VALUE: workflow_url_gitlab,
                                                         constants.PROP_TYPE: constants.URL
-                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)                
-                else:
-                    if filename.endswith(".ga") or filename.endswith(".cwl") or filename.endswith(".nf") or (
-                            filename.endswith(".snake") or filename.endswith(
-                        ".smk") or "Snakefile" == filename_no_ext) or filename.endswith(".knwf") or filename.endswith(
-                        ".t2flow") or filename.endswith(".dag") or filename.endswith(".kar") or filename.endswith(
-                        ".wdl"):
-                        analysis = extract_workflows.is_file_workflow(os.path.join(repo_dir, file_path))
-                        if analysis:
+                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
+                        elif extract_workflows.is_file_workflow(os.path.join(repo_dir, file_path)):
                             workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
-                                                        repo_dir, repo_relative_path, filename)
+                                                            repo_dir, repo_relative_path, filename)
                             metadata_result.add_result(constants.CAT_WORKFLOWS,
                                                     {
                                                         constants.PROP_VALUE: workflow_url,
                                                         constants.PROP_TYPE: constants.URL
-                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
-                 
+                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)        
+                    elif repo_type == constants.RepositoryType.GITHUB:
+                        # if file_path.startswith(".github/workflows/"):
+                        #     category = constants.CAT_WORKFLOWS
+                        # elif filename in [".travis.yml", "azure-pipelines.yml", "jenkinsfile"] or file_path.startswith(".circleci/"):
+                        #     category = constants.CAT_CONTINUOUS_INTEGRATION
+                        # else:
+                        #     category = None
+                        if file_path.startswith(".github/workflows/"):
+                            category = constants.CAT_CONTINUOUS_INTEGRATION
+                        else:
+                            category = None
+
+                        if category:
+                            workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
+                                                        repo_dir, repo_relative_path, filename)
+                            metadata_result.add_result(category,
+                                                    {constants.PROP_VALUE: workflow_url, constants.PROP_TYPE: constants.URL},
+                                                    1, constants.TECHNIQUE_FILE_EXPLORATION)
+                            
+                if filename.endswith(".ga") or filename.endswith(".cwl") or filename.endswith(".nf") or (
+                        filename.endswith(".snake") or filename.endswith(
+                    ".smk") or "Snakefile" == filename_no_ext) or filename.endswith(".knwf") or filename.endswith(
+                    ".t2flow") or filename.endswith(".dag") or filename.endswith(".kar") or filename.endswith(
+                    ".wdl"):
+                    analysis = extract_workflows.is_file_workflow(os.path.join(repo_dir, file_path))
+                    if analysis:
+                        workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
+                                                    repo_dir, repo_relative_path, filename)
+                        metadata_result.add_result(constants.CAT_WORKFLOWS,
+                                                {
+                                                    constants.PROP_VALUE: workflow_url,
+                                                    constants.PROP_TYPE: constants.URL
+                                                }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
+
                 # TO DO: Improve this a bit, as just returning the docs folder is not that informative
             for dir_name in dir_names:
                 if dir_name.lower() == "docs":
