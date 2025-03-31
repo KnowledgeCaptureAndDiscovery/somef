@@ -76,7 +76,6 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `contributing guidelines`: Guidelines indicating how to contribute to a software component.
 - `contributors`: Contributors to a software component
 - `date_created`: Date when the software component was created.
-- `date_published`: Date of first release.
 - `date_updated`: Date when the software component was last updated (note that this will always be older than the date of the extraction).
 - `description`: A description of what the software component does.
 - `documentation`: Where to find additional documentation about a software component.

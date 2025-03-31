@@ -2,6 +2,8 @@ import unittest
 import os
 from pathlib import Path
 
+from nltk.sem.hole import Constants
+
 from somef.parser.package_json_parser import parse_package_json_file
 from somef.process_results import Result
 from somef.utils import constants
@@ -14,7 +16,7 @@ class TestPackageJsonParser(unittest.TestCase):
         package_file_path = test_data_path + "package_neors.json"
         result = Result()
         
-        metadata_result = parse_package_json_file(package_file_path, result)
+        metadata_result = parse_package_json_file(package_file_path, result, "http://example.com/package_neors.json")
         
         package_id_results = metadata_result.results.get(constants.CAT_PACKAGE_ID, [])
         self.assertTrue(len(package_id_results) > 0, "No package ID found")
@@ -46,7 +48,7 @@ class TestPackageJsonParser(unittest.TestCase):
         author_results = metadata_result.results.get(constants.CAT_AUTHORS, [])
         self.assertTrue(len(author_results) > 0, "No author found")
         self.assertEqual(author_results[0]["result"]["name"], "Qianqian Fang <q.fang at neu.edu>")
-        self.assertEqual(author_results[0]["result"]["type"], "author")
+        self.assertEqual(author_results[0]["result"]["type"], constants.AGENT)
         self.assertEqual(author_results[0]["result"]["value"], "Qianqian Fang <q.fang at neu.edu>")
         
         license_results = metadata_result.results.get(constants.CAT_LICENSE, [])
@@ -57,7 +59,7 @@ class TestPackageJsonParser(unittest.TestCase):
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
         self.assertEqual(package_results[0]["result"]["value"], "package.json")
-        self.assertEqual(package_results[0]["result"]["type"], "npm")
+        self.assertEqual(package_results[0]["result"]["type"], constants.URL)
 
         keywords_results = metadata_result.results.get(constants.CAT_KEYWORDS, [])
         self.assertEqual(len(keywords_results), 0, "Keywords should not be found in this package.json")

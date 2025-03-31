@@ -14,7 +14,7 @@ class TestPythonParser(unittest.TestCase):
         pyproject_path = test_data_repositories + os.path.sep+ "gammalearn"+ os.path.sep+ "pyproject.toml"
         result = Result()
 
-        metadata_result = parse_pyproject_toml(pyproject_path, result)    
+        metadata_result = parse_pyproject_toml(pyproject_path, result, "https://example.org/pyproject.toml")
         print(f"###################### {metadata_result} #####################")
         print(f"Available categories in result: {list(metadata_result.results.keys())}")
         """

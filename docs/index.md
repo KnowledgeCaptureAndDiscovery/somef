@@ -34,7 +34,6 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Contributors**: Contributors to a software component
 - **Creation date**: Date when the repository was created
 - **Date updated**: Date of last release.
-- **Date published**: Date when the project was first published (first release).
 - **Description**: A description of what the software does
 - **Documentation**: Where to find additional documentation about a software component
 - **Download URL**: URL where to download the target software (typically the installer, package or a tarball to a stable version)

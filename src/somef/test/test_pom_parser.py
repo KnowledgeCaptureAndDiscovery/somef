@@ -16,7 +16,7 @@ class TestPomParser(unittest.TestCase):
         pom_file_path = test_data_repositories + os.path.sep + "Widoco" + os.path.sep + "pom.xml"
         result = Result()
     
-        metadata_result = parse_pom_file(pom_file_path, result)
+        metadata_result = parse_pom_file(pom_file_path, result, "https://example.org/pom.xml")
 
         identifier_results = metadata_result.results.get(constants.CAT_PACKAGE_ID, [])
         self.assertTrue(len(identifier_results) > 0, "No identifier found")
@@ -28,12 +28,12 @@ class TestPomParser(unittest.TestCase):
         version_results = metadata_result.results.get(constants.CAT_VERSION, [])
         self.assertTrue(len(version_results) > 0, "No version found")
         self.assertEqual(version_results[0]["result"]["value"], "1.4.26")
-        self.assertEqual(version_results[0]["result"]["type"], "release")
+        self.assertEqual(version_results[0]["result"]["type"], constants.RELEASE)
 
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
         self.assertEqual(package_results[0]["result"]["value"], "pom.xml")
-        self.assertEqual(package_results[0]["result"]["type"], "maven")
+        self.assertEqual(package_results[0]["result"]["type"], constants.URL)
 
         requirements_results = metadata_result.results.get(constants.CAT_REQUIREMENTS, [])
         self.assertTrue(len(requirements_results) > 0, "No dependencies found")
