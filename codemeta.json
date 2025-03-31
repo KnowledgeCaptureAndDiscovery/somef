@@ -1,5 +1,5 @@
 {
-    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "@context": "https://w3id.org/codemeta/3.0",
     "author": [
         {
             "affiliation": {
