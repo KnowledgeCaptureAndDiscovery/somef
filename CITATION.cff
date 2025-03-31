@@ -16,6 +16,11 @@ authors:
     given-names: Aidan
   - family-names: García
     given-names: Miguel Angel
+  - family-names: Ciuciu-Kiss
+    given-names: Jenifer
+  - family-names: Mendoza
+    given-names: Juanje
+    
 cff-version: 1.2.0
 message: "If you use this software, please cite both the article from preferred-citation and the software itself."
 preferred-citation:
