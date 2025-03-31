@@ -178,7 +178,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                         if analysis:
                             workflow_url_gitlab = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
                                                         repo_dir, repo_relative_path, filename)
-                            metadata_result.add_result(constants.CAT_CONTINUOS_INTEGRATION,
+                            metadata_result.add_result(constants.CAT_CONTINUOUS_INTEGRATION,
                                                     {
                                                         constants.PROP_VALUE: workflow_url_gitlab,
                                                         constants.PROP_TYPE: constants.URL
@@ -191,12 +191,16 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                         1, constants.TECHNIQUE_FILE_EXPLORATION)
                             
                     elif repo_type == constants.RepositoryType.GITHUB:
+                        # if file_path.startswith(".github/workflows/"):
+                        #     category = constants.CAT_WORKFLOWS
+                        # elif filename in [".travis.yml", "azure-pipelines.yml", "jenkinsfile"] or file_path.startswith(".circleci/"):
+                        #     category = constants.CAT_CONTINUOUS_INTEGRATION
+                        # else:
+                        #     category = None
                         if file_path.startswith(".github/workflows/"):
-                            category = constants.CAT_WORKFLOWS
-                        elif filename in [".travis.yml", "azure-pipelines.yml", "jenkinsfile"] or file_path.startswith(".circleci/"):
-                            category = constants.CAT_CONTINUOS_INTEGRATION
+                            category = constants.CAT_CONTINUOUS_INTEGRATION
                         else:
-                            category = None 
+                            category = None
 
                         if category:
                             workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,

@@ -151,10 +151,10 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["programmingLanguage"] = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in repo_data[constants.CAT_PROGRAMMING_LANGUAGES]]
     if constants.CAT_REQUIREMENTS in repo_data:
         codemeta_output["softwareRequirements"] = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in repo_data[constants.CAT_REQUIREMENTS]]
-    if constants.CAT_CONTINUOS_INTEGRATION in repo_data:
-        codemeta_output["continuousIntegration"] = repo_data[constants.CAT_CONTINUOS_INTEGRATION][0][constants.PROP_RESULT][constants.PROP_VALUE]
-    if constants.CAT_WORKFLOWS in repo_data:
-        codemeta_output["workflows"] = repo_data[constants.CAT_WORKFLOWS][0][constants.PROP_RESULT][constants.PROP_VALUE] 
+    if constants.CAT_CONTINUOUS_INTEGRATION in repo_data:
+        codemeta_output["continuousIntegration"] = repo_data[constants.CAT_CONTINUOUS_INTEGRATION][0][constants.PROP_RESULT][constants.PROP_VALUE]
+    # if constants.CAT_WORKFLOWS in repo_data:
+    #     codemeta_output["workflows"] = repo_data[constants.CAT_WORKFLOWS][0][constants.PROP_RESULT][constants.PROP_VALUE] 
     if constants.CAT_RELEASES in repo_data:
         
         latest_date = None
