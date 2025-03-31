@@ -27,7 +27,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
   - Author: list of author names in the publication
   - URL: URL of the publication 
   - DOI: Digital object identifier of the publication
-  - Date published:
+  - Date published
 - **Code of conduct**: Link to the code of conduct of the project
 - **Code repository**: Link to the GitHub/GitLab repository used for the extraction
 - **Contact**: Contact person responsible for maintaining a software component
