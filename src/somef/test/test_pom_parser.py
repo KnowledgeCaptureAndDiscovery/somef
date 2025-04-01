@@ -44,7 +44,7 @@ class TestPomParser(unittest.TestCase):
             if dependency.get("name") == "junit":
                 found_junit = True
                 self.assertEqual(dependency.get("version"), "4.13.1")
-                self.assertEqual(dependency.get("value"), "junit")
+                self.assertEqual(dependency.get("value"), "junit.junit")
                 break
         self.assertTrue(found_junit, "JUnit dependency not found")
         

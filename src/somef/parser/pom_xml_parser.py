@@ -138,7 +138,7 @@ def parse_pom_file(file_path, metadata_result: Result, source):
                 metadata_result.add_result(
                     constants.CAT_REQUIREMENTS,
                     {
-                        "value": dependency.get("groupId", ""),
+                        "value": f'{dependency.get("groupId", "")}.{dependency.get("artifactId", "")}'.strip("."),
                         "name": dependency.get("artifactId", ""),
                         "version": dependency.get("version", ""),
                         "type": constants.SOFTWARE_APPLICATION
