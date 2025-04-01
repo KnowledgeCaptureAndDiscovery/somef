@@ -71,6 +71,7 @@ LICENSES_DICT = {
     "The Unlicense": {"regex": REGEXP_UNLICENSE, "spdx_id": "Unlicense"},
 }
 # Categories recognized by SOMEF (they all start by CAT_
+CAT_AUTHORS = "authors"
 CAT_APPLICATION_DOMAIN = "application_domain"
 CAT_ACKNOWLEDGEMENT = "acknowledgement"
 CAT_CITATION = "citation"
@@ -119,6 +120,9 @@ CAT_SUPPORT_CHANNELS = "support_channels"
 CAT_USAGE = "usage"
 CAT_WORKFLOWS = "workflows"
 CAT_TYPE = "type"
+CAT_PACKAGE_ID = "package_id"
+CAT_HAS_PACKAGE_FILE = "has_package_file"
+CAT_VERSION = "version"
 CAT_CONTINUOUS_INTEGRATION= "continuous_integration"
 
 # Special category: missing categories
@@ -131,16 +135,17 @@ CAT_MISSING = "somef_missing_categories"
 supervised_categories = [CAT_DESCRIPTION]
 
 # list with all categories
-all_categories = [CAT_APPLICATION_DOMAIN, CAT_ACKNOWLEDGEMENT, CAT_CITATION, CAT_CONTRIBUTORS,
-                  CAT_CONTRIBUTING_GUIDELINES,
+all_categories = [CAT_APPLICATION_DOMAIN, CAT_ACKNOWLEDGEMENT, CAT_AUTHORS, CAT_CITATION, CAT_CONTRIBUTORS,
+                  CAT_CONTRIBUTING_GUIDELINES, CAT_CONTINUOUS_INTEGRATION,
                   CAT_COC, CAT_CODE_REPOSITORY, CAT_CONTACT, CAT_DESCRIPTION, CAT_DATE_CREATED, CAT_DATE_UPDATED,
                   CAT_DOCUMENTATION, CAT_DOWNLOAD, CAT_DOWNLOAD_URL, CAT_EXECUTABLE_EXAMPLE,
                   CAT_FAQ, CAT_FORK_COUNTS, CAT_FORKS_URLS, CAT_FULL_NAME, CAT_FULL_TITLE, CAT_HAS_BUILD_FILE,
                   CAT_HAS_SCRIPT_FILE, CAT_IDENTIFIER, CAT_IMAGE, CAT_INSTALLATION,
                   CAT_INVOCATION, CAT_ISSUE_TRACKER, CAT_KEYWORDS, CAT_LICENSE, CAT_LOGO, CAT_NAME, CAT_ONTOLOGIES,
-                  CAT_OWNER, CAT_PACKAGE_DISTRIBUTION, CAT_PROGRAMMING_LANGUAGES, CAT_README_URL,
-                  CAT_RELATED_DOCUMENTATION, CAT_RELEASES, CAT_RUN,
-                  CAT_STATUS, CAT_REQUIREMENTS, CAT_STARS, CAT_SUPPORT, CAT_SUPPORT_CHANNELS, CAT_USAGE]
+                  CAT_OWNER, CAT_PACKAGE_DISTRIBUTION, CAT_HAS_PACKAGE_FILE, CAT_PROGRAMMING_LANGUAGES, CAT_README_URL,
+                  CAT_RELATED_DOCUMENTATION, CAT_RELEASES, CAT_RUN, CAT_RELATED_PAPERS,
+                  CAT_STATUS, CAT_REQUIREMENTS, CAT_STARS, CAT_SUPPORT, CAT_SUPPORT_CHANNELS, CAT_USAGE,
+                  CAT_WORKFLOWS, CAT_TYPE]
 
 # All properties used by SOMEF to label the output JSON
 # Provenance:
@@ -187,6 +192,12 @@ FORMAT_DOCKERFILE = "dockerfile"
 FORMAT_DOCKER_COMPOSE = "docker_compose"
 FORMAT_READTHEDOCS = "readthedocs"
 FORMAT_WIKI = "wiki"
+# Package types
+FORMAT_PYTHON_SETUP_PY = "setup.py"
+FORMAT_POM_XML = "pom.xml"
+FORMAT_PYPROJECT_TOML = "pyproject.toml"
+FORMAT_PACKAGE_JSON = "package.json"
+
 
 # Result types: data types
 STRING = "String"
@@ -202,6 +213,7 @@ RELEASE = "Release"
 LICENSE = "License"
 PUBLICATION = "Publication"
 LANGUAGE = "Programming_language"
+SOFTWARE_APPLICATION = "Software_application"
 
 # Different techniques
 TECHNIQUE_SUPERVISED_CLASSIFICATION = "supervised_classification"

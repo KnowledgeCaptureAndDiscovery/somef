@@ -17,28 +17,35 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 
 - **Acknowledgement**: Text acknowledging funding sources or contributors
 - **Application domain**: The application domain of the repository. Current supported domains include: Astrophysics, Audio, Computer vision, Graphs, Natural language processing, Reinforcement learning, Semantc web, Sequential. Domains are not mutually exclusive. These domains have been extracted from [awesome lists](https://github.com/topics/awesome-list) and [Papers with code](https://paperswithcode.com/). Find more information in our [documentation](https://somef.readthedocs.io/en/latest/)
-- **Author**: Person or organization responsible of the project. This property is also used to indicate the responsible entities of a publication associated with the code repository.
-- **Citation**: Preferred citation as the authors have stated in their readme file. SOMEF recognizes Bibtex, Citation File Format files and other means by which authors cite their papers (e.g., by in-text citation)
-- **Code of Conduct**: Link to the code of conduct of the project
+- **Authors**: Person(s) or organization(s) responsible for the project. We recognize the following properties:
+  - Name: name of the author (including last name)
+  - Email: email of author
+  - URL: website or ORCID associated with the author
+- **Build file**: Build file(s) of the project. For example, files used to create a Docker image for the target software, package files, etc.
+- **Citation**: Preferred citation as the authors have stated in their readme file. SOMEF recognizes Bibtex, Citation File Format files and other means by which authors cite their papers (e.g., by in-text citation). We aim to recognize the following properties:
+  - Title: Title of the publication
+  - Author: list of author names in the publication
+  - URL: URL of the publication 
+  - DOI: Digital object identifier of the publication
+  - Date published
+- **Code of conduct**: Link to the code of conduct of the project
 - **Code repository**: Link to the GitHub/GitLab repository used for the extraction
 - **Contact**: Contact person responsible for maintaining a software component
-- **ContinuousIntegration**: Link to continuous integration service
+- **Continuous integration**: Link to continuous integration service(s)
 - **Contribution guidelines**: Text indicating how to contribute to this code repository
 - **Contributors**: Contributors to a software component
 - **Creation date**: Date when the repository was created
-- **Date modified**: Date of last release.
-- **Date published**: Date when the project was first published (first release).
+- **Date updated**: Date of last release.
 - **Description**: A description of what the software does
-- **DockerFile**: Build file(s) to create a Docker image for the target software
 - **Documentation**: Where to find additional documentation about a software component
 - **Download URL**: URL where to download the target software (typically the installer, package or a tarball to a stable version)
-- **DOI**: Digital Object Identifier associated with the software (if any). DOIs associated with publications will also be detected.
 - **Executable examples**: Jupyter notebooks ready for execution (e.g., files, or through myBinder/colab links)
 - **FAQ**: Frequently asked questions about a software component
 - **Forks count**: Number of forks of the project
 - **Forks url**: Links to forks made of the project
 - **Full name**: Name + owner (owner/name)
 - **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository name
+- **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers. DOIs associated with publications will also be detected.
 - **Images**: Images used to illustrate the software component
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component
@@ -48,22 +55,33 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Logo**: Main logo used to represent the target software component
 - **Name**: Name identifying a software component
 - **Ontologies**: URL and path to the ontology files present in the repository
-- **Owner**: Name of the user or organization in charge of the repository
-- **Owner type**: Type of the owner, user or organization, of the repository
+- **Owner**: Name and type of the user or organization in charge of the repository
 - **Package distribution**: Links to package sites like pypi in case the repository has a package available.
+- **Package files**: Links to package files used to wrap the project in a package.
 - **Programming languages**: Languages used in the repository
 - **Related papers**: URL to possible related papers within the repository stated within the readme file (from Arxiv)
-- **Releases** (GitHub only): Pointer to the available versions of a software component. For each release, somef will track its description, author, name, date of publication, date of creation, the link to the html page of the release, the id of the release and a link to the tarball zip and code of the release
-- **Repository Status**: Repository status as it is described in [repostatus.org](https://www.repostatus.org/).
+- **Releases** (GitHub only): Pointer to the available versions of a software component. For each release, somef will track the following properties:
+  - Description: Release notes
+  - Author: Agent responsible of creating the release
+  - Name: Name of the release
+  - Tag: version number of the release
+  - Date of publication
+  - Date of creation
+  - Link to the html page of the release
+  - Id of the release
+  - Link to the tarball zip and code of the release 
+- **Repository status**: Repository status as it is described in [repostatus.org](https://www.repostatus.org/).
 - **Requirements**: Pre-requisites and dependencies needed to execute a software component
-- **Support**: Guidelines and links of where to obtain support for a software component
+- **Run**: Running instructions of a software component. It may be wider than the `invocation` category, as it may include several steps and explanations.
+- **Script files**: Bash script files contained in the repository
 - **Stargazers count**: Total number of stargazers of the project
-- **Scripts**: Snippets of code contained in the repository
+- **Support**: Guidelines and links of where to obtain support for a software component
 - **Support channels**: Help channels one can use to get support about the target software component
+- **Type**: type of software (command line application, notebook, ontology, scientific workflow, etc.)
 - **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it
 - **Workflows**: URL and path to the computational workflow files present in the repository
 
-We use different supervised classifiers, header analysis, regular expressions and the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description](https://somef.readthedocs.io/en/latest/output/)
+We use different supervised classifiers, header analysis, regular expressions, the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field) and language specific metadata parsers (e.g., for package files). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description](https://somef.readthedocs.io/en/latest/output/)
 
 ## Documentation
 

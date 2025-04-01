@@ -17,3 +17,4 @@ src/somef.egg-info/*
 local_tests/*
 Dockerfile_old
 repos.txt
+!package_neors.json

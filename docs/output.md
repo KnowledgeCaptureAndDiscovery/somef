@@ -1,7 +1,7 @@
 SOMEF supports three main output formats. Each of them contains different information with different levels of granularity. Below we enumerate them from more granular to less granular:
 
 ## JSON format
-**Version:** 1.0.0
+**Version:** 1.0.1
 
 Default SOMEF response (and more complete in terms of metadata). The JSON format returns a set of categories, as shown in the snippet below:
 
@@ -65,22 +65,20 @@ The `confidence` depends on the `technique` used. In this case, the confidence i
 
 SOMEF aims to recognize the following categories (in alphabetical order):
 
-- `application_domain`: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects). See all current recognized application domains [here](https://somef.readthedocs.io/en/latest/#myfootnote1).
 - `acknowledgement`: Any text that the authors have prepared to acknnowledge the contribution from others, or project funding.
-- `author`: Person or organization responsible of the project. This property is also used to indicate the responsible entities of a publication associated with the code repository.
-- `contributors`: Contributors to a software component
-- `contributing guidelines`: Guidelines indicating how to contribute to a software component.
+- `application_domain`: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects). See all current recognized application domains [here](https://somef.readthedocs.io/en/latest/#myfootnote1).
+- `authors`: Person or organization responsible of the project. This property is also used to indicate the responsible entities of a publication associated with the code repository.
 - `citation`: Software citation (usually in `.bib` form) as the authors have stated in their readme file, or through a `CFF` file.
 - `code_of_conduct`: Link to the code of conduct file of the project
 - `code_repository`: Link to the source code (typically the repository where the readme can be found)
 - `contact`: Contact person responsible for maintaining a software component.
 - `continuous_integration`: Link to continuous integration service, supported on GitHub as well as in GitLab.
+- `contributing guidelines`: Guidelines indicating how to contribute to a software component.
+- `contributors`: Contributors to a software component
 - `date_created`: Date when the software component was created.
-- `date_published`: Date of first release.
 - `date_updated`: Date when the software component was last updated (note that this will always be older than the date of the extraction).
 - `description`: A description of what the software component does.
 - `documentation`: Where to find additional documentation about a software component.
-- `download`: Download instructions included in the repository.
 - `download_url`: URL where to download the target software (typically the installer, package or a tarball to a stable version)
 - `executable_example`: Jupyter notebooks ready for execution (e.g., through myBinder, colab or files)
 - `faq`: Frequently asked questions about a software component
@@ -102,9 +100,9 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `ontologies`: URL and path to the ontology files present in the repository.
 - `owner`: Name of the user or organization in charge of the repository
 - `package_distribution`: Link to official package repositories where the software can be downloaded from (e.g., `pypi`).
+- `package_file`: Link to a package file used in the repository (e.g., `pyproject.toml`, `setup.py`).
 - `programming_languages`: Languages used in the repository.
 - `readme_url`: URL to the main README file in the repository.
-- `related_documentation`: Pointers to documentation of related projects which may be needed when using the target repository.
 - `related_papers`: URL to possible related papers within the repository stated within the readme file.
 - `releases`: Pointer to the available versions of a software component.
 - `repository_status`: Repository status as it is described in [repostatus.org](https://www.repostatus.org/).
@@ -113,9 +111,9 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `stargazers_count`: Total number of stargazers of the project.
 - `support`: Guidelines and links of where to obtain support for a software component.
 - `support_channels`: Help channels one can use to get support about the target software component.
+- `type`: Software type: Commandline Application, Notebook Application, Ontology, Scientific Workflow. Non-Software types: Static Website, Uncategorized
 - `usage`: Usage examples and considerations of a code repository.
 - `workflows`: URL and path to the computational workflow files present in the repository.
-- `type`: Software type: Commandline Application, Notebook Application, Ontology, Workflow. Non-Software types: Static Website, Uncategorized
 
 The following table summarized the properties used to describe a `category`:
 
@@ -136,7 +134,9 @@ Field returning the extracted output from the code repository. An example can be
       "value": "@inproceedings{ilievski2020kgtk,\n  title={{KGTK}: A Toolkit for Large Knowledge Graph Manipulation and Analysis}},\n  author={Ilievski, Filip and Garijo, Daniel and Chalupsky, Hans and Divvala, Naren Teja and Yao, Yixiang and Rogers, Craig and Li, Ronpeng and Liu, Jun and Singh, Amandeep and Schwabe, Daniel and Szekely, Pedro},\n  booktitle={International Semantic Web Conference},\n  pages={278--293},\n  year={2020},\n  organization={Springer}\n  url={https://arxiv.org/pdf/2006.00088.pdf}\n}",
       "format": "bibtex",
       "type": "string",
-      "url": "https://arxiv.org/pdf/2006.00088.pdf"
+      "title": "{KGTK}: A Toolkit for Large Knowledge Graph Manipulation and Analysis",
+      "url": "https://arxiv.org/pdf/2006.00088.pdf",
+      "original_header": "citation"
     },
     "confidence": 1.0,
     "technique": "Regular expression",
@@ -163,6 +163,7 @@ The following object `types` are currently supported:
 - `License`: object representing all the metadata SOMEF extracts from a license.
 - `Agent`: user (typically, a person) or organization responsible for authoring a software release or a paper.
 - `Publication`: Scientific paper associated with the code repository.
+- `SoftwareApplication`: Class to represent software dependencies between projects.
 
 The following literal types are currently supported:
 
@@ -182,6 +183,7 @@ The table below summarizes all types and their corresponding properties:
 | **description** | Release | String | Descriptive text with the purpose of the release |
 | **date_created** | Release | Date | Date of creation of a release |
 | **date_published** | Release | Date | Date of publication of a release |
+| **email** | Agent | String | Email of an author |
 | **html_url** | Release | Url | link to the HTML representation of a release |
 | **name** | License, Release,  User, Programming_language | String | Title or name used to designate the release, license user or programming language. |
 | **original_header** | Text_excerpt | String | If the result value is extracted from a markdown file like a README, the original header of that section is also returned. |
@@ -192,7 +194,7 @@ The table below summarizes all types and their corresponding properties:
 | **tag** | Release | String | named version of a release |
 | **tarball_url** | Release | Url | URL to the tar ball file where to download a software release |
 | **title** | Publication | String | Title of the publication |
-| **url** | Release, Publication, License | Url | Uniform resource locator of the resource |
+| **url** | Release, Publication, License, Agent | Url | Uniform resource locator of the resource |
 | **zipball_url** | Release | Url | URL to the zip file where to download a software release |
 
 
@@ -206,18 +208,23 @@ The following formats for a result value are currently recognized:
 - `docker_compose`: [orchestration file](https://docs.docker.com/compose/compose-file/) used to communicate multiple containers.
 - `readthedocs`: documentation format used by many repositories in order to describe their projects.
 - `wiki`: documentation format used in GitHub repositories.
+- `setup.py`: package file format used in python projects
+- `pyproject.toml`: package file format used in python projects
+- `pom.xml`: package file used in Java projects
+- `package.json`: package file used in Javascript projects
 
 ### Technique
 The techniques can be of several types: 
 
+- `code_parser`: the result was obtained from parsing package files with metadata. 
 - `header_analysis`: the result was extracted by analyzing the headers used in the README file and assessing their proximity to commonly used headers (and other synonims).
-- `supervised_classification`: the results were obtained after running text classifiers trained for detecting that type of header.
 - `file_exploration`: the result comes from an exploration of the files in the repository
 - `GitHub_API`: the result was obtained from the GitHub API.
 - `GitLab_API`: the result was obtained from the GitLab API.
 - `regular_expression`: the result was obtained after performing regular expressions on the files in the repository.
-- `code_parser`: the result was obtained from code configuration files with metadata markup. 
 - `software_type_heuristics`: the result was obtained from analysis of the repository based on various heuristics from the README, code and extension analysis. 
+- `supervised_classification`: the results were obtained after running text classifiers trained for detecting that type of header.
+
 
 ### Missing categories
 If SOMEF is run with the `-m` flag, a report of the categories that the program was not able to find is returned. The format for this field is slightly different than the rest, providing a list of the missing categories. An example can be seen below:

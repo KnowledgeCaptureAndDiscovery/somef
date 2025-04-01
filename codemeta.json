@@ -1,0 +1,97 @@
+{
+    "@context": "https://w3id.org/codemeta/3.0",
+    "author": [
+        {
+            "affiliation": {
+                "name": "Universidad Politécnica de Madrid",
+                "@type": "Organization"
+            },
+            "email": "daniel.garijo@upm.es",
+            "familyName": "Garijo",
+            "givenName": "Daniel",
+            "@id": "http://orcid.org/0000-0003-0454-7145",
+            "@type": "Person"
+        },
+        {
+            "familyName": "Mao",
+            "givenName": "Allen",
+            "@type": "Person"
+        },
+        {
+            "familyName": "Dharmala",
+            "givenName": "Haripriya",
+            "@type": "Person"
+        },
+        {
+            "familyName": "Diwanji",
+            "givenName": "Vedant",
+            "@type": "Person"
+        },
+        {
+            "familyName": "Wang",
+            "givenName": "Jiajing",
+            "@type": "Person"
+        },
+        {
+            "familyName": "Kelley",
+            "givenName": "Aidan",
+            "@type": "Person"
+        },
+        {
+            "familyName": "García",
+            "givenName": "Miguel Angel",
+            "@id": "_:author_7",
+            "@type": "Person"
+        },
+        {
+            "familyName": "Ciu Ciu Kiss",
+            "givenName": "Jenifer",
+            "@type": "Person"
+        },
+        {
+            "familyName": "Mendoza",
+            "givenName": "Juanje",
+            "@type": "Person"
+        }
+    ],
+    "codeRepository": "https://github.com/KnowledgeCaptureAndDiscovery/somef",
+    "dateCreated": "2019-06-06",
+    "dateModified": "2025-03-31",
+    "description": "SOftware Metadata Extraction Framework: A tool for automatically extracting relevant software information from readme files \n",
+    "downloadUrl": "https://github.com/KnowledgeCaptureAndDiscovery/somef/releases",
+    "identifier": "https://zenodo.org/badge/latestdoi/190487675",
+    "keywords": [
+        "codemeta",
+        "extraction",
+        "metadata",
+        "readme",
+        "software"
+    ],
+    "license": "https://spdx.org/licenses/MIT",
+    "name": "Software Metadata Extraction Framework (SoMEF)",
+    "programmingLanguage": [
+        "Jupyter Notebook",
+        "Python",
+        "Batchfile"
+    ],
+    "referencePublication": [
+        {
+            "identifier": "10.1162/qss_a_00167",
+            "name": "a framework for creating knowledge graphs of scientific software metadata",
+            "url": "https://doi.org/10.1162/qss_a_00167",
+            "@type": "ScholarlyArticle"
+        }
+    ],
+    "schema:releaseNotes": "This release includes the following updates:\n- We now recognize `pom.xml`, `setup.py`, `pyproject.toml` and `package.json` files, based on the CodeMeta crosswalks.\n- Regular expressions for licenses.\n- Improving release extraction in Gitlab\n- Fixed documentation inconsistency issues\n- Continuous integration and developmentStatus now are exported.\nMore information: https://github.com/KnowledgeCaptureAndDiscovery/somef/milestone/12?closed=1\n\n## What's Changed\n* Typo fix in statements about application domains by @Daniel-Mietchen in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/726\n* Resolve issues gitlab release, licenses. Development status. Fixes #721, #713, #722 by @juanjemdIos in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/727\n* author type Organization by @juanjemdIos in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/732\n* Update master with changes for 0.9.9 by @dgarijo in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/735\n* fix #736 by @dgarijo in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/737\n* Improved file extraction workflows and continuous integration. Enhanced documentation with new properties by @juanjemdIos in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/738\n* Fix #471, initial version by @Anas-Elhounsri in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/739\n* Dev by @dgarijo in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/743\n\n## New Contributors\n* @Daniel-Mietchen made their first contribution in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/726\n\n**Full Changelog**: https://github.com/KnowledgeCaptureAndDiscovery/somef/compare/0.9.8...0.9.9",
+    "softwareRequirements": [
+        "- Python 3.9 or Python 3.10 (default version support)",
+        "/",
+        "SOMEF has been tested on Unix, MacOS and Windows Microsoft operating systems.",
+        "/",
+        "If you face any issues when installing SOMEF, please make sure you have installed the following packages: `build-essential`, `libssl-dev`, `libffi-dev` and `python3-dev`."
+    ],
+    "version": "0.9.9",
+    "developmentStatus": "active",
+    "issueTracker": "https://github.com/KnowledgeCaptureAndDiscovery/somef/issues",
+    "@type": "SoftwareSourceCode"
+}
