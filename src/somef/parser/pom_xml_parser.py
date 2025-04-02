@@ -133,17 +133,20 @@ def parse_pom_file(file_path, metadata_result: Result, source):
                 source
             )
 
-        if project_data["dependencies"]	:
-            metadata_result.add_result(
-                constants.CAT_REQUIREMENTS ,
-                {
-                    "value": project_data["dependencies"],
-                    "type": constants.URL
-                },
-                1,
-                constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                source
-            )
+        if project_data["dependencies"]:
+            for dependency in project_data["dependencies"]:
+                metadata_result.add_result(
+                    constants.CAT_REQUIREMENTS,
+                    {
+                        "value": f'{dependency.get("groupId", "")}.{dependency.get("artifactId", "")}'.strip("."),
+                        "name": dependency.get("artifactId", ""),
+                        "version": dependency.get("version", ""),
+                        "type": constants.SOFTWARE_APPLICATION
+                    },
+                    1,
+                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                    source
+                )
         
         if project_data["developers"]	:
             metadata_result.add_result( 
