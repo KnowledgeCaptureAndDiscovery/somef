@@ -1,11 +1,12 @@
 import ast
+import os
 import tomli
 import logging
 import re
 from pathlib import Path
 from ..process_results import Result
-from ..utils import constants
-
+from ..utils import constants 
+from ..regular_expressions import detect_license_spdx
 """
 This code is inspired by Codemeta Project parsers, specifically python.py
 https://github.com/proycon/codemetapy/blob/master/codemeta/parsers/python.py
@@ -216,8 +217,18 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
 
                 if "license" in project:
                     license_info = project["license"]
+                    license_text = ""
+
                     if isinstance(license_info, dict):
                         # Check if license is specified as a file
+                        license_path_file = license_info["file"]
+                        dir_path_license = os.path.dirname(file_path)
+                        license_path = os.path.join(dir_path_license, license_path_file)
+
+                        if os.path.exists(license_path):
+                            with open(license_path, "r", encoding="utf-8") as f:
+                                license_text = f.read()
+
                         if "file" in license_info:
                             license_value = f"License file: {license_info['file']}"
                         else:
@@ -226,19 +237,32 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                     else:
                         license_text = ""
                         license_value = license_info
-                
+
+                    license_info_spdx = detect_license_spdx(license_text)
+                    spdx_id = ""
+                    spdx_name = ""
+
+                    if license_info_spdx:
+                        license_data = {
+                            "value": license_value,
+                            "spdx_id": license_info_spdx.get('spdx_id'),
+                            "name": license_info_spdx.get('name'),
+                            "type": constants.LICENSE
+                        }
+                    else:
+                        license_data = {
+                            "value": license_value,
+                            "type": constants.LICENSE
+                        }
+
                     metadata_result.add_result(
                         constants.CAT_LICENSE,
-                        {
-                            "value": license_value,
-                            "spdx_id": license_value,
-                            "type": constants.LICENSE
-                        },
+                        license_data,
                         1,
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
                         source
                     )
-                
+
                 if "keywords" in project:
                     for keyword in project["keywords"]:
                         metadata_result.add_result(

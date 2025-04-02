@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 from .utils import constants, markdown_utils
 from . import extract_ontologies, extract_workflows
 from .process_results import Result
-from .regular_expressions import detect_license_spdx
+from .regular_expressions import detect_license_spdx, extract_scholarly_article_natural, extract_scholarly_article_properties
 from .parser.pom_xml_parser import parse_pom_file
 from .parser.package_json_parser import parse_package_json_file
 from .parser.python_parser import parse_pyproject_toml
@@ -145,12 +145,13 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_CITATION,
                                                                constants.FORMAT_BIB)
-                if "CITATION.CFF" == filename.upper():       
+                if "CITATION.CFF" == filename.upper():     
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_CITATION,
                                                                constants.FORMAT_CFF)
+
                 if filename.endswith(".sh"):
                     sh_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
                                            repo_relative_path, filename)
@@ -251,7 +252,19 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                     constants.PROP_VALUE: workflow_url,
                                                     constants.PROP_TYPE: constants.URL
                                                 }, 1, constants.TECHNIQUE_FILE_EXPLORATION)
+                        
+            if 'citation' in metadata_result.results:
+                for cit in metadata_result.results['citation']:
+                    scholarly_article = {}
+                    result = cit.get(constants.PROP_RESULT, {})
+                    value = result.get(constants.PROP_VALUE, '')
+                    if re.search(r'@\w+\{', value):  
+                        scholarly_article = extract_scholarly_article_properties(value, scholarly_article)
+                    else:
+                        scholarly_article = extract_scholarly_article_natural(value, scholarly_article)
 
+                    if 'datePublished' in scholarly_article:
+                        result['datePublished'] = scholarly_article['datePublished']
                 # TO DO: Improve this a bit, as just returning the docs folder is not that informative
             for dir_name in dir_names:
                 if dir_name.lower() == "docs":
@@ -375,7 +388,6 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 if license_info:
                     result[constants.PROP_NAME] = license_info['name']
                     result[constants.PROP_SPDX_ID] = license_info['spdx_id']
-            
             # Properties extraction from cff
             if format_result == 'cff':
                 yaml_content = yaml.safe_load(file_text)
@@ -390,7 +402,8 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 title = yaml_content.get("title") or preferred_citation.get("title", None)
                 # doi = preferred_citation.get("doi", None)
                 # url_citation = preferred_citation.get("url", None) 
-                authors = preferred_citation.get("authors", [])
+                # authors = preferred_citation.get("authors", [])
+                authors = yaml_content.get("authors", [])
 
                 if identifier_doi:
                     final_url = f"https://doi.org/{identifier_doi}"
@@ -403,19 +416,48 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 else:
                     final_url = ''
 
-                author_names = ", ".join(
-                    f"{a.get('given-names', '').strip()} {a.get('family-names', '').strip()}".strip()
-                    for a in authors if a.get('given-names') and a.get('family-names')
-                ) or None  
+                author_list = []
+                for author in authors:
+                    family_name = author.get("family-names")
+                    given_name = author.get("given-names")
+                    orcid = author.get("orcid")
+                    name = author.get("name")
 
+                    if family_name and given_name:
+                        author_entry = {
+                            "@type": "Person",
+                            "familyName": family_name,
+                            "givenName": given_name
+                        }
+                        if orcid:
+                            author_entry["@id"] = orcid
+                    elif name:
+                        # If there is only a name, we assume this to be an Organization.
+                        # it could be not enough acurate
+
+                        author_entry = {
+                            "@type": "Organization",
+                            "name": name
+                        }
+                    
+                    author_list.append({k: v for k, v in author_entry.items() if v is not None})
+
+                if author_list:
+                    result[constants.PROP_AUTHOR] = author_list
+
+                
+                # author_names = ", ".join(
+                #     f"{a.get('given-names', '').strip()} {a.get('family-names', '').strip()}".strip()
+                #     for a in authors if a.get('given-names') and a.get('family-names')
+                # ) or None  
                 if title:
                     result[constants.PROP_TITLE] = title
-                if author_names:
-                    result[constants.PROP_AUTHOR] = author_names
+                # if author_names:
+                #     result[constants.PROP_AUTHOR] = author_names
                 if final_url:
                     result[constants.PROP_URL] = final_url
                 if doi:
-                    result[constants.PROP_DOI] = doi  
+                    result[constants.PROP_DOI] = doi
 
             if format_result != "":
                 result[constants.PROP_FORMAT] = format_result

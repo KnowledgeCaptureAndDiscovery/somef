@@ -661,3 +661,111 @@ def detect_license_spdx(license_text):
                 "spdx_id": f"{license_info['spdx_id']}"
             }
     return None
+
+def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle):
+    """
+    Extract datePublished, issn and pagination fromg BibTeX and append to scholarlyArticle object
+    
+    Params:
+        - bibtex_entry (str): Entrada BibTeX en formato string.
+        - scholarlyArticle (dict): Diccionario donde se almacenarán los datos extraídos.
+    """
+
+    # regular expresions properties
+    issn_match = re.search(constants.REGEXP_ISSN, bibtex_entry)
+    year_match = re.search(constants.REGEXP_YEAR, bibtex_entry)
+    month_match = re.search(constants.REGEXP_MONTH, bibtex_entry)
+    pages_match = re.search(constants.REGEXP_PAGES, bibtex_entry)
+    author_match = re.search(r'author\s*=\s*\{([^}]+)\}', bibtex_entry) 
+    orcid_match = re.search(r'orcid\s*=\s*\{([^}]+)\}', bibtex_entry)  # Buscar ORCID explícito
+    note_orcid_match = re.search(r'ORCID[:\s]*([\d-]+X?)', bibtex_entry)  #buscar en notes
+
+    issn = issn_match.group(1) if issn_match else None
+    year = year_match.group(1) if year_match else None
+    month = month_match.group(1) if month_match else None
+    pagination = pages_match.group(1) if pages_match else None
+    authors = author_match.group(1) if author_match else None
+    orcid = orcid_match.group(1) if orcid_match else None
+
+    date_published = f"{year}-{month.zfill(2)}" if year and month else year  # Zfill asegura 2 dígitos en mes
+
+    if issn:
+        scholarlyArticle["issn"] = issn
+    if date_published:
+        scholarlyArticle["datePublished"] = date_published
+    if pagination:
+        scholarlyArticle["pagination"] = pagination
+
+    if author_match:
+        author_list = []
+        authors = author_match.group(1).split(" and ")  # Separar múltiples autores
+
+        for author in authors:
+            parts = author.split(", ") 
+            if len(parts) == 2:
+                family_name, given_name = parts
+            else:
+                family_name = author
+                given_name = None  
+
+            author_entry = {
+                "@type": "Person",
+                "familyName": family_name.strip(),
+                "givenName": given_name.strip() if given_name else None
+            }
+            
+            # in bibtext orcid do not works correctly and in case we have several authors 
+            # if could be dificult to asign the orcid because bibtext just manage one.
+            if len(author_list) == 1 and orcid:
+                author_list[0]["@id"] = f"https://orcid.org/{orcid}"
+
+            author_list.append({k: v for k, v in author_entry.items() if v is not None})  # Filtrar valores None
+
+        if author_list:
+            scholarlyArticle["author"] = author_list  # Agregar la lista de autores
+
+    return scholarlyArticle
+
+def extract_scholarly_article_natural(citation_text, scholarly_article):
+    """
+    Extracts information from a natural language citation and structures it as a ScholarlyArticle.
+    Params:
+        - citation_text (str): The citation text in natural language.
+        - scholarly_article (dict): Dictionary where the extracted data will be stored.
+    Returns:
+        - dict: Dictionary with the extracted data in the desired format.
+    """
+
+    # regular expresions
+    doi_match = re.search(constants.REGEXP_DOI_NATURAL, citation_text)
+    year_match = re.search(constants.REGEXP_YEAR_NATURAL, citation_text)
+    url_match = re.search(constants.REGEXP_URL_NATURAL, citation_text)
+    author_match = re.search(constants.REGEXP_AUTHOR_NATURAL, citation_text)
+    title_match = re.search(constants.REGEXP_TITLE_NATURAL, citation_text)
+
+    if doi_match:
+        scholarly_article["identifier"] = doi_match.group(0)
+        scholarly_article["url"] = f"https://doi.org/{doi_match.group(0)}"
+    
+    if year_match:
+        scholarly_article["datePublished"] = year_match.group(0)
+    
+    if url_match and "url" not in scholarly_article:
+        scholarly_article["url"] = url_match.group(0)
+
+    if title_match:
+        scholarly_article["name"] = title_match.group(1)
+
+    # Authors in format surname, name 
+    if author_match:
+        authors_text = author_match.group(0).replace(" et al.", "").strip()
+        author_list = []
+        for author in authors_text.split(", "):
+            parts = author.split(" ")
+            family_name = parts[-1]
+            given_name = " ".join(parts[:-1])
+            author_list.append({"@type": "Person", "familyName": family_name, "givenName": given_name})
+
+        scholarly_article["author"] = author_list
+
+    return scholarly_article
