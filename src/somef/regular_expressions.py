@@ -665,7 +665,6 @@ def detect_license_spdx(license_text, type):
             else:
                 return {
                     "name": license_name,
-                    "spdx_id": f"{license_info['spdx_id']}",
                     "identifier": f"https://spdx.org/licenses/{license_info['spdx_id']}"
                 }
     return None
@@ -730,8 +729,8 @@ def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle, type):
                 author_entry = {
                     "type": "Agent",
                     "name": f"{given_name} {family_name}",
-                    "familyName": family_name.strip(),
-                    "givenName": given_name.strip() if given_name else None
+                    "family_name": family_name.strip(),
+                    "given_name": given_name.strip() if given_name else None
                 }
             else:
                 author_entry = {
@@ -797,7 +796,7 @@ def extract_scholarly_article_natural(citation_text, scholarly_article, type):
             family_name = parts[-1]
             given_name = " ".join(parts[:-1])
             if type == 'JSON':
-                author_list.append({"type": "Agent", "name": f"{given_name} {family_name}","familyName": family_name, "givenName": given_name})
+                author_list.append({"type": "Agent", "name": f"{given_name} {family_name}","family_name": family_name, "given_name": given_name})
             else:
                 author_list.append({"@type": "Person", "familyName": family_name, "givenName": given_name})
 

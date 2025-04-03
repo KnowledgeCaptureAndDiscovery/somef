@@ -427,8 +427,8 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                         author_entry = {
                             "type": "Agent",
                             "name": f"{given_name} {family_name}",
-                            "familyName": family_name,
-                            "givenName": given_name
+                            "family_name": family_name,
+                            "given_name": given_name
                         }
                         if orcid:
                             if not orcid.startswith("http"):  # check if is a url
