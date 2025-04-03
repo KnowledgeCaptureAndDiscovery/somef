@@ -4,7 +4,7 @@ from datetime import datetime
 import yaml
 from dateutil import parser as date_parser
 from ..utils import constants
-
+from ..regular_expressions import detect_license_spdx,extract_scholarly_article_natural, extract_scholarly_article_properties
 
 def save_json_output(repo_data, out_path, missing, pretty=False):
     """
@@ -93,22 +93,13 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         for l in repo_data[constants.CAT_LICENSE]:
             if constants.PROP_NAME in l[constants.PROP_RESULT].keys():
                 l_result["name"] = l[constants.PROP_RESULT][constants.PROP_NAME]
-            # else:
-            #     print(f"PROP_NAME key not found in: {l[constants.PROP_RESULT].keys()}")
-
-            # change this structure because is posible l_result["url"] doesnt exist
-            # if "url" not in l_result.keys() and constants.PROP_URL in l[constants.PROP_RESULT].keys(): 
-            #     l_result["url"] = l[constants.PROP_RESULT][constants.PROP_URL] 
-            # # We get the first license we find from the repo 
-            # elif l[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION and constants.PROP_SOURCE in l.keys() and "api.github.com" in l_result["url"]: 
-            #     l_result["url"] = l[constants.PROP_SOURCE]
             if l[constants.PROP_TECHNIQUE] == "GitLab_API" and l[constants.PROP_RESULT].get("type") == "Url":
                 is_gitlab = True               
                 l_result["url"] = l[constants.PROP_RESULT][constants.PROP_VALUE]
             
             if is_gitlab:
                 if l[constants.PROP_RESULT][constants.PROP_TYPE] == "File_dump":
-                    license_info = detect_license(l[constants.PROP_RESULT][constants.PROP_VALUE])
+                    license_info = detect_license_spdx(l[constants.PROP_RESULT][constants.PROP_VALUE], 'CODEMETA')
                     if license_info:
                         l_result["name"] = license_info['name']
                         l_result["identifier"] = license_info['identifier']
@@ -130,6 +121,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                         l_result["url"] = l[constants.PROP_RESULT][constants.PROP_URL]
             if constants.PROP_SPDX_ID in l[constants.PROP_RESULT].keys():
                 l_result["identifier"] = constants.SPDX_BASE + l[constants.PROP_RESULT][constants.PROP_SPDX_ID]
+                l_result["spdx_id"] = l[constants.PROP_RESULT][constants.PROP_SPDX_ID]
 
         codemeta_output["license"] = l_result
     if code_repository is not None:
@@ -272,6 +264,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                             "givenName": given_name
                         }
                         if orcid:
+                            if not orcid.startswith("http"):  # check if orcid is a url
+                                orcid = f"https://orcid.org/{orcid}"
                             author_entry["@id"] = orcid
                     elif name:
                         # If there is only a name, we assume this to be an Organization.
@@ -289,7 +283,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                     author_list.append({k: v for k, v in author_entry.items() if v is not None})  
 
                 if author_list:
-                    scholarlyArticle[constants.PROP_AUTHOR] = author_list  # Agrega la lista de autores si hay datos
+                    scholarlyArticle[constants.PROP_AUTHOR] = author_list 
             else:
                 if constants.PROP_DOI in cit[constants.PROP_RESULT].keys():
                     doi = cit[constants.PROP_RESULT][constants.PROP_DOI]
@@ -317,9 +311,9 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             if len(scholarlyArticle) > 1:  
                 # look por information in values as pagination, issn and others
                 if re.search(r'@\w+\{', cit[constants.PROP_RESULT][constants.PROP_VALUE]):  
-                    scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle)
+                    scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle, 'CODEMETA')
                 else:
-                    scholarlyArticle = extract_scholarly_article_natural(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle)
+                    scholarlyArticle = extract_scholarly_article_natural(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle, 'CODEMETA')
 
                 key = (doi, title)
 
@@ -331,8 +325,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                 else:
                     codemeta_output["referencePublication"].append(scholarlyArticle)
                     scholarlyArticles[key] = scholarlyArticle
-        # if len(url_cit) > 0:
-        #     codemeta_output["citation"] = url_cit
             
         for article in codemeta_output["referencePublication"]:
             if "author" in article:
@@ -342,14 +334,13 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                     key = (family_name.lower(), given_name.lower()) if given_name else None
 
                     if key and key in author_orcids:
-                        author["@id"] = author_orcids[key]  # Agregar ORCID
+                        author["@id"] = author_orcids[key]  
 
     if constants.CAT_STATUS in repo_data:
         url_status = repo_data[constants.CAT_STATUS][0]['result'].get('value', '')
         status = url_status.split('#')[-1] if '#' in url_status else None
         if status:
             codemeta_output["developmentStatus"] = status
-
     if constants.CAT_IDENTIFIER in repo_data:
         codemeta_output["identifier"] = repo_data[constants.CAT_IDENTIFIER][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_README_URL in repo_data:
@@ -369,114 +360,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             pruned_output[key] = value
     # now, prune out the variables that are None
     save_json_output(pruned_output, outfile, None, pretty=pretty)
-
-def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle):
-    """
-    Extract datePublished, issn and pagination fromg BibTeX and append to scholarlyArticle object
-    
-    Params:
-        - bibtex_entry (str): Entrada BibTeX en formato string.
-        - scholarlyArticle (dict): Diccionario donde se almacenarán los datos extraídos.
-    """
-
-    # regular expresions properties
-    issn_match = re.search(constants.REGEXP_ISSN, bibtex_entry)
-    year_match = re.search(constants.REGEXP_YEAR, bibtex_entry)
-    month_match = re.search(constants.REGEXP_MONTH, bibtex_entry)
-    pages_match = re.search(constants.REGEXP_PAGES, bibtex_entry)
-    author_match = re.search(r'author\s*=\s*\{([^}]+)\}', bibtex_entry) 
-    orcid_match = re.search(r'orcid\s*=\s*\{([^}]+)\}', bibtex_entry)  # Buscar ORCID explícito
-    note_orcid_match = re.search(r'ORCID[:\s]*([\d-]+X?)', bibtex_entry)  #buscar en notes
-
-    issn = issn_match.group(1) if issn_match else None
-    year = year_match.group(1) if year_match else None
-    month = month_match.group(1) if month_match else None
-    pagination = pages_match.group(1) if pages_match else None
-    authors = author_match.group(1) if author_match else None
-    orcid = orcid_match.group(1) if orcid_match else None
-
-    date_published = f"{year}-{month.zfill(2)}" if year and month else year  # Zfill asegura 2 dígitos en mes
-
-    if issn:
-        scholarlyArticle["issn"] = issn
-    if date_published:
-        scholarlyArticle["datePublished"] = date_published
-    if pagination:
-        scholarlyArticle["pagination"] = pagination
-
-    if author_match:
-        author_list = []
-        authors = author_match.group(1).split(" and ")  # Separar múltiples autores
-
-        for author in authors:
-            parts = author.split(", ") 
-            if len(parts) == 2:
-                family_name, given_name = parts
-            else:
-                family_name = author
-                given_name = None  
-
-            author_entry = {
-                "@type": "Person",
-                "familyName": family_name.strip(),
-                "givenName": given_name.strip() if given_name else None
-            }
-            
-            # in bibtext orcid do not works correctly and in case we have several authors 
-            # if could be dificult to asign the orcid because bibtext just manage one.
-            if len(author_list) == 1 and orcid:
-                author_list[0]["@id"] = f"https://orcid.org/{orcid}"
-
-            author_list.append({k: v for k, v in author_entry.items() if v is not None})  # Filtrar valores None
-
-        if author_list:
-            scholarlyArticle["author"] = author_list  # Agregar la lista de autores
-
-    return scholarlyArticle
-
-def extract_scholarly_article_natural(citation_text, scholarly_article):
-    """
-    Extracts information from a natural language citation and structures it as a ScholarlyArticle.
-    Params:
-        - citation_text (str): The citation text in natural language.
-        - scholarly_article (dict): Dictionary where the extracted data will be stored.
-    Returns:
-        - dict: Dictionary with the extracted data in the desired format.
-    """
-
-    # regular expresions
-    doi_match = re.search(constants.REGEXP_DOI_NATURAL, citation_text)
-    year_match = re.search(constants.REGEXP_YEAR_NATURAL, citation_text)
-    url_match = re.search(constants.REGEXP_URL_NATURAL, citation_text)
-    author_match = re.search(constants.REGEXP_AUTHOR_NATURAL, citation_text)
-    title_match = re.search(constants.REGEXP_TITLE_NATURAL, citation_text)
-
-    if doi_match:
-        scholarly_article["identifier"] = doi_match.group(0)
-        scholarly_article["url"] = f"https://doi.org/{doi_match.group(0)}"
-    
-    if year_match:
-        scholarly_article["datePublished"] = year_match.group(0)
-    
-    if url_match and "url" not in scholarly_article:
-        scholarly_article["url"] = url_match.group(0)
-
-    if title_match:
-        scholarly_article["name"] = title_match.group(1)
-
-    # Authors in format surname, name 
-    if author_match:
-        authors_text = author_match.group(0).replace(" et al.", "").strip()
-        author_list = []
-        for author in authors_text.split(", "):
-            parts = author.split(" ")
-            family_name = parts[-1]
-            given_name = " ".join(parts[:-1])
-            author_list.append({"@type": "Person", "familyName": family_name, "givenName": given_name})
-
-        scholarly_article["author"] = author_list
-
-    return scholarly_article
+   
 
 def create_missing_fields(result):
     """Function to create a small report with the categories SOMEF was not able to find.
@@ -490,12 +374,3 @@ def create_missing_fields(result):
 
 def normalize_title(title):
     return re.sub(r"\s+", " ", title.strip().lower()) if title else None
-
-def detect_license(license_text):
-    for license_name, license_info in constants.LICENSES_DICT.items():
-        if re.search(license_info["regex"], license_text, re.IGNORECASE):
-            return {
-                "name": license_name,
-                "identifier": f"https://spdx.org/licenses/{license_info['spdx_id']}"
-            }
-    return None

@@ -222,7 +222,7 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
         if license_text_resp.status_code == 200:
             license_text = license_text_resp.text
             license_result[constants.PROP_VALUE] = possible_license_url
-            license_info = detect_license_spdx(license_text)
+            license_info = detect_license_spdx(license_text, 'JSON')
             if license_info:
                  license_result[constants.PROP_NAME] = license_info['name']
                  license_result[constants.PROP_SPDX_ID] = license_info['spdx_id']
