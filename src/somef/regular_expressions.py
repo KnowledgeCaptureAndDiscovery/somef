@@ -643,7 +643,7 @@ def has_valid_links(link_list):
     """Returns True if the list has at least one valid link."""
     return any(has_valid_link(link) for link in link_list)
 
-def detect_license_spdx(license_text):
+def detect_license_spdx(license_text, type):
     """
     Function that given a license text, infers the name and spdx id in a JSON format
     Parameters
@@ -656,8 +656,150 @@ def detect_license_spdx(license_text):
     """
     for license_name, license_info in constants.LICENSES_DICT.items():
         if re.search(license_info["regex"], license_text, re.IGNORECASE):
-            return {
-                "name": license_name,
-                "spdx_id": f"{license_info['spdx_id']}"
-            }
+            if type == 'JSON':
+                return {
+                    "name": license_name,
+                    "spdx_id": f"{license_info['spdx_id']}",
+                    "@id": f"https://spdx.org/licenses/{license_info['spdx_id']}"
+                }
+            else:
+                return {
+                    "name": license_name,
+                    "identifier": f"https://spdx.org/licenses/{license_info['spdx_id']}"
+                }
     return None
+
+# def detect_license(license_text):
+#     for license_name, license_info in constants.LICENSES_DICT.items():
+#         if re.search(license_info["regex"], license_text, re.IGNORECASE):
+#             return {
+#                 "name": license_name,
+#                 "identifier": f"https://spdx.org/licenses/{license_info['spdx_id']}"
+#             }
+#     return None
+
+def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle, type):
+    """
+    Extract datePublished, issn and pagination fromg BibTeX and append to scholarlyArticle object
+    
+    Params:
+        - bibtex_entry (str): BibTeX entry in string format.
+        - scholarlyArticle (dict): Dictionary where the extracted data will be stored.
+        - type (str): from codemeta or json
+    """
+
+    # regular expresions properties
+    issn_match = re.search(constants.REGEXP_ISSN, bibtex_entry)
+    year_match = re.search(constants.REGEXP_YEAR, bibtex_entry)
+    month_match = re.search(constants.REGEXP_MONTH, bibtex_entry)
+    pages_match = re.search(constants.REGEXP_PAGES, bibtex_entry)
+    author_match = re.search(r'author\s*=\s*\{([^}]+)\}', bibtex_entry) 
+    orcid_match = re.search(r'orcid\s*=\s*\{([^}]+)\}', bibtex_entry)  # Look for ORCID explícit
+    note_orcid_match = re.search(r'ORCID[:\s]*([\d-]+X?)', bibtex_entry)  # Look in notes
+
+    issn = issn_match.group(1) if issn_match else None
+    year = year_match.group(1) if year_match else None
+    month = month_match.group(1) if month_match else None
+    pagination = pages_match.group(1) if pages_match else None
+    authors = author_match.group(1) if author_match else None
+    orcid = orcid_match.group(1) if orcid_match else None
+
+    date_published = f"{year}-{month.zfill(2)}" if year and month else year 
+
+    if issn:
+        scholarlyArticle["issn"] = issn
+    if date_published:
+        scholarlyArticle["datePublished"] = date_published
+    if pagination:
+        scholarlyArticle["pagination"] = pagination
+
+    if author_match:
+        author_list = []
+        authors = author_match.group(1).split(" and ")  # Split several authors
+
+        for author in authors:
+            parts = author.split(", ") 
+            if len(parts) == 2:
+                family_name, given_name = parts
+            else:
+                family_name = author
+                given_name = None  
+
+            if type == 'JSON':
+                author_entry = {
+                    "type": "Agent",
+                    "name": f"{given_name} {family_name}",
+                    "family_name": family_name.strip(),
+                    "given_name": given_name.strip() if given_name else None
+                }
+            else:
+                author_entry = {
+                    "@type": "Person",
+                    "familyName": family_name.strip(),
+                    "givenName": given_name.strip() if given_name else None
+                }
+            
+            # in bibtext orcid do not works correctly and in case we have several authors 
+            # if could be dificult to asign the orcid because bibtext just manage one.
+            if len(author_list) == 1 and orcid:
+                if not orcid.startswith("http"):  # check if is a url
+                    orcid = f"https://orcid.org/{orcid}"
+                if type == 'JSON':
+                   author_list[0]["url"] = f"https://orcid.org/{orcid}" 
+                else:
+                    author_list[0]["@id"] = f"https://orcid.org/{orcid}"
+
+            author_list.append({k: v for k, v in author_entry.items() if v is not None}) 
+
+        if author_list:
+            scholarlyArticle["author"] = author_list  # Add to authors list
+
+    return scholarlyArticle
+
+def extract_scholarly_article_natural(citation_text, scholarly_article, type):
+    """
+    Extracts information from a natural language citation and structures it as a ScholarlyArticle.
+    Params:
+        - citation_text (str): The citation text in natural language.
+        - scholarly_article (dict): Dictionary where the extracted data will be stored.
+         - type (str): from codemeta or json
+    Returns:
+        - dict: Dictionary with the extracted data in the desired format.
+    """
+
+    # regular expresions
+    doi_match = re.search(constants.REGEXP_DOI_NATURAL, citation_text)
+    year_match = re.search(constants.REGEXP_YEAR_NATURAL, citation_text)
+    url_match = re.search(constants.REGEXP_URL_NATURAL, citation_text)
+    author_match = re.search(constants.REGEXP_AUTHOR_NATURAL, citation_text)
+    title_match = re.search(constants.REGEXP_TITLE_NATURAL, citation_text)
+
+    if doi_match:
+        scholarly_article["identifier"] = doi_match.group(0)
+        scholarly_article["url"] = f"https://doi.org/{doi_match.group(0)}"
+    
+    if year_match:
+        scholarly_article["datePublished"] = year_match.group(0)
+    
+    if url_match and "url" not in scholarly_article:
+        scholarly_article["url"] = url_match.group(0)
+
+    if title_match:
+        scholarly_article["name"] = title_match.group(1)
+
+    # Authors in format surname, name 
+    if author_match:
+        authors_text = author_match.group(0).replace(" et al.", "").strip()
+        author_list = []
+        for author in authors_text.split(", "):
+            parts = author.split(" ")
+            family_name = parts[-1]
+            given_name = " ".join(parts[:-1])
+            if type == 'JSON':
+                author_list.append({"type": "Agent", "name": f"{given_name} {family_name}","family_name": family_name, "given_name": given_name})
+            else:
+                author_list.append({"@type": "Person", "familyName": family_name, "givenName": given_name})
+
+        scholarly_article["author"] = author_list
+
+    return scholarly_article

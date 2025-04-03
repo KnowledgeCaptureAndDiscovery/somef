@@ -118,7 +118,6 @@ class TestJSONExport(unittest.TestCase):
         with open(test_data_path + "test_issue_629.json", "r") as text_file:
             data = json.load(text_file) 
 
-
         citation = data.get("citation", [])
 
         assert citation, "No 'citation' found in JSON"
@@ -150,6 +149,34 @@ class TestJSONExport(unittest.TestCase):
 
         assert 'keywords' in data.get(constants.CAT_MISSING, []), "Keywords is not in CAT_MISSING" 
         os.remove(test_data_path + "test-651.json")
+
+    def test_issue_745(self):
+        """Checks whether all the items in license has a spdx_id"""
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url="https://github.com/sunpy/sunpy",
+                            local_repo=None,
+                            doc_src=None,
+                            in_file=None,
+                            output=test_data_path + "test_issue_745.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        text_file = open(test_data_path + "test_issue_745.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+        licenses = json_content["license"]
+
+        for i, license_entry in enumerate(licenses):
+            assert "spdx_id" in license_entry["result"], f"Missing 'spdx_id' in license{i}"
+            assert license_entry["result"]["spdx_id"], f"'spdx_id' empty in license {i}"
+        
+        os.remove(test_data_path + "test_issue_745.json")
 
 if __name__ == '__main__':
     unittest.main()

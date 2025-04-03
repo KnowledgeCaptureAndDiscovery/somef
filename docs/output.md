@@ -184,6 +184,8 @@ The table below summarizes all types and their corresponding properties:
 | **date_created** | Release | Date | Date of creation of a release |
 | **date_published** | Release | Date | Date of publication of a release |
 | **email** | Agent | String | Email of an author |
+| **family_name** | Agent | String | Last name of an author |
+| **given_name** | Agent | String | First name of an author |
 | **html_url** | Release | Url | link to the HTML representation of a release |
 | **name** | License, Release,  User, Programming_language | String | Title or name used to designate the release, license user or programming language. |
 | **original_header** | Text_excerpt | String | If the result value is extracted from a markdown file like a README, the original header of that section is also returned. |

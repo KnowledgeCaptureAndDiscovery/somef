@@ -17,6 +17,8 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Application domain**: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects)<sup>[1](#myfootnote1)</sup> 
 - **Authors**: Person(s) or organization(s) responsible for the project. We recognize the following properties:
   - Name: name of the author (including last name)
+  - Given name: First name of an author
+  - Family name: Last name of an author
   - Email: email of author
   - URL: website or ORCID associated with the author
 - **Build file**: Build file(s) of the project. For example, files used to create a Docker image for the target software, package files, etc.
