@@ -93,22 +93,13 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         for l in repo_data[constants.CAT_LICENSE]:
             if constants.PROP_NAME in l[constants.PROP_RESULT].keys():
                 l_result["name"] = l[constants.PROP_RESULT][constants.PROP_NAME]
-            # else:
-            #     print(f"PROP_NAME key not found in: {l[constants.PROP_RESULT].keys()}")
-
-            # change this structure because is posible l_result["url"] doesnt exist
-            # if "url" not in l_result.keys() and constants.PROP_URL in l[constants.PROP_RESULT].keys(): 
-            #     l_result["url"] = l[constants.PROP_RESULT][constants.PROP_URL] 
-            # # We get the first license we find from the repo 
-            # elif l[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_FILE_EXPLORATION and constants.PROP_SOURCE in l.keys() and "api.github.com" in l_result["url"]: 
-            #     l_result["url"] = l[constants.PROP_SOURCE]
             if l[constants.PROP_TECHNIQUE] == "GitLab_API" and l[constants.PROP_RESULT].get("type") == "Url":
                 is_gitlab = True               
                 l_result["url"] = l[constants.PROP_RESULT][constants.PROP_VALUE]
             
             if is_gitlab:
                 if l[constants.PROP_RESULT][constants.PROP_TYPE] == "File_dump":
-                    license_info = detect_license_spdx(l[constants.PROP_RESULT][constants.PROP_VALUE])
+                    license_info = detect_license_spdx(l[constants.PROP_RESULT][constants.PROP_VALUE], 'CODEMETA')
                     if license_info:
                         l_result["name"] = license_info['name']
                         l_result["identifier"] = license_info['identifier']
@@ -130,6 +121,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                         l_result["url"] = l[constants.PROP_RESULT][constants.PROP_URL]
             if constants.PROP_SPDX_ID in l[constants.PROP_RESULT].keys():
                 l_result["identifier"] = constants.SPDX_BASE + l[constants.PROP_RESULT][constants.PROP_SPDX_ID]
+                l_result["spdx_id"] = l[constants.PROP_RESULT][constants.PROP_SPDX_ID]
 
         codemeta_output["license"] = l_result
     if code_repository is not None:
@@ -272,6 +264,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                             "givenName": given_name
                         }
                         if orcid:
+                            if not orcid.startswith("http"):  # check if orcid is a url
+                                orcid = f"https://orcid.org/{orcid}"
                             author_entry["@id"] = orcid
                     elif name:
                         # If there is only a name, we assume this to be an Organization.
@@ -317,9 +311,9 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             if len(scholarlyArticle) > 1:  
                 # look por information in values as pagination, issn and others
                 if re.search(r'@\w+\{', cit[constants.PROP_RESULT][constants.PROP_VALUE]):  
-                    scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle)
+                    scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle, 'CODEMETA')
                 else:
-                    scholarlyArticle = extract_scholarly_article_natural(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle)
+                    scholarlyArticle = extract_scholarly_article_natural(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle, 'CODEMETA')
 
                 key = (doi, title)
 
@@ -347,7 +341,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         status = url_status.split('#')[-1] if '#' in url_status else None
         if status:
             codemeta_output["developmentStatus"] = status
-
     if constants.CAT_IDENTIFIER in repo_data:
         codemeta_output["identifier"] = repo_data[constants.CAT_IDENTIFIER][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_README_URL in repo_data:

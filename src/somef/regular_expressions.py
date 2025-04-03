@@ -643,7 +643,7 @@ def has_valid_links(link_list):
     """Returns True if the list has at least one valid link."""
     return any(has_valid_link(link) for link in link_list)
 
-def detect_license_spdx(license_text):
+def detect_license_spdx(license_text, type):
     """
     Function that given a license text, infers the name and spdx id in a JSON format
     Parameters
@@ -656,19 +656,37 @@ def detect_license_spdx(license_text):
     """
     for license_name, license_info in constants.LICENSES_DICT.items():
         if re.search(license_info["regex"], license_text, re.IGNORECASE):
-            return {
-                "name": license_name,
-                "spdx_id": f"{license_info['spdx_id']}"
-            }
+            if type == 'JSON':
+                return {
+                    "name": license_name,
+                    "spdx_id": f"{license_info['spdx_id']}",
+                    "@id": f"https://spdx.org/licenses/{license_info['spdx_id']}"
+                }
+            else:
+                return {
+                    "name": license_name,
+                    "spdx_id": f"{license_info['spdx_id']}",
+                    "identifier": f"https://spdx.org/licenses/{license_info['spdx_id']}"
+                }
     return None
 
-def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle):
+# def detect_license(license_text):
+#     for license_name, license_info in constants.LICENSES_DICT.items():
+#         if re.search(license_info["regex"], license_text, re.IGNORECASE):
+#             return {
+#                 "name": license_name,
+#                 "identifier": f"https://spdx.org/licenses/{license_info['spdx_id']}"
+#             }
+#     return None
+
+def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle, type):
     """
     Extract datePublished, issn and pagination fromg BibTeX and append to scholarlyArticle object
     
     Params:
-        - bibtex_entry (str): Entrada BibTeX en formato string.
-        - scholarlyArticle (dict): Diccionario donde se almacenarán los datos extraídos.
+        - bibtex_entry (str): BibTeX entry in string format.
+        - scholarlyArticle (dict): Dictionary where the extracted data will be stored.
+        - type (str): from codemeta or json
     """
 
     # regular expresions properties
@@ -677,8 +695,8 @@ def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle):
     month_match = re.search(constants.REGEXP_MONTH, bibtex_entry)
     pages_match = re.search(constants.REGEXP_PAGES, bibtex_entry)
     author_match = re.search(r'author\s*=\s*\{([^}]+)\}', bibtex_entry) 
-    orcid_match = re.search(r'orcid\s*=\s*\{([^}]+)\}', bibtex_entry)  # Buscar ORCID explícito
-    note_orcid_match = re.search(r'ORCID[:\s]*([\d-]+X?)', bibtex_entry)  #buscar en notes
+    orcid_match = re.search(r'orcid\s*=\s*\{([^}]+)\}', bibtex_entry)  # Look for ORCID explícit
+    note_orcid_match = re.search(r'ORCID[:\s]*([\d-]+X?)', bibtex_entry)  # Look in notes
 
     issn = issn_match.group(1) if issn_match else None
     year = year_match.group(1) if year_match else None
@@ -687,7 +705,7 @@ def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle):
     authors = author_match.group(1) if author_match else None
     orcid = orcid_match.group(1) if orcid_match else None
 
-    date_published = f"{year}-{month.zfill(2)}" if year and month else year  # Zfill asegura 2 dígitos en mes
+    date_published = f"{year}-{month.zfill(2)}" if year and month else year 
 
     if issn:
         scholarlyArticle["issn"] = issn
@@ -698,7 +716,7 @@ def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle):
 
     if author_match:
         author_list = []
-        authors = author_match.group(1).split(" and ")  # Separar múltiples autores
+        authors = author_match.group(1).split(" and ")  # Split several authors
 
         for author in authors:
             parts = author.split(", ") 
@@ -708,30 +726,44 @@ def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle):
                 family_name = author
                 given_name = None  
 
-            author_entry = {
-                "@type": "Person",
-                "familyName": family_name.strip(),
-                "givenName": given_name.strip() if given_name else None
-            }
+            if type == 'JSON':
+                author_entry = {
+                    "type": "Agent",
+                    "name": f"{given_name} {family_name}",
+                    "familyName": family_name.strip(),
+                    "givenName": given_name.strip() if given_name else None
+                }
+            else:
+                author_entry = {
+                    "@type": "Person",
+                    "familyName": family_name.strip(),
+                    "givenName": given_name.strip() if given_name else None
+                }
             
             # in bibtext orcid do not works correctly and in case we have several authors 
             # if could be dificult to asign the orcid because bibtext just manage one.
             if len(author_list) == 1 and orcid:
-                author_list[0]["@id"] = f"https://orcid.org/{orcid}"
+                if not orcid.startswith("http"):  # check if is a url
+                    orcid = f"https://orcid.org/{orcid}"
+                if type == 'JSON':
+                   author_list[0]["url"] = f"https://orcid.org/{orcid}" 
+                else:
+                    author_list[0]["@id"] = f"https://orcid.org/{orcid}"
 
-            author_list.append({k: v for k, v in author_entry.items() if v is not None})  # Filtrar valores None
+            author_list.append({k: v for k, v in author_entry.items() if v is not None}) 
 
         if author_list:
-            scholarlyArticle["author"] = author_list  # Agregar la lista de autores
+            scholarlyArticle["author"] = author_list  # Add to authors list
 
     return scholarlyArticle
 
-def extract_scholarly_article_natural(citation_text, scholarly_article):
+def extract_scholarly_article_natural(citation_text, scholarly_article, type):
     """
     Extracts information from a natural language citation and structures it as a ScholarlyArticle.
     Params:
         - citation_text (str): The citation text in natural language.
         - scholarly_article (dict): Dictionary where the extracted data will be stored.
+         - type (str): from codemeta or json
     Returns:
         - dict: Dictionary with the extracted data in the desired format.
     """
@@ -764,7 +796,10 @@ def extract_scholarly_article_natural(citation_text, scholarly_article):
             parts = author.split(" ")
             family_name = parts[-1]
             given_name = " ".join(parts[:-1])
-            author_list.append({"@type": "Person", "familyName": family_name, "givenName": given_name})
+            if type == 'JSON':
+                author_list.append({"type": "Agent", "name": f"{given_name} {family_name}","familyName": family_name, "givenName": given_name})
+            else:
+                author_list.append({"@type": "Person", "familyName": family_name, "givenName": given_name})
 
         scholarly_article["author"] = author_list
 

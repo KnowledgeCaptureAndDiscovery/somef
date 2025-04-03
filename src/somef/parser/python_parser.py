@@ -238,7 +238,7 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                         license_text = ""
                         license_value = license_info
 
-                    license_info_spdx = detect_license_spdx(license_text)
+                    license_info_spdx = detect_license_spdx(license_text, 'JSON')
                     spdx_id = ""
                     spdx_name = ""
 

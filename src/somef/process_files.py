@@ -259,9 +259,9 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                     result = cit.get(constants.PROP_RESULT, {})
                     value = result.get(constants.PROP_VALUE, '')
                     if re.search(r'@\w+\{', value):  
-                        scholarly_article = extract_scholarly_article_properties(value, scholarly_article)
+                        scholarly_article = extract_scholarly_article_properties(value, scholarly_article, 'JSON')
                     else:
-                        scholarly_article = extract_scholarly_article_natural(value, scholarly_article)
+                        scholarly_article = extract_scholarly_article_natural(value, scholarly_article, 'JSON')
 
                     if 'datePublished' in scholarly_article:
                         result['datePublished'] = scholarly_article['datePublished']
@@ -384,7 +384,7 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
             }
             if category is constants.CAT_LICENSE:
                 license_text = file_text
-                license_info = detect_license_spdx(license_text)
+                license_info = detect_license_spdx(license_text, 'JSON')
                 if license_info:
                     result[constants.PROP_NAME] = license_info['name']
                     result[constants.PROP_SPDX_ID] = license_info['spdx_id']
@@ -425,18 +425,21 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
 
                     if family_name and given_name:
                         author_entry = {
-                            "@type": "Person",
+                            "type": "Agent",
+                            "name": f"{given_name} {family_name}",
                             "familyName": family_name,
                             "givenName": given_name
                         }
                         if orcid:
-                            author_entry["@id"] = orcid
+                            if not orcid.startswith("http"):  # check if is a url
+                                orcid = f"https://orcid.org/{orcid}"
+                            author_entry["url"] = orcid
                     elif name:
                         # If there is only a name, we assume this to be an Organization.
                         # it could be not enough acurate
 
                         author_entry = {
-                            "@type": "Organization",
+                            "type": "Agent",
                             "name": name
                         }
                     
