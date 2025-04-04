@@ -313,7 +313,8 @@ def parse_requirements_txt(file_path, metadata_result: Result, source):
     metadata_result: Updated metadata result object
     """
     try:
-        if Path(file_path).name.lower() in ["requirements.txt", "requirment.txt"]:
+        if Path(file_path).name.lower() in ["requirements.txt", "requirement.txt"]:
+
             
             with open(file_path, "r", encoding="utf-8") as f:
                 for line in f:
