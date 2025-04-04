@@ -12,6 +12,7 @@ from .parser.pom_xml_parser import parse_pom_file
 from .parser.package_json_parser import parse_package_json_file
 from .parser.python_parser import parse_pyproject_toml
 from .parser.python_parser import parse_setup_py
+from.parser.python_parser import parse_requirements_txt
 from chardet import detect
 
 domain_gitlab = ''
@@ -175,9 +176,10 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                    )
                 if filename.upper() == constants.CODEOWNERS_FILE:
                     codeowners_json = parse_codeowners_structured(dir_path,filename)
+
                     # TO DO: Code owners not fully implemented yet
                 if filename.lower() == "pom.xml" or filename.lower() == "package.json" or \
-                    filename.lower() == "pyproject.toml" or filename.lower() == "setup.py":
+                    filename.lower() == "pyproject.toml" or filename.lower() == "setup.py" or filename.lower() == "requirements.txt":
                         build_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
                                                        repo_dir,
                                                        repo_relative_path, filename)
@@ -198,6 +200,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             metadata_result = parse_pyproject_toml(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "setup.py":
                             metadata_result = parse_setup_py(os.path.join(dir_path, filename), metadata_result, build_file_url)
+                        if filename.lower() == "requirements.txt":
+                            metadata_result = parse_requirements_txt(os.path.join(dir_path, filename), metadata_result, build_file_url)
 
                 # if repo_type == constants.RepositoryType.GITLAB: 
                 if filename.endswith(".yml"):
