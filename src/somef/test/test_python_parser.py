@@ -2,6 +2,8 @@ import unittest
 import os
 from pathlib import Path
 from ..parser.python_parser import parse_pyproject_toml
+from ..parser.python_parser import parse_requirements_txt
+from..parser.python_parser import parse_setup_py
 from ..process_results import Result
 from ..utils import constants
 
@@ -15,17 +17,10 @@ class TestPythonParser(unittest.TestCase):
         result = Result()
 
         metadata_result = parse_pyproject_toml(pyproject_path, result, "https://example.org/pyproject.toml")
-        print(f"###################### {metadata_result} #####################")
-        print(f"Available categories in result: {list(metadata_result.results.keys())}")
-        """
-        I am testing if there is any categories in metadata_result, but it always gives me the same output:
-        !!! Available categories in result: ['somef_provenance'] !!!
-        and that's the issue, it cannot detect any other categories, even though I tested with somef on the same file, and it works as intented
-        """
-        print(f"Full result content: {metadata_result.results}")
+        #print(f"Full result content: {metadata_result.results}")
         
         package_id = metadata_result.results.get(constants.CAT_PACKAGE_ID, [])
-        print(package_id)
+        #print(package_id)
         self.assertTrue(len(package_id) > 0, "No identifier found")
         self.assertEqual(package_id[0]["result"]["value"], "gammalearn")
         
@@ -59,7 +54,56 @@ class TestPythonParser(unittest.TestCase):
         
         self.assertIn(constants.CAT_REQUIREMENTS, result.results)
         dependencies = result.results[constants.CAT_REQUIREMENTS]
-        self.assertEqual(len(dependencies), 23)
+        self.assertEqual(len(dependencies), 25)
+
+    def test_inspect4py_repository(self):
+        """Test parsing of inspect4py repository files"""
+  
+        inspect4py_dir = test_data_repositories + os.path.sep + "inspect4py"
+        requirements_path = os.path.join(inspect4py_dir, "requirements.txt")
+        pyproject_path = os.path.join(inspect4py_dir, "pyproject.toml")
+        setup_path = os.path.join(inspect4py_dir, "setup.py")
+        
+        ############### This is for testing requirements.txt parsing #######################
+        result = Result()
+        metadata_result = parse_requirements_txt(requirements_path, result, "https://example.org/requirements.txt")
+        
+        self.assertIn(constants.CAT_REQUIREMENTS, result.results)
+        dependencies = result.results[constants.CAT_REQUIREMENTS]
+        self.assertEqual(len(dependencies), 12, "Incorrect number of requirements found in requirements.txt")
+        
+        # Decided to randomly check if some specific dependencies are found in the requirements.txt file
+        req_names = [req["result"]["name"] for req in dependencies]
+        self.assertIn("docstring_parser", req_names)
+        self.assertIn("astor", req_names)
+        
+        ####################### This is for testing pyroject.toml parsing #######################
+        result = Result()
+        metadata_result = parse_pyproject_toml(pyproject_path, result, "https://example.org/pyproject.toml")
+        
+        self.assertIn(constants.CAT_REQUIREMENTS, result.results)
+        dependencies = result.results[constants.CAT_REQUIREMENTS]
+        self.assertEqual(len(dependencies), 11, "Incorrect number of requirements found in pyproject.toml")
+        
+        req_names = [req["result"]["name"] for req in dependencies]
+        self.assertIn("bs4", req_names)
+        self.assertIn("docstring_parser", req_names)
+        
+        ####################### This is for testing setup.py parsing #######################
+        result = Result()
+        metadata_result = parse_setup_py(setup_path, result, "https://example.org/setup.py")
+
+        self.assertIn(constants.CAT_DESCRIPTION, result.results)
+        description = result.results[constants.CAT_DESCRIPTION][0]["result"]["value"]
+        self.assertEqual(description, "Static code analysis package for Python repositories")
+        
+        self.assertIn(constants.CAT_LICENSE, result.results)
+        license_info = result.results[constants.CAT_LICENSE][0]["result"]["value"]
+        self.assertEqual(license_info, "BSD-3-Clause")
+
+        self.assertIn(constants.CAT_PROGRAMMING_LANGUAGES, result.results)
+        programming_languages = result.results[constants.CAT_PROGRAMMING_LANGUAGES]
+        self.assertEqual(programming_languages[0]["result"]["value"], "Python")
 
 if __name__ == "__main__":
     unittest.main()
