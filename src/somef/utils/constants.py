@@ -284,6 +284,10 @@ release_gitlab_crosswalk_table = {
     PROP_DATE_CREATED: 'created_at',
     PROP_DATE_PUBLISHED: "released_at",
 }
+
+# Minimum percentage of total bytes a programming language must have to be considered relevant in CodeMeta file.
+MINIMUM_PERCENTAGE_LANGUAGE_PROGRAMMING = 10
+
 # TO DO: Assess run and download.
 categories_files_header = [CAT_INSTALLATION, CAT_CITATION, CAT_ACKNOWLEDGEMENT, "run", "download", CAT_REQUIREMENTS,
                            CAT_CONTACT, CAT_DESCRIPTION, CAT_CONTRIBUTORS, CAT_DOCUMENTATION, CAT_LICENSE, CAT_USAGE,
