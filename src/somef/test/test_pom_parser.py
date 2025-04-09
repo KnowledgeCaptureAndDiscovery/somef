@@ -37,18 +37,17 @@ class TestPomParser(unittest.TestCase):
 
         requirements_results = metadata_result.results.get(constants.CAT_REQUIREMENTS, [])
         self.assertTrue(len(requirements_results) > 0, "No dependencies found")
-        dependencies = requirements_results[0]["result"]["value"]
-        self.assertTrue(len(dependencies) > 0, "Empty dependencies list")
         
         found_junit = False
-        for dep in dependencies:
-            if dep.get("artifactId") == "junit":
+        for req_result in requirements_results:
+            dependency = req_result["result"]
+            if dependency.get("name") == "junit":
                 found_junit = True
-                self.assertEqual(dep.get("version"), "4.13.1")
-                self.assertEqual(dep.get("groupId"), "junit")
+                self.assertEqual(dependency.get("version"), "4.13.1")
+                self.assertEqual(dependency.get("value"), "junit.junit")
                 break
         self.assertTrue(found_junit, "JUnit dependency not found")
-
+        
         repo_results = metadata_result.results.get(constants.CAT_PACKAGE_DISTRIBUTION, [])
         self.assertTrue(len(repo_results) > 0, "No repository information found")
         
