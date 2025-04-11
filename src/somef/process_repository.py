@@ -424,14 +424,16 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     default_branch = None
 
     if len(path_components) >= 5:
-        if not path_components[3] == "tree":
-            logging.error(
-                "Github link is not correct. \n"
-                "The correct format is https://github.com/{owner}/{repo_name}/tree/{ref}.")
+        # if not path_components[3] == "tree":
+        if path_components[3] not in ["tree", "blob"]:
+            logging.error(f"Github link is not correct. \n"
+                f"The correct format is https://github.com/{owner}/{repo_name}/tree/... \n"
+                f"or  https://github.com/{owner}/{repo_name}/blob/....")
             return repository_metadata, "", "", ""
 
         # we must join all after 4, as sometimes tags have "/" in them.
-        default_branch = "/".join(path_components[4:])
+        # default_branch = "/".join(path_components[4:])
+        default_branch = path_components[4]
         # ref_param = {"ref": default_branch}
 
     general_resp = {}
