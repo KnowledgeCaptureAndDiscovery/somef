@@ -203,6 +203,14 @@ class TestCodemetaExport(unittest.TestCase):
         assert found, f"Author {expected_given_name} {expected_family_name} not found in referencePublication"
         os.remove(json_file_path)
 
+    def test_codemeta_relevants_programming_languages(self):
+        """Checks if codemeta file has filter just relevants programming language"""
+
+        assert "programmingLanguage" in self.json_content, "Key 'programmingLanguage' is missing in JSON"
+        expected_languages = ["Jupyter Notebook"]
+        assert set(self.json_content["programmingLanguage"]) == set(expected_languages), f"Mismatch: {self.json_content['programmingLanguage']}"
+
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""
@@ -213,7 +221,7 @@ class TestCodemetaExport(unittest.TestCase):
             except Exception as e:
                 print(f"Failed to delete {cls.json_file}: {e}")  # Captura errores de eliminación
 
-                
+
 if __name__ == "__main__":
     unittest.main()
  

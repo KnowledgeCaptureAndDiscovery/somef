@@ -140,7 +140,15 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     if constants.CAT_KEYWORDS in repo_data:
         codemeta_output["keywords"] = repo_data[constants.CAT_KEYWORDS][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_PROGRAMMING_LANGUAGES in repo_data:
-        codemeta_output["programmingLanguage"] = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in repo_data[constants.CAT_PROGRAMMING_LANGUAGES]]
+        # Calculate the total code size of all the programming languages
+        total_size = sum(x[constants.PROP_RESULT][constants.PROP_SIZE] for x in repo_data[constants.CAT_PROGRAMMING_LANGUAGES])
+        # Discard languages below 10% of the total code size
+        codemeta_output["programmingLanguage"] = [
+            x[constants.PROP_RESULT][constants.PROP_VALUE]
+            for x in repo_data[constants.CAT_PROGRAMMING_LANGUAGES]
+            if (x[constants.PROP_RESULT][constants.PROP_SIZE] / total_size) * 100 > constants.MINIMUM_PERCENTAGE_LANGUAGE_PROGRAMMING  # Just more than 10%
+        ]
+        # codemeta_output["programmingLanguage"] = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in repo_data[constants.CAT_PROGRAMMING_LANGUAGES]]
     if constants.CAT_REQUIREMENTS in repo_data:
         codemeta_output["softwareRequirements"] = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in repo_data[constants.CAT_REQUIREMENTS]]
     if constants.CAT_CONTINUOUS_INTEGRATION in repo_data:
