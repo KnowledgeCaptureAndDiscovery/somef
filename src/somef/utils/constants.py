@@ -179,6 +179,7 @@ PROP_SIZE = "size"
 PROP_SPDX_ID = "spdx_id"
 PROP_TAG = "tag"
 PROP_URL = "url"
+PROP_VERSION = "version"
 PROP_ZIPBALL_URL = "zipball_url"
 PROP_TARBALL_URL = "tarball_url"
 # Publications
