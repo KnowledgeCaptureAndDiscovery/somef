@@ -159,7 +159,26 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                             constants.TECHNIQUE_CODE_CONFIG_PARSER,
                             source
                         )
-                
+                        
+                # This is for detecting the "requires" section in a pyrpoject.toml file      
+                if "build-system" in data and "requires" in data["build-system"]:
+                    build_requires = data["build-system"]["requires"]
+                    if isinstance(build_requires, list):
+                        for req in build_requires:
+                            name, version = parse_dependency(req)
+                            if name:
+                                metadata_result.add_result(
+                                    constants.CAT_REQUIREMENTS,
+                                    {
+                                        "value": req,
+                                        "name": name,
+                                        "version": version,
+                                        "type": constants.SOFTWARE_APPLICATION
+                                    },
+                                    1,
+                                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                                    source
+                                )
                 
                 urls = project.get("urls", {})
                 if not urls and "tool" in data and "poetry" in data["tool"]:
@@ -280,8 +299,47 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
         logging.error(f"Error parsing pyproject.toml from {file_path}: {str(e)}")
 
     return metadata_result    
-    
-################################ setup.py #########################################
+
+def parse_requirements_txt(file_path, metadata_result: Result, source):
+    """
+    Parameters
+    ----------
+    file_path: path to the requirements.txt file being analyzed
+    metadata_result: Metadata object dictionary
+    source: source of the package file (URL)
+
+    Returns
+    -------
+    metadata_result: Updated metadata result object
+    """
+    try:
+        if Path(file_path).name.lower() in ["requirements.txt", "requirement.txt"]:
+
+            
+            with open(file_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith('#'):
+                        continue
+                    name, version = parse_dependency(line)
+                    if name:
+                        metadata_result.add_result(
+                            constants.CAT_REQUIREMENTS,
+                            {
+                                "value": line,
+                                "name": name,
+                                "version": version,
+                                "type": constants.SOFTWARE_APPLICATION
+                            },
+                            1,
+                            constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                            source
+                        )
+    except Exception as e:
+        logging.error(f"Error parsing requirements.txt from {file_path}: {str(e)}")
+
+    return metadata_result
+
 def parse_setup_py(file_path, metadata_result: Result, source):
     """
 
