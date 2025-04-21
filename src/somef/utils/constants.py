@@ -179,6 +179,7 @@ PROP_SIZE = "size"
 PROP_SPDX_ID = "spdx_id"
 PROP_TAG = "tag"
 PROP_URL = "url"
+PROP_VERSION = "version"
 PROP_ZIPBALL_URL = "zipball_url"
 PROP_TARBALL_URL = "tarball_url"
 # Publications
@@ -284,6 +285,10 @@ release_gitlab_crosswalk_table = {
     PROP_DATE_CREATED: 'created_at',
     PROP_DATE_PUBLISHED: "released_at",
 }
+
+# Minimum percentage of total bytes a programming language must have to be considered relevant in CodeMeta file.
+MINIMUM_PERCENTAGE_LANGUAGE_PROGRAMMING = 10
+
 # TO DO: Assess run and download.
 categories_files_header = [CAT_INSTALLATION, CAT_CITATION, CAT_ACKNOWLEDGEMENT, "run", "download", CAT_REQUIREMENTS,
                            CAT_CONTACT, CAT_DESCRIPTION, CAT_CONTRIBUTORS, CAT_DOCUMENTATION, CAT_LICENSE, CAT_USAGE,
