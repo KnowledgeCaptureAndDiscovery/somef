@@ -141,13 +141,27 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["keywords"] = repo_data[constants.CAT_KEYWORDS][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_PROGRAMMING_LANGUAGES in repo_data:
         # Calculate the total code size of all the programming languages
-        total_size = sum(x[constants.PROP_RESULT][constants.PROP_SIZE] for x in repo_data[constants.CAT_PROGRAMMING_LANGUAGES])
-        # Discard languages below 10% of the total code size
-        codemeta_output["programmingLanguage"] = [
-            x[constants.PROP_RESULT][constants.PROP_VALUE]
-            for x in repo_data[constants.CAT_PROGRAMMING_LANGUAGES]
-            if (x[constants.PROP_RESULT][constants.PROP_SIZE] / total_size) * 100 > constants.MINIMUM_PERCENTAGE_LANGUAGE_PROGRAMMING  # Just more than 10%
-        ]
+        codemeta_output["programmingLanguage"] = []
+        language_data = repo_data.get(constants.CAT_PROGRAMMING_LANGUAGES, [])
+        total_size = 0
+        for item in language_data:
+            result = item.get(constants.PROP_RESULT, {})
+            size = result.get(constants.PROP_SIZE)
+            if size is not None:
+                total_size += size
+        # Discard languages below 10% of the total code size, only if size is available
+        for item in language_data:
+            result = item.get(constants.PROP_RESULT, {})
+            size = result.get(constants.PROP_SIZE)
+            value = result.get(constants.PROP_VALUE)
+            if value not in codemeta_output["programmingLanguage"]:
+                if size is not None and value is not None and total_size > 0:
+                    percentage = (size / total_size) * 100
+                    if percentage > constants.MINIMUM_PERCENTAGE_LANGUAGE_PROGRAMMING:
+                        codemeta_output["programmingLanguage"].append(value)
+                elif size is None: # when size is not available, it comes from the parsers
+                    codemeta_output["programmingLanguage"].append(value)
+
     if constants.CAT_REQUIREMENTS in repo_data:
         # codemeta_output["softwareRequirements"] = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in repo_data[constants.CAT_REQUIREMENTS]]
         code_parser_requirements = [

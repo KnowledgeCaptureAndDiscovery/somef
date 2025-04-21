@@ -15,17 +15,9 @@ class TestPythonParser(unittest.TestCase):
         result = Result()
 
         metadata_result = parse_pyproject_toml(pyproject_path, result, "https://example.org/pyproject.toml")
-        print(f"###################### {metadata_result} #####################")
-        print(f"Available categories in result: {list(metadata_result.results.keys())}")
-        """
-        I am testing if there is any categories in metadata_result, but it always gives me the same output:
-        !!! Available categories in result: ['somef_provenance'] !!!
-        and that's the issue, it cannot detect any other categories, even though I tested with somef on the same file, and it works as intented
-        """
-        print(f"Full result content: {metadata_result.results}")
         
         package_id = metadata_result.results.get(constants.CAT_PACKAGE_ID, [])
-        print(package_id)
+        # print(package_id)
         self.assertTrue(len(package_id) > 0, "No identifier found")
         self.assertEqual(package_id[0]["result"]["value"], "gammalearn")
         
