@@ -15,7 +15,6 @@ class TestPythonParser(unittest.TestCase):
         result = Result()
 
         metadata_result = parse_pyproject_toml(pyproject_path, result, "https://example.org/pyproject.toml")
-        
         package_id = metadata_result.results.get(constants.CAT_PACKAGE_ID, [])
         # print(package_id)
         self.assertTrue(len(package_id) > 0, "No identifier found")
