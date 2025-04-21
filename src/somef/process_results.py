@@ -72,7 +72,7 @@ class Result:
         N/A edits the  metadata result
         """
         for entry in self.results[category]:
-            if entry[constants.PROP_SOURCE] is not None and entry[constants.PROP_TECHNIQUE] is constants.TECHNIQUE_FILE_EXPLORATION:
+            if entry.get(constants.PROP_SOURCE) is not None and entry[constants.PROP_TECHNIQUE] is constants.TECHNIQUE_FILE_EXPLORATION:
                 if source != "":
                     entry[constants.PROP_RESULT] = result
                     entry[constants.PROP_SOURCE] = source
