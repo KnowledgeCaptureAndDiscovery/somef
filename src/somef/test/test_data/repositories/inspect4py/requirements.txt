@@ -1,0 +1,12 @@
+docstring_parser==0.7
+astor
+graphviz
+click
+pigar
+setuptools==70.0.0
+json2html
+configparser
+bigcode_astgen
+GitPython
+tree-sitter
+requests
