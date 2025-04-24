@@ -103,5 +103,23 @@ class TestPythonParser(unittest.TestCase):
         programming_languages = result.results[constants.CAT_PROGRAMMING_LANGUAGES]
         self.assertEqual(programming_languages[0]["result"]["value"], "Python")
 
+
+    def test_parse_pyproject_toml_requirements_version(self):
+        """Test parsing requirements with version and name. If version, must have name"""
+        pyproject_path = test_data_repositories + os.path.sep+ "sunpy"+ os.path.sep+ "pyproject.toml"
+        result = Result()
+
+        metadata_result = parse_pyproject_toml(pyproject_path, result, "https://example.org/pyproject.toml")
+        
+        self.assertIn(constants.CAT_REQUIREMENTS, result.results)
+        dependencies = result.results[constants.CAT_REQUIREMENTS]
+
+        for item in dependencies:
+            result = item.get("result", {})
+            version = result.get("version", None)  
+            name = result.get("name", None)  
+
+            self.assertTrue(version is None or name is not None, f"Error in requirement: {item}")
+
 if __name__ == "__main__":
     unittest.main()

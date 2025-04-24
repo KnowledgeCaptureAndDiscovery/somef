@@ -1,0 +1,255 @@
+[build-system]
+requires = [
+  "setuptools>=62.1",
+  "setuptools_scm[toml]>=8.0.1",
+  "wheel",
+  "extension-helpers",
+  # Comments on numpy build requirement range:
+  #
+  #   1. >=2.0.x is the numpy requirement for wheel builds for distribution
+  #      on PyPI - building against 2.x yields wheels that are also
+  #      ABI-compatible with numpy 1.x at runtime.
+  #   2. Note that building against numpy 1.x works fine too - users and
+  #      redistributors can do this by installing the numpy version they like
+  #      and disabling build isolation.
+  #   3. The <2.3 upper bound is for matching the numpy deprecation policy,
+  #      it should not be loosened.
+  "numpy>=2.0.0rc1,<2.3",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sunpy"
+description = "SunPy core package: Python for Solar Physics"
+requires-python = ">=3.11"
+readme = { file = "README.rst", content-type = "text/x-rst" }
+license = { file = "LICENSE.rst" }
+authors = [
+  { name = "The SunPy Community", email = "sunpy@googlegroups.com" },
+]
+dependencies = [
+  "astropy>=6.0.0",
+  "numpy>=1.24.0",
+  "packaging>=23.0",
+  "parfive[ftp]>=2.0.0",
+  "pyerfa>=2.0.1.1",
+  "requests>=2.28.0",
+  "fsspec>=2023.3.0",
+]
+dynamic = ["version"]
+keywords = ["solar physics", "solar", "science", "sun", "wcs", "coordinates"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: BSD License",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Physics",
+]
+
+[project.optional-dependencies]
+# The list of available extras is also in the installation docs, if you add or remove one please edit it there as well.
+asdf = [
+  "asdf-astropy>=0.5.0",
+  "asdf>=2.13.0",
+]
+dask = ["dask[array]>=2022.5.2"]
+image = [
+  "scipy>=1.10.1",
+]
+jpeg2000 = [
+  "glymur>=0.11.0",
+  # While a direct dependency of glymur, we import it to save JPEG2000 files.
+  # and we had issues with specific versions lxml.
+  "lxml>=4.9.1,!=5.0.0",
+]
+map = [
+  "contourpy>=1.0.1",
+  "matplotlib>=3.6.0",
+  "mpl-animators>=1.0.0",
+  "reproject>=0.10.0",
+  "scipy>=1.10.1",
+]
+opencv = ["opencv-python>=4.6.0.66"]
+net = [
+  "beautifulsoup4>=4.11.0",
+  "drms>=0.7.1",
+  "python-dateutil>=2.8.1",
+  "tqdm>=4.64.0",
+  "zeep>=4.1.0",
+]
+scikit-image = ["scikit-image>=0.20.0"]
+spice = ["spiceypy>=5.0.0"]
+timeseries = [
+  "cdflib>=1.3.2",
+  "h5netcdf>=1.0.0",
+  # While a not direct dependency
+  # We need to raise this to ensure the goes netcdf files open.
+  "h5py>=3.8.0",
+  "matplotlib>=3.6.0",
+  "pandas>=1.5.0",
+]
+visualization = [
+  "matplotlib>=3.6.0",
+  "mpl-animators>=1.0.0",
+]
+core = ["sunpy[image,map,net,timeseries,visualization]"]
+all = ["sunpy[core,asdf,jpeg2000,opencv,spice,scikit-image]"]
+# Because of some real *fun* dependancy constraints between aiobotocore, s3fs
+# and boto3 this is the best way to get s3fs and boto3 (needed for cdflib)
+# installed simultaneously. We only use this extra for tests, but it is
+# provided separate for users who want to opt-in to s3 support. It should not be
+# included in [all] or conda deps.
+s3 = [
+  "fsspec[s3]>=2023.3.0",
+  "aiobotocore[boto3]>=1.26.41",  # cdflib has it's own special s3 handling which requires boto3
+]
+tests-only = [
+  "hvpy>=1.1.0",
+  "jplephem>=2.14",
+  "pytest-astropy>=0.11.0",
+  "pytest-mpl>=0.16",
+  "pytest-xdist>=3.0.2",
+  "pytest>=7.1.0",
+]
+tests = [
+  "sunpy[all,s3,tests-only]",
+]
+docs = [
+  "sphinx>=6.0.0",
+  "sphinx-automodapi>=0.14.1",
+  "packaging>=23.0",
+  "sunpy[all]",
+  "hvpy>=1.1.0",
+  "ruamel.yaml>=0.17.19",
+  "sphinx-changelog>=1.5.0",
+  "sphinx-copybutton>=0.5.0",
+  "sphinx-design>=0.2.0",
+  "sphinx-gallery>=0.13.0",
+  "sphinxext-opengraph>=0.6.0",
+  "sunpy-sphinx-theme>=2.0.3",
+  "sphinx-hoverxref>=1.3.0",
+  "sphinxcontrib-bibtex",
+]
+docs-gallery = [
+  "sunpy[docs]",
+  "astroquery>=0.4.6",
+  "jplephem>=2.14",
+]
+dev = ["sunpy[docs,tests]"]
+
+[project.urls]
+Homepage = "https://sunpy.org"
+"Source Code" = "https://github.com/sunpy/sunpy"
+Download = "https://pypi.org/project/sunpy"
+Documentation = "https://docs.sunpy.org"
+Changelog = "https://docs.sunpy.org/en/stable/whatsnew/changelog.html"
+"Issue Tracker" = "https://github.com/sunpy/sunpy/issues"
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+platforms = ["any"]
+provides = ["sunpy"]
+license-files = ["LICENSE.rst"]
+
+[tool.setuptools.packages.find]
+include = ["sunpy*"]
+exclude = ["sunpy._dev*"]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["*.c", "*.h"]
+
+[tool.setuptools_scm]
+version_file = "sunpy/_version.py"
+
+[project.entry-points."asdf.resource_mappings"]
+sunpy = "sunpy.io.special.asdf.entry_points:get_resource_mappings"
+
+[project.entry-points."asdf.extensions"]
+sunpy = "sunpy.io.special.asdf.entry_points:get_extensions"
+
+[tool.distutils.bdist_wheel]
+# The Py_LIMITED_API version hex in _pyana.c should match the version specified here
+py-limited-api = "cp311"
+
+[tool.extension-helpers]
+use_extension_helpers = "true"
+
+[tool.gilesbot]
+  [tool.gilesbot.circleci_artifacts]
+  enabled = true
+
+  [tool.gilesbot.circleci_artifacts.figure_report]
+  url = ".tmp/py312-figure/figure_test_images/fig_comparison.html"
+  message = "Click details to see the figure test comparisons, for py312-figure."
+  report_on_fail = true
+
+  [tool.gilesbot.circleci_artifacts.figure_report_devdeps]
+  url = ".tmp/py312-figure-devdeps/figure_test_images/fig_comparison.html"
+  message = "Click details to see the figure test comparisons for py312-figure-devdeps."
+  report_on_fail = true
+
+  [tool.gilesbot.pull_requests]
+  enabled = true
+
+  [tool.gilesbot.towncrier_changelog]
+  enabled = true
+  verify_pr_number = true
+  changelog_skip_label = "No Changelog Entry Needed"
+  help_url = "https://github.com/sunpy/sunpy/blob/main/changelog/README.rst"
+
+  changelog_missing_long = "There isn't a changelog file in this pull request. Please add a changelog file to the `changelog/` directory following the instructions in the changelog [README](https://github.com/sunpy/sunpy/blob/main/changelog/README.rst)."
+
+  type_incorrect_long = "The changelog file you added is not one of the allowed types. Please use one of the types described in the changelog [README](https://github.com/sunpy/sunpy/blob/main/changelog/README.rst)"
+
+  number_incorrect_long = "The number in the changelog file you added does not match the number of this pull request. Please rename the file."
+
+# TODO: This should be in towncrier.toml but Giles currently only works looks in
+# pyproject.toml we should move this back when it's fixed.
+[tool.towncrier]
+  package = "sunpy"
+  filename = "CHANGELOG.rst"
+  directory = "changelog/"
+  issue_format = "`#{issue} <https://github.com/sunpy/sunpy/pull/{issue}>`__"
+  title_format = "{version} ({project_date})"
+
+  [[tool.towncrier.type]]
+  directory = "breaking"
+  name = "Breaking Changes"
+  showcontent = true
+
+  [[tool.towncrier.type]]
+  directory = "deprecation"
+  name = "Deprecations"
+  showcontent = true
+
+  [[tool.towncrier.type]]
+  directory = "removal"
+  name = "Removals"
+  showcontent = true
+
+  [[tool.towncrier.type]]
+  directory = "feature"
+  name = "New Features"
+  showcontent = true
+
+  [[tool.towncrier.type]]
+  directory = "bugfix"
+  name = "Bug Fixes"
+  showcontent = true
+
+  [[tool.towncrier.type]]
+  directory = "doc"
+  name = "Documentation"
+  showcontent = true
+
+  [[tool.towncrier.type]]
+  directory = "trivial"
+  name = "Internal Changes"
+  showcontent = true
