@@ -15,7 +15,6 @@ https://github.com/proycon/codemetapy/blob/master/codemeta/parsers/python.py
 def parse_dependency(dependency_str):
     if not dependency_str:
         return None, None
-        
     parts = re.split(r'(>=|<=|==|!=|>|<|~=|\[)', dependency_str, 1)
     name = parts[0].strip()
     if len(parts) > 1:
@@ -136,7 +135,8 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                             metadata_result.add_result(
                                 constants.CAT_REQUIREMENTS,
                                 {
-                                    "value": req, 
+                                    "value": req,
+                                    "name": name, 
                                     "version": version, 
                                     "type": constants.SOFTWARE_APPLICATION
                                 },
