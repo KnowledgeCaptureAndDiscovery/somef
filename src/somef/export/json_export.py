@@ -166,7 +166,9 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         # codemeta_output["softwareRequirements"] = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in repo_data[constants.CAT_REQUIREMENTS]]
         code_parser_requirements = [
         {
-            "name": x[constants.PROP_RESULT].get(constants.PROP_NAME),
+            "name": x[constants.PROP_RESULT].get(constants.PROP_NAME)
+            if x[constants.PROP_RESULT].get(constants.PROP_NAME) 
+            else x[constants.PROP_RESULT].get(constants.PROP_VALUE),
             "version": x[constants.PROP_RESULT].get(constants.PROP_VERSION)
         }
         for x in repo_data[constants.CAT_REQUIREMENTS]
