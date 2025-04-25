@@ -124,7 +124,9 @@ CAT_PACKAGE_ID = "package_id"
 CAT_HAS_PACKAGE_FILE = "has_package_file"
 CAT_VERSION = "version"
 CAT_CONTINUOUS_INTEGRATION= "continuous_integration"
-
+CAT_FUNDING = "funding"
+CAT_DEV_STATUS = "development_status"
+CAT_REF_PUBLICATION = "reference_publication"
 # Special category: missing categories
 CAT_MISSING = "somef_missing_categories"
 
@@ -215,6 +217,7 @@ LICENSE = "License"
 PUBLICATION = "Publication"
 LANGUAGE = "Programming_language"
 SOFTWARE_APPLICATION = "Software_application"
+SCHOLARLY_ARTICLE = "Scholarly_article"
 
 # Different techniques
 TECHNIQUE_SUPERVISED_CLASSIFICATION = "supervised_classification"
