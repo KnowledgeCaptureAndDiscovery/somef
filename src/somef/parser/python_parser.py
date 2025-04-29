@@ -13,17 +13,20 @@ https://github.com/proycon/codemetapy/blob/master/codemeta/parsers/python.py
 """
 
 def parse_dependency(dependency_str):
+
     if not dependency_str:
         return None, None
-    parts = re.split(r'(>=|<=|==|!=|>|<|~=|\[)', dependency_str, 1)
+    # parts = re.split(r'(>=|<=|==|!=|>|<|~=|\[)', dependency_str, 1)
+    parts = re.split(r'(>=|<=|==|!=|>|<|~=)', dependency_str, 1)
     name = parts[0].strip()
     if len(parts) > 1:
         version = ''.join(parts[1:])
     else:
         version = ""
 
-    version = version.strip("[]() -.,:")
-    
+    # version = version.strip("[]() -.,:")
+    version = re.sub(r'[\[\]\(\)]', '', version)
+
     return name, version
 
 def parse_url_type(url_label):
