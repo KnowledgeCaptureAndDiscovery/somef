@@ -121,5 +121,23 @@ class TestPythonParser(unittest.TestCase):
 
             self.assertTrue(version is None or name is not None, f"Error in requirement: {item}")
 
+    
+    def test_issue_769(self):
+        """Test parsing requirements with brakes"""
+        pyproject_path = test_data_repositories + os.path.sep+ "sunpy"+ os.path.sep+ "pyproject.toml"
+        result = Result()
+
+        metadata_result = parse_pyproject_toml(pyproject_path, result, "https://example.org/pyproject.toml")
+        
+        self.assertIn(constants.CAT_REQUIREMENTS, result.results)
+        dependencies = result.results[constants.CAT_REQUIREMENTS]
+
+        self.assertTrue(
+                any(item.get("result", {}).get("name") == "setuptools_scm[toml]" 
+                    and item.get("result", {}).get("version") == ">=8.0.1" 
+                    for item in dependencies),
+                    "Expected dependency 'setuptools_scm[toml]' with version '>=8.0.1' not found."
+)
+
 if __name__ == "__main__":
     unittest.main()
