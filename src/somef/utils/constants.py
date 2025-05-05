@@ -129,7 +129,7 @@ CAT_DEV_STATUS = "development_status"
 CAT_REF_PUBLICATION = "reference_publication"
 # Special category: missing categories
 CAT_MISSING = "somef_missing_categories"
-
+CAT_HOMEPAGE = "homepage"
 # list of those categories to be analyzed with supervised classification.
 # supervised_categories = [CAT_DESCRIPTION, CAT_CITATION, CAT_INSTALLATION, CAT_INVOCATION]
 # update jan 2025: only description is run, since the installation classifier is a bit noisy.

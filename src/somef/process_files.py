@@ -15,6 +15,7 @@ from .parser.python_parser import parse_setup_py
 from.parser.python_parser import parse_requirements_txt
 from .parser.codemeta_parser import parse_codemeta_json_file
 from .parser.cargo_parser import parse_cargo_toml
+from .parser.composer_parser import parse_composer_json
 from chardet import detect
 
 domain_gitlab = ''
@@ -186,7 +187,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
             
                 if filename.lower() == "pom.xml" or filename.lower() == "package.json" or \
                     filename.lower() == "pyproject.toml" or filename.lower() == "setup.py" or \
-                    filename.lower() == "requirements.txt" or (filename.lower() == "cargo.toml" and repo_relative_path == "."):
+                    filename.lower() == "requirements.txt" or (filename.lower() == "cargo.toml" and repo_relative_path == ".") or \
+                    (filename.lower() == "composer.json" and repo_relative_path == "."):
                         build_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
                                                        repo_dir,
                                                        repo_relative_path, filename)
@@ -211,7 +213,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             metadata_result = parse_requirements_txt(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "cargo.toml":
                             metadata_result = parse_cargo_toml(os.path.join(dir_path, filename), metadata_result, build_file_url)
-
+                        if filename.lower() == "composer.json":
+                            metadata_result = parse_composer_json(os.path.join(dir_path, filename), metadata_result, build_file_url)
                 # if repo_type == constants.RepositoryType.GITLAB: 
                 if filename.endswith(".yml"):
                     if repo_type == constants.RepositoryType.GITLAB: 

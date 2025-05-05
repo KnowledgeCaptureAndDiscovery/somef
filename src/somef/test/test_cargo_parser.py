@@ -10,7 +10,6 @@ class TestCargoParser(unittest.TestCase):
     def setUp(self):
         self.test_dir = os.path.dirname(os.path.abspath(__file__))
         self.cargo_toml_path = os.path.join(self.test_dir, "test_data", "repositories", "rustdesk", "Cargo.toml")
-        
         self.assertTrue(os.path.exists(self.cargo_toml_path), f"Test file not found: {self.cargo_toml_path}")
 
     def test_parse_cargo_toml(self):
