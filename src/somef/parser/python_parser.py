@@ -423,8 +423,12 @@ def parse_setup_py(file_path, metadata_result: Result, source):
                                         value = module_vars[keyword.value.id]
                                     else:
                                         value = ast.literal_eval(keyword.value)
-                                    
-                                    author_results = metadata_result.results.get(constants.CAT_AUTHORS, [])
+
+                                    # author_results = metadata_result.results.get(constants.CAT_AUTHORS, [])
+                                    author_results = [
+                                        a for a in metadata_result.results.get(constants.CAT_AUTHORS, [])
+                                        if a.get("technique") == constants.TECHNIQUE_CODE_CONFIG_PARSER
+                                    ]
                                     if author_results:
                                         for result in author_results:
                                             result["result"]["email"] = value
@@ -432,7 +436,7 @@ def parse_setup_py(file_path, metadata_result: Result, source):
                                         metadata_result.add_result(
                                             constants.CAT_AUTHORS,
                                             {
-                                                "name": None,
+                                                # "name": None,
                                                 "email": value,
                                                 "type": constants.AGENT,
                                                 "value": value
