@@ -135,7 +135,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_CONTRIBUTORS) 
-                if "AUTHORS" == filename.upper() or "AUTHORS.MD" == filename.upper():
+                if "AUTHORS" == filename.upper() or "AUTHORS.MD" == filename.upper() or "AUTHORS.TXT" == filename.upper():
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
@@ -416,8 +416,10 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                     if author_l.get("email") is not None:
                         author_data["email"] = author_l.get("email")
                     if author_l["type"] == "Person":
-                        author_data["last_name"] = author_l.get("last_name")
-                        author_data["given_name"] = author_l.get("given_name")
+                        if author_l.get("last_name") is not None:
+                            author_data["last_name"] = author_l.get("last_name")
+                        if author_l.get("given_name") is not None:    
+                            author_data["given_name"] = author_l.get("given_name")
                     metadata_result.add_result(
                             constants.CAT_AUTHORS,
                             author_data,

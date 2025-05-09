@@ -56,7 +56,7 @@ REGEXP_MPL2 = r'(?i)mozilla\s+public\s+license\s*,?\s*version\s*2\.0'
 REGEXP_UNLICENSE = r'(?i)the\s+unlicense'
 
 # Detect organization in authors.md
-REGEXP_LTD_INC = r'\b(inc|ltd)\b'
+REGEXP_LTD_INC = r'\b(inc|ltd|llc|corporation)([.,]|\b)'
 
 LICENSES_DICT = {
     "Apache License 2.0": {"regex": REGEXP_APACHE, "spdx_id": "Apache-2.0"},
