@@ -13,17 +13,20 @@ https://github.com/proycon/codemetapy/blob/master/codemeta/parsers/python.py
 """
 
 def parse_dependency(dependency_str):
+
     if not dependency_str:
         return None, None
-    parts = re.split(r'(>=|<=|==|!=|>|<|~=|\[)', dependency_str, 1)
+    # parts = re.split(r'(>=|<=|==|!=|>|<|~=|\[)', dependency_str, 1)
+    parts = re.split(r'(>=|<=|==|!=|>|<|~=)', dependency_str, 1)
     name = parts[0].strip()
     if len(parts) > 1:
         version = ''.join(parts[1:])
     else:
         version = ""
 
-    version = version.strip("[]() -.,:")
-    
+    # version = version.strip("[]() -.,:")
+    version = re.sub(r'[\[\]\(\)]', '', version)
+
     return name, version
 
 def parse_url_type(url_label):
@@ -420,8 +423,12 @@ def parse_setup_py(file_path, metadata_result: Result, source):
                                         value = module_vars[keyword.value.id]
                                     else:
                                         value = ast.literal_eval(keyword.value)
-                                    
-                                    author_results = metadata_result.results.get(constants.CAT_AUTHORS, [])
+
+                                    # author_results = metadata_result.results.get(constants.CAT_AUTHORS, [])
+                                    author_results = [
+                                        a for a in metadata_result.results.get(constants.CAT_AUTHORS, [])
+                                        if a.get("technique") == constants.TECHNIQUE_CODE_CONFIG_PARSER
+                                    ]
                                     if author_results:
                                         for result in author_results:
                                             result["result"]["email"] = value
@@ -429,7 +436,7 @@ def parse_setup_py(file_path, metadata_result: Result, source):
                                         metadata_result.add_result(
                                             constants.CAT_AUTHORS,
                                             {
-                                                "name": None,
+                                                # "name": None,
                                                 "email": value,
                                                 "type": constants.AGENT,
                                                 "value": value

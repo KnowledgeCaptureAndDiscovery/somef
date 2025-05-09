@@ -16,7 +16,8 @@ class TestCodemetaExport(unittest.TestCase):
         somef_cli.run_cli(
             threshold=0.8,
             ignore_classifiers=False,
-            repo_url="https://github.com/tpronk/somef-demo-repo/",
+            # repo_url="https://github.com/tpronk/somef-demo-repo/",
+            repo_url="https://github.com/juanjemdIos/somef-demo-repo/",
             doc_src=None,
             in_file=None,
             output=None,
@@ -210,16 +211,23 @@ class TestCodemetaExport(unittest.TestCase):
         expected_languages = ["Jupyter Notebook"]
         assert set(self.json_content["programmingLanguage"]) == set(expected_languages), f"Mismatch: {self.json_content['programmingLanguage']}"
 
+    def test_codemeta_author_file(self):
+        """Checks if codemeta file has extracted the authors in the author file"""
+
+
+        authors = [author.get("name") for author in self.json_content["author"] if author["@type"] == "Person"]
+        expected_authors = {"Daniel Garijo", "Juanje Mendoza"}
+        assert set(authors) >= expected_authors, f"Mismatch in authors: {authors}"
 
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""
-        if os.path.exists(cls.json_file):  # Verifica que el archivo exista
+        if os.path.exists(cls.json_file): 
             try:
                 os.remove(cls.json_file)
-                print(f"Deleted {cls.json_file}")  # Mensaje para confirmar la eliminación
+                print(f"Deleted {cls.json_file}") 
             except Exception as e:
-                print(f"Failed to delete {cls.json_file}: {e}")  # Captura errores de eliminación
+                print(f"Failed to delete {cls.json_file}: {e}")  
 
 
 if __name__ == "__main__":
