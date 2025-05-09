@@ -78,15 +78,3 @@ Will be interpreted as:
   "last_name": "Smith"
 }
 
-## Contribution Guidelines
-
-If you're contributing to a project that uses this parser, follow these best practices when updating `AUTHORS` files:
-
-* Use consistent formatting (`Full Name <email>`, or `Organization Name`) including a suffix like *Inc.*, *Ltd.*, *LLC*, or *Corporation* for organizations.
-* Do not include roles, descriptions, or comments inline with names.
-* Add each contributor on a new line.
-* Avoid markdown headers or links.
-
----
-
-For any improvements or additions to supported formats, feel free to open an issue or submit a pull request.
