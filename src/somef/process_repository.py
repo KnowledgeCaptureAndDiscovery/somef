@@ -30,7 +30,6 @@ def is_gitlab(gitlab_server):
     api_url = f"https://{gitlab_server}/api/v4/projects"
     try:
         response = requests.get(api_url, timeout=5)
-        print(response.status_code)
         if response.status_code in [200, 401, 403]: 
             return True
     except requests.RequestException:
@@ -148,6 +147,26 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
             elif zip_gz_entry:
                 value = zip_gz_entry["url"]
 
+            if category == constants.CAT_ASSETS:
+                assets_release_list_filtered = []
+                for source in release[constants.CAT_ASSETS]['sources']:
+                    source_asset = {
+                        constants.PROP_ENCODING_FORMAT: source[constants.PROP_FORMAT],
+                        constants.PROP_CONTENT_URL: source[constants.PROP_URL]
+                    }
+                    assets_release_list_filtered.append(source_asset)
+
+                for link in release[constants.CAT_ASSETS]['links']:
+                    link_asset = {
+                        constants.PROP_NAME: link[constants.PROP_NAME],
+                        constants.PROP_ENCODING_FORMAT: link["link_type"],
+                        constants.PROP_URL: constants.PROP_URL,
+                        constants.PROP_CONTENT_URL: link["direct_asset_url"],
+                    }
+                    assets_release_list_filtered.append(link_asset)
+
+                value = assets_release_list_filtered 
+        
             if value: 
                 release_obj[category] = value
             else:
@@ -441,6 +460,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     if not ignore_api_metadata:
         general_resp_raw, date = rate_limit_get(repo_api_base_url, headers=header)
         general_resp = general_resp_raw.json()
+
     if 'message' in general_resp:
         if general_resp['message'] == "Not Found":
             logging.error("Error: Repository name is private or incorrect")
@@ -500,6 +520,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     # get languages
     if not ignore_api_metadata:
         languages_raw, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
+        
         languages = languages_raw.json()
         if "message" in languages:
             logging.error("Error while retrieving languages: " + languages["message"])
@@ -524,6 +545,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
         else:
             release_list_filtered = [do_crosswalk(release, constants.release_crosswalk_table) for release in
                                      releases_list]
+            
             for release in release_list_filtered:
                 release_obj = {
                     constants.PROP_TYPE: constants.RELEASE,
@@ -541,6 +563,24 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
                             release_obj[category] = value
                         else:
                             logging.warning("Ignoring empty value in release for " + category)
+
+                        if category == constants.CAT_ASSETS:
+                            assets_release_list_filtered = [do_crosswalk(assets, constants.release_assets_github) for assets in
+                                     release[constants.CAT_ASSETS]]
+                            
+                            key_mapping = {
+                                constants.PROP_BROWSER_URL: constants.PROP_CONTENT_URL,
+                                constants.PROP_SIZE: constants.PROP_CONTENT_SIZE,
+                                constants.PROP_CONTENT_TYPE: constants.PROP_ENCODING_FORMAT,
+                                constants.PROP_DATE_CREATED_AT: constants.PROP_UPLOAD_DATE
+                            }
+
+                            assets_release_list_filtered = [
+                                {key_mapping.get(k, k): v for k, v in asset.items()} for asset in assets_release_list_filtered
+                            ]
+
+                            release_obj[category] = assets_release_list_filtered
+
                 repository_metadata.add_result(constants.CAT_RELEASES, release_obj, 1,
                                                constants.TECHNIQUE_GITHUB_API)
     logging.info("Repository information successfully loaded.\n")
@@ -562,8 +602,7 @@ def get_path(obj, path):
 
 def do_crosswalk(data, crosswalk_table):
     output = {}
-    # print('------------data realeases')
-    # print(data)
+
     for somef_key, path in crosswalk_table.items():
         value = get_path(data, path)
         if value is not None:
@@ -695,34 +734,34 @@ def get_all_gitlab_releases(repo_api_base_url):
 
     while True:
         url = f"{repo_api_base_url}/releases?page={page}&per_page=100"
-        logging.info(f"Obteniendo releases desde: {url}")
+        logging.info(f"Getting releases from: {url}")
         response = requests.get(url)
-        logging.info(f"Respuesta: {response.status_code}")
+        logging.info(f"Response: {response.status_code}")
         content_type = response.headers.get("Content-Type", "")
         if response.status_code != 200 or "application/json" not in content_type:
-            logging.error(f"Error en la respuesta o no es JSON: {response.text}")
-            break  # Termina el bucle si la respuesta no es válida
+            logging.error(f"Error in response or not JSON: {response.text}")
+            break 
 
         try:
             releases = response.json()
         except requests.exceptions.JSONDecodeError as e:
-            logging.error(f"Error al decodificar JSON: {e}. Respuesta: {response.text}")
+            logging.error(f"Error decoding JSON: {e}. Response: {response.text}")
             break
 
         if not releases:
-            break  # Si ya no hay releases, termina el bucle
+            break 
 
         all_releases.extend(releases)
 
-        # Verifica si hay más páginas
+        # check if more pages
         next_page = response.headers.get("X-Next-Page")
         if not next_page:
-            break  # Si no hay más páginas, termina el bucle
+            break  # No more pages
 
         page = int(next_page)
 
     if not all_releases:
-        logging.warning("No se encontraron releases.")
+        logging.warning("Not releseases found.")
         return []
     
 
@@ -740,25 +779,24 @@ def get_all_gitlab_releases(repo_api_base_url):
 
 def get_gitlab_releases(project_id, base_url):
     """
-    Obtiene las releases de un repositorio en GitLab sin autenticación.
-    
-    :param project_id: ID del proyecto en GitLab
-    :param base_url: URL base del GitLab donde está alojado el proyecto (ej: https://gitlab.in2p3.fr)
-    :return: Lista de releases con información relevante
+        Retrieves the releases of a GitLab repository without authentication.
+        
+        :param project_id: ID of the project in GitLab
+        :param base_url: Base URL of the GitLab where the project is hosted (e.g., https://gitlab.in2p3.fr)
+        :return: List of releases with relevant information
     """
     releases_url = f"{base_url}/api/v4/projects/{project_id}/releases"
 
-    logging.info(f"Obteniendo releases desde: {releases_url}")
+    logging.info(f"Getting releases from: {releases_url}")
 
     response = requests.get(releases_url)
     
     if response.status_code != 200:
-        logging.error(f"Error obteniendo releases: {response.text}")
+        logging.error(f"Error getting releases: {response.text}")
         return []
 
     releases_list = response.json()
     
-    # Filtrar información relevante
     release_list_filtered = [
         {
             "url": release.get("description"),
@@ -773,7 +811,6 @@ def get_gitlab_releases(project_id, base_url):
 
 # error when github url is wrong
 class GithubUrlError(Exception):
-    # print("The URL provided seems to be incorrect")
     pass
 
 

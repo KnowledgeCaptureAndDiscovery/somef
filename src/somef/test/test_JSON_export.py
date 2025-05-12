@@ -178,5 +178,43 @@ class TestJSONExport(unittest.TestCase):
         
         os.remove(test_data_path + "test_issue_745.json")
 
+    def test_issue_499(self):
+        """Checks whether a repository correctly extracts assets from release"""
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url="https://github.com/dgarijo/Widoco",
+                        local_repo=None,
+                        doc_src=None,
+                        in_file=None,
+                        output=test_data_path + "test-499.json-ld",
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out= None,
+                        pretty=True,
+                        missing=False,
+                        readme_only=False)
+        
+        text_file = open(test_data_path + "test-499.json-ld", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+
+        assert "releases" in json_content, "Missing 'releases' key in JSON content"
+        assert isinstance(json_content["releases"], list), "'releases' should be a list"
+
+        release_1425 = None
+        for release in json_content["releases"]:
+            if release.get("result", {}).get("tag") == "v1.4.25":
+                release_1425 = release
+                break
+
+        assert release_1425 is not None, "No release with tag 'v1.4.25' found"
+
+        assets = release_1425.get("result", {}).get("assets", [])
+        assert any(asset.get("name") == "widoco-1.4.25-jar-with-dependencies_JDK-11.jar" for asset in assets), \
+            "Asset 'widoco-1.4.25-jar-with-dependencies_JDK-11.jar' not found in release v1.4.25"
+
+        os.remove(test_data_path + "test-499.json-ld")
+
 if __name__ == '__main__':
     unittest.main()

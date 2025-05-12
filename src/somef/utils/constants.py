@@ -74,6 +74,7 @@ LICENSES_DICT = {
     "The Unlicense": {"regex": REGEXP_UNLICENSE, "spdx_id": "Unlicense"},
 }
 # Categories recognized by SOMEF (they all start by CAT_
+CAT_ASSETS = "assets"
 CAT_AUTHORS = "authors"
 CAT_APPLICATION_DOMAIN = "application_domain"
 CAT_ACKNOWLEDGEMENT = "acknowledgement"
@@ -168,9 +169,12 @@ AGENT_TYPE = "agent_type"  # Special type needed when objects are nested
 PROP_VALUE = "value"
 # For Result types
 PROP_AUTHOR = "author"
+PROP_BROWSER_URL = "browser_download_url"
+PROP_CONTENT_TYPE = "content_type"
 PROP_DOI = "doi"
 PROP_DESCRIPTION = "description"
 PROP_DATE_CREATED = "date_created"
+PROP_DATE_CREATED_AT = "created_at"
 PROP_DATE_PUBLISHED = "date_published"
 PROP_DATE_UPDATED = "date_updated"
 PROP_HTML_URL = "html_url"
@@ -187,6 +191,13 @@ PROP_ZIPBALL_URL = "zipball_url"
 PROP_TARBALL_URL = "tarball_url"
 # Publications
 PROP_TITLE = "title"
+# Assets from releases
+# PROP_ASSETS = "assets"
+PROP_CONTENT_URL = "content_url"
+PROP_ENCODING_FORMAT = "encoding_format"
+PROP_UPLOAD_DATE = "upload_date"
+PROP_CONTENT_SIZE = "content_size"
+PROP_DOWNLOAD_COUNT = "download_count"
 
 # Format:
 FORMAT_BIB = "bibtex"
@@ -273,6 +284,7 @@ release_crosswalk_table = {
     PROP_RELEASE_ID: 'id',
     PROP_DATE_CREATED: 'created_at',
     PROP_DATE_PUBLISHED: "published_at",
+    CAT_ASSETS: "assets"
 }
 
 release_gitlab_crosswalk_table = {
@@ -287,6 +299,17 @@ release_gitlab_crosswalk_table = {
     PROP_RELEASE_ID: 'tag_name',
     PROP_DATE_CREATED: 'created_at',
     PROP_DATE_PUBLISHED: "released_at",
+    CAT_ASSETS: "assets"
+}
+
+release_assets_github = {
+    PROP_URL: "url",
+    PROP_NAME: "name",
+    PROP_SIZE: "size",
+    PROP_BROWSER_URL: "browser_download_url",
+    PROP_CONTENT_TYPE: "content_type",
+    PROP_DATE_CREATED_AT: "created_at",
+    PROP_DOWNLOAD_COUNT: "download_count"
 }
 
 # Minimum percentage of total bytes a programming language must have to be considered relevant in CodeMeta file.
