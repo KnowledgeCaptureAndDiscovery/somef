@@ -245,6 +245,11 @@ GITHUB_DOMAIN = "github.com"
 GITHUB_ACCEPT_HEADER = "application/vnd.github.v3+json"
 GITHUB_API = "https://api.github.com/repos"
 
+# Software Heritage
+SWH_ROOT = "https://archive.softwareheritage.org/"
+REGEXP_SWH = r'\[\!\[SWH\]([^\]]+)\]\(([^)]+)\)'
+REGEXP_SWH_ANCHOR = r"anchor=(swh:1:[a-z]+:[a-f0-9]{40})"
+REGEXP_SWH_ALL_IDENTIFIERS = r"(swh:1:[a-z]+:[a-f0-9]{40})"
 # Spdx url
 SPDX_BASE = "https://spdx.org/licenses/"
 

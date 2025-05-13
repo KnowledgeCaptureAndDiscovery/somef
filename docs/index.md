@@ -53,7 +53,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Forks url**: Links to forks made of the project
 - **Full name**: Name + owner (owner/name)
 - **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository name
-- **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers. DOIs associated with publications will also be detected.
+- **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers and Software Heritage identifiers (SWH). DOIs associated with publications will also be detected. 
 - **Images**: Images used to illustrate the software component
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component

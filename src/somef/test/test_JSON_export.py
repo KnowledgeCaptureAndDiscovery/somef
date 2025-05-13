@@ -216,5 +216,38 @@ class TestJSONExport(unittest.TestCase):
 
         os.remove(test_data_path + "test-499.json-ld")
 
+    def test_issue_577(self):
+        """Checks if keywords is in the missing categories because is empty"""
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=test_data_path + "README-widoco-swh.md",
+                          in_file=None,
+                          output=test_data_path + "test-577.json",
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=True)
+
+        with open(test_data_path + "test-577.json", "r") as text_file:
+            data = json.load(text_file)
+      
+        expected_values = {
+            "https://doi.org/10.5281/zenodo.11093793",
+            "https://archive.softwareheritage.org/swh:1:rev:fec66b89a4f4acb015a44c7f8cb671d49bec626a"
+        }
+        identifiers = data.get("identifier", [])
+        found_values = set()
+        
+        for item in identifiers:
+            value = item["result"]["value"]        
+            found_values.add(value)
+
+        for expected in expected_values:
+            assert expected in found_values, f"Expected identifier not found: {expected}"
+
+        os.remove(test_data_path + "test-577.json")
+
 if __name__ == '__main__':
     unittest.main()

@@ -420,7 +420,10 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         if status:
             codemeta_output["developmentStatus"] = status
     if constants.CAT_IDENTIFIER in repo_data:
-        codemeta_output["identifier"] = repo_data[constants.CAT_IDENTIFIER][0][constants.PROP_RESULT][constants.PROP_VALUE]
+        codemeta_output["identifier"] = []
+        for identifier in repo_data[constants.CAT_IDENTIFIER]:
+          codemeta_output["identifier"].append(identifier[constants.PROP_RESULT][constants.PROP_VALUE]) 
+    #     codemeta_output["identifier"] = repo_data[constants.CAT_IDENTIFIER][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_README_URL in repo_data:
         codemeta_output["readme"] = repo_data[constants.CAT_README_URL][0][constants.PROP_RESULT][constants.PROP_VALUE]
     

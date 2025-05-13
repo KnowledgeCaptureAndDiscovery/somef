@@ -549,8 +549,56 @@ def extract_doi_badges(readme_text, repository_metadata: Result, source) -> Resu
                                            constants.PROP_TYPE: constants.URL,
                                            constants.PROP_VALUE: doi[1]
                                        }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+        
     return repository_metadata
 
+def extract_swh_badges(readme_text, repository_metadata: Result, source) -> Result:
+    """
+    Function that takes the text of a readme file and searches if there are any Software Heritage (swh) badges.
+    Parameters
+    ----------
+    @param readme_text: Text of the readme
+    @param repository_metadata: Result with all the findings in the repo
+    @param source: source file on top of which the extraction is performed (provenance)
+    Returns
+    -------
+    @returns Result with the Sofware heritage badges found
+    """
+    swh_badges = re.findall(constants.REGEXP_SWH, readme_text)
+    # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
+
+    for swh in swh_badges:
+
+        identifier = extract_swh_identifier_from_url(swh[1])
+        if identifier:
+            url_identifier = constants.SWH_ROOT + identifier
+            repository_metadata.add_result(constants.CAT_IDENTIFIER,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: url_identifier
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+        
+    return repository_metadata
+
+def extract_swh_identifier_from_url(url: str) -> str | None:
+    """
+    Function that look for a correct identifier en the swh url
+    """
+
+    #  If anchor look for identifier
+    anchor_match = re.search(constants.REGEXP_SWH_ANCHOR, url)
+    if anchor_match:
+        return anchor_match.group(1)
+
+    #  If no anchor look for all identifiers
+    all_matches = re.findall(constants.REGEXP_SWH_ALL_IDENTIFIERS, url)
+    if all_matches:
+        for preferred_type in ['rev', 'snp', 'dir', 'cnt']:
+            for match in all_matches:
+                if f"swh:1:{preferred_type}:" in match:
+                    return match
+
+    return None
 
 def extract_binder_links(readme_text, repository_metadata: Result, source) -> Result:
     """
