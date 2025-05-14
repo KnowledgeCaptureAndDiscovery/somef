@@ -88,6 +88,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `full_title`: If the repository has a short name, we will attempt to extract the longer version of the repository name. For example, a repository may be called "Widoco", but the longer title is "Wizard for documenting ontologies".
 - `has_build_file`: Build file to create a Docker image for the target software 
 - `has_script_file`: Snippets of code contained in the repository.
+- `homepage`: URL of the item.
 - `identifier`: Identifiers detected within a repository (e.g., Digital Object Identifier).
 - `images`: Images used to illustrate the software component.
 - `installation`: A set of instructions that indicate how to install a target repository

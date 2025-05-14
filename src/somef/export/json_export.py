@@ -419,10 +419,33 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         status = url_status.split('#')[-1] if '#' in url_status else None
         if status:
             codemeta_output["developmentStatus"] = status
+
     if constants.CAT_IDENTIFIER in repo_data:
         codemeta_output["identifier"] = []
         for identifier in repo_data[constants.CAT_IDENTIFIER]:
           codemeta_output["identifier"].append(identifier[constants.PROP_RESULT][constants.PROP_VALUE]) 
+
+    if constants.CAT_HOMEPAGE in repo_data:
+        homepage_urls = set()
+        for homepage_entry in repo_data[constants.CAT_HOMEPAGE]:
+            url = homepage_entry[constants.PROP_RESULT][constants.PROP_VALUE]
+            homepage_urls.add(url.strip()) 
+
+        filtered_urls = set()
+        https_roots = {url.replace("https://", "") for url in homepage_urls if url.startswith("https://")}
+
+        for url in homepage_urls:
+            root = url.replace("http://", "").replace("https://", "")
+            if root in https_roots:
+                continue  
+            filtered_urls.add(url)
+
+        for url in homepage_urls:
+            if url.startswith("https://"):
+                filtered_urls.add(url)
+
+        codemeta_output["url"] = list(filtered_urls)
+
     #     codemeta_output["identifier"] = repo_data[constants.CAT_IDENTIFIER][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_README_URL in repo_data:
         codemeta_output["readme"] = repo_data[constants.CAT_README_URL][0][constants.PROP_RESULT][constants.PROP_VALUE]
@@ -449,7 +472,8 @@ def create_missing_fields(result):
     The categories are added to the JSON results. This won't be added if you export TTL or Codemeta"""
     missing = []
     repo_data = result
-    for c in constants.categories_files_header:
+    # for c in constants.categories_files_header:
+    for c in constants.all_categories:
         if c not in repo_data:
             missing.append(c)
     return missing

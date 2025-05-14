@@ -494,7 +494,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
                 value = '%s,' % (', '.join(value))
                 value = value.rstrip(',')
             if category in [constants.CAT_CODE_REPOSITORY, constants.CAT_ISSUE_TRACKER,
-                            constants.CAT_DOWNLOAD_URL, constants.CAT_FORKS_URLS]:
+                            constants.CAT_DOWNLOAD_URL, constants.CAT_FORKS_URLS, constants.CAT_HOMEPAGE]:
                 value_type = constants.URL
             if category in [constants.CAT_DATE_CREATED, constants.CAT_DATE_UPDATED]:
                 value_type = constants.DATE
@@ -514,7 +514,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
                     constants.PROP_VALUE: value,
                     constants.PROP_TYPE: value_type
                 }
-            
+
             if (result['value']):
                 repository_metadata.add_result(category, result, 1, constants.TECHNIQUE_GITHUB_API)
     # get languages

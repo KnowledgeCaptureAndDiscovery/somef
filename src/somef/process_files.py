@@ -43,11 +43,16 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
 
     text = ""
     try:
+
         for dir_path, dir_names, filenames in os.walk(repo_dir):
+
+            dir_names[:] = [d for d in dir_names if d.lower() not in constants.IGNORED_DIRS]
             repo_relative_path = os.path.relpath(dir_path, repo_dir)
+            current_dir = os.path.basename(repo_relative_path).lower()
             # if this is a test folder, we ignore it (except for the root repo)
-            if ignore_test_folder and repo_relative_path != "." and "test" in repo_relative_path.lower():
-                # skip this file if it's in a test folder, or inside one
+            # if ignore_test_folder and repo_relative_path != "." and "test" in repo_relative_path.lower():
+            if ignore_test_folder and repo_relative_path != "." and current_dir in constants.IGNORED_DIRS:
+                # skip this file if it's in a test folder, ignored dire, or inside one
                 continue
             for filename in filenames:
                 file_path = os.path.join(repo_relative_path, filename)

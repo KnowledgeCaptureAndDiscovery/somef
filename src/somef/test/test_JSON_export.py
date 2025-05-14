@@ -217,7 +217,7 @@ class TestJSONExport(unittest.TestCase):
         os.remove(test_data_path + "test-499.json-ld")
 
     def test_issue_577(self):
-        """Checks if keywords is in the missing categories because is empty"""
+        """Checks if there are idenfiers from Software Heritage in the README file"""
         somef_cli.run_cli(threshold=0.8,
                           ignore_classifiers=False,
                           repo_url=None,
@@ -239,7 +239,7 @@ class TestJSONExport(unittest.TestCase):
         }
         identifiers = data.get("identifier", [])
         found_values = set()
-        
+
         for item in identifiers:
             value = item["result"]["value"]        
             found_values.add(value)
@@ -248,6 +248,40 @@ class TestJSONExport(unittest.TestCase):
             assert expected in found_values, f"Expected identifier not found: {expected}"
 
         os.remove(test_data_path + "test-577.json")
+
+
+    def test_issue_580(self):
+        """Checks if there are Project homepage in the readme file"""
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=test_data_path + "README-citation-file-format.md",
+                          in_file=None,
+                          output=test_data_path + "test-580.json",
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=True)
+
+        with open(test_data_path + "test-580.json", "r") as text_file:
+            data = json.load(text_file)
+      
+        found = False  
+        homepage_entries = data.get("homepage", [])
+
+        for item in homepage_entries:
+            technique = item.get("technique")
+            result = item.get("result", {})
+            value = result.get("value")
+
+            if technique == "regular_expression" and value == "https://citation-file-format.github.io":
+                found = True
+                break  
+
+        assert found, "Expected homepage not found"
+
+        os.remove(test_data_path + "test-580.json")
 
 if __name__ == '__main__':
     unittest.main()

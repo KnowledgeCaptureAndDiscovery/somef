@@ -33,6 +33,9 @@ REGEXP_YEAR = r'year\s*=\s*{(\d{4})}'
 REGEXP_MONTH = r'month\s*=\s*{(\d{1,2})}'
 REGEXP_PAGES = r'pages\s*=\s*{([\d-]+)}'
 
+# Project Homepage badge'
+REGEXP_PROJECT_HOMEPAGE = r'\[\!\[Project homepage\]([^\]]+)\]\(([^)]+)\)'
+
 # For natural language citation
 REGEXP_DOI_NATURAL = r'10\.\d{4,9}/[-._;()/:A-Za-z0-9]+'
 REGEXP_YEAR_NATURAL = r'\b(19|20)\d{2}\b'
@@ -96,6 +99,7 @@ CAT_FORK_COUNTS = "forks_count"
 CAT_FORKS_URLS = "forks_url"
 CAT_FULL_NAME = "full_name"
 CAT_FULL_TITLE = "full_title"
+CAT_HOMEPAGE = "homepage"
 CAT_HAS_BUILD_FILE = "has_build_file"
 CAT_HAS_SCRIPT_FILE = "has_script_file"
 CAT_IDENTIFIER = "identifier"
@@ -145,7 +149,7 @@ all_categories = [CAT_APPLICATION_DOMAIN, CAT_ACKNOWLEDGEMENT, CAT_AUTHORS, CAT_
                   CAT_DOCUMENTATION, CAT_DOWNLOAD, CAT_DOWNLOAD_URL, CAT_EXECUTABLE_EXAMPLE,
                   CAT_FAQ, CAT_FORK_COUNTS, CAT_FORKS_URLS, CAT_FULL_NAME, CAT_FULL_TITLE, CAT_HAS_BUILD_FILE,
                   CAT_HAS_SCRIPT_FILE, CAT_IDENTIFIER, CAT_IMAGE, CAT_INSTALLATION,
-                  CAT_INVOCATION, CAT_ISSUE_TRACKER, CAT_KEYWORDS, CAT_LICENSE, CAT_LOGO, CAT_NAME, CAT_ONTOLOGIES,
+                  CAT_INVOCATION, CAT_ISSUE_TRACKER,CAT_HOMEPAGE, CAT_KEYWORDS, CAT_LICENSE, CAT_LOGO, CAT_NAME, CAT_ONTOLOGIES,
                   CAT_OWNER, CAT_PACKAGE_DISTRIBUTION, CAT_HAS_PACKAGE_FILE, CAT_PROGRAMMING_LANGUAGES, CAT_README_URL,
                   CAT_RELATED_DOCUMENTATION, CAT_RELEASES, CAT_RUN, CAT_RELATED_PAPERS,
                   CAT_STATUS, CAT_REQUIREMENTS, CAT_STARS, CAT_SUPPORT, CAT_SUPPORT_CHANNELS, CAT_USAGE,
@@ -272,7 +276,8 @@ github_crosswalk_table = {
     CAT_FORKS_URLS: "forks_url",
     CAT_STARS: "stargazers_count",
     CAT_KEYWORDS: "topics",
-    CAT_FORK_COUNTS: "forks_count"
+    CAT_FORK_COUNTS: "forks_count",
+    CAT_HOMEPAGE: "homepage"
 }
 
 # Mapping for releases
@@ -355,3 +360,6 @@ workflow_extensions=('.ga','.cwl','.nf','.knwf','.t2flow','.dag','.kar','.wdl',"
 code_extensions = (".jl",".sql",".ddl",".psql",".mysql",".oracle",".plsql",".py",".java",".jar",".bash",".sh",".cs",".dll",".cpp",".c",".php",".phtml",".ps1",".rs",".go",".kt",".rb",".pl",".lua",".dart",".groovy",".asm",".swift",".R",".r")
 ontology_extensions=(".rdf",".ttl",".owl",".nt",".owl2",".nq",".n3",".rdfs") 
 media_files=(".mp4",".mp3",".wav",".bmp",".gif",".png",".jpeg",".jpg",".svg",".webp",".xls",".xlsx",".ico",".webm",".wmv",".txt")
+
+# Folders ignored in process_files.py/process_repository_files
+IGNORED_DIRS = {"test", "tests", "node_modules", "venv", "__pycache__"}

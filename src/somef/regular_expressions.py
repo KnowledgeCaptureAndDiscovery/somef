@@ -552,6 +552,30 @@ def extract_doi_badges(readme_text, repository_metadata: Result, source) -> Resu
         
     return repository_metadata
 
+def extract_project_homepage_badges(readme_text, repository_metadata: Result, source) -> Result:
+    """
+    Function that takes the text of a readme file and searches if there are any project homepages.
+    Parameters
+    ----------
+    @param readme_text: Text of the readme
+    @param repository_metadata: Result with all the findings in the repo
+    @param source: source file on top of which the extraction is performed (provenance)
+    Returns
+    -------
+    @returns Result with the Sofware heritage badges found
+    """
+    homepage_badges = re.findall(constants.REGEXP_PROJECT_HOMEPAGE, readme_text)
+    # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
+
+    for homepage in homepage_badges:
+        repository_metadata.add_result(constants.CAT_HOMEPAGE,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: homepage[1]
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+        
+    return repository_metadata
+
 def extract_swh_badges(readme_text, repository_metadata: Result, source) -> Result:
     """
     Function that takes the text of a readme file and searches if there are any Software Heritage (swh) badges.
