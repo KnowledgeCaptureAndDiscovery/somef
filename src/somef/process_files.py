@@ -43,11 +43,16 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
 
     text = ""
     try:
+
         for dir_path, dir_names, filenames in os.walk(repo_dir):
+
+            dir_names[:] = [d for d in dir_names if d.lower() not in constants.IGNORED_DIRS]
             repo_relative_path = os.path.relpath(dir_path, repo_dir)
+            current_dir = os.path.basename(repo_relative_path).lower()
             # if this is a test folder, we ignore it (except for the root repo)
-            if ignore_test_folder and repo_relative_path != "." and "test" in repo_relative_path.lower():
-                # skip this file if it's in a test folder, or inside one
+            # if ignore_test_folder and repo_relative_path != "." and "test" in repo_relative_path.lower():
+            if ignore_test_folder and repo_relative_path != "." and current_dir in constants.IGNORED_DIRS:
+                # skip this file if it's in a test folder, ignored dire, or inside one
                 continue
             for filename in filenames:
                 file_path = os.path.join(repo_relative_path, filename)
@@ -135,7 +140,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_CONTRIBUTORS) 
-                if "AUTHORS" == filename.upper() or "AUTHORS.MD" == filename.upper():
+                if "AUTHORS" == filename.upper() or "AUTHORS.MD" == filename.upper() or "AUTHORS.TXT" == filename.upper():
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
@@ -416,8 +421,10 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                     if author_l.get("email") is not None:
                         author_data["email"] = author_l.get("email")
                     if author_l["type"] == "Person":
-                        author_data["last_name"] = author_l.get("last_name")
-                        author_data["given_name"] = author_l.get("given_name")
+                        if author_l.get("last_name") is not None:
+                            author_data["last_name"] = author_l.get("last_name")
+                        if author_l.get("given_name") is not None:    
+                            author_data["given_name"] = author_l.get("given_name")
                     metadata_result.add_result(
                             constants.CAT_AUTHORS,
                             author_data,

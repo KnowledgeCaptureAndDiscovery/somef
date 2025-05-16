@@ -46,7 +46,18 @@ def parse_package_json_file(file_path, metadata_result: Result, source):
                     constants.TECHNIQUE_CODE_CONFIG_PARSER,
                     source
                 )
-            
+
+            if "homepage" in data:
+                metadata_result.add_result(
+                    constants.CAT_HOMEPAGE,
+                    {
+                        "value": data["homepage"], 
+                        "type": constants.URL},
+                    1,
+                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                    source
+                )
+
             if "version" in data:
                 metadata_result.add_result(
                     constants.CAT_VERSION,

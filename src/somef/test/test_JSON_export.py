@@ -178,5 +178,110 @@ class TestJSONExport(unittest.TestCase):
         
         os.remove(test_data_path + "test_issue_745.json")
 
+    def test_issue_499(self):
+        """Checks whether a repository correctly extracts assets from release"""
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url="https://github.com/dgarijo/Widoco",
+                        local_repo=None,
+                        doc_src=None,
+                        in_file=None,
+                        output=test_data_path + "test-499.json-ld",
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out= None,
+                        pretty=True,
+                        missing=False,
+                        readme_only=False)
+        
+        text_file = open(test_data_path + "test-499.json-ld", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+
+        assert "releases" in json_content, "Missing 'releases' key in JSON content"
+        assert isinstance(json_content["releases"], list), "'releases' should be a list"
+
+        release_1425 = None
+        for release in json_content["releases"]:
+            if release.get("result", {}).get("tag") == "v1.4.25":
+                release_1425 = release
+                break
+
+        assert release_1425 is not None, "No release with tag 'v1.4.25' found"
+
+        assets = release_1425.get("result", {}).get("assets", [])
+        assert any(asset.get("name") == "widoco-1.4.25-jar-with-dependencies_JDK-11.jar" for asset in assets), \
+            "Asset 'widoco-1.4.25-jar-with-dependencies_JDK-11.jar' not found in release v1.4.25"
+
+        os.remove(test_data_path + "test-499.json-ld")
+
+    def test_issue_577(self):
+        """Checks if there are idenfiers from Software Heritage in the README file"""
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=test_data_path + "README-widoco-swh.md",
+                          in_file=None,
+                          output=test_data_path + "test-577.json",
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=True)
+
+        with open(test_data_path + "test-577.json", "r") as text_file:
+            data = json.load(text_file)
+      
+        expected_values = {
+            "https://doi.org/10.5281/zenodo.11093793",
+            "https://archive.softwareheritage.org/swh:1:rev:fec66b89a4f4acb015a44c7f8cb671d49bec626a"
+        }
+        identifiers = data.get("identifier", [])
+        found_values = set()
+
+        for item in identifiers:
+            value = item["result"]["value"]        
+            found_values.add(value)
+
+        for expected in expected_values:
+            assert expected in found_values, f"Expected identifier not found: {expected}"
+
+        os.remove(test_data_path + "test-577.json")
+
+
+    def test_issue_580(self):
+        """Checks if there are Project homepage in the readme file"""
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=test_data_path + "README-citation-file-format.md",
+                          in_file=None,
+                          output=test_data_path + "test-580.json",
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=True)
+
+        with open(test_data_path + "test-580.json", "r") as text_file:
+            data = json.load(text_file)
+      
+        found = False  
+        homepage_entries = data.get("homepage", [])
+
+        for item in homepage_entries:
+            technique = item.get("technique")
+            result = item.get("result", {})
+            value = result.get("value")
+
+            if technique == "regular_expression" and value == "https://citation-file-format.github.io":
+                found = True
+                break  
+
+        assert found, "Expected homepage not found"
+
+        os.remove(test_data_path + "test-580.json")
+
 if __name__ == '__main__':
     unittest.main()

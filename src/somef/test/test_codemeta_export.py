@@ -213,8 +213,6 @@ class TestCodemetaExport(unittest.TestCase):
 
     def test_codemeta_author_file(self):
         """Checks if codemeta file has extracted the authors in the author file"""
-
-
         authors = [author.get("name") for author in self.json_content["author"] if author["@type"] == "Person"]
         expected_authors = {"Daniel Garijo", "Juanje Mendoza"}
         assert set(authors) >= expected_authors, f"Mismatch in authors: {authors}"
