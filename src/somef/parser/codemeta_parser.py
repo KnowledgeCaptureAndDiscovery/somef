@@ -2,6 +2,7 @@ import json
 import logging
 from ..process_results import Result
 from ..utils import constants
+import re
 
 def parse_keywords(keywords_data):
     """
@@ -34,78 +35,7 @@ def parse_keywords(keywords_data):
                 processed_keywords.append(str(item).strip())
         return processed_keywords
     return processed_keywords
-
-def parse_authors(author_data):
-    """
-    Parse author information from codemeta.json
     
-    Parameters
-    ----------
-    author_data: list or dict
-    The author data from codemeta.json
-        
-    Returns
-    -------
-    list
-    """
-    authors = []
-    
-    if isinstance(author_data, list):
-        for author in author_data:
-            if isinstance(author, dict):
-                author_info = {}
-                
-                if "name" in author:
-                    author_info["name"] = author["name"]
-                elif "givenName" in author and "familyName" in author:
-                    author_info["name"] = f"{author.get('givenName', '')} {author.get('familyName', '')}".strip()
-                
-                if "email" in author:
-                    author_info["email"] = author["email"]
-                
-                if "affiliation" in author:
-                    if isinstance(author["affiliation"], dict):
-                        author_info["affiliation"] = author["affiliation"].get("name", "")
-                    elif isinstance(author["affiliation"], str):
-                        author_info["affiliation"] = author["affiliation"]
-                
-                if "identifier" in author:
-                    author_info["identifier"] = author["identifier"]
-                elif "@id" in author:
-                    author_info["identifier"] = author["@id"]
-                
-                if author_info:  
-                    authors.append(author_info)
-            elif isinstance(author, str):
-                authors.append({"name": author})
-
-    elif isinstance(author_data, dict):
-        author_info = {}
-        
-        if "name" in author_data:
-            author_info["name"] = author_data["name"]
-        elif "givenName" in author_data and "familyName" in author_data:
-            author_info["name"] = f"{author_data.get('givenName', '')} {author_data.get('familyName', '')}".strip()
-        
-        if "email" in author_data:
-            author_info["email"] = author_data["email"]
-        
-        if "affiliation" in author_data:
-            if isinstance(author_data["affiliation"], dict):
-                author_info["affiliation"] = author_data["affiliation"].get("name", "")
-            elif isinstance(author_data["affiliation"], str):
-                author_info["affiliation"] = author_data["affiliation"]
-        
-        if "identifier" in author_data:
-            author_info["identifier"] = author_data["identifier"]
-        elif "@id" in author_data:
-            author_info["identifier"] = author_data["@id"]
-        
-        if author_info: 
-            authors.append(author_info)
-    
-    return authors
-
 def parse_license(license_data):
     """
     Parse license information from codemeta.json
@@ -125,13 +55,12 @@ def parse_license(license_data):
         license_info["name"] = license_data.get("name")
         license_info["url"] = license_data.get("url")
         license_info["identifier"] = license_data.get("identifier")
-        # Extract SPDX ID from identifier if it's an SPDX URL
+
         identifier = license_info.get("identifier", "")
         if "spdx.org/licenses/" in identifier:
             spdx_id = identifier.split("spdx.org/licenses/")[-1].split("/")[0]
             license_info["spdx_id"] = spdx_id
     elif isinstance(license_data, str):
-        # Assume the string is the SPDX ID (e.g., "Apache-2.0")
         license_info["name"] = license_data
         license_info["identifier"] = f"https://spdx.org/licenses/{license_data}"
         license_info["spdx_id"] = license_data
@@ -153,14 +82,29 @@ def parse_software_requirements(requirements_data):
     list
     """
     requirements = []
-    
+
+    if isinstance(requirements_data, str):
+        requirements_data = [requirements_data]
+
     if isinstance(requirements_data, list):
         for req in requirements_data:
             if isinstance(req, str):
-                requirements.append(req)
-    elif isinstance(requirements_data, str):
-        requirements.append(requirements_data)
-    
+                original = req.strip()
+
+                match = re.match(r'^([a-zA-Z0-9_.\-]+)([<>=!~].*)?$', original)
+                if match:
+                    name = match.group(1)
+                    version = match.group(2).strip() if match.group(2) else None
+                    requirements.append({
+                        "value": original,
+                        "name": name,
+                        "version": version
+                    })
+                else:
+                    requirements.append({
+                        "value": original
+                    })
+
     return requirements
 
 def parse_referenced_publication(reference_data):
@@ -218,31 +162,6 @@ def parse_funding(funding_data):
     
     return None
 
-def parse_description(description_data):
-    """
-    Parse description information from codemeta.json
-    This can be either a string or a list of strings
-    
-    Parameters
-    ----------
-    description_data: str or list
-    The description data from codemeta.json
-        
-    Returns
-    -------
-    list
-    """
-    descriptions = []
-    
-    if isinstance(description_data, str):
-        descriptions.append(description_data)
-    elif isinstance(description_data, list):
-        for desc in description_data:
-            if isinstance(desc, str):
-                descriptions.append(desc)
-    
-    return descriptions
-
 def parse_codemeta_json_file(file_path, metadata_result: Result, source):
     """
 
@@ -265,7 +184,7 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
 
             if "applicationCategory" in data:
                 metadata_result.add_result(
-                    constants.CAT_APPLICATION_CATEGORY,
+                    constants.CAT_APPLICATION_DOMAIN,
                     {
                         "value": data["applicationCategory"],
                         "type": constants.STRING
@@ -437,6 +356,17 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                             constants.TECHNIQUE_CODE_CONFIG_PARSER,
                             source
                         )
+                else:
+                    metadata_result.add_result(
+                    constants.CAT_REF_PUBLICATION,
+                    {
+                        "value": data["referencePublication"],
+                        "type": constants.STRING
+                    },
+                    1,
+                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                    source
+                )
 
             if "funding" in data:
                 funding_data = data["funding"]
@@ -470,18 +400,6 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                             source
                         )
             
-            if "contIntegration" in data:
-                metadata_result.add_result(
-                    constants.CAT_CONTINUOUS_INTEGRATION,
-                    {
-                        "value": data["contIntegration"],
-                        "type": constants.URL
-                    },
-                    1,
-                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                    source
-                )
-        
             if "developmentStatus" in data:
                 metadata_result.add_result(
                     constants.CAT_DEV_STATUS,
@@ -500,18 +418,6 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                     {
                         "value": data["identifier"],
                         "type": constants.STRING
-                    },
-                    1,
-                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                    source
-                )
-
-            if "downloadUrl" in data:
-                metadata_result.add_result(
-                    constants.CAT_DOWNLOAD_URL,
-                    {
-                        "value": data["downloadUrl"],
-                        "type": constants.URL
                     },
                     1,
                     constants.TECHNIQUE_CODE_CONFIG_PARSER,
@@ -541,55 +447,70 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                     constants.TECHNIQUE_CODE_CONFIG_PARSER,
                     source
                 )
-                license_info = parse_license(data["license"])
-                if license_info:
-                    result_dict = {
-                        "type": constants.LICENSE
-                    }
-                    
-                    if license_info.get("name"):
-                        result_dict["name"] = license_info.get("name")
-                    
-                    if license_info.get("url"):
-                        result_dict["url"] = license_info.get("url")
-                    
-                    if license_info.get("identifier"):
-                        result_dict["identifier"] = license_info.get("identifier")
-                    
-                    if license_info.get("spdx_id"):
-                        result_dict["spdx_id"] = license_info.get("spdx_id")
-                    
-                    metadata_result.add_result(
-                        constants.CAT_LICENSE,
-                        result_dict,
-                        1,
-                        constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                        source
-                    )
 
             if "author" in data:
-                authors = parse_authors(data["author"])
-                if authors:
+                authors = data["author"]
+                if isinstance(authors, list):
                     for author in authors:
-                        author_dict = {
-                            "type": "string"
+                        if isinstance(author, dict):
+                            author_name = ""
+                            if "givenName" in author and "familyName" in author:
+                                author_name = f"{author['givenName']} {author['familyName']}"
+                            elif "name" in author:
+                                author_name = author["name"]
+                            
+                            if author_name:
+                                author_info = {
+                                    "value": author_name,
+                                    "type": constants.STRING
+                                }
+                                
+                                if "email" in author:
+                                    author_info["email"] = author["email"]
+                                
+                                if "affiliation" in author:
+                                    if isinstance(author["affiliation"], dict) and "name" in author["affiliation"]:
+                                        author_info["affiliation"] = author["affiliation"]["name"]
+                                    elif isinstance(author["affiliation"], str):
+                                        author_info["affiliation"] = author["affiliation"]
+
+                                identifier = author.get("identifier") or author.get("@id")
+                                if identifier:
+                                    author_info["identifier"] = identifier
+
+                                metadata_result.add_result(
+                                    constants.CAT_AUTHORS,
+                                    author_info,
+                                    1,
+                                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                                    source
+                                )
+                elif isinstance(authors, dict):
+                    author = authors
+                    author_name = ""
+                    if "givenName" in author and "familyName" in author:
+                        author_name = f"{author['givenName']} {author['familyName']}"
+                    elif "name" in author:
+                        author_name = author["name"]
+                    
+                    if author_name:
+                        author_info = {
+                            "value": author_name,
+                            "type": constants.STRING
                         }
                         
-                        if "name" in author:
-                            author_dict["name"] = author["name"]
-                        
                         if "email" in author:
-                            author_dict["email"] = author["email"]
+                            author_info["email"] = author["email"]
                         
-                        if "affiliation" in author:
-                            author_dict["affiliation"] = author["affiliation"]
+                        if "affiliation" in author and "name" in author["affiliation"]:
+                            author_info["affiliation"] = author["affiliation"]["name"]
                         
                         if "identifier" in author:
-                            author_dict["identifier"] = author["identifier"]
+                            author_info["identifier"] = author["identifier"]
                         
                         metadata_result.add_result(
                             constants.CAT_AUTHORS,
-                            author_dict,
+                            author_info,
                             1,
                             constants.TECHNIQUE_CODE_CONFIG_PARSER,
                             source
@@ -620,18 +541,32 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
 
             if "softwareRequirements" in data:
                 requirements = parse_software_requirements(data["softwareRequirements"])
-                if requirements:
+                for requirement in requirements:
                     metadata_result.add_result(
                         constants.CAT_REQUIREMENTS,
                         {
-                            "value": requirements,
-                            "type": constants.STRING
+                            "value": requirement.get("value"),
+                            "name": requirement.get("name"),
+                            "version": requirement.get("version"),
+                            "type": constants.SOFTWARE_APPLICATION
                         },
                         1,
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
                         source
-                    )
-    
+                    )            
+
+            if "datePublished" in data:
+                metadata_result.add_result(
+                    constants.CAT_DATE_PUBLISHED,
+                    {
+                        "value": data["datePublished"],
+                        "type": constants.STRING
+                    },
+                    1,
+                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                    source
+                )
+            
     except Exception as e:
             logging.error(f"Error parsing codemeta JSON file {file_path}: {str(e)}")
     

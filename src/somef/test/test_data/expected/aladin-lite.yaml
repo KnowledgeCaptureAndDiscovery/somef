@@ -1,0 +1,22 @@
+CAT_NAME: Aladin Lite # Passed
+CAT_CODE_REPOSITORY: https://github.com/cds-astro/aladin-lite # Passed
+CAT_ISSUE_TRACKER: https://github.com/cds-astro/aladin-lite/issues # Passed
+CAT_DATE_CREATED: "2013-05-01" # Passed
+CAT_DATE_UPDATED: "2023-01-31" # Passed
+CAT_DATE_PUBLISHED: "2013-05-01" # Passed
+CAT_README_URL: # Passed
+  value: "https://aladin.cds.unistra.fr/AladinLite/doc/" 
+CAT_KEYWORDS: # Passed
+  - IVOA
+  - Astronomy
+CAT_LICENSE: https://spdx.org/licenses/GPL-3.0 # Passed
+CAT_VERSION: 3.6.1 # Passed
+CAT_IDENTIFIER: 10.5281/zenodo.7638833 # Passed
+CAT_DESCRIPTION: An astronomical HiPS visualizer in the browser. # Passed
+CAT_AUTHORS: # Passed
+  value: Matthieu Baumann
+  type: String
+  email: matthieu.baumann@unistra.fr
+  affiliation: "Universit\u00e9 de Strasbourg, CNRS, Observatoire astronomique de Strasbourg, UMR 7550, F-67000 Strasbourg, France"
+  identifier: "https://orcid.org/0000-0002-7123-773X"
+CAT_REF_PUBLICATION: http://aspbooks.org/publications/532/007.pdf # Passed
