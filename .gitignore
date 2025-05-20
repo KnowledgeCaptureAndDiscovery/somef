@@ -10,6 +10,7 @@ Lib/*
 Scripts/*
 .idea/*
 *.json
+!**/codemeta.json
 *.ttl
 env_3.9/*
 src/somef/create_corpus_for_NER.py
