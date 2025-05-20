@@ -11,6 +11,7 @@ Scripts/*
 .idea/*
 *.json
 !**/codemeta.json
+!**/composer.json
 *.ttl
 env_3.9/*
 src/somef/create_corpus_for_NER.py
