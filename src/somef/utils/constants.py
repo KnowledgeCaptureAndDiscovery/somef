@@ -36,6 +36,9 @@ REGEXP_PAGES = r'pages\s*=\s*{([\d-]+)}'
 # Project Homepage badge'
 REGEXP_PROJECT_HOMEPAGE = r'\[\!\[Project homepage\]([^\]]+)\]\(([^)]+)\)'
 
+# Redthedocs badges'
+REGEXP_READTHEDOCS_BADGES = r"https?://[^\s]*readthedocs\.org/projects/[^\s]*/badge/\?version=[^\s]*(?:.|\n)*?:target:\s*(https?://[^\s]+)"
+
 # For natural language citation
 REGEXP_DOI_NATURAL = r'10\.\d{4,9}/[-._;()/:A-Za-z0-9]+'
 REGEXP_YEAR_NATURAL = r'\b(19|20)\d{2}\b'
@@ -60,6 +63,10 @@ REGEXP_UNLICENSE = r'(?i)the\s+unlicense'
 
 # Detect organization in authors.md
 REGEXP_LTD_INC = r'\b(inc|ltd|llc|corporation)([.,]|\b)'
+
+# Detect zenodo latest doi in readme. 
+REGEXP_ZENODO_LATEST_DOI = r':target:\s*(https://zenodo\.org/badge/latestdoi/\d+)'
+REGEXP_ZENODO_JSON_LD = r"<script[^>]*type=['\"]application/ld\+json['\"][^>]*>(.*?)</script>"
 
 LICENSES_DICT = {
     "Apache License 2.0": {"regex": REGEXP_APACHE, "spdx_id": "Apache-2.0"},
@@ -114,6 +121,16 @@ CAT_NAME = "name"
 CAT_ONTOLOGIES = "ontologies"
 CAT_OWNER = "owner"
 CAT_PACKAGE_DISTRIBUTION = "package_distribution"
+REGEXP_PACKAGE_MANAGER = r"""
+    (?P<url>
+        https?://
+        (?:
+            (?:pypi\.python\.org/pypi/[^/\s]+)|
+            (?:anaconda\.org/[^/\s]+/[^/\s]+)|
+            (?:search\.maven\.org/artifact/[^/\s]+/[^/\s]+(?:/[^/\s]+)?)
+        )
+    )
+"""
 CAT_PROGRAMMING_LANGUAGES = "programming_languages"
 CAT_README_URL = "readme_url"
 CAT_RELATED_DOCUMENTATION = "related_documentation"
@@ -363,3 +380,5 @@ media_files=(".mp4",".mp3",".wav",".bmp",".gif",".png",".jpeg",".jpg",".svg",".w
 
 # Folders ignored in process_files.py/process_repository_files
 IGNORED_DIRS = {"test", "tests", "node_modules", "venv", "__pycache__"}
+
+
