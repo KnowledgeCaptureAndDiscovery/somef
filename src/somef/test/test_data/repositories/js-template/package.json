@@ -1,0 +1,25 @@
+{
+  "name": "alarm",
+  "version": "1.0.0",
+  "description": "Alarm clock project during week1 day2 JS at Epicodus.",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "bower-files": "^3.14.1",
+    "browser-sync": "^2.18.5",
+    "browserfy": "^1.0.0",
+    "browserify": "^13.1.1",
+    "del": "^2.2.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-jshint": "^2.0.4",
+    "gulp-uglify": "^2.0.0",
+    "gulp-util": "^3.0.8",
+    "jshint": "^2.9.4",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

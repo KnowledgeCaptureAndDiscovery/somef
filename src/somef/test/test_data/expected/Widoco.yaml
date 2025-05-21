@@ -1,0 +1,29 @@
+CAT_NAME: Widoco # Passed
+CAT_CODE_REPOSITORY: https://github.com/dgarijo/Widoco # Passed
+CAT_ISSUE_TRACKER: https://github.com/dgarijo/Widoco/issues # Passed
+CAT_DATE_CREATED: "2013-07-15" # Passed
+CAT_DATE_UPDATED: "2025-01-31" # Passed
+CAT_DOWNLOAD_URL: https://github.com/dgarijo/Widoco/releases # Passed
+CAT_README_URL: # Passed
+  value: "https://raw.githubusercontent.com/dgarijo/Widoco/master/README.md"
+
+CAT_KEYWORDS: # Passed
+  - documentation 
+  - metadata 
+  - ontology 
+  - ontology-diagram 
+  - ontology-evaluation 
+  - wizard
+CAT_LICENSE: # Passed
+  value: Apache License 2.0
+CAT_VERSION: v1.4.25 # Passed
+CAT_IDENTIFIER: https://doi.org/10.5281/zenodo.11093793 # Passed
+CAT_DESCRIPTION: # Passed
+  - "Wizard for documenting ontologies. WIDOCO is a step by step generator of HTML templates with the documentation of your ontology. It uses the LODE environment to create part of the template."
+  - "WIDOCO helps you to publish and create an enriched and customized documentation of your ontology, by following a series of steps in a wizard. We extend the LODE framework by Silvio Peroni to describe the classes, properties and data properties of the ontology, the OOPS! webservice by María Poveda to print an evaluation and the Licensius service by Victor Rodriguez Doncel to determine the license URI and title being used. In addition, we use WebVowl to visualize the ontology and have extended Bubastis to show a complete changelog between different versions of your ontology.\n\nFeatures of WIDOCO:\n* Automatic documentation of the terms in your ontology (based on [LODE](http://www.essepuntato.it/lode/)). Now **you can use Markdown on your class descriptions** (see [example](https://dgarijo.github.io/Widoco/doc/gallery/index.html))\n* Massive metadata extraction and support: WIDOCO will enhance your ontology documentation  based on your ontology annotations. Now you can add custom logos and images, edit the content of your sections, etc. by just editing metadata. See our [supported metadata](doc/metadataGuide/guide.md) and [recommendations](https://dgarijo.github.io/Widoco/doc/bestPractices/index-en.html) for more information.\n* Automatic annotation in JSON-LD snippets of the html produced.\n* Association of a provenance page which includes the history of your vocabulary (W3C PROV-O compliant).\n* Guidelines on the main sections that your document should have and how to complete them.\n* Integration with diagram creators ([WebVOWL](http://vowl.visualdataweb.org/webvowl/)).\n* Automatic changelog of differences between the actual and the previous version of the ontology (based on [Bubastis](http://www.ebi.ac.uk/efo/bubastis/)).\n* Separation of the sections of your html page so you can write them independently and replace only those needed.\n* Content negotiation and serialization of your ontology according to [W3C best practices](https://www.w3.org/TR/swbp-vocab-pub/)\n* Evaluation reports of your ontology (using the [OOPS! web service](https://oops.linkeddata.es/))\n* Integration with license metadata services ([Licensius](http://licensius.com/)) to automatically describe the license used in your ontology.\n" # Passed
+CAT_REF_PUBLICATION: # Passed
+  title: "WIDOCO: a wizard for documenting ontologies"
+  type: Scholarly_article
+  url: http://dgarijo.com/papers/widoco-iswc2017.pdf
+  date_published: "2017"
+  doi: "10.1007/978-3-319-68204-4_9"

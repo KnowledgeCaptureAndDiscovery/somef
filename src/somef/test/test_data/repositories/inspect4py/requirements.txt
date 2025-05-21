@@ -3,7 +3,7 @@ astor
 graphviz
 click
 pigar
-setuptools==70.0.0
+setuptools==78.1.1
 json2html
 configparser
 bigcode_astgen
