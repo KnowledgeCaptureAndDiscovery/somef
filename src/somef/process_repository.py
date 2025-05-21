@@ -537,52 +537,53 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
                                                constants.TECHNIQUE_GITHUB_API)
 
         # get releases
-        releases_list_raw, date = rate_limit_get(repo_api_base_url + "/releases",
-                                                 headers=header)
-        releases_list = releases_list_raw.json()
-        if isinstance(releases_list, dict) and 'message' in releases_list.keys():
-            logging.error("Releases Error: " + releases_list['message'])
-        else:
-            release_list_filtered = [do_crosswalk(release, constants.release_crosswalk_table) for release in
-                                     releases_list]
-            
-            for release in release_list_filtered:
-                release_obj = {
-                    constants.PROP_TYPE: constants.RELEASE,
-                    constants.PROP_VALUE: release[constants.PROP_URL]
-                }
-                for category, value in release.items():
-                    if category != constants.AGENT_TYPE:
-                        if category == constants.PROP_AUTHOR:
-                            value = {
-                                constants.PROP_NAME: value,
-                                constants.PROP_TYPE: release[constants.AGENT_TYPE]
+        # releases_list_raw, date = rate_limit_get(repo_api_base_url + "/releases",
+        #                                          headers=header)
+        releases_list = get_all_paginated_results(repo_api_base_url + "/releases", headers=header)
+        # releases_list = releases_list_raw.json()
+        # if isinstance(releases_list, dict) and 'message' in releases_list.keys():
+        #     logging.error(f"Releases Error: {releases_list['message']}")
+        # else:
+        release_list_filtered = [do_crosswalk(release, constants.release_crosswalk_table) for release in
+                                    releases_list]
+        
+        for release in release_list_filtered:
+            release_obj = {
+                constants.PROP_TYPE: constants.RELEASE,
+                constants.PROP_VALUE: release[constants.PROP_URL]
+            }
+            for category, value in release.items():
+                if category != constants.AGENT_TYPE:
+                    if category == constants.PROP_AUTHOR:
+                        value = {
+                            constants.PROP_NAME: value,
+                            constants.PROP_TYPE: release[constants.AGENT_TYPE]
 
-                            }
-                        if value != "":
-                            release_obj[category] = value
-                        else:
-                            logging.warning("Ignoring empty value in release for " + category)
+                        }
+                    if value != "":
+                        release_obj[category] = value
+                    else:
+                        logging.warning("Ignoring empty value in release for " + category)
 
-                        if category == constants.CAT_ASSETS:
-                            assets_release_list_filtered = [do_crosswalk(assets, constants.release_assets_github) for assets in
-                                     release[constants.CAT_ASSETS]]
-                            
-                            key_mapping = {
-                                constants.PROP_BROWSER_URL: constants.PROP_CONTENT_URL,
-                                constants.PROP_SIZE: constants.PROP_CONTENT_SIZE,
-                                constants.PROP_CONTENT_TYPE: constants.PROP_ENCODING_FORMAT,
-                                constants.PROP_DATE_CREATED_AT: constants.PROP_UPLOAD_DATE
-                            }
+                    if category == constants.CAT_ASSETS:
+                        assets_release_list_filtered = [do_crosswalk(assets, constants.release_assets_github) for assets in
+                                    release[constants.CAT_ASSETS]]
+                        
+                        key_mapping = {
+                            constants.PROP_BROWSER_URL: constants.PROP_CONTENT_URL,
+                            constants.PROP_SIZE: constants.PROP_CONTENT_SIZE,
+                            constants.PROP_CONTENT_TYPE: constants.PROP_ENCODING_FORMAT,
+                            constants.PROP_DATE_CREATED_AT: constants.PROP_UPLOAD_DATE
+                        }
 
-                            assets_release_list_filtered = [
-                                {key_mapping.get(k, k): v for k, v in asset.items()} for asset in assets_release_list_filtered
-                            ]
+                        assets_release_list_filtered = [
+                            {key_mapping.get(k, k): v for k, v in asset.items()} for asset in assets_release_list_filtered
+                        ]
 
-                            release_obj[category] = assets_release_list_filtered
+                        release_obj[category] = assets_release_list_filtered
 
-                repository_metadata.add_result(constants.CAT_RELEASES, release_obj, 1,
-                                               constants.TECHNIQUE_GITHUB_API)
+            repository_metadata.add_result(constants.CAT_RELEASES, release_obj, 1,
+                                            constants.TECHNIQUE_GITHUB_API)
     logging.info("Repository information successfully loaded.\n")
     return repository_metadata, owner, repo_name, default_branch
 
@@ -820,3 +821,36 @@ def get_readme_content(readme_url):
     readme = requests.get(readme_url)
     readme_text = readme.content.decode('utf-8')
     return readme_text
+
+def get_all_paginated_results(base_url, headers, per_page=100):
+    """
+    Retrieve all paginated results from a GitHub API endpoint.
+    
+    Parameters:
+        base_url (str): The base API URL (without ?page or ?per_page).
+        headers (dict): Headers to send (e.g. for authentication).
+        per_page (int): Number of results per page (default=100, GitHub max).
+    
+    Returns:
+        list: A combined list with all the items across all pages.
+    """
+    all_results = []
+    page = 1
+
+    while True:
+        url = f"{base_url}?per_page={per_page}&page={page}"
+        print(url)
+        response, _ = rate_limit_get(url, headers=headers)
+
+        if response.status_code != 200:
+            logging.warning(f"GitHub API error on page {page}: {response.status_code}")
+            break
+
+        page_data = response.json()
+        if not page_data:
+            break  # No more results
+
+        all_results.extend(page_data)
+        page += 1
+
+    return all_results

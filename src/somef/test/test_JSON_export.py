@@ -10,6 +10,29 @@ test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories
 
 
 class TestJSONExport(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        """Runs somef_cli once and saves the JSON"""
+        cls.json_file = test_data_path + "test_json_widoco_export.json"
+        
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url="https://github.com/dgarijo/Widoco",
+                          local_repo=None,
+                          doc_src=None,
+                          in_file=None,
+                          output=cls.json_file,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=False,
+                          readme_only=False)
+
+        with open(cls.json_file, "r") as f:
+            cls.json_content = json.load(f)
+
     def test_issue_417(self):
         """Checks whether a repository correctly extracts to Codemeta"""
         somef_cli.run_cli(threshold=0.8,
@@ -25,6 +48,7 @@ class TestJSONExport(unittest.TestCase):
                           pretty=True,
                           missing=False,
                           readme_only=False)
+        
         text_file = open(test_data_path + "test-417.json-ld", "r")
         data = text_file.read()
         text_file.close()
@@ -40,6 +64,7 @@ class TestJSONExport(unittest.TestCase):
                len(json_content["softwareRequirements"]) > 0 and len(json_content["programmingLanguage"]) > 0 and \
                len(json_content["keywords"]) > 0 and len(json_content["logo"]) > 0 and \
                len(json_content["license"]) > 0 and len(json_content["dateCreated"]) > 0
+        
         os.remove(test_data_path + "test-417.json-ld")
 
     def test_issue_311(self):
@@ -102,24 +127,24 @@ class TestJSONExport(unittest.TestCase):
 
     def test_issue_629(self):
         """Checks if citattion have news properties """
-        somef_cli.run_cli(threshold=0.8,
-                          ignore_classifiers=False,
-                          repo_url=None,
-                          doc_src=None,
-                          local_repo=test_data_repositories + "Widoco",
-                          in_file=None,
-                          output=test_data_path + "test_issue_629.json",
-                          graph_out=None,
-                          graph_format="turtle",
-                          codemeta_out=None,
-                          pretty=True,
-                          missing=True)
+        # somef_cli.run_cli(threshold=0.8,
+        #                   ignore_classifiers=False,
+        #                   repo_url=None,
+        #                   doc_src=None,
+        #                   local_repo=test_data_repositories + "Widoco",
+        #                   in_file=None,
+        #                   output=test_data_path + "test_issue_629.json",
+        #                   graph_out=None,
+        #                   graph_format="turtle",
+        #                   codemeta_out=None,
+        #                   pretty=True,
+        #                   missing=True)
         
-        with open(test_data_path + "test_issue_629.json", "r") as text_file:
-            data = json.load(text_file) 
+        # with open(test_data_path + "test_issue_629.json", "r") as text_file:
+        #     data = json.load(text_file) 
 
-        citation = data.get("citation", [])
-
+        # citation = data.get("citation", [])
+        citation = self.json_content.get("citation", [])
         assert citation, "No 'citation' found in JSON"
         assert any(
             entry.get("result", {}).get("format") == "cff" and
@@ -128,7 +153,7 @@ class TestJSONExport(unittest.TestCase):
             for entry in citation
         ), "Citation.cff must have doi and title"
 
-        os.remove(test_data_path + "test_issue_629.json")
+        # os.remove(test_data_path + "test_issue_629.json")
 
     def test_issue_651(self):
         """Checks if keywords is in the missing categories because is empty"""
@@ -180,30 +205,31 @@ class TestJSONExport(unittest.TestCase):
 
     def test_issue_499(self):
         """Checks whether a repository correctly extracts assets from release"""
-        somef_cli.run_cli(threshold=0.8,
-                        ignore_classifiers=False,
-                        repo_url="https://github.com/dgarijo/Widoco",
-                        local_repo=None,
-                        doc_src=None,
-                        in_file=None,
-                        output=test_data_path + "test-499.json-ld",
-                        graph_out=None,
-                        graph_format="turtle",
-                        codemeta_out= None,
-                        pretty=True,
-                        missing=False,
-                        readme_only=False)
         
-        text_file = open(test_data_path + "test-499.json-ld", "r")
-        data = text_file.read()
-        text_file.close()
-        json_content = json.loads(data)
+        # somef_cli.run_cli(threshold=0.8,
+        #                 ignore_classifiers=False,
+        #                 repo_url="https://github.com/dgarijo/Widoco",
+        #                 local_repo=None,
+        #                 doc_src=None,
+        #                 in_file=None,
+        #                 output=test_data_path + "test-499.json-ld",
+        #                 graph_out=None,
+        #                 graph_format="turtle",
+        #                 codemeta_out= None,
+        #                 pretty=True,
+        #                 missing=False,
+        #                 readme_only=False)
+        
+        # text_file = open(test_data_path + "test-499.json-ld", "r")
+        # data = text_file.read()
+        # text_file.close()
+        # json_content = json.loads(data)
 
-        assert "releases" in json_content, "Missing 'releases' key in JSON content"
-        assert isinstance(json_content["releases"], list), "'releases' should be a list"
+        assert "releases" in self.json_content, "Missing 'releases' key in JSON content"
+        assert isinstance(self.json_content["releases"], list), "'releases' should be a list"
 
         release_1425 = None
-        for release in json_content["releases"]:
+        for release in self.json_content["releases"]:
             if release.get("result", {}).get("tag") == "v1.4.25":
                 release_1425 = release
                 break
@@ -214,7 +240,7 @@ class TestJSONExport(unittest.TestCase):
         assert any(asset.get("name") == "widoco-1.4.25-jar-with-dependencies_JDK-11.jar" for asset in assets), \
             "Asset 'widoco-1.4.25-jar-with-dependencies_JDK-11.jar' not found in release v1.4.25"
 
-        os.remove(test_data_path + "test-499.json-ld")
+        # os.remove(test_data_path + "test-499.json-ld")
 
     def test_issue_577(self):
         """Checks if there are idenfiers from Software Heritage in the README file"""
@@ -282,6 +308,20 @@ class TestJSONExport(unittest.TestCase):
         assert found, "Expected homepage not found"
 
         os.remove(test_data_path + "test-580.json")
+
+    def test_issue_653(self):
+        """Checks if json from widoco repo has more than 30 releases"""
+        assert len(self.json_content["releases"]) > 30, f"Expected more than 30 releases, found {len(self.json_content['release'])}"
+
+    @classmethod
+    def tearDownClass(cls):
+        """delete temp file JSON just if all the test pass"""
+        if os.path.exists(cls.json_file): 
+            try:
+                os.remove(cls.json_file)
+                print(f"Deleted {cls.json_file}") 
+            except Exception as e:
+                print(f"Failed to delete {cls.json_file}: {e}")  
 
 if __name__ == '__main__':
     unittest.main()
