@@ -37,8 +37,14 @@ REGEXP_PAGES = r'pages\s*=\s*{([\d-]+)}'
 REGEXP_PROJECT_HOMEPAGE = r'\[\!\[Project homepage\]([^\]]+)\]\(([^)]+)\)'
 
 # Redthedocs badges'
-REGEXP_READTHEDOCS_BADGES = r"https?://[^\s]*readthedocs\.org/projects/[^\s]*/badge/\?version=[^\s]*(?:.|\n)*?:target:\s*(https?://[^\s]+)"
-
+# REGEXP_READTHEDOCS_BADGES = r"https?://[^\s]*readthedocs\.org/projects/[^\s]*/badge/\?version=[^\s]*(?:.|\n)*?:target:\s*(https?://[^\s]+)"
+# REGEXP_READTHEDOCS_BADGES = r"https?://readthedocs\.org/projects/[^/\s]+/badge/\?version=[^)\s]+"
+REGEXP_READTHEDOCS_BADGES = (
+    r"https?://readthedocs\.org/projects/[^/\s]+/badge/\?version=[^)\s]+"
+    r"(?:.|\n)*?:target:\s*(https?://[^\s]+)"  # rst
+    r"|" 
+    r"\((https?://readthedocs\.org/projects/[^/\s]+/[^)\s]+)\)"  # md
+)
 # For natural language citation
 REGEXP_DOI_NATURAL = r'10\.\d{4,9}/[-._;()/:A-Za-z0-9]+'
 REGEXP_YEAR_NATURAL = r'\b(19|20)\d{2}\b'

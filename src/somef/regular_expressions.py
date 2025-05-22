@@ -644,12 +644,13 @@ def extract_readthedocs_badgeds(readme_text, repository_metadata: Result, source
     """
     readthedocs_badges = re.findall(constants.REGEXP_READTHEDOCS_BADGES, readme_text, re.DOTALL)
     for doc in readthedocs_badges:
-        repository_metadata.add_result(constants.CAT_DOCUMENTATION,
+        url = doc[0] or doc[1]
+        if url:
+            repository_metadata.add_result(constants.CAT_DOCUMENTATION,
                                        {
                                            constants.PROP_TYPE: constants.URL,
-                                           constants.PROP_VALUE: doc
+                                           constants.PROP_VALUE: url
                                        }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
-
 
     return repository_metadata
 
