@@ -156,11 +156,17 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                      readme_source)
             repository_metadata = regular_expressions.extract_doi_badges(readme_unfiltered_text, repository_metadata,
                                                                          readme_source)
+            repository_metadata = regular_expressions.extract_swh_badges(readme_unfiltered_text, repository_metadata,
+                                                                         readme_source)
+            repository_metadata = regular_expressions.extract_project_homepage_badges(readme_unfiltered_text, repository_metadata,
+                                                                         readme_source)
             repository_metadata = regular_expressions.extract_title(readme_unfiltered_text, repository_metadata,
                                                                     readme_source)
             repository_metadata = regular_expressions.extract_binder_links(readme_unfiltered_text, repository_metadata,
                                                                            readme_source)
             repository_metadata = regular_expressions.extract_readthedocs(readme_unfiltered_text, repository_metadata,
+                                                                          readme_source)
+            repository_metadata = regular_expressions.extract_readthedocs_badgeds(readme_unfiltered_text, repository_metadata,
                                                                           readme_source)
             repository_metadata = regular_expressions.extract_repo_status(readme_unfiltered_text, repository_metadata,
                                                                           readme_source)

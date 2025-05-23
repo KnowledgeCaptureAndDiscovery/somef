@@ -42,6 +42,8 @@ def parse_url_type(url_label):
         return constants.CAT_README_URL
     elif "download" in label:
         return constants.CAT_DOWNLOAD_URL
+    elif "homepage" in label:
+        return constants.CAT_HOMEPAGE
     else:
         return constants.CAT_RELATED_DOCUMENTATION
 
@@ -92,7 +94,6 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                 data = tomli.load(f)
                 
                 project = get_project_data(data)
-                
                 if "name" in project:
                     metadata_result.add_result(
                         constants.CAT_PACKAGE_ID,
@@ -116,7 +117,19 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
                         source
                     )
-                
+
+                if "homepage" in project:
+                    metadata_result.add_result(
+                        constants.CAT_HOMEPAGE,
+                        {
+                            "value": project["homepage"], 
+                            "type": constants.URL
+                        },
+                        1,
+                        constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                        source
+                    )
+
                 if "version" in project:
                     metadata_result.add_result(
                         constants.CAT_VERSION,
@@ -184,8 +197,8 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                                 )
                 
                 urls = project.get("urls", {})
-                if not urls and "tool" in data and "poetry" in data["tool"]:
-                    
+
+                if not urls and "tool" in data and "poetry" in data["tool"]:             
                     poetry = data["tool"]["poetry"]
                     if "repository" in poetry:
                         urls["repository"] = poetry["repository"]
@@ -195,6 +208,7 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                         urls["documentation"] = poetry["documentation"]
                 
                 for url_type, url in urls.items():
+                    print(url_type)
                     category = parse_url_type(url_type)
                     metadata_result.add_result(
                         category,

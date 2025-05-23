@@ -3,6 +3,7 @@ import os
 import re
 import markdown
 import requests
+import json
 import validators
 from .utils import constants
 from .process_results import Result
@@ -424,6 +425,30 @@ def extract_package_distributions(unfiltered_text, repository_metadata: Result, 
                                            constants.PROP_TYPE: constants.URL,
                                            constants.PROP_VALUE: output
                                        }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+            
+    matches = re.findall(constants.REGEXP_PACKAGE_MANAGER, unfiltered_text, re.VERBOSE)
+    found_urls = set()  
+
+    for match in matches:
+        try:
+            response = requests.get(match, timeout=5)
+            final_url = response.url
+        except requests.RequestException:
+            final_url = match
+
+        if final_url not in found_urls and has_valid_output(final_url):
+            found_urls.add(final_url)
+            repository_metadata.add_result(
+                constants.CAT_PACKAGE_DISTRIBUTION,
+                {
+                    constants.PROP_TYPE: constants.URL,
+                    constants.PROP_VALUE: final_url
+                },
+                1,
+                constants.TECHNIQUE_REGULAR_EXPRESSION,
+                readme_source
+            )
+
 
     return repository_metadata
 
@@ -541,16 +566,165 @@ def extract_doi_badges(readme_text, repository_metadata: Result, source) -> Resu
     """
     # regex = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
     # regex = r'\[\!\[DOI\]\(.+\)\]\(([^)]+)\)'
+
     doi_badges = re.findall(constants.REGEXP_DOI, readme_text)
     # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
-    for doi in doi_badges:
-        repository_metadata.add_result(constants.CAT_IDENTIFIER,
-                                       {
-                                           constants.PROP_TYPE: constants.URL,
-                                           constants.PROP_VALUE: doi[1]
-                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+    if not doi_badges:
+        match = re.search(constants.REGEXP_ZENODO_LATEST_DOI, readme_text)
+        if match:
+            badge_url = match.group(1)
+            try:
+                response = requests.get(badge_url, allow_redirects=True, timeout=10)
+                match = re.search(constants.REGEXP_ZENODO_JSON_LD,
+                    response.text,
+                    re.DOTALL | re.IGNORECASE
+                )
+                if match:
+                    json_ld_text = match.group(1).strip()
+                    try:
+                        json_ld_data = json.loads(json_ld_text)
+                        identifier = json_ld_data.get('identifier')
+                        repository_metadata.add_result(constants.CAT_IDENTIFIER,
+                            {
+                                constants.PROP_TYPE: constants.URL,
+                                constants.PROP_VALUE: identifier,
+                            }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+                    except json.JSONDecodeError:
+                        logging.warning("Error parsing Zenodo JSON-LD")
+            except requests.RequestException as e:
+                logging.warning(f"Error fetching DOI from Zenodo badge: {e}")
+
+    else:
+
+        for doi in doi_badges:
+            repository_metadata.add_result(constants.CAT_IDENTIFIER,
+                                        {
+                                            constants.PROP_TYPE: constants.URL,
+                                            constants.PROP_VALUE: doi[1]
+                                        }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+        
     return repository_metadata
 
+def extract_project_homepage_badges(readme_text, repository_metadata: Result, source) -> Result:
+    """
+    Function that takes the text of a readme file and searches if there are any project homepages.
+    Parameters
+    ----------
+    @param readme_text: Text of the readme
+    @param repository_metadata: Result with all the findings in the repo
+    @param source: source file on top of which the extraction is performed (provenance)
+    Returns
+    -------
+    @returns Result with the Sofware heritage badges found
+    """
+    homepage_badges = re.findall(constants.REGEXP_PROJECT_HOMEPAGE, readme_text)
+    # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
+
+    for homepage in homepage_badges:
+        repository_metadata.add_result(constants.CAT_HOMEPAGE,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: homepage[1]
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+        
+    return repository_metadata
+
+
+def extract_readthedocs_badgeds(readme_text, repository_metadata: Result, source) -> Result:
+    """
+    Function that takes the text of a readme file and searches if there are readthedocs badges.
+    Parameters
+    ----------
+    @param readme_text: Text of the readme
+    @param repository_metadata: Result with all the findings in the repo
+    @param source: source file on top of which the extraction is performed (provenance)
+    Returns
+    -------
+    @returns Result with the readthedocs badges found
+    """
+    readthedocs_badges = re.findall(constants.REGEXP_READTHEDOCS_BADGES, readme_text, re.DOTALL)
+    for doc in readthedocs_badges:
+        url = doc[0] or doc[1]
+        if url:
+            repository_metadata.add_result(constants.CAT_DOCUMENTATION,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: url
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+
+    return repository_metadata
+
+def extract_package_manager_badgeds(readme_text, repository_metadata: Result, source) -> Result:
+    """
+    Function that takes the text of a readme file and searches if there are package manager badges.
+    Parameters
+    ----------
+    @param readme_text: Text of the readme
+    @param repository_metadata: Result with all the findings in the repo
+    @param source: source file on top of which the extraction is performed (provenance)
+    Returns
+    -------
+    @returns Result with the package badges found
+    """
+    package_manager_badges = re.findall(constants.REGEXP_READTHEDOCS_BADGES, readme_text, re.DOTALL)
+    for package in package_manager_badges:
+        repository_metadata.add_result(constants.CAT_DOCUMENTATION,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: package
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+
+
+    return repository_metadata
+
+
+def extract_swh_badges(readme_text, repository_metadata: Result, source) -> Result:
+    """
+    Function that takes the text of a readme file and searches if there are any Software Heritage (swh) badges.
+    Parameters
+    ----------
+    @param readme_text: Text of the readme
+    @param repository_metadata: Result with all the findings in the repo
+    @param source: source file on top of which the extraction is performed (provenance)
+    Returns
+    -------
+    @returns Result with the Sofware heritage badges found
+    """
+    swh_badges = re.findall(constants.REGEXP_SWH, readme_text)
+    # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
+
+    for swh in swh_badges:
+
+        identifier = extract_swh_identifier_from_url(swh[1])
+        if identifier:
+            url_identifier = constants.SWH_ROOT + identifier
+            repository_metadata.add_result(constants.CAT_IDENTIFIER,
+                                       {
+                                           constants.PROP_TYPE: constants.URL,
+                                           constants.PROP_VALUE: url_identifier
+                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+        
+    return repository_metadata
+
+def extract_swh_identifier_from_url(url: str) -> str | None:
+    """
+    Function that look for a correct identifier en the swh url
+    """
+
+    #  If anchor look for identifier
+    anchor_match = re.search(constants.REGEXP_SWH_ANCHOR, url)
+    if anchor_match:
+        return anchor_match.group(1)
+
+    #  If no anchor look for all identifiers
+    all_matches = re.findall(constants.REGEXP_SWH_ALL_IDENTIFIERS, url)
+    if all_matches:
+        for preferred_type in ['rev', 'snp', 'dir', 'cnt']:
+            for match in all_matches:
+                if f"swh:1:{preferred_type}:" in match:
+                    return match
+
+    return None
 
 def extract_binder_links(readme_text, repository_metadata: Result, source) -> Result:
     """

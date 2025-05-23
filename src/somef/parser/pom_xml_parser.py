@@ -59,7 +59,8 @@ def parse_pom_file(file_path, metadata_result: Result, source):
             "dependencies": [],
             "developers": [],
             "issue_tracker": None,
-            "scm_url": None
+            "scm_url": None,
+            "homepage": []
         }
 
         for key, node in parse_node(root):
@@ -120,7 +121,18 @@ def parse_pom_file(file_path, metadata_result: Result, source):
                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
                 source
             )
-    
+     
+        if project_data["homepage"]:
+            metadata_result.add_result(
+                constants.CAT_HOMEPAGE,
+                {
+                    "value": project_data["homepage"], 
+                    "type": constants.URL},
+                1,
+                constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                source
+            )
+
         if project_data["scm_url"]:
             metadata_result.add_result(
                 constants.CAT_PACKAGE_DISTRIBUTION,
