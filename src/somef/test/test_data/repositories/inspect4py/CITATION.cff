@@ -1,0 +1,25 @@
+title: "Inspect4py: A Knowledge Extraction Framework for Python Code Repositories"
+license: BSD-3-Clause license
+authors:
+  - family-names: Filgueira
+    given-names: Rosa
+    orcid: "0000-0002-5715-3046"
+  - family-names: Garijo
+    given-names: Daniel
+    orcid: "http://orcid.org/0000-0003-0454-7145"
+cff-version: 1.2.0
+message: "If you use this software, please cite both the article from preferred-citation and the software itself."
+preferred-citation:
+  authors:
+  - family-names: Filgueira
+    given-names: Rosa
+  - family-names: Garijo
+    given-names: Daniel
+  title: "Inspect4py: A Knowledge Extraction Framework for Python Code Repositories"
+  type: article
+  year: 2022
+  doi: 10.1145/3524842.3528497
+identifiers:
+  - description: "Collection of archived snapshots for Inspect4py"
+    type: doi
+    value: 10.5281/zenodo.5907936

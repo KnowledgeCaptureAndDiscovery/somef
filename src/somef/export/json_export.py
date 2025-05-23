@@ -5,6 +5,7 @@ import yaml
 from dateutil import parser as date_parser
 from ..utils import constants
 from ..regular_expressions import detect_license_spdx,extract_scholarly_article_natural, extract_scholarly_article_properties
+from typing import List, Dict
 
 def save_json_output(repo_data, out_path, missing, pretty=False):
     """
@@ -289,7 +290,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     if constants.CAT_CITATION in repo_data:
         # url_cit = []
         codemeta_output["referencePublication"] = []
-        scholarlyArticles = {}
+        all_reference_publications = []
+        # scholarlyArticles = {}
         author_orcids = {}
 
         for cit in repo_data[constants.CAT_CITATION]:
@@ -366,14 +368,9 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                 if constants.PROP_DOI in cit[constants.PROP_RESULT].keys():
                     doi = cit[constants.PROP_RESULT][constants.PROP_DOI]
                     scholarlyArticle[constants.CAT_IDENTIFIER] = cit[constants.PROP_RESULT][constants.PROP_DOI]
-                # elif constants.PROP_FORMAT in cit[constants.PROP_RESULT].keys() \
-                #         and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == constants.FORMAT_CFF:
-                #     url_cit.append(cit[constants.PROP_SOURCE])
 
                 if constants.PROP_URL in cit[constants.PROP_RESULT].keys():
                     scholarlyArticle[constants.PROP_URL] = cit[constants.PROP_RESULT][constants.PROP_URL]
-                # if constants.PROP_AUTHOR in cit[constants.PROP_RESULT].keys():
-                #     scholarlyArticle[constants.PROP_AUTHOR] = cit[constants.PROP_RESULT][constants.PROP_AUTHOR]
 
                 if constants.PROP_TITLE in cit[constants.PROP_RESULT].keys():
                     title = normalize_title(cit[constants.PROP_RESULT][constants.PROP_TITLE])
@@ -393,18 +390,12 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                 else:
                     scholarlyArticle = extract_scholarly_article_natural(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle, 'CODEMETA')
 
-                key = (doi, title)
+                all_reference_publications.append({
+                    **scholarlyArticle,
+                    "_source_format": "cff" if not is_bibtex else "bibtex"
+                })
 
-                if key in scholarlyArticles:
-                    if is_bibtex:
-                        codemeta_output["referencePublication"].remove(scholarlyArticles[key])
-                        codemeta_output["referencePublication"].append(scholarlyArticle)
-                        scholarlyArticles[key] = scholarlyArticle
-                else:
-                    codemeta_output["referencePublication"].append(scholarlyArticle)
-                    scholarlyArticles[key] = scholarlyArticle
-            
-        for article in codemeta_output["referencePublication"]:
+        for article in all_reference_publications:
             if "author" in article:
                 for author in article["author"]:
                     family_name = author.get("familyName", "").strip()
@@ -413,6 +404,19 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
                     if key and key in author_orcids:
                         author["@id"] = author_orcids[key]  
+
+        codemeta_output["referencePublication"] = deduplicate_publications(all_reference_publications)
+                # key = (doi, title)
+
+                # if key in scholarlyArticles:
+                #     if is_bibtex:
+                #         codemeta_output["referencePublication"].remove(scholarlyArticles[key])
+                #         codemeta_output["referencePublication"].append(scholarlyArticle)
+                #         scholarlyArticles[key] = scholarlyArticle
+                # else:
+                #     codemeta_output["referencePublication"].append(scholarlyArticle)
+                #     scholarlyArticles[key] = scholarlyArticle
+            
 
     if constants.CAT_STATUS in repo_data:
         url_status = repo_data[constants.CAT_STATUS][0]['result'].get('value', '')
@@ -478,5 +482,50 @@ def create_missing_fields(result):
             missing.append(c)
     return missing
 
-def normalize_title(title):
-    return re.sub(r"\s+", " ", title.strip().lower()) if title else None
+# def normalize_title(title):
+#     return re.sub(r"\s+", " ", title.strip().lower()) if title else None
+
+def normalize_title(title: str) -> str:
+    if not title:
+        return None
+    title = re.sub(r'[{}]', '', title)
+    title = re.sub(r'\s+', ' ', title)
+    return title.strip().lower()
+
+
+def deduplicate_publications(publications: List[Dict]) -> List[Dict]:
+    seen = {}
+    for pub in publications:
+        # doi = pub.get("identifier", "").lower().strip()
+        doi = (pub.get("identifier") or "").lower().strip()
+        title = normalize_title(pub.get("name", ""))
+        key = (doi, title)
+
+        if key not in seen:
+            seen[key] = pub
+        else:
+            existing = seen[key]
+            # Extraemos valores relevantes
+            existing_format = existing.get("_source_format", "")
+            new_format = pub.get("_source_format", "")
+            existing_url = (existing.get("url") or "").lower()
+            new_url = (pub.get("url") or "").lower()
+
+            is_doi_url_existing = existing_url.startswith("https://doi.org/")
+            is_doi_url_new = new_url.startswith("https://doi.org/")
+
+            # Priority CFF
+            if existing_format != "cff" and new_format == "cff":
+                seen[key] = pub
+
+            # Priority URL DOI
+            elif existing_format == new_format:
+                if not is_doi_url_existing and is_doi_url_new:
+                    seen[key] = pub
+
+    result = []
+    for pub in seen.values():
+        pub.pop("_source_format", None)
+        result.append(pub)
+
+    return result

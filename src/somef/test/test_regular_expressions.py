@@ -195,7 +195,6 @@ class TestRegExp(unittest.TestCase):
             results = regular_expressions.extract_images(test_text, repo_url, None, Result(),
                                                          test_data_path + "test_issue_images.txt", "main")
             img = results.results[constants.CAT_IMAGE]
-            print(img)
             assert len(img) == 2
 
     #Test commented out because arxiv links with no context has demonstrated not to be useful
