@@ -1,0 +1,127 @@
+name:                unused
+version:             0.10.0.0
+synopsis:            A command line tool to identify unused code.
+description:         Please see README.md
+homepage:            https://github.com/joshuaclayton/unused#readme
+license:             MIT
+license-file:        LICENSE
+author:              Josh Clayton
+maintainer:          sayhi@joshuaclayton.me
+copyright:           2016-2018 Josh Clayton
+category:            CLI
+build-type:          Simple
+-- extra-source-files:
+cabal-version:       >=1.10
+data-files:          data/config.yml
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Unused.TermSearch
+                     , Unused.TermSearch.Types
+                     , Unused.TermSearch.Internal
+                     , Unused.Parser
+                     , Unused.Types
+                     , Unused.GitContext
+                     , Unused.Util
+                     , Unused.Regex
+                     , Unused.Aliases
+                     , Unused.Projection
+                     , Unused.Projection.Transform
+                     , Unused.ResponseFilter
+                     , Unused.ResultsClassifier
+                     , Unused.ResultsClassifier.Types
+                     , Unused.ResultsClassifier.Config
+                     , Unused.Grouping
+                     , Unused.Grouping.Internal
+                     , Unused.Grouping.Types
+                     , Unused.LikelihoodCalculator
+                     , Unused.Cache
+                     , Unused.Cache.DirectoryFingerprint
+                     , Unused.Cache.FindArgsFromIgnoredPaths
+                     , Unused.TagsSource
+                     , Unused.CLI
+                     , Unused.CLI.Search
+                     , Unused.CLI.GitContext
+                     , Unused.CLI.Util
+                     , Unused.CLI.Views
+                     , Unused.CLI.Views.Error
+                     , Unused.CLI.Views.NoResultsFound
+                     , Unused.CLI.Views.AnalysisHeader
+                     , Unused.CLI.Views.GitSHAsHeader
+                     , Unused.CLI.Views.MissingTagsFileError
+                     , Unused.CLI.Views.InvalidConfigError
+                     , Unused.CLI.Views.FingerprintError
+                     , Unused.CLI.Views.SearchResult
+                     , Unused.CLI.Views.SearchResult.ColumnFormatter
+                     , Unused.CLI.Views.SearchResult.Internal
+                     , Unused.CLI.Views.SearchResult.ListResult
+                     , Unused.CLI.Views.SearchResult.TableResult
+                     , Unused.CLI.Views.SearchResult.Types
+                     , Unused.CLI.ProgressIndicator
+                     , Unused.CLI.ProgressIndicator.Internal
+                     , Unused.CLI.ProgressIndicator.Types
+                     , Common
+  build-depends:       base >= 4.7 && < 5
+                     , process
+                     , containers
+                     , filepath
+                     , directory
+                     , regex-tdfa
+                     , terminal-progress-bar >= 0.1.1.1 && < 0.1.2
+                     , ansi-terminal
+                     , unix
+                     , parallel-io
+                     , yaml
+                     , bytestring
+                     , text
+                     , unordered-containers
+                     , cassava >= 0.5.1.0 && < 0.6
+                     , vector
+                     , mtl
+                     , transformers
+                     , megaparsec >= 7.0.5 && < 8
+                     , inflections >= 0.4.0.3 && < 0.5
+                     , file-embed
+  ghc-options:         -Wall
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings
+
+executable unused
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:       base
+                     , unused
+                     , optparse-applicative
+                     , mtl
+                     , transformers
+  other-modules:       App
+                     , Types
+  default-language:    Haskell2010
+
+test-suite unused-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  build-depends:       base
+                     , unused
+                     , hspec
+                     , containers
+                     , text
+  other-modules:       Unused.ParserSpec
+                     , Unused.ResponseFilterSpec
+                     , Unused.TypesSpec
+                     , Unused.LikelihoodCalculatorSpec
+                     , Unused.Grouping.InternalSpec
+                     , Unused.TermSearch.InternalSpec
+                     , Unused.UtilSpec
+                     , Unused.Cache.FindArgsFromIgnoredPathsSpec
+                     , Unused.AliasesSpec
+                     , Unused.ProjectionSpec
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings
+
+source-repository head
+  type:     git
+  location: https://github.com/joshuaclayton/unused
