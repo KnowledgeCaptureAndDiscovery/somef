@@ -114,6 +114,11 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `type`: Software type: Commandline Application, Notebook Application, Ontology, Scientific Workflow. Non-Software types: Static Website, Uncategorized
 - `usage`: Usage examples and considerations of a code repository.
 - `workflows`: URL and path to the computational workflow files present in the repository.
+- `homepage`: URL to the homepage of the software or organization.
+- `reference_publication`: URL to the paper associated with the code repository.
+- `package_id`: Identifier extracted from packages. (e.g., `packages.json`)
+-  `funding`: Funding code for the related project.
+- `has_package_file`: Specifies what package file is present in the code repository.
 
 The following table summarized the properties used to describe a `category`:
 
