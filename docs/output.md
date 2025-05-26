@@ -210,10 +210,15 @@ The following formats for a result value are currently recognized:
 - `docker_compose`: [orchestration file](https://docs.docker.com/compose/compose-file/) used to communicate multiple containers.
 - `readthedocs`: documentation format used by many repositories in order to describe their projects.
 - `wiki`: documentation format used in GitHub repositories.
-- `setup.py`: package file format used in python projects
-- `pyproject.toml`: package file format used in python projects
-- `pom.xml`: package file used in Java projects
-- `package.json`: package file used in Javascript projects
+- `setup.py`: package file format used in python projects.
+- `pyproject.toml`: package file format used in python projects.
+- `pom.xml`: package file used in Java projects.
+- `package.json`: package file used in Javascript projects.
+- `bower.json`: package descriptor used for configuring packages that can be used as a dependency for Bower-managed front-end projects.
+- `composer.json`: manifest file serves as the package descriptor used in PHP projects.
+- `cargo.toml.json`: manifest file serves as the package descriptor used in Rust projects.
+- `[name].gemspec`:manifest file serves as the package descriptor used in Ruby gem projects.
+
 
 ### Technique
 The techniques can be of several types: 
