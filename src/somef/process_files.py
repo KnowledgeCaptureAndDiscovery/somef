@@ -12,7 +12,8 @@ from .parser.pom_xml_parser import parse_pom_file
 from .parser.package_json_parser import parse_package_json_file
 from .parser.python_parser import parse_pyproject_toml
 from .parser.python_parser import parse_setup_py
-from.parser.python_parser import parse_requirements_txt
+from .parser.python_parser import parse_requirements_txt
+from .parser.authors_parser import parse_author_file
 from chardet import detect
 
 domain_gitlab = ''
@@ -133,7 +134,13 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
-                                                               metadata_result, constants.CAT_CONTRIBUTORS)
+                                                               metadata_result, constants.CAT_CONTRIBUTORS) 
+                if "AUTHORS" == filename.upper() or "AUTHORS.MD" == filename.upper():
+                    metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
+                                                               repo_default_branch,
+                                                               repo_dir, repo_relative_path, filename, dir_path,
+                                                               metadata_result, constants.CAT_AUTHORS) 
+                    
                 if "INSTALL" in filename.upper() and filename.upper().endswith("MD"):
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
@@ -392,6 +399,31 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 if license_info:
                     result[constants.PROP_NAME] = license_info['name']
                     result[constants.PROP_SPDX_ID] = license_info['spdx_id']
+
+            if category is constants.CAT_AUTHORS:
+                result = {}
+                authors_list = parse_author_file(file_text)
+                for author_l in authors_list:
+
+                    author_data = {
+                                "name": author_l.get("name"),                  
+                                "type": constants.AGENT,
+                                "value": author_l.get("name")
+                            }
+                    
+                    if author_l.get("url") is not None:
+                        author_data["url"] = author_l.get("url")
+                    if author_l.get("email") is not None:
+                        author_data["email"] = author_l.get("email")
+                    if author_l["type"] == "Person":
+                        author_data["last_name"] = author_l.get("last_name")
+                        author_data["given_name"] = author_l.get("given_name")
+                    metadata_result.add_result(
+                            constants.CAT_AUTHORS,
+                            author_data,
+                            1,
+                            constants.TECHNIQUE_FILE_EXPLORATION, url
+                        ) 
             # Properties extraction from cff
             if format_result == 'cff':
                 yaml_content = yaml.safe_load(file_text)
@@ -451,16 +483,8 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
 
                 if author_list:
                     result[constants.PROP_AUTHOR] = author_list
-
-                
-                # author_names = ", ".join(
-                #     f"{a.get('given-names', '').strip()} {a.get('family-names', '').strip()}".strip()
-                #     for a in authors if a.get('given-names') and a.get('family-names')
-                # ) or None  
                 if title:
                     result[constants.PROP_TITLE] = title
-                # if author_names:
-                #     result[constants.PROP_AUTHOR] = author_names
                 if final_url:
                     result[constants.PROP_URL] = final_url
                 if doi:
@@ -546,9 +570,57 @@ def parse_codeowners_structured(dir_path, filename):
             line = line.strip()
             if line and not line.startswith("#"):
                 parts = line.split()
-                path = parts[0]  # Primera parte es el path o patrón
-                owners = parts[1:]  # Lo demás son los propietarios
+                path = parts[0]  
+                owners = parts[1:] 
                 codeowners.append({"path": path, "owners": owners})
 
     return {"codeowners": codeowners}
 
+# def parse_author_file(author_str):
+#     """
+#     Proccess a text with possible authors
+#     """
+#     if not author_str:
+#         return []
+
+#     authors = []
+
+#     for line in author_str.splitlines():
+#         line = line.strip()
+#         if not line or line.startswith("#"):
+#             continue  
+
+#         email_match = re.search(r'<([^>]+)>', line)
+#         if email_match:
+#             email = email_match.group(1)
+#             name = line[:email_match.start()].strip()
+#         else:
+#             name = line
+#             email = None
+
+#         if name:
+#             if re.search(constants.REGEXP_LTD_INC, name, re.IGNORECASE):
+#                 type_author = "Organization"
+#                 author_info = {
+#                     "name": name,
+#                     "email": email,
+#                     "value": name,
+#                     "type": type_author
+#                 }
+#             else:
+#                 type_author = "Person"
+#                 name_parts = name.split()
+#                 given_name = name_parts[0] if name_parts else None
+#                 last_name = " ".join(name_parts[1:]) if len(name_parts) > 1 else None
+#                 author_info = {
+#                     "name": name,
+#                     "email": email,
+#                     "value": name,
+#                     "type": type_author,
+#                     "given_name": given_name,
+#                     "last_name": last_name
+#                 }
+
+#             authors.append(author_info)
+
+#     return authors

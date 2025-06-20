@@ -249,6 +249,43 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                 "@id": "https://github.com/" + author_name
             }
         ]
+    if constants.CAT_AUTHORS in repo_data:
+        if "author" not in codemeta_output:
+            codemeta_output["author"] = []
+
+        for author in repo_data[constants.CAT_AUTHORS]:
+            value_author = author[constants.PROP_RESULT].get(constants.PROP_VALUE)
+            name_author = author[constants.PROP_RESULT].get(constants.PROP_NAME)
+            if value_author and re.search(constants.REGEXP_LTD_INC, value_author, re.IGNORECASE):
+                type_author = "Organization"
+            else:
+                type_author = "Person"
+
+            author_l = {
+                "@type": type_author
+            }
+
+            if type_author == "Organization":
+                if name_author:
+                    author_l['name'] = name_author
+            else:
+                family_name = None
+                given_name = None
+
+                if author[constants.PROP_RESULT].get('last_name'):
+                    family_name = author[constants.PROP_RESULT].get('last_name')
+                    author_l['familyName'] = family_name
+                if author[constants.PROP_RESULT].get('given_name'):
+                    given_name = author[constants.PROP_RESULT].get('given_name')
+                    author_l['givenName'] = given_name 
+                if author[constants.PROP_RESULT].get('email'):
+                    mail_author = author[constants.PROP_RESULT].get('email')
+                    author_l['email'] = mail_author  
+
+                author_l['name'] = name_author
+
+            codemeta_output["author"].append(author_l)
+
     if constants.CAT_CITATION in repo_data:
         # url_cit = []
         codemeta_output["referencePublication"] = []
@@ -386,6 +423,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["identifier"] = repo_data[constants.CAT_IDENTIFIER][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_README_URL in repo_data:
         codemeta_output["readme"] = repo_data[constants.CAT_README_URL][0][constants.PROP_RESULT][constants.PROP_VALUE]
+    
     # if "contributors" in repo_data:
     #     codemeta_output["contributor"] = data_path(["contributors", "excerpt"])
     # A person is expected, and we extract text at the moment
