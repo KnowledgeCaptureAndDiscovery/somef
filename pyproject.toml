@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "somef"
 version = "0.9.12"
-description = "SOftware Metadata Extraction Framework: A tool for automatically extracting relevant software information from readme files."
+description = "SOftware Metadata Extraction Framework: A tool for automatically extracting relevant software metadata from a source code repository (README, package files, etc)."
 authors = ["Daniel Garijo <daniel.garijo@upm.es>"]
 packages = [
     { include = "somef", from = "src" }
