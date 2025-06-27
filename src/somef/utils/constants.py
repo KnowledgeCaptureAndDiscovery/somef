@@ -387,4 +387,7 @@ media_files=(".mp4",".mp3",".wav",".bmp",".gif",".png",".jpeg",".jpg",".svg",".w
 # Folders ignored in process_files.py/process_repository_files
 IGNORED_DIRS = {"test", "tests", "node_modules", "venv", "__pycache__"}
 
+SIZE_DOWNLOAD_LIMIT_MB = 200
+DOWNLOAD_TIMEOUT_SECONDS = 120
+
 

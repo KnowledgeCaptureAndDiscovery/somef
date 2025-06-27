@@ -399,7 +399,7 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
             package = regular_expressions.extract_package_distributions(test_text, Result(),
                                                   test_data_path + "README-sunpy.rst")
             
-            expected_doi = "https://doi.org/10.5281/zenodo.14919949"
+            expected_doi = "https://doi.org/10.5281/zenodo.15691296"
             doi_values = []
             if "identifier" in identifiers.results:
                 for result in identifiers.results["identifier"]:

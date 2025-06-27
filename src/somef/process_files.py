@@ -3,6 +3,7 @@ import os
 import re
 import urllib
 import yaml
+import string
 from urllib.parse import urlparse
 from .utils import constants, markdown_utils
 from . import extract_ontologies, extract_workflows
@@ -42,6 +43,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
         domain_gitlab = extract_gitlab_domain(metadata_result, repo_type)
 
     text = ""
+    readmeMD_proccesed = False
+
     try:
 
         for dir_path, dir_names, filenames in os.walk(repo_dir):
@@ -90,29 +93,51 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                 filename_no_ext = os.path.splitext(filename)[0]
                 # this will take into account README, README.MD, README.TXT, README.RST
                 if "README" == filename_no_ext.upper():
-                    if repo_relative_path == ".":
-                        try:
-                            with open(os.path.join(dir_path, filename), "rb") as data_file:
-                                data_file_text = data_file.read()
-                                try:
-                                    text = data_file_text.decode("utf-8")
-                                except UnicodeError as err:
-                                    logging.error(f"{type(err).__name__} was raised: {err} Trying other encodings...")
-                                    text = data_file_text.decode(detect(data_file_text)["encoding"])
-                                if repo_type == constants.RepositoryType.GITHUB:
-                                    readme_url = convert_to_raw_user_content_github(filename, owner,
-                                                                                    repo_name,
-                                                                                    repo_default_branch)
-                                    metadata_result.add_result(constants.CAT_README_URL,
-                                                               {
-                                                                   constants.PROP_VALUE: readme_url,
-                                                                   constants.PROP_TYPE: constants.URL
-                                                               },
-                                                               1,
-                                                               constants.TECHNIQUE_FILE_EXPLORATION)
-                        except ValueError:
-                            logging.error("README Error: error while reading file content")
-                            logging.error(f"{type(err).__name__} was raised: {err}")
+                    # There is unexpected behavior when the README is available in multiple formats. 
+                    # We prioritize the .md format as it is more readable than pdf and others
+                    if not readmeMD_proccesed:
+                        if repo_relative_path == ".":
+                            try:
+
+                                with open(os.path.join(dir_path, filename), "rb") as data_file:
+                                    data_file_text = data_file.read()
+
+                                    try:                                       
+                                        text = data_file_text.decode("utf-8")
+                                    except UnicodeError as err:
+                                        logging.error(f"{type(err).__name__} was raised: {err} Trying other encodings...")
+                                        # text = data_file_text.decode(detect(data_file_text)["encoding"])
+                                        result_detect = detect(data_file_text)
+                                        encoding = result_detect.get("encoding")
+                                        if encoding:
+                                            try:
+                                                text = data_file_text.decode(encoding)
+                                            except UnicodeError as err:
+                                                logging.warning(f"Detected encoding '{encoding}' failed: {err}. Using utf-8 with replacement.")
+                                                text = data_file_text.decode("utf-8", errors="replace")
+                                        else:
+                                            logging.warning("Could not detect encoding. Using utf-8 with replacement.")
+                                            text = data_file_text.decode("utf-8", errors="replace")
+                                    text = clean_text(text)
+                               
+                                    if repo_type == constants.RepositoryType.GITHUB:
+                                        readme_url = convert_to_raw_user_content_github(filename, owner,
+                                                                                        repo_name,
+                                                                                        repo_default_branch)
+                                        metadata_result.add_result(constants.CAT_README_URL,
+                                                                {
+                                                                    constants.PROP_VALUE: readme_url,
+                                                                    constants.PROP_TYPE: constants.URL
+                                                                },
+                                                                1,
+                                                                constants.TECHNIQUE_FILE_EXPLORATION)
+                                    
+                                    if filename.upper() == "README.MD":
+                                        readmeMD_proccesed = True
+
+                            except ValueError:
+                                logging.error("README Error: error while reading file content")
+                                logging.error(f"{type(err).__name__} was raised: {err}")
                 if ("LICENCE" == filename.upper() or "LICENSE" == filename.upper() or "LICENSE.MD"== filename.upper()
                         or "LICENSE.RST"== filename.upper()):
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
@@ -583,7 +608,14 @@ def parse_codeowners_structured(dir_path, filename):
 
     return {"codeowners": codeowners}
 
-# def parse_author_file(author_str):
+def clean_text(text):
+    cleaned_lines = []
+    for line in text.splitlines():
+        printable_chars = sum(1 for c in line if c in string.printable)
+        if len(line) == 0 or (printable_chars / len(line)) > 0.9:
+            cleaned_lines.append(line)
+    return "\n".join(cleaned_lines)
+
 #     """
 #     Proccess a text with possible authors
 #     """
