@@ -3,6 +3,7 @@ import os
 import re
 import urllib
 import yaml
+import string
 from urllib.parse import urlparse
 from .utils import constants, markdown_utils
 from . import extract_ontologies, extract_workflows
@@ -12,7 +13,8 @@ from .parser.pom_xml_parser import parse_pom_file
 from .parser.package_json_parser import parse_package_json_file
 from .parser.python_parser import parse_pyproject_toml
 from .parser.python_parser import parse_setup_py
-from.parser.python_parser import parse_requirements_txt
+from .parser.python_parser import parse_requirements_txt
+from .parser.authors_parser import parse_author_file
 from chardet import detect
 
 domain_gitlab = ''
@@ -41,12 +43,19 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
         domain_gitlab = extract_gitlab_domain(metadata_result, repo_type)
 
     text = ""
+    readmeMD_proccesed = False
+
     try:
+
         for dir_path, dir_names, filenames in os.walk(repo_dir):
+
+            dir_names[:] = [d for d in dir_names if d.lower() not in constants.IGNORED_DIRS]
             repo_relative_path = os.path.relpath(dir_path, repo_dir)
+            current_dir = os.path.basename(repo_relative_path).lower()
             # if this is a test folder, we ignore it (except for the root repo)
-            if ignore_test_folder and repo_relative_path != "." and "test" in repo_relative_path.lower():
-                # skip this file if it's in a test folder, or inside one
+            # if ignore_test_folder and repo_relative_path != "." and "test" in repo_relative_path.lower():
+            if ignore_test_folder and repo_relative_path != "." and current_dir in constants.IGNORED_DIRS:
+                # skip this file if it's in a test folder, ignored dire, or inside one
                 continue
             for filename in filenames:
                 file_path = os.path.join(repo_relative_path, filename)
@@ -84,29 +93,51 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                 filename_no_ext = os.path.splitext(filename)[0]
                 # this will take into account README, README.MD, README.TXT, README.RST
                 if "README" == filename_no_ext.upper():
-                    if repo_relative_path == ".":
-                        try:
-                            with open(os.path.join(dir_path, filename), "rb") as data_file:
-                                data_file_text = data_file.read()
-                                try:
-                                    text = data_file_text.decode("utf-8")
-                                except UnicodeError as err:
-                                    logging.error(f"{type(err).__name__} was raised: {err} Trying other encodings...")
-                                    text = data_file_text.decode(detect(data_file_text)["encoding"])
-                                if repo_type == constants.RepositoryType.GITHUB:
-                                    readme_url = convert_to_raw_user_content_github(filename, owner,
-                                                                                    repo_name,
-                                                                                    repo_default_branch)
-                                    metadata_result.add_result(constants.CAT_README_URL,
-                                                               {
-                                                                   constants.PROP_VALUE: readme_url,
-                                                                   constants.PROP_TYPE: constants.URL
-                                                               },
-                                                               1,
-                                                               constants.TECHNIQUE_FILE_EXPLORATION)
-                        except ValueError:
-                            logging.error("README Error: error while reading file content")
-                            logging.error(f"{type(err).__name__} was raised: {err}")
+                    # There is unexpected behavior when the README is available in multiple formats. 
+                    # We prioritize the .md format as it is more readable than pdf and others
+                    if not readmeMD_proccesed:
+                        if repo_relative_path == ".":
+                            try:
+
+                                with open(os.path.join(dir_path, filename), "rb") as data_file:
+                                    data_file_text = data_file.read()
+
+                                    try:                                       
+                                        text = data_file_text.decode("utf-8")
+                                    except UnicodeError as err:
+                                        logging.error(f"{type(err).__name__} was raised: {err} Trying other encodings...")
+                                        # text = data_file_text.decode(detect(data_file_text)["encoding"])
+                                        result_detect = detect(data_file_text)
+                                        encoding = result_detect.get("encoding")
+                                        if encoding:
+                                            try:
+                                                text = data_file_text.decode(encoding)
+                                            except UnicodeError as err:
+                                                logging.warning(f"Detected encoding '{encoding}' failed: {err}. Using utf-8 with replacement.")
+                                                text = data_file_text.decode("utf-8", errors="replace")
+                                        else:
+                                            logging.warning("Could not detect encoding. Using utf-8 with replacement.")
+                                            text = data_file_text.decode("utf-8", errors="replace")
+                                    text = clean_text(text)
+                               
+                                    if repo_type == constants.RepositoryType.GITHUB:
+                                        readme_url = convert_to_raw_user_content_github(filename, owner,
+                                                                                        repo_name,
+                                                                                        repo_default_branch)
+                                        metadata_result.add_result(constants.CAT_README_URL,
+                                                                {
+                                                                    constants.PROP_VALUE: readme_url,
+                                                                    constants.PROP_TYPE: constants.URL
+                                                                },
+                                                                1,
+                                                                constants.TECHNIQUE_FILE_EXPLORATION)
+                                    
+                                    if filename.upper() == "README.MD":
+                                        readmeMD_proccesed = True
+
+                            except ValueError:
+                                logging.error("README Error: error while reading file content")
+                                logging.error(f"{type(err).__name__} was raised: {err}")
                 if ("LICENCE" == filename.upper() or "LICENSE" == filename.upper() or "LICENSE.MD"== filename.upper()
                         or "LICENSE.RST"== filename.upper()):
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
@@ -133,7 +164,13 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
-                                                               metadata_result, constants.CAT_CONTRIBUTORS)
+                                                               metadata_result, constants.CAT_CONTRIBUTORS) 
+                if "AUTHORS" == filename.upper() or "AUTHORS.MD" == filename.upper() or "AUTHORS.TXT" == filename.upper():
+                    metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
+                                                               repo_default_branch,
+                                                               repo_dir, repo_relative_path, filename, dir_path,
+                                                               metadata_result, constants.CAT_AUTHORS) 
+                    
                 if "INSTALL" in filename.upper() and filename.upper().endswith("MD"):
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
@@ -392,6 +429,33 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 if license_info:
                     result[constants.PROP_NAME] = license_info['name']
                     result[constants.PROP_SPDX_ID] = license_info['spdx_id']
+
+            if category is constants.CAT_AUTHORS:
+                result = {}
+                authors_list = parse_author_file(file_text)
+                for author_l in authors_list:
+
+                    author_data = {
+                                "name": author_l.get("name"),                  
+                                "type": constants.AGENT,
+                                "value": author_l.get("name")
+                            }
+                    
+                    if author_l.get("url") is not None:
+                        author_data["url"] = author_l.get("url")
+                    if author_l.get("email") is not None:
+                        author_data["email"] = author_l.get("email")
+                    if author_l["type"] == "Person":
+                        if author_l.get("last_name") is not None:
+                            author_data["last_name"] = author_l.get("last_name")
+                        if author_l.get("given_name") is not None:    
+                            author_data["given_name"] = author_l.get("given_name")
+                    metadata_result.add_result(
+                            constants.CAT_AUTHORS,
+                            author_data,
+                            1,
+                            constants.TECHNIQUE_FILE_EXPLORATION, url
+                        ) 
             # Properties extraction from cff
             if format_result == 'cff':
                 yaml_content = yaml.safe_load(file_text)
@@ -451,16 +515,8 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
 
                 if author_list:
                     result[constants.PROP_AUTHOR] = author_list
-
-                
-                # author_names = ", ".join(
-                #     f"{a.get('given-names', '').strip()} {a.get('family-names', '').strip()}".strip()
-                #     for a in authors if a.get('given-names') and a.get('family-names')
-                # ) or None  
                 if title:
                     result[constants.PROP_TITLE] = title
-                # if author_names:
-                #     result[constants.PROP_AUTHOR] = author_names
                 if final_url:
                     result[constants.PROP_URL] = final_url
                 if doi:
@@ -546,9 +602,64 @@ def parse_codeowners_structured(dir_path, filename):
             line = line.strip()
             if line and not line.startswith("#"):
                 parts = line.split()
-                path = parts[0]  # Primera parte es el path o patrón
-                owners = parts[1:]  # Lo demás son los propietarios
+                path = parts[0]  
+                owners = parts[1:] 
                 codeowners.append({"path": path, "owners": owners})
 
     return {"codeowners": codeowners}
 
+def clean_text(text):
+    cleaned_lines = []
+    for line in text.splitlines():
+        printable_chars = sum(1 for c in line if c in string.printable)
+        if len(line) == 0 or (printable_chars / len(line)) > 0.9:
+            cleaned_lines.append(line)
+    return "\n".join(cleaned_lines)
+
+#     """
+#     Proccess a text with possible authors
+#     """
+#     if not author_str:
+#         return []
+
+#     authors = []
+
+#     for line in author_str.splitlines():
+#         line = line.strip()
+#         if not line or line.startswith("#"):
+#             continue  
+
+#         email_match = re.search(r'<([^>]+)>', line)
+#         if email_match:
+#             email = email_match.group(1)
+#             name = line[:email_match.start()].strip()
+#         else:
+#             name = line
+#             email = None
+
+#         if name:
+#             if re.search(constants.REGEXP_LTD_INC, name, re.IGNORECASE):
+#                 type_author = "Organization"
+#                 author_info = {
+#                     "name": name,
+#                     "email": email,
+#                     "value": name,
+#                     "type": type_author
+#                 }
+#             else:
+#                 type_author = "Person"
+#                 name_parts = name.split()
+#                 given_name = name_parts[0] if name_parts else None
+#                 last_name = " ".join(name_parts[1:]) if len(name_parts) > 1 else None
+#                 author_info = {
+#                     "name": name,
+#                     "email": email,
+#                     "value": name,
+#                     "type": type_author,
+#                     "given_name": given_name,
+#                     "last_name": last_name
+#                 }
+
+#             authors.append(author_info)
+
+#     return authors

@@ -15,6 +15,14 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 
 - **Acknowledgement**: Text acknowledging funding sources or contributors
 - **Application domain**: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects)<sup>[1](#myfootnote1)</sup> 
+- **Assets**: files attached to the release
+  - url: URL of the publication of the file
+  - name: name of the file
+  - content_size: file size
+  - content_url: direct download link for the release file
+  - encoding_format: format of the file
+  - upload_date: date of publishing
+  - download_count: numbers of downloads
 - **Authors**: Person(s) or organization(s) responsible for the project. We recognize the following properties:
   - Name: name of the author (including last name)
   - Given name: First name of an author
@@ -45,7 +53,8 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Forks url**: Links to forks made of the project
 - **Full name**: Name + owner (owner/name)
 - **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository name
-- **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers. DOIs associated with publications will also be detected.
+- **Homepage**: URL of the item.
+- **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers and Software Heritage identifiers (SWH). DOIs associated with publications will also be detected. 
 - **Images**: Images used to illustrate the software component
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component
@@ -60,7 +69,8 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Package files**: Links to package files used to wrap the project in a package.
 - **Programming languages**: Languages used in the repository
 - **Related papers**: URL to possible related papers within the repository stated within the readme file (from Arxiv)
-- **Releases** (GitHub only): Pointer to the available versions of a software component. For each release, somef will track the following properties:
+- **Releases** (GitHub and Gitlab): Pointer to the available versions of a software component. For each release, somef will track the following properties:
+  - Assets: files attached to the release
   - Description: Release notes
   - Author: Agent responsible of creating the release
   - Name: Name of the release

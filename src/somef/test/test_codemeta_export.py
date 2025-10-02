@@ -5,6 +5,7 @@ from pathlib import Path
 from .. import somef_cli
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
+test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
 
 class TestCodemetaExport(unittest.TestCase):
     
@@ -16,7 +17,8 @@ class TestCodemetaExport(unittest.TestCase):
         somef_cli.run_cli(
             threshold=0.8,
             ignore_classifiers=False,
-            repo_url="https://github.com/tpronk/somef-demo-repo/",
+            # repo_url="https://github.com/tpronk/somef-demo-repo/",
+            repo_url="https://github.com/juanjemdIos/somef-demo-repo/",
             doc_src=None,
             in_file=None,
             output=None,
@@ -210,16 +212,57 @@ class TestCodemetaExport(unittest.TestCase):
         expected_languages = ["Jupyter Notebook"]
         assert set(self.json_content["programmingLanguage"]) == set(expected_languages), f"Mismatch: {self.json_content['programmingLanguage']}"
 
+    def test_codemeta_author_file(self):
+        """Checks if codemeta file has extracted the authors in the author file"""
+        authors = [author.get("name") for author in self.json_content["author"] if author["@type"] == "Person"]
+        expected_authors = {"Daniel Garijo", "Juanje Mendoza"}
+        assert set(authors) >= expected_authors, f"Mismatch in authors: {authors}"
+
+    def test_issue_763(self):
+        """
+        Checks that several citations of same item in json become in one in codemeta 
+        
+        Export to codemeta: Reconcile Bibtex and CFF exports
+        """
+
+        somef_cli.run_cli(threshold=0.9,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=None,
+                          local_repo=test_data_repositories + "inspect4py",
+                          in_file=None,
+                          output=None,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out= test_data_path + 'test_codemeta_several_citations.json',
+                          pretty=True,
+                          missing=False)
+        
+        json_file_path = test_data_path + "test_codemeta_several_citations.json"
+        text_file = open(json_file_path, "r")
+        data = text_file.read()
+        json_content = json.loads(data)
+        text_file.close()
+
+        reference_publications = json_content.get("referencePublication", [])
+
+        # just one reference
+        assert len(reference_publications) == 1, f"Expected 1 referencePublication, found {len(reference_publications)}"
+
+        # reference with doi expected
+        assert reference_publications[0].get("identifier") == "10.1145/3524842.3528497", \
+            f"Expected identifier '10.1145/3524842.3528497', found '{reference_publications[0].get('identifier')}'"
+        os.remove(json_file_path)
 
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""
-        if os.path.exists(cls.json_file):  # Verifica que el archivo exista
+        if os.path.exists(cls.json_file): 
             try:
                 os.remove(cls.json_file)
-                print(f"Deleted {cls.json_file}")  # Mensaje para confirmar la eliminación
+                print(f"Deleted {cls.json_file}") 
             except Exception as e:
-                print(f"Failed to delete {cls.json_file}: {e}")  # Captura errores de eliminación
+                print(f"Failed to delete {cls.json_file}: {e}")  
 
 
 if __name__ == "__main__":

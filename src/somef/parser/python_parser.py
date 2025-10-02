@@ -13,17 +13,20 @@ https://github.com/proycon/codemetapy/blob/master/codemeta/parsers/python.py
 """
 
 def parse_dependency(dependency_str):
+
     if not dependency_str:
         return None, None
-    parts = re.split(r'(>=|<=|==|!=|>|<|~=|\[)', dependency_str, 1)
+    # parts = re.split(r'(>=|<=|==|!=|>|<|~=|\[)', dependency_str, 1)
+    parts = re.split(r'(>=|<=|==|!=|>|<|~=)', dependency_str, 1)
     name = parts[0].strip()
     if len(parts) > 1:
         version = ''.join(parts[1:])
     else:
         version = ""
 
-    version = version.strip("[]() -.,:")
-    
+    # version = version.strip("[]() -.,:")
+    version = re.sub(r'[\[\]\(\)]', '', version)
+
     return name, version
 
 def parse_url_type(url_label):
@@ -39,6 +42,8 @@ def parse_url_type(url_label):
         return constants.CAT_README_URL
     elif "download" in label:
         return constants.CAT_DOWNLOAD_URL
+    elif "homepage" in label:
+        return constants.CAT_HOMEPAGE
     else:
         return constants.CAT_RELATED_DOCUMENTATION
 
@@ -89,7 +94,6 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                 data = tomli.load(f)
                 
                 project = get_project_data(data)
-                
                 if "name" in project:
                     metadata_result.add_result(
                         constants.CAT_PACKAGE_ID,
@@ -113,7 +117,19 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
                         source
                     )
-                
+
+                if "homepage" in project:
+                    metadata_result.add_result(
+                        constants.CAT_HOMEPAGE,
+                        {
+                            "value": project["homepage"], 
+                            "type": constants.URL
+                        },
+                        1,
+                        constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                        source
+                    )
+
                 if "version" in project:
                     metadata_result.add_result(
                         constants.CAT_VERSION,
@@ -181,8 +197,8 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                                 )
                 
                 urls = project.get("urls", {})
-                if not urls and "tool" in data and "poetry" in data["tool"]:
-                    
+
+                if not urls and "tool" in data and "poetry" in data["tool"]:             
                     poetry = data["tool"]["poetry"]
                     if "repository" in poetry:
                         urls["repository"] = poetry["repository"]
@@ -192,6 +208,7 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                         urls["documentation"] = poetry["documentation"]
                 
                 for url_type, url in urls.items():
+                    print(url_type)
                     category = parse_url_type(url_type)
                     metadata_result.add_result(
                         category,
@@ -420,8 +437,12 @@ def parse_setup_py(file_path, metadata_result: Result, source):
                                         value = module_vars[keyword.value.id]
                                     else:
                                         value = ast.literal_eval(keyword.value)
-                                    
-                                    author_results = metadata_result.results.get(constants.CAT_AUTHORS, [])
+
+                                    # author_results = metadata_result.results.get(constants.CAT_AUTHORS, [])
+                                    author_results = [
+                                        a for a in metadata_result.results.get(constants.CAT_AUTHORS, [])
+                                        if a.get("technique") == constants.TECHNIQUE_CODE_CONFIG_PARSER
+                                    ]
                                     if author_results:
                                         for result in author_results:
                                             result["result"]["email"] = value
@@ -429,7 +450,7 @@ def parse_setup_py(file_path, metadata_result: Result, source):
                                         metadata_result.add_result(
                                             constants.CAT_AUTHORS,
                                             {
-                                                "name": None,
+                                                # "name": None,
                                                 "email": value,
                                                 "type": constants.AGENT,
                                                 "value": value
