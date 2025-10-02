@@ -102,6 +102,7 @@ CAT_CODE_REPOSITORY = "code_repository"
 CAT_CONTACT = "contact"
 CAT_DATE_CREATED = "date_created"
 CAT_DATE_UPDATED = "date_updated"
+CAT_DATE_PUBLISHED = "date_published"
 CAT_DESCRIPTION = "description"
 CAT_DOCUMENTATION = "documentation"
 CAT_DOWNLOAD = "download"
@@ -155,10 +156,12 @@ CAT_PACKAGE_ID = "package_id"
 CAT_HAS_PACKAGE_FILE = "has_package_file"
 CAT_VERSION = "version"
 CAT_CONTINUOUS_INTEGRATION= "continuous_integration"
-
+CAT_FUNDING = "funding"
+CAT_DEV_STATUS = "development_status"
+CAT_REF_PUBLICATION = "reference_publication"
 # Special category: missing categories
 CAT_MISSING = "somef_missing_categories"
-
+CAT_HOMEPAGE = "homepage"
 # list of those categories to be analyzed with supervised classification.
 # supervised_categories = [CAT_DESCRIPTION, CAT_CITATION, CAT_INSTALLATION, CAT_INVOCATION]
 # update jan 2025: only description is run, since the installation classifier is a bit noisy.
@@ -256,6 +259,7 @@ LICENSE = "License"
 PUBLICATION = "Publication"
 LANGUAGE = "Programming_language"
 SOFTWARE_APPLICATION = "Software_application"
+SCHOLARLY_ARTICLE = "Scholarly_article"
 
 # Different techniques
 TECHNIQUE_SUPERVISED_CLASSIFICATION = "supervised_classification"

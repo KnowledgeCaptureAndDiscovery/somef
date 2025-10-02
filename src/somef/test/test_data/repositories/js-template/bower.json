@@ -1,0 +1,25 @@
+{
+  "name": "alarm",
+  "description": "Alarm clock project during week1 day2 JS at Epicodus.",
+  "main": "gulpfile.js",
+  "authors": [
+    "Andrew Accuardi <andrewaccuardi@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.1.1",
+    "bootstrap": "^3.3.7",
+    "moment": "^2.17.1",
+    "components-font-awesome": "^4.7.0",
+    "font-awesome": "^4.7.0",
+    "materialize": "^0.97.8"
+  }
+}
