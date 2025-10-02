@@ -195,7 +195,6 @@ class TestRegExp(unittest.TestCase):
             results = regular_expressions.extract_images(test_text, repo_url, None, Result(),
                                                          test_data_path + "test_issue_images.txt", "main")
             img = results.results[constants.CAT_IMAGE]
-            print(img)
             assert len(img) == 2
 
     #Test commented out because arxiv links with no context has demonstrated not to be useful
@@ -388,3 +387,46 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
                                                   test_data_path + "README-ci-sample-project.md")
 
             assert constants.CAT_FULL_TITLE not in c.results, "Category CAT_FULL_TITLE should be absent if there is no valid title."
+
+    def test_issue_771(self):
+        """Test designed to check if can be extracted identifiers, package manager and documentation from badges in the readme"""
+        with open(test_data_path + "README-sunpy.rst", "r") as data_file:
+            test_text = data_file.read()
+            identifiers = regular_expressions.extract_doi_badges(test_text, Result(),
+                                                  test_data_path + "README-sunpy.rst")
+            documentation = regular_expressions.extract_readthedocs_badgeds(test_text, Result(),
+                                                  test_data_path + "README-sunpy.rst")
+            package = regular_expressions.extract_package_distributions(test_text, Result(),
+                                                  test_data_path + "README-sunpy.rst")
+            
+            expected_doi = "https://doi.org/10.5281/zenodo.15691296"
+            doi_values = []
+            if "identifier" in identifiers.results:
+                for result in identifiers.results["identifier"]:
+                    if "result" in result and "value" in result["result"]:
+                        doi_values.append(result["result"]["value"])
+
+                assert expected_doi in doi_values, f"Expected DOI {expected_doi} not found in identifiers"
+                
+            expected_doc_url = "https://docs.sunpy.org/"
+            documentation_values = []
+            if "documentation" in documentation.results:
+                for result in documentation.results["documentation"]:
+                    if "result" in result and "value" in result["result"]:
+                        documentation_values.append(result["result"]["value"])
+
+                assert expected_doc_url in documentation_values, f"Expected url documentation {expected_doc_url} not found in documentation"
+
+            expected_packages = {
+                "https://pypi.org/project/sunpy/",
+                "https://anaconda.org/conda-forge/sunpy"
+            }
+
+            package_distribution_values = []
+            if "package_distribution" in package.results:
+                for result in package.results["package_distribution"]:
+                    if "result" in result and "value" in result["result"]:
+                        package_distribution_values.append(result["result"]["value"])
+
+                for expected in expected_packages:
+                    assert expected in package_distribution_values, f"Package distribution {expected} not found in {package_distribution_values}"

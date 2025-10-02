@@ -33,6 +33,18 @@ REGEXP_YEAR = r'year\s*=\s*{(\d{4})}'
 REGEXP_MONTH = r'month\s*=\s*{(\d{1,2})}'
 REGEXP_PAGES = r'pages\s*=\s*{([\d-]+)}'
 
+# Project Homepage badge'
+REGEXP_PROJECT_HOMEPAGE = r'\[\!\[Project homepage\]([^\]]+)\]\(([^)]+)\)'
+
+# Redthedocs badges'
+# REGEXP_READTHEDOCS_BADGES = r"https?://[^\s]*readthedocs\.org/projects/[^\s]*/badge/\?version=[^\s]*(?:.|\n)*?:target:\s*(https?://[^\s]+)"
+# REGEXP_READTHEDOCS_BADGES = r"https?://readthedocs\.org/projects/[^/\s]+/badge/\?version=[^)\s]+"
+REGEXP_READTHEDOCS_BADGES = (
+    r"https?://readthedocs\.org/projects/[^/\s]+/badge/\?version=[^)\s]+"
+    r"(?:.|\n)*?:target:\s*(https?://[^\s]+)"  # rst
+    r"|" 
+    r"\((https?://readthedocs\.org/projects/[^/\s]+/[^)\s]+)\)"  # md
+)
 # For natural language citation
 REGEXP_DOI_NATURAL = r'10\.\d{4,9}/[-._;()/:A-Za-z0-9]+'
 REGEXP_YEAR_NATURAL = r'\b(19|20)\d{2}\b'
@@ -56,7 +68,11 @@ REGEXP_MPL2 = r'(?i)mozilla\s+public\s+license\s*,?\s*version\s*2\.0'
 REGEXP_UNLICENSE = r'(?i)the\s+unlicense'
 
 # Detect organization in authors.md
-REGEXP_LTD_INC = r'\b(inc|ltd)\b'
+REGEXP_LTD_INC = r'\b(inc|ltd|llc|corporation)([.,]|\b)'
+
+# Detect zenodo latest doi in readme. 
+REGEXP_ZENODO_LATEST_DOI = r':target:\s*(https://zenodo\.org/badge/latestdoi/\d+)'
+REGEXP_ZENODO_JSON_LD = r"<script[^>]*type=['\"]application/ld\+json['\"][^>]*>(.*?)</script>"
 
 LICENSES_DICT = {
     "Apache License 2.0": {"regex": REGEXP_APACHE, "spdx_id": "Apache-2.0"},
@@ -74,6 +90,7 @@ LICENSES_DICT = {
     "The Unlicense": {"regex": REGEXP_UNLICENSE, "spdx_id": "Unlicense"},
 }
 # Categories recognized by SOMEF (they all start by CAT_
+CAT_ASSETS = "assets"
 CAT_AUTHORS = "authors"
 CAT_APPLICATION_DOMAIN = "application_domain"
 CAT_ACKNOWLEDGEMENT = "acknowledgement"
@@ -95,6 +112,7 @@ CAT_FORK_COUNTS = "forks_count"
 CAT_FORKS_URLS = "forks_url"
 CAT_FULL_NAME = "full_name"
 CAT_FULL_TITLE = "full_title"
+CAT_HOMEPAGE = "homepage"
 CAT_HAS_BUILD_FILE = "has_build_file"
 CAT_HAS_SCRIPT_FILE = "has_script_file"
 CAT_IDENTIFIER = "identifier"
@@ -109,6 +127,16 @@ CAT_NAME = "name"
 CAT_ONTOLOGIES = "ontologies"
 CAT_OWNER = "owner"
 CAT_PACKAGE_DISTRIBUTION = "package_distribution"
+REGEXP_PACKAGE_MANAGER = r"""
+    (?P<url>
+        https?://
+        (?:
+            (?:pypi\.python\.org/pypi/[^/\s]+)|
+            (?:anaconda\.org/[^/\s]+/[^/\s]+)|
+            (?:search\.maven\.org/artifact/[^/\s]+/[^/\s]+(?:/[^/\s]+)?)
+        )
+    )
+"""
 CAT_PROGRAMMING_LANGUAGES = "programming_languages"
 CAT_README_URL = "readme_url"
 CAT_RELATED_DOCUMENTATION = "related_documentation"
@@ -144,7 +172,7 @@ all_categories = [CAT_APPLICATION_DOMAIN, CAT_ACKNOWLEDGEMENT, CAT_AUTHORS, CAT_
                   CAT_DOCUMENTATION, CAT_DOWNLOAD, CAT_DOWNLOAD_URL, CAT_EXECUTABLE_EXAMPLE,
                   CAT_FAQ, CAT_FORK_COUNTS, CAT_FORKS_URLS, CAT_FULL_NAME, CAT_FULL_TITLE, CAT_HAS_BUILD_FILE,
                   CAT_HAS_SCRIPT_FILE, CAT_IDENTIFIER, CAT_IMAGE, CAT_INSTALLATION,
-                  CAT_INVOCATION, CAT_ISSUE_TRACKER, CAT_KEYWORDS, CAT_LICENSE, CAT_LOGO, CAT_NAME, CAT_ONTOLOGIES,
+                  CAT_INVOCATION, CAT_ISSUE_TRACKER,CAT_HOMEPAGE, CAT_KEYWORDS, CAT_LICENSE, CAT_LOGO, CAT_NAME, CAT_ONTOLOGIES,
                   CAT_OWNER, CAT_PACKAGE_DISTRIBUTION, CAT_HAS_PACKAGE_FILE, CAT_PROGRAMMING_LANGUAGES, CAT_README_URL,
                   CAT_RELATED_DOCUMENTATION, CAT_RELEASES, CAT_RUN, CAT_RELATED_PAPERS,
                   CAT_STATUS, CAT_REQUIREMENTS, CAT_STARS, CAT_SUPPORT, CAT_SUPPORT_CHANNELS, CAT_USAGE,
@@ -168,9 +196,12 @@ AGENT_TYPE = "agent_type"  # Special type needed when objects are nested
 PROP_VALUE = "value"
 # For Result types
 PROP_AUTHOR = "author"
+PROP_BROWSER_URL = "browser_download_url"
+PROP_CONTENT_TYPE = "content_type"
 PROP_DOI = "doi"
 PROP_DESCRIPTION = "description"
 PROP_DATE_CREATED = "date_created"
+PROP_DATE_CREATED_AT = "created_at"
 PROP_DATE_PUBLISHED = "date_published"
 PROP_DATE_UPDATED = "date_updated"
 PROP_HTML_URL = "html_url"
@@ -187,6 +218,13 @@ PROP_ZIPBALL_URL = "zipball_url"
 PROP_TARBALL_URL = "tarball_url"
 # Publications
 PROP_TITLE = "title"
+# Assets from releases
+# PROP_ASSETS = "assets"
+PROP_CONTENT_URL = "content_url"
+PROP_ENCODING_FORMAT = "encoding_format"
+PROP_UPLOAD_DATE = "upload_date"
+PROP_CONTENT_SIZE = "content_size"
+PROP_DOWNLOAD_COUNT = "download_count"
 
 # Format:
 FORMAT_BIB = "bibtex"
@@ -234,6 +272,11 @@ GITHUB_DOMAIN = "github.com"
 GITHUB_ACCEPT_HEADER = "application/vnd.github.v3+json"
 GITHUB_API = "https://api.github.com/repos"
 
+# Software Heritage
+SWH_ROOT = "https://archive.softwareheritage.org/"
+REGEXP_SWH = r'\[\!\[SWH\]([^\]]+)\]\(([^)]+)\)'
+REGEXP_SWH_ANCHOR = r"anchor=(swh:1:[a-z]+:[a-f0-9]{40})"
+REGEXP_SWH_ALL_IDENTIFIERS = r"(swh:1:[a-z]+:[a-f0-9]{40})"
 # Spdx url
 SPDX_BASE = "https://spdx.org/licenses/"
 
@@ -256,7 +299,8 @@ github_crosswalk_table = {
     CAT_FORKS_URLS: "forks_url",
     CAT_STARS: "stargazers_count",
     CAT_KEYWORDS: "topics",
-    CAT_FORK_COUNTS: "forks_count"
+    CAT_FORK_COUNTS: "forks_count",
+    CAT_HOMEPAGE: "homepage"
 }
 
 # Mapping for releases
@@ -273,6 +317,7 @@ release_crosswalk_table = {
     PROP_RELEASE_ID: 'id',
     PROP_DATE_CREATED: 'created_at',
     PROP_DATE_PUBLISHED: "published_at",
+    CAT_ASSETS: "assets"
 }
 
 release_gitlab_crosswalk_table = {
@@ -287,6 +332,17 @@ release_gitlab_crosswalk_table = {
     PROP_RELEASE_ID: 'tag_name',
     PROP_DATE_CREATED: 'created_at',
     PROP_DATE_PUBLISHED: "released_at",
+    CAT_ASSETS: "assets"
+}
+
+release_assets_github = {
+    PROP_URL: "url",
+    PROP_NAME: "name",
+    PROP_SIZE: "size",
+    PROP_BROWSER_URL: "browser_download_url",
+    PROP_CONTENT_TYPE: "content_type",
+    PROP_DATE_CREATED_AT: "created_at",
+    PROP_DOWNLOAD_COUNT: "download_count"
 }
 
 # Minimum percentage of total bytes a programming language must have to be considered relevant in CodeMeta file.
@@ -327,3 +383,11 @@ workflow_extensions=('.ga','.cwl','.nf','.knwf','.t2flow','.dag','.kar','.wdl',"
 code_extensions = (".jl",".sql",".ddl",".psql",".mysql",".oracle",".plsql",".py",".java",".jar",".bash",".sh",".cs",".dll",".cpp",".c",".php",".phtml",".ps1",".rs",".go",".kt",".rb",".pl",".lua",".dart",".groovy",".asm",".swift",".R",".r")
 ontology_extensions=(".rdf",".ttl",".owl",".nt",".owl2",".nq",".n3",".rdfs") 
 media_files=(".mp4",".mp3",".wav",".bmp",".gif",".png",".jpeg",".jpg",".svg",".webp",".xls",".xlsx",".ico",".webm",".wmv",".txt")
+
+# Folders ignored in process_files.py/process_repository_files
+IGNORED_DIRS = {"test", "tests", "node_modules", "venv", "__pycache__"}
+
+SIZE_DOWNLOAD_LIMIT_MB = 200
+DOWNLOAD_TIMEOUT_SECONDS = 120
+
+
