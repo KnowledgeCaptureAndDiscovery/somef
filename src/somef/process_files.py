@@ -20,6 +20,7 @@ from .parser.python_parser import parse_requirements_txt
 from .parser.authors_parser import parse_author_file
 from .parser.bower_parser import parse_bower_json_file
 from .parser.gemspec_parser import parse_gemspec_file
+from .parser.description_parser import parse_description_file
 from chardet import detect
 
 
@@ -224,11 +225,11 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                     codemeta_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir, repo_relative_path, filename)
                     metadata_result = parse_codemeta_json_file(os.path.join(dir_path, filename), metadata_result, codemeta_file_url)
                     # TO DO: Code owners not fully implemented yet
-            
+
                 if filename.lower() == "pom.xml" or filename.lower() == "package.json" or \
-                    filename.lower() == "pyproject.toml" or filename.lower() == "setup.py" or filename.endswith(".gemspec") or \
-                    filename.lower() == "requirements.txt" or filename.lower() == "bower.json" or \
-                    (filename.lower() == "cargo.toml" and repo_relative_path == ".") or (filename.lower() == "composer.json" and repo_relative_path == "."):
+                        filename.lower() == "pyproject.toml" or filename.lower() == "setup.py" or filename.endswith(".gemspec") or \
+                        filename.lower() == "requirements.txt" or filename.lower() == "bower.json" or filename == "DESCRIPTION" or \
+                        (filename.lower() == "cargo.toml" and repo_relative_path == ".") or (filename.lower() == "composer.json" and repo_relative_path == "."):
                         build_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
                                                        repo_dir,
                                                        repo_relative_path, filename)
@@ -259,6 +260,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             metadata_result = parse_composer_json(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.endswith(".gemspec"):
                             metadata_result = parse_gemspec_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
+                        if filename == "DESCRIPTION":
+                            metadata_result = parse_description_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                             
                 # if repo_type == constants.RepositoryType.GITLAB: 
                 if filename.endswith(".yml"):
