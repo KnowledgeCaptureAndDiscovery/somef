@@ -1,0 +1,31 @@
+CAT_NAME: "Gammapy: Python toolbox for gamma-ray astronomy" # Passed
+CAT_CODE_REPOSITORY: https://github.com/gammapy/gammapy # Passed
+CAT_ISSUE_TRACKER: https://github.com/gammapy/gammapy/issues # Passed
+CAT_DATE_UPDATED: "2024-11-29" # Passed
+CAT_DATE_PUBLISHED: "2024-11-26" # Passed
+CAT_README_URL: # Passed
+    value: "https://gammapy.org"
+
+CAT_KEYWORDS: # Passed
+    - Astronomy
+    - Gamma-rays
+    - Data analysis
+
+CAT_LICENSE: # Passed
+    value: https://spdx.org/licenses/BSD-3-Clause 
+
+CAT_VERSION: v1.3   # Passed
+
+CAT_IDENTIFIER: https://doi.org/10.5281/zenodo.4701488 # Passed
+
+CAT_DESCRIPTION: Gammapy analyzes gamma-ray data and creates sky images, spectra and lightcurves, from event lists and instrument response information; it can also determine the position, morphology and spectra of gamma-ray sources. It is used to analyze data from H.E.S.S., Fermi-LAT, HAWC, and the Cherenkov Telescope Array (CTA). # Passed
+
+CAT_REQUIREMENTS: # Passed
+    value: numpy>=1.21
+    name: numpy
+    version: ">=1.21"
+    type: Software_application
+
+CAT_AUTHORS: # Passed
+    value: Fabio Acero
+    type: String    

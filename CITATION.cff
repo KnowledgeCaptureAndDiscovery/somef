@@ -1,9 +1,16 @@
-title: "SOMEF: Software metadata extraction framework"
-license: Apache-2.0
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: 'SOMEF: Software metadata extraction framework'
+message: >-
+  If you use this software, please cite both the article
+  from preferred-citation and the software itself.
+type: software
 authors:
   - family-names: Garijo
     given-names: Daniel
-    orcid: "http://orcid.org/0000-0003-0454-7145"
+    orcid: 'https://orcid.org/0000-0003-0454-7145'
   - family-names: Mao
     given-names: Allen
   - family-names: Dharmala
@@ -20,18 +27,16 @@ authors:
     given-names: Jenifer
   - family-names: Mendoza
     given-names: Juanje
-    
-cff-version: 1.2.0
-message: "If you use this software, please cite both the article from preferred-citation and the software itself."
+license: Apache-2.0
 preferred-citation:
   authors:
     - family-names: Kelley
       given-names: Aidan
     - family-names: Garijo
       given-names: Daniel
-  title: "A Framework for Creating Knowledge Graphs of Scientific Software Metadata"
+  title: A Framework for Creating Knowledge Graphs of Scientific Software Metadata
   type: article
-  journal: "Quantitative Science Studies"
-  pages: "1-37"
+  journal: Quantitative Science Studies
+  pages: 1-37
   year: 2021
   doi: 10.1162/qss_a_00167
