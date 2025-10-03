@@ -194,7 +194,8 @@ class TestProcessRepository(unittest.TestCase):
                                                                    constants.RepositoryType.LOCAL)
         licenses = github_data.results[constants.CAT_LICENSE]
         citation = github_data.results[constants.CAT_CITATION]
-        assert len(licenses) == 1 and "LICENSE" in licenses[0]["source"] and \
+        # there are two licenses because the codemeta parser obtains one
+        assert len(licenses) == 2 and "LICENSE" or "codemeta" in licenses[0]["source"] and \
             len(citation) == 1 and "example_onto" not in citation[0]["source"]
 
     def test_issue_611(self):
