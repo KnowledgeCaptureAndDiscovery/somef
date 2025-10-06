@@ -75,6 +75,7 @@ REGEXP_ALL_DOIS = r'10\.\d{4,9}/[-._;()/:A-Z0-9]+'
 
 # Detect zenodo latest doi in readme. 
 REGEXP_ZENODO_LATEST_DOI = r':target:\s*(https://zenodo\.org/badge/latestdoi/\d+)'
+REGEXP_ZENODO_DOI = r'https://zenodo\.org/badge/DOI/\d+'
 REGEXP_ZENODO_JSON_LD = r"<script[^>]*type=['\"]application/ld\+json['\"][^>]*>(.*?)</script>"
 
 LICENSES_DICT = {

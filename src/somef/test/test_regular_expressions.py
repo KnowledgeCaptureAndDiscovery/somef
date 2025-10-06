@@ -48,7 +48,7 @@ class TestRegExp(unittest.TestCase):
         with open(test_data_path + "test_extract_dois.txt", "r") as data_file:
             test_text = data_file.read()
             c = regular_expressions.extract_doi_badges(test_text, Result(), test_data_path + "test_extract_dois.txt")
-            assert len(c.results[constants.CAT_IDENTIFIER]) == 2
+            assert len(c.results[constants.CAT_IDENTIFIER]) == 3
 
     def test_extract_binder_links(self):
         """Test designed to check if binder links are detected"""
