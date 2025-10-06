@@ -77,9 +77,40 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
     descriptions_text = []
     if descriptions is not None:
-        descriptions.sort(key=lambda x: (x[constants.PROP_CONFIDENCE] + (1 if x[constants.PROP_TECHNIQUE] == constants.GITHUB_API else 0)),
-                          reverse=True)
-        descriptions_text = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in descriptions]
+
+        # priority descriptions: Codemeta, without codemeta but confidence 1, rest
+        codemeta_desc = [d for d in descriptions if d.get("technique") == "code_parser" and "codemeta.json" in d.get("source", "")]
+        github_desc = [d for d in descriptions if d.get("technique") == constants.GITHUB_API]
+        readme_desc = [d for d in descriptions if d.get("technique") not in ("code_parser", constants.GITHUB_API)]
+
+        if codemeta_desc:
+            # If codemeta just these
+            selected = codemeta_desc
+        elif github_desc:
+            # whitout codemeta, but we have descripciont with confidence 1
+            threshold_1 = [d for d in github_desc if d.get("confidence", 0) == 1]
+            selected = threshold_1 if threshold_1 else github_desc
+        else:
+            # Rest of descriptions 
+            selected = sorted(readme_desc, key=lambda x: x.get("confidence", 0), reverse=True)[:1]
+
+        flat_descriptions = []
+        for d in selected:
+            value = d[constants.PROP_RESULT][constants.PROP_VALUE]
+            if isinstance(value, list):
+                for v in value:
+                    if v not in flat_descriptions:
+                        flat_descriptions.append(v)
+            else:
+                if value not in flat_descriptions:
+                    flat_descriptions.append(value)
+
+        descriptions_text = flat_descriptions
+
+        # descriptions_text = [d[constants.PROP_RESULT][constants.PROP_VALUE] for d in selected]
+        # descriptions.sort(key=lambda x: (x[constants.PROP_CONFIDENCE] + (1 if x[constants.PROP_TECHNIQUE] == constants.GITHUB_API else 0)),
+        #                   reverse=True)
+        # descriptions_text = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in descriptions]
 
 
     codemeta_output = {
@@ -412,6 +443,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                     if key and key in author_orcids:
                         author["@id"] = author_orcids[key]  
      
+        print('--------------------------> duplicate_publications')
         codemeta_output["referencePublication"] = deduplicate_publications(all_reference_publications)
                 # key = (doi, title)
 
@@ -504,15 +536,15 @@ def deduplicate_publications(publications: List[Dict]) -> List[Dict]:
     seen = {}
     for pub in publications:
         # doi = pub.get("identifier", "").lower().strip()
-        doi = (pub.get("identifier") or "").lower().strip()
+        # doi = (pub.get("identifier") or "").lower().strip()
+        doi = extract_doi(pub.get("identifier") or "")
         title = normalize_title(pub.get("name", ""))
         key = (doi, title)
-
+        print(doi)
         if key not in seen:
             seen[key] = pub
         else:
             existing = seen[key]
-            # Extraemos valores relevantes
             existing_format = existing.get("_source_format", "")
             new_format = pub.get("_source_format", "")
             existing_url = (existing.get("url") or "").lower()
@@ -526,7 +558,6 @@ def deduplicate_publications(publications: List[Dict]) -> List[Dict]:
             # print(f'-----> DOI existing: {doi_new}')
             is_doi_url_existing = bool(doi_existing)
             is_doi_url_new = bool(doi_new)
-
 
             # Priority CFF
             if existing_format != "cff" and new_format == "cff":
