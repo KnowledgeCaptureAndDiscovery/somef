@@ -97,8 +97,10 @@ def parse_software_requirements(requirements_data):
                     version = match.group(2).strip() if match.group(2) else None
                     requirements.append({
                         "value": original,
-                        "name": name,
-                        "version": version
+                        # "name": name,
+                        # "version": version
+                        **({"name": name} if name else {}),
+                        **({"version": version} if version else {})
                     })
                 else:
                     requirements.append({
@@ -546,8 +548,10 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                         constants.CAT_REQUIREMENTS,
                         {
                             "value": requirement.get("value"),
-                            "name": requirement.get("name"),
-                            "version": requirement.get("version"),
+                            # "name": requirement.get("name"),
+                            # "version": requirement.get("version"),
+                            **({"name": requirement["name"]} if "name" in requirement else {}),
+                            **({"version": requirement["version"]} if "version" in requirement else {}),
                             "type": constants.SOFTWARE_APPLICATION
                         },
                         1,

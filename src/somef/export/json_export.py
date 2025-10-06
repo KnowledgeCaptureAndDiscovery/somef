@@ -174,7 +174,11 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             "name": x[constants.PROP_RESULT].get(constants.PROP_NAME)
             if x[constants.PROP_RESULT].get(constants.PROP_NAME) 
             else x[constants.PROP_RESULT].get(constants.PROP_VALUE),
-            "version": x[constants.PROP_RESULT].get(constants.PROP_VERSION)
+            # "version": x[constants.PROP_RESULT].get(constants.PROP_VERSION)
+            **({"version": x[constants.PROP_RESULT].get(constants.PROP_VERSION)}
+                if x[constants.PROP_RESULT].get(constants.PROP_VERSION) is not None
+                else {}
+                )
         }
         for x in repo_data[constants.CAT_REQUIREMENTS]
         if x.get(constants.PROP_TECHNIQUE) == constants.TECHNIQUE_CODE_CONFIG_PARSER
@@ -407,6 +411,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
                     if key and key in author_orcids:
                         author["@id"] = author_orcids[key]  
+     
         codemeta_output["referencePublication"] = deduplicate_publications(all_reference_publications)
                 # key = (doi, title)
 
@@ -516,9 +521,9 @@ def deduplicate_publications(publications: List[Dict]) -> List[Dict]:
             # is_doi_url_existing = existing_url.startswith("https://doi.org/")
             # is_doi_url_new = new_url.startswith("https://doi.org/")
             doi_existing = extract_doi(existing_url)
-            print(f'-----> DOI existing: {doi_existing}')
+            # print(f'-----> DOI existing: {doi_existing}')
             doi_new = extract_doi(new_url)
-            print(f'-----> DOI existing: {doi_new}')
+            # print(f'-----> DOI existing: {doi_new}')
             is_doi_url_existing = bool(doi_existing)
             is_doi_url_new = bool(doi_new)
 
