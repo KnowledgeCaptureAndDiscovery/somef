@@ -129,9 +129,13 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["codeRepository"] = code_repository
         codemeta_output["issueTracker"] = code_repository + "/issues"
     if constants.CAT_DATE_CREATED in repo_data:
-        codemeta_output["dateCreated"] = format_date(repo_data[constants.CAT_DATE_CREATED][0][constants.PROP_RESULT][constants.PROP_VALUE])
+        value = repo_data[constants.CAT_DATE_CREATED][0][constants.PROP_RESULT][constants.PROP_VALUE]
+        if value:
+            codemeta_output["dateCreated"] = format_date(value)
     if constants.CAT_DATE_UPDATED in repo_data:
-        codemeta_output["dateModified"] = format_date(repo_data[constants.CAT_DATE_UPDATED][0][constants.PROP_RESULT][constants.PROP_VALUE])
+        value = repo_data[constants.CAT_DATE_UPDATED][0][constants.PROP_RESULT][constants.PROP_VALUE]
+        if value:
+            codemeta_output["dateModified"] = format_date(value)
     if constants.CAT_DOWNLOAD_URL in repo_data:
         codemeta_output["downloadUrl"] = repo_data[constants.CAT_DOWNLOAD_URL][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_NAME in repo_data:
@@ -307,7 +311,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                 doi = yaml_content.get("doi") or preferred_citation.get("doi")
                 identifiers = yaml_content.get("identifiers", [])
                 url_citation = preferred_citation.get("url") or yaml_content.get("url")
-
                 identifier_url = next((id["value"] for id in identifiers if id["type"] == "url"), None)
                 identifier_doi = next((id["value"] for id in identifiers if id["type"] == "doi"), None)
 
@@ -404,7 +407,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
                     if key and key in author_orcids:
                         author["@id"] = author_orcids[key]  
-
         codemeta_output["referencePublication"] = deduplicate_publications(all_reference_publications)
                 # key = (doi, title)
 
@@ -430,23 +432,23 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
           codemeta_output["identifier"].append(identifier[constants.PROP_RESULT][constants.PROP_VALUE]) 
 
     if constants.CAT_HOMEPAGE in repo_data:
-        homepage_urls = set()
-        for homepage_entry in repo_data[constants.CAT_HOMEPAGE]:
-            url = homepage_entry[constants.PROP_RESULT][constants.PROP_VALUE]
-            homepage_urls.add(url.strip()) 
 
+        # example 
+        # homepage_urls = {"http://foo.com", "https://foo.com", "http://bar.com"}
+        # Result-->  filtered_urls = {"https://foo.com", "http://bar.com"}
+        # Priorice https
+
+        homepage_urls = {hp[constants.PROP_RESULT][constants.PROP_VALUE].strip()
+                 for hp in repo_data[constants.CAT_HOMEPAGE]}
+        
         filtered_urls = set()
-        https_roots = {url.replace("https://", "") for url in homepage_urls if url.startswith("https://")}
+        roots_with_https = {url[len("https://"):] for url in homepage_urls if url.startswith("https://")}
 
         for url in homepage_urls:
             root = url.replace("http://", "").replace("https://", "")
-            if root in https_roots:
-                continue  
+            if url.startswith("http://") and root in roots_with_https:
+                continue
             filtered_urls.add(url)
-
-        for url in homepage_urls:
-            if url.startswith("https://"):
-                filtered_urls.add(url)
 
         codemeta_output["url"] = list(filtered_urls)
 
@@ -511,14 +513,21 @@ def deduplicate_publications(publications: List[Dict]) -> List[Dict]:
             existing_url = (existing.get("url") or "").lower()
             new_url = (pub.get("url") or "").lower()
 
-            is_doi_url_existing = existing_url.startswith("https://doi.org/")
-            is_doi_url_new = new_url.startswith("https://doi.org/")
+            # is_doi_url_existing = existing_url.startswith("https://doi.org/")
+            # is_doi_url_new = new_url.startswith("https://doi.org/")
+            doi_existing = extract_doi(existing_url)
+            print(f'-----> DOI existing: {doi_existing}')
+            doi_new = extract_doi(new_url)
+            print(f'-----> DOI existing: {doi_new}')
+            is_doi_url_existing = bool(doi_existing)
+            is_doi_url_new = bool(doi_new)
+
 
             # Priority CFF
             if existing_format != "cff" and new_format == "cff":
                 seen[key] = pub
 
-            # Priority URL DOI
+            # Priority DOI URL
             elif existing_format == new_format:
                 if not is_doi_url_existing and is_doi_url_new:
                     seen[key] = pub
@@ -529,3 +538,11 @@ def deduplicate_publications(publications: List[Dict]) -> List[Dict]:
         result.append(pub)
 
     return result
+    
+
+def extract_doi(url: str) -> str:
+    if not url:
+        return ""
+
+    match = re.search(constants.REGEXP_ALL_DOIS, url, re.IGNORECASE)
+    return match.group(0).lower() if match else ""

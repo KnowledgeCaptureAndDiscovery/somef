@@ -389,7 +389,8 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
             assert constants.CAT_FULL_TITLE not in c.results, "Category CAT_FULL_TITLE should be absent if there is no valid title."
 
     def test_issue_771(self):
-        """Test designed to check if can be extracted identifiers, package manager and documentation from badges in the readme"""
+        """Test designed to check whether identifiers, package manager and documentation can be extracted
+        from badges in the readme file """
         with open(test_data_path + "README-sunpy.rst", "r") as data_file:
             test_text = data_file.read()
             identifiers = regular_expressions.extract_doi_badges(test_text, Result(),
@@ -398,15 +399,15 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
                                                   test_data_path + "README-sunpy.rst")
             package = regular_expressions.extract_package_distributions(test_text, Result(),
                                                   test_data_path + "README-sunpy.rst")
-            
-            expected_doi = "https://doi.org/10.5281/zenodo.15691296"
+
+            # cant provide concrete doi or test will fail every time there is an update and we resolve the id
+            expected_doi = "https://doi.org/10.5281/zenodo."
             doi_values = []
             if "identifier" in identifiers.results:
                 for result in identifiers.results["identifier"]:
                     if "result" in result and "value" in result["result"]:
                         doi_values.append(result["result"]["value"])
-
-                assert expected_doi in doi_values, f"Expected DOI {expected_doi} not found in identifiers"
+                assert expected_doi in doi_values[0], f"Expected DOI {expected_doi} not found in identifiers"
                 
             expected_doc_url = "https://docs.sunpy.org/"
             documentation_values = []
