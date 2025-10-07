@@ -254,6 +254,37 @@ class TestCodemetaExport(unittest.TestCase):
             f"Expected identifier '10.1145/3524842.3528497', found '{reference_publications[0].get('identifier')}'"
         os.remove(json_file_path)
 
+    def test_codemeta_duplicate_dois(self):
+        """Checks if codemeta duplicates dois whith diferent format: doi.org, dx.doi...."""
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=test_data_path + "README-widoco-duplicate-dois.md",
+                          in_file=None,
+                          output=None,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=test_data_path + 'test_codemeta_dup_dois.json',
+                          pretty=True,
+                          missing=True)
+        
+        json_file_path = test_data_path + "test_codemeta_dup_dois.json"
+        # check if the file has been created in the correct path
+        assert os.path.exists(json_file_path), f"File {json_file_path} doesn't exist."
+
+        with open(json_file_path, "r") as f:
+            codemeta = json.load(f)
+
+        ref_pubs = codemeta.get("referencePublication", [])
+
+        dois = set()
+        for pub in ref_pubs:
+            if isinstance(pub, dict) and "identifier" in pub:
+                dois.add(pub["identifier"])
+        assert len(dois) == 1, f"Expected 1 DOI, got {len(dois)}: {dois}"
+
+        os.remove(json_file_path)
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""

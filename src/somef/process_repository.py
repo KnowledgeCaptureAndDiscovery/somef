@@ -55,7 +55,6 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=const
         try:
             head_response = requests.get(url, stream=True, allow_redirects=True, **kwargs)
             content_length = head_response.headers.get("Content-Length")
-            print(f"---------> {content_length}")
             if content_length is not None:
                 size_bytes = int(content_length)
                 print(f"HEAD Content-Length: {size_bytes}")
