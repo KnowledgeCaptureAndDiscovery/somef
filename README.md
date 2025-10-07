@@ -314,6 +314,11 @@ Options:
                                   will be stored at the
                                   desired path
 
+  -all, --requirements_all        Export all detected requirements, including
+                                  text and libraries (default).
+
+  -v, --requirements_v            Export only requirements from structured
+                                  sources (pom.xml, requirements.txt, etc.)
 
   -h, --help                      Show this message and exit.
 ```

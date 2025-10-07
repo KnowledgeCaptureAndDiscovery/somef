@@ -285,6 +285,116 @@ class TestCodemetaExport(unittest.TestCase):
 
         os.remove(json_file_path)
 
+    def test_requirements_mode(self):
+       
+        """
+        Checks that when requirements_mode='v', only structured requirements from code parsers are exported,
+        and textual requirements (e.g. from README or codemeta.json) are excluded.
+        """
+        output_path = test_data_path + 'test_codemeta_widoco_requirements_v.json'
+
+        somef_cli.run_cli(threshold=0.9,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=None,
+                          local_repo=test_data_repositories + "Widoco",
+                          in_file=None,
+                          output=None,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out= output_path,
+                          pretty=True,
+                          missing=False,
+                          requirements_mode="v")
+        
+        with open(output_path, "r") as f:
+            json_content = json.load(f)
+
+        requirements = json_content.get("softwareRequirements", [])
+
+        assert all(isinstance(req, dict) and "name" in req for req in requirements), \
+            f"Expected only structured requirements, found: {requirements}"
+
+        assert all(not isinstance(req, str) for req in requirements), \
+            f"Found unexpected textual requirement entries: {[r for r in requirements if isinstance(r, str)]}"  
+        
+        os.remove(output_path)
+
+    def test_requirements_not_duplicate(self):
+       
+        """
+        Checks that when requirements_mode='all', the exported softwareRequirements list contains no duplicates,
+        even if the same requirement appears from multiple sources or techniques.
+        """
+        output_path = test_data_path + 'test_codemeta_widoco_requirements_not_duplicate.json'
+
+        somef_cli.run_cli(threshold=0.9,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=None,
+                          local_repo=test_data_repositories + "Widoco",
+                          in_file=None,
+                          output=None,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out= output_path,
+                          pretty=True,
+                          missing=False,
+                          requirements_mode="all")
+        
+        with open(output_path, "r") as f:
+            json_content = json.load(f)
+
+        requirements = json_content.get("softwareRequirements", [])
+
+        seen = set()
+        for req in requirements:
+            if isinstance(req, dict):
+                key = f"{req['name'].strip()}|{req.get('version', '').strip()}"
+            else:
+                key = " ".join(req.strip().replace("\n", " ").split())
+            assert key not in seen, f"Duplicate requirement found: {key}"
+            seen.add(key)
+        
+        os.remove(output_path)
+
+
+    def test_description_not_duplicate(self):
+        """
+        Checks that the 'description' field in the exported codemeta contains no duplicate entries,
+        even if the same description appears from multiple sources or techniques.
+        """
+
+        output_path = test_data_path + 'test_codemeta_widoco_description_not_duplicate.json'
+
+        somef_cli.run_cli(
+            threshold=0.9,
+            ignore_classifiers=False,
+            repo_url=None,
+            doc_src=None,
+            local_repo=test_data_repositories + "Widoco",
+            in_file=None,
+            output=None,
+            graph_out=None,
+            graph_format="turtle",
+            codemeta_out=output_path,
+            pretty=True,
+            missing=False,
+            requirements_mode="all"
+        )
+
+        with open(output_path, "r") as f:
+            json_content = json.load(f)
+
+        descriptions = json_content.get("description", [])
+        os.remove(output_path)
+
+        seen = set()
+        for desc in descriptions:
+            normalized = " ".join(desc.strip().replace("\n", " ").split())
+            assert normalized not in seen, f"Duplicate description found: {normalized}"
+            seen.add(normalized)
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""
