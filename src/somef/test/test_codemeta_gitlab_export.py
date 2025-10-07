@@ -54,7 +54,6 @@ class TestCodemetaGitlabExport(unittest.TestCase):
         # assert data.find(constants.CAT_IDENTIFIER) > 0
         # os.remove(test_data_path + "test_gitlab.json")
         # assert self.json_content.find(constants.CAT_IDENTIFIER) > 0
-        print(self.json_content)
         assert constants.CAT_IDENTIFIER in self.json_content, f"Missing key {constants.CAT_IDENTIFIER} in JSON"
 
     def test_gitlab_license(self):

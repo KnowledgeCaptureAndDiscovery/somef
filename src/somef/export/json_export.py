@@ -77,9 +77,40 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
     descriptions_text = []
     if descriptions is not None:
-        descriptions.sort(key=lambda x: (x[constants.PROP_CONFIDENCE] + (1 if x[constants.PROP_TECHNIQUE] == constants.GITHUB_API else 0)),
-                          reverse=True)
-        descriptions_text = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in descriptions]
+
+        # priority descriptions: Codemeta, without codemeta but confidence 1, rest
+        codemeta_desc = [d for d in descriptions if d.get("technique") == "code_parser" and "codemeta.json" in d.get("source", "")]
+        github_desc = [d for d in descriptions if d.get("technique") == constants.GITHUB_API]
+        readme_desc = [d for d in descriptions if d.get("technique") not in ("code_parser", constants.GITHUB_API)]
+
+        if codemeta_desc:
+            # If codemeta just these
+            selected = codemeta_desc
+        elif github_desc:
+            # whitout codemeta, but we have descripciont with confidence 1
+            threshold_1 = [d for d in github_desc if d.get("confidence", 0) == 1]
+            selected = threshold_1 if threshold_1 else github_desc
+        else:
+            # Rest of descriptions 
+            selected = sorted(readme_desc, key=lambda x: x.get("confidence", 0), reverse=True)[:1]
+
+        flat_descriptions = []
+        for d in selected:
+            value = d[constants.PROP_RESULT][constants.PROP_VALUE]
+            if isinstance(value, list):
+                for v in value:
+                    if v not in flat_descriptions:
+                        flat_descriptions.append(v)
+            else:
+                if value not in flat_descriptions:
+                    flat_descriptions.append(value)
+
+        descriptions_text = flat_descriptions
+
+        # descriptions_text = [d[constants.PROP_RESULT][constants.PROP_VALUE] for d in selected]
+        # descriptions.sort(key=lambda x: (x[constants.PROP_CONFIDENCE] + (1 if x[constants.PROP_TECHNIQUE] == constants.GITHUB_API else 0)),
+        #                   reverse=True)
+        # descriptions_text = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in descriptions]
 
 
     codemeta_output = {
@@ -129,9 +160,13 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         codemeta_output["codeRepository"] = code_repository
         codemeta_output["issueTracker"] = code_repository + "/issues"
     if constants.CAT_DATE_CREATED in repo_data:
-        codemeta_output["dateCreated"] = format_date(repo_data[constants.CAT_DATE_CREATED][0][constants.PROP_RESULT][constants.PROP_VALUE])
+        value = repo_data[constants.CAT_DATE_CREATED][0][constants.PROP_RESULT][constants.PROP_VALUE]
+        if value:
+            codemeta_output["dateCreated"] = format_date(value)
     if constants.CAT_DATE_UPDATED in repo_data:
-        codemeta_output["dateModified"] = format_date(repo_data[constants.CAT_DATE_UPDATED][0][constants.PROP_RESULT][constants.PROP_VALUE])
+        value = repo_data[constants.CAT_DATE_UPDATED][0][constants.PROP_RESULT][constants.PROP_VALUE]
+        if value:
+            codemeta_output["dateModified"] = format_date(value)
     if constants.CAT_DOWNLOAD_URL in repo_data:
         codemeta_output["downloadUrl"] = repo_data[constants.CAT_DOWNLOAD_URL][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_NAME in repo_data:
@@ -170,7 +205,11 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
             "name": x[constants.PROP_RESULT].get(constants.PROP_NAME)
             if x[constants.PROP_RESULT].get(constants.PROP_NAME) 
             else x[constants.PROP_RESULT].get(constants.PROP_VALUE),
-            "version": x[constants.PROP_RESULT].get(constants.PROP_VERSION)
+            # "version": x[constants.PROP_RESULT].get(constants.PROP_VERSION)
+            **({"version": x[constants.PROP_RESULT].get(constants.PROP_VERSION)}
+                if x[constants.PROP_RESULT].get(constants.PROP_VERSION) is not None
+                else {}
+                )
         }
         for x in repo_data[constants.CAT_REQUIREMENTS]
         if x.get(constants.PROP_TECHNIQUE) == constants.TECHNIQUE_CODE_CONFIG_PARSER
@@ -307,7 +346,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                 doi = yaml_content.get("doi") or preferred_citation.get("doi")
                 identifiers = yaml_content.get("identifiers", [])
                 url_citation = preferred_citation.get("url") or yaml_content.get("url")
-
                 identifier_url = next((id["value"] for id in identifiers if id["type"] == "url"), None)
                 identifier_doi = next((id["value"] for id in identifiers if id["type"] == "doi"), None)
 
@@ -404,7 +442,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
                     if key and key in author_orcids:
                         author["@id"] = author_orcids[key]  
-
+     
         codemeta_output["referencePublication"] = deduplicate_publications(all_reference_publications)
                 # key = (doi, title)
 
@@ -426,27 +464,30 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
     if constants.CAT_IDENTIFIER in repo_data:
         codemeta_output["identifier"] = []
+
         for identifier in repo_data[constants.CAT_IDENTIFIER]:
-          codemeta_output["identifier"].append(identifier[constants.PROP_RESULT][constants.PROP_VALUE]) 
+          value = identifier[constants.PROP_RESULT][constants.PROP_VALUE]
+          if value not in codemeta_output['identifier']:
+            codemeta_output["identifier"].append(value)
 
     if constants.CAT_HOMEPAGE in repo_data:
-        homepage_urls = set()
-        for homepage_entry in repo_data[constants.CAT_HOMEPAGE]:
-            url = homepage_entry[constants.PROP_RESULT][constants.PROP_VALUE]
-            homepage_urls.add(url.strip()) 
 
+        # example 
+        # homepage_urls = {"http://foo.com", "https://foo.com", "http://bar.com"}
+        # Result-->  filtered_urls = {"https://foo.com", "http://bar.com"}
+        # Prioritize https
+
+        homepage_urls = {hp[constants.PROP_RESULT][constants.PROP_VALUE].strip()
+                 for hp in repo_data[constants.CAT_HOMEPAGE]}
+        
         filtered_urls = set()
-        https_roots = {url.replace("https://", "") for url in homepage_urls if url.startswith("https://")}
+        roots_with_https = {url[len("https://"):] for url in homepage_urls if url.startswith("https://")}
 
         for url in homepage_urls:
             root = url.replace("http://", "").replace("https://", "")
-            if root in https_roots:
-                continue  
+            if url.startswith("http://") and root in roots_with_https:
+                continue
             filtered_urls.add(url)
-
-        for url in homepage_urls:
-            if url.startswith("https://"):
-                filtered_urls.add(url)
 
         codemeta_output["url"] = list(filtered_urls)
 
@@ -497,28 +538,34 @@ def deduplicate_publications(publications: List[Dict]) -> List[Dict]:
     seen = {}
     for pub in publications:
         # doi = pub.get("identifier", "").lower().strip()
-        doi = (pub.get("identifier") or "").lower().strip()
+        # doi = (pub.get("identifier") or "").lower().strip()
+        doi = extract_doi(pub.get("identifier") or "")
         title = normalize_title(pub.get("name", ""))
         key = (doi, title)
-
+      
         if key not in seen:
             seen[key] = pub
         else:
             existing = seen[key]
-            # Extraemos valores relevantes
             existing_format = existing.get("_source_format", "")
             new_format = pub.get("_source_format", "")
             existing_url = (existing.get("url") or "").lower()
             new_url = (pub.get("url") or "").lower()
 
-            is_doi_url_existing = existing_url.startswith("https://doi.org/")
-            is_doi_url_new = new_url.startswith("https://doi.org/")
+            # is_doi_url_existing = existing_url.startswith("https://doi.org/")
+            # is_doi_url_new = new_url.startswith("https://doi.org/")
+            doi_existing = extract_doi(existing_url)
+            # print(f'-----> DOI existing: {doi_existing}')
+            doi_new = extract_doi(new_url)
+            # print(f'-----> DOI existing: {doi_new}')
+            is_doi_url_existing = bool(doi_existing)
+            is_doi_url_new = bool(doi_new)
 
             # Priority CFF
             if existing_format != "cff" and new_format == "cff":
                 seen[key] = pub
 
-            # Priority URL DOI
+            # Priority DOI URL
             elif existing_format == new_format:
                 if not is_doi_url_existing and is_doi_url_new:
                     seen[key] = pub
@@ -529,3 +576,11 @@ def deduplicate_publications(publications: List[Dict]) -> List[Dict]:
         result.append(pub)
 
     return result
+    
+
+def extract_doi(url: str) -> str:
+    if not url:
+        return ""
+
+    match = re.search(constants.REGEXP_ALL_DOIS, url, re.IGNORECASE)
+    return match.group(0).lower() if match else ""

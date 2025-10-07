@@ -65,6 +65,20 @@ class DataGraph:
         @return a clean JSON output removing confidence and provenance information to transform
 
         """
+
+        def sanitize_recursive(value):
+            """change escapes and " by `"""
+            if isinstance(value, str):
+                value = value.replace('\\"', "`").replace('"', "`")
+                value = value.replace('\\\\', '\\') 
+                return value
+            elif isinstance(value, list):
+                return [sanitize_recursive(v) for v in value]
+            elif isinstance(value, dict):
+                return {k: sanitize_recursive(v) for k, v in value.items()}
+            else:
+                return value
+        
         out = {}
         for key, value in data.items():
             # for now, we are not exporting provenance keys. Ignore all keys like somef_provenance
@@ -147,6 +161,7 @@ class DataGraph:
                 else:
                     out[key] = value[constants.PROP_RESULT][constants.PROP_VALUE]
         # print(json.dumps(out))
+        out = sanitize_recursive(out)
         return out
 
 
@@ -186,13 +201,25 @@ class DataGraph:
             except (json.JSONDecodeError, FileNotFoundError) as e: 
                 return None
             
+        if isinstance(data, dict) and "usage" in data:
+            def replace_quotes(obj):
+                if isinstance(obj, str):
+                    return obj.replace('"', '`')
+                elif isinstance(obj, list):
+                    return [replace_quotes(item) for item in obj]
+                elif isinstance(obj, dict):
+                    return {k: replace_quotes(v) for k, v in obj.items()}
+                else:
+                    return obj
+
+            data["usage"] = replace_quotes(data["usage"])
+
         # option sending directly the dictionary to materialize. IMPORTANT: just works with rml.ttl, not yml.
         config = constants.MAPPING_CONFIG_DICT
         config = config.replace("$PATH", mapping_path)
     
-        data_complete =  {
-            'data_complete': data
-        }
+        data_complete = {
+            'data_complete': data}
 
         try: 
             result_graph = morph_kgc.materialize(config, data_complete) 

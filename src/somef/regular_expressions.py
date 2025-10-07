@@ -573,6 +573,11 @@ def extract_doi_badges(readme_text, repository_metadata: Result, source) -> Resu
         match = re.search(constants.REGEXP_ZENODO_LATEST_DOI, readme_text)
         if match:
             badge_url = match.group(1)
+        else:
+            match = re.search(constants.REGEXP_ZENODO_DOI, readme_text)
+            if match:
+                badge_url = match.group(0)
+                
             try:
                 response = requests.get(badge_url, allow_redirects=True, timeout=10)
                 match = re.search(constants.REGEXP_ZENODO_JSON_LD,
