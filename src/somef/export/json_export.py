@@ -443,7 +443,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                     if key and key in author_orcids:
                         author["@id"] = author_orcids[key]  
      
-        print('--------------------------> duplicate_publications')
         codemeta_output["referencePublication"] = deduplicate_publications(all_reference_publications)
                 # key = (doi, title)
 
@@ -465,8 +464,11 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
 
     if constants.CAT_IDENTIFIER in repo_data:
         codemeta_output["identifier"] = []
+
         for identifier in repo_data[constants.CAT_IDENTIFIER]:
-          codemeta_output["identifier"].append(identifier[constants.PROP_RESULT][constants.PROP_VALUE]) 
+          value = identifier[constants.PROP_RESULT][constants.PROP_VALUE]
+          if value not in codemeta_output['identifier']:
+            codemeta_output["identifier"].append(value)
 
     if constants.CAT_HOMEPAGE in repo_data:
 
@@ -540,7 +542,7 @@ def deduplicate_publications(publications: List[Dict]) -> List[Dict]:
         doi = extract_doi(pub.get("identifier") or "")
         title = normalize_title(pub.get("name", ""))
         key = (doi, title)
-        print(doi)
+      
         if key not in seen:
             seen[key] = pub
         else:
