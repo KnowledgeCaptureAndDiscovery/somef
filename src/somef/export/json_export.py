@@ -475,7 +475,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
         # example 
         # homepage_urls = {"http://foo.com", "https://foo.com", "http://bar.com"}
         # Result-->  filtered_urls = {"https://foo.com", "http://bar.com"}
-        # Priorice https
+        # Prioritize https
 
         homepage_urls = {hp[constants.PROP_RESULT][constants.PROP_VALUE].strip()
                  for hp in repo_data[constants.CAT_HOMEPAGE]}
