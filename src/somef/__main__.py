@@ -157,8 +157,30 @@ def configure(auto, base_uri):
     default=True,
     help="""SOMEF will ignore the contents of all files within folders named test (True by default)"""
 )
-def describe(**kwargs):
+@click.option(
+    "--requirements_all",
+    "-all",
+    is_flag=True,
+    default=False,
+    help="Export all detected requirements, including text and libraries (default)."
+)
+@click.option(
+    "--requirements_v",
+    "-v",
+    is_flag=True,
+    default=False,
+    help="Export only requirements from structured sources (pom.xml, requirements.txt, etc.)"
+)
+def describe(requirements_v, requirements_all, **kwargs):
     # import so missing packages get installed when appropriate
+    if requirements_v:
+        kwargs["requirements_mode"] = "v"
+    elif requirements_all:
+        kwargs["requirements_mode"] = "all"
+    else:
+        kwargs["requirements_mode"] = "all" 
+
     from . import somef_cli
     somef_cli.run_cli(**kwargs)
     click.secho(f"Success", fg="green")
+    
