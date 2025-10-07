@@ -571,14 +571,15 @@ def extract_doi_badges(readme_text, repository_metadata: Result, source) -> Resu
     # The identifier is in position 1. Position 0 is the badge id, which we don't want to export
     if not doi_badges:
         match = re.search(constants.REGEXP_ZENODO_LATEST_DOI, readme_text)
+        badge_url = None
         if match:
             badge_url = match.group(1)
         else:
             match = re.search(constants.REGEXP_ZENODO_DOI, readme_text)
             if match:
                 badge_url = match.group(0)
-                
-            try:
+        try:
+            if badge_url is not None:
                 response = requests.get(badge_url, allow_redirects=True, timeout=10)
                 match = re.search(constants.REGEXP_ZENODO_JSON_LD,
                     response.text,
@@ -596,9 +597,8 @@ def extract_doi_badges(readme_text, repository_metadata: Result, source) -> Resu
                             }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
                     except json.JSONDecodeError:
                         logging.warning("Error parsing Zenodo JSON-LD")
-            except requests.RequestException as e:
-                logging.warning(f"Error fetching DOI from Zenodo badge: {e}")
-
+        except requests.RequestException as e:
+            logging.warning(f"Error fetching DOI from Zenodo badge: {e}")
     else:
 
         for doi in doi_badges:
