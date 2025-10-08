@@ -3,6 +3,7 @@ name = "somef"
 version = "0.9.12"
 description = "SOftware Metadata Extraction Framework: A tool for automatically extracting relevant software metadata from a source code repository (README, package files, etc)."
 authors = ["Daniel Garijo <daniel.garijo@upm.es>"]
+readme = "README.md"
 packages = [
     { include = "somef", from = "src" }
 ]
@@ -12,9 +13,9 @@ classifiers = [
     "License :: OSI Approved :: MIT License", 
     "Topic :: Software Development :: Libraries :: Python Modules"
     ]
+    
 [tool.poetry.urls]
 homepage = "https://github.com/KnowledgeCaptureAndDiscovery/somef"
-readme = "README.md"
 
 [tool.poetry.dependencies]
     python = ">=3.9,<=3.13"
