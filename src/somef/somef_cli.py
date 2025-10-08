@@ -20,7 +20,7 @@ from urllib.parse import urlparse, quote
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
                  ignore_github_metadata=False, readme_only=False, keep_tmp=None, authorization=None,
-                 ignore_test_folder=True) -> Result:
+                 ignore_test_folder=True,requirements_mode='all') -> Result:
     """
     Main function to get the data through the command line
     Parameters
@@ -35,6 +35,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     @param keep_tmp: path where to store TMP files in case SOMEF is instructed to keep them
     @param authorization: GitHub authorization token
     @param ignore_test_folder: Ignore contents of test folders
+    @param requiriments_mode: flag to indicate what requirements show in codemeta 
 
     Returns
     -------
@@ -223,7 +224,8 @@ def run_cli(*,
             pretty=False,
             missing=False,
             keep_tmp=None,
-            ignore_test_folder=True
+            ignore_test_folder=True,
+            requirements_mode="all"
             ):
     """Function to run all the required components of the cli for a repository"""
     # check if it is a valid url
@@ -257,7 +259,7 @@ def run_cli(*,
                     encoded_url = encoded_url.replace(".","") #removing dots just in case
                     repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                              ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
-                                             keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder)
+                                             keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, requirements_mode=requirements_mode)
                     
                     if output is not None:
                         output = output.replace(".json","")
@@ -266,7 +268,7 @@ def run_cli(*,
                     if codemeta_out is not None:
                         codemeta_out = codemeta_out.replace(".json", "")
                         codemeta_out = codemeta_out + "_" + encoded_url + ".json"
-                        json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty)
+                        json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty, requirements_mode= requirements_mode)
                 except:
                     logging.error("Error when processing repo: " + repo_url)
         else:
@@ -287,7 +289,7 @@ def run_cli(*,
         if output is not None:
             json_export.save_json_output(repo_data.results, output, missing, pretty=pretty)
         if codemeta_out is not None:
-            json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty)
+            json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty, requirements_mode=requirements_mode)
 
     if graph_out is not None:
         logging.info("Generating triples...")

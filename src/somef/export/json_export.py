@@ -32,7 +32,7 @@ def save_json_output(repo_data, out_path, missing, pretty=False):
             json.dump(repo_data, output)
 
 
-def save_codemeta_output(repo_data, outfile, pretty=False):
+def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='all'):
     """
     Function that saves a Codemeta JSONLD file with a summary of the results
 
@@ -41,6 +41,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
     @param repo_data: JSON with the results to translate to Codemeta
     @param outfile: path where to save the codemeta file
     @param pretty: option to show the JSON results in a nice format
+    @param requriments_mode: option to show all requriments or just machine readable
     """
     def format_date(date_string):
         date_object = date_parser.parse(date_string)
@@ -199,31 +200,43 @@ def save_codemeta_output(repo_data, outfile, pretty=False):
                     codemeta_output["programmingLanguage"].append(value)
 
     if constants.CAT_REQUIREMENTS in repo_data:
-        # codemeta_output["softwareRequirements"] = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in repo_data[constants.CAT_REQUIREMENTS]]
-        code_parser_requirements = [
-        {
-            "name": x[constants.PROP_RESULT].get(constants.PROP_NAME)
-            if x[constants.PROP_RESULT].get(constants.PROP_NAME) 
-            else x[constants.PROP_RESULT].get(constants.PROP_VALUE),
-            # "version": x[constants.PROP_RESULT].get(constants.PROP_VERSION)
-            **({"version": x[constants.PROP_RESULT].get(constants.PROP_VERSION)}
-                if x[constants.PROP_RESULT].get(constants.PROP_VERSION) is not None
-                else {}
-                )
-        }
-        for x in repo_data[constants.CAT_REQUIREMENTS]
-        if x.get(constants.PROP_TECHNIQUE) == constants.TECHNIQUE_CODE_CONFIG_PARSER
-        ]
+        structured_sources = ["pom.xml", "requirements.txt", "setup.py", "environment.yml"]
 
-        other_requirements = [
-        x[constants.PROP_RESULT][constants.PROP_VALUE]
-        for x in repo_data[constants.CAT_REQUIREMENTS]
-        if x.get(constants.PROP_TECHNIQUE) != constants.TECHNIQUE_CODE_CONFIG_PARSER
-        ]
- 
-        codemeta_output["softwareRequirements"] = (
-            code_parser_requirements if code_parser_requirements  else other_requirements
-        )
+        code_parser_requirements = []
+        seen_structured = set()
+        for x in repo_data[constants.CAT_REQUIREMENTS]:
+            if x.get(constants.PROP_TECHNIQUE) == constants.TECHNIQUE_CODE_CONFIG_PARSER:
+                source = x.get("source", "")
+                if any(src in source for src in structured_sources):
+                    name = x[constants.PROP_RESULT].get(constants.PROP_NAME) or x[constants.PROP_RESULT].get(constants.PROP_VALUE)
+                    version = x[constants.PROP_RESULT].get(constants.PROP_VERSION)
+                    key = f"{name.strip()}|{version.strip() if version else ''}"
+                    if key not in seen_structured:
+                        entry = {"name": name.strip()}
+                        if version:
+                            entry["version"] = version.strip()
+                        code_parser_requirements.append(entry)
+                        seen_structured.add(key)
+
+        other_requirements = []
+        seen_text = set()
+        for x in repo_data[constants.CAT_REQUIREMENTS]:
+            if not (
+                x.get(constants.PROP_TECHNIQUE) == constants.TECHNIQUE_CODE_CONFIG_PARSER
+                and x.get("source") is not None
+                and any(src in x["source"] for src in structured_sources)
+            ):
+                value = x[constants.PROP_RESULT].get(constants.PROP_VALUE, "").strip().replace("\n", " ")
+                normalized = " ".join(value.split())
+                if normalized not in seen_text:
+                    other_requirements.append(value)
+                    seen_text.add(normalized)
+
+        if requirements_mode == "v":
+            codemeta_output["softwareRequirements"] = code_parser_requirements
+        else:
+            codemeta_output["softwareRequirements"] = code_parser_requirements + other_requirements
+
     if constants.CAT_CONTINUOUS_INTEGRATION in repo_data:
         codemeta_output["continuousIntegration"] = repo_data[constants.CAT_CONTINUOUS_INTEGRATION][0][constants.PROP_RESULT][constants.PROP_VALUE]
     # if constants.CAT_WORKFLOWS in repo_data:
