@@ -4,6 +4,7 @@
 name: Publish SOMEF package to PyPI
 
 on:
+  workflow_dispatch: 
   release:
     types: [created]
 
