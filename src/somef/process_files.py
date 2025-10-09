@@ -53,6 +53,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
     readmeMD_proccesed = False
 
     try:
+        parsed_build_files = set()
 
         for dir_path, dir_names, filenames in os.walk(repo_dir):
 
@@ -222,17 +223,28 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                     codeowners_json = parse_codeowners_structured(dir_path,filename)
 
                 if filename.lower() == "codemeta.json":
+                    if filename.lower() in parsed_build_files and repo_relative_path != ".":
+                        logging.info(f"Ignoring secondary {filename} in {dir_path}")
+                        continue
+
                     codemeta_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir, repo_relative_path, filename)
                     metadata_result = parse_codemeta_json_file(os.path.join(dir_path, filename), metadata_result, codemeta_file_url)
+                    parsed_build_files.add(filename.lower())
                     # TO DO: Code owners not fully implemented yet
 
                 if filename.lower() == "pom.xml" or filename.lower() == "package.json" or \
                         filename.lower() == "pyproject.toml" or filename.lower() == "setup.py" or filename.endswith(".gemspec") or \
                         filename.lower() == "requirements.txt" or filename.lower() == "bower.json" or filename == "DESCRIPTION" or \
                         (filename.lower() == "cargo.toml" and repo_relative_path == ".") or (filename.lower() == "composer.json" and repo_relative_path == "."):
+
+                        if filename.lower() in parsed_build_files and repo_relative_path != ".":
+                            logging.info(f"Ignoring secondary {filename} in {dir_path}")
+                            continue
+
                         build_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
                                                        repo_dir,
                                                        repo_relative_path, filename)
+                        
                         metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
                                                {
                                                    constants.PROP_VALUE: build_file_url,
@@ -262,7 +274,9 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             metadata_result = parse_gemspec_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename == "DESCRIPTION":
                             metadata_result = parse_description_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
-                            
+
+                        parsed_build_files.add(filename.lower())
+                          
                 # if repo_type == constants.RepositoryType.GITLAB: 
                 if filename.endswith(".yml"):
                     if repo_type == constants.RepositoryType.GITLAB: 

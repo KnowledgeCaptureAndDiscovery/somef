@@ -85,6 +85,17 @@ class TestRegExp(unittest.TestCase):
             res = c.results[constants.CAT_FULL_TITLE][0]
             assert "SOMEF" == res[constants.PROP_RESULT][constants.PROP_VALUE]
 
+    def test_extract_title_ignored_header(self):
+        """Test that a header like 'Overview' and headers are not returned as full title"""
+
+        with open(test_data_path + "README-EUVpy.md", "r") as data_file:
+            test_text = data_file.read()
+            c = regular_expressions.extract_title(test_text, Result(),
+                                                  test_data_path + "README-EUVpy.md")
+  
+            assert constants.CAT_FULL_TITLE not in c.results or len(c.results[constants.CAT_FULL_TITLE]) == 0
+
+
     def test_extract_readthedocs_1(self):
         """Test designed to check if readthedocs links are detected"""
         with open(test_data_path + "test_extract_readthedocs_1.txt", "r") as data_file:
@@ -212,7 +223,7 @@ class TestRegExp(unittest.TestCase):
             result = regular_expressions.extract_arxiv_links(test_text, Result(), test_data_path + "test_issue_181_2.txt")
             arxiv_url = result.results[constants.CAT_RELATED_PAPERS][0]['result']['value']
             expected_result = "https://arxiv.org/abs/2203.01044"
-            self.assertEquals(expected_result,arxiv_url)
+            self.assertEqual(expected_result,arxiv_url)
     def test_issue_181_3(self):
         """Test to test arxiv as embedded url, including same in bibtex"""
         with open(test_data_path + "test_issue_181_3.txt", "r") as data_file:
@@ -221,7 +232,7 @@ class TestRegExp(unittest.TestCase):
                                                              test_data_path + "test_issue_181_3.txt")
             arxiv_url = result.results[constants.CAT_RELATED_PAPERS][0]['result']['value']
             expected_result = "https://arxiv.org/abs/1907.11111"
-            self.assertEquals(expected_result, arxiv_url)
+            self.assertEqual(expected_result, arxiv_url)
 
     def test_issue_270(self):
         """Test designed to check if support channels are detected"""

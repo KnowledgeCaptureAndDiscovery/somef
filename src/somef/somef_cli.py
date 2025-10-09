@@ -1,5 +1,5 @@
 import sys
-from uu import encode
+# from uu import encode
 
 import validators
 import logging

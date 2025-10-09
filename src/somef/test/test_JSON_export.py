@@ -313,6 +313,44 @@ class TestJSONExport(unittest.TestCase):
         """Checks if json from widoco repo has more than 30 releases"""
         assert len(self.json_content["releases"]) > 30, f"Expected more than 30 releases, found {len(self.json_content['release'])}"
 
+    def test_not_recursive_folders(self):
+        """
+        Checks that build files in subfolders are ignored if they already exist in the root,
+        and that duplicates do not appear in the results.
+        pom.xml has been duplicated in docs/pom.xml
+        """
+
+        output_path = test_data_path + 'test_widoco_not_recursive_folders.json'
+
+        somef_cli.run_cli(  threshold=0.8,
+                            local_repo=test_data_repositories + "Widoco",
+                            doc_src=None,
+                            in_file=None,
+                            output=output_path,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+
+
+        with open(output_path, "r") as f:
+            json_content = json.load(f)
+
+        build_files = [
+            entry[constants.PROP_RESULT][constants.PROP_VALUE]
+            for key in json_content
+            for entry in json_content[key]
+            if key == constants.CAT_HAS_BUILD_FILE
+        ]
+
+        # root
+        assert any("pom.xml" in bf for bf in build_files), "The root pom.xml should be present"
+        # No docs/pom.xml
+        assert not any("docs/pom.xml" in bf for bf in build_files), "The pom.xml in docs/ should not be processed"
+        assert len(build_files) == len(set(build_files)), "There should be no duplicate build files"
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""
