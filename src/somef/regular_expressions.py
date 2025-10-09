@@ -8,35 +8,43 @@ import validators
 from .utils import constants
 from .process_results import Result
 from urllib.parse import urlparse
+
 import bibtexparser
 
 def extract_title(unfiltered_text, repository_metadata: Result, readme_source) -> Result:
+    from .header_analysis import label_header 
     """
-    Regexp to extract title (first header) from a repository
-    Parameters
-    ----------
-    @param unfiltered_text: repo text
-    @param repository_metadata: Result with the extractions so far
-    @param readme_source: url to the file used (for provenance)
+        Regexp to extract title (first header) from a repository
+        Parameters
+        ----------
+        @param unfiltered_text: repo text
+        @param repository_metadata: Result with the extractions so far
+        @param readme_source: url to the file used (for provenance)
 
-    Returns
-    -------
-    @returns a Result including the title (if found)
-
+        Returns
+        -------
+        @returns a Result including the title (if found)
     """
+
     html_text = markdown.markdown(unfiltered_text)
     splitted = html_text.split("\n")
     index = 0
     limit = len(splitted)
     output = ""
     regex = r'<[^<>]+>'
+    
     while index < limit:
         line = splitted[index]
         if line.startswith("<h"):
             if line.startswith("<h1>"):
-                output = re.sub(regex, '', line)
+                title = re.sub(regex, '', line).strip()
+                header_labels = label_header(title.lower())
+                if not header_labels and title.lower() != "overview":
+                    output = title
             break
         index += 1
+
+   
 
     # If the output is empty or none, the category doesn't make sense and shouldn't be displayed in the final result
     if has_valid_output(output):
@@ -112,7 +120,8 @@ def extract_readthedocs(readme_text, repository_metadata: Result, readme_source)
             }
             try:
                 # if name of the repo is known then compare against the readthedocs one. Only add it if it's similar/same
-                name_in_link = re.findall('https://([^.]+)\.readthedocs\.io', link)
+                # name_in_link = re.findall('https://([^.]+)\.readthedocs\.io', link)
+                name_in_link = re.findall(r'https://([^.]+)\.readthedocs\.io', link)
                 name_in_link = name_in_link[0]
                 if name == "" or name_in_link.lower() == name.lower():
                     repository_metadata.add_result(constants.CAT_DOCUMENTATION, result, 1,
