@@ -170,7 +170,7 @@ The following object `types` are currently supported:
 - `Agent`: user (typically, a person) or organization responsible for authoring a software release or a paper.
 - `Publication`: Scientific paper associated with the code repository.
 - `SoftwareApplication`: Class to represent software dependencies between projects.
-
+- `Runtime_platform`: specifies the programming language and version required to run the project.
 The following literal types are currently supported:
 
 - `Number`: A numerical value. We do not distinguish between integer, long or float.
@@ -279,6 +279,12 @@ A RELEASE has the following properties:
 | **url** | Url | Uniform resource locator of the resource |
 | **zipball_url** | Url | URL to the zip file where to download a software release |
 
+A RUNTIME_PLATFORM has the following properties:
+
+| Property | Expected value | Definition |
+|---|---|---|
+| **name** | String | Name of runtime |
+| **value** | String | version of the runtime |
 
 A TEXT_EXCERPT has the following properties:
 

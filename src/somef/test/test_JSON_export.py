@@ -351,6 +351,28 @@ class TestJSONExport(unittest.TestCase):
         assert not any("docs/pom.xml" in bf for bf in build_files), "The pom.xml in docs/ should not be processed"
         assert len(build_files) == len(set(build_files)), "There should be no duplicate build files"
 
+
+    def test_runtime_platform(self):
+        """
+        Checks that the runtime_platform information is correctly extracted from the project.
+        """
+        
+        runtime_entries = [
+            entry[constants.PROP_RESULT]
+            for key in self.json_content
+            for entry in self.json_content[key]
+            if key == constants.CAT_RUNTIME_PLATFORM
+        ]
+
+        assert len(runtime_entries) > 0, "There should be at least one runtime_platform entry"
+
+        found_java = any(
+            entry.get("name") == "Java" and entry.get("value") == "1.8"
+            for entry in runtime_entries
+        )
+        assert found_java, "Java runtime with version 1.8 should be present"
+
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""

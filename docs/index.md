@@ -83,6 +83,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Repository status**: Repository status as it is described in [repostatus.org](https://www.repostatus.org/).
 - **Requirements**: Pre-requisites and dependencies needed to execute a software component
 - **Run**: Running instructions of a software component. It may be wider than the `invocation` category, as it may include several steps and explanations.
+- **Runtime platform**: specifies the programming language and version required to run the project.
 - **Script files**: Bash script files contained in the repository
 - **Stargazers count**: Total number of stargazers of the project
 - **Support**: Guidelines and links of where to obtain support for a software component
