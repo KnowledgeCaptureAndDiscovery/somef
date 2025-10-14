@@ -170,7 +170,7 @@ The following object `types` are currently supported:
 - `Agent`: user (typically, a person) or organization responsible for authoring a software release or a paper.
 - `Publication`: Scientific paper associated with the code repository.
 - `SoftwareApplication`: Class to represent software dependencies between projects.
-- `Runtime_platform`: specifies the programming language and version required to run the project.
+- `Runtime_platform`: specifies runtime platform or script interpreter dependencies required to run the project..
 The following literal types are currently supported:
 
 - `Number`: A numerical value. We do not distinguish between integer, long or float.
