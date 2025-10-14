@@ -624,7 +624,8 @@ def parse_setup_py(file_path, metadata_result: Result, source):
 def parse_runtime_platform_from_pyproject(project_section):
     """
     Given the `[tool.poetry]` section from pyproject.toml,
-    extract runtime platform(s) declared (e.g. Python version). Return list of dicts.
+    this method extracts the runtime platform(s) declared (e.g. Python version). Return a list of dicts.
+
     """
     runtimes = []
 
