@@ -284,7 +284,7 @@ A RUNTIME_PLATFORM has the following properties:
 | Property | Expected value | Definition |
 |---|---|---|
 | **name** | String | Name of the runtime platform (e.g., Java) |
-| **value** | String | version of the runtime |
+| **value** | String | version of the runtime platform |
 
 A TEXT_EXCERPT has the following properties:
 
