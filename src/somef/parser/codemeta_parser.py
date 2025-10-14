@@ -212,9 +212,11 @@ def parse_programming_language(language_data):
             lang_info = {
                 "name": name,
                 "value": name,
-                "type": constants.LANGUAGE,
-                "version": version if version is not None else None  # Now we include None when there is no version
+                "type": constants.LANGUAGE
+                # "version": version if version is not None else None 
             }
+            if version:
+                lang_info["version"] = version
 
             if url:
                 lang_info["url"] = url
@@ -225,8 +227,9 @@ def parse_programming_language(language_data):
         return {
             "name": language_data,
             "value": language_data,
-            "type": constants.LANGUAGE,
-            "version": None
+            "type": constants.LANGUAGE
+            # ,
+            # "version": None
         }
 
     return None

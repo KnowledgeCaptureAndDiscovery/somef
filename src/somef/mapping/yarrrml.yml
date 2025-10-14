@@ -24,6 +24,7 @@ mappings:
       - [sd:hasUsageNotes, $(usage)]
       - [sd:hasDownloadUrl, $(download_url), xsd:anyURI]
       - [sd:softwareRequirements, $(requirements)]
+      - [schema:runtimePlatform, $(runtimePlatform), xsd:string]
       - [sd:contactDetails, $(contact)]
       - [sd:contributionInstructions, $(contributing_guidelines), xsd:anyURI]
       - [sd:supportDetails, $(support)]

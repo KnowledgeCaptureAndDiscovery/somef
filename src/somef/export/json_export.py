@@ -508,6 +508,19 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
     if constants.CAT_README_URL in repo_data:
         codemeta_output["readme"] = repo_data[constants.CAT_README_URL][0][constants.PROP_RESULT][constants.PROP_VALUE]
     
+    if constants.CAT_RUNTIME_PLATFORM in repo_data:
+        runtimes = []
+ 
+        for runtime_entry in repo_data[constants.CAT_RUNTIME_PLATFORM]:
+            result = runtime_entry.get("result", {})
+            name = result.get("name")
+            version = result.get("value")
+            if name and value:
+                runtimes.append(f"{name} {version}")
+
+        if runtimes:
+            codemeta_output["runtimePlatform"] = ", ".join(runtimes)
+
     # if "contributors" in repo_data:
     #     codemeta_output["contributor"] = data_path(["contributors", "excerpt"])
     # A person is expected, and we extract text at the moment

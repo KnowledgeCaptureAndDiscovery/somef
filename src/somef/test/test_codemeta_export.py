@@ -395,6 +395,36 @@ class TestCodemetaExport(unittest.TestCase):
             assert normalized not in seen, f"Duplicate description found: {normalized}"
             seen.add(normalized)
 
+
+    def test_codemeta_runtime(self):
+       
+        """
+        Checks runtime in codemeta file
+        """
+        output_path = test_data_path + 'test_codemeta_widoco_runtime_platform.json'
+
+        somef_cli.run_cli(threshold=0.9,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=None,
+                          local_repo=test_data_repositories + "Widoco",
+                          in_file=None,
+                          output=None,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out= output_path,
+                          pretty=True,
+                          missing=False,
+                          requirements_mode="v")
+        
+        with open(output_path, "r") as f:
+            json_content = json.load(f)
+
+        runtime = json_content.get("runtimePlatform", [])
+
+        assert runtime == "Java 1.8", f"It was expected 'Java 1.8' but it was '{runtime}'"
+        os.remove(output_path)
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""

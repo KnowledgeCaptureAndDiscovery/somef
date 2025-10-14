@@ -312,6 +312,24 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                             source
                         )
                 
+
+                runtimes = parse_runtime_platform_from_pyproject(project)
+
+                if runtimes:
+                    for runtime in runtimes:
+                        metadata_result.add_result(
+                            constants.CAT_RUNTIME_PLATFORM,
+                            {
+                                "value": runtime["version"],
+                                "name": runtime["name"],
+                                "type": constants.STRING
+                            },
+                            1,
+                            constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                            source
+                        )
+                        
+                
     except Exception as e:
         logging.error(f"Error parsing pyproject.toml from {file_path}: {str(e)}")
 
@@ -331,10 +349,11 @@ def parse_requirements_txt(file_path, metadata_result: Result, source):
     """
     try:
         if Path(file_path).name.lower() in ["requirements.txt", "requirement.txt"]:
-
-            
+  
             with open(file_path, "r", encoding="utf-8") as f:
-                for line in f:
+                lines = f.readlines()
+
+                for line in lines:
                     line = line.strip()
                     if not line or line.startswith('#'):
                         continue
@@ -347,6 +366,21 @@ def parse_requirements_txt(file_path, metadata_result: Result, source):
                                 "name": name,
                                 "version": version,
                                 "type": constants.SOFTWARE_APPLICATION
+                            },
+                            1,
+                            constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                            source
+                        )
+
+                runtimes = parse_runtime_platform_from_requirements(lines)
+                if runtimes:
+                    for runtime in runtimes:
+                        metadata_result.add_result(
+                            constants.CAT_RUNTIME_PLATFORM,
+                            {
+                                "value": runtime["version"],
+                                "name": runtime["name"],
+                                "type": constants.STRING
                             },
                             1,
                             constants.TECHNIQUE_CODE_CONFIG_PARSER,
@@ -586,3 +620,71 @@ def parse_setup_py(file_path, metadata_result: Result, source):
         logging.error(f"Error parsing setup.py from {file_path}: {str(e)}")
 
     return metadata_result
+
+def parse_runtime_platform_from_pyproject(project_section):
+    """
+    Given the `[tool.poetry]` section from pyproject.toml,
+    this method extracts the runtime platform(s) declared (e.g. Python version). Return a list of dicts.
+
+    """
+    runtimes = []
+
+    deps = project_section.get("dependencies", {})
+    if isinstance(deps, dict):
+        python_spec = deps.get("python")
+        if python_spec:
+            runtimes.append({"name": "Python", "version": python_spec})
+
+    req_python = project_section.get("requires-python")
+    if req_python:
+        runtimes.append({"name": "Python", "version": req_python})
+
+    return runtimes
+
+def parse_runtime_platform_from_requirements(requirements_lines):
+    """
+    Extracts runtime information (e.g., Python) from a requirements.txt file.
+    Only returns an entry if the runtime is explicitly mentioned with a version.
+
+    Parameters
+    ----------
+    requirements_lines : 
+        Lines from the requirements.txt file.
+
+    Returns
+    -------
+    list of dict
+        Each dictionary has the keys 'name' and 'version', e.g.:
+        [{'name': 'Python', 'version': '3.11'}]
+        Returns an empty list if no explicit runtime information is found.
+    """
+    runtimes = []
+
+    if not requirements_lines:
+        return runtimes
+
+    for line in requirements_lines:
+        clean_line = line.strip()
+        if not clean_line or clean_line.startswith('#'):
+            continue
+
+        if clean_line.lower().startswith('python'):
+            version = None
+
+            for sep in ['==', '>=', '<=', '~=', '>', '<']:
+                if sep in clean_line:
+                    version = clean_line.split(sep)[1].strip()
+                    break
+
+            if version is None:
+                match = re.search(r'python\s*([0-9.]+)', clean_line, re.IGNORECASE)
+                if not match:
+                    match = re.search(r'python([0-9.]+)', clean_line, re.IGNORECASE)
+                if match:
+                    version = match.group(1)
+
+            if version:
+                runtimes.append({'name': 'Python', 'version': version})
+                break 
+
+    return runtimes
