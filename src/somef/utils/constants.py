@@ -163,7 +163,7 @@ CAT_VERSION = "version"
 CAT_CONTINUOUS_INTEGRATION= "continuous_integration"
 CAT_FUNDING = "funding"
 CAT_DEV_STATUS = "development_status"
-CAT_REF_PUBLICATION = "reference_publication"
+CAT_REF_PUBLICATION = "referencePublication"
 # Special category: missing categories
 CAT_MISSING = "somef_missing_categories"
 CAT_HOMEPAGE = "homepage"
@@ -399,4 +399,28 @@ IGNORED_DIRS = {"test", "tests", "node_modules", "venv", "__pycache__"}
 SIZE_DOWNLOAD_LIMIT_MB = 200
 DOWNLOAD_TIMEOUT_SECONDS = 120
 
-
+# CODEMETA Categories. All start with CAT_CODEMETA
+CAT_CODEMETA_AUTHOR = "author"
+CAT_CODEMETA_BUILDINSTRUCTIONS = "buildInstructions"
+CAT_CODEMETA_CODEREPOSITORY = "codeRepository"
+CAT_CODEMETA_CONTINUOUSINTEGRATION = "continuousIntegration"
+CAT_CODEMETA_DATECREATED = "dateCreated"
+CAT_CODEMETA_DATEMODIFIED = "dateModified"
+CAT_CODEMETA_DATEPUBLISHED = "datePublished"
+CAT_CODEMETA_DESCRIPTION = "description"
+CAT_CODEMETA_DEVELOPMENTSTATUS = "developmentStatus"
+CAT_CODEMETA_DOWNLOADURL = "downloadUrl"
+CAT_CODEMETA_ISSUETRACKER = "issueTracker"
+CAT_CODEMETA_IDENTIFIER = "identifier"
+CAT_CODEMETA_KEYWORDS = "keywords"
+CAT_CODEMETA_LICENSE = "license"
+CAT_CODEMETA_LOGO = "logo"
+CAT_CODEMETA_NAME = "name"
+CAT_CODEMETA_PROGRAMMINGLANGUAGE = "programmingLanguage"
+CAT_CODEMETA_README = "readme"
+CAT_CODEMETA_REFERENCEPUBLICATION = "referencePublication"
+CAT_CODEMETA_RELEASENOTES = "releaseNotes"
+CAT_CODEMETA_RUNTIMEPLATFORM = "runtimePlatform"
+CAT_CODEMETA_SOFTWAREREQUIREMENTS = "softwareRequirements"
+CAT_CODEMETA_SOFTWAREVERSION = "softwareVersion"
+CAT_CODEMETA_URL = "url"
