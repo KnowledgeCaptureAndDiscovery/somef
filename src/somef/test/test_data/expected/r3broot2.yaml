@@ -41,4 +41,4 @@ CAT_AUTHORS: # Passed
   affiliation: "CITENI, Industrial Campus of Ferrol, University of Coruña, 15403 Ferrol, Spain" # Passed
   identifier: https://orcid.org/0000-0002-4702-5294
 
-CAT_REF_PUBLICATION: https://doi.org/10.1088/1742-6596/523/1/012034 # Passed
+CAT_CITATION: https://doi.org/10.1088/1742-6596/523/1/012034 # Passed

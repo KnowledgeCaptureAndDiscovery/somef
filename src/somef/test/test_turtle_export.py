@@ -1,8 +1,8 @@
 import os
 import unittest
 from pathlib import Path
-from .. import somef_cli
 from rdflib import Graph
+from .. import somef_cli
 from ..export import turtle_export
 from .. import process_results
 

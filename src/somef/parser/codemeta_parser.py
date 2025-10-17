@@ -396,9 +396,11 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
             if "referencePublication" in data:
                 ref_publications = data["referencePublication"]
                 if isinstance(ref_publications, list):
+
                     for pub in ref_publications:
                         pub_data = parse_referenced_publication(pub)
                         if pub_data:
+                     
                             result_dict = {
                                 "value": pub_data.get("title", ""),
                                 "title": pub_data.get("title", ""),
@@ -415,13 +417,15 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                                 result_dict["doi"] = pub_data.get("identifier")
 
                             metadata_result.add_result(
-                                constants.CAT_REF_PUBLICATION,
+                                # constants.CAT_REF_PUBLICATION,
+                                constants.CAT_CITATION,
                                 result_dict,
                                 1,
                                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
                                 source
                             )
                 elif isinstance(ref_publications, dict):
+                
                     pub_data = parse_referenced_publication(ref_publications)
                     if pub_data:
                         result_dict = {
@@ -440,7 +444,8 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                             result_dict["doi"] = pub_data.get("identifier")
 
                         metadata_result.add_result(
-                            constants.CAT_REF_PUBLICATION,
+                            # constants.CAT_REF_PUBLICATION,
+                            constants.CAT_CITATION,
                             result_dict,
                             1,
                             constants.TECHNIQUE_CODE_CONFIG_PARSER,
@@ -448,7 +453,8 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                         )
                 else:
                     metadata_result.add_result(
-                        constants.CAT_REF_PUBLICATION,
+                        # constants.CAT_REF_PUBLICATION,
+                        constants.CAT_CITATION,
                         {
                             "value": data["referencePublication"],
                             "type": constants.STRING
