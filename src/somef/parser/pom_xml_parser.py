@@ -60,7 +60,8 @@ def parse_pom_file(file_path, metadata_result: Result, source):
             "developers": [],
             "issue_tracker": None,
             "scm_url": None,
-            "homepage": []
+            "homepage": [],
+            "runtime_platform": []
         }
 
         for key, node in parse_node(root):
@@ -84,7 +85,9 @@ def parse_pom_file(file_path, metadata_result: Result, source):
                 project_data["developers"] = parse_developers(node)              
             elif key == "dependencies":
                 project_data["dependencies"] = parse_dependencies(node)
-        
+            elif key == "properties":
+                project_data["runtime_platform"] = parse_runtime_platform(node)
+
         if group_id or artifact_id:
             identifier_value = f"{group_id or ''}.{artifact_id or ''}".strip(':')
             metadata_result.add_result(
@@ -184,6 +187,22 @@ def parse_pom_file(file_path, metadata_result: Result, source):
                 source
             )
 
+        if project_data["runtime_platform"]:
+            for runtime in project_data["runtime_platform"]:
+                print('----> runtime')
+                print(runtime)
+                metadata_result.add_result(
+                    constants.CAT_RUNTIME_PLATFORM,
+                    {
+                        "value": runtime["version"],
+                        "name": runtime["name"],
+                        "type": constants.STRING
+                    },
+                    1,
+                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                    source
+                )
+
         metadata = {}
         for k, v in project_data.items():
             if v: 
@@ -280,3 +299,33 @@ def parse_repositories(repo_node):
             if repo_data:
                 repos.append(repo_data)
     return repos
+
+def parse_runtime_platform(properties_node):
+    """
+    Extracts runtime platform information from a <properties> node in a pom.xml.
+    Returns a list of dictionaries with runtime names and versions, or an empty list if none are found.
+
+    Parameters
+    ----------
+    properties_node : lxml.etree.Element
+        The <properties> node from the POM file.
+
+    Returns
+    -------
+    list of dict
+        Each dict has the keys 'name' and 'version', e.g. [{'name': 'Java', 'version': '1.8'}, {'name': 'Python', 'version': '3.11'}].
+        Returns an empty list if no runtime information is present.
+    """
+    runtimes = []
+
+    if properties_node is None:
+        return runtimes
+
+    for child in properties_node:
+        tag = child.tag
+        if tag.startswith(f"{{{POM_NAMESPACE}}}") and tag.endswith(".version") and child.text:
+            runtime_name = tag.split("}")[-1].split(".")[0].capitalize()
+            version_value = child.text.strip()
+            runtimes.append({"name": runtime_name, "version": version_value})
+    
+    return runtimes

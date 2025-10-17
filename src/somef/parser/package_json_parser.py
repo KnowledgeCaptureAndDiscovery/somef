@@ -148,7 +148,22 @@ def parse_package_json_file(file_path, metadata_result: Result, source):
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
                         source
                     )
-            
+
+            runtimes = parse_runtime_platform_from_package_json(data)
+            if runtimes:
+                for runtime in runtimes:
+                    metadata_result.add_result(
+                        constants.CAT_RUNTIME_PLATFORM,
+                        {
+                            "value": runtime["version"],
+                            "name": runtime["name"],
+                            "type": constants.STRING
+                        },
+                        1,
+                        constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                        source
+                    )
+
             deps = {}
             deps.update(data.get("dependencies", {}))
             deps.update(data.get("devDependencies", {}))
@@ -211,3 +226,22 @@ def parse_bugs(bugs_data):
     if isinstance(bugs_data, str):
         return bugs_data
     return None
+
+def parse_runtime_platform_from_package_json(data):
+    """
+    Extract runtime information from a package.json dict.
+    Returns a list of dicts with 'name' and 'version', e.g.:
+    [{'name': 'Node.js', 'version': '18.x'}]
+    """
+    runtimes = []
+
+    engines = data.get("engines", {})
+    if isinstance(engines, dict):
+        for runtime_name, version_value in engines.items():
+            if version_value:
+                runtimes.append({
+                    "name": runtime_name.capitalize(),
+                    "version": version_value.strip()
+                })
+    
+    return runtimes

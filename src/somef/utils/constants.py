@@ -147,9 +147,10 @@ CAT_README_URL = "readme_url"
 CAT_RELATED_DOCUMENTATION = "related_documentation"
 CAT_RELATED_PAPERS = "related_papers"
 CAT_RELEASES = "releases"
-CAT_RUN = "run"
-CAT_STATUS = "repository_status"
 CAT_REQUIREMENTS = "requirements"
+CAT_RUN = "run"
+CAT_RUNTIME_PLATFORM = "runtime_platform"
+CAT_STATUS = "repository_status"
 CAT_STARS = "stargazers_count"
 CAT_SUPPORT = "support"
 CAT_SUPPORT_CHANNELS = "support_channels"
@@ -162,10 +163,8 @@ CAT_VERSION = "version"
 CAT_CONTINUOUS_INTEGRATION= "continuous_integration"
 CAT_FUNDING = "funding"
 CAT_DEV_STATUS = "development_status"
-CAT_REF_PUBLICATION = "reference_publication"
 # Special category: missing categories
 CAT_MISSING = "somef_missing_categories"
-CAT_HOMEPAGE = "homepage"
 # list of those categories to be analyzed with supervised classification.
 # supervised_categories = [CAT_DESCRIPTION, CAT_CITATION, CAT_INSTALLATION, CAT_INVOCATION]
 # update jan 2025: only description is run, since the installation classifier is a bit noisy.
@@ -181,7 +180,7 @@ all_categories = [CAT_APPLICATION_DOMAIN, CAT_ACKNOWLEDGEMENT, CAT_AUTHORS, CAT_
                   CAT_HAS_SCRIPT_FILE, CAT_IDENTIFIER, CAT_IMAGE, CAT_INSTALLATION,
                   CAT_INVOCATION, CAT_ISSUE_TRACKER,CAT_HOMEPAGE, CAT_KEYWORDS, CAT_LICENSE, CAT_LOGO, CAT_NAME, CAT_ONTOLOGIES,
                   CAT_OWNER, CAT_PACKAGE_DISTRIBUTION, CAT_HAS_PACKAGE_FILE, CAT_PROGRAMMING_LANGUAGES, CAT_README_URL,
-                  CAT_RELATED_DOCUMENTATION, CAT_RELEASES, CAT_RUN, CAT_RELATED_PAPERS,
+                  CAT_RELATED_DOCUMENTATION, CAT_RELEASES, CAT_RUN, CAT_RUNTIME_PLATFORM, CAT_RELATED_PAPERS,
                   CAT_STATUS, CAT_REQUIREMENTS, CAT_STARS, CAT_SUPPORT, CAT_SUPPORT_CHANNELS, CAT_USAGE,
                   CAT_WORKFLOWS, CAT_TYPE]
 
@@ -398,4 +397,28 @@ IGNORED_DIRS = {"test", "tests", "node_modules", "venv", "__pycache__"}
 SIZE_DOWNLOAD_LIMIT_MB = 200
 DOWNLOAD_TIMEOUT_SECONDS = 120
 
-
+# CODEMETA Categories. All start with CAT_CODEMETA
+CAT_CODEMETA_AUTHOR = "author"
+CAT_CODEMETA_BUILDINSTRUCTIONS = "buildInstructions"
+CAT_CODEMETA_CODEREPOSITORY = "codeRepository"
+CAT_CODEMETA_CONTINUOUSINTEGRATION = "continuousIntegration"
+CAT_CODEMETA_DATECREATED = "dateCreated"
+CAT_CODEMETA_DATEMODIFIED = "dateModified"
+CAT_CODEMETA_DATEPUBLISHED = "datePublished"
+CAT_CODEMETA_DESCRIPTION = "description"
+CAT_CODEMETA_DEVELOPMENTSTATUS = "developmentStatus"
+CAT_CODEMETA_DOWNLOADURL = "downloadUrl"
+CAT_CODEMETA_ISSUETRACKER = "issueTracker"
+CAT_CODEMETA_IDENTIFIER = "identifier"
+CAT_CODEMETA_KEYWORDS = "keywords"
+CAT_CODEMETA_LICENSE = "license"
+CAT_CODEMETA_LOGO = "logo"
+CAT_CODEMETA_NAME = "name"
+CAT_CODEMETA_PROGRAMMINGLANGUAGE = "programmingLanguage"
+CAT_CODEMETA_README = "readme"
+CAT_CODEMETA_REFERENCEPUBLICATION = "referencePublication"
+CAT_CODEMETA_RELEASENOTES = "releaseNotes"
+CAT_CODEMETA_RUNTIMEPLATFORM = "runtimePlatform"
+CAT_CODEMETA_SOFTWAREREQUIREMENTS = "softwareRequirements"
+CAT_CODEMETA_SOFTWAREVERSION = "softwareVersion"
+CAT_CODEMETA_URL = "url"
