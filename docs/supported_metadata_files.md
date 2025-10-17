@@ -78,3 +78,27 @@ Will be interpreted as:
   "last_name": "Smith"
 }
 
+
+## Supported Metadata Files in SOMEF
+
+SOMEF can extract metadata from a wide range of files commonly found in software repositories. Below is a list of supported file types, along with clickable examples from real projects:
+
+| File Name          | Language       | Description | Detail | Source Spec. | Version Spec.| Example | Based  |
+|--------------------|----------------------------|-------------|--------|--------|---------------|-----------|----------|
+| `AUTHORS.md`       | General                    | Lists contributors, authors, and affiliations relevant to the project |  <div align="center">[🔍](./author.md)</div>| [📄](https://opensource.google/documentation/reference/releasing/authors/)| |[Example](https://gist.github.com/juliengdt/91d80c812e41be891dcf) |
+| `bower.json`       | JavaScript (Bower)         | Package descriptor used for configuring packages that can be used as a dependency for Bower-managed front-end projects. |  <div align="center">[🔍](./bower.md)</div>| [📄](https://github.com/bower/spec/blob/master/json.md)| |[Example](https://github.com/juanjemdIos/somef/blob/master/src/somef/test/test_data/repositories/js-template/bower.json) |
+| `cargo.toml`       | Rust                       | Manifest file serves as the package descriptor used in Rust projects | <div align="center">[🔍](./cargo.md)</div> | [📄](hhttps://doc.rust-lang.org/cargo/reference/manifest.html)| |[Example](https://github.com/rust-lang/cargo/blob/master/Cargo.toml) |
+| `codemeta.json`       |        JSON-LD              | Metadata file for research software using JSON-LD vocabulary | <div align="center">[🔍](./codemetajson.md)</div> | [📄](https://github.com/codemeta/codemeta/blob/master/crosswalk.csv)| [v3.0](https://raw.githubusercontent.com/codemeta/codemeta/3.0/codemeta.jsonld)|[Example](https://github.com/codemeta/codemeta/blob/master/codemeta.json) |
+| `composer.json`    | PHP                        | Manifest file serves as the package descriptor used in PHP projects. | <div align="center">[🔍](./composer.md)</div>| [📄](https://getcomposer.org/doc/04-schema.md)| [2.8.12](https://getcomposer.org/changelog/2.8.12)|[Example](https://github.com/composer/composer/blob/main/composer.json) |
+| `DESCRIPTION`      | R                          | Metadata file for R packages including title, author, and version |  <div align="center">[🔍](./description.md)</div> | [📄](https://r-pkgs.org/description.html)| | [Example](https://github.com/cran/ggplot2/blob/master/DESCRIPTION) |
+| `package.json`     | JavaScript / Node.js       | Defines metadata, scripts, and dependencies for Node.js projects |  <div align="center">[🔍](./package.md)| [📄](https://docs.npmjs.com/cli/v10/configuring-npm/package-json)| 10.9.4|[Example](https://github.com/npm/cli/blob/latest/package.json) | [inspired](https://github.com/proycon/codemetapy/blob/master/codemeta/parsers/nodejs.py)|
+| `pom.xml`          | Java / Maven   | Project configuration file containing metadata and dependencies | <div align="center">[🔍](./pom.md) | [📄](https://maven.apache.org/pom.html) | [4.0.0](https://maven.apache.org/xsd/maven-4.0.0.xsd) | [Example](https://github.com/apache/maven/blob/master/pom.xml) | [inspired](https://github.com/proycon/codemetapy/blob/master/codemeta/parsers/java.py)
+| `pyproject.toml`   | Python                     | Modern Python project configuration file used by tools like Poetry and Flit |  <div align="center">[🔍](./pyprojecttoml.md)</div>| [📄](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/)| |[Example](https://github.com/KnowledgeCaptureAndDiscovery/somef/blob/master/pyproject.toml) | [inspired](https://github.com/proycon/codemetapy/blob/master/codemeta/parsers/python.py) |
+| `requirements.txt` | Python                     | Lists Python package dependencies |  <div align="center">[🔍](./requirementstxt.md)</div>| [📄](https://pip.pypa.io/en/stable/reference/requirements-file-format/)| 25.2|[Example](https://github.com/oeg-upm/FAIR-Research-Object/blob/main/requirements.txt) |[inspired](https://github.com/proycon/codemetapy/blob/master/codemeta/parsers/python.py) |
+| `setup.py`         | Python                     | Package file format used in python projects |  <div align="center">[🔍](./setuppy.md)</div>| [📄](https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/#setup-args)| |[Example](https://github.com/oeg-upm/soca/blob/main/setup.py) | [inspired](https://github.com/proycon/codemetapy/blob/master/codemeta/parsers/python.py) |
+| `*.gemspec`        | Ruby                       | Manifest file serves as the package descriptor used in Ruby gem projects. | <div align="center">[🔍](./gemspec.md)</div>| [📄](https://guides.rubygems.org/specification-reference/)| |[Example](https://github.com/rubygems/rubygems/blob/master/bundler/bundler.gemspec) |
+
+
+
+
+
