@@ -1,5 +1,5 @@
 The following metadata fields can be extracted from a bower.json file.   
-These fields are defined in the [Bower specification](https://github.com/bower/spec/blob/master/json.md)), currently at version **4.0.0**, and are mapped according to the [CodeMeta crosswalk for bower.json](https://github.com/codemeta/codemeta/blob/master/crosswalks/NodeJS.csv).
+These fields are defined in the [Bower specification](https://github.com/bower/spec/blob/master/json.md), currently at version **4.0.0**, and are mapped according to the [CodeMeta crosswalk for bower.json](https://github.com/codemeta/codemeta/blob/master/crosswalks/NodeJS.csv).
 
 | SOMEF metadata category       | SOMEF metadata field                 | BOWER.JSON value    |
 |-------------------------|--------------------------------------------|---------------------|
