@@ -23,6 +23,7 @@ These fields are defined in the [Codemeta specification](https://w3id.org/codeme
 | **download_url**              |  download_url.value                        |     downloadUrl              |
 | **funding**                   |  funding.funder                            |     funding.funder or funding.funder.name             |    
 | **funding**                   |  funding.funding                           |     funding.fundingIdentifier                        |
+| **has_package_field**         | has_package_field.value                    |   codemeta.json |
 | **identifier**                |  identifier.value                          |     identifier                     |
 | **issue_tracker**             |  issue_tracker.value                       |     issueTracker             |
 | **keywords**                  |  keywords.value                            |     keywords                 |
