@@ -29,6 +29,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
   - Family name: Last name of an author
   - Email: email of author
   - URL: website or ORCID associated with the author
+  - Affiliation: name of organization or affiliation
 - **Build file**: Build file(s) of the project. For example, files used to create a Docker image for the target software, package files, etc.
 - **Citation**: Preferred citation as the authors have stated in their readme file. SOMEF recognizes Bibtex, Citation File Format files and other means by which authors cite their papers (e.g., by in-text citation). We aim to recognize the following properties:
   - Title: Title of the publication

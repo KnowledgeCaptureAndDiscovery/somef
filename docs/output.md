@@ -219,8 +219,9 @@ An AGENT has the following properties:
 | **given_name** | String | First name of an author |
 | **name** | String | Name used to designate the person or organization|
 | **url** | Url | Uniform resource locator of the resource |
-
-
+| **affiliation** | String | name of organization or affiliation  |
+| **identifier** | String | id of an agent  |
+| **role** | String | role of agent  |
 
 An ASSET has the following properties:
 
@@ -235,6 +236,7 @@ An ASSET has the following properties:
 | **url** |  Url | Uniform resource locator of the resource |
 
 
+
 A LICENSE has the following properties:
 
 | Property | Expected value | Definition |
@@ -242,7 +244,7 @@ A LICENSE has the following properties:
 | **name** | String | Title or name of the license |
 | **spdx_id** | String | Spdx id corresponding to this license |
 | **url** |  Url | Uniform resource locator of the license |
-
+| **identifier** |  String | id of licence |
 
 A PROGRAMMING_LANGUAGE has the following properties:
 
@@ -278,6 +280,16 @@ A RELEASE has the following properties:
 | **tarball_url** | Url | URL to the tar ball file where to download a software release |
 | **url** | Url | Uniform resource locator of the resource |
 | **zipball_url** | Url | URL to the zip file where to download a software release |
+
+
+A REQUIREMENTS has the following properties:
+
+| Property | Expected value | Definition |
+|---|---|---|
+| **name** | String | Name of the requeriment |
+| **version** | String | named version of a requeriment |
+| **dependency_type** | String | type: dev, runtime... |
+
 
 A RUNTIME_PLATFORM has the following properties:
 
