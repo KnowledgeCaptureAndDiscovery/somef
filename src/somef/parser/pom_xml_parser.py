@@ -163,17 +163,20 @@ def parse_pom_file(file_path, metadata_result: Result, source):
                     source
                 )
         
-        if project_data["developers"]	:
-            metadata_result.add_result( 
-                constants.CAT_AUTHORS ,
-                {
-                    "value": project_data["developers"],
-                    "type": constants.URL
-                },
-                1,
-                constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                source
-            )
+
+        if project_data["developers"]:
+            for author in project_data["developers"]:
+  
+                if "type" not in author:
+                    author["type"] = constants.AGENT
+                    
+                metadata_result.add_result(
+                    constants.CAT_AUTHORS,
+                    author,
+                    1,
+                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                    source
+                )
 
         if repositories:
             metadata_result.add_result(
@@ -189,8 +192,6 @@ def parse_pom_file(file_path, metadata_result: Result, source):
 
         if project_data["runtime_platform"]:
             for runtime in project_data["runtime_platform"]:
-                print('----> runtime')
-                print(runtime)
                 metadata_result.add_result(
                     constants.CAT_RUNTIME_PLATFORM,
                     {
@@ -253,10 +254,10 @@ def parse_developers(developers_node):
         if key == "developer":
             dev_data = {}
             author_data = {
-                "name": None,
-                "email": None,
-                "url": None,
-                "organization": None,
+                # "name": None,
+                # "email": None,
+                # "url": None,
+                # "affiliation": None,
                 "type": constants.AGENT
             }
             for key2, node2 in parse_node(node):
@@ -268,10 +269,10 @@ def parse_developers(developers_node):
                 elif key2 == "url" and node2.text:
                     author_data["url"] = node2.text
                 elif key2 == "organization" and node2.text:
-                    author_data["organization"] = node2.text
+                    author_data["affiliation"] = node2.text
 
-            if not author_data["value"]:
-                author_data["value"] = author_data["email"] or author_data["organization"]
+            if "value" not in author_data:
+                author_data["value"] = author_data["email"] or author_data["affiliation"]
             dev_data.update({k: v for k, v in author_data.items() if k != "type"})
             developers.append(dev_data)
     return developers

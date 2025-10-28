@@ -78,6 +78,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `date_created`: Date when the software component was created.
 - `date_updated`: Date when the software component was last updated (note that this will always be older than the date of the extraction).
 - `description`: A description of what the software component does.
+- `development_status`: The project’s development stage: beta, deprecated...
 - `documentation`: Where to find additional documentation about a software component.
 - `download_url`: URL where to download the target software (typically the installer, package or a tarball to a stable version)
 - `executable_example`: Jupyter notebooks ready for execution (e.g., through myBinder, colab or files)
@@ -282,13 +283,13 @@ A RELEASE has the following properties:
 | **zipball_url** | Url | URL to the zip file where to download a software release |
 
 
-A REQUIREMENTS has the following properties:
+<!-- A REQUIREMENTS has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
 | **name** | String | Name of the requeriment |
 | **version** | String | named version of a requeriment |
-| **dependency_type** | String | type: dev, runtime... |
+| **dependency_type** | String | type: dev, runtime... | -->
 
 
 A RUNTIME_PLATFORM has the following properties:
@@ -297,6 +298,27 @@ A RUNTIME_PLATFORM has the following properties:
 |---|---|---|
 | **name** | String | Name of the runtime platform (e.g., Java) |
 | **value** | String | version of the runtime platform |
+
+
+A SCHOLARLY_ARTICLE has the following properties:
+
+| Property | Expected value | Definition |
+|---|---|---|
+| **title** | String | Title of reference or citation |
+| **value** | String | Title of reference or citation |
+| **url** | String | Link to reference or citation |
+| **date_published** | String | date of publication reference or citation |
+| **doi** | String | Identifier of reference|
+
+
+A SOFTWARE_APPLICATION has the following properties:
+
+| Property | Expected value | Definition |
+|---|---|---|
+| **name** | String | Name of the software |
+| **value** | String | Name and version of the software |
+| **version** | String | version of software |
+| **development_type** | String | runtime or dev |
 
 A TEXT_EXCERPT has the following properties:
 

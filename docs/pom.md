@@ -3,10 +3,11 @@ These fields are defined in the [Maven POM specification](https://maven.apache.o
 
 | SOMEF metadata category       | Category describes  |   SOMEF metadata field                 | POM.XML value    |
 |-------------------------------|---------------------|----------------------------------------|------------------|
-| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.name  |     developer.name                            |
-| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.email  |    developer.email  |
-| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.url  |      developer.url |
-| **authors**                   |  Agent (author[i].result is of type Agent) | Agent.affiliation |     developer.organization  |
+| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.value       |     developer.name |
+| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.name       |     developer.name |
+| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.email      |     developer.email |
+| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.url         |     developer.url |
+| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.affiliation |     developer.organization |
 | **has_package_field**         |  Url (has_package_file[i].result is of type Url) | Url.value      |   "pom.xml" |
 | **homepage**                  |  Url (homepage[i].result is of type Url)                |   Url.value | homepage |
 | **issue_tracker**             |  Url (issue_tracker[i].result is of type Url)    | Url.value    | issueManagement.url                  |

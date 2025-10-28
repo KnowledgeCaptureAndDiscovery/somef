@@ -21,6 +21,7 @@ from .parser.authors_parser import parse_author_file
 from .parser.bower_parser import parse_bower_json_file
 from .parser.gemspec_parser import parse_gemspec_file
 from .parser.description_parser import parse_description_file
+from .parser.cabal_parser import parse_cabal_file
 from chardet import detect
 
 
@@ -274,7 +275,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             metadata_result = parse_gemspec_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename == "DESCRIPTION":
                             metadata_result = parse_description_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
-
+                        if filename.endswith == ".cabal":
+                            metadata_result = parse_cabal_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         parsed_build_files.add(filename.lower())
                           
                 # if repo_type == constants.RepositoryType.GITLAB: 

@@ -6,7 +6,7 @@ These fields are defined in the [Composer.json specification](https://getcompose
 | **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.value      |     authors.name |
 | **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.name       |     authors.name |
 | **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.email      |     authors.email |
-| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.homepage   |     authors.homepage |
+| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.url   |     authors.homepage |
 | **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.role        |    authors.role     |
 | **code_repository**           |  Url (code_repository[i].result is of type Url)  | Url.value   |     repository or repository.url           |
 | **description**               |  String (description[i].result is of type String) |   String.value  |   description                       |
