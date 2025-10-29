@@ -165,7 +165,7 @@ The following Python code snippet show the logic used by the SOMEF parser to tra
 ```
 
 
-After applying the mapping logic, the metadata for the dependency is stored under the requirements category (CAT_REQUIREMENTS) with the following JSON structure:
+After applying the mapping logic, the metadata for the dependency is stored under the requirements category (CAT_REQUIREMENTS in this case) with the following JSON structure:
 
 ``` somef json 
 
