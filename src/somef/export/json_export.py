@@ -335,9 +335,16 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                     mail_author = author[constants.PROP_RESULT].get('email')
                     author_l['email'] = mail_author  
 
-                author_l['name'] = name_author
+                if name_author:
+                    author_l['name'] = name_author
+                else:
+                    author_l['name'] = value_author
 
-            codemeta_output[constants.CAT_CODEMETA_AUTHOR].append(author_l)
+            existing_authors = codemeta_output.get(constants.CAT_CODEMETA_AUTHOR, [])
+
+            if not any(a.get('name') == author_l['name'] for a in existing_authors):
+                codemeta_output[constants.CAT_CODEMETA_AUTHOR].append(author_l)
+            # codemeta_output[constants.CAT_CODEMETA_AUTHOR].append(author_l)
 
     if constants.CAT_CITATION in repo_data:
         # url_cit = []
@@ -502,10 +509,11 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
  
         for runtime_entry in repo_data[constants.CAT_RUNTIME_PLATFORM]:
             result = runtime_entry.get("result", {})
-            name = result.get("name")
-            version = result.get("value")
-            if name and value:
-                runtimes.append(f"{name} {version}")
+            # name = result.get("name")
+            value = result.get("value")
+            if value:
+                # runtimes.append(f"{name} {version}")
+                runtimes.append(value)
 
         if runtimes:
             codemeta_output[constants.CAT_CODEMETA_RUNTIMEPLATFORM] = ", ".join(runtimes)
