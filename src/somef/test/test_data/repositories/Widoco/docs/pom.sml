@@ -163,10 +163,5 @@
 		</repository>
 
 	</repositories>
-	<scm>
-		<connection>scm:svn:http://127.0.0.1/svn/my-project</connection>
-		<developerConnection>scm:svn:https://127.0.0.1/svn/my-project</developerConnection>
-		<tag>HEAD</tag>
-		<url>http://127.0.0.1/websvn/my-project</url>
-	</scm>
+
 </project>

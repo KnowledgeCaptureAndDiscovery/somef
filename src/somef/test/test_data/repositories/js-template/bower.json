@@ -3,7 +3,8 @@
   "description": "Alarm clock project during week1 day2 JS at Epicodus.",
   "main": "gulpfile.js",
   "authors": [
-    "Andrew Accuardi <andrewaccuardi@gmail.com>"
+    "Andrew Accuardi <andrewaccuardi@gmail.com>",
+    "Another Author <anotherauthor@gmail.com>"
   ],
   "license": "ISC",
   "homepage": "",

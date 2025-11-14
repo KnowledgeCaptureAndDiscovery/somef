@@ -421,8 +421,7 @@ class TestCodemetaExport(unittest.TestCase):
             json_content = json.load(f)
 
         runtime = json_content.get("runtimePlatform", [])
-
-        assert runtime == "Java 1.8", f"It was expected 'Java 1.8' but it was '{runtime}'"
+        assert runtime == "Java: 1.8", f"It was expected 'Java: 1.8' but it was '{runtime}'"
         os.remove(output_path)
 
     @classmethod

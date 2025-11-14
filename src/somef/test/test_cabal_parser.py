@@ -44,13 +44,46 @@ class TestCabalParser(unittest.TestCase):
 
         requirements_results = metadata_result.results.get(constants.CAT_REQUIREMENTS, [])
         self.assertTrue(len(requirements_results) > 0, "No dependencies found")
-
+    
         found_dep = False
         for req_result in requirements_results:
             dependency = req_result["result"]
             if dependency.get("name") == "terminal-progress-bar" and dependency.get("dependency_type") == "runtime":
                 found_dep = True
         self.assertTrue(found_dep, "Dependency not found")
+
+    def test_parse_2_cabal(self):
+        cabal_file_path = test_data_repositories + os.path.sep + "haskell" + os.path.sep + "cabal.cabal"
+        result = Result()
+
+        metadata_result = parse_cabal_file(cabal_file_path, result, "https://example.org/cabal.cabal")
+        
+        package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
+        self.assertTrue(len(package_results) > 0, "No package file info found")
+        self.assertEqual(package_results[0]["result"]["value"], "cabal.cabal")
+        self.assertEqual(package_results[0]["result"]["type"], constants.URL)
+        description_results = metadata_result.results.get(constants.CAT_DESCRIPTION, [])
+        self.assertTrue(len(description_results) > 0, "No description found")
+        expected_start = "The Haskell Common Architecture"
+
+        self.assertTrue(
+            description_results[0]["result"]["value"].strip().startswith(expected_start)
+        )
+
+        homepage_results = metadata_result.results.get(constants.CAT_HOMEPAGE, [])
+        self.assertTrue(len(homepage_results) > 0, "No homepage found")
+        self.assertEqual(homepage_results[0]["result"]["value"], "http://www.haskell.org/cabal/")
+        self.assertEqual(homepage_results[0]["result"]["type"], constants.URL)
+
+        license_results = metadata_result.results.get(constants.CAT_LICENSE, [])
+        self.assertTrue(len(license_results) > 0, "No license found")
+        self.assertEqual(license_results[0]["result"]["value"], "BSD-3-Clause")
+        self.assertEqual(license_results[0]["result"]["type"], constants.LICENSE)
+
+        requirements_results = metadata_result.results.get(constants.CAT_REQUIREMENTS, [])
+        self.assertEqual(requirements_results[0]["result"]["name"], "Cabal-syntax")
+        self.assertEqual(requirements_results[1]["result"]["version"], ">= 0.4.0.1  && < 0.6")
+
     
 if __name__ == "__main__":
     unittest.main()

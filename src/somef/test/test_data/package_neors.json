@@ -17,5 +17,13 @@
   "bugs": {
     "url": "https://github.com/fangq/jsonlab/issues"
   },
-  "homepage": "https://iso2mesh.sf.net/jsonlab/"
+  "homepage": "https://iso2mesh.sf.net/jsonlab/",
+  "dependencies": {
+    "foo": "1.0.0 - 2.9999.9999",
+    "bar": ">=1.0.2 <2.1.2",
+    "baz": ">1.0.2 <=2.3.4"
+  },
+   "engines": {
+    "node": "^20.17.0 || >=22.9.0"
+  }
 }
