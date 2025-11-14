@@ -1,30 +1,78 @@
 The following metadata fields can be extracted from a pyproject.toml file.   
 These fields are defined in the [pyproject.toml specification](https://packaging.python.org/en/latest/guides/writing-pyproject-toml), and are mapped according to the [CodeMeta crosswalk for python](https://github.com/codemeta/codemeta/blob/master/crosswalks/Python%20Distutils%20(PyPI).csv).
 
-| SOMEF metadata category  |   Category describes                | SOMEF metadata field    | PYPROJECT.TOML value    |
+| SOMEF metadata category  |   Expected value type                | SOMEF metadata field    | PYPROJECT.TOML metadata field     |
 |--------------------------|-------------------------------------|-------------------------|-------------------------|
-| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.value       |     author.name                  |
-| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.email       |     author.email                  |
-| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.name        |     author.name                |
-| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.url         |     author.url               |
-| **code_repository** |    Url (code_repository[i].result is of type Url)  |  Url.value                    |  projects.urls.repository or tool.poetry.repository |
-| **description**          |  String (description[i].result is of type String) |   String.value |  project.description or tool.poetry.description                |
-| **documentation** |     Url (documentation[i].result is of type Url)  |  Url.value              |  projects.urls.documentation or tool.poetry.documentation |
-| **download_url** |     Url (download_url[i].result is of type Url)  |  Url.value                |  projects.urls.download or tool.poetry.download|        
-| **license**                   |  License(license[i].result is of type License) |    License.value  |   license.file or license.type or license                   |
-| **license**                   |  License(license[i].result is of type License) |    License.name    |  license.name              |
-| **license**                   |  License(license[i].result is of type License)|    License.spdx_id |    license.identifier if "spdx.org/licenses/  |  
-| **has_package_field**    |  Url(has_package_file[i].result is of type Url)    | Url.value    |   "pyproject.toml"      |
-| **homepage**             |  Url(homepage[i].result is of type Url)    |   Url.value          |   project.homepage or tool.poetry.homepage     |
-| **issue_tracker** |     Url (issue_tracker[i].result is of type Url)  |  Url.value              |  pprojects.urls.issue or tool.poetry.issue |
-| **keywords** |    String(keywords[i].result is of type String) |    String.value          |     keywords                 |
-| **package_id**           |  String (package_id[i].result is of type String)  |   String.value |   project.name or tool.poetry.name  |
-| **readme_url** |      Url (readme_url[i].result is of type Url)  |  Url.value                   |  projects.urls.readme or tool.poetry.readme|
-| **related_documentation** |  Url (download_url[i].result is of type Url)  |  Url.value          |  projects.urls or tool.poetry |  
-| **requirements**         |  Software_application (requirements[i].result is of type Software_application) |  Software_application.value  |   dependencies(name=version) or build-system.requires[i] parsing |
-| **requirements**         |  Software_application (requirements[i].result is of type Software_application) |  Software_application.name   |   dependencies(name=version) -> dependencies.name or build-system.requires[i] parsing -> name     |
-| **requirements**         |  Software_application (requirements[i].result is of type Software_application) |  Software_application.version   | dependencies[i](name=version) -> dependencies.version or build-system.requires[i] parsing -> version  |
-| **runtime_platform**          | String (runtime_platform[i].result is of type String)  |   String.value |  depeendencies or requires-python -> regex version  |
-| **runtime_platform**          | String (runtime_platform[i].result is of type String) |   String.name |   depeendencies or requires-python -> regex name   |
-| **version**              |  Release(version[i].result is of type Release)    |  Release.value |  project.version or tool.poetry.version |
-| **version**              |  Release(version[i].result is of type Release)    |  version.tag                            |     project.version or tool.poetry.version                            |
+| **authors**                   |  Agent (authors[i].result is of type Agent) | authors[i].result.value       |     authors.name                  |
+| **authors**                   |  Agent (authors[i].result is of type Agent) | authors[i].result.email       |     authors.email                  |
+| **authors**                   |  Agent (authors[i].result is of type Agent) | authors[i].result.name        |     authors.name                |
+| **authors**                   |  Agent (authors[i].result is of type Agent) | authors[i].result.url         |     authors.url               |
+| **code_repository** |    Url (code_repository[i].result is of type Url)  |  code_repository[i].result.value                    |  project.urls.repository or tool.poetry.repository |
+| **description**          |  String (description[i].result is of type String) |   description[i].result.value |  project.description or tool.poetry.description                |
+| **documentation** |     Url (documentation[i].result is of type Url)  |  documentation[i].result.value              |  project.urls.documentation or tool.poetry.documentation |
+| **download_url** |     Url (download_url[i].result is of type Url)  |  download_url[i].result.value                |  project.urls.download or tool.poetry.download|        
+| **license**                   |  License(license[i].result is of type License) |    license[i].result.value  |   license.file or license.type or license                   |
+| **license**                   |  License(license[i].result is of type License) |    license[i].result.name    |  license.name           *(1)*   |
+| **license**                   |  License(license[i].result is of type License)|    license[i].result.spdx_id |    license.identifier if "spdx.org/licenses/   *(1)* |  
+| **has_package_file**    |  Url(has_package_file[i].result is of type Url)    | has_package_file[i].result.value    |   URL of the pyproject.toml file      |
+| **homepage**             |  Url(homepage[i].result is of type Url)    |   homepage[i].result.value          |   project.homepage or tool.poetry.homepage     |
+| **issue_tracker** |     Url (issue_tracker[i].result is of type Url)  |  issue_tracker[i].result.value              |  projects.urls.issue or tool.poetry.issue |
+| **keywords** |    String(keywords[i].result is of type String) |    keywords[i].result.value          |     keywords                 |
+| **package_id**           |  String (package_id[i].result is of type String)  |   package_id[i].result.value |   project.name or tool.poetry.name  |
+| **readme_url** |      Url (readme_url[i].result is of type Url)  | readme_url[i].result.value                   |  projects.urls.readme or tool.poetry.readme|
+| **related_documentation** |  Url (download_url[i].result is of type Url)  |  download_url[i].result.value          |  projects.urls or tool.poetry |  
+| **requirements**         |  Software_application (requirements[i].result is of type Software_application) |  requirements[i].result.value  |   dependencies(name=version) or build-system.requires[i] *(2)*   |
+| **requirements**         |  Software_application (requirements[i].result is of type Software_application) |  requirements[i].result.name   |   dependencies(name=version) -> dependencies.name or build-system.requires[i] parsing -> name  *(2)*     |
+| **requirements**         |  Software_application (requirements[i].result is of type Software_application) |  requirements[i].result.version   | dependencies[i](name=version) -> dependencies.version or build-system.requires[i] parsing -> version *(2)*   |
+| **runtime_platform**          | String (runtime_platform[i].result is of type String)  |   runtime_platform[i].result.value |  depeendencies or requires-python -> version  *(3)*  |
+| **runtime_platform**          | String (runtime_platform[i].result is of type String) |   runtime_platform[i].result.name |   depeendencies or requires-python -> name   *(3)* |
+| **version**              |  Release(version[i].result is of type Release)    | version[i].result.value |  project.version or tool.poetry.version |
+| **version**              |  Release(version[i].result is of type Release)    |  version[i].result.tag                            |     project.version or tool.poetry.version                            |
+
+---
+
+*(1)*  
+- Look for the name and spdx_id in a local dictionary with all licenses
+
+*(2)*  
+- Examples: allows formats
+```
+dependencies = [
+    "astropy",
+    "ctapipe",
+    "ctaplot",
+    "dl1_data_handler",
+    "h5py",
+........
+
+[tool.poetry.dependencies]
+    python = ">=3.9,<=3.13"
+    bs4 = "^0.0.1"
+........
+
+[build-system]
+    requires = ["poetry-core>=1.1.10"]
+```
+
+- If it is possible we obtain name and version
+    'value' : 'python>=3.9,<=3.13' 
+    'name' : 'python'  
+    'version' : '>=3.9,<=3.13'  
+
+*(3)*
+- Always "Python" and version if exists.
+- Examenple:
+```
+requires-python = ">=3.11"
+
+or
+
+[tool.poetry.dependencies]
+    python = ">=3.9,<=3.13"
+
+or
+
+[dependencies]
+    python = ">=3.9,<=3.13"
+
+```

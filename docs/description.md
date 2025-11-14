@@ -1,17 +1,86 @@
 The following metadata fields can be extracted from a DESCRIPTION file.   
 These fields are defined in the [DESCRIPTON specification](https://r-pkgs.org/description.html), and are mapped according to the [CodeMeta crosswalk for DESCRIPTION files based in R Package](https://github.com/codemeta/codemeta/blob/master/crosswalks/R%20Package%20Description.csv).
 
-| SOMEF metadata category       | Category describes        | SOMEF metadata field          | DESCRIPTION file    |
+| SOMEF metadata category       | Expected value type        | SOMEF metadata field          | DESCRIPTION metadata field    |
 |-------------------------------|---------------------------|-------------------------------|---------------------|
-| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.value      |  Regex 'Authors:'   regex firsname + regex lastname |
-| **authors**                   |  Agent (authors[i].result is of type Agent) | Agent.email      |  Regex 'Authors:'   regex email |
-| **code_repository**           |  Url (code_repository[i].result is of type Url)  | Url.value   |  Regex 'URL:'  if github.com or gitlab.com      |
-| **description**               |  String (description[i].result is of type String)|   String.value   |   Regex 'Description:'    |
-| **has_package_field**         |  Url(has_package_file[i].result is of type Url) |  Url.value    |   "DESCRIPTION"        |
-| **hompage**           |  Url (homepage[i].result is of type Url)  | Url.value   |  Regex 'URL:'  if not (github.com or gitlab.com)     |
-| **issue_tracker**           |  Url (issue_tracker[i].result is of type Url)  | Url.value   |  Regex 'BugReports:'    |
-| **license**                  |  String (license[i].result is of type String)|   String.value   |   Regex 'License:'    |
-| **package_id**                |  String (package_id[i].result is of type String)|   String.value   |   Regex 'Package:'    |
-| **version**                  |  String (version[i].result is of type String)|   String.value   |   Regex 'Version:'    |
+| **authors**                   |  Agent (authors[i].result is of type Agent) |authors[i].result.value      |  Authors *(1)*  |
+| **authors**                   |  Agent (authors[i].result is of type Agent) | authors[i].result.email      | Authors *(2)*  |
+| **code_repository**           |  Url (code_repository[i].result is of type Url)  | code_repository[i].result.value   |     URL *(3)* |
+| **description**               |  String (description[i].result is of type String)|   description[i].result.value   |    Description *(3)*  |
+| **has_package_file**         |  Url(has_package_file[i].result is of type Url) |  has_package_file[i].result.value    |  URL of the DESCRIPTION file       |
+| **homepage**           |  Url (homepage[i].result is of type Url)  | homepage[i].result.value   |  URL    *(3)*   |
+| **issue_tracker**           |  Url (issue_tracker[i].result is of type Url)  | issue_tracker[i].result.value   | BugReports  *(5)*   |
+| **license**                  |  String (license[i].result is of type String)|   license[i].result.value   | License   *(6)*   |
+| **package_id**                |  String (package_id[i].result is of type String)|   package_id[i].result.value   |   Package   *(6)*    |
+| **version**                  |  String (version[i].result is of type String)|   version[i].result.value   |   Version  *(7)*   |
+
+---
+
+*(1)*, *(2)* , 
+- Regex 1: `r'Authors@R:\s*c\(([\s\S]*?)\)\s*$' → group[1]`  
+- Regex 2: `find in group[1] all persons and extract first name (or organition), last name and email`
+- Example: 
+```
+        Authors@R: c(
+            person("Hadley", "Wickham", , "hadley@posit.co", role = "aut",
+                comment = c(ORCID = "0000-0003-4757-117X")),
+            person("Winston", "Chang", role = "aut",
+                comment = c(ORCID = "0000-0002-1576-2126"))
+        )
+```
+
+- Result: 
+```
+{'result': {'value': 'Hadley Wickham', 'type': 'Agent', 'email': 'hadley@posit.co'}, 'confidence': 1, 'technique': 'code_parser', 'source': 'https://example.org/DESCRIPTION'}, {'result': {'value': 'Winston Chang', 'type': 'Agent'}, 'confidence': 1, 'technique': 'code_parser', 'source': 'https://example.org/DESCRIPTION'}
+```
+
+*(3)*
+- Regex: `'URL:\s*([^\n]+(?:\n\s+[^\n]+)*)'`
+- if github.com or gitlab.com  --> code_repository
+- if not  --> homepage
+
+- Example: 
+```
+URL: https://ggplot2.tidyverse.org,
+        https://github.com/tidyverse/ggplot2
+```
+
+- Result code_repository: `'result': {'value': 'https://github.com/tidyverse/tidyverse', 'type': 'Url'}`
+- Result hompeage: `'result': {'value': 'https://tidyverse.tidyverse.org', 'type': 'Url'}}`
 
 
+*(3)*
+- Regex: `r'Description:\s*([^\n]+(?:\n\s+[^\n]+)*)', content)`
+- Example: 
+```Description: A system for 'declaratively' creating graphics, based on "The
+    Grammar of Graphics". You provide the data, tell 'ggplot2' how to map
+    variables to aesthetics, what graphical primitives to use, and it
+    takes care of the details.
+```
+- Result: 
+```
+A system for 'declaratively' creating graphics, based on "The
+    Grammar of Graphics". You provide the data, tell 'ggplot2' how to map
+    variables to aesthetics, what graphical primitives to use, and it
+    takes care of the details.
+```
+
+*(5)*
+- Regex: `'BugReports:\s*([^\n]+)'`
+- Example: `BugReports: https://github.com/tidyverse/ggplot2/issues`
+- Result: `https://github.com/tidyverse/ggplot2/issues`
+
+*(5)*
+- Regex: `r'License:\s*([^\n]+)'``
+- Example: `License: MIT + file LICENSE`
+- Result: `MIT + file LICENSE`
+
+*(6)*
+- Regex: `r'Package:\s*([^\n]+)`
+- Example: `Package: ggplot2`
+- Result: `ggplot2`
+
+*(6)*
+- Regex: `r'Version:\s*([^\n]+)'`
+- Example: `Version: 2.0.0.9000`
+- Result: `2.0.0.9000`

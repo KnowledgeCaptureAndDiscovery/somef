@@ -91,6 +91,7 @@ SOMEF can extract metadata from a wide range of files commonly found in software
 | `package.json`     | JavaScript / Node.js       | Defines metadata, scripts, and dependencies for Node.js projects |  <div align="center">[🔍](./packagejson.md)| [📄](https://docs.npmjs.com/cli/v10/configuring-npm/package-json)| 10.9.4|[Example](https://github.com/npm/cli/blob/latest/package.json) | 
 | `codemeta.json`       |        JSON-LD              | Metadata file for research software using JSON-LD vocabulary | <div align="center">[🔍](./codemetajson.md)</div> | [📄](https://github.com/codemeta/codemeta/blob/master/crosswalk.csv)| [v3.0](https://w3id.org/codemeta/3.0)|[Example](https://github.com/codemeta/codemeta/blob/master/codemeta.json) |
 | `composer.json`    | PHP                        | Manifest file serves as the package descriptor used in PHP projects. | <div align="center">[🔍](./composer.md)</div>| [📄](https://getcomposer.org/doc/04-schema.md)| [2.8.12](https://getcomposer.org/changelog/2.8.12)|[Example](https://github.com/composer/composer/blob/main/composer.json) |
+| `juliaProject.toml`   | Python                     | Defines the package metadata and dependencies for Julia projects, used by the Pkg package manager.|  <div align="center">[🔍](./julia.md)</div>| [📄](https://docs.julialang.org/en/v1/)| |[Example](https://github.com/JuliaLang/TOML.jl/blob/master/Project.toml) | 
 | `pyproject.toml`   | Python                     | Modern Python project configuration file used by tools like Poetry and Flit |  <div align="center">[🔍](./pyprojecttoml.md)</div>| [📄](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/)| |[Example](https://github.com/KnowledgeCaptureAndDiscovery/somef/blob/master/pyproject.toml) | 
 | `requirements.txt` | Python                     | Lists Python package dependencies |  <div align="center">[🔍](./requirementstxt.md)</div>| [📄](https://pip.pypa.io/en/stable/reference/requirements-file-format/)| 25.2|[Example](https://github.com/oeg-upm/FAIR-Research-Object/blob/main/requirements.txt) |
 | `setup.py`         | Python                     | Package file format used in python projects |  <div align="center">[🔍](./setuppy.md)</div>| [📄](https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/#setup-args)| |[Example](https://github.com/oeg-upm/soca/blob/main/setup.py) | 
@@ -99,7 +100,7 @@ SOMEF can extract metadata from a wide range of files commonly found in software
 | `cargo.toml`       | Rust                       | Manifest file serves as the package descriptor used in Rust projects | <div align="center">[🔍](./cargo.md)</div> | [📄](https://doc.rust-lang.org/cargo/reference/manifest.html)| |[Example](https://github.com/rust-lang/cargo/blob/master/Cargo.toml) |
 | `*.cabal`       | Haskell                       | Manifest file serving as the package descriptor for Haskell projects.| <div align="center">[🔍](./cabal.md)</div> | [📄](https://cabal.readthedocs.io/en/3.10/cabal-package.html)| |[Example](https://github.com/haskell/cabal/blob/master/Cabal/Cabal.cabal) |
 
-> **Note:** The general principles behind metadata mapping in SOMEF are based on the [CodeMeta crosswalk](https://github.com/codemeta/codemeta/blob/master/crosswalk.csv) and the [CodeMseta JSON-LD context](https://github.com/codemeta/codemeta/blob/master/codemeta.jsonld).  
+> **Note:** The general principles behind metadata mapping in SOMEF are based on the [CodeMeta crosswalk](https://github.com/codemeta/codemeta/blob/master/crosswalk.csv) and the [CodeMeta JSON-LD context](https://github.com/codemeta/codemeta/blob/master/codemeta.jsonld).  
 > However, each supported file type may have specific characteristics and field interpretations.
 
 
@@ -118,7 +119,7 @@ SOMEF can extract metadata from a wide range of files commonly found in software
 | String               | name                      |
 | String               | package_id                |
 | String               | runtime_platform          |
-| Url                  | has_package_field         |
+| Url                  | has_package_file         |
 | Url                  | homepage                  |
 | Url                  | issue_tracker             |
 | Url                  | package_distribution      |
