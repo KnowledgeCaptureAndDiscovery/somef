@@ -84,37 +84,54 @@ def parse_description_file(file_path, metadata_result: Result, source):
                         source
                     )
                 
-                authors_section = re.search(r'Authors@R:\s*c\(([^)]+)\)', content, re.DOTALL)
+             
+                authors_section = re.search(r'Authors@R:\s*c\(([\s\S]*?)\)\s*$', content, re.MULTILINE)
+                # authors_section = re.search(r'Authors@R:\s*c\(([^)]+)\)', content, re.DOTALL)
                 if authors_section:
                     authors_text = authors_section.group(1)
-                    person_entries = re.findall(r'person\(\s*"([^"]+)"\s*,\s*"([^"]+)"(?:\s*,\s*)?(?:"[^"]*")?(?:\s*,\s*)?(?:"([^"]+)")?', authors_text)
-                    
-                    authors = []
-                    for entry in person_entries:
-                        first_name = entry[0].strip() if entry[0] else ""
-                        last_name = entry[1].strip() if entry[1] else ""
-                        email = entry[2].strip() if len(entry) > 2 and entry[2] else ""
-                        
-                        if first_name or last_name:
-                            author = {
-                                "value": f"{first_name} {last_name}".strip(),
-                                "email": email,       
-                            }
-                            authors.append(author)
-                
-                    if authors:
-                        metadata_result.add_result(
-                            constants.CAT_AUTHORS,
-                            {
-                                "value": authors,
-                                "type": constants.AGENT,
-                                "source": source
-                            },
-                            1,
-                            constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                            source
-                        )
+            
+                    pattern = re.compile(
+                        r'''person\(
+                            \s*"([^"]+)"                
+                            (?:\s*,\s*"([^"]*)")?      
+                            (?:\s*,\s*)*               
+                            (?:
+                                "(?P<email1>[^"]+@[^"]+)" 
+                                |
+                                .*?email\s*=\s*"(?P<email2>[^"]+)" 
+                            )?                     
+                            [^)]*                        
+                        \)''',
+                        re.VERBOSE
+                    )
+                    # person_entries = re.findall(r'person\(\s*"([^"]+)"\s*,\s*"([^"]+)"(?:\s*,\s*)?(?:"[^"]*")?(?:\s*,\s*)?(?:"([^"]+)")?', authors_text)
+                    person_entries = []
+                    for match in pattern.finditer(authors_text):
+                        given = match.group(1)
+                        family = match.group(2) or ""
+                        email = match.group("email1") or match.group("email2") or ""
+                        person_entries.append((given, family, email))
 
+                    for given, family, email in person_entries:
+                        name = given.strip()
+                        if family:
+                            name += " " + family.strip()
+                        author = {
+                                    "value": name,
+                                    "type": constants.AGENT,
+                                }
+     
+                        if email:
+                            author["email"] = email.strip()
+
+                        metadata_result.add_result(
+                                constants.CAT_AUTHORS,
+                                author,
+                                1,
+                                constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                                source
+                            )
+            
                 license_match = re.search(r'License:\s*([^\n]+)', content)
                 if license_match:
                     license_text = license_match.group(1).strip()
