@@ -502,13 +502,13 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 identifiers = yaml_content.get("identifiers", [])
                 url_citation = preferred_citation.get("url") or yaml_content.get("url")
 
+                if identifiers:
+                    result[constants.CAT_IDENTIFIER] = identifiers
+
                 identifier_url = next((id["value"] for id in identifiers if id["type"] == "url"), None)
                 identifier_doi = next((id["value"] for id in identifiers if id["type"] == "doi"), None)
-    
+
                 title = yaml_content.get("title") or preferred_citation.get("title", None)
-                # doi = preferred_citation.get("doi", None)
-                # url_citation = preferred_citation.get("url", None) 
-                # authors = preferred_citation.get("authors", [])
                 authors = yaml_content.get("authors", [])
 
                 if identifier_doi:

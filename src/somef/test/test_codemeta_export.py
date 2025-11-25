@@ -424,6 +424,38 @@ class TestCodemetaExport(unittest.TestCase):
         assert runtime == "Java: 1.8", f"It was expected 'Java: 1.8' but it was '{runtime}'"
         os.remove(output_path)
 
+    def test_issue_832_join_authors(self):
+        """
+        Check that an author who appears multiple times in the JSON appears only once in the Codemeta output, merging their properties.
+        """
+
+        somef_cli.run_cli(threshold=0.9,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=None,
+                          local_repo=test_data_repositories + "fuji",
+                          in_file=None,
+                          output=None,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out= test_data_path + 'test_codemeta_join_authors.json',
+                          pretty=True,
+                          missing=False)
+        
+        json_file_path = test_data_path + "test_codemeta_join_authors.json"
+        text_file = open(json_file_path, "r")
+        data = text_file.read()
+        json_content = json.loads(data)
+        text_file.close()
+
+        authors = json_content.get("author", [])
+        assert len(authors) == 9, f"Expected 9 author, found {len(authors)}"
+        assert authors[0].get("name") == "Robert Huber", "Second author must be Robert Huber"
+        assert authors[1].get("email") == "anusuriya.devaraju@googlemail.com", \
+        "Third author must have email anusuriya.devaraju@googlemail.com"
+
+        os.remove(json_file_path)
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""

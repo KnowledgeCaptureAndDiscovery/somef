@@ -33,7 +33,8 @@ def parse_author_file(author_str):
                 and not re.match(r'^([A-Z][a-zA-Z0-9&\-\.]+(?:\s+[A-Z][a-zA-Z0-9&\-\.]+){0,3})\.$', line)
                 and not re.search(constants.REGEXP_LTD_INC, line, re.IGNORECASE)
             ) or
-            line.endswith(",") or
+            line.endswith(",") or 
+            line.endswith(":") or
             re.match(r'^[A-Z][a-z]+ *:$', line) or
             re.match(r"^[=\-*]{2,}$", next_line)
         ):
