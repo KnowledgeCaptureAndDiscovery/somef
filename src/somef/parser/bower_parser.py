@@ -60,16 +60,18 @@ def parse_bower_json_file(file_path, metadata_result: Result, source):
                     )
                 
                 if "homepage" in data:
-                    metadata_result.add_result(
-                        constants.CAT_HOMEPAGE,
-                        {
-                            "value": data["homepage"],
-                            "type": constants.URL
-                        },
-                        1,
-                        constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                        source
-                    )
+                    home = data["homepage"]
+                    if home and home.strip():
+                        metadata_result.add_result(
+                            constants.CAT_HOMEPAGE,
+                            {
+                                "value": data["homepage"],
+                                "type": constants.URL
+                            },
+                            1,
+                            constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                            source
+                        )
                 
                 if "version" in data:
                     metadata_result.add_result(
@@ -84,16 +86,34 @@ def parse_bower_json_file(file_path, metadata_result: Result, source):
                     )
                 
                 if "authors" in data:
-                    metadata_result.add_result(
-                        constants.CAT_AUTHORS,
-                        {
-                            "value": data["authors"],
-                        },
-                        1,
-                        constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                        source
-                    )
-                
+                    authors_data = data["authors"]
+                    if isinstance(authors_data, str):
+                        authors_list = [a.strip() for a in authors_data.split(",") if a.strip()]
+                    elif isinstance(authors_data, list):
+                        authors_list = []
+                        for a in authors_data:
+                            if isinstance(a, str):
+                                authors_list.extend([s.strip() for s in a.split(",") if s.strip()])
+                            elif isinstance(a, dict):
+                                name = a.get("name", "")
+                                email = f" <{a['email']}>" if "email" in a else ""
+                                authors_list.append(f"{name}{email}".strip())
+                    else:
+                        authors_list = []
+
+                    for aut in authors_list:
+                           # "value": data["authors"],
+                        metadata_result.add_result(
+                            constants.CAT_AUTHORS,
+                            {
+                                "value": aut,
+                                "type": constants.AGENT
+                            },
+                            1,
+                            constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                            source
+                        )
+
                 if "license" in data:                   
                     metadata_result.add_result(
                         constants.CAT_LICENSE,

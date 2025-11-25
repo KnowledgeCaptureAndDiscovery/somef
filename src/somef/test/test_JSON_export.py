@@ -155,6 +155,8 @@ class TestJSONExport(unittest.TestCase):
 
         # os.remove(test_data_path + "test_issue_629.json")
 
+
+
     def test_issue_651(self):
         """Checks if keywords is in the missing categories because is empty"""
         somef_cli.run_cli(threshold=0.8,
@@ -265,7 +267,7 @@ class TestJSONExport(unittest.TestCase):
         }
         identifiers = data.get("identifier", [])
         found_values = set()
-
+    
         for item in identifiers:
             value = item["result"]["value"]        
             found_values.add(value)
@@ -295,7 +297,8 @@ class TestJSONExport(unittest.TestCase):
       
         found = False  
         homepage_entries = data.get("homepage", [])
-
+        print('---------------------------')
+        print(homepage_entries)
         for item in homepage_entries:
             technique = item.get("technique")
             result = item.get("result", {})
@@ -367,11 +370,23 @@ class TestJSONExport(unittest.TestCase):
         assert len(runtime_entries) > 0, "There should be at least one runtime_platform entry"
 
         found_java = any(
-            entry.get("name") == "Java" and entry.get("value") == "1.8"
+            entry.get("name") == "Java" and entry.get("value") == "Java: 1.8"
             for entry in runtime_entries
         )
-        assert found_java, "Java runtime with version 1.8 should be present"
+        assert found_java, "Java runtime with value Java: 1.8 should be present"
 
+
+    def test_issue_830(self):
+        """Checks if citattion have identifiers """
+        citation = self.json_content.get("citation", [])
+        assert citation, "No 'citation' found in JSON"
+        assert any(
+            entry.get("result", {}).get("format") == "cff"
+            and any(id.get("value") == "10.5281/zenodo.591294"
+            for id in entry.get("result", {}).get("identifier", [])
+        )
+            for entry in citation
+        ), "Citation.cff must have identifier id 10.5281/zenodo.591294"
 
     @classmethod
     def tearDownClass(cls):

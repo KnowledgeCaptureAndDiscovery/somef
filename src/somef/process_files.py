@@ -5,7 +5,7 @@ import urllib
 import yaml
 import string
 from urllib.parse import urlparse
-from .utils import constants, markdown_utils
+from .utils import constants
 from . import extract_ontologies, extract_workflows
 from .process_results import Result
 from .regular_expressions import detect_license_spdx, extract_scholarly_article_natural, extract_scholarly_article_properties
@@ -14,13 +14,15 @@ from .parser.package_json_parser import parse_package_json_file
 from .parser.python_parser import parse_pyproject_toml
 from .parser.python_parser import parse_setup_py
 from .parser.codemeta_parser import parse_codemeta_json_file
-from .parser.cargo_parser import parse_cargo_toml
+# from .parser.cargo_parser import parse_cargo_toml
 from .parser.composer_parser import parse_composer_json
 from .parser.python_parser import parse_requirements_txt
 from .parser.authors_parser import parse_author_file
 from .parser.bower_parser import parse_bower_json_file
 from .parser.gemspec_parser import parse_gemspec_file
 from .parser.description_parser import parse_description_file
+from .parser.toml_parser import parse_toml_file
+from .parser.cabal_parser import parse_cabal_file
 from chardet import detect
 
 
@@ -235,8 +237,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                 if filename.lower() == "pom.xml" or filename.lower() == "package.json" or \
                         filename.lower() == "pyproject.toml" or filename.lower() == "setup.py" or filename.endswith(".gemspec") or \
                         filename.lower() == "requirements.txt" or filename.lower() == "bower.json" or filename == "DESCRIPTION" or \
-                        (filename.lower() == "cargo.toml" and repo_relative_path == ".") or (filename.lower() == "composer.json" and repo_relative_path == "."):
-
+                        (filename.lower() == "cargo.toml" and repo_relative_path == ".") or (filename.lower() == "composer.json" and repo_relative_path == ".") or \
+                        (filename == "Project.toml" and repo_relative_path == "."):
                         if filename.lower() in parsed_build_files and repo_relative_path != ".":
                             logging.info(f"Ignoring secondary {filename} in {dir_path}")
                             continue
@@ -253,28 +255,27 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                },
                                                1,
                                                constants.TECHNIQUE_FILE_EXPLORATION, build_file_url)
-                        logging.info(f"############### Processing package file: {filename} ############### ")
+                        logging.info(f"############### (NEW UPDATE) Processing package file: {filename} ############### ")
                         if filename.lower() == "pom.xml":
                             metadata_result = parse_pom_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "package.json":
                             metadata_result = parse_package_json_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
-                        if filename.lower() == "pyproject.toml":
-                            metadata_result = parse_pyproject_toml(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "setup.py":
                             metadata_result = parse_setup_py(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "requirements.txt":
                             metadata_result = parse_requirements_txt(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "bower.json":
                             metadata_result = parse_bower_json_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
-                        if filename.lower() == "cargo.toml":
-                            metadata_result = parse_cargo_toml(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "composer.json":
                             metadata_result = parse_composer_json(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.endswith(".gemspec"):
                             metadata_result = parse_gemspec_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename == "DESCRIPTION":
                             metadata_result = parse_description_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
-
+                        if filename.lower() == "pyproject.toml" or filename.lower() == "cargo.toml" or filename == "Project.toml":
+                            metadata_result = parse_toml_file(os.path.join(dir_path, filename), metadata_result, build_file_url)                            
+                        if filename.endswith == ".cabal":
+                            metadata_result = parse_cabal_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         parsed_build_files.add(filename.lower())
                           
                 # if repo_type == constants.RepositoryType.GITLAB: 
@@ -501,13 +502,13 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 identifiers = yaml_content.get("identifiers", [])
                 url_citation = preferred_citation.get("url") or yaml_content.get("url")
 
+                if identifiers:
+                    result[constants.CAT_IDENTIFIER] = identifiers
+
                 identifier_url = next((id["value"] for id in identifiers if id["type"] == "url"), None)
                 identifier_doi = next((id["value"] for id in identifiers if id["type"] == "doi"), None)
-    
+
                 title = yaml_content.get("title") or preferred_citation.get("title", None)
-                # doi = preferred_citation.get("doi", None)
-                # url_citation = preferred_citation.get("url", None) 
-                # authors = preferred_citation.get("authors", [])
                 authors = yaml_content.get("authors", [])
 
                 if identifier_doi:

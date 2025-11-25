@@ -2,7 +2,7 @@
 require File.expand_path('../lib/bootstrap-datepicker-rails/version', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.authors       = ["Gonzalo Rodríguez-Baltanás Díaz", "Author Dos"]
+  gem.author       = "Gonzalo Rodríguez-Baltanás Díaz"
   gem.email         = ["siotopo@gmail.com"]
   gem.description   = %q{A date picker for Twitter Bootstrap}
   gem.homepage      = "https://github.com/Nerian/bootstrap-datepicker-rails"

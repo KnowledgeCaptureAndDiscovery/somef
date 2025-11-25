@@ -208,7 +208,7 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                         urls["documentation"] = poetry["documentation"]
                 
                 for url_type, url in urls.items():
-                    print(url_type)
+                    # print(url_type)
                     category = parse_url_type(url_type)
                     metadata_result.add_result(
                         category,
@@ -320,7 +320,8 @@ def parse_pyproject_toml(file_path, metadata_result: Result, source):
                         metadata_result.add_result(
                             constants.CAT_RUNTIME_PLATFORM,
                             {
-                                "value": runtime["version"],
+                                "value": runtime["value"],
+                                "version": runtime["version"],
                                 "name": runtime["name"],
                                 "type": constants.STRING
                             },
@@ -359,18 +360,22 @@ def parse_requirements_txt(file_path, metadata_result: Result, source):
                         continue
                     name, version = parse_dependency(line)
                     if name:
-                        metadata_result.add_result(
-                            constants.CAT_REQUIREMENTS,
-                            {
+                        req = {
                                 "value": line,
                                 "name": name,
-                                "version": version,
                                 "type": constants.SOFTWARE_APPLICATION
-                            },
+                            }
+                        if version:
+                            req['version'] = version
+                        
+                        metadata_result.add_result(
+                            constants.CAT_REQUIREMENTS,
+                            req,
                             1,
                             constants.TECHNIQUE_CODE_CONFIG_PARSER,
                             source
                         )
+     
 
                 runtimes = parse_runtime_platform_from_requirements(lines)
                 if runtimes:
@@ -378,7 +383,8 @@ def parse_requirements_txt(file_path, metadata_result: Result, source):
                         metadata_result.add_result(
                             constants.CAT_RUNTIME_PLATFORM,
                             {
-                                "value": runtime["version"],
+                                "value": runtime["value"],
+                                "version": runtime["version"],
                                 "name": runtime["name"],
                                 "type": constants.STRING
                             },
@@ -455,7 +461,7 @@ def parse_setup_py(file_path, metadata_result: Result, source):
                                         constants.CAT_AUTHORS,
                                         {
                                             "name": value,
-                                            "email": None,
+                                            # "email": None,
                                             "type": constants.AGENT,
                                         },
                                         1,
@@ -633,11 +639,11 @@ def parse_runtime_platform_from_pyproject(project_section):
     if isinstance(deps, dict):
         python_spec = deps.get("python")
         if python_spec:
-            runtimes.append({"name": "Python", "version": python_spec})
+            runtimes.append({"name": "Python", "version": python_spec, "value": f'Python {python_spec}'})
 
     req_python = project_section.get("requires-python")
     if req_python:
-        runtimes.append({"name": "Python", "version": req_python})
+        runtimes.append({"name": "Python", "version": req_python, "value": f'Python {python_spec}'})
 
     return runtimes
 
@@ -684,7 +690,7 @@ def parse_runtime_platform_from_requirements(requirements_lines):
                     version = match.group(1)
 
             if version:
-                runtimes.append({'name': 'Python', 'version': version})
+                runtimes.append({'name': 'Python', 'version': version, 'value': f'Python: {version}'})
                 break 
 
     return runtimes
