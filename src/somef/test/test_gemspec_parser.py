@@ -17,6 +17,9 @@ class TestGemSpecParser(unittest.TestCase):
     
         metadata_result = parse_gemspec_file(gemspec_file_path, result, "https://example.org/bootstrap-datepicker-rails.gemspec")
 
+        authors_results = metadata_result.results.get(constants.CAT_AUTHORS, [])
+        self.assertTrue(len(authors_results) == 2, "Expected two authors")
+
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
         self.assertEqual(package_results[0]["result"]["value"], "bootstrap-datepicker-rails.gemspec")
@@ -51,7 +54,19 @@ class TestGemSpecParser(unittest.TestCase):
             dependency = req_result["result"]
             if dependency.get("name") == "railties" and dependency.get("dependency_type") == "runtime":
                 found_jquery = True
+
         self.assertTrue(found_jquery, "Dependency not found")
+
+    def test_parse_gemspec_another_authors(self):
+        gemspec_file_path = test_data_repositories + os.path.sep + "bootstrap-datepicker-rails" + os.path.sep + "bootstrap-datepicker-rails-2.gemspec"
+        result = Result()
+    
+        metadata_result = parse_gemspec_file(gemspec_file_path, result, "https://example.org/bootstrap-datepicker-rails.gemspec")
+       
+        authors_results = metadata_result.results.get(constants.CAT_AUTHORS, [])
+        self.assertTrue(len(authors_results) == 1, "Expected one authors")
+        self.assertEqual(authors_results[0]["result"]["value"], "Gonzalo Rodríguez-Baltanás Díaz")
+
 
         # To do Version
         # To do Email

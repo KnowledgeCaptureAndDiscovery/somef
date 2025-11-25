@@ -154,16 +154,18 @@ def parse_package_json_file(file_path, metadata_result: Result, source):
                 for runtime in runtimes:
                     metadata_result.add_result(
                         constants.CAT_RUNTIME_PLATFORM,
-                        {
-                            "value": runtime["version"],
-                            "name": runtime["name"],
-                            "type": constants.STRING
-                        },
+                        runtime,
+                        # {
+                        #     "value": runtime["version"],
+                        #     "version": runtime["version"],
+                        #     "name": runtime["name"],
+                        #     "type": constants.STRING
+                        # },
                         1,
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
                         source
                     )
-
+         
             deps = {}
             deps.update(data.get("dependencies", {}))
             deps.update(data.get("devDependencies", {}))
@@ -238,10 +240,27 @@ def parse_runtime_platform_from_package_json(data):
     engines = data.get("engines", {})
     if isinstance(engines, dict):
         for runtime_name, version_value in engines.items():
+
             if version_value:
-                runtimes.append({
-                    "name": runtime_name.capitalize(),
-                    "version": version_value.strip()
-                })
+                value_str = f"{runtime_name}: {version_value}".strip()
+            else:
+                value_str = runtime_name
+
+            run = {
+                "value": value_str,
+                "name": runtime_name.capitalize(),
+                "type": constants.STRING
+            }
+            if version_value:
+                run["version"] = version_value.strip()
+
+            # if version_value:
+            #     # runtimes.append({
+            #     #     "name": runtime_name.capitalize(),
+            #     #     "version": version_value.strip()
+            #     # })
+            #     run["version"]=  version_value.strip()
+            
+            runtimes.append(run)  
     
     return runtimes

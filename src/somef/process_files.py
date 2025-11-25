@@ -14,14 +14,15 @@ from .parser.package_json_parser import parse_package_json_file
 from .parser.python_parser import parse_pyproject_toml
 from .parser.python_parser import parse_setup_py
 from .parser.codemeta_parser import parse_codemeta_json_file
-from .parser.cargo_parser import parse_cargo_toml
+# from .parser.cargo_parser import parse_cargo_toml
 from .parser.composer_parser import parse_composer_json
 from .parser.python_parser import parse_requirements_txt
 from .parser.authors_parser import parse_author_file
 from .parser.bower_parser import parse_bower_json_file
 from .parser.gemspec_parser import parse_gemspec_file
 from .parser.description_parser import parse_description_file
-from somef.test.julia_parser import parse_project_toml
+from .parser.toml_parser import parse_toml_file
+from .parser.cabal_parser import parse_cabal_file
 from chardet import detect
 
 
@@ -259,25 +260,22 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             metadata_result = parse_pom_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "package.json":
                             metadata_result = parse_package_json_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
-                        if filename.lower() == "pyproject.toml":
-                            metadata_result = parse_pyproject_toml(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "setup.py":
                             metadata_result = parse_setup_py(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "requirements.txt":
                             metadata_result = parse_requirements_txt(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "bower.json":
                             metadata_result = parse_bower_json_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
-                        if filename.lower() == "cargo.toml":
-                            metadata_result = parse_cargo_toml(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "composer.json":
                             metadata_result = parse_composer_json(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.endswith(".gemspec"):
                             metadata_result = parse_gemspec_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename == "DESCRIPTION":
                             metadata_result = parse_description_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
-                        if filename == "Project.toml":
-                            metadata_result = parse_project_toml(os.path.join(dir_path, filename), metadata_result, build_file_url)
-
+                        if filename.lower() == "pyproject.toml" or filename.lower() == "cargo.toml" or filename == "Project.toml":
+                            metadata_result = parse_toml_file(os.path.join(dir_path, filename), metadata_result, build_file_url)                            
+                        if filename.endswith == ".cabal":
+                            metadata_result = parse_cabal_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         parsed_build_files.add(filename.lower())
                           
                 # if repo_type == constants.RepositoryType.GITLAB: 

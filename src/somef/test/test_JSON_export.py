@@ -367,10 +367,10 @@ class TestJSONExport(unittest.TestCase):
         assert len(runtime_entries) > 0, "There should be at least one runtime_platform entry"
 
         found_java = any(
-            entry.get("name") == "Java" and entry.get("value") == "1.8"
+            entry.get("name") == "Java" and entry.get("value") == "Java: 1.8"
             for entry in runtime_entries
         )
-        assert found_java, "Java runtime with version 1.8 should be present"
+        assert found_java, "Java runtime with value Java: 1.8 should be present"
 
 
     @classmethod

@@ -99,7 +99,7 @@ def parse_composer_json(file_path, metadata_result: Result, source):
                             author_data["email"] = author["email"]
                         
                         if "homepage" in author:
-                            author_data["homepage"] = author["homepage"]
+                            author_data["url"] = author["homepage"]
                         
                         if "role" in author:
                             author_data["role"] = author["role"]

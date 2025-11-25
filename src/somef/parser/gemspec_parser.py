@@ -37,7 +37,7 @@ def parse_gemspec_file(file_path, metadata_result: Result, source):
             
             with open(file_path, 'r', encoding='utf-8') as file:
                 content = file.read()
-                
+
                 name_match = re.search(r'gem\.name\s*=\s*["\']([^"\']+)["\']', content)
                 if name_match:
                     metadata_result.add_result(
@@ -78,11 +78,14 @@ def parse_gemspec_file(file_path, metadata_result: Result, source):
                         source
                     )
                 
-                authors_match = re.search(r'gem\.authors\s*=\s*\[(.*?)\]', content, re.DOTALL)
-                if authors_match:
-                    authors_str = authors_match.group(1)
-                    author_list = re.findall(r'["\']([^"\']+)["\']', authors_str)
-                    
+                authors_match = re.findall(r'gem\.author[s]?\s*=\s*(?P<value>"[^"]*"|\[[^\]]*\])', content)
+
+                for match in authors_match:
+                    if match.startswith('['):
+                        author_list = re.findall(r'["\']([^"\']+)["\']', match)
+                    else:
+                        author_list = [re.sub(r'["\']', '', match).strip()]
+     
                     for author in author_list:
                         metadata_result.add_result(
                             constants.CAT_AUTHORS,
@@ -94,8 +97,24 @@ def parse_gemspec_file(file_path, metadata_result: Result, source):
                             constants.TECHNIQUE_CODE_CONFIG_PARSER,
                             source
                         )
+
+                    # authors_str = authors_match.group(1)
+                    # author_list = re.findall(r'["\']([^"\']+)["\']', authors_str)
+                    
+                    # for author in author_list:
+                    #     metadata_result.add_result(
+                    #         constants.CAT_AUTHORS,
+                    #         {
+                    #             "type": constants.AGENT,
+                    #             "value": author
+                    #         },
+                    #         1,
+                    #         constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                    #         source
+                    #     )
                 
-                license_match = re.search(r'gem\.license\s*=\s*["\']([^"\']+)["\']', content)
+                # license_match = re.search(r'gem\.license\s*=\s*["\']([^"\']+)["\']', content)
+                license_match = re.search(r'gem\.license[s]?\s*=\s*["\']([^"\']+)["\']', content)
                 if license_match:
                     license_value = license_match.group(1)
                     license_text = ""
@@ -135,7 +154,27 @@ def parse_gemspec_file(file_path, metadata_result: Result, source):
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
                         source
                     )
-                
+
+
+                dependency_matches = re.search(r'gem\.requirements\s*=\s*(\[.*?\])', content, re.DOTALL)
+
+                if dependency_matches:
+                    array_requirements = dependency_matches.group(1)    
+                    dependencies = re.findall(r'["\']([^"\']+)["\']', array_requirements)
+
+                    if dependencies:
+                        metadata_result.add_result(
+                            constants.CAT_REQUIREMENTS,
+                            {
+                                "value": dependencies,
+                                "type": constants.SOFTWARE_APPLICATION,
+                            },
+                            1,
+                            constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                            source
+                        )
+
+
                 dependency_matches = re.findall(r'gem\.add_dependency\s*["\']([^"\']+)["\'](?:\s*,\s*["\']([^"\']+)["\'])?', content)
                 for dep in dependency_matches:
                     name = dep[0]

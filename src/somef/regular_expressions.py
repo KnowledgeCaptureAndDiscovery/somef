@@ -855,6 +855,14 @@ def detect_license_spdx(license_text, type):
                     "name": license_name,
                     "identifier": f"https://spdx.org/licenses/{license_info['spdx_id']}"
                 }
+    for license_name, license_info in constants.LICENSES_DICT.items():
+        spdx_id = license_info["spdx_id"]
+        if re.search(rf'\b{re.escape(spdx_id)}\b', license_text, re.IGNORECASE):
+            return {
+                "name": license_name,
+                "spdx_id": spdx_id,
+                "@id": f"https://spdx.org/licenses/{spdx_id}"
+            }
     return None
 
 # def detect_license(license_text):
