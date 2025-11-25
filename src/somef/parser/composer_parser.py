@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-import re
 from pathlib import Path
 from ..process_results import Result
 from ..utils import constants
