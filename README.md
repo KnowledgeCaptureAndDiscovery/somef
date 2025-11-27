@@ -345,3 +345,13 @@ To see upcoming features, please have a look at our [open issues](https://github
 ## Extending SOMEF categories:
 
 To run a classifier with an additional category or remove an existing one, a corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in `cli.py`.
+
+## Metadata Support
+
+SOMEF supports the extraction and analysis of metadata in programming languages.  
+This includes identifying dependencies, runtime requirements, and development tools specified in project configuration files.  
+
+## Limitations
+
+SOMEF is designed to work primarily with repositories written in English.  
+Repositories in other languages may not be processed as effectively, and results could be incomplete or less accurate.
