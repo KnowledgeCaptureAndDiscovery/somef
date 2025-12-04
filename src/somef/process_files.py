@@ -11,10 +11,8 @@ from .process_results import Result
 from .regular_expressions import detect_license_spdx, extract_scholarly_article_natural, extract_scholarly_article_properties
 from .parser.pom_xml_parser import parse_pom_file
 from .parser.package_json_parser import parse_package_json_file
-from .parser.python_parser import parse_pyproject_toml
 from .parser.python_parser import parse_setup_py
 from .parser.codemeta_parser import parse_codemeta_json_file
-# from .parser.cargo_parser import parse_cargo_toml
 from .parser.composer_parser import parse_composer_json
 from .parser.python_parser import parse_requirements_txt
 from .parser.authors_parser import parse_author_file
