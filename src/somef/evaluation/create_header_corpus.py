@@ -5,7 +5,7 @@ output ="../../../experiments/header_analysis/header_evaluation/header_evaluatio
 
 import os
 import pandas as pd
-from somef.header_analysis import extract_header_content
+from .header_analysis import extract_header_content
 
 df_all = pd.DataFrame ({}, columns = ['Repo','Header','Content'])
 print(df_all)

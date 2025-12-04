@@ -345,3 +345,13 @@ To see upcoming features, please have a look at our [open issues](https://github
 ## Extending SOMEF categories:
 
 To run a classifier with an additional category or remove an existing one, a corresponding path entry in the config.json should be provided and the category type should be added/removed in the category variable in `cli.py`.
+
+## Metadata Support
+
+SOMEF supports the extraction and analysis of metadata in package files of several programming languages.  Current support includes: `setup.py` and `pyproject.toml` for Python, `pom.xml` for Java, `.gemspec` for Ruby, `DESCRIPTION` for R, `bower.json` for JavaScript, HTML or CSS, `.cabal` for Haskell, `cargo.toml` for RUST, `composer` for PHP, `.juliaProject.toml` for Julia , `AUTHORS`, `codemeta.json`, and `citation.cff`
+This includes identifying dependencies, runtime requirements, and development tools specified in project configuration files.  
+
+## Limitations
+
+SOMEF is designed to work primarily with repositories written in English.  
+Repositories in other languages may not be processed as effectively, and results could be incomplete or less accurate.
