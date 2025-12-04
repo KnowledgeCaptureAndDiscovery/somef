@@ -3,7 +3,7 @@ import logging
 import markdown
 import re
 import pandas as pd
-from somef import regular_expressions
+from .. import regular_expressions
 
 def extract_headers(original_text):
     text, bashes = extract_bash(original_text)
