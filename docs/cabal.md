@@ -15,6 +15,18 @@ These fields are defined in the [Cabal specification](https://cabal.readthedocs.
 | **requirements**              |   requirements[i].result.version      |     library.build-depends version  *(5.2)*  |   
 | **requirements**              |   requirements[i].result.development_type  |    "runtime"         |
 | **version**                   |   version[i].result.value             |     version  *(6)*  |
+| Software metadata category       |       SOMEF metadata JSON path  | CABAL metadata file field               |
+|-------------------------------|-----------------------------|------------------------------|
+| description  |   description[i].result.value   |   synopsis or description *(1)*|
+| has_package_file         |  has_package_file[i].result.value    |   URL of the filename.cabal file    |
+| homepage                  |  homepage[i].result.value   |   homepage  *(2)*  |
+| license                   |   license[i].result.value   |    license  *(3)*  |
+| package id                |  package_id[i].value   |   name  *(4)* |
+| requirements - value              |    requirements[i].result.value  |  library.build-depends *(5)*      |
+| requirements - name              |    requirements[i].result.name | library.build-depends name  *(5.1)*    |
+| requirements - version             |   requirements[i].result.version | library.build-depends version  *(5.2)*       
+| requirements - development type              | requirements[i].result.development_type  |    runtime         |
+| version                   |    version[i].result.value   |   version  *(6)*  |
 
 ---
 
