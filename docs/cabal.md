@@ -1,18 +1,20 @@
 The following metadata fields can be extracted from a cabal file.   
-These fields are defined in the [Cabal specification](https://cabal.readthedocs.io/en/3.10/cabal-package.html), currently at version **3.10**and are mapped according to the [Codemeta crosswalk for cabal](https://github.com/codemeta/codemeta/blob/master/crosswalks/Cabal.csv).
+These fields are defined in the [Cabal specification](https://cabal.readthedocs.io/en/3.10/cabal-package.html), currently at version **3.10** and are mapped according to the [Codemeta crosswalk for cabal](https://github.com/codemeta/codemeta/blob/master/crosswalks/Cabal.csv).
 
-| SOMEF metadata category       | Expected value type            |       SOMEF metadata field  | CABAL metadata field               |
-|-------------------------------|-------------------------------|-----------------------------|------------------------------|
-| **description**               | String (description[i].result is of type String)|   description[i].result.value   |   synopsis / description *(1)*|
-| **has_package_file**         |  Url(has_package_file[i].result is of type Url) |  has_package_file[i].result.value    |   URL of the filename.cabal file    |
-| **homepage**                  |  Url (homepage[i].result is of type Url)|  homepage[i].result.value   |   homepage  *(2)*  |
-| **license**                   |  License (license[i].result is of type License)|   license[i].result.value   |   Regex license  *(3)*  |
-| **package_id**                |  String (package_id[i].result is of type String)|   package_id[i].value   |   name  *(4)* |
-| **requirements**              |  Software_application (requirements[i].result is of type Software_application) |   requirements[i].result.value  |   *(5)*      |
-| **requirements**              |  Software_application (requirements[i].result is of type Software_application) |   requirements[i].result.name | library.build-depends name  *(5.1)*    |
-| **requirements**              |  Software_application (requirements[i].result is of type Software_application) |   requirements[i].result.version | library.build-depends version  *(5.2)*       
-| **requirements**              |  Software_application (requirements[i].result is of type Software_application) | requirements[i].result.development_type  |    "runtime"         |
-| **version**                   |  String (version[i].result is of type String)|   version[i].result.value   |   version  *(6)*  |
+| Software metadata category    |       SOMEF metadata JSON path        | CABAL metadata file field               |
+|-------------------------------|---------------------------------------|-----------------------------------------|
+| **description**               |   description[i].result.value         |     synopsis / description *(1)*|
+| **development_status**        |   development_status[i].result.value  |     stability  |
+| **has_package_file**          |   has_package_file[i].result.value    |     URL of the filename.cabal file    |
+| **homepage**                  |   homepage[i].result.value            |     homepage  *(2)*  |
+| **issue_tracker**             |   issue_tracker[i].result.value       |     bug-reports             |
+| **license**                   |   license[i].result.value             |     Regex license  *(3)*  |
+| **package_id**                |   package_id[i].value                 |     name  *(4)* |
+| **requirements**              |   requirements[i].result.value        |     *(5)*      |
+| **requirements**              |   requirements[i].result.name         |     library.build-depends name  *(5.1)*    |
+| **requirements**              |   requirements[i].result.version      |     library.build-depends version  *(5.2)*  |   
+| **requirements**              |   requirements[i].result.development_type  |    "runtime"         |
+| **version**                   |   version[i].result.value             |     version  *(6)*  |
 
 ---
 
