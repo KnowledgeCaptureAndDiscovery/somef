@@ -14,7 +14,7 @@ print("You will be asked whether an excerpt matches a given value")
 print("To say it does, enter 'y' or just press enter. To say it does not, enter 'n'")
 
 for filename in os.listdir(input_dir):
-    from somef.somef_cli import cli_get_data
+    from .somef_cli import cli_get_data
     cli_data = cli_get_data(1.0, doc_src=os.path.join(input_dir, filename))
 
     def get_yes_or_no():

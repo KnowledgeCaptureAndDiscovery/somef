@@ -3,7 +3,7 @@
 
 import pandas as pd
 import os
-from somef.header_analysis import label_header
+from .header_analysis import label_header
 from datetime import datetime
 import csv
 
