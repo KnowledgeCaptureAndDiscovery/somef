@@ -1,18 +1,18 @@
 The following metadata fields can be extracted from a DESCRIPTION file.   
 These fields are defined in the [DESCRIPTON specification](https://r-pkgs.org/description.html), and are mapped according to the [CodeMeta crosswalk for DESCRIPTION files based in R Package](https://github.com/codemeta/codemeta/blob/master/crosswalks/R%20Package%20Description.csv).
 
-| SOMEF metadata category       | Expected value type        | SOMEF metadata field          | DESCRIPTION metadata field    |
-|-------------------------------|---------------------------|-------------------------------|---------------------|
-| **authors**                   |  Agent (authors[i].result is of type Agent) |authors[i].result.value      |  Authors *(1)*  |
-| **authors**                   |  Agent (authors[i].result is of type Agent) | authors[i].result.email      | Authors *(2)*  |
-| **code_repository**           |  Url (code_repository[i].result is of type Url)  | code_repository[i].result.value   |     URL *(3)* |
-| **description**               |  String (description[i].result is of type String)|   description[i].result.value   |    Description *(3)*  |
-| **has_package_file**         |  Url(has_package_file[i].result is of type Url) |  has_package_file[i].result.value    |  URL of the DESCRIPTION file       |
-| **homepage**           |  Url (homepage[i].result is of type Url)  | homepage[i].result.value   |  URL    *(3)*   |
-| **issue_tracker**           |  Url (issue_tracker[i].result is of type Url)  | issue_tracker[i].result.value   | BugReports  *(5)*   |
-| **license**                  |  String (license[i].result is of type String)|   license[i].result.value   | License   *(6)*   |
-| **package_id**                |  String (package_id[i].result is of type String)|   package_id[i].result.value   |   Package   *(6)*    |
-| **version**                  |  String (version[i].result is of type String)|   version[i].result.value   |   Version  *(7)*   |
+| Software metadata category    | SOMEF metadata JSON path          | DESCRIPTION metadata file field    |
+|-------------------------------|---------------------------------|---------------------|
+| **authors**                   |   authors[i].result.value      |  Authors *(1)*  |
+| **authors**                   |   authors[i].result.email      | Authors *(2)*  |
+| **code_repository**           |   code_repository[i].result.value   |     URL *(3)* |
+| **description**               |   description[i].result.value   |    Description *(3)*  |
+| **has_package_file**          |   has_package_file[i].result.value    |  URL of the DESCRIPTION file       |
+| **homepage**                  |   homepage[i].result.value   |  URL    *(3)*   |
+| **issue_tracker**             |   issue_tracker[i].result.value   | BugReports  *(5)*   |
+| **license**                   |   license[i].result.value   | License   *(6)*   |
+| **package_id**                |   package_id[i].result.value   |   Package   *(6)*    |
+| **version**                   |   version[i].result.value   |   Version  *(7)*   |
 
 ---
 

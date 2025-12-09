@@ -1,26 +1,26 @@
 The following metadata fields can be extracted from a package.json file.   
 These fields are defined in the [Package.json specification](https://docs.npmjs.com/cli/v10/configuring-npm/package-json), currently at version **10.9.4**, and are mapped according to the [CodeMeta crosswalk for package.json](https://github.com/codemeta/codemeta/blob/master/crosswalks/NodeJS.csv).
 
-| SOMEF metadata category       | Expected value type  | SOMEF metadata field                 | PACKAGE.JSON metadata field     |
-|-------------------------------|---------------------|--------------------------------------|---------------------  |
-| **authors**                   |  Agent (authors[i].result is of type Agent)  |     authors[i].result.value                |       author.name    |
-| **authors**                   |  Agent (authors[i].result is of type Agent)  |     authors[i].result.email                |       author.email  |
-| **authors**                   |  Agent (authors[i].result is of type Agent)  |     authors[i].result.url                  |       author.url  |
-| **authors**                   |  Agent (authors[i].result is of type Agent)  |     authors[i].result.name                 |       author.name  |
-| **code_repository**           |   Url (code_repository[i].result is of type Url)  |     code_repository[i].result.value         |    repository/repository.url/repository.directory  *(1)*|
-| **description**               |  String(description[i].result is of type String) |   description[i].result.value               | description            |
-| **has_package_file**         |   Url (has_package_file[i].result is of type Url) |   has_package_file[i].result.value   |  URL of the package.json file   |
-| **homepage**                  |  Url (homepage[i].result is of type Url)    |         homepage[i].result.value                       | homepage               |
-| **issue_tracker**             |   Url (issue_tracker[i].result is of type Url)|     issue_tracker[i].result.value           | bugs or bugs.url        *(2)*           |
-| **keywords**                  |   String(keywords[i].result is of type String) |   keywords[i].result.value                     |        keywords               |
-| **license**                   |   License(license[i].result is of type License) |   license[i].result.value       |     license or license.type          *(3)*             |
-| **package_id**                |  String(package_id[i].result is of type String) |    package_id[i].result.value                |         name          |
-| **requirements**              |    Software_application (requirements[i].result is of type Software_application)|  requirements[i].result.value              | dependencies/devDependencies     name@sversion      *(4)*            |
-| **requirements**              |    Software_application (requirements[i].result is of type Software_application)|  requirements[i].result.name      *(4)*          | dependencies/devDependencies     name                    |
-| **requirements**              |   Software_application (requirements[i].result is of type Software_application) |  requirements[i].result.version         *(4)*         | dependencies/devDependencies       version              |
-| **runtime_platform**          |   String (runtime_platform[i].result is of type String) |   runtime_platform[i].result.value             | engines(package:version) -> version  *(5)*  |
-| **runtime_platform**          |   String (runtime_platform[i].result is of type String) |   runtime_platform[i].result .name              | engines(package:version) -> package *(5)* |
-| **version**                   |   Release (version[i].result is of type Release)   |      version[i].result.value               | version               |
+| Software metadata category    |  SOMEF metadata JSON path                | PACKAGE.JSON metadata file field     |
+|-------------------------------|----------------------------------------|---------------------  |
+| **authors**                   |    authors[i].result.value                |       author.name    |
+| **authors**                   |    authors[i].result.email                |       author.email  |
+| **authors**                   |    authors[i].result.url                  |       author.url  |
+| **authors**                   |    authors[i].result.name                 |       author.name  |
+| **code_repository**           |    code_repository[i].result.value         |    repository/repository.url/repository.directory  *(1)*|
+| **description**               |    description[i].result.value               | description            |
+| **has_package_file**          |    has_package_file[i].result.value   |  URL of the package.json file   |
+| **homepage**                  |    homepage[i].result.value                       | homepage               |
+| **issue_tracker**             |    issue_tracker[i].result.value           | bugs or bugs.url        *(2)*           |
+| **keywords**                  |    keywords[i].result.value                     |        keywords               |
+| **license**                   |    license[i].result.value       |     license or license.type          *(3)*             |
+| **package_id**                |    package_id[i].result.value                |         name          |
+| **requirements**              |    requirements[i].result.value              | dependencies/devDependencies     name@sversion      *(4)*            |
+| **requirements**              |    requirements[i].result.name           | dependencies/devDependencies     name   *(4)*                |
+| **requirements**              |    requirements[i].result.version         | dependencies/devDependencies       version          *(4)*            |
+| **runtime_platform**          |    runtime_platform[i].result.value      | engines(package:version) -> version  *(5)*  |
+| **runtime_platform**          |    runtime_platform[i].result .name         engines(package:version) -> package *(5)* |
+| **version**                   |    version[i].result.value               | version               |
 
 ---
 

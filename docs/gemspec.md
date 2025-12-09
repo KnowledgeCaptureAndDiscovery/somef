@@ -1,21 +1,21 @@
 The following metadata fields can be extracted from a gemspec file.   
 These fields are defined in the [Ruby Gems specification](https://guides.rubygems.org/specification-reference/) currently at version **2.0**, and are mapped according to the [CodeMeta crosswalk for ruby gems](https://github.com/codemeta/codemeta/blob/master/crosswalks/Ruby%20Gem.csv).
 
-| SOMEF metadata category       | Expected value type            |       SOMEF metadata field  | .gemspec metadata field               |
-|-------------------------------|-------------------------------|-----------------------------|------------------------------|
-| **authors**                   |  Agent (authors[i].result is of type Agent) | authors[i].result.value   |   gem.authors    *(1)*    |
-| **description**               |  String (description[i].result is of type String)|   description[i].resultvalue   |   description   *(2)* |
-| **has_package_file**         |  Url(has_package_file[i].result is of type Url) |  has_package_file[i].result.value    |  URL of the filename.gemspec file      |
-| **homepage**                  |  Url (homepage[i].result is of type String)|   homepage[i].result.value   |  homepage *(3)*   |
-| **license**                   |  License (license[i].result is of type License)|   license[i].result.value   |   license/licenses  *(4)*   |
-| **license**                   |  License (license[i].result is of type License)|   license[i].result.spdx_id   |   license/licenses *(4)* spdx_id   |
-| **license**                   |  License (license[i].result is of type License)|   license[i].result.name   |    llicense/licenses name  *(4)*  |
-| **package_id**                |  String (package_id[i].result is of type String)|   package_id[i].result.value   |   name  *(5)*   |
-| **requirements**              |  Software_application (requirements[i].result is of type Software_application) |   requirements[i].result.value                  |   requirements/add_dependency/add_development_dependency    name:version   *(6)*    |
-| **requirements**              |  Software_application (requirements[i].result is of type Software_application) |   requirements[i].result.name                   |  requirements/add_dependency/add_development_dependency   name    *(6)*      |
-| **requirements**              |  Software_application (requirements[i].result is of type Software_application) |   requirements[i].result.version                |     requirements/add_dependency/add_development_dependency  version     *(6)*      |
-| **requirements**              |  Software_application (requirements[i].result is of type Software_application) |   requirements[i].result.development_type               |     add_dependency -> runtime     *(6)*     |
-| **requirements**              |  Software_application (requirements[i].result is of type Software_application) |   requirements[i].result.development_type               |     add_development_dependency -> dev      *(6)*    |
+| Software metadata category    |   SOMEF metadata JSON path     | .gemspec metadata file field               |
+|-------------------------------|--------------------------------|--------------------------------------|
+| **authors**                   |  authors[i].result.value   |   gem.authors    *(1)*    |
+| **description**               |  description[i].resultvalue   |   description   *(2)* |
+| **has_package_file**          |  has_package_file[i].result.value    |  URL of the filename.gemspec file      |
+| **homepage**                  |  homepage[i].result.value   |  homepage *(3)*   |
+| **license**                   |  license[i].result.value   |   license/licenses  *(4)*   |
+| **license**                   |  license[i].result.spdx_id   |   license/licenses *(4)* spdx_id   |
+| **license**                   |  license[i].result.name   |    llicense/licenses name  *(4)*  |
+| **package_id**                |  package_id[i].result.value   |   name  *(5)*   |
+| **requirements**              |  requirements[i].result.value                  |   requirements/add_dependency/add_development_dependency    name:version   *(6)*    |
+| **requirements**              |  requirements[i].result.name                   |  requirements/add_dependency/add_development_dependency   name    *(6)*      |
+| **requirements**              |  requirements[i].result.version                |     requirements/add_dependency/add_development_dependency  version     *(6)*      |
+| **requirements**              |  requirements[i].result.development_type               |     add_dependency -> runtime     *(6)*     |
+| **requirements**              |  requirements[i].result.development_type               |     add_development_dependency -> dev      *(6)*    |
 
 ---
 

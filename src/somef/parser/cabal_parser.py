@@ -108,6 +108,32 @@ def parse_cabal_file(file_path, metadata_result: Result, source):
                         source
                     )
 
+                stability_match = re.search(r'stability:\s*(.*)', content, re.IGNORECASE)
+                if stability_match:
+                    metadata_result.add_result(
+                        constants.CAT_DEV_STATUS,  
+                        {
+                            "value": stability_match.group(1),
+                            "type": constants.STRING   
+                        },
+                        1,
+                        constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                        source
+                    )
+
+                bug_reports_match = re.search(r'bug-reports:\s*(.*)', content, re.IGNORECASE)
+                if bug_reports_match:
+                    metadata_result.add_result(
+                        constants.CAT_ISSUE_TRACKER, 
+                        {
+                            "value": bug_reports_match.group(1),
+                            "type": constants.URL  
+                        },
+                        1,
+                        constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                        source
+                    )
+
                 license_match = re.search(r'license:\s*(.*)', content, re.IGNORECASE)
                 if license_match:
                     license_value = license_match.group(1)
