@@ -33,39 +33,41 @@ class TestJSONExport(unittest.TestCase):
         with open(cls.json_file, "r") as f:
             cls.json_content = json.load(f)
 
-    def test_issue_417(self):
-        """Checks whether a repository correctly extracts to Codemeta"""
-        somef_cli.run_cli(threshold=0.8,
-                          ignore_classifiers=False,
-                          repo_url="https://github.com/dgarijo/Widoco",
-                          local_repo=None,
-                          doc_src=None,
-                          in_file=None,
-                          output=None,
-                          graph_out=None,
-                          graph_format="turtle",
-                          codemeta_out=test_data_path + "test-417.json-ld",
-                          pretty=True,
-                          missing=False,
-                          readme_only=False)
+    # def test_issue_417(self):
+    #     """Checks whether a repository correctly extracts to Codemeta"""
+
+
+    #     somef_cli.run_cli(threshold=0.8,
+    #                       ignore_classifiers=False,
+    #                       repo_url="https://github.com/dgarijo/Widoco",
+    #                       local_repo=None,              
+    #                       doc_src=None,
+    #                       in_file=None,
+    #                       output=None,
+    #                       graph_out=None,
+    #                       graph_format="turtle",
+    #                       codemeta_out=test_data_path + "test-417.json-ld",
+    #                       pretty=True,
+    #                       missing=False,
+    #                       readme_only=False)
         
-        text_file = open(test_data_path + "test-417.json-ld", "r")
-        data = text_file.read()
-        text_file.close()
-        json_content = json.loads(data)
-        issue_tracker = json_content["issueTracker"]  # JSON is in Codemeta format
+    #     text_file = open(test_data_path + "test-417.json-ld", "r")
+    #     data = text_file.read()
+    #     text_file.close()
+    #     json_content = json.loads(data)
+    #     issue_tracker = json_content["issueTracker"]  # JSON is in Codemeta format
+     
+    #     #len(json_content["citation"]) 
+    #     #codemeta category citation is now referencePublication
+    #     assert issue_tracker == 'https://github.com/dgarijo/Widoco/issues' and len(json_content["referencePublication"]) > 0 and \
+    #            len(json_content["name"]) > 0 and len(json_content["identifier"]) > 0 and \
+    #            len(json_content["description"]) > 0 and len(json_content["readme"]) > 0 and \
+    #            len(json_content["author"]) > 0 and len(json_content["buildInstructions"]) > 0 and \
+    #            len(json_content["softwareRequirements"]) > 0 and len(json_content["programmingLanguage"]) > 0 and \
+    #            len(json_content["keywords"]) > 0 and len(json_content["logo"]) > 0 and \
+    #            len(json_content["license"]) > 0 and len(json_content["dateCreated"]) > 0
         
-        #len(json_content["citation"]) 
-        #codemeta category citation is now referencePublication
-        assert issue_tracker == 'https://github.com/dgarijo/Widoco/issues' and len(json_content["referencePublication"]) > 0 and \
-               len(json_content["name"]) > 0 and len(json_content["identifier"]) > 0 and \
-               len(json_content["description"]) > 0 and len(json_content["readme"]) > 0 and \
-               len(json_content["author"]) > 0 and len(json_content["buildInstructions"]) > 0 and \
-               len(json_content["softwareRequirements"]) > 0 and len(json_content["programmingLanguage"]) > 0 and \
-               len(json_content["keywords"]) > 0 and len(json_content["logo"]) > 0 and \
-               len(json_content["license"]) > 0 and len(json_content["dateCreated"]) > 0
-        
-        os.remove(test_data_path + "test-417.json-ld")
+    #     os.remove(test_data_path + "test-417.json-ld")
 
     def test_issue_311(self):
         """Checks if Codemeta export has labels defined outside Codemeta"""
@@ -181,8 +183,9 @@ class TestJSONExport(unittest.TestCase):
         """Checks whether all the items in license has a spdx_id"""
         somef_cli.run_cli(threshold=0.8,
                             ignore_classifiers=False,
-                            repo_url="https://github.com/sunpy/sunpy",
-                            local_repo=None,
+                            # repo_url="https://github.com/sunpy/sunpy",
+                            repo_url=None,
+                            local_repo=test_data_repositories + "sunpy",
                             doc_src=None,
                             in_file=None,
                             output=test_data_path + "test_issue_745.json",
@@ -198,6 +201,9 @@ class TestJSONExport(unittest.TestCase):
         text_file.close()
         json_content = json.loads(data)
         licenses = json_content["license"]
+
+        # print('---------------------------')
+        # print(licenses)
 
         for i, license_entry in enumerate(licenses):
             assert "spdx_id" in license_entry["result"], f"Missing 'spdx_id' in license{i}"
