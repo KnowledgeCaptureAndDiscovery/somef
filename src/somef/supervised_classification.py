@@ -29,7 +29,16 @@ def run_category_classification(readme_text: str, threshold: float, results: Res
             with open(model_file, 'rb') as f:
                 model = pickle.load(f)
                 cat = model.predict(text).tolist()[0]
-                prob = max(model.predict_proba(text).tolist()[0])
+
+                # now prob always corresponds to the class actually returned in cat, and the threshold is applied consistently.
+                # the old code always get the max probability of all classes
+                # prob = max(model.predict_proba(text).tolist()[0])
+                # print(f"------------------- Category: {cat} ------------------")
+
+                proba = model.predict_proba(text)[0]
+                prob = proba[model.classes_.tolist().index(cat)]  
+
+                # print(f"----Prob max: {prob} ------------------")
                 if cat != 'Other' and prob > threshold:
                     results.add_result(constants.CAT_APPLICATION_DOMAIN,
                                        {

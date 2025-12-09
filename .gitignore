@@ -22,3 +22,4 @@ local_tests/*
 Dockerfile_old
 repos.txt
 !package_neors.json
+!package_npm.json
