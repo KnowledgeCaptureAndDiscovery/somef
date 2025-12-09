@@ -3,12 +3,14 @@ import unittest
 import json
 from pathlib import Path
 from .. import somef_cli
+from ..parser import pom_xml_parser
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
 
 class TestCodemetaExport(unittest.TestCase):
-    
+
+
     @classmethod
     def setUpClass(cls):
         """Runs somef_cli once and saves the JSON"""
@@ -401,8 +403,13 @@ class TestCodemetaExport(unittest.TestCase):
         """
         Checks runtime in codemeta file
         """
-        output_path = test_data_path + 'test_codemeta_widoco_runtime_platform.json'
 
+        pom_xml_parser.processed_pom = False
+
+        output_path = test_data_path + 'test_codemeta_widoco_runtime_platform.json'
+        if os.path.exists(output_path):
+            os.remove(output_path)
+            
         somef_cli.run_cli(threshold=0.9,
                           ignore_classifiers=False,
                           repo_url=None,
@@ -502,7 +509,7 @@ class TestCodemetaExport(unittest.TestCase):
             except Exception as e:
                 print(f"Failed to delete {cls.json_file}: {e}")  
 
-
+    
 if __name__ == "__main__":
     unittest.main()
  
