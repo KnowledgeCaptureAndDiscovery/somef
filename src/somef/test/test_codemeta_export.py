@@ -3,35 +3,56 @@ import unittest
 import json
 from pathlib import Path
 from .. import somef_cli
+from ..parser import pom_xml_parser
+from ..export import json_export
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
+test_data_api_json = str(Path(__file__).parent / "test_data" / "api_responses") + os.path.sep
 
 class TestCodemetaExport(unittest.TestCase):
-    
+
+
     @classmethod
     def setUpClass(cls):
         """Runs somef_cli once and saves the JSON"""
         cls.json_file = test_data_path + "test_json_codemeta_export.json"
         
-        somef_cli.run_cli(
-            threshold=0.8,
-            ignore_classifiers=False,
-            # repo_url="https://github.com/tpronk/somef-demo-repo/",
-            repo_url="https://github.com/juanjemdIos/somef-demo-repo/",
-            doc_src=None,
-            in_file=None,
-            output=None,
-            graph_out=None,
-            graph_format="turtle",
-            codemeta_out=cls.json_file,
+        cls.api_results_file = test_data_api_json + "somef-demo.json"
+        with open(cls.api_results_file, "r", encoding="utf-8") as f:
+            cls.api_results = json.load(f)
+
+        json_export.save_codemeta_output(
+            cls.api_results, 
+            cls.json_file,
             pretty=True,
-            missing=True,
-            readme_only=False
+            requirements_mode=False     
         )
 
-        with open(cls.json_file, "r") as f:
+        with open(cls.json_file, "r", encoding="utf-8") as f:
             cls.json_content = json.load(f)
+
+        # somef_cli.run_cli(
+        #     threshold=0.8,
+        #     ignore_classifiers=False,
+        #     repo_url="https://github.com/juanjemdIos/somef-demo-repo/",
+        #     # repo_url=None,
+        #     # local_repo= test_data_repositories + "somef-demo",
+        #     doc_src=None,
+        #     in_file=None,
+        #     output=None,
+        #     graph_out=None,
+        #     graph_format="turtle",
+        #     codemeta_out=cls.json_file,
+        #     pretty=True,
+        #     missing=True,
+        #     readme_only=False
+        # )
+
+        # with open(cls.json_file, "r") as f:
+        #     cls.json_content = json.load(f)
+
+        # print(cls.json_content)
 
 
     def test_codemeta_version(self):
@@ -401,8 +422,13 @@ class TestCodemetaExport(unittest.TestCase):
         """
         Checks runtime in codemeta file
         """
-        output_path = test_data_path + 'test_codemeta_widoco_runtime_platform.json'
 
+        pom_xml_parser.processed_pom = False
+
+        output_path = test_data_path + 'test_codemeta_widoco_runtime_platform.json'
+        if os.path.exists(output_path):
+            os.remove(output_path)
+            
         somef_cli.run_cli(threshold=0.9,
                           ignore_classifiers=False,
                           repo_url=None,
@@ -502,7 +528,7 @@ class TestCodemetaExport(unittest.TestCase):
             except Exception as e:
                 print(f"Failed to delete {cls.json_file}: {e}")  
 
-
+    
 if __name__ == "__main__":
     unittest.main()
  

@@ -84,6 +84,9 @@ class TestCabalParser(unittest.TestCase):
         self.assertEqual(requirements_results[0]["result"]["name"], "Cabal-syntax")
         self.assertEqual(requirements_results[1]["result"]["version"], ">= 0.4.0.1  && < 0.6")
 
+        issue_tracker_results = metadata_result.results.get(constants.CAT_ISSUE_TRACKER, [])
+        self.assertEqual(issue_tracker_results[0]["result"]["value"], "https://github.com/haskell/cabal/issues")
+
     
 if __name__ == "__main__":
     unittest.main()

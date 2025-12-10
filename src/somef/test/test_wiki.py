@@ -5,7 +5,7 @@ from pathlib import Path
 from .. import somef_cli
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
-
+test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
 class TestWiki(unittest.TestCase):
     # def test_no_wiki(self):
     #     """Checks if codemeta file has been exported without wiki"""
@@ -42,7 +42,9 @@ class TestWiki(unittest.TestCase):
         """Checks if codemeta file has been exported with wiki content"""
         somef_cli.run_cli(threshold=0.8,
                             ignore_classifiers=False,
-                            repo_url='https://github.com/dgarijo/Widoco',
+                            # repo_url='https://github.com/dgarijo/Widoco',
+                            repo_url=None,
+                            local_repo= test_data_repositories + "Widoco",
                             doc_src=None,
                             in_file=None,
                             output=None,
