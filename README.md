@@ -159,7 +159,7 @@ This option is recommended over installing Poetry with pip install.
 
 Now Poetry will handle the installation of SOMEF and all its dependencies configured in the `toml` file.
 
-To test the correct installation of poetry run (the poetry version installed for this project is `> 2.0.0`):
+To test the correct installation of poetry run (poetry version `> 2.0.0`):
 
 ```
 poetry --version
