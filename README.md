@@ -159,7 +159,7 @@ This option is recommended over installing Poetry with pip install.
 
 Now Poetry will handle the installation of SOMEF and all its dependencies configured in the `toml` file.
 
-To test the correct installation of poetry run:
+To test the correct installation of poetry run (poetry version `> 2.0.0`):
 
 ```
 poetry --version
@@ -172,15 +172,11 @@ cd /somef
 poetry install
 ```
 
-Now we need to access our virtual environment, to do so you have to install the [poetry plugin shell](https://github.com/python-poetry/poetry-plugin-shell) and run the following command:
+Now we need to access our virtual environment, to do so you can run the following command:
+```
+poetry env activate
+To learn more about poetry environment management, visit their official documentation [here](https://python-poetry.org/docs/managing-environments/).
 
-```
-pip install poetry-plugin-shell
-```
-After `shell` is set up, you can run the following comand to access the virtual environment
-```
-poetry shell
-```
 Test SOMEF installation
 
 ```bash
