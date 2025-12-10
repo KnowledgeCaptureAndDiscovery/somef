@@ -1460,7 +1460,7 @@
                     {
                         "url": "https://api.github.com/repos/dgarijo/Widoco/releases/assets/3978689",
                         "name": "widoco-1.4.1-jar-with-dependencies.jar",
-                        "content_size": 42914379,
+                        "content_size": 42914378,
                         "content_url": "https://github.com/dgarijo/Widoco/releases/download/v1.4.1/widoco-1.4.1-jar-with-dependencies.jar",
                         "encoding_format": "application/octet-stream",
                         "upload_date": "2017-05-28T18:36:04Z",
@@ -2738,7 +2738,7 @@
                 "type": "String",
                 "value": "Semantic web"
             },
-            "confidence": 0.921888526958784,
+            "confidence": 0.921888526958785,
             "technique": "supervised_classification"
         }
     ],
