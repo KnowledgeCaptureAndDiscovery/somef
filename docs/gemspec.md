@@ -3,19 +3,19 @@ These fields are defined in the [Ruby Gems specification](https://guides.rubygem
 
 | Software metadata category    |   SOMEF metadata JSON path     | .gemspec metadata file field               |
 |-------------------------------|--------------------------------|--------------------------------------|
-| **authors**                   |  authors[i].result.value   |   gem.authors    *(1)*    |
-| **description**               |  description[i].resultvalue   |   description   *(2)* |
-| **has_package_file**          |  has_package_file[i].result.value    |  URL of the filename.gemspec file      |
-| **homepage**                  |  homepage[i].result.value   |  homepage *(3)*   |
-| **license**                   |  license[i].result.value   |   license/licenses  *(4)*   |
-| **license**                   |  license[i].result.spdx_id   |   license/licenses *(4)* spdx_id   |
-| **license**                   |  license[i].result.name   |    llicense/licenses name  *(4)*  |
-| **package_id**                |  package_id[i].result.value   |   name  *(5)*   |
-| **requirements**              |  requirements[i].result.value                  |   requirements/add_dependency/add_development_dependency    name:version   *(6)*    |
-| **requirements**              |  requirements[i].result.name                   |  requirements/add_dependency/add_development_dependency   name    *(6)*      |
-| **requirements**              |  requirements[i].result.version                |     requirements/add_dependency/add_development_dependency  version     *(6)*      |
-| **requirements**              |  requirements[i].result.development_type               |     add_dependency -> runtime     *(6)*     |
-| **requirements**              |  requirements[i].result.development_type               |     add_development_dependency -> dev      *(6)*    |
+| authors                  |  authors[i].result.value   |   gem.authors    *(1)*    |
+| description              |  description[i].resultvalue   |   description   *(2)* |
+| has_package_file          |  has_package_file[i].result.value    |  URL of the filename.gemspec file      |
+| homepage                  |  homepage[i].result.value   |  homepage *(3)*   |
+| license - value                   |  license[i].result.value   |   license/licenses  *(4)*   |
+| license - spdx id                   |  license[i].result.spdx_id   |   license/licenses *(4)* spdx_id   |
+| license - name                   |  license[i].result.name   |    llicense/licenses name  *(4)*  |
+| package_id                |  package_id[i].result.value   |   name  *(5)*   |
+| requirements - value              |  requirements[i].result.value                  |   requirements/add_dependency/add_development_dependency    name:version   *(6)*    |
+| requirements - name              |  requirements[i].result.name                   |  requirements/add_dependency/add_development_dependency   name    *(6)*      |
+| requirements - version             |  requirements[i].result.version                |     requirements/add_dependency/add_development_dependency  version     *(6)*      |
+| requirements - development type             |  requirements[i].result.development_type               |     add_dependency -> runtime     *(6)*     |
+| requirements - development type                |  requirements[i].result.development_type               |     add_development_dependency -> dev      *(6)*    |
 
 ---
 

@@ -3,11 +3,11 @@ These fields are defined in the [Requirements specification](https://pip.pypa.io
 
 | Software metadata category       |     SOMEF metadata JSON path       |    REQUIREMENTS.TXT metadata file field  |   
 |----------------------------------|------------------------------------|------------------------------------------|
-| **requirements**         |   requirements[i].result.value  |  *(1)*  |
-| **requirements**         |   requirements[i].result.name   |  *(1)*    |
-| **requirements**         |   requirements[i].result.version| *(1)*   |
-| **runtime_platform**     |   runtime_platform[i].result.value | if Python *(1)* |
-| **runtime_platform**     |   runtime_platform[i].result.name |   "Python"   |
+| requirements - value         |   requirements[i].result.value  |  *(1)*  |
+| requirements - name        |   requirements[i].result.name   |  *(1)*    |
+| requirements - version         |   requirements[i].result.version| *(1)*   |
+| runtime_platform - value     |   runtime_platform[i].result.value | if Python *(1)* |
+| runtime_platform - name     |   runtime_platform[i].result.name |   "Python"   |
 
 
 ---

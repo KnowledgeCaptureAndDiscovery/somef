@@ -1,28 +1,28 @@
 The following metadata fields can be extracted from a pom.xml file.   
 These fields are defined in the [Maven POM specification](https://maven.apache.org/pom.html), currently at version **4.0.0**, and are mapped according to the [CodeMeta crosswalk for Java (Maven)](https://github.com/codemeta/codemeta/blob/master/crosswalks/Java%20(Maven).csv).
 
-| SOMEF metadata category       | Expected value type  |   SOMEF metadata field                 | POM.XML metadata field    |
-|-------------------------------|---------------------|----------------------------------------|------------------|
-| **authors**                   |  Agent (authors[i].result is of type Agent) | authors[i].result .value       |    developers.developer.name |
-| **authors**                   |  Agent (authors[i].result is of type Agent) | authors[i].result .name       |     developers.developer.name |
-| **authors**                   |  Agent (authors[i].result is of type Agent) | Aauthors[i].result .email      |     developers.developer.email |
-| **authors**                   |  Agent (authors[i].result is of type Agent) | authors[i].result .url         |     developers.developer.url |
-| **authors**                   |  Agent (authors[i].result is of type Agent) | authors[i].result .affiliation |     developers.developer.organization |
-| **has_package_file**         |  Url (has_package_file[i].result is of type Url) | has_package_file[i].result .value      |  URL of the pom.xml file |
-| **homepage**                  |  Url (homepage[i].result is of type Url)                |   homepage[i].result.value | homepage |
-| **issue_tracker**             |  Url (issue_tracker[i].result is of type Url)    | issue_tracker[i].result .value    | issueManagement.url                  |
-| **package_distribution**      |  Url (package_distribution[i].result is of type Url)    |   package_distribution[i].result value  | scm.url *(1)*|
-| **package_distribution**      |  Url (package_distribution[i].result is of type Url)    |   package_distribution[i].result.value   | repositories.repository(id) *(2)*|
-| **package_distribution**      |  Url (package_distribution[i].result is of type Url)    |   package_distribution[i].result.name   | repositories.repository(name) *(2)*|
-| **package_distribution**      |  Url (package_distribution[i].result is of type Url)    |   package_distribution[i].result.url  | repositories.repository(url) *(2)*|
-| **requirements**              |  Software_application (requirements[i].result is of type Software_application)  | requirements[i].result.value   | dependencies.dependency.groupId.arfifactId  *(3)*                        |
-| **requirements**              |  Software_application (requirements[i].result is of type Software_application)  | requirements[i].result.name   |  dependencies.dependency.arfifactId    *(3)*                     |
-| **requirements**              |  Software_application (requirements[i].result is of type Software_application) | requirements[i].result.version   | dependencies.dependency.version    *(3)*                    |
-| **package_id**                |  String (package_id[i].result is of type String)   | package_id[i].result .value   | group_id.artifact_id             *(4)*              |
-| **runtime_platform**          | String (runtime_platform[i].result is of type String)  |   runtime_platform[i].result.value |  properties  extract name version  *(5)*  |
-| **runtime_platform**          | String (runtime_platform[i].result is of type String) |   runtime_platform[i].result.name |   properties extract name    *(5)*|
-| **runtime_platform**          | String (runtime_platform[i].result is of type String)  |   runtime_platform[i].result.value |  properties  extract version  *(5)*  |
-| **version**                   | Release (version[i].result is of type Release)   | version[i].result .value  | version                    |
+| Software metadata category       |   SOMEF metadata JSON path                 | POM.XML metadata file field    |
+|-------------------------------|---------------------------------------------|----------------------------------|
+| authors - value                   |  authors[i].result.value       |    developers.developer.name |
+| authors - name                   |  authors[i].result.name       |     developers.developer.name |
+| authors - email                   |  Aauthors[i].result.email      |     developers.developer.email |
+| authors - url                   |  authors[i].result.url         |     developers.developer.url |
+| authors - affiliation                   |  authors[i].result.affiliation |     developers.developer.organization |
+| has_package_file          | has_package_file[i].result .value      |  URL of the pom.xml file |
+| homepage                  |  homepage[i].result.value | homepage |
+| issue_tracker             | issue_tracker[i].result .value    | issueManagement.url                  |
+| package_distribution - value      |    package_distribution[i].result value  | scm.url *(1)*|
+| package_distribution - value      |    package_distribution[i].result.value   | repositories.repository(id) *(2)*|
+| package_distribution - name      |    package_distribution[i].result.name   | repositories.repository(name) *(2)*|
+| package_distribution - url      |    package_distribution[i].result.url  | repositories.repository(url) *(2)*|
+| requirements - value             |   requirements[i].result.value   | dependencies.dependency.grpId.arfifactId  *(3)*                        |
+| requirements - name            |   requirements[i].result.name  | dependencies.dependency.arfifactId    *(3)*                     |
+| requirements - version              |   requirements[i].result.version   | dependencies.dependency.version    *(3)*                    |
+| package_id                 |   package_id[i].result .value   | group_id.artifact_id             *(4)*              |
+| runtime_platform - value          |    runtime_platform[i].result.value |  properties  extract name version  *(5)*  |
+| runtime_platform - name          |    runtime_platform[i].result.name |   properties extract name    *(5)*|
+| runtime_platform - value          |   runtime_platform[i].result.value |  properties  extract version  *(5)*  |
+| version                   |  version[i].result .value  | version                    |
 
 ---
 

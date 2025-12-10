@@ -3,18 +3,18 @@ These fields are defined in the [Bower specification](https://github.com/bower/s
 
 | Software metadata category  | SOMEF metadata JSON path              | BOWER.JSON metadata file field     |
 |-----------------------------|---------------------------------------|---------------------|
-| **authors**                 |     authors[i].result.value           |     authors[]         |
-| **description**             |     description[i].result.value       |     description     |
-| **has_package_file**        |     has_package_file[i].result.value  |   URL of the bower.json file   |
-| **homepage**                |     homepage[i].result.value          |     homepage |
-| **license**                 |     license[i].result.value           |     license |
-| **name**                    |     name[i].result.value              |     name  |
-| **keywords**                |     keywords[i].result.value          |     keywords |
-| **requirements**            |     requirements[i].result.value      | "dependencies": {"paq":"version"}  -> paq: version    *(1)* | 
-| **requirements**            |     requirements[i].result.name       | "dependencies": {"paq":"version"}  -> paq       |        
-| **requirements**            |     requirements[i].result.version    | "dependencies": {"paq":"version"}  -> version |
-| **requirements**            |     requirements[i].result.dependency_type            | dependencies -> runtime , devDependencies -> dev |
-| **version**                 |     version[i].result.value           | version |
+| authors                 |     authors[i].result.value           |     authors[]         |
+| description             |     description[i].result.value       |     description     |
+| has_package_file        |     has_package_file[i].result.value  |   URL of the bower.json file   |
+| homepage                |     homepage[i].result.value          |     homepage |
+| license                 |     license[i].result.value           |     license |
+| name                   |     name[i].result.value              |     name  |
+| keywords                |     keywords[i].result.value          |     keywords |
+| requirements - value          |     requirements[i].result.value      | "dependencies": {"paq":"version"}  -> paq: version    *(1)* | 
+| requirements - name           |     requirements[i].result.name       | "dependencies": {"paq":"version"}  -> paq       |        
+| requirements - version            |     requirements[i].result.version    | "dependencies": {"paq":"version"}  -> version |
+| requirements - dependency type           |     requirements[i].result.dependency_type            | dependencies -> runtime , devDependencies -> dev |
+| version                 |     version[i].result.value           | version |
 
 
 ---

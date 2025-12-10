@@ -3,16 +3,16 @@ These fields are defined in the [DESCRIPTON specification](https://r-pkgs.org/de
 
 | Software metadata category    | SOMEF metadata JSON path          | DESCRIPTION metadata file field    |
 |-------------------------------|---------------------------------|---------------------|
-| **authors**                   |   authors[i].result.value      |  Authors *(1)*  |
-| **authors**                   |   authors[i].result.email      | Authors *(2)*  |
-| **code_repository**           |   code_repository[i].result.value   |     URL *(3)* |
-| **description**               |   description[i].result.value   |    Description *(3)*  |
-| **has_package_file**          |   has_package_file[i].result.value    |  URL of the DESCRIPTION file       |
-| **homepage**                  |   homepage[i].result.value   |  URL    *(3)*   |
-| **issue_tracker**             |   issue_tracker[i].result.value   | BugReports  *(5)*   |
-| **license**                   |   license[i].result.value   | License   *(6)*   |
-| **package_id**                |   package_id[i].result.value   |   Package   *(6)*    |
-| **version**                   |   version[i].result.value   |   Version  *(7)*   |
+| authors                   |   authors[i].result.value      |  Authors *(1)*  |
+| authors                   |   authors[i].result.email      | Authors *(2)*  |
+| code_repository          |   code_repository[i].result.value   |     URL *(3)* |
+| description               |   description[i].result.value   |    Description *(3)*  |
+| has_package_file          |   has_package_file[i].result.value    |  URL of the DESCRIPTION file       |
+| homepage                  |   homepage[i].result.value   |  URL    *(3)*   |
+| issue_tracker            |   issue_tracker[i].result.value   | BugReports  *(5)*   |
+| license                   |   license[i].result.value   | License   *(6)*   |
+| package_id                |   package_id[i].result.value   |   Package   *(6)*    |
+| version                   |   version[i].result.value   |   Version  *(7)*   |
 
 ---
 

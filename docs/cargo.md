@@ -3,23 +3,23 @@ These fields are defined in the [Cargo.toml specification](https://doc.rust-lang
 
 | Software metadata category        |      SOMEF metadata JSON path  | CARGO.TOML metadata file field                |
 |-------------------------------|--------------------------------------------|------------------------------|
-| **authors**                   |   authors[i].result.value   |     package.authors      |
-| **authors**                   |   authors[i].result.name   |     package.authors  *(1)*     |
-| **authors**                   |   authors[i].result.email   |    package.authors  *(2)*      |
-| **code_repository**           |   code_repository[i].result.value   |   package.repository      |
-| **description**               |   description[i].result.value   |   package.description   |
-| **has_package_file**          |   has_package_file[i].result.value    |  URL of the cargo.toml file        |
-| **keywords**                  |   keywords[i].result.value   |   package.keywords   |
-| **license**                   |   license[i].result.value   |   package.license    |
-| **license**                   |   license[i].result.spdx_id   |   package.license *(3)*  |
-| **license**                   |   license[i].result.name   |   package.license  *(4)*   |
-| **package_id**                |   package_id[i].result.value   |   package.name   |
-| **requirements**              |   requirements[i].result.value                  |  target.dependencies or depencencies name = version     |
-| **requirements**              |   requirements[i].result.name                   |  target.dependencies or depencencies name         |
-| **requirements**              |   requirements[i].result.version                |  target.dependencies or depencencies version             |
-| **requirements**              |   requirements[i].result.development_type               |   target.dependencies or dependencies (version, git, path, other)         |
-| **version**                   |    version[i].result.value   |   package.version   |
-| **version**                   |   version[i].result.tag      |   package.version   |
+| authors - value                 |   authors[i].result.value   |     package.authors      |
+| authors - name                |   authors[i].result.name   |     package.authors  *(1)*     |
+| authors - email                  |   authors[i].result.email   |    package.authors  *(2)*      |
+| code_repository           |   code_repository[i].result.value   |   package.repository      |
+| description              |   description[i].result.value   |   package.description   |
+| has_package_file         |   has_package_file[i].result.value    |  URL of the cargo.toml file        |
+| keywords                  |   keywords[i].result.value   |   package.keywords   |
+| license - value                  |   license[i].result.value   |   package.license    |
+| license - spdx id                |   license[i].result.spdx_id   |   package.license *(3)*  |
+| license - name                |   license[i].result.name   |   package.license  *(4)*   |
+| package_id                |   package_id[i].result.value   |   package.name   |
+| requirements - value              |   requirements[i].result.value                  |  target.dependencies or depencencies name = version     |
+| requirements - name              |   requirements[i].result.name                   |  target.dependencies or depencencies name         |
+| requirements - version             |   requirements[i].result.version                |  target.dependencies or depencencies version             |
+| requirements - development type              |   requirements[i].result.development_type               |   target.dependencies or dependencies (version, git, path, other)         |
+| version - value                  |    version[i].result.value   |   package.version   |
+| version - tag                   |   version[i].result.tag      |   package.version   |
 
 ---
 

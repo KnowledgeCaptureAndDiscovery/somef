@@ -3,24 +3,24 @@ These fields are defined in the [Package.json specification](https://docs.npmjs.
 
 | Software metadata category    |  SOMEF metadata JSON path                | PACKAGE.JSON metadata file field     |
 |-------------------------------|----------------------------------------|---------------------  |
-| **authors**                   |    authors[i].result.value                |       author.name    |
-| **authors**                   |    authors[i].result.email                |       author.email  |
-| **authors**                   |    authors[i].result.url                  |       author.url  |
-| **authors**                   |    authors[i].result.name                 |       author.name  |
-| **code_repository**           |    code_repository[i].result.value         |    repository/repository.url/repository.directory  *(1)*|
-| **description**               |    description[i].result.value               | description            |
-| **has_package_file**          |    has_package_file[i].result.value   |  URL of the package.json file   |
-| **homepage**                  |    homepage[i].result.value                       | homepage               |
-| **issue_tracker**             |    issue_tracker[i].result.value           | bugs or bugs.url        *(2)*           |
-| **keywords**                  |    keywords[i].result.value                     |        keywords               |
-| **license**                   |    license[i].result.value       |     license or license.type          *(3)*             |
-| **package_id**                |    package_id[i].result.value                |         name          |
-| **requirements**              |    requirements[i].result.value              | dependencies/devDependencies     name@sversion      *(4)*            |
-| **requirements**              |    requirements[i].result.name           | dependencies/devDependencies     name   *(4)*                |
-| **requirements**              |    requirements[i].result.version         | dependencies/devDependencies       version          *(4)*            |
-| **runtime_platform**          |    runtime_platform[i].result.value      | engines(package:version) -> version  *(5)*  |
-| **runtime_platform**          |    runtime_platform[i].result .name         engines(package:version) -> package *(5)* |
-| **version**                   |    version[i].result.value               | version               |
+| authors - value                   |    authors[i].result.value                |       author.name    |
+| authors - email                   |    authors[i].result.email                |       author.email  |
+| authors - url                   |    authors[i].result.url                  |       author.url  |
+| authors - name                  |    authors[i].result.name                 |       author.name  |
+| code_repository           |    code_repository[i].result.value         |    repository/repository.url/repository.directory  *(1)*|
+| description               |    description[i].result.value               | description            |
+| has_package_file          |    has_package_file[i].result.value   |  URL of the package.json file   |
+| homepage                  |    homepage[i].result.value                       | homepage               |
+| issue_tracker             |    issue_tracker[i].result.value           | bugs or bugs.url        *(2)*           |
+| keywords                  |    keywords[i].result.value                     |        keywords               |
+| license                   |    license[i].result.value       |     license or license.type          *(3)*             |
+| package_id               |    package_id[i].result.value                |         name          |
+| requirements - value              |    requirements[i].result.value              | dependencies/devDependencies     name@sversion      *(4)*          |
+| requirements - name              |    requirements[i].result.name           | dependencies/devDependencies     name   *(4)*                |
+| requirements - version              |    requirements[i].result.version         | dependencies/devDependencies       version          *(4)*            |
+| runtime_platform - value          |    runtime_platform[i].result.value      | engines(package:version) -> version  *(5)*  |
+| runtime_platform - name          |    runtime_platform[i].result.name         engines(package:version) -> package *(5)* |
+| version                   |    version[i].result.value               | version               |
 
 ---
 
