@@ -842,6 +842,7 @@ def detect_license_spdx(license_text, type):
     -------
     A JSON dictionary with name and spdx id
     """
+
     for license_name, license_info in constants.LICENSES_DICT.items():
         if re.search(license_info["regex"], license_text, re.IGNORECASE):
             if type == 'JSON':
@@ -865,14 +866,18 @@ def detect_license_spdx(license_text, type):
             }
     return None
 
-# def detect_license(license_text):
-#     for license_name, license_info in constants.LICENSES_DICT.items():
-#         if re.search(license_info["regex"], license_text, re.IGNORECASE):
-#             return {
-#                 "name": license_name,
-#                 "identifier": f"https://spdx.org/licenses/{license_info['spdx_id']}"
-#             }
-#     return None
+def detect_spdx_from_declared(value: str):
+    """
+    Check if declared license matches an SPDX ID in LICENSES_DICT.
+    """
+    for name, info in constants.LICENSES_DICT.items():
+        if value == info["spdx_id"]:
+            return {
+                "name": name,
+                "spdx_id": info["spdx_id"],
+                "@id": f"https://spdx.org/licenses/{info['spdx_id']}"
+            }
+    return None
 
 def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle, type):
     """

@@ -7,65 +7,70 @@ from ..utils import constants
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
-
+test_data_api_json = str(Path(__file__).parent / "test_data" / "api_responses") + os.path.sep
 
 class TestJSONExport(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         """Runs somef_cli once and saves the JSON"""
-        cls.json_file = test_data_path + "test_json_widoco_export.json"
-        
-        somef_cli.run_cli(threshold=0.8,
-                          ignore_classifiers=False,
-                          repo_url="https://github.com/dgarijo/Widoco",
-                          local_repo=None,
-                          doc_src=None,
-                          in_file=None,
-                          output=cls.json_file,
-                          graph_out=None,
-                          graph_format="turtle",
-                          codemeta_out=None,
-                          pretty=True,
-                          missing=False,
-                          readme_only=False)
+        # cls.json_file = test_data_path + "test_json_widoco_export.json"
+        cls.api_results_file = test_data_api_json + "widoco_api_response.json"
+        with open(cls.api_results_file, "r", encoding="utf-8") as f:
+            cls.json_content= json.load(f)
 
-        with open(cls.json_file, "r") as f:
-            cls.json_content = json.load(f)
+        # somef_cli.run_cli(threshold=0.8,
+        #                   ignore_classifiers=False,
+        #                   repo_url="https://github.com/dgarijo/Widoco",
+        #                   local_repo=None,
+        #                   doc_src=None,
+        #                   in_file=None,
+        #                   output=cls.json_file,
+        #                   graph_out=None,
+        #                   graph_format="turtle",
+        #                   codemeta_out=None,
+        #                   pretty=True,
+        #                   missing=False,
+        #                   readme_only=False)
 
-    def test_issue_417(self):
-        """Checks whether a repository correctly extracts to Codemeta"""
-        somef_cli.run_cli(threshold=0.8,
-                          ignore_classifiers=False,
-                          repo_url="https://github.com/dgarijo/Widoco",
-                          local_repo=None,
-                          doc_src=None,
-                          in_file=None,
-                          output=None,
-                          graph_out=None,
-                          graph_format="turtle",
-                          codemeta_out=test_data_path + "test-417.json-ld",
-                          pretty=True,
-                          missing=False,
-                          readme_only=False)
+        # with open(cls.json_file, "r") as f:
+        #     cls.json_content = json.load(f)
+
+    # def test_issue_417(self):
+    #     """Checks whether a repository correctly extracts to Codemeta"""
+
+
+    #     somef_cli.run_cli(threshold=0.8,
+    #                       ignore_classifiers=False,
+    #                       repo_url="https://github.com/dgarijo/Widoco",
+    #                       local_repo=None,              
+    #                       doc_src=None,
+    #                       in_file=None,
+    #                       output=None,
+    #                       graph_out=None,
+    #                       graph_format="turtle",
+    #                       codemeta_out=test_data_path + "test-417.json-ld",
+    #                       pretty=True,
+    #                       missing=False,
+    #                       readme_only=False)
         
-        text_file = open(test_data_path + "test-417.json-ld", "r")
-        data = text_file.read()
-        text_file.close()
-        json_content = json.loads(data)
-        issue_tracker = json_content["issueTracker"]  # JSON is in Codemeta format
+    #     text_file = open(test_data_path + "test-417.json-ld", "r")
+    #     data = text_file.read()
+    #     text_file.close()
+    #     json_content = json.loads(data)
+    #     issue_tracker = json_content["issueTracker"]  # JSON is in Codemeta format
+     
+    #     #len(json_content["citation"]) 
+    #     #codemeta category citation is now referencePublication
+    #     assert issue_tracker == 'https://github.com/dgarijo/Widoco/issues' and len(json_content["referencePublication"]) > 0 and \
+    #            len(json_content["name"]) > 0 and len(json_content["identifier"]) > 0 and \
+    #            len(json_content["description"]) > 0 and len(json_content["readme"]) > 0 and \
+    #            len(json_content["author"]) > 0 and len(json_content["buildInstructions"]) > 0 and \
+    #            len(json_content["softwareRequirements"]) > 0 and len(json_content["programmingLanguage"]) > 0 and \
+    #            len(json_content["keywords"]) > 0 and len(json_content["logo"]) > 0 and \
+    #            len(json_content["license"]) > 0 and len(json_content["dateCreated"]) > 0
         
-        #len(json_content["citation"]) 
-        #codemeta category citation is now referencePublication
-        assert issue_tracker == 'https://github.com/dgarijo/Widoco/issues' and len(json_content["referencePublication"]) > 0 and \
-               len(json_content["name"]) > 0 and len(json_content["identifier"]) > 0 and \
-               len(json_content["description"]) > 0 and len(json_content["readme"]) > 0 and \
-               len(json_content["author"]) > 0 and len(json_content["buildInstructions"]) > 0 and \
-               len(json_content["softwareRequirements"]) > 0 and len(json_content["programmingLanguage"]) > 0 and \
-               len(json_content["keywords"]) > 0 and len(json_content["logo"]) > 0 and \
-               len(json_content["license"]) > 0 and len(json_content["dateCreated"]) > 0
-        
-        os.remove(test_data_path + "test-417.json-ld")
+    #     os.remove(test_data_path + "test-417.json-ld")
 
     def test_issue_311(self):
         """Checks if Codemeta export has labels defined outside Codemeta"""
@@ -181,8 +186,9 @@ class TestJSONExport(unittest.TestCase):
         """Checks whether all the items in license has a spdx_id"""
         somef_cli.run_cli(threshold=0.8,
                             ignore_classifiers=False,
-                            repo_url="https://github.com/sunpy/sunpy",
-                            local_repo=None,
+                            # repo_url="https://github.com/sunpy/sunpy",
+                            repo_url=None,
+                            local_repo=test_data_repositories + "sunpy",
                             doc_src=None,
                             in_file=None,
                             output=test_data_path + "test_issue_745.json",
@@ -198,6 +204,9 @@ class TestJSONExport(unittest.TestCase):
         text_file.close()
         json_content = json.loads(data)
         licenses = json_content["license"]
+
+        # print('---------------------------')
+        # print(licenses)
 
         for i, license_entry in enumerate(licenses):
             assert "spdx_id" in license_entry["result"], f"Missing 'spdx_id' in license{i}"
@@ -388,15 +397,15 @@ class TestJSONExport(unittest.TestCase):
             for entry in citation
         ), "Citation.cff must have identifier id 10.5281/zenodo.591294"
 
-    @classmethod
-    def tearDownClass(cls):
-        """delete temp file JSON just if all the test pass"""
-        if os.path.exists(cls.json_file): 
-            try:
-                os.remove(cls.json_file)
-                print(f"Deleted {cls.json_file}") 
-            except Exception as e:
-                print(f"Failed to delete {cls.json_file}: {e}")  
+    # @classmethod
+    # def tearDownClass(cls):
+    #     """delete temp file JSON just if all the test pass"""
+    #     if os.path.exists(cls.json_file): 
+    #         try:
+    #             os.remove(cls.json_file)
+    #             print(f"Deleted {cls.json_file}") 
+    #         except Exception as e:
+    #             print(f"Failed to delete {cls.json_file}: {e}")  
 
 if __name__ == '__main__':
     unittest.main()

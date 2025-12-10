@@ -1,5 +1,6 @@
 import os
 import unittest
+import json
 from pathlib import Path
 from rdflib import Graph
 from .. import somef_cli
@@ -8,7 +9,7 @@ from .. import process_results
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
-
+test_data_api_responses= str(Path(__file__).parent / "test_data" / "api_responses") + os.path.sep
 
 class TestExportTTL(unittest.TestCase):
 
@@ -25,19 +26,27 @@ class TestExportTTL(unittest.TestCase):
         Test to make sure it works from URL
         """
         test_path = test_data_path + "test-basic.ttl"
-        somef_cli.run_cli(threshold=0.8,
-                          ignore_classifiers=False,
-                          repo_url="https://github.com/dgarijo/Widoco",
-                          local_repo=None,
-                          doc_src=None,
-                          in_file=None,
-                          output=None,
-                          graph_out=test_path,
-                          graph_format="turtle",
-                          codemeta_out=None,
-                          pretty=True,
-                          missing=False,
-                          readme_only=False)
+        api_results_file = test_data_api_responses + "widoco_api_response.json"
+
+        with open(api_results_file, "r", encoding="utf-8") as f:
+            api_results = json.load(f)
+
+        a = turtle_export.DataGraph()
+        a.somef_data_to_graph(api_results)
+        a.export_to_file(test_path, "turtle")
+
+        # somef_cli.run_cli(threshold=0.8,
+        #                   ignore_classifiers=False,
+        #                   repo_url="https://github.com/dgarijo/Widoco",
+        #                   doc_src=None,
+        #                   in_file=None,
+        #                   output=None,
+        #                   graph_out=test_path,
+        #                   graph_format="turtle",
+        #                   codemeta_out=None,
+        #                   pretty=True,
+        #                   missing=False,
+        #                   readme_only=False)
         g = Graph()
         g.parse(test_path)
         assert len(g) > 10

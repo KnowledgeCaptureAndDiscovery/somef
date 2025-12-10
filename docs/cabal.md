@@ -1,18 +1,20 @@
 The following metadata fields can be extracted from a cabal file.   
-These fields are defined in the [Cabal specification](https://cabal.readthedocs.io/en/3.10/cabal-package.html), currently at version **3.10**and are mapped according to the [Codemeta crosswalk for cabal](https://github.com/codemeta/codemeta/blob/master/crosswalks/Cabal.csv).
+These fields are defined in the [Cabal specification](https://cabal.readthedocs.io/en/3.10/cabal-package.html), currently at version **3.10** and are mapped according to the [Codemeta crosswalk for cabal](https://github.com/codemeta/codemeta/blob/master/crosswalks/Cabal.csv).
 
-| Software metadata category       |       SOMEF metadata JSON path  | CABAL metadata file field               |
-|-------------------------------|-----------------------------|------------------------------|
-| description  |   description[i].result.value   |   synopsis or description *(1)*|
-| has_package_file         |  has_package_file[i].result.value    |   URL of the filename.cabal file    |
-| homepage                  |  homepage[i].result.value   |   homepage  *(2)*  |
-| license                   |   license[i].result.value   |    license  *(3)*  |
-| package id                |  package_id[i].value   |   name  *(4)* |
-| requirements - value              |    requirements[i].result.value  |  library.build-depends *(5)*      |
-| requirements - name              |    requirements[i].result.name | library.build-depends name  *(5.1)*    |
-| requirements - version             |   requirements[i].result.version | library.build-depends version  *(5.2)*       
-| requirements - development type              | requirements[i].result.development_type  |    runtime         |
-| version                   |    version[i].result.value   |   version  *(6)*  |
+| Software metadata category    |       SOMEF metadata JSON path        | CABAL metadata file field               |
+|-------------------------------|---------------------------------------|-----------------------------------------|
+| description              |   description[i].result.value         |     synopsis / description *(1)*|
+| development_status        |   development_status[i].result.value  |     stability  |
+| has_package_file         |   has_package_file[i].result.value    |     URL of the filename.cabal file    |
+| homepage                  |   homepage[i].result.value            |     homepage  *(2)*  |
+| issue_tracker             |   issue_tracker[i].result.value       |     bug-reports             |
+| license                  |   license[i].result.value             |     Regex license  *(3)*  |
+| package_id               |   package_id[i].value                 |     name  *(4)* |
+| requirements - value             |   requirements[i].result.value        |     *(5)*      |
+| requirements - name            |   requirements[i].result.name         |     library.build-depends name  *(5.1)*    |
+| requirements - version            |   requirements[i].result.version      |     library.build-depends version  *(5.2)*  |   
+| requirements - development type          |   requirements[i].result.development_type  |    "runtime"         |
+| version                  |   version[i].result.value             |     version  *(6)*  |
 
 ---
 

@@ -6,7 +6,7 @@ import logging
 from pathlib import Path
 from ..process_results import Result
 from ..utils import constants
-from ..regular_expressions import detect_license_spdx
+from ..regular_expressions import detect_license_spdx, detect_spdx_from_declared
 
 
 def parse_toml_file(file_path, metadata_result: Result, source):
@@ -298,7 +298,7 @@ def parse_cargo_metadata(data, metadata_result, source, file_path):
                 with open(license_path, "r", encoding="utf-8") as lf:
                     license_text = lf.read()
                 break
-
+        
         license_info_spdx = detect_license_spdx(license_text, 'JSON')
 
         if license_info_spdx:
@@ -486,7 +486,15 @@ def parse_pyproject_metadata(data, metadata_result, source, file_path):
             license_text = ""
             license_value = license_info
 
-        license_info_spdx = detect_license_spdx(license_text, 'JSON')
+
+        licence_info_spdx = None
+
+        if license_text:
+            license_info_spdx = detect_license_spdx(license_text, 'JSON')
+        else:
+            # there is no text in licence and we cant detect license in the text as usual,
+            # so we check if the declared license matches an SPDX ID from our dictionary of licences
+            license_info_spdx = detect_spdx_from_declared(license_value)
 
         if license_info_spdx:
             license_data = {

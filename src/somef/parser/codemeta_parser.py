@@ -1,7 +1,7 @@
 import json
 import logging
-from somef.process_results import Result
-from somef.utils import constants
+from ..process_results import Result
+from ..utils import constants
 import re
 
 
