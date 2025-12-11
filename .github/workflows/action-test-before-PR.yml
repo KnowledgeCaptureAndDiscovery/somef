@@ -27,10 +27,8 @@ jobs:
       - name: Download NLTK data
         run: poetry run python -m nltk.downloader wordnet omw-1.4 punkt punkt_tab stopwords
 
-      - name: Copy config.json to ~/.somef
-        run: |
-          mkdir -p ~/.somef
-          cp config.json ~/.somef/config.json
+      - name: Configure SOMEF
+        run: poetry run somef configure -a
         
       - name: Run pytest
         run: poetry run pytest -v src/somef/test
