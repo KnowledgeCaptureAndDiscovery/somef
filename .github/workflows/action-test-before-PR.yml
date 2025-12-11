@@ -1,0 +1,34 @@
+name: Run SOMEF tests before PR
+
+on:
+  pull_request:
+    branches:
+      - dev #should be this branch or master?
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11"
+
+      - name: Install Poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Download NLTK data
+        run: poetry run python -m nltk.downloader wordnet omw-1.4 punkt punkt_tab stopwords
+
+      - name: Configure SOMEF
+        run: poetry run somef configure -a
+        
+      - name: Run pytest
+        run: poetry run pytest -v src/somef/test

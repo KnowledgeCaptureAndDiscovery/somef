@@ -71,6 +71,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 logging.info(f"{servidor} is GitLab.")
                 bGitLab = True
 
+            print(f"DEBUG: {servidor} is_gitlab = {bGitLab}")
             if bGitLab:
                 repo_type = constants.RepositoryType.GITLAB
             repository_metadata, owner, repo_name, def_branch = process_repository.load_online_repository_metadata(
@@ -80,6 +81,13 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 repo_type,
                 authorization
             )
+            print("\n=== DEBUG GITLAB SELF-HOSTED ===")
+            print(f"repo_url: {repo_url}")
+            print(f"owner: {owner}")
+            print(f"repo_name: {repo_name}")
+            print(f"def_branch: {def_branch}")
+            print(f"repo_type: {repo_type}")
+            print("=================================\n")
 
             # download files and obtain path to download folder
             if readme_only:
