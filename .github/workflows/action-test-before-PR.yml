@@ -3,7 +3,7 @@ name: Run SOMEF tests before PR
 on:
   pull_request:
     branches:
-      - master #should be this branch or master?
+      - dev #should be this branch or master?
   workflow_dispatch:
 jobs:
   test:
