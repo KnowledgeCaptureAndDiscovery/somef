@@ -25,7 +25,10 @@ jobs:
         run: poetry install
 
       - name: Download NLTK data
-        run: poetry run python -m nltk.downloader wordnet
+        run: poetry run python -m nltk.downloader wordnet punkt punkt_tab
+
+      - name: Copy config.json into src/somef
+        run: cp config.json src/somef/config.json
         
       - name: Run pytest
         run: poetry run pytest -v src/somef/test
