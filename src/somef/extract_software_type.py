@@ -1,12 +1,14 @@
 import os
 from pathlib import Path
 import nbformat
+from nbformat.reader import NotJSONError
 from chardet import detect
 import re
 from .extract_workflows import is_file_workflow
 from .process_results import Result
 from .utils import constants
 from .extract_ontologies import is_file_ontology
+
 import pdb
 
 
@@ -301,14 +303,20 @@ def is_notebook_code(file_path):
     has_code = False
     num_code_cells = 0
     num_total_cells = 0
-    nb = nbformat.read(file_path, as_version=4)
-    for cell in nb['cells']:
-        if cell['cell_type'] == 'code':
-            num_total_cells += 1
-            if cell['source'].strip():
-                num_code_cells += 1
-                has_code = True
-    return has_code
+    try:
+        nb = nbformat.read(file_path, as_version=4)
+ 
+        for cell in nb['cells']:
+            if cell['cell_type'] == 'code':
+                num_total_cells += 1
+                if cell['source'].strip():
+                    num_code_cells += 1
+                    has_code = True
+        return has_code
+    except NotJSONError:
+        return False
+    except Exception:
+        return False
 
 
 def has_code_in_rmd(file_path):
