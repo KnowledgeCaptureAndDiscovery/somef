@@ -24,5 +24,8 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
+      - name: Download NLTK data
+        run: poetry run python -m nltk.downloader wordnet
+        
       - name: Run pytest
         run: poetry run pytest -v src/somef/test
