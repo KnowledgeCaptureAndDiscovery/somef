@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - master #should be this branch or master?
-
+  workflow_dispatch:
 jobs:
   test:
     runs-on: ubuntu-latest
