@@ -173,11 +173,19 @@ poetry install
 ```
 
 Now we need to access our virtual environment, to do so you can run the following command:
-```
+
+```bash
 poetry env activate
+```
+If the environment is not active, paste the command shown when `poetry env activate` is run, typically something like the command below: 
+
+```bash
+source /path_to_env/ENV_NAME/bin/activate
+```
+
 To learn more about poetry environment management, visit their official documentation [here](https://python-poetry.org/docs/managing-environments/).
 
-Test SOMEF installation
+Test the SOMEF installation run:
 
 ```bash
 somef --help
