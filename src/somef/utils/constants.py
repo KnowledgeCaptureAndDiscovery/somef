@@ -25,8 +25,8 @@ REGEXP_PYPI_2 = "[![Latest PyPI version]"
 REGEXP_COLAB = "https://colab.research.google.com/drive"
 # needed to cleanup bibtext files.
 # REGEXP_BIBTEX = r'\@[a-zA-Z]+\{[.\n\S\s]+?[author|title][.\n\S\s]+?[author|title][.\n\S\s]+?\n\}'
-REGEXP_BIBTEX = r'@[a-zA-Z]+\{[\s\S]*?(?:author|title)[\s\S]*?(?:author|title)[\s\S]*?\}'
-
+# REGEXP_BIBTEX = r'@[a-zA-Z]+\{[\s\S]*?(?:author|title)[\s\S]*?(?:author|title)[\s\S]*?\}'
+REGEXP_BIBTEX = r'@[a-zA-Z]+\{(?=[\s\S]*\bauthor\b)(?=[\s\S]*\btitle\b)[\s\S]*?\}'
 REGEXP_DOI = r'\[\!\[DOI\]([^\]]+)\]\(([^)]+)\)'
 REGEXP_LINKS = r"\[(.*?)?\]\(([^)]+)\)"
 REGEXP_IMAGES = r"!\[(.*?)?\]\((.*?)?\)"
