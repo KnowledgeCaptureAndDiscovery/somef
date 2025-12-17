@@ -644,6 +644,34 @@ def extract_project_homepage_badges(readme_text, repository_metadata: Result, so
     return repository_metadata
 
 
+# def extract_readthedocs_badgeds(readme_text, repository_metadata: Result, source) -> Result:
+#     """
+#     Function that takes the text of a readme file and searches if there are readthedocs badges.
+#     Parameters
+#     ----------
+#     @param readme_text: Text of the readme
+#     @param repository_metadata: Result with all the findings in the repo
+#     @param source: source file on top of which the extraction is performed (provenance)
+#     Returns
+#     -------
+#     @returns Result with the readthedocs badges found
+#     """
+#     print("--------------------------> Extracting readthedocs badges")
+#     readthedocs_badges = re.findall(constants.REGEXP_READTHEDOCS_BADGES, readme_text, re.DOTALL)
+#     print(readthedocs_badges)
+#     for doc in readthedocs_badges:
+#         print(f'Doc found: {doc}')
+#         url = doc[0] or doc[1]
+#         if url:
+#             repository_metadata.add_result(constants.CAT_DOCUMENTATION,
+#                                        {
+#                                            constants.PROP_TYPE: constants.URL,
+#                                            constants.PROP_VALUE: url
+#                                        }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+
+#     return repository_metadata
+
+
 def extract_readthedocs_badgeds(readme_text, repository_metadata: Result, source) -> Result:
     """
     Function that takes the text of a readme file and searches if there are readthedocs badges.
@@ -656,15 +684,41 @@ def extract_readthedocs_badgeds(readme_text, repository_metadata: Result, source
     -------
     @returns Result with the readthedocs badges found
     """
-    readthedocs_badges = re.findall(constants.REGEXP_READTHEDOCS_BADGES, readme_text, re.DOTALL)
-    for doc in readthedocs_badges:
-        url = doc[0] or doc[1]
-        if url:
-            repository_metadata.add_result(constants.CAT_DOCUMENTATION,
-                                       {
-                                           constants.PROP_TYPE: constants.URL,
-                                           constants.PROP_VALUE: url
-                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+
+    urls = set()
+
+    # RST
+    for match in re.findall(constants.REGEXP_READTHEDOCS_RST, readme_text):
+        if isinstance(match, tuple):
+            urls.update([u for u in match if u])
+        elif match:
+            urls.add(match)
+
+    # Markdown
+    for match in re.findall(constants.REGEXP_READTHEDOCS_MD, readme_text):
+        if isinstance(match, tuple):
+            urls.update([u for u in match if u])
+        elif match:
+            urls.add(match)
+
+    # HTML
+    for match in re.findall(constants.REGEXP_READTHEDOCS_HTML, readme_text):
+        if isinstance(match, tuple):
+            urls.update([u for u in match if u])
+        elif match:
+            urls.add(match)
+
+    for url in urls:
+        repository_metadata.add_result(
+            constants.CAT_DOCUMENTATION,
+            {
+                constants.PROP_TYPE: constants.URL,
+                constants.PROP_VALUE: url
+            },
+            1,
+            constants.TECHNIQUE_REGULAR_EXPRESSION,
+            source
+        )
 
     return repository_metadata
 

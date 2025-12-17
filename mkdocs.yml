@@ -4,25 +4,23 @@ nav:
   - Install: install.md
   - Usage: usage.md
   - Output: output.md
-  - Supported formats:
-    - Authors: author.md
-    - Bower: bower.md
-    - Cabal: cabal.md
-    - Cargo: cargo.md
-    - Codemeta: codemetajson.md
-    - Composer: composer.md
-    - Description: description.md
-    - Gemespec: gemspec.md
-    - Julia Projects: julia.md
-    - Package JSON: packagejson.md
-    - Pom: pom.md
-    - Pyproject: pyprojecttoml.md
-    - Requirements: requirementstxt.md
-    - Setup: setuppy.md
-  
+  - Supported metadata files: supported_metadata_files.md
+  - Supported languages: supported_languages.md
+    # - Authors: author.md
+    # - Bower: bower.md
+    # - Cabal: cabal.md
+    # - Cargo: cargo.md
+    # - Codemeta: codemetajson.md
+    # - Composer: composer.md
+    # - Description: description.md
+    # - Gemespec: gemspec.md
+    # - Julia Projects: julia.md
+    # - Package JSON: packagejson.md
+    # - Pom: pom.md
+    # - Pyproject: pyprojecttoml.md
+    # - Requirements: requirementstxt.md
+    # - Setup: setuppy.md
 
-  - Contributing: contributing.md
-  - Changelog: changelog.md 
 theme:
   name: material
 

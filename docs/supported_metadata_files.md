@@ -2,82 +2,6 @@
 
 This project supports extracting metadata from specific types of files commonly used to declare authorship and contribution in open source repositories.
 
-## Supported files of authors.
-
-The following filenames are recognized and processed automatically:
-
-* `AUTHORS`
-* `AUTHORS.md`
-* `AUTHORS.txt`
-
-These files are expected to be located at the root of the repository. Filenames are matched case-insensitively.
-
-## Purpose and Format
-
-These files typically contain a list of individuals and/or organizations that have contributed to the project. While there is no universal standard for formatting, a widely referenced convention is Google's guidance:
-
-🔗 [Google Open Source: Authors Files Protocol](https://opensource.google/documentation/reference/releasing/authors/)
-
-The content may be structured as:
-
-* Simple plain text, with one contributor per line.
-* Markdown-formatted text (`.md` files).
-* Lines including contributor names, emails (e.g., `Name <email>`), and sometimes affiliations.
-
-### Examples of Valid Entries
-
-```text
-Jane Doe <jane@example.com>
-John Smith
-Acme Corporation <acme@mail.com>
-Google Inc.
-```
-
-### Examples of NON Valid Entries
-
-```text
-JetBrains <>
-Microsoft
-Fraunhofer-Gesellschaft zur Förderung der angewandten Forschung
-scrawl - Top contributor
-Tom
-```
-## What Is Read vs. Discarded
-
-When processing these files, the parser will:
-
-**Include** lines that:
-
-* Contain person names, optionally with emails (`Name <email>`).
-* Clearly refer to organizations (e.g., "Google LLC", "OpenAI Inc.").
-
-**Discard** lines that:
-
-* Are headers, decorative separators, or markdown formatting (`#`, `*`, `=`, etc.).
-* Contain only URLs or links.
-* Are single words with no email and no organizational keyword (e.g., `JetBrains <>`).
-* Are markdown or structured noise (`---`, `{}`, etc.).
-* Contain more than four words and are not recognized as organizations — to avoid capturing generic or descriptive sentences (e.g., This line not is an author).
-
-### Special Cases
-
-* Entries with only a first name and an email are accepted but must not assign an empty `last_name`.
-* Lines starting with `-` or `*` are considered lists, but only parsed if the content matches expected author patterns.
-* Blocks enclosed in `{}` are stripped before parsing.
-* Any line matching known organization suffixes (`Inc.`, `LLC`, `Ltd.`, `Corporation`) is treated as an organization, even if no email is present.
-* Some organization names (e.g., Open Source Initiative) may be mistakenly treated as person names if they do not contain a company designator or email. To improve detection, it is recommended to use names like Open Source Initiative Inc.
-* In such cases, only the meaningful part (typically the name) is extracted before any descriptive annotations.
-For example, the line:
-Tom Smith (Tom) - Project leader 2010-2018
-Will be interpreted as:
-{
-  "type": "Person",
-  "name": "Tom Smith",
-  "value": "Tom Smith",
-  "given_name": "Tom",
-  "last_name": "Smith"
-}
-
 
 ## Supported Metadata Files in SOMEF
 
@@ -90,6 +14,7 @@ SOMEF can extract metadata from a wide range of files commonly found in software
 | `bower.json`       | JavaScript (Bower)         | Package descriptor used for configuring packages that can be used as a dependency for Bower-managed front-end projects. |  <div align="center">[🔍](./bower.md)</div>| [📄](https://github.com/bower/spec/blob/master/json.md)| |[Example](https://github.com/juanjemdIos/somef/blob/master/src/somef/test/test_data/repositories/js-template/bower.json) |
 | `package.json`     | JavaScript / Node.js       | Defines metadata, scripts, and dependencies for Node.js projects |  <div align="center">[🔍](./packagejson.md)| [📄](https://docs.npmjs.com/cli/v10/configuring-npm/package-json)| 10.9.4|[Example](https://github.com/npm/cli/blob/latest/package.json) | 
 | `codemeta.json`       |        JSON-LD              | Metadata file for research software using JSON-LD vocabulary | <div align="center">[🔍](./codemetajson.md)</div> | [📄](https://github.com/codemeta/codemeta/blob/master/crosswalk.csv)| [v3.0](https://w3id.org/codemeta/3.0)|[Example](https://github.com/codemeta/codemeta/blob/master/codemeta.json) |
+| `readme.me` | Markdown                     | Main documentation file of repository |  <div align="center">[🔍](./readmefile.md)</div>| | |[Example](https://github.com/KnowledgeCaptureAndDiscovery/somef/blob/master/README.md) |
 | `composer.json`    | PHP                        | Manifest file serves as the package descriptor used in PHP projects. | <div align="center">[🔍](./composer.md)</div>| [📄](https://getcomposer.org/doc/04-schema.md)| [2.8.12](https://getcomposer.org/changelog/2.8.12)|[Example](https://github.com/composer/composer/blob/main/composer.json) |
 | `juliaProject.toml`   | Python                     | Defines the package metadata and dependencies for Julia projects, used by the Pkg package manager.|  <div align="center">[🔍](./julia.md)</div>| [📄](https://docs.julialang.org/en/v1/)| |[Example](https://github.com/JuliaLang/TOML.jl/blob/master/Project.toml) | 
 | `pyproject.toml`   | Python                     | Modern Python project configuration file used by tools like Poetry and Flit |  <div align="center">[🔍](./pyprojecttoml.md)</div>| [📄](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/)| |[Example](https://github.com/KnowledgeCaptureAndDiscovery/somef/blob/master/pyproject.toml) | 
