@@ -427,7 +427,7 @@ class TestJSONExport(unittest.TestCase):
     #     data = text_file.read()
     #     text_file.close()
     #     json_content = json.loads(data)
- 
+
     #     assert "description" in json_content, "Missing 'description' property" 
    
     #     assert len(json_content["description"]) > 0, "Description list is empty" 
@@ -437,6 +437,38 @@ class TestJSONExport(unittest.TestCase):
     #     assert first_desc["value"], "Description 'value' is empty"    
         
     #     os.remove(test_data_path + "test_issue_862.json")
+
+    def test_issue_859(self):
+        """Checks whether a repository without content works fine. Must have just some results from the API."""
+
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url="https://github.com/shiningZZ/GU-CAFF",
+                        local_repo=None,
+                        doc_src=None,
+                        in_file=None,
+                        output=test_data_path + "test-859.json",
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out= None,
+                        pretty=True,
+                        missing=False,
+                        readme_only=False)
+        
+        with open(test_data_path + "test-859.json", "r") as text_file: 
+            json_content = json.load(text_file)
+
+        assert "code_repository" in json_content 
+        assert len(json_content["code_repository"]) > 0
+        
+        for key, entries in json_content.items(): 
+            if isinstance(entries, list): 
+                for entry in entries: 
+                    assert entry.get("technique") == "GitHub_API", \
+                    f"Unexpected technique {entry.get('technique')} in key {key}"
+
+        os.remove(test_data_path + "test-859.json")
+
 
 if __name__ == '__main__':
     unittest.main()
