@@ -774,10 +774,17 @@ def download_github_files(directory, owner, repo_name, repo_ref, authorization):
     with open(repo_zip_file, "wb") as f:
         f.write(repo_zip)
 
-    with zipfile.ZipFile(repo_zip_file, "r") as zip_ref:
-        zip_ref.extractall(repo_extract_dir)
-
+    try:
+        with zipfile.ZipFile(repo_zip_file, "r") as zip_ref: 
+            zip_ref.extractall(repo_extract_dir) 
+    except zipfile.BadZipFile: 
+        logging.error("Downloaded archive is not a valid zip (repo may be empty)") 
+        return None
+    
     repo_folders = os.listdir(repo_extract_dir)
+    if not repo_folders: 
+        logging.warning("Repository archive is empty") 
+        return None
 
     repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
     return repo_dir
