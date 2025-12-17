@@ -39,12 +39,25 @@ REGEXP_PROJECT_HOMEPAGE = r'\[\!\[Project homepage\]([^\]]+)\]\(([^)]+)\)'
 # Redthedocs badges'
 # REGEXP_READTHEDOCS_BADGES = r"https?://[^\s]*readthedocs\.org/projects/[^\s]*/badge/\?version=[^\s]*(?:.|\n)*?:target:\s*(https?://[^\s]+)"
 # REGEXP_READTHEDOCS_BADGES = r"https?://readthedocs\.org/projects/[^/\s]+/badge/\?version=[^)\s]+"
-REGEXP_READTHEDOCS_BADGES = (
-    r"https?://readthedocs\.org/projects/[^/\s]+/badge/\?version=[^)\s]+"
-    r"(?:.|\n)*?:target:\s*(https?://[^\s]+)"  # rst
-    r"|" 
-    r"\((https?://readthedocs\.org/projects/[^/\s]+/[^)\s]+)\)"  # md
+# REGEXP_READTHEDOCS_BADGES = (
+#     r"https?://readthedocs\.org/projects/[^/\s]+/badge/\?version=[^)\s]+"
+#     r"(?:.|\n)*?:target:\s*(https?://[^\s]+)"  # rst
+#     r"|" 
+#     r"\((https?://readthedocs\.org/projects/[^/\s]+/[^)\s]+)\)"  # md
+# )
+REGEXP_READTHEDOCS_RST = (
+    r"https?://readthedocs\.org/projects/[^\s/]+/badge/[^\s]*"
+    r"[^\n]*?:target:\s*(https?://[^\s\"']+)"
 )
+REGEXP_READTHEDOCS_MD = (
+    r"\(\s*(https?://[^\s\)]+\.readthedocs\.io[^\s\)]*)\s*\)"
+)
+# REGEXP_READTHEDOCS_HTML = (
+#     r"<a[^>]+href=['\"](https?://[^\s\"']+\.readthedocs\.io[^\s\"']*)['\"][^>]*>"
+#     r"(?:\s|<[^>]+>)*"
+#     r"<img[^>]+src=['\"]https?://readthedocs\.org/projects/[^\s/]+/badge/[^\s\"']*"
+# )
+REGEXP_READTHEDOCS_HTML = ( r"<a[^>]+href=['\"](https?://[^\s\"']+)['\"][^>]*>" r"(?:\s|<[^>]+>)*" r"<img[^>]+src=['\"]https?://readthedocs\.org/projects/[^\s/]+/badge/[^\s\"']*" )
 # For natural language citation
 REGEXP_DOI_NATURAL = r'10\.\d{4,9}/[-._;()/:A-Za-z0-9]+'
 REGEXP_YEAR_NATURAL = r'\b(19|20)\d{2}\b'
