@@ -442,3 +442,50 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
 
                 for expected in expected_packages:
                     assert expected in package_distribution_values, f"Package distribution {expected} not found in {package_distribution_values}"
+
+    def test_issue_860(self):
+        """Test designed to check redthedocs links are extracted correctly when multiple links are present """
+        documentation_values = []
+
+        for readme_file in ["README-menty.md", "README-uncbiag.md"]:
+            with open(test_data_path + readme_file, "r") as data_file:
+                readme_text = data_file.read()
+                documentation = regular_expressions.extract_readthedocs_badgeds(
+                    readme_text, Result(), test_data_path + readme_file
+                )
+                if "documentation" in documentation.results:
+                    for result in documentation.results["documentation"]:
+                        if "result" in result and "value" in result["result"]:
+                            # Solo agregamos strings
+                            value = result["result"]["value"]
+                            if isinstance(value, str):
+                                documentation_values.append(value)
+
+        expected_doc_urls = { 
+            "https://pypi.org/project/mentpy", 
+            "https://icon.readthedocs.io/en/master/" 
+        }
+        
+        assert expected_doc_urls.issubset(set(documentation_values)), (
+            f"Expected documentation URLs {expected_doc_urls} not found in {documentation_values}"
+        )
+
+    def test_readme_rst_readthedocs(self):
+        """Test designed to check whether rst readmes get stuck in extracting documentation """
+ 
+        with open(test_data_path + "README-sunpy.rst", "r") as data_file:
+            test_text = data_file.read()
+
+            documentation = regular_expressions.extract_readthedocs_badgeds(test_text, Result(),
+                                                  test_data_path + "README-sunpy.rst")
+
+                
+            expected_doc_url = "https://docs.sunpy.org/"
+            documentation_values = []
+            if "documentation" in documentation.results:
+                for result in documentation.results["documentation"]:
+                    if "result" in result and "value" in result["result"]:
+                        documentation_values.append(result["result"]["value"])
+
+                assert expected_doc_url in documentation_values, f"Expected url documentation {expected_doc_url} not found in documentation"
+
