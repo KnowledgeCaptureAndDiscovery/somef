@@ -24,7 +24,8 @@ def parse_description_file(file_path, metadata_result: Result, source):
             metadata_result.add_result(
                 constants.CAT_HAS_PACKAGE_FILE,
                 {
-                    "value": "DESCRIPTION",
+                    # "value": "DESCRIPTION",
+                    "value": source,
                     "type": constants.URL,
                     "source": source
                 },

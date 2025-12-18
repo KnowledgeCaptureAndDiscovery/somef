@@ -34,7 +34,8 @@ class TestPomParser(unittest.TestCase):
 
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
-        self.assertEqual(package_results[0]["result"]["value"], "pom.xml")
+        # self.assertEqual(package_results[0]["result"]["value"], "pom.xml")
+        self.assertEqual(package_results[0]["result"]["value"], "https://example.org/pom.xml")
         self.assertEqual(package_results[0]["result"]["type"], constants.URL)
 
         requirements_results = metadata_result.results.get(constants.CAT_REQUIREMENTS, [])

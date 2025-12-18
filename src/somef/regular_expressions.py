@@ -689,6 +689,7 @@ def extract_readthedocs_badgeds(readme_text, repository_metadata: Result, source
 
     # RST
     for match in re.findall(constants.REGEXP_READTHEDOCS_RST, readme_text):
+        print(match)
         if isinstance(match, tuple):
             urls.update([u for u in match if u])
         elif match:
@@ -702,15 +703,21 @@ def extract_readthedocs_badgeds(readme_text, repository_metadata: Result, source
             urls.add(match)
 
     # HTML
-    for match in re.findall(constants.REGEXP_READTHEDOCS_HTML, readme_text):
+    pattern_html = re.compile(constants.REGEXP_READTHEDOCS_HTML, flags=re.DOTALL | re.IGNORECASE)
+    for match in pattern_html.findall(readme_text):
         if isinstance(match, tuple):
             urls.update([u for u in match if u])
         elif match:
             urls.add(match)
 
     for url in urls:
+        if "pypi.org/project" in url: 
+            category = constants.CAT_PACKAGE_DISTRIBUTION 
+        else: 
+            category = constants.CAT_DOCUMENTATION
+
         repository_metadata.add_result(
-            constants.CAT_DOCUMENTATION,
+            category,
             {
                 constants.PROP_TYPE: constants.URL,
                 constants.PROP_VALUE: url
@@ -722,28 +729,28 @@ def extract_readthedocs_badgeds(readme_text, repository_metadata: Result, source
 
     return repository_metadata
 
-def extract_package_manager_badgeds(readme_text, repository_metadata: Result, source) -> Result:
-    """
-    Function that takes the text of a readme file and searches if there are package manager badges.
-    Parameters
-    ----------
-    @param readme_text: Text of the readme
-    @param repository_metadata: Result with all the findings in the repo
-    @param source: source file on top of which the extraction is performed (provenance)
-    Returns
-    -------
-    @returns Result with the package badges found
-    """
-    package_manager_badges = re.findall(constants.REGEXP_READTHEDOCS_BADGES, readme_text, re.DOTALL)
-    for package in package_manager_badges:
-        repository_metadata.add_result(constants.CAT_DOCUMENTATION,
-                                       {
-                                           constants.PROP_TYPE: constants.URL,
-                                           constants.PROP_VALUE: package
-                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+# def extract_package_manager_badgeds(readme_text, repository_metadata: Result, source) -> Result:
+#     """
+#     Function that takes the text of a readme file and searches if there are package manager badges.
+#     Parameters
+#     ----------
+#     @param readme_text: Text of the readme
+#     @param repository_metadata: Result with all the findings in the repo
+#     @param source: source file on top of which the extraction is performed (provenance)
+#     Returns
+#     -------
+#     @returns Result with the package badges found
+#     """
+#     package_manager_badges = re.findall(constants.REGEXP_READTHEDOCS_BADGES, readme_text, re.DOTALL)
+#     for package in package_manager_badges:
+#         repository_metadata.add_result(constants.CAT_DOCUMENTATION,
+#                                        {
+#                                            constants.PROP_TYPE: constants.URL,
+#                                            constants.PROP_VALUE: package
+#                                        }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
 
 
-    return repository_metadata
+#     return repository_metadata
 
 
 def extract_swh_badges(readme_text, repository_metadata: Result, source) -> Result:

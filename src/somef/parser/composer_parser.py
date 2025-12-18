@@ -25,7 +25,8 @@ def parse_composer_json(file_path, metadata_result: Result, source):
             metadata_result.add_result(
                 constants.CAT_HAS_PACKAGE_FILE,
                 {
-                    "value": "composer.json",
+                    # "value": "composer.json",
+                    "value": source,
                     "type": constants.URL,
                 },
                 1,

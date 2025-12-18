@@ -19,7 +19,8 @@ class TestCabalParser(unittest.TestCase):
         
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
-        self.assertEqual(package_results[0]["result"]["value"], "unused.cabal")
+        # self.assertEqual(package_results[0]["result"]["value"], "unused.cabal")
+        self.assertEqual(package_results[0]["result"]["value"], "https://example.org/unused.cabal")      
         self.assertEqual(package_results[0]["result"]["type"], constants.URL)
         
         id_results = metadata_result.results.get(constants.CAT_PACKAGE_ID, [])
@@ -60,7 +61,8 @@ class TestCabalParser(unittest.TestCase):
         
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
-        self.assertEqual(package_results[0]["result"]["value"], "cabal.cabal")
+        # self.assertEqual(package_results[0]["result"]["value"], "cabal.cabal")
+        self.assertEqual(package_results[0]["result"]["value"], "https://example.org/cabal.cabal")
         self.assertEqual(package_results[0]["result"]["type"], constants.URL)
         description_results = metadata_result.results.get(constants.CAT_DESCRIPTION, [])
         self.assertTrue(len(description_results) > 0, "No description found")

@@ -28,7 +28,8 @@ class TestDescriptionParser(unittest.TestCase):
 
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
-        self.assertEqual(package_results[0]["result"]["value"], "DESCRIPTION")
+        # self.assertEqual(package_results[0]["result"]["value"], "DESCRIPTION")
+        self.assertEqual(package_results[0]["result"]["value"], "https://example.org/DESCRIPTION")
         self.assertEqual(package_results[0]["result"]["type"], constants.URL)
         
         id_results = metadata_result.results.get(constants.CAT_PACKAGE_ID, [])
@@ -59,7 +60,7 @@ class TestDescriptionParser(unittest.TestCase):
 
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
-        self.assertEqual(package_results[0]["result"]["value"], "DESCRIPTION")
+        self.assertEqual(package_results[0]["result"]["value"], "https://example.org/DESCRIPTION")
         self.assertEqual(package_results[0]["result"]["type"], constants.URL)
 
         id_results = metadata_result.results.get(constants.CAT_PACKAGE_ID, [])
