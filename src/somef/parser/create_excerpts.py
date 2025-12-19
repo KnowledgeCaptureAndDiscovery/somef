@@ -59,6 +59,7 @@ def create_excerpts(string_list):
     """
     logging.info("Splitting text into valid excerpts for classification")
     string_list = markdown_utils.remove_bibtex(string_list)
+    logging.info("Extracting excerpts for classification")
     divisions = mardown_parser.extract_blocks_excerpts(string_list)
     logging.info("Text Successfully split.")
     output = {}
