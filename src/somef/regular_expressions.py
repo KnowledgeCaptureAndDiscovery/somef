@@ -72,7 +72,7 @@ def extract_title_old(unfiltered_text):
     # header declared with ====
     title = ""
     if len(underline_header) != 0:
-        title = re.split('.+[=]+[\n]+', unfiltered_text)[0].strip()
+        title = re.split(r'.+[=]+[\n]+', unfiltered_text)[0].strip()
     else:
         # The first occurrence is assumed to be the title.
         title = re.findall(r'# .+', unfiltered_text)[0]
@@ -81,7 +81,7 @@ def extract_title_old(unfiltered_text):
             title = title[1:].strip()
     # Remove other markup (links, etc.)
     if "[!" in title:
-        title = re.split('\[\!', title)[0].strip()
+        title = re.split(r'\[\!', title)[0].strip()
     return title
 
 
@@ -703,7 +703,7 @@ def extract_readthedocs_badgeds(readme_text, repository_metadata: Result, source
             urls.add(match)
 
     # HTML
-    pattern_html = re.compile(constants.REGEXP_READTHEDOCS_HTML, flags=re.DOTALL | re.IGNORECASE)
+    pattern_html = re.compile(constants.REGEXP_READTHEDOCS_HTML, flags=re.VERBOSE |re.DOTALL | re.IGNORECASE)
     for match in pattern_html.findall(readme_text):
         if isinstance(match, tuple):
             urls.update([u for u in match if u])

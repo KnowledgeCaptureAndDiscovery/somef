@@ -55,10 +55,27 @@ REGEXP_READTHEDOCS_MD = (
     r"\(\s*(https?://[^\s\)]+\.readthedocs\.io[^\s\)]*)\s*\)"
 )
 
-REGEXP_READTHEDOCS_HTML = (
-    r"<a\b[^>]+?href=['\"](https?://[^'\"\s]+?)['\"][^>]*?>"  
-    r"(?:(?!</a>)[\s\S])*?"                                  
-    r"<img\b[^>]+?src=['\"]https?://(?:readthedocs\.org/projects/|img\.shields\.io/pypi/)[^'\"\s]*"
+# REGEXP_READTHEDOCS_HTML = (
+#     r"<a\b[^>]+?href=['\"](https?://[^'\"\s]+?)['\"][^>]*?>"  
+#     r"(?:(?!</a>)[\s\S])*?"                                  
+#     r"<img\b[^>]+?src=['\"]https?://(?:readthedocs\.org/projects/|img\.shields\.io/pypi/)[^'\"\s]*"
+# )
+
+REGEXP_READTHEDOCS_HTML = (r"""
+    <a\b
+        [^>]*\bhref=['"](https?://[^'"\s]+)['"]
+        [^>]*>
+    (?:
+        [^<]+             
+        |
+        <(?!/a\b)[^>]*>   
+    )*
+    <img\b
+        [^>]*\bsrc=['"]
+        https?://(?:readthedocs\.org/projects/|img\.shields\.io/pypi/)
+        [^'"\s>]+
+        ['"]
+    """
 )
 # For natural language citation
 REGEXP_DOI_NATURAL = r'10\.\d{4,9}/[-._;()/:A-Za-z0-9]+'

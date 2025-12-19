@@ -58,13 +58,14 @@ class TestTomlParser(unittest.TestCase):
         result = Result()
         # parse_toml_file(self.cargo_toml_path, result, "test")
         print("self.cargo_toml_path:", self.cargo_toml_path)
-        parse_toml_file(self.cargo_toml_path, result, "http://example.com/rustdesk/Cargo.toml")
+        # parse_toml_file(self.cargo_toml_path, result, "http://example.com/rustdesk/Cargo.toml")
+        parse_toml_file(self.cargo_toml_path, result, self.cargo_toml_path)
 
         self.assertIn(constants.CAT_HAS_PACKAGE_FILE, result.results)
         package_file = result.results[constants.CAT_HAS_PACKAGE_FILE][0]["result"]["value"]
 
         # self.assertEqual(package_file, "Cargo.toml")
-        self.assertEqual(package_file, "http://example.com/rustdesk/Cargo.toml")
+        self.assertEqual(package_file, self.cargo_toml_path)
 
         self.assertIn(constants.CAT_PACKAGE_ID, result.results)
         package_id = result.results[constants.CAT_PACKAGE_ID][0]["result"]["value"]
@@ -98,16 +99,22 @@ class TestTomlParser(unittest.TestCase):
         """Test parsing Pluto's Project.toml (Julia) file"""
         result = Result()
 
+        # metadata_result = parse_toml_file(
+        #     self.pluto_project_path,
+        #     result,
+        #     "http://example.com/repo1/Project.toml"
+        # )
+        
         metadata_result = parse_toml_file(
             self.pluto_project_path,
             result,
-            "http://example.com/repo1/Project.toml"
+            self.pluto_project_path
         )
 
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
         # self.assertEqual(package_results[0]["result"]["value"], "Project.toml")
-        self.assertEqual(package_results[0]["result"]["value"], "http://example.com/repo1/Project.toml")
+        self.assertEqual(package_results[0]["result"]["value"], self.pluto_project_path)
         self.assertEqual(package_results[0]["result"]["type"], constants.URL)
         self.assertEqual(package_results[0]["technique"], constants.TECHNIQUE_CODE_CONFIG_PARSER)
 
@@ -165,16 +172,21 @@ class TestTomlParser(unittest.TestCase):
         """Test parsing Flux's Project.toml (Julia) file"""
         result = Result()
 
+        # metadata_result = parse_toml_file(
+        #     self.flux_project_path,
+        #     result,
+        #     "http://example.com/repo2/Project.toml"
+        # )
         metadata_result = parse_toml_file(
             self.flux_project_path,
             result,
-            "http://example.com/repo2/Project.toml"
+            self.flux_project_path
         )
 
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
         # self.assertEqual(package_results[0]["result"]["value"], "Project.toml")
-        self.assertEqual(package_results[0]["result"]["value"], "http://example.com/repo2/Project.toml")
+        self.assertEqual(package_results[0]["result"]["value"], self.flux_project_path)
 
         package_id_results = metadata_result.results.get(constants.CAT_PACKAGE_ID, [])
         self.assertTrue(len(package_id_results) > 0, "No package ID found")

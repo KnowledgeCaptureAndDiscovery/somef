@@ -16,11 +16,12 @@ class TestBowerParser(unittest.TestCase):
 
         result = Result()
     
-        metadata_result = parse_bower_json_file(bower_file_path, result, "https://example.org/bower.json")
+        # metadata_result = parse_bower_json_file(bower_file_path, result, "https://example.org/bower.json")
+        metadata_result = parse_bower_json_file(bower_file_path, result, bower_file_path)
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
         # self.assertEqual(package_results[0]["result"]["value"], "bower.json")
-        self.assertEqual(package_results[0]["result"]["value"], "https://example.org/bower.json")
+        self.assertEqual(package_results[0]["result"]["value"], bower_file_path)
         self.assertEqual(package_results[0]["result"]["type"], constants.URL)
         
         name_results = metadata_result.results.get(constants.CAT_NAME, [])
@@ -71,11 +72,12 @@ class TestBowerParser(unittest.TestCase):
 
         result = Result()
     
-        metadata_result = parse_bower_json_file(bower_file_path, result, "https://example.org/bower.json")
+        # metadata_result = parse_bower_json_file(bower_file_path, result, "https://example.org/bower.json")
+        metadata_result = parse_bower_json_file(bower_file_path, result, bower_file_path)
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
         # self.assertEqual(package_results[0]["result"]["value"], "bower.json")
-        self.assertEqual(package_results[0]["result"]["value"], "https://example.org/bower.json")
+        self.assertEqual(package_results[0]["result"]["value"], bower_file_path)
         self.assertEqual(package_results[0]["result"]["type"], constants.URL)
         
         name_results = metadata_result.results.get(constants.CAT_NAME, [])

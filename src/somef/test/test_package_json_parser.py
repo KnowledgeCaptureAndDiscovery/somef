@@ -16,8 +16,8 @@ class TestPackageJsonParser(unittest.TestCase):
         package_file_path = test_data_path + "package_neors.json"
         result = Result()
         
-        metadata_result = parse_package_json_file(package_file_path, result, "http://example.com/package_neors.json")
-        
+        # metadata_result = parse_package_json_file(package_file_path, result, "http://example.com/package_neors.json")
+        metadata_result = parse_package_json_file(package_file_path, result, package_file_path)
         package_id_results = metadata_result.results.get(constants.CAT_PACKAGE_ID, [])
         self.assertTrue(len(package_id_results) > 0, "No package ID found")
         self.assertEqual(package_id_results[0]["result"]["value"], "jsonlab")
@@ -59,7 +59,8 @@ class TestPackageJsonParser(unittest.TestCase):
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
         # self.assertEqual(package_results[0]["result"]["value"], "package.json")
-        self.assertEqual(package_results[0]["result"]["value"], "http://example.com/package_neors.json")
+        # self.assertEqual(package_results[0]["result"]["value"], "http://example.com/package_neors.json")
+        self.assertEqual(package_results[0]["result"]["value"],package_file_path)
         self.assertEqual(package_results[0]["result"]["type"], constants.URL)
 
         keywords_results = metadata_result.results.get(constants.CAT_KEYWORDS, [])
