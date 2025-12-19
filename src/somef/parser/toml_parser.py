@@ -45,7 +45,8 @@ def parse_toml_file(file_path, metadata_result: Result, source):
         metadata_result.add_result(
             constants.CAT_HAS_PACKAGE_FILE,
             {
-                "value": display_name,
+                # "value": display_name,
+                "value": source,
                 "type": constants.URL,
             },
             1,
@@ -523,8 +524,9 @@ def parse_pyproject_metadata(data, metadata_result, source, file_path):
             metadata_result.add_result(
                 constants.CAT_RUNTIME_PLATFORM,
                 {
-                    "value": runtime["version"],
+                    "value": f'{runtime["name"]}{runtime["version"]}',
                     "name": runtime["name"],
+                    "version": runtime["version"],
                     "type": constants.STRING
                 },
                 1,

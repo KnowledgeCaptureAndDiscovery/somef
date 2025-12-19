@@ -109,7 +109,9 @@ def extract_header_content(text):
     df = pd.concat(dfs, ignore_index=True)
     # for i, j in zip(header, content):
     #     df = df.append({'Header': i, 'Content': j, 'ParentHeader': parent_headers[i]}, ignore_index=True)
-    df['Content'].replace('', np.nan, inplace=True)
+    # df['Content'].replace('', np.nan, inplace=True)
+    df['Content'] = df['Content'].replace('', np.nan)
+
     df.dropna(subset=['Content'], inplace=True)
     return df, none_header_content
 
@@ -221,13 +223,15 @@ def extract_categories(repo_data, repository_metadata: Result):
                 data.at[i, 'Group'] = data['GroupParent'][i]
         data = data.drop(columns=['GroupParent'])
         if len(data['Group'].iloc[0]) == 0:
-            data['Group'].iloc[0] = ['unknown']
+            # data['Group'].iloc[0] = ['unknown']
+            data.loc[0, 'Group'] = ['unknown']
         groups = data.apply(lambda x: pd.Series(x['Group']), axis=1).stack().reset_index(level=1, drop=True)
 
         groups.name = 'Group'
         data = data.drop('Group', axis=1).join(groups)
         if data['Group'].iloc[0] == 'unknown':
-            data['Group'].iloc[0] = np.NaN
+            # data['Group'].iloc[0] = np.NaN
+            data.loc[0, 'Group'] = np.nan
 
         # to json
         group = data.loc[(data['Group'] != 'None') & pd.notna(data['Group'])]

@@ -446,6 +446,7 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
     def test_issue_860(self):
         """Test designed to check redthedocs links are extracted correctly when multiple links are present """
         documentation_values = []
+        package_values = []
 
         for readme_file in ["README-menty.md", "README-uncbiag.md"]:
             with open(test_data_path + readme_file, "r") as data_file:
@@ -461,14 +462,27 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
                             if isinstance(value, str):
                                 documentation_values.append(value)
 
+                if "package_distribution" in documentation.results:
+                    for result in documentation.results["package_distribution"]:
+                        value = result.get("result", {}).get("value")
+                        if isinstance(value, str):
+                            package_values.append(value)
+
         expected_doc_urls = { 
-            "https://pypi.org/project/mentpy", 
+            "https://docs.mentpy.com/en/latest/?badge=latest", 
             "https://icon.readthedocs.io/en/master/" 
         }
-        
+
+        expected_package_urls = {
+                "https://pypi.org/project/mentpy"
+        }
+
         assert expected_doc_urls.issubset(set(documentation_values)), (
             f"Expected documentation URLs {expected_doc_urls} not found in {documentation_values}"
         )
+        assert expected_package_urls.issubset(set(package_values)), (
+        f"Pypy package {expected_package_urls} not foun in package_distribution: {package_values}"
+    )
 
     def test_readme_rst_readthedocs(self):
         """Test designed to check whether rst readmes get stuck in extracting documentation """

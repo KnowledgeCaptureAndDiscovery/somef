@@ -15,14 +15,16 @@ class TestGemSpecParser(unittest.TestCase):
         gemspec_file_path = test_data_repositories + os.path.sep + "bootstrap-datepicker-rails" + os.path.sep + "bootstrap-datepicker-rails.gemspec"
         result = Result()
     
-        metadata_result = parse_gemspec_file(gemspec_file_path, result, "https://example.org/bootstrap-datepicker-rails.gemspec")
+        # metadata_result = parse_gemspec_file(gemspec_file_path, result, "https://example.org/bootstrap-datepicker-rails.gemspec")
+        metadata_result = parse_gemspec_file(gemspec_file_path, result, gemspec_file_path)
 
         authors_results = metadata_result.results.get(constants.CAT_AUTHORS, [])
         self.assertTrue(len(authors_results) == 2, "Expected two authors")
 
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
-        self.assertEqual(package_results[0]["result"]["value"], "bootstrap-datepicker-rails.gemspec")
+        # self.assertEqual(package_results[0]["result"]["value"], "bootstrap-datepicker-rails.gemspec")
+        self.assertEqual(package_results[0]["result"]["value"], gemspec_file_path)
         self.assertEqual(package_results[0]["result"]["type"], constants.URL)
         
         id_results = metadata_result.results.get(constants.CAT_PACKAGE_ID, [])
