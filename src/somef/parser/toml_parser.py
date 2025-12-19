@@ -524,8 +524,9 @@ def parse_pyproject_metadata(data, metadata_result, source, file_path):
             metadata_result.add_result(
                 constants.CAT_RUNTIME_PLATFORM,
                 {
-                    "value": runtime["version"],
+                    "value": f'{runtime["name"]}{runtime["version"]}',
                     "name": runtime["name"],
+                    "version": runtime["version"],
                     "type": constants.STRING
                 },
                 1,

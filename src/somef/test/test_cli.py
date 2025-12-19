@@ -447,17 +447,19 @@ class TestCli(unittest.TestCase):
     def test_issue_314_1(self):
         """Checks that the program can be run using only a single readme. GitHub"""
         somef_cli.run_cli(threshold=0.8,
-                          ignore_classifiers=False,
-                          repo_url="https://github.com/tensorflow/tensorflow/tree/v2.6.0",
-                          doc_src=None,
-                          in_file=None,
-                          output=test_data_path + "test-314-1.json",
-                          graph_out=None,
-                          graph_format="turtle",
-                          codemeta_out=None,
-                          pretty=True,
-                          missing=True,
-                          readme_only=True)
+                            ignore_classifiers=False,
+                            # repo_url="https://github.com/tensorflow/tensorflow/tree/v2.6.0",
+                            repo_url=None,
+                            # doc_src=None,
+                            doc_src= test_data_path + "README-tensorflow-2.6.0.md",
+                            in_file=None,
+                            output=test_data_path + "test-314-1.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=True,
+                            readme_only=True)
         text_file = open(test_data_path + "test-314-1.json", "r")
         data = text_file.read()
         text_file.close()
@@ -469,17 +471,19 @@ class TestCli(unittest.TestCase):
     def test_issue_314_2(self):
         """Checks that the program can be run using only a single readme. Gitlab"""
         somef_cli.run_cli(threshold=0.8,
-                          ignore_classifiers=False,
-                          repo_url="https://gitlab.com/jleblay/tokei",
-                          doc_src=None,
-                          in_file=None,
-                          output=test_data_path + "test-314-2.json",
-                          graph_out=None,
-                          graph_format="turtle",
-                          codemeta_out=None,
-                          pretty=True,
-                          missing=False,
-                          readme_only=True)
+                            ignore_classifiers=False,
+                            #   repo_url="https://gitlab.com/jleblay/tokei",
+                            repo_url=None,  
+                            #   doc_src=None,
+                            doc_src= test_data_path + "README-tokei.md",
+                            in_file=None,
+                            output=test_data_path + "test-314-2.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=True)
         text_file = open(test_data_path + "test-314-2.json", "r")
         data = text_file.read()
         text_file.close()
@@ -491,17 +495,19 @@ class TestCli(unittest.TestCase):
     def test_issue_314_3(self):
         """Checks that the program can be run using only a single readme. Gitlab"""
         somef_cli.run_cli(threshold=0.8,
-                          ignore_classifiers=False,
-                          repo_url="https://gitlab.com/unboundedsystems/adapt/-/tree/release-0.1",
-                          doc_src=None,
-                          in_file=None,
-                          output=test_data_path + "test-314-3.json",
-                          graph_out=None,
-                          graph_format="turtle",
-                          codemeta_out=None,
-                          pretty=True,
-                          missing=True,
-                          readme_only=True)
+                            ignore_classifiers=False,
+                            # repo_url="https://gitlab.com/unboundedsystems/adapt/-/tree/release-0.1",
+                            repo_url=None,
+                            # doc_src=None,
+                            doc_src= test_data_path + "README-unboundedsystems.md",
+                            in_file=None,
+                            output=test_data_path + "test-314-3.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=True,
+                            readme_only=True)
         text_file = open(test_data_path + "test-314-3.json", "r")
         data = text_file.read()
         text_file.close()
@@ -530,6 +536,8 @@ class TestCli(unittest.TestCase):
         somef_cli.run_cli(threshold=0.8,
                           ignore_classifiers=False,
                           repo_url="https://github.com/oeg-upm/wot-hive",
+                        #   repo_url=None,
+                        #   local_repo=test_data_repositories + "wot-hive",
                           doc_src=None,
                           in_file=None,
                           output=test_data_path + "test-403.json",
@@ -589,7 +597,6 @@ class TestCli(unittest.TestCase):
         text_file = open(test_data_path + "test-225.json", "r")
         data = text_file.read()
         text_file.close()
-        print(data)
         assert data.find("\"" + constants.PROP_FORMAT + "\": \"" + constants.FORMAT_WIKI + "\"")
         os.remove(test_data_path + "test-225.json")
 
@@ -617,18 +624,20 @@ class TestCli(unittest.TestCase):
     def test_issue_255(self):
         """Tests if somef can detect wiki articles"""
         somef_cli.run_cli(threshold=0.8,
-                          ignore_classifiers=False,
-                          repo_url="https://github.com/mbloch/mapshaper/",
-                          local_repo=None,
-                          doc_src=None,
-                          in_file=None,
-                          output=test_data_path + "test-255.json",
-                          graph_out=None,
-                          graph_format="turtle",
-                          codemeta_out=None,
-                          pretty=True,
-                          missing=True,
-                          readme_only=False)
+                            ignore_classifiers=False,
+                            # repo_url="https://github.com/mbloch/mapshaper/",
+                            repo_url=None,
+                            local_repo=None,
+                            # doc_src=None,
+                            doc_src=test_data_path + "README-mapshaper.md",
+                            in_file=None,
+                            output=test_data_path + "test-255.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=True,
+                            readme_only=False)
         text_file = open(test_data_path + "test-255.json", "r")
         data = text_file.read()
         text_file.close()
