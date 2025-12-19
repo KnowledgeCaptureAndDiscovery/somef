@@ -188,7 +188,8 @@ def parse_package_json_file(file_path, metadata_result: Result, source):
             metadata_result.add_result(
                 constants.CAT_HAS_PACKAGE_FILE,
                 {
-                    "value": "package.json",
+                    # "value": "package.json",
+                    "value": source,
                     "type": constants.URL,
                 },
                 1,

@@ -17,8 +17,8 @@ class TestPomParser(unittest.TestCase):
         pom_xml_parser.processed_pom = False
         pom_file_path = test_data_repositories + os.path.sep + "Widoco" + os.path.sep + "pom.xml"
         result = Result()
-    
-        metadata_result = parse_pom_file(pom_file_path, result, "https://example.org/pom.xml")
+
+        metadata_result = parse_pom_file(pom_file_path, result, pom_file_path)
 
         identifier_results = metadata_result.results.get(constants.CAT_PACKAGE_ID, [])
         self.assertTrue(len(identifier_results) > 0, "No identifier found")
@@ -34,7 +34,8 @@ class TestPomParser(unittest.TestCase):
 
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
-        self.assertEqual(package_results[0]["result"]["value"], "pom.xml")
+        # self.assertEqual(package_results[0]["result"]["value"], "pom.xml")
+        self.assertEqual(package_results[0]["result"]["value"], pom_file_path)
         self.assertEqual(package_results[0]["result"]["type"], constants.URL)
 
         requirements_results = metadata_result.results.get(constants.CAT_REQUIREMENTS, [])

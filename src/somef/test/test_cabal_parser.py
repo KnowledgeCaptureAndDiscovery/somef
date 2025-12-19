@@ -15,11 +15,12 @@ class TestCabalParser(unittest.TestCase):
         cabal_file_path = test_data_repositories + os.path.sep + "unused" + os.path.sep + "unused.cabal"
         result = Result()
 
-        metadata_result = parse_cabal_file(cabal_file_path, result, "https://example.org/unused.cabal")
-        
+        # metadata_result = parse_cabal_file(cabal_file_path, result, "https://example.org/unused.cabal")
+        metadata_result = parse_cabal_file(cabal_file_path, result, cabal_file_path)
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
-        self.assertEqual(package_results[0]["result"]["value"], "unused.cabal")
+        # self.assertEqual(package_results[0]["result"]["value"], "unused.cabal")
+        self.assertEqual(package_results[0]["result"]["value"], cabal_file_path)  
         self.assertEqual(package_results[0]["result"]["type"], constants.URL)
         
         id_results = metadata_result.results.get(constants.CAT_PACKAGE_ID, [])
@@ -56,11 +57,12 @@ class TestCabalParser(unittest.TestCase):
         cabal_file_path = test_data_repositories + os.path.sep + "haskell" + os.path.sep + "cabal.cabal"
         result = Result()
 
-        metadata_result = parse_cabal_file(cabal_file_path, result, "https://example.org/cabal.cabal")
-        
+        # metadata_result = parse_cabal_file(cabal_file_path, result, "https://example.org/cabal.cabal")
+        metadata_result = parse_cabal_file(cabal_file_path, result, cabal_file_path)
         package_results = metadata_result.results.get(constants.CAT_HAS_PACKAGE_FILE, [])
         self.assertTrue(len(package_results) > 0, "No package file info found")
-        self.assertEqual(package_results[0]["result"]["value"], "cabal.cabal")
+        # self.assertEqual(package_results[0]["result"]["value"], "cabal.cabal")
+        self.assertEqual(package_results[0]["result"]["value"], cabal_file_path)
         self.assertEqual(package_results[0]["result"]["type"], constants.URL)
         description_results = metadata_result.results.get(constants.CAT_DESCRIPTION, [])
         self.assertTrue(len(description_results) > 0, "No description found")
