@@ -407,36 +407,36 @@ class TestJSONExport(unittest.TestCase):
     #         except Exception as e:
     #             print(f"Failed to delete {cls.json_file}: {e}")  
 
-    # def test_issue_862(self):
-    #     """Checks if this repository does not gets stuck when labeling headers"""
-    #     somef_cli.run_cli(threshold=0.8,
-    #                         ignore_classifiers=False,
-    #                         repo_url=None,
-    #                         local_repo=test_data_repositories + "componentInstaller",
-    #                         doc_src=None,
-    #                         in_file=None,
-    #                         output=test_data_path + "test_issue_862.json",
-    #                         graph_out=None,
-    #                         graph_format="turtle",
-    #                         codemeta_out=None,
-    #                         pretty=True,
-    #                         missing=False,
-    #                         readme_only=False)
+    def test_issue_862(self):
+        """Checks if this repository does not gets stuck when labeling headers"""
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "componentInstaller",
+                            doc_src=None,
+                            in_file=None,
+                            output=test_data_path + "test_issue_862.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
         
-    #     text_file = open(test_data_path + "test_issue_862.json", "r")
-    #     data = text_file.read()
-    #     text_file.close()
-    #     json_content = json.loads(data)
+        text_file = open(test_data_path + "test_issue_862.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
 
-    #     assert "description" in json_content, "Missing 'description' property"
+        assert "description" in json_content, "Missing 'description' property"
    
-    #     assert len(json_content["description"]) > 0, "Description list is empty"
+        assert len(json_content["description"]) > 0, "Description list is empty"
    
-    #     first_desc = json_content["description"][0]["result"] 
-    #     assert "value" in first_desc, "Missing 'value' in description result"
-    #     assert first_desc["value"], "Description 'value' is empty"  
+        first_desc = json_content["description"][0]["result"] 
+        assert "value" in first_desc, "Missing 'value' in description result"
+        assert first_desc["value"], "Description 'value' is empty"  
         
-    #     os.remove(test_data_path + "test_issue_862.json")
+        os.remove(test_data_path + "test_issue_862.json")
 
     def test_issue_859(self):
         """Checks whether a repository without content works fine. Must have just some results from the API."""

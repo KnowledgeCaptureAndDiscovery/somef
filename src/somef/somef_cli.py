@@ -156,6 +156,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                                         repository_metadata)
             logging.info("--> create excerpts")                                                                           
             excerpts = create_excerpts.create_excerpts(string_list)
+            logging.info("--> extract text excerpts headers")  
             excerpts_headers = mardown_parser.extract_text_excerpts_header(readme_unfiltered_text)
             header_parents = mardown_parser.extract_headers_parents(readme_unfiltered_text)
             score_dict = supervised_classification.run_classifiers(excerpts, file_paths)
