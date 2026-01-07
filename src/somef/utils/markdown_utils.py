@@ -64,7 +64,9 @@ def remove_comments(html_text):
     Markdown with no HTML comments
     """
     # comment_pattern = r'<!--(.*?)-->'
-    comment_pattern = r'<!--[\s\S]*?--\s*>'
+    # comment_pattern = r'<!--[\s\S]*?--\s*>'
+    comment_pattern = r'<!--[\s\S]*?--.*?>'
 
-    html_without_comments = re.sub(comment_pattern, '', html_text, flags=re.DOTALL)
+    html_without_comments = re.sub(comment_pattern, '', html_text)
+    print(html_without_comments)
     return html_without_comments
