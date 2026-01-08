@@ -6,7 +6,6 @@ import logging
 import os
 import tempfile
 import urllib.parse
-import re
 
 from os import path
 from . import header_analysis, regular_expressions, process_repository, configuration, process_files, \
