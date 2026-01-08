@@ -31,4 +31,4 @@ jobs:
         run: poetry run somef configure -a
         
       - name: Run pytest
-        run: poetry run pytest -v -s src/somef/test/test_JSON_export.py::TestJSONExport::test_issue_862
+        run: poetry run pytest -v src/somef/test/
