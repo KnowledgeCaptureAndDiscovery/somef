@@ -151,10 +151,6 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                               repository_metadata)
         
         logging.info("Extracted categories from headers successfully.")
-        readme_text = re.sub( r'\*\*(.*?)\n(.*?)\*\*', 
-                             lambda m: m.group(1) + " " + m.group(2), 
-                             readme_text, 
-                             flags=re.DOTALL )
         readme_text_unmarked = markdown_utils.unmark(readme_text)
         logging.info("readme text unmarked successfully.") 
         if not ignore_classifiers and readme_unfiltered_text != '':
