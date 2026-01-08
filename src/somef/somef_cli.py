@@ -148,7 +148,9 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         readme_unfiltered_text = markdown_utils.remove_comments(readme_unfiltered_text)
         repository_metadata, string_list = header_analysis.extract_categories(readme_unfiltered_text,
                                                                               repository_metadata)
+        logging.info("Extracted categories from headers successfully.")
         readme_text_unmarked = markdown_utils.unmark(readme_text)
+        logging.info("readme text unmarked successfully.") 
         if not ignore_classifiers and readme_unfiltered_text != '':
             logging.info("--> suppervised classification")
             repository_metadata = supervised_classification.run_category_classification(readme_unfiltered_text,
