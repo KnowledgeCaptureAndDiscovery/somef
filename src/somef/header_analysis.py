@@ -400,10 +400,11 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
             source = source[constants.PROP_RESULT][constants.PROP_VALUE]
 
         logging.info("Extracting information using headers - iterating over valid entries")
+        logging.info("Valid rows: %s", len(valid))
 
         for _, row in valid.iterrows():
-            
-            # logging.info(f'row value: {row[constants.PROP_VALUE]}')
+
+            logging.info(f'row value: {row[constants.PROP_VALUE]}')
             result = {
                 constants.PROP_VALUE: row[constants.PROP_VALUE],
                 constants.PROP_TYPE: constants.TEXT_EXCERPT,
@@ -413,6 +414,8 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
             if row[constants.PROP_PARENT_HEADER]:
                 result[constants.PROP_PARENT_HEADER] = row[constants.PROP_PARENT_HEADER]
 
+            logging.info("Row: before add_result")
+
             repository_metadata.add_result(
                 row['Group'],
                 result,
@@ -420,6 +423,7 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
                 constants.TECHNIQUE_HEADER_ANALYSIS,
                 source,
             )
+            logging.info("Row: after add_result")
 
         leftovers = df[df['Group'].isna()]['Content'].tolist()
         if none_header_content:

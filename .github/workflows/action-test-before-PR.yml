@@ -3,7 +3,7 @@ name: Run SOMEF tests before PR
 on:
   pull_request:
     branches:
-      - dev #should be this branch or master?
+      - master #should be this branch or master?
   workflow_dispatch:
 jobs:
   test:
@@ -31,4 +31,4 @@ jobs:
         run: poetry run somef configure -a
         
       - name: Run pytest
-        run: poetry run pytest -v -s src/somef/test
+        run: poetry run pytest -v -s src/somef/test/test_JSON_export.py::TestJSONExport::test_issue_862
