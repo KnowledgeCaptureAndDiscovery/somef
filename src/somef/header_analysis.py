@@ -138,10 +138,6 @@ def extract_header_content(text: str) -> Tuple[pd.DataFrame, str | None]:
 
     content, none_header_content = mardown_parser.extract_content_per_header(text, headers)
     parents = mardown_parser.extract_headers_parents(text)
-
-    min_len = min(len(header_list), len(content)) 
-    header_list = header_list[:min_len] 
-    content = content[:min_len]
     
     df = pd.DataFrame({
         'Header': header_list,
