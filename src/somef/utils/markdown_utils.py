@@ -1,9 +1,11 @@
 import logging
 from io import StringIO
 from markdown import Markdown
+from markdown_it import MarkdownIt
 from ..utils import constants
 import re
 
+logging.getLogger("markdown_it").setLevel(logging.WARNING)
 
 ## Markdown to plain text conversion: begin ##
 # code snippet from https://stackoverflow.com/a/54923798
@@ -20,13 +22,18 @@ def unmark_element(element, stream=None):
 
 
 # patching Markdown
-Markdown.output_formats["plain"] = unmark_element
-__md = Markdown(output_format="plain")
-__md.stripTopLevelTags = False
+# Markdown.output_formats["plain"] = unmark_element
+# __md = Markdown(output_format="plain")
+# __md.stripTopLevelTags = False
 
-
-def unmark(text):
-    return __md.convert(text)
+_md = MarkdownIt()
+def unmark(text: str) -> str:
+    tokens = _md.parse(text)
+    return "".join(
+        t.content for t in tokens if t.type == "inline"
+    )
+# def unmark(text):
+#     return __md.convert(text)
 
 
 def remove_bibtex(string_list):
@@ -63,6 +70,10 @@ def remove_comments(html_text):
     -------
     Markdown with no HTML comments
     """
-    comment_pattern = r'<!--(.*?)-->'
-    html_without_comments = re.sub(comment_pattern, '', html_text, flags=re.DOTALL)
+    # comment_pattern = r'<!--(.*?)-->'
+    # # # comment_pattern = r'<!--[\s\S]*?--\s*>'
+    comment_pattern = r'<!--[\s\S]*?--.*?>'
+
+    html_without_comments = re.sub(comment_pattern, '', html_text)
+    # print(html_without_comments)
     return html_without_comments

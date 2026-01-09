@@ -148,7 +148,10 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         readme_unfiltered_text = markdown_utils.remove_comments(readme_unfiltered_text)
         repository_metadata, string_list = header_analysis.extract_categories(readme_unfiltered_text,
                                                                               repository_metadata)
+        
+        logging.info("Extracted categories from headers successfully.")
         readme_text_unmarked = markdown_utils.unmark(readme_text)
+        logging.info("readme text unmarked successfully.") 
         if not ignore_classifiers and readme_unfiltered_text != '':
             logging.info("--> suppervised classification")
             repository_metadata = supervised_classification.run_category_classification(readme_unfiltered_text,
@@ -156,6 +159,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                                         repository_metadata)
             logging.info("--> create excerpts")                                                                           
             excerpts = create_excerpts.create_excerpts(string_list)
+            logging.info("--> extract text excerpts headers")  
             excerpts_headers = mardown_parser.extract_text_excerpts_header(readme_unfiltered_text)
             header_parents = mardown_parser.extract_headers_parents(readme_unfiltered_text)
             score_dict = supervised_classification.run_classifiers(excerpts, file_paths)

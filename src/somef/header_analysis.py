@@ -138,6 +138,7 @@ def extract_header_content(text: str) -> Tuple[pd.DataFrame, str | None]:
 
     content, none_header_content = mardown_parser.extract_content_per_header(text, headers)
     parents = mardown_parser.extract_headers_parents(text)
+    
     df = pd.DataFrame({
         'Header': header_list,
         'Content': content,
@@ -395,10 +396,9 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
             source = source[constants.PROP_RESULT][constants.PROP_VALUE]
 
         logging.info("Extracting information using headers - iterating over valid entries")
+        logging.info("Valid rows: %s", len(valid))
 
         for _, row in valid.iterrows():
-            
-            # logging.info(f'row value: {row[constants.PROP_VALUE]}')
             result = {
                 constants.PROP_VALUE: row[constants.PROP_VALUE],
                 constants.PROP_TYPE: constants.TEXT_EXCERPT,
