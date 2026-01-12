@@ -77,16 +77,34 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                repo_relative_path, filename)
                     if filename == "Dockerfile":
                         format_file = constants.FORMAT_DOCKERFILE
+                        maintainers = extract_dockerfile_maintainer(os.path.join(repo_dir, file_path))
                     else:
                         format_file = constants.FORMAT_DOCKER_COMPOSE
-                    metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
-                                               {
-                                                   constants.PROP_VALUE: docker_url,
-                                                   constants.PROP_TYPE: constants.URL,
-                                                   constants.PROP_FORMAT: format_file
-                                               },
-                                               1,
-                                               constants.TECHNIQUE_FILE_EXPLORATION, docker_url)
+                        maintainers = None
+
+                    result_value = {
+                        constants.PROP_VALUE: docker_url,
+                        constants.PROP_TYPE: constants.URL,
+                        constants.PROP_FORMAT: format_file
+                    }
+                    if maintainers:
+                        result_value[constants.PROP_AUTHOR] = maintainers
+
+                    metadata_result.add_result(
+                        constants.CAT_HAS_BUILD_FILE,
+                        result_value,
+                        1,
+                        constants.TECHNIQUE_FILE_EXPLORATION,
+                        docker_url
+                    )
+                    # metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
+                    #                            {
+                    #                                constants.PROP_VALUE: docker_url,
+                    #                                constants.PROP_TYPE: constants.URL,
+                    #                                constants.PROP_FORMAT: format_file
+                    #                            },
+                    #                            1,
+                    #                            constants.TECHNIQUE_FILE_EXPLORATION, docker_url)
                 if filename.lower().endswith(".ipynb"):
                     notebook_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
                                                  repo_relative_path, filename)
@@ -651,6 +669,49 @@ def clean_text(text):
         if len(line) == 0 or (printable_chars / len(line)) > 0.9:
             cleaned_lines.append(line)
     return "\n".join(cleaned_lines)
+
+def extract_dockerfile_maintainer(file_path):
+    print(f"Extracting maintainers from Dockerfile: {file_path}")
+    maintainers = []
+    unique_maintainers = [] 
+    try:
+        with open(file_path, "rb") as file:
+            raw_data = file.read()
+
+        try:
+            content = raw_data.decode("utf-8")
+        except UnicodeDecodeError:
+            logging.warning(f"File {file_path} is not UTF-8 decodable. Skipping.")
+            return maintainers
+
+        # not sure if should be better property author or a new property of maintainer
+        oci_match = re.findall(
+            constants.REGEXP_MAINTAINER_LABEL_OCI,
+            content,
+            re.IGNORECASE | re.MULTILINE
+        )
+        # LABEL maintainer free
+        label_match = re.findall(
+            constants.REGEXP_MAINTAINER_LABEL_FREE,
+            content,
+            re.IGNORECASE | re.MULTILINE
+        )
+        # Deprecated mantainer
+        maintainer_match = re.findall(
+            constants.REGEXP_MAINTAINER,
+            content,
+            re.IGNORECASE | re.MULTILINE
+        )
+
+        maintainers.extend(oci_match)
+        maintainers.extend(label_match)
+        maintainers.extend(maintainer_match)
+
+        unique_maintainers = list({m.strip() for m in maintainers if m.strip()})
+    except OSError:
+        logging.warning(f"Could not read Dockerfile {file_path}")
+
+    return unique_maintainers
 
 #     """
 #     Proccess a text with possible authors
