@@ -21,6 +21,7 @@ from .parser.gemspec_parser import parse_gemspec_file
 from .parser.description_parser import parse_description_file
 from .parser.toml_parser import parse_toml_file
 from .parser.cabal_parser import parse_cabal_file
+from .parser.dockerfile_parser import extract_dockerfile_maintainer
 from chardet import detect
 
 
@@ -670,93 +671,3 @@ def clean_text(text):
             cleaned_lines.append(line)
     return "\n".join(cleaned_lines)
 
-def extract_dockerfile_maintainer(file_path):
-    print(f"Extracting maintainers from Dockerfile: {file_path}")
-    maintainers = []
-    unique_maintainers = [] 
-    try:
-        with open(file_path, "rb") as file:
-            raw_data = file.read()
-
-        try:
-            content = raw_data.decode("utf-8")
-        except UnicodeDecodeError:
-            logging.warning(f"File {file_path} is not UTF-8 decodable. Skipping.")
-            return maintainers
-
-        # not sure if should be better property author or a new property of maintainer
-        oci_match = re.findall(
-            constants.REGEXP_MAINTAINER_LABEL_OCI,
-            content,
-            re.IGNORECASE | re.MULTILINE
-        )
-        # LABEL maintainer free
-        label_match = re.findall(
-            constants.REGEXP_MAINTAINER_LABEL_FREE,
-            content,
-            re.IGNORECASE | re.MULTILINE
-        )
-        # Deprecated mantainer
-        maintainer_match = re.findall(
-            constants.REGEXP_MAINTAINER,
-            content,
-            re.IGNORECASE | re.MULTILINE
-        )
-
-        maintainers.extend(oci_match)
-        maintainers.extend(label_match)
-        maintainers.extend(maintainer_match)
-
-        unique_maintainers = list({m.strip() for m in maintainers if m.strip()})
-    except OSError:
-        logging.warning(f"Could not read Dockerfile {file_path}")
-
-    return unique_maintainers
-
-#     """
-#     Proccess a text with possible authors
-#     """
-#     if not author_str:
-#         return []
-
-#     authors = []
-
-#     for line in author_str.splitlines():
-#         line = line.strip()
-#         if not line or line.startswith("#"):
-#             continue  
-
-#         email_match = re.search(r'<([^>]+)>', line)
-#         if email_match:
-#             email = email_match.group(1)
-#             name = line[:email_match.start()].strip()
-#         else:
-#             name = line
-#             email = None
-
-#         if name:
-#             if re.search(constants.REGEXP_LTD_INC, name, re.IGNORECASE):
-#                 type_author = "Organization"
-#                 author_info = {
-#                     "name": name,
-#                     "email": email,
-#                     "value": name,
-#                     "type": type_author
-#                 }
-#             else:
-#                 type_author = "Person"
-#                 name_parts = name.split()
-#                 given_name = name_parts[0] if name_parts else None
-#                 last_name = " ".join(name_parts[1:]) if len(name_parts) > 1 else None
-#                 author_info = {
-#                     "name": name,
-#                     "email": email,
-#                     "value": name,
-#                     "type": type_author,
-#                     "given_name": given_name,
-#                     "last_name": last_name
-#                 }
-
-#             authors.append(author_info)
-
-#     return authors
