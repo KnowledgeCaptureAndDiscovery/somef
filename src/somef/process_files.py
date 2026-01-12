@@ -21,6 +21,7 @@ from .parser.gemspec_parser import parse_gemspec_file
 from .parser.description_parser import parse_description_file
 from .parser.toml_parser import parse_toml_file
 from .parser.cabal_parser import parse_cabal_file
+from .parser.dockerfile_parser import extract_dockerfile_maintainer
 from chardet import detect
 
 
@@ -77,16 +78,34 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                repo_relative_path, filename)
                     if filename == "Dockerfile":
                         format_file = constants.FORMAT_DOCKERFILE
+                        maintainers = extract_dockerfile_maintainer(os.path.join(repo_dir, file_path))
                     else:
                         format_file = constants.FORMAT_DOCKER_COMPOSE
-                    metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
-                                               {
-                                                   constants.PROP_VALUE: docker_url,
-                                                   constants.PROP_TYPE: constants.URL,
-                                                   constants.PROP_FORMAT: format_file
-                                               },
-                                               1,
-                                               constants.TECHNIQUE_FILE_EXPLORATION, docker_url)
+                        maintainers = None
+
+                    result_value = {
+                        constants.PROP_VALUE: docker_url,
+                        constants.PROP_TYPE: constants.URL,
+                        constants.PROP_FORMAT: format_file
+                    }
+                    if maintainers:
+                        result_value[constants.PROP_AUTHOR] = maintainers
+
+                    metadata_result.add_result(
+                        constants.CAT_HAS_BUILD_FILE,
+                        result_value,
+                        1,
+                        constants.TECHNIQUE_FILE_EXPLORATION,
+                        docker_url
+                    )
+                    # metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
+                    #                            {
+                    #                                constants.PROP_VALUE: docker_url,
+                    #                                constants.PROP_TYPE: constants.URL,
+                    #                                constants.PROP_FORMAT: format_file
+                    #                            },
+                    #                            1,
+                    #                            constants.TECHNIQUE_FILE_EXPLORATION, docker_url)
                 if filename.lower().endswith(".ipynb"):
                     notebook_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
                                                  repo_relative_path, filename)
@@ -652,50 +671,3 @@ def clean_text(text):
             cleaned_lines.append(line)
     return "\n".join(cleaned_lines)
 
-#     """
-#     Proccess a text with possible authors
-#     """
-#     if not author_str:
-#         return []
-
-#     authors = []
-
-#     for line in author_str.splitlines():
-#         line = line.strip()
-#         if not line or line.startswith("#"):
-#             continue  
-
-#         email_match = re.search(r'<([^>]+)>', line)
-#         if email_match:
-#             email = email_match.group(1)
-#             name = line[:email_match.start()].strip()
-#         else:
-#             name = line
-#             email = None
-
-#         if name:
-#             if re.search(constants.REGEXP_LTD_INC, name, re.IGNORECASE):
-#                 type_author = "Organization"
-#                 author_info = {
-#                     "name": name,
-#                     "email": email,
-#                     "value": name,
-#                     "type": type_author
-#                 }
-#             else:
-#                 type_author = "Person"
-#                 name_parts = name.split()
-#                 given_name = name_parts[0] if name_parts else None
-#                 last_name = " ".join(name_parts[1:]) if len(name_parts) > 1 else None
-#                 author_info = {
-#                     "name": name,
-#                     "email": email,
-#                     "value": name,
-#                     "type": type_author,
-#                     "given_name": given_name,
-#                     "last_name": last_name
-#                 }
-
-#             authors.append(author_info)
-
-#     return authors

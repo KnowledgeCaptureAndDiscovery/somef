@@ -454,3 +454,10 @@ CAT_CODEMETA_RUNTIMEPLATFORM = "runtimePlatform"
 CAT_CODEMETA_SOFTWAREREQUIREMENTS = "softwareRequirements"
 CAT_CODEMETA_SOFTWAREVERSION = "softwareVersion"
 CAT_CODEMETA_URL = "url"
+
+
+# DOCKER labels maintainer
+# REGEXP_MAINTAINER_LABEL_OCI = r'^\s*LABEL\s+org\.opencontainers\.image\.authors\s*=\s*["\']?(.+?)["\']?\s*$'
+REGEXP_MAINTAINER_LABEL_OCI = r'^\s*LABEL\s+org\.opencontainers\.image\.authors\s*=\s*["\']([^"\'\\]+)["\']?\s*(?:\\)?\s*$'
+REGEXP_MAINTAINER_LABEL_FREE = r'^\s*LABEL\s+"?maintainer"?\s*=\s*["\']?(.+?)["\']?\s*$'
+REGEXP_MAINTAINER = r'^\s*MAINTAINER\s+(.+)$'
