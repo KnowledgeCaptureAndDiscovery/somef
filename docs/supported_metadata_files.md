@@ -24,6 +24,8 @@ SOMEF can extract metadata from a wide range of files commonly found in software
 | `*.gemspec`        | Ruby                       | Manifest file serves as the package descriptor used in Ruby gem projects. | <div align="center">[🔍](./gemspec.md)</div>| [📄](https://guides.rubygems.org/specification-reference/)| |[Example](https://github.com/rubygems/rubygems/blob/master/bundler/bundler.gemspec) |
 | `cargo.toml`       | Rust                       | Manifest file serves as the package descriptor used in Rust projects | <div align="center">[🔍](./cargo.md)</div> | [📄](https://doc.rust-lang.org/cargo/reference/manifest.html)| |[Example](https://github.com/rust-lang/cargo/blob/master/Cargo.toml) |
 | `*.cabal`       | Haskell                       | Manifest file serving as the package descriptor for Haskell projects.| <div align="center">[🔍](./cabal.md)</div> | [📄](https://cabal.readthedocs.io/en/3.10/cabal-package.html)| |[Example](https://github.com/haskell/cabal/blob/master/Cabal/Cabal.cabal) |
+| `dockerfile`       | Dockerfile                       | Build specification file for container images that can include software metadata via LABEL instructions (OCI specification).| <div align="center">[🔍](./dockerfiledoc.md)</div> | [📄](https://docs.docker.com/reference/dockerfile/)| |[Example](https://github.com/FairwindsOps/nova/blob/master/Dockerfile) |
+
 
 > **Note:** The general principles behind metadata mapping in SOMEF are based on the [CodeMeta crosswalk](https://github.com/codemeta/codemeta/blob/master/crosswalk.csv) and the [CodeMeta JSON-LD context](https://github.com/codemeta/codemeta/blob/master/codemeta.jsonld).  
 > However, each supported file type may have specific characteristics and field interpretations.

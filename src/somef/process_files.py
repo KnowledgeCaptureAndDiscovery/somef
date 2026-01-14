@@ -21,7 +21,7 @@ from .parser.gemspec_parser import parse_gemspec_file
 from .parser.description_parser import parse_description_file
 from .parser.toml_parser import parse_toml_file
 from .parser.cabal_parser import parse_cabal_file
-from .parser.dockerfile_parser import extract_dockerfile_maintainer
+from .parser.dockerfile_parser import parse_dockerfile
 from chardet import detect
 
 
@@ -76,20 +76,22 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                 if filename == "Dockerfile" or filename.lower() == "docker-compose.yml":
                     docker_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
                                                repo_relative_path, filename)
-                    if filename == "Dockerfile":
-                        format_file = constants.FORMAT_DOCKERFILE
-                        maintainers = extract_dockerfile_maintainer(os.path.join(repo_dir, file_path))
-                    else:
-                        format_file = constants.FORMAT_DOCKER_COMPOSE
-                        maintainers = None
+                    
+                    # full_path = os.path.join(repo_dir, file_path)
 
                     result_value = {
                         constants.PROP_VALUE: docker_url,
                         constants.PROP_TYPE: constants.URL,
-                        constants.PROP_FORMAT: format_file
                     }
-                    if maintainers:
-                        result_value[constants.PROP_AUTHOR] = maintainers
+
+                    if filename == "Dockerfile":
+                        format_file = constants.FORMAT_DOCKERFILE
+                        result_value[constants.PROP_FORMAT] = format_file
+                        metadata_result = parse_dockerfile(os.path.join(dir_path, filename), metadata_result, docker_url)
+                    else:
+                        format_file = constants.FORMAT_DOCKER_COMPOSE
+
+                    result_value[constants.PROP_FORMAT] = format_file
 
                     metadata_result.add_result(
                         constants.CAT_HAS_BUILD_FILE,
@@ -98,14 +100,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                         constants.TECHNIQUE_FILE_EXPLORATION,
                         docker_url
                     )
-                    # metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
-                    #                            {
-                    #                                constants.PROP_VALUE: docker_url,
-                    #                                constants.PROP_TYPE: constants.URL,
-                    #                                constants.PROP_FORMAT: format_file
-                    #                            },
-                    #                            1,
-                    #                            constants.TECHNIQUE_FILE_EXPLORATION, docker_url)
+ 
                 if filename.lower().endswith(".ipynb"):
                     notebook_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
                                                  repo_relative_path, filename)
