@@ -22,6 +22,7 @@ from .parser.description_parser import parse_description_file
 from .parser.toml_parser import parse_toml_file
 from .parser.cabal_parser import parse_cabal_file
 from .parser.dockerfile_parser import parse_dockerfile
+from .parser.publiccode_parser import parse_publiccode_file
 from chardet import detect
 
 
@@ -250,7 +251,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                         filename.lower() == "pyproject.toml" or filename.lower() == "setup.py" or filename.endswith(".gemspec") or \
                         filename.lower() == "requirements.txt" or filename.lower() == "bower.json" or filename == "DESCRIPTION" or \
                         (filename.lower() == "cargo.toml" and repo_relative_path == ".") or (filename.lower() == "composer.json" and repo_relative_path == ".") or \
-                        (filename == "Project.toml" and repo_relative_path == "."):
+                        (filename == "Project.toml" or (filename.lower()== "publiccode.yml" or filename.lower()== "publiccode.yaml") and repo_relative_path == "."):
                         if filename.lower() in parsed_build_files and repo_relative_path != ".":
                             logging.info(f"Ignoring secondary {filename} in {dir_path}")
                             continue
@@ -288,6 +289,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             metadata_result = parse_toml_file(os.path.join(dir_path, filename), metadata_result, build_file_url)                            
                         if filename.endswith == ".cabal":
                             metadata_result = parse_cabal_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
+                        if filename.lower() == "publiccode.yml" or filename.lower() == "publiccode.yaml":
+                            metadata_result = parse_publiccode_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         parsed_build_files.add(filename.lower())
                           
                 # if repo_type == constants.RepositoryType.GITLAB: 

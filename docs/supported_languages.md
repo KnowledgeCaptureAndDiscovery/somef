@@ -28,6 +28,6 @@ SoMEF also detects the following files to recognize build instructions, workflow
 | Jupyter Notebook |  `*.ipynb`                | executable_example |
 | Ontologies | `*.ttl`, `*.owl`, `*.nt`, `*.xml`, `*.jsonld` | ontologies |
 | Shell |  `*.sh`                                | has_script_file   |
-| YAML |  `*.yml`, `*.yaml` | continuous_integration, workflows
+| YAML |  `*.yml`, `*.yaml` | continuous_integration, workflows, publiccode |
 
 
