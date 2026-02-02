@@ -15,6 +15,7 @@ from .utils import constants, markdown_utils
 from .parser import mardown_parser, create_excerpts
 from .export.turtle_export import DataGraph
 from .export import json_export
+from .export import google_codemeta_export
 from .extract_software_type import check_repository_type
 from urllib.parse import urlparse, quote
 
@@ -153,13 +154,13 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         readme_text_unmarked = markdown_utils.unmark(readme_text)
         logging.info("readme text unmarked successfully.") 
         if not ignore_classifiers and readme_unfiltered_text != '':
-            logging.info("--> suppervised classification")
+            logging.info("Supervised classification")
             repository_metadata = supervised_classification.run_category_classification(readme_unfiltered_text,
                                                                                         threshold,
                                                                                         repository_metadata)
-            logging.info("--> create excerpts")                                                                           
+            logging.info("Create excerpts")                                                                           
             excerpts = create_excerpts.create_excerpts(string_list)
-            logging.info("--> extract text excerpts headers")  
+            logging.info("Extract text excerpts headers")  
             excerpts_headers = mardown_parser.extract_text_excerpts_header(readme_unfiltered_text)
             header_parents = mardown_parser.extract_headers_parents(readme_unfiltered_text)
             score_dict = supervised_classification.run_classifiers(excerpts, file_paths)
@@ -228,6 +229,7 @@ def run_cli(*,
             graph_out=None,
             graph_format="turtle",
             codemeta_out=None,
+            google_codemeta_out=None,
             pretty=False,
             missing=False,
             keep_tmp=None,
@@ -276,6 +278,15 @@ def run_cli(*,
                         codemeta_out = codemeta_out.replace(".json", "")
                         codemeta_out = codemeta_out + "_" + encoded_url + ".json"
                         json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty, requirements_mode= requirements_mode)
+                    if google_codemeta_out is not None:
+                        gc_out = google_codemeta_out.replace(".json", "")
+                        gc_out = gc_out + "_" + encoded_url + ".json"
+                        google_codemeta_export.save_google_codemeta_output(
+                            repo_data.results,
+                            gc_out,
+                            pretty=pretty,
+                            requirements_mode=requirements_mode
+                        )
                 except:
                     logging.error("Error when processing repo: " + repo_url)
         else:
@@ -297,7 +308,8 @@ def run_cli(*,
             json_export.save_json_output(repo_data.results, output, missing, pretty=pretty)
         if codemeta_out is not None:
             json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty, requirements_mode=requirements_mode)
-
+        if google_codemeta_out is not None:
+            google_codemeta_export.save_google_codemeta_output(repo_data.results, google_codemeta_out, pretty=pretty, requirements_mode=requirements_mode)
     if graph_out is not None:
         logging.info("Generating triples...")
         data_graph = DataGraph()

@@ -115,6 +115,12 @@ def configure(auto, base_uri):
     help="Path to an output codemeta file"
 )
 @optgroup.option(
+    "--google_codemeta_out",
+    "-gc",
+    type=click.Path(),
+    help="Path to an output Google-compliant codemeta file"
+)
+@optgroup.option(
     "--graph_out",
     "-g",
     type=click.Path(),

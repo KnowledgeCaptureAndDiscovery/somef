@@ -116,7 +116,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
 
     codemeta_output = {
         "@context": "https://w3id.org/codemeta/3.0",
-        "@type": "SoftwareSourceCode"
+        "@type": ["SoftwareSourceCode", "SoftwareApplication"]
     }
     if constants.CAT_LICENSE in repo_data:
         # We mix the name of the license from github API with the URL of the file (if found)  
@@ -154,7 +154,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                         l_result["url"] = l[constants.PROP_RESULT][constants.PROP_URL]
             if constants.PROP_SPDX_ID in l[constants.PROP_RESULT].keys():
                 l_result["identifier"] = constants.SPDX_BASE + l[constants.PROP_RESULT][constants.PROP_SPDX_ID]
-                l_result["spdx_id"] = l[constants.PROP_RESULT][constants.PROP_SPDX_ID]
+                # spdx_id does not exist in codemeta
+                # l_result["spdx_id"] = l[constants.PROP_RESULT][constants.PROP_SPDX_ID]
 
         codemeta_output[constants.CAT_CODEMETA_LICENSE] = l_result
     if code_repository is not None:
@@ -213,6 +214,9 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                     key = f"{name.strip()}|{version.strip() if version else ''}"
                     if key not in seen_structured:
                         entry = {"name": name.strip()}
+                        req_type = x[constants.PROP_RESULT].get("type")
+                        if req_type:
+                            entry["@type"] = map_requirement_type(req_type)
                         if version:
                             entry["version"] = version.strip()
                         code_parser_requirements.append(entry)
@@ -616,3 +620,14 @@ def extract_doi(url: str) -> str:
 
     match = re.search(constants.REGEXP_ALL_DOIS, url, re.IGNORECASE)
     return match.group(0).lower() if match else ""
+
+def map_requirement_type(t):
+    t = t.lower()
+    if "application" in t:
+        return "SoftwareApplication"
+    if "source" in t:
+        return "SoftwareSourceCode"
+    if "system" in t:
+        return "SoftwareSystem"
+    return "SoftwareApplication" 
+

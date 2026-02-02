@@ -294,13 +294,16 @@ Options:
   Output: [required_any]
     -o, --output PATH             Path to the output file. If supplied, the
                                   output will be in JSON
-
     -c, --codemeta_out PATH       Path to an output codemeta file
     -g, --graph_out PATH          Path to the output Knowledge Graph export
                                   file. If supplied, the output will be a
                                   Knowledge Graph, in the format given in the
                                   --format option chosen (turtle, json-ld)
-
+    -gc, --google_codemeta_out PATH Path to a Google-compliant Codemeta JSON-LD
+                                    file. This output transforms the standard
+                                    Codemeta to follow Google’s expected JSON-LD
+                                    structure.
+                                    
   -f, --graph_format [turtle|json-ld]
                                   If the --graph_out option is given, this is
                                   the format that the graph will be stored in
