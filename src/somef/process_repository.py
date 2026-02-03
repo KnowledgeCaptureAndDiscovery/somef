@@ -81,6 +81,12 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=const
             stream=use_stream,
             **kwargs
         )
+        # Detect invalid or insufficient GitHub token 
+        if response.status_code == 401: 
+            raise Exception("Invalid GitHub token. Run `somef configure` to set a valid token.") 
+        if response.status_code == 403: 
+            raise Exception("GitHub token lacks required permissions or scopes.")
+        
         date = response.headers.get("Date", "")
         # Show rate limit information if available
         if "X-RateLimit-Remaining" in response.headers:
