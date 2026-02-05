@@ -306,8 +306,7 @@ class TestJSONExport(unittest.TestCase):
       
         found = False  
         homepage_entries = data.get("homepage", [])
-        print('---------------------------')
-        print(homepage_entries)
+
         for item in homepage_entries:
             technique = item.get("technique")
             result = item.get("result", {})
@@ -469,5 +468,36 @@ class TestJSONExport(unittest.TestCase):
 
         os.remove(test_data_path + "test-859.json")
 
+
+    def test_issue_723(self):
+        """Checks if we exract the maintainers in the Codemeta output from the CODEOWNERS file. 
+        But without -ai flag because requiere real requests to GitHub API and we want to avoid that in the tests. 
+        """
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "tensorflow",
+                            doc_src=None,
+                            in_file=None,
+                            output=test_data_path + "test_issue_723.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        text_file = open(test_data_path + "test_issue_723.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+
+        maintainers= json_content.get("maintainer", [])
+        assert len(maintainers) == 10, f"Expected 10 maintainers, found {len(maintainers)}"
+        usernames = [m.get("result", {}).get("username") for m in maintainers]
+        assert "qqfish" in usernames, "Expected maintainer 'qqfish' not found" 
+        assert "penpornk" in usernames, "Expected maintainer 'penpornk' not found"
+        
+        os.remove(test_data_path + "test_issue_723.json")
 
    

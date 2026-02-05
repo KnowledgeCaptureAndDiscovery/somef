@@ -23,13 +23,14 @@ from .parser.toml_parser import parse_toml_file
 from .parser.cabal_parser import parse_cabal_file
 from .parser.dockerfile_parser import parse_dockerfile
 from .parser.publiccode_parser import parse_publiccode_file
+from .parser.codeowners_parser import parse_codeowners_file
 from chardet import detect
 
 
 domain_gitlab = ''
 
 def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner="", repo_name="",
-                             repo_default_branch="", ignore_test_folder=True):
+                             repo_default_branch="", ignore_test_folder=True, additional_info=False):
     """
     Method that given a folder, it recognizes whether there are notebooks, dockerfiles, docs, script files or
     ontologies.
@@ -225,6 +226,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                 if filename.endswith(".ttl") or filename.endswith(".owl") or filename.endswith(".nt") or filename. \
                         endswith(".xml"):
                     uri = extract_ontologies.is_file_ontology(os.path.join(repo_dir, file_path))
+
                     if uri is not None:
                         onto_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
                                                  repo_relative_path, filename)
@@ -235,7 +237,14 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION
                                                    )
                 if filename.upper() == constants.CODEOWNERS_FILE:
-                    codeowners_json = parse_codeowners_structured(dir_path,filename)
+                    # codeowners_json = parse_codeowners_structured(dir_path,filename)
+                    print("Processing CODEOWNERS file...")
+                    codeowner_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
+                                                       repo_dir,
+                                                       repo_relative_path, filename)
+                    
+                    metadata_result = parse_codeowners_file(os.path.join(dir_path, filename), metadata_result, codeowner_file_url, additional_info)
+                    parsed_build_files.add(filename.lower())
 
                 if filename.lower() == "codemeta.json":
                     if filename.lower() in parsed_build_files and repo_relative_path != ".":
@@ -245,7 +254,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                     codemeta_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir, repo_relative_path, filename)
                     metadata_result = parse_codemeta_json_file(os.path.join(dir_path, filename), metadata_result, codemeta_file_url)
                     parsed_build_files.add(filename.lower())
-                    # TO DO: Code owners not fully implemented yet
+                    
 
                 if filename.lower() == "pom.xml" or filename.lower() == "package.json" or \
                         filename.lower() == "pyproject.toml" or filename.lower() == "setup.py" or filename.endswith(".gemspec") or \
@@ -647,19 +656,6 @@ def extract_gitlab_domain(metadata_result, repo_type):
             return domain
     return None  
 
-def parse_codeowners_structured(dir_path, filename):
-    codeowners = []
-
-    with open(os.path.join(dir_path, filename), "r", encoding="utf-8") as file:
-        for line in file:
-            line = line.strip()
-            if line and not line.startswith("#"):
-                parts = line.split()
-                path = parts[0]  
-                owners = parts[1:] 
-                codeowners.append({"path": path, "owners": owners})
-
-    return {"codeowners": codeowners}
 
 def clean_text(text):
     cleaned_lines = []

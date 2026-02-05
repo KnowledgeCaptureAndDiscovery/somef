@@ -210,9 +210,10 @@ class TestCodemetaExport(unittest.TestCase):
         with open(test_data_path + "test_authors_reference.json", "r") as text_file:
             data = json.load(text_file) 
 
+
         expected_family_name = "Garijo"
         expected_given_name = "Daniel"
-
+        
         found = any(
             any(
                 author.get("familyName") == expected_family_name and author.get("givenName") == expected_given_name
@@ -517,6 +518,38 @@ class TestCodemetaExport(unittest.TestCase):
             len(json_content["license"]) > 0 and len(json_content["dateCreated"]) > 0
         
         os.remove(test_data_path + "test-417.json-ld")
+
+    def test_issue_723_codemeta(self):
+            """
+            Check that we extract the maintainers in the Codemeta output from the CODEOWNERS file. But without -ai flag
+            """
+
+            somef_cli.run_cli(threshold=0.9,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            doc_src=None,
+                            local_repo=test_data_repositories + "tensorflow",
+                            in_file=None,
+                            output=None,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out= test_data_path + 'test_codemeta_codeowners.json',
+                            pretty=True,
+                            missing=False)
+            
+            json_file_path = test_data_path + "test_codemeta_codeowners.json"
+            text_file = open(json_file_path, "r")
+            data = text_file.read()
+            json_content = json.loads(data)
+            text_file.close()
+
+            maintainers= json_content.get("maintainer", [])
+            assert len(maintainers) == 10, f"Expected 10 maintainers, found {len(maintainers)}"
+            identifiers = [m.get("identifier") for m in maintainers]
+            assert "qqfish" in identifiers, "Expected maintainer 'qqfish' not found" 
+            assert "penpornk" in identifiers, "Expected maintainer 'penpornk' not found"
+
+            os.remove(json_file_path)
 
     @classmethod
     def tearDownClass(cls):

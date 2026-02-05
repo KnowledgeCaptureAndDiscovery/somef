@@ -55,6 +55,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Keywords**: set of terms used to commonly identify a software component
 - **License**: License and usage terms of a software component
 - **Logo**: Main logo used to represent the target software component
+- **Maintainer**: Individuals or teams responsible for maintaining the software component, extracted from the CODEOWNERS file
 - **Name**: Name identifying a software component
 - **Ontologies**: URL and path to the ontology files present in the repository
 - **Owner**: Name and type of the user or organization in charge of the repository
@@ -327,6 +328,12 @@ Options:
 
   -v, --requirements_v            Export only requirements from structured
                                   sources (pom.xml, requirements.txt, etc.)
+
+
+  -ai, --additional_info          SOMEF will extract additional information 
+                                  from certain files like CODEOWNERS. 
+                                  This may require extra API
+                                  requests and increase execution time
 
   -h, --help                      Show this message and exit.
 ```

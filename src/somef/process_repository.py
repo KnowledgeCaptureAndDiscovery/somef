@@ -11,6 +11,7 @@ from .utils import constants
 from . import configuration
 from .process_results import Result
 from .regular_expressions import detect_license_spdx
+from .parser.codeowners_parser import enrich_github_user
 
 # Constructs a template HTTP header, which:
 # - has a key for the authorization token if passed via the authorization argument, otherwise
@@ -484,7 +485,7 @@ def download_readme(owner, repo_name, default_branch, repo_type, authorization):
 
 
 def load_online_repository_metadata(repository_metadata: Result, repository_url, ignore_api_metadata=False,
-                                    repo_type=constants.RepositoryType.GITHUB, authorization=None):
+                                    repo_type=constants.RepositoryType.GITHUB, authorization=None, additional_info=False):
     """
     Function uses the repository_url provided to load required information from GitHub or Gitlab.
     Information kept from the repository is written in keep_keys.
@@ -495,6 +496,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     @param ignore_api_metadata: true if you do not want to do an additional request to the target API
     @param repository_url: target repository URL.
     @param authorization: GitHub authorization token
+    @param additional_info: flag to indicate if additional should be extracted from certain files as codeowners. More request.
 
     Returns
     -------
@@ -578,10 +580,22 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
 
     for category, value in filtered_resp.items():
         value_type = constants.STRING
+        maintainer_data = {}
         if category in constants.all_categories:
             if category == constants.CAT_ISSUE_TRACKER:
                 value = value.replace("{/number}", "")
             if category == constants.CAT_OWNER:
+                if additional_info:
+                    print("Enriching owner information from codeowners...")
+                    user_info = enrich_github_user(owner)
+                    if user_info:
+                        if user_info.get("name"):
+                            maintainer_data["name"] = user_info.get("name")
+                        if user_info.get("company"):
+                            maintainer_data["affiliation"] = user_info.get("company")
+                        if user_info.get("email"):
+                            maintainer_data["email"] = user_info.get("email")
+
                 value_type = filtered_resp[constants.AGENT_TYPE]
             if category == constants.CAT_KEYWORDS:
                 # we concatenate all keywords in a list, as the return value is always a single object
@@ -603,6 +617,17 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
                 }
                 if "spdx_id" in value.keys():
                     result[constants.PROP_SPDX_ID] = value["spdx_id"]
+            elif category == constants.CAT_OWNER:
+                result = {
+                    constants.PROP_VALUE: value,
+                    constants.PROP_TYPE: value_type
+                }
+                if maintainer_data.get("name"):
+                    result[constants.PROP_NAME] = maintainer_data["name"]
+                if maintainer_data.get("affiliation"):
+                    result[constants.PROP_AFFILIATION] = maintainer_data["affiliation"]
+                if maintainer_data.get("email"):
+                    result[constants.PROP_EMAIL] = maintainer_data["email"]
             else:
                 result = {
                     constants.PROP_VALUE: value,

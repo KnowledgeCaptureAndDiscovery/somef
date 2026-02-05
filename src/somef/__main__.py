@@ -177,6 +177,13 @@ def configure(auto, base_uri):
     default=False,
     help="Export only requirements from structured sources (pom.xml, requirements.txt, etc.)"
 )
+@click.option(
+    "--additional_info",
+    "-ai",
+    is_flag=True,
+    default=False,
+    help="""SOMEF will extract additional information from certain files like CODEOWNERS, etc."""
+)
 def describe(requirements_v, requirements_all, **kwargs):
     # import so missing packages get installed when appropriate
     if requirements_v:
