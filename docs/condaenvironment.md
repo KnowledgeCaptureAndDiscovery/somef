@@ -1,5 +1,3 @@
-# Metadata extracted from a Conda `environment.yml` file
-
 The following metadata fields can be extracted from a Conda `environment.yml` or `environment.yaml` file.  
 This file format is part of the Conda environment specification and is commonly used to declare software dependencies for reproducible environments.
 
@@ -12,10 +10,10 @@ Only dependency information is mapped, since it is the only part of the Conda en
 | Software metadata category  | SOMEF metadata JSON path              | ENVIRONMENT.YML metadata file field     |
 |-----------------------------|---------------------------------------|------------------------------|
 | has_package_file            | has_package_file[i].result.value      | URL of the `environment.yml` file |
-| requirements - value          |     requirements[i].result.value      | dependenciees | 
+| requirements - value          |     requirements[i].result.value      | dependencies | 
 | requirements - name           |     requirements[i].result.name       | dependencies extract name       |        
 | requirements - version            |     requirements[i].result.version    | dependencies extract version |
-| requirements - dependency type           |     requirements[i].result.dependency_type            | conda if depedencies or pip if dependencie/pip  *(1)* |
+| requirements - dependency type           |     requirements[i].result.dependency_type            | conda if dependencies or pip if dependencies/pip  *(1)* |
 
 
 ---
