@@ -282,19 +282,24 @@ def run_cli(*,
                                              ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
                                              keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, requirements_mode=requirements_mode, additional_info=additional_info)
                     
+                    if hasattr(repo_data, "get_json"): 
+                        repo_data = repo_data.get_json()
+           
+                    repo_data = json_export.unify_results(repo_data.results)
+
                     if output is not None:
                         output = output.replace(".json","")
                         output = output + "_" + encoded_url + ".json"
-                        json_export.save_json_output(repo_data.results, output, missing, pretty=pretty)
+                        json_export.save_json_output(repo_data, output, missing, pretty=pretty)
                     if codemeta_out is not None:
                         codemeta_out = codemeta_out.replace(".json", "")
                         codemeta_out = codemeta_out + "_" + encoded_url + ".json"
-                        json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty, requirements_mode= requirements_mode)
+                        json_export.save_codemeta_output(repo_data, codemeta_out, pretty=pretty, requirements_mode= requirements_mode)
                     if google_codemeta_out is not None:
                         gc_out = google_codemeta_out.replace(".json", "")
                         gc_out = gc_out + "_" + encoded_url + ".json"
                         google_codemeta_export.save_google_codemeta_output(
-                            repo_data.results,
+                            repo_data,
                             gc_out,
                             pretty=pretty,
                             requirements_mode=requirements_mode
@@ -315,13 +320,18 @@ def run_cli(*,
         else:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
                                      doc_src=doc_src, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, additional_info=additional_info)
+        
+        if hasattr(repo_data, "get_json"): 
+            repo_data = repo_data.get_json()
+
+        repo_data = json_export.unify_results(repo_data.results)
 
         if output is not None:
-            json_export.save_json_output(repo_data.results, output, missing, pretty=pretty)
+            json_export.save_json_output(repo_data, output, missing, pretty=pretty)
         if codemeta_out is not None:
-            json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty, requirements_mode=requirements_mode)
+            json_export.save_codemeta_output(repo_data, codemeta_out, pretty=pretty, requirements_mode=requirements_mode)
         if google_codemeta_out is not None:
-            google_codemeta_export.save_google_codemeta_output(repo_data.results, google_codemeta_out, pretty=pretty, requirements_mode=requirements_mode)
+            google_codemeta_export.save_google_codemeta_output(repo_data, google_codemeta_out, pretty=pretty, requirements_mode=requirements_mode)
     if graph_out is not None:
         logging.info("Generating triples...")
         data_graph = DataGraph()

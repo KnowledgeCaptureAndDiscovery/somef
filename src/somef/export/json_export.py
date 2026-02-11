@@ -1,11 +1,13 @@
 import json
 import re
 from datetime import datetime
+from urllib.parse import urlparse, urlunparse
+from typing import List, Dict
 import yaml
 from dateutil import parser as date_parser
 from ..utils import constants
 from ..regular_expressions import detect_license_spdx,extract_scholarly_article_natural, extract_scholarly_article_properties
-from typing import List, Dict
+
 
 def save_json_output(repo_data, out_path, missing, pretty=False):
     """
@@ -320,7 +322,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
 
         if codemeta_authors: 
             codemeta_output[constants.CAT_CODEMETA_AUTHOR] = codemeta_authors
-            
+
     if constants.CAT_AUTHORS in repo_data:
         if "author" not in codemeta_output:
             codemeta_output[constants.CAT_CODEMETA_AUTHOR] = []
@@ -328,6 +330,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         # print('-------AUTHORES')
         # print(repo_data[constants.CAT_AUTHORS])
         for author in repo_data[constants.CAT_AUTHORS]:
+            print(author)
             value_author = author[constants.PROP_RESULT].get(constants.PROP_VALUE)
             name_author = author[constants.PROP_RESULT].get(constants.PROP_NAME)
             if value_author and re.search(constants.REGEXP_LTD_INC, value_author, re.IGNORECASE):
@@ -664,3 +667,135 @@ def map_requirement_type(t):
         return "SoftwareSystem"
     return "SoftwareApplication" 
 
+
+"""
+This part of code implements the post processing and unification logic applied to the
+raw JSON extracted by SOMEF. Different extractors may produce duplicated or
+slightly divergent entries for the same underlying resource (e.g., documentation
+URLs, identifiers, authors). The functions below normalize values, detect
+equivalent items, and merge them while preserving all available information.
+
+Key ideas:
+- Canonicalize simple URL values to avoid redundant entries.
+- Never canonicalize structured objects (e.g., Release, Agent).
+- Merge complementary fields extracted by different techniques.
+- Combine techniques and sources without losing provenance.
+"""
+
+def canonicalize_value(value, value_type):
+    """Canonicalization for SOMEF:
+       - If URL points to a file (has extension), keep full path (no unification)
+       - Otherwise, unify to scheme://domain (documentation, badges, pages)
+       - Always remove query, fragment, trailing slash
+    """
+    if value_type == "Release": 
+        return value
+    
+    if value_type == "Url":
+        parsed = urlparse(value)
+
+        # Remove query and fragment
+        path = parsed.path.rstrip('/')
+
+        # Detect if last segment has a file extension
+        last_segment = path.split('/')[-1]
+        if '.' in last_segment:
+            # It's a file → do NOT unify
+            clean_path = path
+            return urlunparse((parsed.scheme, parsed.netloc, clean_path, '', '', ''))
+
+        # It's a directory/page → unify to domain
+        return f"{parsed.scheme}://{parsed.netloc}"
+
+    if isinstance(value, str):
+        return value.strip()
+
+    return value
+
+
+def normalize_type(result):
+    value = result.get("value", "")
+    rtype = result.get("type", "")
+
+    # Only normalize if the object ONLY has type + value
+    # (i.e., it's a simple URL, not a structured object like Release)
+    if isinstance(value, str) and value.startswith("http"):
+        if set(result.keys()) <= {"type", "value"}:
+            return "Url"
+
+    return rtype
+
+
+def choose_more_general(a, b):
+    """ 
+    If both values are strings and one contains the other, return the shorter one.
+    Otherwise, return 'a'.
+    """
+    if isinstance(a, str) and isinstance(b, str):
+        if a in b:
+            return a
+        if b in a:
+            return b
+    return a
+
+
+def unify_results(repo_data: dict) -> dict:
+    print("Unifying results...")
+    unified_data = {}
+
+    for category, items in repo_data.items():
+        if not isinstance(items, list):
+            unified_data[category] = items
+            continue
+
+        seen = {}
+
+        for item in items:
+            result = item.get("result", {})
+            normalized_type = normalize_type(result) 
+            result["type"] = normalized_type
+            value = result.get("value")
+            value_type = result.get("type")
+
+            canonical = canonicalize_value(value, value_type)
+
+            key = str(canonical)
+
+            if key in seen:
+                existing = seen[key]
+
+                # If types match, merge normally
+                existing["result"]["value"] = choose_more_general(
+                    existing["result"]["value"], value
+                )
+
+                # merge other result fields because different techniques might have extracted different information 
+                # (e.g., email in authors extracted by file exploration or code parser.
+                for field, new_val in result.items():
+                    if field in ("value", "type"):
+                        continue  
+                    old_val = existing["result"].get(field)
+                    if old_val in (None, "", []):
+                        existing["result"][field] = new_val
+
+                # join techniques
+                t1 = existing.get("technique", [])
+                t2 = item.get("technique", [])
+                if not isinstance(t1, list): t1 = [t1]
+                if not isinstance(t2, list): t2 = [t2]
+                existing["technique"] = list(set(t1 + t2))
+
+                # join sources
+                s1 = existing.get("source", [])
+                s2 = item.get("source", [])
+                if s1 and not isinstance(s1, list): s1 = [s1]
+                if s2 and not isinstance(s2, list): s2 = [s2]
+                if s1 or s2:
+                    existing["source"] = list(set(s1 + s2))
+
+            else:
+                seen[key] = item
+
+        unified_data[category] = list(seen.values())
+
+    return unified_data
