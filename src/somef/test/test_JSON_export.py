@@ -512,7 +512,7 @@ class TestJSONExport(unittest.TestCase):
         output_path = test_data_path + 'test_widoco_unify.json'
 
         somef_cli.run_cli(  threshold=0.8,
-                            local_repo=test_data_repositories + "widoco",
+                            local_repo=test_data_repositories + "Widoco",
                             doc_src=None,
                             in_file=None,
                             output=output_path,
@@ -528,6 +528,7 @@ class TestJSONExport(unittest.TestCase):
             json_content = json.load(f)
 
         requirements = json_content.get(constants.CAT_REQUIREMENTS, [])
+        print(json.dumps(requirements, indent=2))
 
         unified_reqs = [ r for r in requirements if "You will need Java 1.8" in r["result"].get("value", "") ]
         assert unified_reqs, "There should be at least one unified Java requirement entry" 
