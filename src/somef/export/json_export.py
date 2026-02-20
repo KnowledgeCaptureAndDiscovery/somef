@@ -178,7 +178,14 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
     if constants.CAT_LOGO in repo_data:
         codemeta_output[constants.CAT_CODEMETA_LOGO] = repo_data[constants.CAT_LOGO][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_KEYWORDS in repo_data:
-        codemeta_output[constants.CAT_CODEMETA_KEYWORDS] = repo_data[constants.CAT_KEYWORDS][0][constants.PROP_RESULT][constants.PROP_VALUE]
+        # codemeta_output[constants.CAT_CODEMETA_KEYWORDS] = repo_data[constants.CAT_KEYWORDS][0][constants.PROP_RESULT][constants.PROP_VALUE]
+        codemeta_output[constants.CAT_CODEMETA_KEYWORDS] = []
+
+        for key in repo_data[constants.CAT_KEYWORDS]:
+          key_value = key[constants.PROP_RESULT][constants.PROP_VALUE]
+          if key_value not in codemeta_output[constants.CAT_CODEMETA_KEYWORDS]:
+            codemeta_output[constants.CAT_CODEMETA_KEYWORDS].append(key_value)
+
     if constants.CAT_PROGRAMMING_LANGUAGES in repo_data:
         # Calculate the total code size of all the programming languages
         codemeta_output[constants.CAT_CODEMETA_PROGRAMMINGLANGUAGE] = []
@@ -330,7 +337,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         # print('-------AUTHORES')
         # print(repo_data[constants.CAT_AUTHORS])
         for author in repo_data[constants.CAT_AUTHORS]:
-            print(author)
             value_author = author[constants.PROP_RESULT].get(constants.PROP_VALUE)
             name_author = author[constants.PROP_RESULT].get(constants.PROP_NAME)
             if value_author and re.search(constants.REGEXP_LTD_INC, value_author, re.IGNORECASE):
