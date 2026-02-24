@@ -47,38 +47,44 @@ def parse_conda_environment_file(file_path, metadata_result: Result, source):
 
     # conda dependencies
     for dep in conda_deps:
+        dep_dict = {
+            "value": dep,
+            "name": re.split(r"[=<>!]", dep)[0],
+            "type": constants.SOFTWARE_APPLICATION,
+            "dependency_type": "conda"
+        }
+
+        match = re.search(r"[=<>!]+(.+)", dep)
+        if match:
+            dep_dict["version"] = match.group(1)
+
         metadata_result.add_result(
             constants.CAT_REQUIREMENTS,
-            {
-                "value": dep,
-                "name": dep.split("=")[0],
-                "version": dep.split("=")[1] if "=" in dep else "",
-                "type": constants.SOFTWARE_APPLICATION,
-                "dependency_type": "conda"
-            },
+            dep_dict,
             1,
             constants.TECHNIQUE_CODE_CONFIG_PARSER,
             source
         )
-
     # pip dependdencies
     for dep in pip_deps:
-        name = dep.split("==")[0] if "==" in dep else dep
-        version = dep.split("==")[1] if "==" in dep else ""
+
+        dep_dict = {
+            "value": dep,
+            "name": re.split(r"[=<>!~]", dep)[0],
+            "type": constants.SOFTWARE_APPLICATION,
+            "dependency_type": "pip"
+        }
+
+        match = re.search(r"[=<>!~]+(.+)", dep)
+        if match:
+            dep_dict["version"] = match.group(1)
 
         metadata_result.add_result(
             constants.CAT_REQUIREMENTS,
-            {
-                "value": dep,
-                "name": name,
-                "version": version,
-                "type": constants.SOFTWARE_APPLICATION,
-                "dependency_type": "pip"
-            },
+            dep_dict,
             1,
             constants.TECHNIQUE_CODE_CONFIG_PARSER,
             source
         )
-
     
     return metadata_result

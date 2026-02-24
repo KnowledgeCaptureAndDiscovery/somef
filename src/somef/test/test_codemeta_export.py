@@ -213,7 +213,7 @@ class TestCodemetaExport(unittest.TestCase):
 
         expected_family_name = "Garijo"
         expected_given_name = "Daniel"
-        
+
         found = any(
             any(
                 author.get("familyName") == expected_family_name and author.get("givenName") == expected_given_name
@@ -333,7 +333,6 @@ class TestCodemetaExport(unittest.TestCase):
             json_content = json.load(f)
 
         requirements = json_content.get("softwareRequirements", [])
-
         assert all(isinstance(req, dict) and "name" in req for req in requirements), \
             f"Expected only structured requirements, found: {requirements}"
 
@@ -476,6 +475,7 @@ class TestCodemetaExport(unittest.TestCase):
         text_file.close()
 
         authors = json_content.get("author", [])
+
         assert len(authors) == 9, f"Expected 9 author, found {len(authors)}"
         assert authors[0].get("name") == "Robert Huber", "Second author must be Robert Huber"
         assert authors[1].get("email") == "anusuriya.devaraju@googlemail.com", \
@@ -550,6 +550,106 @@ class TestCodemetaExport(unittest.TestCase):
             assert "penpornk" in identifiers, "Expected maintainer 'penpornk' not found"
 
             os.remove(json_file_path)
+
+
+    def test_issue_891(self):
+       
+        """
+        Checks that the CodeMeta export include just structured requirements extracted by code parsers, excluding any textual
+        entries coming from readme, codemeta.json or other non structured sources.
+        """
+
+        output_path = test_data_path + 'test_codemeta_issue_891.json'
+
+        somef_cli.run_cli(threshold=0.9,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=None,
+                          local_repo=test_data_repositories + "somef_repo",
+                          in_file=None,
+                          output=None,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out= output_path,
+                          pretty=True,
+                          missing=False)
+        
+        with open(output_path, "r") as f:
+            json_content = json.load(f)
+
+        requirements = json_content.get("softwareRequirements", [])
+        assert all(isinstance(req, dict) and "name" in req for req in requirements), \
+        f"Expected only structured requirement objects, found: {requirements}"
+
+        req_dict = {req["name"]: req for req in requirements} 
+        assert "python" in req_dict, "Missing expected requirement: python" 
+        assert req_dict["python"].get("version") == ">=3.9,<=3.13"
+        
+        os.remove(output_path)
+
+    # def test_codemeta_local(self):
+       
+    #     """
+    #     codemeta local
+    #     """
+
+    #     pom_xml_parser.processed_pom = False
+
+    #     output_path = test_data_path + 'test_urban_pfr.json'
+    #     if os.path.exists(output_path):
+    #         os.remove(output_path)
+            
+    #     somef_cli.run_cli(threshold=0.9,
+    #                       ignore_classifiers=False,
+    #                       repo_url=None,
+    #                       doc_src=None,
+    #                       local_repo=test_data_repositories + "urban_pfr_toolbox_hamburg",
+    #                       in_file=None,
+    #                       output=None,
+    #                       graph_out=None,
+    #                       graph_format="turtle",
+    #                       codemeta_out= output_path,
+    #                       pretty=True,
+    #                       missing=False,
+    #                       readme_only=False)
+        
+    #     with open(output_path, "r") as f:
+    #         json_content = json.load(f)
+
+        # runtime = json_content.get("runtimePlatform", [])
+        # assert runtime == "Java: 1.8", f"It was expected 'Java: 1.8' but it was '{runtime}'"
+        # os.remove(output_path)
+
+
+    # def test_codemeta_local_2(self):
+       
+    #     """
+    #     codemeta local
+    #     """
+
+    #     pom_xml_parser.processed_pom = False
+
+    #     output_path = test_data_path + 'test_json_urban_pfr.json'
+    #     if os.path.exists(output_path):
+    #         os.remove(output_path)
+            
+    #     somef_cli.run_cli(threshold=0.9,
+    #                       ignore_classifiers=False,
+    #                       repo_url=None,
+    #                       doc_src=None,
+    #                       local_repo=test_data_repositories + "urban_pfr_toolbox_hamburg",
+    #                       in_file=None,
+    #                       output=output_path,
+    #                       graph_out=None,
+    #                       graph_format="turtle",
+    #                       codemeta_out= None,
+    #                       pretty=True,
+    #                       missing=False,
+    #                       readme_only=False)
+        
+    #     with open(output_path, "r") as f:
+            # json_content = json.load(f)
+
 
     @classmethod
     def tearDownClass(cls):

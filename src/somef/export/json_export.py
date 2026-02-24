@@ -210,7 +210,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                     codemeta_output[constants.CAT_CODEMETA_PROGRAMMINGLANGUAGE].append(value)
 
     if constants.CAT_REQUIREMENTS in repo_data:
-        structured_sources = ["pom.xml", "requirements.txt", "setup.py", "environment.yml"]
+        structured_sources = ["pom.xml", "requirements.txt", "setup.py", "environment.yml", "pyproject.toml"]
 
         code_parser_requirements = []
         seen_structured = set()
@@ -220,7 +220,10 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                 if any(src in source for src in structured_sources):
                     name = x[constants.PROP_RESULT].get(constants.PROP_NAME) or x[constants.PROP_RESULT].get(constants.PROP_VALUE)
                     version = x[constants.PROP_RESULT].get(constants.PROP_VERSION)
-                    key = f"{name.strip()}|{version.strip() if version else ''}"
+                    # key = f"{name.strip()}|{version.strip() if version else ''}"
+
+                    key = name.strip().lower()
+
                     if key not in seen_structured:
                         entry = {"name": name.strip()}
                         req_type = x[constants.PROP_RESULT].get("type")
@@ -239,16 +242,31 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                 and x.get("source") is not None
                 and any(src in x["source"] for src in structured_sources)
             ):
-                value = x[constants.PROP_RESULT].get(constants.PROP_VALUE, "").strip().replace("\n", " ")
+                result = x.get(constants.PROP_RESULT, {}) 
+                req_type = result.get("type", "") 
+                if req_type in ("Url", "Text_excerpt"): 
+                    continue
+
+                value = result.get(constants.PROP_VALUE, "").strip().replace("\n", " ")
+                # value = x[constants.PROP_RESULT].get(constants.PROP_VALUE, "").strip().replace("\n", " ")
                 normalized = " ".join(value.split())
                 if normalized not in seen_text:
                     other_requirements.append(value)
                     seen_text.add(normalized)
 
+        # if requirements_mode == "v":
+        #     codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = code_parser_requirements
+        # else:
+        #     codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = code_parser_requirements + other_requirements
+  
         if requirements_mode == "v":
             codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = code_parser_requirements
         else:
-            codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = code_parser_requirements + other_requirements
+            if code_parser_requirements:
+                codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = code_parser_requirements
+            else:
+                codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = other_requirements
+
 
     if constants.CAT_CONTINUOUS_INTEGRATION in repo_data:
         codemeta_output[constants.CAT_CODEMETA_CONTINUOUSINTEGRATION] = repo_data[constants.CAT_CONTINUOUS_INTEGRATION][0][constants.PROP_RESULT][constants.PROP_VALUE]
