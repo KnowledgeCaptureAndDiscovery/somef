@@ -56,12 +56,17 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
     text = ""
     readmeMD_proccesed = False
 
+    is_local_repo = (owner == "" and repo_name == "")
+
     try:
         parsed_build_files = set()
 
         for dir_path, dir_names, filenames in os.walk(repo_dir):
 
             dir_names[:] = [d for d in dir_names if d.lower() not in constants.IGNORED_DIRS]
+            if is_local_repo:
+                dir_names[:] = [d for d in dir_names if d.lower() != "lib"]
+
             repo_relative_path = os.path.relpath(dir_path, repo_dir)
             current_dir = os.path.basename(repo_relative_path).lower()
             # if this is a test folder, we ignore it (except for the root repo)

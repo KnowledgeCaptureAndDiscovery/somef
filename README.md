@@ -291,6 +291,7 @@ Options:
     -d, --doc_src PATH            Path to the README file source
     -i, --in_file PATH            A file of newline separated links to GitHub/
                                   Gitlab repositories
+    -l, --local_repo PATH         Path to the local repository source. No APIs will be used
 
   Output: [required_any]
     -o, --output PATH             Path to the output file. If supplied, the
