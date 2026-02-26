@@ -53,12 +53,10 @@ def extract_content_per_header(original_text, headers):
     index = 0
     bottom = None
     none_header_content = None
-
     if not keys:
         return [], original_text
     
     top = keys[0]
-
     text_tokenized = original_text.split('\n')
     if len(text_tokenized) == 1:
         return text_tokenized[0]
