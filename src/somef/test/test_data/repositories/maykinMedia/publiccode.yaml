@@ -1,0 +1,112 @@
+# This repository adheres to the publiccode.yml standard by including this
+# metadata file that makes public software easily discoverable.
+# More info at https://github.com/italia/publiccode.yml
+
+publiccodeYmlVersion: '0.2'
+
+name: Objects API
+url: 'http://github.com/maykinmedia/objects-api.git'
+softwareType: standalone/backend
+softwareVersion: 3.5.0
+releaseDate: '2025-12-01'
+logo: 'https://github.com/maykinmedia/objects-api/blob/master/docs/logo.png'
+platforms:
+  - web
+  - linux
+  - windows
+  - mac
+
+categories:
+  - data-collection
+  - it-development
+
+developmentStatus: beta
+
+description:
+  nl:
+    shortDescription: API voor het beheren van objecten
+    documentation: 'https://objects-and-objecttypes-api.readthedocs.io/'
+    apiDocumentation: 'https://raw.githubusercontent.com/maykinmedia/objects-api/master/src/objects/api/v1/openapi.yaml'
+    features:
+      - Objecten API
+      - Minimalistische objecten beheerinterface
+    genericName: API component
+    longDescription: >
+      De **Objecten API** heeft als doel om uiteenlopende objecten eenvoudig te kunnen
+      registreren en ontsluiten in een gestandaardiseerd formaat. De Objecten API kan
+      door elke organisatie ingezet worden om de voor haar interessante objecten te
+      beheren. Ook kan een organisatie er voor kiezen een Objecten API in te zetten
+      voor Open Data, waarbij de geregistreerde objecten publiekelijk toegankelijk
+      zijn.
+
+      Om het formaat van objecten, de zogenoemde objecttypen, vast te leggen wordt
+      gebruik gemaakt van de landelijke en/of een lokale `Objecttypen API`_.
+
+  en:
+    shortDescription: API to manage objects
+    documentation: 'https://objects-and-objecttypes-api.readthedocs.io/'
+    apiDocumentation: 'https://raw.githubusercontent.com/maykinmedia/objects-api/master/src/objects/api/v1/openapi.yaml'
+    features:
+      - Objects API
+      - Minimalistic object management interface
+    genericName: API component
+    longDescription: >
+      The **Objects API** aims to easily store various objects and make them available in
+      standardized format. The Objects API can be used by any organization to manage
+      relevant objects. An organization can also choose to use the Objects API to
+      expose objects to the public, as Open Data.
+
+      To define the format of objects, so called object types, organizations can use
+      a national and/or local `Objecttypes API`_.
+
+legal:
+  license: EUPL-1.2
+  mainCopyrightOwner: Maykin Media
+  repoOwner: Maykin Media
+
+dependsOn:
+  open:
+    - name: Objecttypes API
+      optional: false
+      versionMin: '1.0'
+    - name: PostgreSQL
+      optional: false
+      versionMin: '14.0'
+    - name: PostGIS
+      optional: false
+      versionMin: '3.2'
+    - name: Kubernetes
+      optional: true
+      versionMin: '1.12'
+    - name: Docker
+      optional: true
+      versionMin: '18.0'
+
+inputTypes:
+  - application/json
+
+outputTypes:
+  - application/json
+  - text/html
+
+intendedAudience:
+  countries:
+    - nl
+  scope:
+    - government
+
+localisation:
+  availableLanguages:
+    - nl
+    - en
+  localisationReady: false
+
+maintenance:
+  type: contract
+  contractors:
+  - name: Maykin Media
+    email: info@maykinmedia.nl
+    website: https://www.maykinmedia.nl/
+  contacts:
+  - name: Joeri Bekker
+    affiliation: Maykin Media

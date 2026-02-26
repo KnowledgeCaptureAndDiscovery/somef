@@ -470,5 +470,4 @@ class TestJSONExport(unittest.TestCase):
         os.remove(test_data_path + "test-859.json")
 
 
-if __name__ == '__main__':
-    unittest.main()
+   

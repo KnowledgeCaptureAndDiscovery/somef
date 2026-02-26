@@ -341,6 +341,7 @@ The following formats for a result value are currently recognized:
 - `readthedocs`: documentation format used by many repositories in order to describe their projects.
 - `wiki`: documentation format used in GitHub repositories.
 - `setup.py`: package file format used in python projects.
+- `publiccode.yml`: metadata file used to describe public sector software projects.
 - `pyproject.toml`: package file format used in python projects.
 - `pom.xml`: package file used in Java projects.
 - `package.json`: package file used in Javascript projects.

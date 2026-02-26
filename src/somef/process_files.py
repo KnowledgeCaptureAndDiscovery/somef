@@ -21,6 +21,8 @@ from .parser.gemspec_parser import parse_gemspec_file
 from .parser.description_parser import parse_description_file
 from .parser.toml_parser import parse_toml_file
 from .parser.cabal_parser import parse_cabal_file
+from .parser.dockerfile_parser import parse_dockerfile
+from .parser.publiccode_parser import parse_publiccode_file
 from chardet import detect
 
 
@@ -75,18 +77,31 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                 if filename == "Dockerfile" or filename.lower() == "docker-compose.yml":
                     docker_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
                                                repo_relative_path, filename)
+                    
+                    # full_path = os.path.join(repo_dir, file_path)
+
+                    result_value = {
+                        constants.PROP_VALUE: docker_url,
+                        constants.PROP_TYPE: constants.URL,
+                    }
+
                     if filename == "Dockerfile":
                         format_file = constants.FORMAT_DOCKERFILE
+                        result_value[constants.PROP_FORMAT] = format_file
+                        metadata_result = parse_dockerfile(os.path.join(dir_path, filename), metadata_result, docker_url)
                     else:
                         format_file = constants.FORMAT_DOCKER_COMPOSE
-                    metadata_result.add_result(constants.CAT_HAS_BUILD_FILE,
-                                               {
-                                                   constants.PROP_VALUE: docker_url,
-                                                   constants.PROP_TYPE: constants.URL,
-                                                   constants.PROP_FORMAT: format_file
-                                               },
-                                               1,
-                                               constants.TECHNIQUE_FILE_EXPLORATION, docker_url)
+
+                    result_value[constants.PROP_FORMAT] = format_file
+
+                    metadata_result.add_result(
+                        constants.CAT_HAS_BUILD_FILE,
+                        result_value,
+                        1,
+                        constants.TECHNIQUE_FILE_EXPLORATION,
+                        docker_url
+                    )
+ 
                 if filename.lower().endswith(".ipynb"):
                     notebook_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
                                                  repo_relative_path, filename)
@@ -236,7 +251,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                         filename.lower() == "pyproject.toml" or filename.lower() == "setup.py" or filename.endswith(".gemspec") or \
                         filename.lower() == "requirements.txt" or filename.lower() == "bower.json" or filename == "DESCRIPTION" or \
                         (filename.lower() == "cargo.toml" and repo_relative_path == ".") or (filename.lower() == "composer.json" and repo_relative_path == ".") or \
-                        (filename == "Project.toml" and repo_relative_path == "."):
+                        (filename == "Project.toml" or (filename.lower()== "publiccode.yml" or filename.lower()== "publiccode.yaml") and repo_relative_path == "."):
                         if filename.lower() in parsed_build_files and repo_relative_path != ".":
                             logging.info(f"Ignoring secondary {filename} in {dir_path}")
                             continue
@@ -274,6 +289,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             metadata_result = parse_toml_file(os.path.join(dir_path, filename), metadata_result, build_file_url)                            
                         if filename.endswith == ".cabal":
                             metadata_result = parse_cabal_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
+                        if filename.lower() == "publiccode.yml" or filename.lower() == "publiccode.yaml":
+                            metadata_result = parse_publiccode_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         parsed_build_files.add(filename.lower())
                           
                 # if repo_type == constants.RepositoryType.GITLAB: 
@@ -652,50 +669,3 @@ def clean_text(text):
             cleaned_lines.append(line)
     return "\n".join(cleaned_lines)
 
-#     """
-#     Proccess a text with possible authors
-#     """
-#     if not author_str:
-#         return []
-
-#     authors = []
-
-#     for line in author_str.splitlines():
-#         line = line.strip()
-#         if not line or line.startswith("#"):
-#             continue  
-
-#         email_match = re.search(r'<([^>]+)>', line)
-#         if email_match:
-#             email = email_match.group(1)
-#             name = line[:email_match.start()].strip()
-#         else:
-#             name = line
-#             email = None
-
-#         if name:
-#             if re.search(constants.REGEXP_LTD_INC, name, re.IGNORECASE):
-#                 type_author = "Organization"
-#                 author_info = {
-#                     "name": name,
-#                     "email": email,
-#                     "value": name,
-#                     "type": type_author
-#                 }
-#             else:
-#                 type_author = "Person"
-#                 name_parts = name.split()
-#                 given_name = name_parts[0] if name_parts else None
-#                 last_name = " ".join(name_parts[1:]) if len(name_parts) > 1 else None
-#                 author_info = {
-#                     "name": name,
-#                     "email": email,
-#                     "value": name,
-#                     "type": type_author,
-#                     "given_name": given_name,
-#                     "last_name": last_name
-#                 }
-
-#             authors.append(author_info)
-
-#     return authors
