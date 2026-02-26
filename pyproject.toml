@@ -18,7 +18,7 @@ classifiers = [
 homepage = "https://github.com/KnowledgeCaptureAndDiscovery/somef"
 
 [tool.poetry.dependencies]
-    python = ">=3.12,<3.13"
+    python = ">=3.11,<3.13"
     bs4 = "^0.0.1"
     click = "^8.1.7"
     click-option-group = "^0.5.6"
