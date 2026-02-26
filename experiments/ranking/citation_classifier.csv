@@ -1,12 +1,11 @@
 sklearn Primitive - citation,Hyperparameters,Input Data Used,Accuracy,Precision,Recall,F-measure,Pickle ID
-"sklearnpipeline(CountVectorizer, BernoulliBayes)", -,Allen,0.754,0.675,0.993,0.803,citcvbb.p
-"sklearnpipeline(CountVectorizer, LogisticRegression)", - ,Allen,0.922,0.912,0.938,0.924,citcvlr.p
-"sklearnpipeline(CountVectorizer, NaiveBayes)", -,Allen,0.927,0.909,0.952,0.929,citcvnb.p
-"sklearnpipeline(TFIDFVectorizer, AdaBoostClassifier)", -,Allen,0.886,0.948,0.821,0.877,cittfada.p
-"sklearnpipeline(TFIDFVectorizer, DecisionTreeClassifier)", -,Allen,0.879,0.95,0.8,0.868,cittfdtc.p
-"sklearnpipeline(TFIDFVectorizer, LogisticRegression)", - ,Allen,0.938,0.958,0.917,0.936,cittflr.p
-"sklearnpipeline(TFIDFVectorizer, NaiveBayes)", - ,Allen,0.92,0.91,0.934,0.922,cittfnb.p
-"sklearnpipeline(TFIDFVectorizer, Perceptron)", -,Allen,0.907,0.899,0.921,0.909,cittfper.p
-"sklearnpipeline(TFIDFVectorizer, RandomForestClassifier)", -,Allen,0.879,0.864,0.907,0.882,cittfrfc.p
-"sklearnpipeline(TFIDFVectorizer, StochasticGradientDescent)",loss = 'log',Allen,0.939,0.957,0.921,0.938,cittfsgd.p
-"sklearnpipeline(TFIDFVectorizer, XGBClassifier)", -,Allen,0.839,0.906,0.759,0.825,cittfxgb.p
+"sklearnpipeline(CountVectorizer, BernoulliBayes)", -,Allen,0.765,0.685,0.983,0.807,citcvbb.p
+"sklearnpipeline(CountVectorizer, LogisticRegression)", - ,Allen,0.926,0.908,0.948,0.927,citcvlr.p
+"sklearnpipeline(CountVectorizer, NaiveBayes)", -,Allen,0.945,0.932,0.962,0.946,citcvnb.p
+"sklearnpipeline(TFIDFVectorizer, AdaBoostClassifier)", -,Allen,0.768,0.818,0.755,0.757,cittfada.p
+"sklearnpipeline(TFIDFVectorizer, DecisionTreeClassifier)", -,Allen,0.846,0.877,0.821,0.843,cittfdtc.p
+"sklearnpipeline(TFIDFVectorizer, LogisticRegression)", - ,Allen,0.933,0.964,0.9,0.93,cittflr.p
+"sklearnpipeline(TFIDFVectorizer, NaiveBayes)", - ,Allen,0.936,0.921,0.959,0.938,cittfnb.p
+"sklearnpipeline(TFIDFVectorizer, RandomForestClassifier)", -,Allen,0.879,0.866,0.9,0.882,cittfrfc.p
+"sklearnpipeline(TFIDFVectorizer, StochasticGradientDescent)",loss = 'log',Allen,0.945,0.971,0.917,0.943,cittfsgd.p
+"sklearnpipeline(TFIDFVectorizer, XGBClassifier)", -,Allen,0.832,0.847,0.831,0.831,cittfxgb.p
