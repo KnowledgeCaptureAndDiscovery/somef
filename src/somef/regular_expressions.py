@@ -328,7 +328,8 @@ def extract_images(unfiltered_text, repo_url, local_repo, repository_metadata: R
     -------
     A Result object with the logos and images from the given text
     """
-    logo = ""
+    # logo = ""
+    logos = []
     images = []
     repo_name = ""
     if repo_url is not None and repo_url != "":
@@ -341,20 +342,30 @@ def extract_images(unfiltered_text, repo_url, local_repo, repository_metadata: R
     img_html = [_.start() for _ in re.finditer("<img ", html_text)]
     for img in img_md:
         img = img[1]  # the 0 position is the name used in the link
+        filename = img.split("/")[-1]
+        filename_upper = filename.upper()
         # if the image contains jitpack.io, the element is not processed
         if img.find("jitpack.io") > 0 or img.find("/badge") >= 0 or img.find("/travis-ci.") >= 0 \
                 or img.find("img.shields.io") >= 0:
-            pass
-        elif logo == "" and repo_url is not None:
-            start = img.rindex("/")
+            # pass
+            continue
+        elif repo_url is not None:
+
+            start = img.rindex("/") if "/" in img else 0
+            # start = img.rindex("/")
             if img.find(repo_name, start) > 0:
-                logo = rename_github_image(img, repo_url, local_repo, def_branch)
+                logos.append(rename_github_image(img, repo_url, local_repo, def_branch))
             elif get_alt_text_md(html_text, img) == repo_name or get_alt_text_md(html_text, img).upper() == "LOGO":
-                logo = rename_github_image(img, repo_url, local_repo, def_branch)
+                logos.append(rename_github_image(img, repo_url, local_repo, def_branch))
             else:
-                start = img.rindex("/")
-                if img.upper().find("LOGO", start) > 0:
-                    logo = rename_github_image(img, repo_url, local_repo, def_branch)
+                if "/" in img:
+                    start = img.rindex("/")
+                else: 
+                    start = 0
+                # start = img.rindex("/")
+                # if img.upper().find("LOGO", start) >= 0:
+                if filename_upper.startswith("LOGO"):
+                    logos.append(rename_github_image(img, repo_url, local_repo, def_branch))
                 else:
                     images.append(rename_github_image(img, repo_url, local_repo, def_branch))
         else:
@@ -364,40 +375,100 @@ def extract_images(unfiltered_text, repo_url, local_repo, repository_metadata: R
         init = html_text.find("src=\"", index_img)
         end = html_text.find("\"", init + 5)
         img = html_text[init + 5:end]
+        filename = img.split("/")[-1]
+        filename_upper = filename.upper()
+
         # if the image contains jitpack.io, the element is not processed
         if img.find("jitpack.io") > 0 or img.find("/badge") >= 0 or img.find("/travis-ci.") >= 0 \
                 or img.find("img.shields.io") >= 0:
-            pass
-        elif logo == "" and repo_url is not None:
+            # pass
+            continue
+        elif repo_url is not None:
             start = 0
             if img.find("/") > 0:
                 start = img.rindex("/")
             image_name = img[start:]
-            if image_name.find(repo_name) > 0 or image_name.upper().find("LOGO") > 0:
-                logo = rename_github_image(img, repo_url, local_repo, def_branch)
+            # if image_name.find(repo_name) > 0 or image_name.upper().find("LOGO") >= 0:
+            # if image_name.find(repo_name) > 0 or filename_upper.startswith("LOGO"):
+            if image_name.find(repo_name) > 0 or "LOGO" in filename_upper:
+                logos.append(rename_github_image(img, repo_url, local_repo, def_branch))
             elif get_alt_text_img(html_text, index_img) == repo_name or get_alt_text_img(html_text,
                                                                                          index_img).upper() == "LOGO":
-                logo = rename_github_image(img, repo_url, local_repo, def_branch)
+                logos.append(rename_github_image(img, repo_url, local_repo, def_branch))
             else:
                 images.append(rename_github_image(img, repo_url, local_repo, def_branch))
         else:
-            start = img.rindex("/")
-            if img.upper().find("LOGO", start) > 0:
-                logo = rename_github_image(img, repo_url, local_repo, def_branch)
+            if "/" in img:
+                start = img.rindex("/")
+            else:
+                start = 0
+            # start = img.rindex("/")
+            # if img.upper().find("LOGO", start) >= 0:
+            # if filename_upper.startswith("LOGO"):
+            if "LOGO" in filename_upper:
+                logos.append(rename_github_image(img, repo_url, local_repo, def_branch))
             else:
                 images.append(rename_github_image(img, repo_url, local_repo, def_branch))
-    if logo != "":
+
+    # final decission. Choose better logo following some priorities
+    # Priorities
+    logo_plus_name = []
+    logo_only = []
+    name_only = []
+
+    # If repo_name is empty, disable repo-name-based matching
+    if not repo_name:
+        repo_name = None
+    
+    for logo in logos:
+        fname = logo.lower()
+
+        # Priority 1: logo + repo name
+        if repo_name and "logo" in fname and repo_name.lower() in fname:
+            logo_plus_name.append(logo)
+
+        # Priority 3: only repo name (but not logo)
+        elif repo_name and repo_name.lower() in fname:
+            name_only.append(logo)
+
+        # Priority 2: only "logo" (but not repo name)
+        elif "logo" in fname:
+            logo_only.append(logo)
+
+    # Apply priorities
+    if logo_plus_name:
+        final_logos = [logo_plus_name[0]]
+        discarded = [l for l in logos if l not in final_logos]
+
+    elif name_only:
+        final_logos = [name_only[0]]
+        discarded = [l for l in logos if l not in final_logos]
+
+    elif logo_only:
+        final_logos = logo_only
+        discarded = [l for l in logos if l not in final_logos]
+
+    else:
+        final_logos = []
+        discarded = logos
+
+    images.extend(discarded)
+
+
+    for logo in final_logos:
+       
         repository_metadata.add_result(constants.CAT_LOGO,
                                        {
                                            constants.PROP_TYPE: constants.URL,
                                            constants.PROP_VALUE: logo
                                        }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
     for image in images:
-        repository_metadata.add_result(constants.CAT_IMAGE,
-                                       {
-                                           constants.PROP_TYPE: constants.URL,
-                                           constants.PROP_VALUE: image
-                                       }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+        if image not in final_logos:
+            repository_metadata.add_result(constants.CAT_IMAGE,
+                                        {
+                                            constants.PROP_TYPE: constants.URL,
+                                            constants.PROP_VALUE: image
+                                        }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
     return repository_metadata
 
 

@@ -55,7 +55,6 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Keywords**: set of terms used to commonly identify a software component
 - **License**: License and usage terms of a software component
 - **Logo**: Main logo used to represent the target software component
-- **Maintainer**: Individuals or teams responsible for maintaining the software component, extracted from the CODEOWNERS file
 - **Name**: Name identifying a software component
 - **Ontologies**: URL and path to the ontology files present in the repository
 - **Owner**: Name and type of the user or organization in charge of the repository
@@ -291,21 +290,17 @@ Options:
     -d, --doc_src PATH            Path to the README file source
     -i, --in_file PATH            A file of newline separated links to GitHub/
                                   Gitlab repositories
-    -l, --local_repo PATH         Path to the local repository source. No APIs will be used
 
   Output: [required_any]
     -o, --output PATH             Path to the output file. If supplied, the
                                   output will be in JSON
+
     -c, --codemeta_out PATH       Path to an output codemeta file
     -g, --graph_out PATH          Path to the output Knowledge Graph export
                                   file. If supplied, the output will be a
                                   Knowledge Graph, in the format given in the
                                   --format option chosen (turtle, json-ld)
-    -gc, --google_codemeta_out PATH Path to a Google-compliant Codemeta JSON-LD
-                                    file. This output transforms the standard
-                                    Codemeta to follow Google’s expected JSON-LD
-                                    structure.
-                                    
+
   -f, --graph_format [turtle|json-ld]
                                   If the --graph_out option is given, this is
                                   the format that the graph will be stored in
@@ -329,12 +324,6 @@ Options:
 
   -v, --requirements_v            Export only requirements from structured
                                   sources (pom.xml, requirements.txt, etc.)
-
-
-  -ai, --additional_info          SOMEF will extract additional information 
-                                  from certain files like CODEOWNERS. 
-                                  This may require extra API
-                                  requests and increase execution time
 
   -h, --help                      Show this message and exit.
 ```
@@ -363,7 +352,7 @@ To run a classifier with an additional category or remove an existing one, a cor
 
 ## Metadata Support
 
-SOMEF supports the extraction and analysis of metadata in package files of several programming languages.  Current support includes: `setup.py` and `pyproject.toml` for Python, `pom.xml` for Java, `.gemspec` for Ruby, `DESCRIPTION` for R, `bower.json` for JavaScript, HTML or CSS, `.cabal` for Haskell, `cargo.toml` for RUST, `composer` for PHP, `.juliaProject.toml` for Julia , `AUTHORS`, `codemeta.json`, `publiccode.yml`, `dockerfile` and `citation.cff`
+SOMEF supports the extraction and analysis of metadata in package files of several programming languages.  Current support includes: `setup.py` and `pyproject.toml` for Python, `pom.xml` for Java, `.gemspec` for Ruby, `DESCRIPTION` for R, `bower.json` for JavaScript, HTML or CSS, `.cabal` for Haskell, `cargo.toml` for RUST, `composer` for PHP, `.juliaProject.toml` for Julia , `AUTHORS`, `codemeta.json`, and `citation.cff`
 This includes identifying dependencies, runtime requirements, and development tools specified in project configuration files.  
 
 ## Limitations

@@ -1,6 +1,7 @@
 import os
 import tempfile
 import unittest
+import json
 from pathlib import Path
 
 from .. import process_repository, process_files, somef_cli
@@ -208,3 +209,21 @@ class TestProcessRepository(unittest.TestCase):
         text, github_data = process_files.process_repository_files(test_data_repositories + "termlex-main", github_data,
                                                                    constants.RepositoryType.LOCAL)
         assert len(github_data.results[constants.CAT_ONTOLOGIES]) >= 1
+
+    def test_issue_894(self):
+        """
+        Test that the 'lib' folder is ignored for local repositories. Any author from lib/authors.txt shoulb be found.
+        """
+
+        metadata = Result() 
+    
+        repo_path = test_data_repositories + "somef_repo" 
+
+        readme_text, full_metadata = process_files.process_repository_files( repo_path, metadata, constants.RepositoryType.LOCAL, ignore_test_folder=True, additional_info=False) 
+        
+        authors = full_metadata.results.get(constants.CAT_AUTHORS, [])
+
+        for entry in authors: 
+            source = entry.get("source", "").lower() 
+            assert "lib/" not in source, f"Author extracted from ignored folder: {source}" 
+            assert "authors.txt" not in source, f"'authors.txt' inside lib/ was incorrectly processed"

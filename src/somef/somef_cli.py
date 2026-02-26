@@ -15,12 +15,13 @@ from .utils import constants, markdown_utils
 from .parser import mardown_parser, create_excerpts
 from .export.turtle_export import DataGraph
 from .export import json_export
+from .export import google_codemeta_export
 from .extract_software_type import check_repository_type
 from urllib.parse import urlparse, quote
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
                  ignore_github_metadata=False, readme_only=False, keep_tmp=None, authorization=None,
-                 ignore_test_folder=True,requirements_mode='all') -> Result:
+                 ignore_test_folder=True,requirements_mode='all', additional_info=False) -> Result:
     """
     Main function to get the data through the command line
     Parameters
@@ -36,7 +37,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     @param authorization: GitHub authorization token
     @param ignore_test_folder: Ignore contents of test folders
     @param requiriments_mode: flag to indicate what requirements show in codemeta 
-
+    @param additional_info: flag to indicate if additional should be extracted from certain files as codeowners. More request.
     Returns
     -------
     @return: Dictionary with the results found by SOMEF, formatted as a Result object.
@@ -45,6 +46,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(levelname)s-%(message)s',
                         datefmt='%d-%b-%y %H:%M:%S', force=True)
     logging.getLogger("bibtexparser").setLevel(logging.ERROR)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
 
     file_paths = configuration.get_configuration_file()
     repo_type = constants.RepositoryType.GITHUB
@@ -74,12 +76,14 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             print(f"DEBUG: {servidor} is_gitlab = {bGitLab}")
             if bGitLab:
                 repo_type = constants.RepositoryType.GITLAB
+
             repository_metadata, owner, repo_name, def_branch = process_repository.load_online_repository_metadata(
                 repository_metadata,
                 repo_url,
                 ignore_github_metadata,
                 repo_type,
-                authorization
+                authorization,
+                additional_info
             )
 
             # download files and obtain path to download folder
@@ -94,10 +98,12 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 if local_folder is not None:
                     readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
                                                                                                repository_metadata,
-                                                                                               repo_type, owner,
+                                                                                               repo_type, 
+                                                                                               owner,
                                                                                                repo_name,
                                                                                                def_branch,
-                                                                                               ignore_test_folder)
+                                                                                               ignore_test_folder,
+                                                                                               additional_info)
                     repository_metadata = check_repository_type(local_folder, repo_name, full_repository_metadata)
                 else:
                     logging.error("Error processing the target repository")
@@ -110,10 +116,12 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                     if local_folder is not None:
                         readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
                                                                                                     repository_metadata,
-                                                                                                    repo_type, owner,
+                                                                                                    repo_type, 
+                                                                                                    owner,
                                                                                                     repo_name,
                                                                                                     def_branch,
-                                                                                                    ignore_test_folder)
+                                                                                                    ignore_test_folder,
+                                                                                                    additional_info)
 
                         repository_metadata = check_repository_type(local_folder, repo_name, full_repository_metadata)
                     else:
@@ -130,7 +138,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             readme_text, full_repository_metadata = process_files.process_repository_files(local_repo,
                                                                                            repository_metadata,
                                                                                            repo_type,
-                                                                                           ignore_test_folder)
+                                                                                           ignore_test_folder = ignore_test_folder,
+                                                                                           additional_info = additional_info)
             if readme_text == "":
                 logging.warning("Warning: README document does not exist in the local repository")
         except process_repository.GithubUrlError:
@@ -153,13 +162,13 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         readme_text_unmarked = markdown_utils.unmark(readme_text)
         logging.info("readme text unmarked successfully.") 
         if not ignore_classifiers and readme_unfiltered_text != '':
-            logging.info("--> suppervised classification")
+            logging.info("Supervised classification")
             repository_metadata = supervised_classification.run_category_classification(readme_unfiltered_text,
                                                                                         threshold,
                                                                                         repository_metadata)
-            logging.info("--> create excerpts")                                                                           
+            logging.info("Create excerpts")                                                                           
             excerpts = create_excerpts.create_excerpts(string_list)
-            logging.info("--> extract text excerpts headers")  
+            logging.info("Extract text excerpts headers")  
             excerpts_headers = mardown_parser.extract_text_excerpts_header(readme_unfiltered_text)
             header_parents = mardown_parser.extract_headers_parents(readme_unfiltered_text)
             score_dict = supervised_classification.run_classifiers(excerpts, file_paths)
@@ -171,6 +180,9 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 readme_source = readme_source[constants.PROP_RESULT][constants.PROP_VALUE]
             except:
                 readme_source = "README.md"
+                
+
+            print("Extracting regular expressions...")
             repository_metadata = regular_expressions.extract_bibtex(readme_unfiltered_text, repository_metadata,
                                                                      readme_source)
             repository_metadata = regular_expressions.extract_doi_badges(readme_unfiltered_text, repository_metadata,
@@ -228,11 +240,13 @@ def run_cli(*,
             graph_out=None,
             graph_format="turtle",
             codemeta_out=None,
+            google_codemeta_out=None,
             pretty=False,
             missing=False,
             keep_tmp=None,
             ignore_test_folder=True,
-            requirements_mode="all"
+            requirements_mode="all",
+            additional_info=False
             ):
     """Function to run all the required components of the cli for a repository"""
     # check if it is a valid url
@@ -266,16 +280,30 @@ def run_cli(*,
                     encoded_url = encoded_url.replace(".","") #removing dots just in case
                     repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                              ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
-                                             keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, requirements_mode=requirements_mode)
+                                             keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, requirements_mode=requirements_mode, additional_info=additional_info)
                     
+                    if hasattr(repo_data, "get_json"): 
+                        repo_data = repo_data.get_json()
+           
+                    repo_data = json_export.unify_results(repo_data.results)
+
                     if output is not None:
                         output = output.replace(".json","")
                         output = output + "_" + encoded_url + ".json"
-                        json_export.save_json_output(repo_data.results, output, missing, pretty=pretty)
+                        json_export.save_json_output(repo_data, output, missing, pretty=pretty)
                     if codemeta_out is not None:
                         codemeta_out = codemeta_out.replace(".json", "")
                         codemeta_out = codemeta_out + "_" + encoded_url + ".json"
-                        json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty, requirements_mode= requirements_mode)
+                        json_export.save_codemeta_output(repo_data, codemeta_out, pretty=pretty, requirements_mode= requirements_mode)
+                    if google_codemeta_out is not None:
+                        gc_out = google_codemeta_out.replace(".json", "")
+                        gc_out = gc_out + "_" + encoded_url + ".json"
+                        google_codemeta_export.save_google_codemeta_output(
+                            repo_data,
+                            gc_out,
+                            pretty=pretty,
+                            requirements_mode=requirements_mode
+                        )
                 except:
                     logging.error("Error when processing repo: " + repo_url)
         else:
@@ -285,19 +313,25 @@ def run_cli(*,
         if repo_url:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                      ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
-                                     keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder)
+                                     keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, additional_info=additional_info)
         elif local_repo:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
-                                     local_repo=local_repo, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder)
+                                     local_repo=local_repo, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, additional_info=additional_info)
         else:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
-                                     doc_src=doc_src, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder)
+                                     doc_src=doc_src, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, additional_info=additional_info)
+        
+        if hasattr(repo_data, "get_json"): 
+            repo_data = repo_data.get_json()
+
+        repo_data = json_export.unify_results(repo_data.results)
 
         if output is not None:
-            json_export.save_json_output(repo_data.results, output, missing, pretty=pretty)
+            json_export.save_json_output(repo_data, output, missing, pretty=pretty)
         if codemeta_out is not None:
-            json_export.save_codemeta_output(repo_data.results, codemeta_out, pretty=pretty, requirements_mode=requirements_mode)
-
+            json_export.save_codemeta_output(repo_data, codemeta_out, pretty=pretty, requirements_mode=requirements_mode)
+        if google_codemeta_out is not None:
+            google_codemeta_export.save_google_codemeta_output(repo_data, google_codemeta_out, pretty=pretty, requirements_mode=requirements_mode)
     if graph_out is not None:
         logging.info("Generating triples...")
         data_graph = DataGraph()

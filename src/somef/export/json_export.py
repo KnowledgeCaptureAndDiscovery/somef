@@ -1,11 +1,13 @@
 import json
 import re
 from datetime import datetime
+from urllib.parse import urlparse, urlunparse
+from typing import List, Dict
 import yaml
 from dateutil import parser as date_parser
 from ..utils import constants
 from ..regular_expressions import detect_license_spdx,extract_scholarly_article_natural, extract_scholarly_article_properties
-from typing import List, Dict
+
 
 def save_json_output(repo_data, out_path, missing, pretty=False):
     """
@@ -116,7 +118,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
 
     codemeta_output = {
         "@context": "https://w3id.org/codemeta/3.0",
-        "@type": "SoftwareSourceCode"
+        "@type": ["SoftwareSourceCode", "SoftwareApplication"]
     }
     if constants.CAT_LICENSE in repo_data:
         # We mix the name of the license from github API with the URL of the file (if found)  
@@ -154,7 +156,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                         l_result["url"] = l[constants.PROP_RESULT][constants.PROP_URL]
             if constants.PROP_SPDX_ID in l[constants.PROP_RESULT].keys():
                 l_result["identifier"] = constants.SPDX_BASE + l[constants.PROP_RESULT][constants.PROP_SPDX_ID]
-                l_result["spdx_id"] = l[constants.PROP_RESULT][constants.PROP_SPDX_ID]
+                # spdx_id does not exist in codemeta
+                # l_result["spdx_id"] = l[constants.PROP_RESULT][constants.PROP_SPDX_ID]
 
         codemeta_output[constants.CAT_CODEMETA_LICENSE] = l_result
     if code_repository is not None:
@@ -175,7 +178,14 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
     if constants.CAT_LOGO in repo_data:
         codemeta_output[constants.CAT_CODEMETA_LOGO] = repo_data[constants.CAT_LOGO][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_KEYWORDS in repo_data:
-        codemeta_output[constants.CAT_CODEMETA_KEYWORDS] = repo_data[constants.CAT_KEYWORDS][0][constants.PROP_RESULT][constants.PROP_VALUE]
+        # codemeta_output[constants.CAT_CODEMETA_KEYWORDS] = repo_data[constants.CAT_KEYWORDS][0][constants.PROP_RESULT][constants.PROP_VALUE]
+        codemeta_output[constants.CAT_CODEMETA_KEYWORDS] = []
+
+        for key in repo_data[constants.CAT_KEYWORDS]:
+          key_value = key[constants.PROP_RESULT][constants.PROP_VALUE]
+          if key_value not in codemeta_output[constants.CAT_CODEMETA_KEYWORDS]:
+            codemeta_output[constants.CAT_CODEMETA_KEYWORDS].append(key_value)
+
     if constants.CAT_PROGRAMMING_LANGUAGES in repo_data:
         # Calculate the total code size of all the programming languages
         codemeta_output[constants.CAT_CODEMETA_PROGRAMMINGLANGUAGE] = []
@@ -200,7 +210,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                     codemeta_output[constants.CAT_CODEMETA_PROGRAMMINGLANGUAGE].append(value)
 
     if constants.CAT_REQUIREMENTS in repo_data:
-        structured_sources = ["pom.xml", "requirements.txt", "setup.py", "environment.yml"]
+        structured_sources = ["pom.xml", "requirements.txt", "setup.py", "environment.yml", "pyproject.toml"]
 
         code_parser_requirements = []
         seen_structured = set()
@@ -210,9 +220,15 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                 if any(src in source for src in structured_sources):
                     name = x[constants.PROP_RESULT].get(constants.PROP_NAME) or x[constants.PROP_RESULT].get(constants.PROP_VALUE)
                     version = x[constants.PROP_RESULT].get(constants.PROP_VERSION)
-                    key = f"{name.strip()}|{version.strip() if version else ''}"
+                    # key = f"{name.strip()}|{version.strip() if version else ''}"
+
+                    key = name.strip().lower()
+
                     if key not in seen_structured:
                         entry = {"name": name.strip()}
+                        req_type = x[constants.PROP_RESULT].get("type")
+                        if req_type:
+                            entry["@type"] = map_requirement_type(req_type)
                         if version:
                             entry["version"] = version.strip()
                         code_parser_requirements.append(entry)
@@ -226,16 +242,31 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                 and x.get("source") is not None
                 and any(src in x["source"] for src in structured_sources)
             ):
-                value = x[constants.PROP_RESULT].get(constants.PROP_VALUE, "").strip().replace("\n", " ")
+                result = x.get(constants.PROP_RESULT, {}) 
+                req_type = result.get("type", "") 
+                if req_type in ("Url", "Text_excerpt"): 
+                    continue
+
+                value = result.get(constants.PROP_VALUE, "").strip().replace("\n", " ")
+                # value = x[constants.PROP_RESULT].get(constants.PROP_VALUE, "").strip().replace("\n", " ")
                 normalized = " ".join(value.split())
                 if normalized not in seen_text:
                     other_requirements.append(value)
                     seen_text.add(normalized)
 
+        # if requirements_mode == "v":
+        #     codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = code_parser_requirements
+        # else:
+        #     codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = code_parser_requirements + other_requirements
+  
         if requirements_mode == "v":
             codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = code_parser_requirements
         else:
-            codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = code_parser_requirements + other_requirements
+            if code_parser_requirements:
+                codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = code_parser_requirements
+            else:
+                codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = other_requirements
+
 
     if constants.CAT_CONTINUOUS_INTEGRATION in repo_data:
         codemeta_output[constants.CAT_CODEMETA_CONTINUOUSINTEGRATION] = repo_data[constants.CAT_CONTINUOUS_INTEGRATION][0][constants.PROP_RESULT][constants.PROP_VALUE]
@@ -293,15 +324,30 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         codemeta_output[constants.CAT_CODEMETA_BUILDINSTRUCTIONS] = install_links
     if constants.CAT_OWNER in repo_data:
         # if user then person, otherwise organization
-        type_aux = repo_data[constants.CAT_OWNER][0][constants.PROP_RESULT][constants.PROP_TYPE]
-        if type_aux == "User":
-            type_aux = "Person"
-        codemeta_output[constants.CAT_CODEMETA_AUTHOR] = [
-            {
-                "@type": type_aux,
-                "@id": "https://github.com/" + author_name
-            }
-        ]
+        codemeta_authors = []
+        for owner in repo_data[constants.CAT_OWNER]: 
+            result_owner = owner.get("result", {})
+            type_aux = repo_data[constants.CAT_OWNER][0][constants.PROP_RESULT][constants.PROP_TYPE]
+            if type_aux == "User":
+                type_aux = "Person"
+
+            author_obj = { "@type": type_aux }
+
+            if "name" in result_owner and result_owner["name"]: 
+                author_obj["name"] = result_owner["name"] 
+            if "value" in result_owner and result_owner["value"]: 
+                author_obj["identifier"] = result_owner["value"]              
+                author_obj["@id"] = "https://github.com/" + result_owner["value"]   
+            if "affiliation" in result_owner and result_owner["affiliation"]: 
+                author_obj["affiliation"] = result_owner["affiliation"]
+            if "email" in result_owner and result_owner["email"]: 
+                author_obj["email"] = result_owner["email"]
+
+            codemeta_authors.append(author_obj)
+
+        if codemeta_authors: 
+            codemeta_output[constants.CAT_CODEMETA_AUTHOR] = codemeta_authors
+
     if constants.CAT_AUTHORS in repo_data:
         if "author" not in codemeta_output:
             codemeta_output[constants.CAT_CODEMETA_AUTHOR] = []
@@ -512,7 +558,25 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
     #     codemeta_output["identifier"] = repo_data[constants.CAT_IDENTIFIER][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_README_URL in repo_data:
         codemeta_output[constants.CAT_CODEMETA_README] = repo_data[constants.CAT_README_URL][0][constants.PROP_RESULT][constants.PROP_VALUE]
-    
+
+    if constants.CAT_MAINTAINER in repo_data:
+        codemeta_maintainers = []
+        for maintainer in repo_data[constants.CAT_MAINTAINER]:
+            result_maint = maintainer.get("result", {})
+            maint_obj = { "@type": result_maint.get("type", "Person") }
+
+            if "name" in result_maint and result_maint["name"]: 
+                maint_obj["name"] = result_maint["name"]
+            if "username" in result_maint and result_maint["username"]:
+                maint_obj["identifier"] = result_maint["username"]
+            if "email" in result_maint and result_maint["email"]:
+                maint_obj["email"] = result_maint["email"]
+
+            codemeta_maintainers.append(maint_obj)
+
+        if codemeta_maintainers: 
+            codemeta_output[constants.CAT_CODEMETA_MAINTAINER] = codemeta_maintainers
+
     if constants.CAT_RUNTIME_PLATFORM in repo_data:
         runtimes = []
  
@@ -616,3 +680,146 @@ def extract_doi(url: str) -> str:
 
     match = re.search(constants.REGEXP_ALL_DOIS, url, re.IGNORECASE)
     return match.group(0).lower() if match else ""
+
+def map_requirement_type(t):
+    t = t.lower()
+    if "application" in t:
+        return "SoftwareApplication"
+    if "source" in t:
+        return "SoftwareSourceCode"
+    if "system" in t:
+        return "SoftwareSystem"
+    return "SoftwareApplication" 
+
+
+"""
+This part of code implements the post processing and unification logic applied to the
+raw JSON extracted by SOMEF. Different extractors may produce duplicated or
+slightly divergent entries for the same underlying resource (e.g., documentation
+URLs, identifiers, authors). The functions below normalize values, detect
+equivalent items, and merge them while preserving all available information.
+
+Key ideas:
+- Canonicalize simple URL values to avoid redundant entries.
+- Never canonicalize structured objects (e.g., Release, Agent).
+- Merge complementary fields extracted by different techniques.
+- Combine techniques and sources without losing provenance.
+"""
+
+def canonicalize_value(value, value_type):
+    """Canonicalization for SOMEF:
+       - If URL points to a file (has extension), keep full path (no unification)
+       - Otherwise, unify to scheme://domain (documentation, badges, pages)
+       - Always remove query, fragment, trailing slash
+    """
+    if value_type == "Release": 
+        return value
+    
+    if value_type == "Url":
+        parsed = urlparse(value)
+
+        # Remove query and fragment
+        path = parsed.path.rstrip('/')
+
+        # Detect if last segment has a file extension
+        last_segment = path.split('/')[-1]
+        if '.' in last_segment:
+            # It's a file → do NOT unify
+            clean_path = path
+            return urlunparse((parsed.scheme, parsed.netloc, clean_path, '', '', ''))
+
+        # It's a directory/page → unify to domain
+        return f"{parsed.scheme}://{parsed.netloc}"
+
+    if isinstance(value, str):
+        return value.strip()
+
+    return value
+
+
+def normalize_type(result):
+    value = result.get("value", "")
+    rtype = result.get("type", "")
+
+    # Only normalize if the object ONLY has type + value
+    # (i.e., it's a simple URL, not a structured object like Release)
+    if isinstance(value, str) and value.startswith("http"):
+        if set(result.keys()) <= {"type", "value"}:
+            return "Url"
+
+    return rtype
+
+
+def choose_more_general(a, b):
+    """ 
+    If both values are strings and one contains the other, return the shorter one.
+    Otherwise, return 'a'.
+    """
+    if isinstance(a, str) and isinstance(b, str):
+        if a in b:
+            return a
+        if b in a:
+            return b
+    return a
+
+
+def unify_results(repo_data: dict) -> dict:
+    print("Unifying results...")
+    unified_data = {}
+
+    for category, items in repo_data.items():
+        if not isinstance(items, list):
+            unified_data[category] = items
+            continue
+
+        seen = {}
+
+        for item in items:
+            result = item.get("result", {})
+            normalized_type = normalize_type(result) 
+            result["type"] = normalized_type
+            value = result.get("value")
+            value_type = result.get("type")
+
+            canonical = canonicalize_value(value, value_type)
+
+            key = str(canonical)
+
+            if key in seen:
+                existing = seen[key]
+
+                # If types match, merge normally
+                existing["result"]["value"] = choose_more_general(
+                    existing["result"]["value"], value
+                )
+
+                # merge other result fields because different techniques might have extracted different information 
+                # (e.g., email in authors extracted by file exploration or code parser.
+                for field, new_val in result.items():
+                    if field in ("value", "type"):
+                        continue  
+                    old_val = existing["result"].get(field)
+                    if old_val in (None, "", []):
+                        existing["result"][field] = new_val
+
+                # join techniques
+                t1 = existing.get("technique", [])
+                t2 = item.get("technique", [])
+                if not isinstance(t1, list): t1 = [t1]
+                if not isinstance(t2, list): t2 = [t2]
+                existing["technique"] = list(set(t1 + t2))
+
+                # join sources
+                s1 = existing.get("source", [])
+                s2 = item.get("source", [])
+                if s1 and not isinstance(s1, list): s1 = [s1]
+                if s2 and not isinstance(s2, list): s2 = [s2]
+                if s1 or s2:
+                    existing["source"] = list(set(s1 + s2))
+
+            else:
+                seen[key] = item
+
+        unified_data[category] = list(seen.values())
+
+    return unified_data

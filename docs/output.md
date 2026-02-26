@@ -98,6 +98,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `keywords`: set of terms used to commonly identify a software component
 - `license`: License and usage terms of a software component
 - `logo`: Main logo used to represent the target software component.
+- `maintainer`': Individuals or teams responsible for maintaining the software component, extracted from the CODEOWNERS file
 - `name`: Name identifying a software component
 - `ontologies`: URL and path to the ontology files present in the repository.
 - `owner`: Name of the user or organization in charge of the repository

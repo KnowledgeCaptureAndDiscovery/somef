@@ -503,3 +503,36 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
 
                 assert expected_doc_url in documentation_values, f"Expected url documentation {expected_doc_url} not found in documentation"
 
+    def test_issue_563(self):
+        """Test designed to check if logos are detected correctly. UCM logo was incorrectly detected before."""
+        repo_url = "https://github.com/oeg-upm/TINTO"
+        with open(test_data_path + "README-TINTO.md", "r") as data_file:
+            test_text = data_file.read()
+            results = regular_expressions.extract_images(test_text, repo_url, None, Result(),
+                                                         test_data_path + "README-TINTO.md", "main")
+            logo = results.results[constants.CAT_LOGO]
+            assert (logo[0][constants.PROP_RESULT][
+                        constants.PROP_VALUE] == "https://raw.githubusercontent.com/oeg-upm/TINTO/main/imgs/logo.svg")
+            
+            
+    def test_issue_597(self):
+        """Check if correctly extracts multiple logos and regular images."""
+  
+        with open(test_data_path + "README-tpronk.md", "r") as data_file:
+            test_text = data_file.read()
+            results = regular_expressions.extract_images(test_text, None, None, Result(),
+                                                         test_data_path + "README-tpronk.md", "main")
+            
+            logos = results.results[constants.CAT_LOGO]
+            print(logos)
+            assert len(logos) == 2, f"Expected 2 logos, found {len(logos)}" 
+            logo_values = {entry["result"][constants.PROP_VALUE] for entry in logos}
+            assert any("logo1.png" in v for v in logo_values), "logo1.png not detected as logo" 
+            assert any("logo_directory/logo2.png" in v for v in logo_values), "logo2.png not detected as logo" 
+            
+        
+            images = results.results[constants.CAT_IMAGE]
+            assert len(images) == 1, f"Expected 1 regular image, found {len(images)}" 
+            image_values = {entry["result"][constants.PROP_VALUE] for entry in images}
+            assert any("diagram.png" in v for v in image_values), "diagram.png not detected as regular image"
+
