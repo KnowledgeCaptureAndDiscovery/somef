@@ -31,7 +31,7 @@ from chardet import detect
 domain_gitlab = ''
 
 def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner="", repo_name="",
-                             repo_default_branch="", ignore_test_folder=True, additional_info=False):
+                             repo_default_branch="", ignore_test_folder=True, reconcile_authors=False):
     """
     Method that given a folder, it recognizes whether there are notebooks, dockerfiles, docs, script files or
     ontologies.
@@ -249,7 +249,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                        repo_dir,
                                                        repo_relative_path, filename)
                     
-                    metadata_result = parse_codeowners_file(os.path.join(dir_path, filename), metadata_result, codeowner_file_url, additional_info)
+                    metadata_result = parse_codeowners_file(os.path.join(dir_path, filename), metadata_result, codeowner_file_url, reconcile_authors)
                     parsed_build_files.add(filename.lower())
 
                 if filename.lower() == "codemeta.json":

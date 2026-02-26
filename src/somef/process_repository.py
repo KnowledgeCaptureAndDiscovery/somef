@@ -485,7 +485,7 @@ def download_readme(owner, repo_name, default_branch, repo_type, authorization):
 
 
 def load_online_repository_metadata(repository_metadata: Result, repository_url, ignore_api_metadata=False,
-                                    repo_type=constants.RepositoryType.GITHUB, authorization=None, additional_info=False):
+                                    repo_type=constants.RepositoryType.GITHUB, authorization=None, reconcile_authors=False):
     """
     Function uses the repository_url provided to load required information from GitHub or Gitlab.
     Information kept from the repository is written in keep_keys.
@@ -496,7 +496,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     @param ignore_api_metadata: true if you do not want to do an additional request to the target API
     @param repository_url: target repository URL.
     @param authorization: GitHub authorization token
-    @param additional_info: flag to indicate if additional should be extracted from certain files as codeowners. More request.
+    @param reconcile_authors: flag to indicate if additional should be extracted from certain files as codeowners. More request.
 
     Returns
     -------
@@ -585,7 +585,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
             if category == constants.CAT_ISSUE_TRACKER:
                 value = value.replace("{/number}", "")
             if category == constants.CAT_OWNER:
-                if additional_info:
+                if reconcile_authors:
                     print("Enriching owner information from codeowners...")
                     user_info = enrich_github_user(owner)
                     if user_info:

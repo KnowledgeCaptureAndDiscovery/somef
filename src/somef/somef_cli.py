@@ -21,7 +21,7 @@ from urllib.parse import urlparse, quote
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
                  ignore_github_metadata=False, readme_only=False, keep_tmp=None, authorization=None,
-                 ignore_test_folder=True,requirements_mode='all', additional_info=False) -> Result:
+                 ignore_test_folder=True,requirements_mode='all', reconcile_authors=False) -> Result:
     """
     Main function to get the data through the command line
     Parameters
@@ -37,7 +37,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     @param authorization: GitHub authorization token
     @param ignore_test_folder: Ignore contents of test folders
     @param requiriments_mode: flag to indicate what requirements show in codemeta 
-    @param additional_info: flag to indicate if additional should be extracted from certain files as codeowners. More request.
+    @param reconcile_authors: flag to indicate if additional should be extracted from certain files as codeowners. More request.
     Returns
     -------
     @return: Dictionary with the results found by SOMEF, formatted as a Result object.
@@ -83,7 +83,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 ignore_github_metadata,
                 repo_type,
                 authorization,
-                additional_info
+                reconcile_authors
             )
 
             # download files and obtain path to download folder
@@ -103,7 +103,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                                                repo_name,
                                                                                                def_branch,
                                                                                                ignore_test_folder,
-                                                                                               additional_info)
+                                                                                               reconcile_authors)
                     repository_metadata = check_repository_type(local_folder, repo_name, full_repository_metadata)
                 else:
                     logging.error("Error processing the target repository")
@@ -121,7 +121,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                                                     repo_name,
                                                                                                     def_branch,
                                                                                                     ignore_test_folder,
-                                                                                                    additional_info)
+                                                                                                    reconcile_authors)
 
                         repository_metadata = check_repository_type(local_folder, repo_name, full_repository_metadata)
                     else:
@@ -139,7 +139,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                                            repository_metadata,
                                                                                            repo_type,
                                                                                            ignore_test_folder = ignore_test_folder,
-                                                                                           additional_info = additional_info)
+                                                                                           reconcile_authors = reconcile_authors)
             if readme_text == "":
                 logging.warning("Warning: README document does not exist in the local repository")
         except process_repository.GithubUrlError:
@@ -246,7 +246,7 @@ def run_cli(*,
             keep_tmp=None,
             ignore_test_folder=True,
             requirements_mode="all",
-            additional_info=False
+            reconcile_authors=False
             ):
     """Function to run all the required components of the cli for a repository"""
     # check if it is a valid url
@@ -280,7 +280,7 @@ def run_cli(*,
                     encoded_url = encoded_url.replace(".","") #removing dots just in case
                     repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                              ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
-                                             keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, requirements_mode=requirements_mode, additional_info=additional_info)
+                                             keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, requirements_mode=requirements_mode, reconcile_authors=reconcile_authors)
                     
                     if hasattr(repo_data, "get_json"): 
                         repo_data = repo_data.get_json()
@@ -313,13 +313,13 @@ def run_cli(*,
         if repo_url:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                      ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
-                                     keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, additional_info=additional_info)
+                                     keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors)
         elif local_repo:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
-                                     local_repo=local_repo, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, additional_info=additional_info)
+                                     local_repo=local_repo, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors)
         else:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
-                                     doc_src=doc_src, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, additional_info=additional_info)
+                                     doc_src=doc_src, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors)
         
         if hasattr(repo_data, "get_json"): 
             repo_data = repo_data.get_json()

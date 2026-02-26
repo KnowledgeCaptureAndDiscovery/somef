@@ -331,7 +331,7 @@ Options:
                                   sources (pom.xml, requirements.txt, etc.)
 
 
-  -ai, --additional_info          SOMEF will extract additional information 
+  -ra, --reconcile_authors         SOMEF will extract additional information 
                                   from certain files like CODEOWNERS. 
                                   This may require extra API
                                   requests and increase execution time

@@ -219,7 +219,7 @@ class TestProcessRepository(unittest.TestCase):
     
         repo_path = test_data_repositories + "somef_repo" 
 
-        readme_text, full_metadata = process_files.process_repository_files( repo_path, metadata, constants.RepositoryType.LOCAL, ignore_test_folder=True, additional_info=False) 
+        readme_text, full_metadata = process_files.process_repository_files( repo_path, metadata, constants.RepositoryType.LOCAL, ignore_test_folder=True, reconcile_authors=False) 
         
         authors = full_metadata.results.get(constants.CAT_AUTHORS, [])
 

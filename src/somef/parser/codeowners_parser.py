@@ -21,9 +21,9 @@ def parse_codeowners_structured(dir_path, filename):
     return {"codeowners": codeowners}
 
 
-def parse_codeowners_file(file_path, metadata_result: Result, source, additional_info=None) -> Result:
+def parse_codeowners_file(file_path, metadata_result: Result, source, reconcile_authors=None) -> Result:
     try:
-        print(f"Additional info flag: {additional_info}")
+        print(f"Additional info flag: {reconcile_authors}")
         if Path(file_path).name.upper() == constants.CODEOWNERS_FILE:
             owners = parse_codeowners_structured(
                 os.path.dirname(file_path),
@@ -58,7 +58,7 @@ def parse_codeowners_file(file_path, metadata_result: Result, source, additional
                         "type": "Person"
                     }
 
-                    if additional_info:
+                    if reconcile_authors:
                         user_info = enrich_github_user(owner)
                         if user_info:
                             if user_info.get("name"):

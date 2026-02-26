@@ -178,8 +178,8 @@ def configure(auto, base_uri):
     help="Export only requirements from structured sources (pom.xml, requirements.txt, etc.)"
 )
 @click.option(
-    "--additional_info",
-    "-ai",
+    "--reconcile_authors",
+    "-ra",
     is_flag=True,
     default=False,
     help="""SOMEF will extract additional information from certain files like CODEOWNERS, etc."""
