@@ -36,13 +36,13 @@ pipelines = {
     'cvbb': make_pipeline(CountVectorizer(), BernoulliNB()),
     'cvlr': make_pipeline(CountVectorizer(), LogisticRegression(solver='liblinear')),
     'cvnb': make_pipeline(CountVectorizer(), MultinomialNB()),
-    'tfada': make_pipeline(TfidfVectorizer(), AdaBoostClassifier()),  #(max_depth=3, random_state=0))
+    'tfada': make_pipeline(TfidfVectorizer(), AdaBoostClassifier(algorithm="SAMME")),  #(max_depth=3, random_state=0))
     'tfdtc': make_pipeline(CountVectorizer(), DecisionTreeClassifier()),
     'tflr': make_pipeline(TfidfVectorizer(), LogisticRegression(solver='liblinear')),
     'tfnb': make_pipeline(TfidfVectorizer(), MultinomialNB()),
     'tfrfc': make_pipeline(TfidfVectorizer(), RandomForestClassifier()),  #(max_depth=3, random_state=0))
     'tfsgd': make_pipeline(TfidfVectorizer(), SGDClassifier(loss='log_loss')),
-    'tfxgb': make_pipeline(TfidfVectorizer(), XGBClassifier(use_label_encoder=False,eval_metric="logloss"))
+    'tfxgb': make_pipeline(TfidfVectorizer(), XGBClassifier(eval_metric="logloss"))
 }
 #'tfper': make_pipeline(TfidfVectorizer(), Perceptron(tol=1e-3, random_state=0)),
 evaluation_names = ('cvlr', 'tflr', 'tfnb', 'cvnb', 'cvbb', 'tfsgd', 'tfxgb', 'tfper', 'tfrfc', 'tfdtc', 'tfada')
