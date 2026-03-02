@@ -524,7 +524,6 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
                                                          test_data_path + "README-tpronk.md", "main")
             
             logos = results.results[constants.CAT_LOGO]
-            print(logos)
             assert len(logos) == 2, f"Expected 2 logos, found {len(logos)}" 
             logo_values = {entry["result"][constants.PROP_VALUE] for entry in logos}
             assert any("logo1.png" in v for v in logo_values), "logo1.png not detected as logo" 
@@ -536,3 +535,14 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
             image_values = {entry["result"][constants.PROP_VALUE] for entry in images}
             assert any("diagram.png" in v for v in image_values), "diagram.png not detected as regular image"
 
+
+    def test_issue_903(self):
+        """Test to ensure extract_images does not fail with broken badges"""
+        repo_url = "https://github.com/mir-am/LightTwinSVM"
+        with open(test_data_path + "README-lighttwinsvm.md", "r") as data_file:
+            test_text = data_file.read()
+            results = regular_expressions.extract_images(test_text, repo_url, None, Result(),
+                                                         test_data_path + "README-lighttwinsvm.md", "master")
+            images = results.results[constants.CAT_IMAGE]
+            assert len(images) == 6, f"Should be 6 images, but got {len(images)}"
+           
