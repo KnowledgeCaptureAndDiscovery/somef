@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-import tomli
+
+# for compatibility in python 3.11 projects
+try:
+    import tomllib as tomli
+except ModuleNotFoundError:
+    import tomli
 import re
 import os
 import logging
