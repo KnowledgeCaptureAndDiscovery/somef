@@ -475,3 +475,20 @@ REGEXP_DOCKER_VERSION = r'org\.opencontainers\.image\.version\s*=\s*"([^"]+)"'
 REGEXP_DOCKER_DOCUMENTATION = r'org\.opencontainers\.image\.documentation\s*=\s*"([^"]+)"'
 REGEXP_DOCKER_VENDOR = r'org\.opencontainers\.image\.vendor\s*=\s*"([^"]+)"'
 REGEXP_DOCKER_CREATED_DATE = r'org\.opencontainers\.image\.created\s*=\s*"([^"]+)"'
+
+# Schema.org properties accepted by Google for software metadata.
+# Any property not in this set will be prefixed as codemeta.
+# Just for -gc or --google_codemeta_out flag
+SCHEMA_ORG_PROPERTIES = { 
+    "@type", 
+    "name", 
+    "description", 
+    "author", 
+    "keywords",
+    "license",
+    "url",
+    "identifier",
+    "programmingLanguage",
+    "releaseNotes",
+    "releaseDate"
+    }

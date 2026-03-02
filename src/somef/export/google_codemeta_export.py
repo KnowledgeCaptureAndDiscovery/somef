@@ -1,7 +1,7 @@
 import json
 import copy
 from . import json_export
-
+from ..utils import constants
 
 def save_google_codemeta_output(repo_data, output_path, pretty=False, requirements_mode="all"):
     """
@@ -33,19 +33,19 @@ def save_google_codemeta_output(repo_data, output_path, pretty=False, requiremen
             json.dump(codemeta, f)
 
 
-SCHEMA_ORG_PROPERTIES = { 
-    "@type", 
-    "name", 
-    "description", 
-    "author", 
-    "keywords",
-    "license",
-    "url",
-    "identifier",
-    "programmingLanguage",
-    "releaseNotes",
-    "releaseDate"
-    }
+# SCHEMA_ORG_PROPERTIES = { 
+#     "@type", 
+#     "name", 
+#     "description", 
+#     "author", 
+#     "keywords",
+#     "license",
+#     "url",
+#     "identifier",
+#     "programmingLanguage",
+#     "releaseNotes",
+#     "releaseDate"
+#     }
 
 def make_google_compliant(codemeta):
     codemeta = copy.deepcopy(codemeta)
@@ -102,7 +102,7 @@ def prefix_all_codemeta_properties(codemeta):
     new = {}
 
     for key, value in codemeta.items(): 
-        if key in SCHEMA_ORG_PROPERTIES or key == "@context": 
+        if key in constants.SCHEMA_ORG_PROPERTIES or key == "@context": 
             new[key] = value 
         else: 
             new[f"codemeta:{key}"] = value 
