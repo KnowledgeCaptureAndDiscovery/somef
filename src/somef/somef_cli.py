@@ -37,7 +37,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     @param authorization: GitHub authorization token
     @param ignore_test_folder: Ignore contents of test folders
     @param requiriments_mode: flag to indicate what requirements show in codemeta 
-    @param reconcile_authors: flag to indicate if additional should be extracted from certain files as codeowners. More request.
+    @param reconcile_authors: flag to indicate if additional should be extracted from certain files as codeowners. Bear in mind that using this flags consumes more requests to the GitHub API.
     Returns
     -------
     @return: Dictionary with the results found by SOMEF, formatted as a Result object.
