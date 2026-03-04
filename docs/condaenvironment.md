@@ -13,12 +13,12 @@ Only dependency information is mapped, since it is the only part of the Conda en
 | requirements - value          |     requirements[i].result.value      | dependencies | 
 | requirements - name           |     requirements[i].result.name       | dependencies extract name       |        
 | requirements - version            |     requirements[i].result.version    | dependencies extract version |
-| requirements - dependency type           |     requirements[i].result.dependency_type            | conda if dependencies or pip if dependencies/pip  *(1)* |
+<!-- | requirements - dependency type           |     requirements[i].result.dependency_type            | conda if dependencies or pip if dependencies/pip  *(1)* | -->
 
 
 ---
 
-
+<!-- 
 *(1)* 
 - Example of a dependency conda and a dependency pip:
 ```
@@ -44,4 +44,4 @@ dependencies:
         "type": "Software_application",
         "dependency_type": "pip"
     },
-
+ -->

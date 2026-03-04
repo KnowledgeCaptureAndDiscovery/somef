@@ -37,7 +37,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     @param authorization: GitHub authorization token
     @param ignore_test_folder: Ignore contents of test folders
     @param requiriments_mode: flag to indicate what requirements show in codemeta 
-    @param reconcile_authors: flag to indicate if additional should be extracted from certain files as codeowners. More request.
+    @param reconcile_authors: flag to indicate if additional should be extracted from certain files as codeowners. Bear in mind that using this flags consumes more requests to the GitHub API.
     Returns
     -------
     @return: Dictionary with the results found by SOMEF, formatted as a Result object.
@@ -72,8 +72,11 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             if process_repository.is_gitlab(servidor):
                 logging.info(f"{servidor} is GitLab.")
                 bGitLab = True
+                if reconcile_authors: 
+                    logging.info("Author enrichment disabled: GitLab repositories are not supported for GitHub user enrichment.") 
+                    reconcile_authors = False
 
-            print(f"DEBUG: {servidor} is_gitlab = {bGitLab}")
+            logging.info(f"DEBUG: {servidor} is_gitlab = {bGitLab}")
             if bGitLab:
                 repo_type = constants.RepositoryType.GITLAB
 
@@ -182,7 +185,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 readme_source = "README.md"
                 
 
-            print("Extracting regular expressions...")
+            logging.info("Extracting regular expressions...")
             repository_metadata = regular_expressions.extract_bibtex(readme_unfiltered_text, repository_metadata,
                                                                      readme_source)
             repository_metadata = regular_expressions.extract_doi_badges(readme_unfiltered_text, repository_metadata,

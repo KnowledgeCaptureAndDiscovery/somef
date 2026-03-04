@@ -15,7 +15,6 @@ def parse_conda_environment_file(file_path, metadata_result: Result, source):
         logging.warning(f"Could not parse environment.yml {file_path}: {e}")
         return metadata_result
 
-    # Validación mínima
     if not isinstance(data, dict) or "dependencies" not in data:
         return metadata_result
 
@@ -23,8 +22,8 @@ def parse_conda_environment_file(file_path, metadata_result: Result, source):
         metadata_result.add_result(
             constants.CAT_HAS_PACKAGE_FILE,
             {
-                "value": source,
-                "type": constants.URL,
+                constants.PROP_VALUE: source,
+                constants.PROP_TYPE: constants.URL,
             },
             1,
             constants.TECHNIQUE_CODE_CONFIG_PARSER,
@@ -48,15 +47,16 @@ def parse_conda_environment_file(file_path, metadata_result: Result, source):
     # conda dependencies
     for dep in conda_deps:
         dep_dict = {
-            "value": dep,
-            "name": re.split(r"[=<>!]", dep)[0],
-            "type": constants.SOFTWARE_APPLICATION,
-            "dependency_type": "conda"
+            constants.PROP_VALUE: dep,
+            constants.PROP_NAME: re.split(r"[=<>!]", dep)[0],
+            constants.PROP_TYPE: constants.SOFTWARE_APPLICATION
+            # ,
+            # constants.PROP_DEPENDENCY_TYPE: "conda"
         }
 
         match = re.search(r"[=<>!]+(.+)", dep)
         if match:
-            dep_dict["version"] = match.group(1)
+            dep_dict[constants.PROP_VERSION] = match.group(1)
 
         metadata_result.add_result(
             constants.CAT_REQUIREMENTS,
@@ -69,15 +69,16 @@ def parse_conda_environment_file(file_path, metadata_result: Result, source):
     for dep in pip_deps:
 
         dep_dict = {
-            "value": dep,
-            "name": re.split(r"[=<>!~]", dep)[0],
-            "type": constants.SOFTWARE_APPLICATION,
-            "dependency_type": "pip"
+            constants.PROP_VALUE: dep,
+            constants.PROP_NAME: re.split(r"[=<>!~]", dep)[0],
+            constants.PROP_TYPE: constants.SOFTWARE_APPLICATION
+            # ,
+            # constants.PROP_DEPENDENCY_TYPE: "pip"
         }
 
         match = re.search(r"[=<>!~]+(.+)", dep)
         if match:
-            dep_dict["version"] = match.group(1)
+            dep_dict[constants.PROP_VERSION] = match.group(1)
 
         metadata_result.add_result(
             constants.CAT_REQUIREMENTS,

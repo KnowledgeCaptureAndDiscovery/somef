@@ -58,7 +58,7 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=const
             content_length = head_response.headers.get("Content-Length")
             if content_length is not None:
                 size_bytes = int(content_length)
-                print(f"HEAD Content-Length: {size_bytes}")
+                logging.info(f"HEAD Content-Length: {size_bytes}")
                 if size_bytes > size_limit_bytes:
                     logging.warning(
                         f"Download size {size_bytes} bytes exceeds limit of {size_limit_bytes} bytes. Skipping download."
@@ -586,15 +586,15 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
                 value = value.replace("{/number}", "")
             if category == constants.CAT_OWNER:
                 if reconcile_authors:
-                    print("Enriching owner information from codeowners...")
+                    logging.info("Enriching owner information from codeowners...")
                     user_info = enrich_github_user(owner)
                     if user_info:
-                        if user_info.get("name"):
-                            maintainer_data["name"] = user_info.get("name")
-                        if user_info.get("company"):
-                            maintainer_data["affiliation"] = user_info.get("company")
-                        if user_info.get("email"):
-                            maintainer_data["email"] = user_info.get("email")
+                        if user_info.get(constants.PROP_CODEOWNERS_NAME):
+                            maintainer_data[constants.PROP_NAME] = user_info.get(constants.PROP_CODEOWNERS_NAME)
+                        if user_info.get(constants.PROP_CODEOWNERS_COMPANY):
+                            maintainer_data[constants.PROP_AFFILIATION] = user_info.get(constants.PROP_CODEOWNERS_COMPANY)
+                        if user_info.get(constants.PROP_CODEOWNERS_EMAIL):
+                            maintainer_data[constants.PROP_EMAIL] = user_info.get(constants.PROP_CODEOWNERS_EMAIL)
 
                 value_type = filtered_resp[constants.AGENT_TYPE]
             if category == constants.CAT_KEYWORDS:

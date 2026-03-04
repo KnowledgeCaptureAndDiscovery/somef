@@ -125,9 +125,19 @@ dependsOn:
         "value": "PostgreSQL>=14.0",
         "name": "PostgreSQL",
         "version": ">=14.0",
+        "type": "Software_application"
+ 
+    },
+```
+<!-- ```
+    "result": {
+        "value": "PostgreSQL>=14.0",
+        "name": "PostgreSQL",
+        "version": ">=14.0",
         "type": "Software_application",
         "dependency_type": "runtime"
     },
-```
+``` -->
+
 
 

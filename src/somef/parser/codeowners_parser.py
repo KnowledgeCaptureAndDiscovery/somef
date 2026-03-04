@@ -23,7 +23,7 @@ def parse_codeowners_structured(dir_path, filename):
 
 def parse_codeowners_file(file_path, metadata_result: Result, source, reconcile_authors=None) -> Result:
     try:
-        print(f"Additional info flag: {reconcile_authors}")
+        logging.info(f"Reconcile authors flag: {reconcile_authors}")
         if Path(file_path).name.upper() == constants.CODEOWNERS_FILE:
             owners = parse_codeowners_structured(
                 os.path.dirname(file_path),
@@ -44,7 +44,6 @@ def parse_codeowners_file(file_path, metadata_result: Result, source, reconcile_
             added_maintainers = set()
             for entry in owners["codeowners"]:
                 for owner in entry["owners"]:
-                    # print(f"Adding maintainer: {owner}")
 
                     if owner in added_maintainers:
                         continue
@@ -61,12 +60,12 @@ def parse_codeowners_file(file_path, metadata_result: Result, source, reconcile_
                     if reconcile_authors:
                         user_info = enrich_github_user(owner)
                         if user_info:
-                            if user_info.get("name"):
-                                maintainer_data["name"] = user_info.get("name")
-                            if user_info.get("company"):
-                                maintainer_data["affiliation"] = user_info.get("company")
-                            if user_info.get("email"):
-                                maintainer_data["email"] = user_info.get("email")
+                            if user_info.get(constants.PROP_CODEOWNERS_NAME):
+                                maintainer_data[constants.PROP_NAME] = user_info.get(constants.PROP_CODEOWNERS_NAME)
+                            if user_info.get(constants.PROP_CODEOWNERS_COMPANY):
+                                maintainer_data[constants.PROP_AFFILIATION] = user_info.get(constants.PROP_CODEOWNERS_COMPANY)
+                            if user_info.get(constants.PROP_CODEOWNERS_EMAIL):
+                                maintainer_data[constants.PROP_EMAIL] = user_info.get(constants.PROP_CODEOWNERS_EMAIL)
 
                     metadata_result.add_result(
                         constants.CAT_MAINTAINER,
@@ -83,6 +82,9 @@ def parse_codeowners_file(file_path, metadata_result: Result, source, reconcile_
     return metadata_result
 
 def enrich_github_user(username):
+    """ Enrich user metadata using the appropriate platform API. 
+    Currently only GitHub is supported. 
+    """
     try:
         url = f"https://api.github.com/users/{username}"
         response = requests.get(url, timeout=5)
@@ -93,10 +95,11 @@ def enrich_github_user(username):
         data = response.json()
 
         return {
-            "name": data.get("name"),
-            "company": data.get("company"),
-            "email": data.get("email")  
+            constants.PROP_CODEOWNERS_NAME: data.get("name"),
+            constants.PROP_CODEOWNERS_COMPANY: data.get("company"),
+            constants.PROP_CODEOWNERS_EMAIL: data.get("email"),
         }
+
 
     except Exception:
         return None

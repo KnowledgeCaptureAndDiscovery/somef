@@ -210,14 +210,13 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                     codemeta_output[constants.CAT_CODEMETA_PROGRAMMINGLANGUAGE].append(value)
 
     if constants.CAT_REQUIREMENTS in repo_data:
-        structured_sources = ["pom.xml", "requirements.txt", "setup.py", "environment.yml", "pyproject.toml"]
 
         code_parser_requirements = []
         seen_structured = set()
         for x in repo_data[constants.CAT_REQUIREMENTS]:
             if x.get(constants.PROP_TECHNIQUE) == constants.TECHNIQUE_CODE_CONFIG_PARSER:
                 source = x.get("source", "")
-                if any(src in source for src in structured_sources):
+                if any(src in source for src in constants.STRUCTURED_REQUIREMENTS_SOURCES):
                     name = x[constants.PROP_RESULT].get(constants.PROP_NAME) or x[constants.PROP_RESULT].get(constants.PROP_VALUE)
                     version = x[constants.PROP_RESULT].get(constants.PROP_VERSION)
                     # key = f"{name.strip()}|{version.strip() if version else ''}"
@@ -240,7 +239,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
             if not (
                 x.get(constants.PROP_TECHNIQUE) == constants.TECHNIQUE_CODE_CONFIG_PARSER
                 and x.get("source") is not None
-                and any(src in x["source"] for src in structured_sources)
+                and any(src in x["source"] for src in constants.STRUCTURED_REQUIREMENTS_SOURCES)
             ):
                 result = x.get(constants.PROP_RESULT, {}) 
                 req_type = result.get("type", "") 
@@ -248,7 +247,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                     continue
 
                 value = result.get(constants.PROP_VALUE, "").strip().replace("\n", " ")
-                # value = x[constants.PROP_RESULT].get(constants.PROP_VALUE, "").strip().replace("\n", " ")
                 normalized = " ".join(value.split())
                 if normalized not in seen_text:
                     other_requirements.append(value)
@@ -333,15 +331,15 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
 
             author_obj = { "@type": type_aux }
 
-            if "name" in result_owner and result_owner["name"]: 
-                author_obj["name"] = result_owner["name"] 
-            if "value" in result_owner and result_owner["value"]: 
-                author_obj["identifier"] = result_owner["value"]              
-                author_obj["@id"] = "https://github.com/" + result_owner["value"]   
-            if "affiliation" in result_owner and result_owner["affiliation"]: 
-                author_obj["affiliation"] = result_owner["affiliation"]
-            if "email" in result_owner and result_owner["email"]: 
-                author_obj["email"] = result_owner["email"]
+            if "name" in result_owner and result_owner[constants.PROP_AUTHOR_NAME]:
+                author_obj[constants.PROP_AUTHOR_NAME] = result_owner[constants.PROP_AUTHOR_NAME]
+            if "value" in result_owner and result_owner[constants.PROP_VALUE]:
+                author_obj[constants.PROP_IDENTIFIER] = result_owner[constants.PROP_VALUE]          
+                author_obj["@id"] = "https://github.com/" + result_owner[constants.PROP_VALUE]
+            if "affiliation" in result_owner and result_owner[constants.PROP_AFFILIATION]:
+                author_obj[constants.PROP_AFFILIATION] = result_owner[constants.PROP_AFFILIATION]
+            if "email" in result_owner and result_owner[constants.PROP_EMAIL]:
+                author_obj[constants.PROP_EMAIL] = result_owner[constants.PROP_EMAIL]
 
             codemeta_authors.append(author_obj)
 
@@ -565,12 +563,12 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
             result_maint = maintainer.get("result", {})
             maint_obj = { "@type": result_maint.get("type", "Person") }
 
-            if "name" in result_maint and result_maint["name"]: 
-                maint_obj["name"] = result_maint["name"]
-            if "username" in result_maint and result_maint["username"]:
-                maint_obj["identifier"] = result_maint["username"]
-            if "email" in result_maint and result_maint["email"]:
-                maint_obj["email"] = result_maint["email"]
+            if "name" in result_maint and result_maint[constants.PROP_AUTHOR_NAME]: 
+                maint_obj[constants.PROP_AUTHOR_NAME] = result_maint[constants.PROP_AUTHOR_NAME]
+            if "username" in result_maint and result_maint[constants.PROP_USERNAME]:
+                maint_obj[constants.PROP_IDENTIFIER] = result_maint[constants.PROP_USERNAME]
+            if "email" in result_maint and result_maint[constants.PROP_EMAIL]:
+                maint_obj[constants.PROP_EMAIL] = result_maint[constants.PROP_EMAIL]
 
             codemeta_maintainers.append(maint_obj)
 
@@ -682,14 +680,18 @@ def extract_doi(url: str) -> str:
     return match.group(0).lower() if match else ""
 
 def map_requirement_type(t):
+    """
+    Maps a free text requirement type to a Schema.org software (soft application, soft source....) 
+    Keyword matching is used and unmatched values default to SoftwareApplication.
+    """
     t = t.lower()
-    if "application" in t:
-        return "SoftwareApplication"
-    if "source" in t:
-        return "SoftwareSourceCode"
-    if "system" in t:
-        return "SoftwareSystem"
-    return "SoftwareApplication" 
+
+    for key, mapped in constants.REQUIREMENT_ENTRIES_TYPE_MAP.items(): 
+        if key in t: 
+            return mapped
+    # default
+    return constants.SCHEMA_SOFTWARE_APPLICATION
+
 
 
 """
@@ -712,10 +714,10 @@ def canonicalize_value(value, value_type):
        - Otherwise, unify to scheme://domain (documentation, badges, pages)
        - Always remove query, fragment, trailing slash
     """
-    if value_type == "Release": 
+    if value_type == constants.RELEASE:
         return value
     
-    if value_type == "Url":
+    if value_type == constants.URL:
         parsed = urlparse(value)
 
         # Remove query and fragment
@@ -738,14 +740,14 @@ def canonicalize_value(value, value_type):
 
 
 def normalize_type(result):
-    value = result.get("value", "")
-    rtype = result.get("type", "")
+    value = result.get(constants.PROP_VALUE, "")
+    rtype = result.get(constants.PROP_TYPE, "")
 
     # Only normalize if the object ONLY has type + value
     # (i.e., it's a simple URL, not a structured object like Release)
     if isinstance(value, str) and value.startswith("http"):
-        if set(result.keys()) <= {"type", "value"}:
-            return "Url"
+        if set(result.keys()) <= {constants.PROP_TYPE, constants.PROP_VALUE}:
+            return constants.URL
 
     return rtype
 
@@ -764,6 +766,13 @@ def choose_more_general(a, b):
 
 
 def unify_results(repo_data: dict) -> dict:
+    """ 
+    Merge and normalize the raw extraction results produced by SOMEF. 
+    Different extractors may return duplicated or 
+    partially overlapping entries for the same underlying resource (urls, identifiers, authors...). 
+    This function canonicalizes simple values, detects equivalent items
+    and merges them into a single unified entry while preserving all available information.
+    """
     print("Unifying results...")
     unified_data = {}
 
@@ -775,11 +784,11 @@ def unify_results(repo_data: dict) -> dict:
         seen = {}
 
         for item in items:
-            result = item.get("result", {})
-            normalized_type = normalize_type(result) 
-            result["type"] = normalized_type
-            value = result.get("value")
-            value_type = result.get("type")
+            result = item.get(constants.PROP_RESULT, {})
+            normalized_type = normalize_type(result)
+            result[constants.PROP_TYPE] = normalized_type
+            value = result.get(constants.PROP_VALUE)
+            value_type = result.get(constants.PROP_TYPE)
 
             canonical = canonicalize_value(value, value_type)
 
@@ -789,18 +798,18 @@ def unify_results(repo_data: dict) -> dict:
                 existing = seen[key]
 
                 # If types match, merge normally
-                existing["result"]["value"] = choose_more_general(
-                    existing["result"]["value"], value
+                existing[constants.PROP_RESULT][constants.PROP_VALUE] = choose_more_general(
+                    existing[constants.PROP_RESULT][constants.PROP_VALUE], value
                 )
 
                 # merge other result fields because different techniques might have extracted different information 
                 # (e.g., email in authors extracted by file exploration or code parser.
                 for field, new_val in result.items():
-                    if field in ("value", "type"):
+                    if field in (constants.PROP_VALUE, constants.PROP_TYPE):
                         continue  
-                    old_val = existing["result"].get(field)
+                    old_val = existing[constants.PROP_RESULT].get(field)
                     if old_val in (None, "", []):
-                        existing["result"][field] = new_val
+                        existing[constants.PROP_RESULT][field] = new_val
 
                 # join techniques
                 t1 = existing.get("technique", [])

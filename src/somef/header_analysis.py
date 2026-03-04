@@ -317,22 +317,12 @@ def is_false_positive_header(text: str, category: str) -> bool:
 
     # false positives for bibliographic citations
     if category == constants.CAT_CITATION:
-        negative_patterns = [
-            "reference implementation",
-            "reference architecture",
-            "reference model",
-            "reference design",
-            "reference to this repository",
-            "reference to this library",
-            "reference in your project",
-            "node references"            
-            # add more patterns here in the future
-        ]
-        return any(pat in text_lower for pat in negative_patterns)
-
-    # Do the same to other categories if needed
-
+        for pattern in constants.NEGATIVE_PATTERNS_CITATION_HEADERS:
+            if pattern in text_lower:
+                return True
     return False
+
+
 # def extract_categories(repo_data, repository_metadata: Result):
 #     """
 #     Function that adds category information extracted using header information
