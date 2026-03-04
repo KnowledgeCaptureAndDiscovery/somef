@@ -231,4 +231,4 @@ From the above table, it can be found that LightTwinSVM is more efficient in ter
 ## Acknowledgments
 - For test and experiment with the LightTwinSVM program, Wine and Pima-Indian datasets are included in the project from [UCI](https://archive.ics.uci.edu/ml/index.php) machine learning repository.
 - Thanks to [Stefan van der Walt](https://github.com/stefanv) and [Nicolas P. Rougier](https://github.com/rougier) for reviewing this project, which published in the Journal of Open Source Software. (March 31, 2019) 
-- Thanks to [idejie](https://github.com/idejie) for test and support on the MacOS. (Dec 8, 2018)
+- Thanks to [idejie](https://github.com/idejie) for test and support on the MacOS. (Dec 8, 2018) 

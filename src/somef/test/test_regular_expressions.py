@@ -539,10 +539,10 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
     def test_issue_903(self):
         """Test to ensure extract_images does not fail with broken badges"""
         repo_url = "https://github.com/mir-am/LightTwinSVM"
-        with open(test_data_path + "README-lighttwinsvm.md", "r") as data_file:
+        with open(test_data_path + "README-lighttwin.md", "r") as data_file:
             test_text = data_file.read()
             results = regular_expressions.extract_images(test_text, repo_url, None, Result(),
-                                                         test_data_path + "README-lighttwinsvm.md", "master")
+                                                         test_data_path + "README-lighttwin.md", "master")
             images = results.results[constants.CAT_IMAGE]
             assert len(images) == 6, f"Should be 6 images, but got {len(images)}"
            
