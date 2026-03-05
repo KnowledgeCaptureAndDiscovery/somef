@@ -50,25 +50,30 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=const
     parsed = urlparse(url)
     is_api_request = "api.github.com" in parsed.netloc
     content_length = None
-    # just verify size if NOT is a request to api.github.com
+    # Check file size before downloading the full body (skip for GitHub API requests,
+    # which are always small JSON payloads).
     if not is_api_request:
         try:
-            head_response = requests.get(url, stream=True, allow_redirects=True, **kwargs)
+            # Use a proper HEAD request to read only the response headers.
+            # Previously this used requests.get(..., stream=True) which opens a full
+            # TCP connection and starts the response stream but never closes it —
+            # leaking a socket for every archive we inspect.  HEAD is the correct
+            # tool here: it retrieves headers without downloading the body.
+            head_response = requests.head(url, allow_redirects=True,
+                                           timeout=constants.DOWNLOAD_TIMEOUT_SECONDS, **kwargs)
+            head_response.close()  # release the connection back to the pool immediately
             content_length = head_response.headers.get("Content-Length")
             if content_length is not None:
                 size_bytes = int(content_length)
-                print(f"HEAD Content-Length: {size_bytes}")
                 if size_bytes > size_limit_bytes:
                     logging.warning(
                         f"Download size {size_bytes} bytes exceeds limit of {size_limit_bytes} bytes. Skipping download."
                     )
                     return None, None
             else:
-                # logging.warning(f"Could not determine file size for {url}. Skipping download.")
-                # return None, None
                 logging.warning(f"No Content-Length header for {url}. Proceeding with download anyway (unable to estimate size).")
         except Exception as e:
-            logging.warning(f"HEAD/stream request failed: {e}. Continuing with GET...")
+            logging.warning(f"HEAD request failed: {e}. Continuing with GET...")
 
     rate_limited = True
     date = ""
@@ -608,8 +613,12 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     # get languages
     if not ignore_api_metadata:
         languages_raw, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
-        
-        languages = languages_raw.json()
+
+        if languages_raw is None:
+            logging.warning("Skipping languages: rate_limit_get returned None (size limit or network error)")
+            languages = {}
+        else:
+            languages = languages_raw.json()
         if "message" in languages:
             logging.error("Error while retrieving languages: " + languages["message"])
         else:
@@ -731,10 +740,28 @@ def download_repository_files(owner, repo_name, default_branch, repo_type, targe
 
 def download_github_files(directory, owner, repo_name, repo_ref, authorization):
     """
-    Download all repository files from a GitHub repository
+    Download all repository files from a GitHub repository.
+
+    GitHub's short-form archive URL ``/archive/{ref}.zip`` returns HTTP 300 (Multiple
+    Choices) when the ref name is **ambiguous** — i.e. a branch and a tag share the
+    same name (e.g. a repo whose default branch is ``v2.0`` and also has a tag called
+    ``v2.0``).  In that case we must use the fully-qualified ref URLs:
+      - ``/archive/refs/heads/{ref}.zip``  (explicit branch)
+      - ``/archive/refs/tags/{ref}.zip``   (explicit tag)
+
+    We also keep the legacy ``main.zip`` fallback for repositories that renamed their
+    default branch to ``main`` after being created with ``master`` (or vice-versa) so
+    that the GitHub API default_branch value is momentarily stale.
+
+    Fallback order tried in sequence until one returns HTTP 200:
+      1. ``/archive/{ref}.zip``              — short form, works for unambiguous refs
+      2. ``/archive/refs/heads/{ref}.zip``   — unambiguous branch (fixes HTTP 300)
+      3. ``/archive/refs/tags/{ref}.zip``    — unambiguous tag  (fixes HTTP 300)
+      4. ``/archive/main.zip``               — legacy branch-rename fallback
+
     Parameters
     ----------
-    repo_ref: link to branch of the repo
+    repo_ref: default branch (or tag) returned by the GitHub API
     repo_name: name of the repo
     owner: GitHub owner
     directory: directory where to extract all downloaded files
@@ -742,28 +769,44 @@ def download_github_files(directory, owner, repo_name, repo_ref, authorization):
 
     Returns
     -------
-    path to the folder where all files have been downloaded
+    Path to the folder where all files have been downloaded, or None on failure.
     """
-    # download the repo at the selected branch with the link
-    repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip"
-    logging.info(f"Downloading {repo_archive_url}")
-    repo_download, date = rate_limit_get(repo_archive_url, headers=header_template(authorization))
+    # Candidate archive URLs tried in order.  We start with the short form because it
+    # works for the vast majority of repos and avoids an extra HTTP round-trip.  When
+    # that returns 300 (ambiguous ref) or 404 (ref not found), we escalate to the
+    # fully-qualified refs/heads/ and refs/tags/ forms before falling back to main.
+    candidate_urls = [
+        f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip",
+        f"https://github.com/{owner}/{repo_name}/archive/refs/heads/{repo_ref}.zip",
+        f"https://github.com/{owner}/{repo_name}/archive/refs/tags/{repo_ref}.zip",
+        f"https://github.com/{owner}/{repo_name}/archive/main.zip",
+    ]
 
-    if repo_download is None:
-        logging.warning(f"Repository archive skipped due to size limit: {constants.SIZE_DOWNLOAD_LIMIT_MB} MB or not content lenght.")
-        return None
-    
-    if repo_download.status_code == 404:
-        logging.error(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-        repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/main.zip"
-        logging.info(f"Trying to download {repo_archive_url}")
+    repo_download = None
+    repo_archive_url = None
+    for repo_archive_url in candidate_urls:
+        logging.info(f"Downloading {repo_archive_url}")
         repo_download, date = rate_limit_get(repo_archive_url, headers=header_template(authorization))
         if repo_download is None:
-            logging.warning(f"Repository archive skipped due to size limit: {constants.SIZE_DOWNLOAD_LIMIT_MB} MB or not content lenght.")
+            # Size limit exceeded or streaming error — no point trying other URLs
+            logging.warning(
+                f"Repository archive skipped due to size limit: "
+                f"{constants.SIZE_DOWNLOAD_LIMIT_MB} MB or no content-length."
+            )
             return None
-        
-    if repo_download.status_code != 200:
-        sys.exit(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+        if repo_download.status_code == 200:
+            break
+        logging.warning(
+            f"Archive URL {repo_archive_url} returned HTTP {repo_download.status_code}, "
+            f"trying next fallback..."
+        )
+
+    if repo_download is None or repo_download.status_code != 200:
+        logging.error(
+            f"All archive download attempts failed for {owner}/{repo_name} "
+            f"(last status: {getattr(repo_download, 'status_code', 'N/A')})"
+        )
+        return None
 
     repo_zip = repo_download.content
 
@@ -941,6 +984,10 @@ def get_all_paginated_results(base_url, headers, per_page=100):
     while True:
         url = f"{base_url}?per_page={per_page}&page={page}"
         response, _ = rate_limit_get(url, headers=headers)
+
+        if response is None:
+            logging.warning(f"Skipping page {page}: rate_limit_get returned None (size limit or network error)")
+            break
 
         if response.status_code != 200:
             logging.warning(f"GitHub API error on page {page}: {response.status_code}")

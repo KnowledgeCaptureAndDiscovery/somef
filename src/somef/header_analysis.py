@@ -147,7 +147,7 @@ def extract_header_content(text: str) -> Tuple[pd.DataFrame, str | None]:
 
     # df['Content'].replace('', np.nan, inplace=True)
     df['Content'] = df['Content'].replace('', np.nan)
-    df.dropna(subset=['Content'], inplace=True)
+    df = df.dropna(subset=['Content'])
 
     return df, none_header_content
 
@@ -375,7 +375,7 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
         df['ParentGroup'] = df['ParentHeader'].fillna('').map(label_text)
 
         df.loc[df['Group'].str.len() == 0, 'Group'] = df['ParentGroup']
-        df.drop(columns=['ParentGroup'], inplace=True)
+        df = df.drop(columns=['ParentGroup'])
 
         if not df.iloc[0]['Group']:
             df.loc[df.index[0], 'Group'] = ['unknown']
@@ -384,11 +384,11 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
         df.loc[df['Group'] == 'unknown', 'Group'] = np.nan
 
         valid = df[df['Group'].notna()].copy()
-        valid.rename(columns={
+        valid = valid.rename(columns={
             'Content': constants.PROP_VALUE,
             'Header': constants.PROP_ORIGINAL_HEADER,
             'ParentHeader': constants.PROP_PARENT_HEADER,
-        }, inplace=True)
+        })
 
         source = None
         if constants.CAT_README_URL in repository_metadata.results:
