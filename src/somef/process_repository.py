@@ -763,7 +763,8 @@ def download_github_files(directory, owner, repo_name, repo_ref, authorization):
             return None
         
     if repo_download.status_code != 200:
-        sys.exit(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+        logging.error(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+        return None
 
     repo_zip = repo_download.content
 
