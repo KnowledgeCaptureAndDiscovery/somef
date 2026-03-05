@@ -59,7 +59,8 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=const
             # TCP connection and starts the response stream but never closes it —
             # leaking a socket for every archive we inspect.  HEAD is the correct
             # tool here: it retrieves headers without downloading the body.
-            head_response = requests.head(url, allow_redirects=True, **kwargs)
+            head_response = requests.head(url, allow_redirects=True,
+                                           timeout=constants.DOWNLOAD_TIMEOUT_SECONDS, **kwargs)
             head_response.close()  # release the connection back to the pool immediately
             content_length = head_response.headers.get("Content-Length")
             if content_length is not None:
@@ -612,8 +613,12 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     # get languages
     if not ignore_api_metadata:
         languages_raw, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
-        
-        languages = languages_raw.json()
+
+        if languages_raw is None:
+            logging.warning("Skipping languages: rate_limit_get returned None (size limit or network error)")
+            languages = {}
+        else:
+            languages = languages_raw.json()
         if "message" in languages:
             logging.error("Error while retrieving languages: " + languages["message"])
         else:
@@ -979,6 +984,10 @@ def get_all_paginated_results(base_url, headers, per_page=100):
     while True:
         url = f"{base_url}?per_page={per_page}&page={page}"
         response, _ = rate_limit_get(url, headers=headers)
+
+        if response is None:
+            logging.warning(f"Skipping page {page}: rate_limit_get returned None (size limit or network error)")
+            break
 
         if response.status_code != 200:
             logging.warning(f"GitHub API error on page {page}: {response.status_code}")

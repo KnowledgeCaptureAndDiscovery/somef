@@ -1,3 +1,4 @@
+import logging
 import os
 from pathlib import Path
 import nbformat
@@ -8,8 +9,6 @@ from .extract_workflows import is_file_workflow
 from .process_results import Result
 from .utils import constants
 from .extract_ontologies import is_file_ontology
-
-import pdb
 
 
 def check_repository_type(path_repo, title, metadata_result: Result):
@@ -200,18 +199,15 @@ def check_static_websites(path_repo, repo_metadata: Result):
                     return False
     try:
         languages = repo_metadata[constants.CAT_PROGRAMMING_LANGUAGES]
-        print(languages)
         for language in languages:
             language_name = language[constants.PROP_RESULT][constants.PROP_NAME]
-            print(language_name)
             if language_name.lower() == "javascript":
                 js_size += language[constants.PROP_RESULT][constants.PROP_SIZE]
-                print(js_size)
             elif language_name.lower() == "scss" or language_name.lower() == "css":
                 css_size += language[constants.PROP_RESULT][constants.PROP_SIZE]
             total_size += language[constants.PROP_RESULT][constants.PROP_SIZE]
     except Exception as e:
-        print(e)
+        logging.warning(f"Could not retrieve programming languages for static website check: {e}")
     if html_file > 0:
         if js_size > 0 and css_size == 0:
             if js_size / total_size < 0.91:
