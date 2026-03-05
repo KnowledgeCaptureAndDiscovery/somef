@@ -180,11 +180,22 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
     if constants.CAT_KEYWORDS in repo_data:
         # codemeta_output[constants.CAT_CODEMETA_KEYWORDS] = repo_data[constants.CAT_KEYWORDS][0][constants.PROP_RESULT][constants.PROP_VALUE]
         codemeta_output[constants.CAT_CODEMETA_KEYWORDS] = []
-
         for key in repo_data[constants.CAT_KEYWORDS]:
-          key_value = key[constants.PROP_RESULT][constants.PROP_VALUE]
-          if key_value not in codemeta_output[constants.CAT_CODEMETA_KEYWORDS]:
-            codemeta_output[constants.CAT_CODEMETA_KEYWORDS].append(key_value)
+            key_value = key[constants.PROP_RESULT][constants.PROP_VALUE]
+            if isinstance(key_value, str):
+                items = [s.strip() for s in key_value.split(",") if s.strip()]
+            elif isinstance(key_value, list):
+                items = key_value
+            else:
+                continue
+
+            for item in items:
+                if item not in codemeta_output[constants.CAT_CODEMETA_KEYWORDS]:
+                    codemeta_output[constants.CAT_CODEMETA_KEYWORDS].append(item)
+        # for key in repo_data[constants.CAT_KEYWORDS]:
+        #   key_value = key[constants.PROP_RESULT][constants.PROP_VALUE]
+        #   if key_value not in codemeta_output[constants.CAT_CODEMETA_KEYWORDS]:
+        #     codemeta_output[constants.CAT_CODEMETA_KEYWORDS].append(key_value)
 
     if constants.CAT_PROGRAMMING_LANGUAGES in repo_data:
         # Calculate the total code size of all the programming languages

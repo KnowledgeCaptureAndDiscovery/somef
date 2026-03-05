@@ -1,6 +1,6 @@
 import sys
 # from uu import encode
-
+import warnings
 import validators
 import logging
 import os
@@ -43,6 +43,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     @return: Dictionary with the results found by SOMEF, formatted as a Result object.
     """
     # Set up logging
+    warnings.filterwarnings("ignore", category=UserWarning, module="pyparsing")
+    warnings.filterwarnings("ignore", category=DeprecationWarning, module="rdflib")
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(levelname)s-%(message)s',
                         datefmt='%d-%b-%y %H:%M:%S', force=True)
     logging.getLogger("bibtexparser").setLevel(logging.ERROR)
