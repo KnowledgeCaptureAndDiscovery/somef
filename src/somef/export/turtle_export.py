@@ -167,7 +167,6 @@ class DataGraph:
 
     @staticmethod
     def apply_mapping(mapping_path, data) -> Graph:
-  
         """
         Given a mapping file and JSON content this method returns the MORPH-KGC materialization for the mapping
         Parameters

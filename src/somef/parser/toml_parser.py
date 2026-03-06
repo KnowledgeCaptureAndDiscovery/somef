@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-import tomli
+
+# for compatibility in python 3.11 projects
+try:
+    import tomllib as tomli
+except ModuleNotFoundError:
+    import tomli
 import re
 import os
 import logging
@@ -335,8 +340,9 @@ def parse_cargo_metadata(data, metadata_result, source, file_path):
                     "value": req,
                     "name": name,
                     "version": version,
-                    "type": constants.SOFTWARE_APPLICATION,
-                    "dependency_type": dep_type
+                    "type": constants.SOFTWARE_APPLICATION
+                    # ,
+                    # "dependency_type": dep_type
                 },
                 1,
                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
@@ -357,8 +363,9 @@ def parse_cargo_metadata(data, metadata_result, source, file_path):
                         "value": req,
                         "name": name,
                         "version": version,
-                        "type": constants.SOFTWARE_APPLICATION,
-                        "dependency_type": dep_type
+                        "type": constants.SOFTWARE_APPLICATION
+                        # ,
+                        # "dependency_type": dep_type
                     },
                     1,
                     constants.TECHNIQUE_CODE_CONFIG_PARSER,

@@ -276,13 +276,53 @@ def tokenize_header(text) -> Iterable[str]:
 
 def label_text(text: str) -> List[str]:
     labels: List[str] = []
+
+    if isinstance(text, list):
+        text = " ".join(text)
+    else:
+        text = str(text)
+
     for token in tokenize_header(text):
         synsets = get_synsets(token)
         if synsets:
             grp = match_group(synsets)
+            # Skip if the header matches a known false positive for this group
+           
+            # if isinstance(text, list):
+            #     text = " ".join(text)
+
+            if is_false_positive_header(text, grp):
+                # print(f"Skipping false positive header '{text}' for category '{grp}'")
+                continue
             if grp and grp not in labels:
                 labels.append(grp)
     return labels
+
+def is_false_positive_header(text: str, category: str) -> bool:
+    """
+    Checks if a header is a known false positive for a given category.
+
+    Prevents headers like 'Reference implementation' from being classified as
+    bibliographic citations (CAT_CITATION) while allowing legitimate ones like 'References'.
+
+    Args:
+        text (str): The header text to check.
+        category (str): The category being considered (e.g., CAT_CITATION).
+
+    Returns:
+        bool: True if the header is a known false positive for the category.
+    """
+
+    text_lower = text.lower()
+
+    # false positives for bibliographic citations
+    if category == constants.CAT_CITATION:
+        for pattern in constants.NEGATIVE_PATTERNS_CITATION_HEADERS:
+            if pattern in text_lower:
+                return True
+    return False
+
+
 # def extract_categories(repo_data, repository_metadata: Result):
 #     """
 #     Function that adds category information extracted using header information

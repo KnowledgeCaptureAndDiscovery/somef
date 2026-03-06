@@ -11,6 +11,7 @@ from .utils import constants
 from . import configuration
 from .process_results import Result
 from .regular_expressions import detect_license_spdx
+from .parser.codeowners_parser import enrich_github_user
 
 # Constructs a template HTTP header, which:
 # - has a key for the authorization token if passed via the authorization argument, otherwise
@@ -57,7 +58,7 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=const
             content_length = head_response.headers.get("Content-Length")
             if content_length is not None:
                 size_bytes = int(content_length)
-                print(f"HEAD Content-Length: {size_bytes}")
+                logging.info(f"HEAD Content-Length: {size_bytes}")
                 if size_bytes > size_limit_bytes:
                     logging.warning(
                         f"Download size {size_bytes} bytes exceeds limit of {size_limit_bytes} bytes. Skipping download."
@@ -81,6 +82,12 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=const
             stream=use_stream,
             **kwargs
         )
+        # Detect invalid or insufficient GitHub token 
+        if response.status_code == 401: 
+            raise Exception("Invalid GitHub token. Run `somef configure` to set a valid token.") 
+        if response.status_code == 403: 
+            raise Exception("GitHub token lacks required permissions or scopes.")
+        
         date = response.headers.get("Date", "")
         # Show rate limit information if available
         if "X-RateLimit-Remaining" in response.headers:
@@ -478,7 +485,7 @@ def download_readme(owner, repo_name, default_branch, repo_type, authorization):
 
 
 def load_online_repository_metadata(repository_metadata: Result, repository_url, ignore_api_metadata=False,
-                                    repo_type=constants.RepositoryType.GITHUB, authorization=None):
+                                    repo_type=constants.RepositoryType.GITHUB, authorization=None, reconcile_authors=False):
     """
     Function uses the repository_url provided to load required information from GitHub or Gitlab.
     Information kept from the repository is written in keep_keys.
@@ -489,6 +496,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     @param ignore_api_metadata: true if you do not want to do an additional request to the target API
     @param repository_url: target repository URL.
     @param authorization: GitHub authorization token
+    @param reconcile_authors: flag to indicate if additional should be extracted from certain files as codeowners. More request.
 
     Returns
     -------
@@ -572,10 +580,22 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
 
     for category, value in filtered_resp.items():
         value_type = constants.STRING
+        maintainer_data = {}
         if category in constants.all_categories:
             if category == constants.CAT_ISSUE_TRACKER:
                 value = value.replace("{/number}", "")
             if category == constants.CAT_OWNER:
+                if reconcile_authors:
+                    logging.info("Enriching owner information from codeowners...")
+                    user_info = enrich_github_user(owner)
+                    if user_info:
+                        if user_info.get(constants.PROP_CODEOWNERS_NAME):
+                            maintainer_data[constants.PROP_NAME] = user_info.get(constants.PROP_CODEOWNERS_NAME)
+                        if user_info.get(constants.PROP_CODEOWNERS_COMPANY):
+                            maintainer_data[constants.PROP_AFFILIATION] = user_info.get(constants.PROP_CODEOWNERS_COMPANY)
+                        if user_info.get(constants.PROP_CODEOWNERS_EMAIL):
+                            maintainer_data[constants.PROP_EMAIL] = user_info.get(constants.PROP_CODEOWNERS_EMAIL)
+
                 value_type = filtered_resp[constants.AGENT_TYPE]
             if category == constants.CAT_KEYWORDS:
                 # we concatenate all keywords in a list, as the return value is always a single object
@@ -597,6 +617,17 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
                 }
                 if "spdx_id" in value.keys():
                     result[constants.PROP_SPDX_ID] = value["spdx_id"]
+            elif category == constants.CAT_OWNER:
+                result = {
+                    constants.PROP_VALUE: value,
+                    constants.PROP_TYPE: value_type
+                }
+                if maintainer_data.get("name"):
+                    result[constants.PROP_NAME] = maintainer_data["name"]
+                if maintainer_data.get("affiliation"):
+                    result[constants.PROP_AFFILIATION] = maintainer_data["affiliation"]
+                if maintainer_data.get("email"):
+                    result[constants.PROP_EMAIL] = maintainer_data["email"]
             else:
                 result = {
                     constants.PROP_VALUE: value,
