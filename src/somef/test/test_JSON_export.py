@@ -585,3 +585,44 @@ class TestJSONExport(unittest.TestCase):
 
 
         os.remove(test_data_path + "test_somef_unify.json")
+
+    
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
+    def test_issue_gitlab_enrich_authors(self):
+        """Tests if a gitlab repository with codeowners file gets enriched with the information of the users in the codeowners file.
+        This test is skipped in CI because it requires real requests to GitLab API and we want to avoid hitting the rate limit.
+        """
+        output_file = test_data_path + "test-gitlab-reconcile.json"
+
+        somef_cli.run_cli(threshold=0.8,
+            ignore_classifiers=False,
+            repo_url="https://gitlab.com/sosy-lab/benchmarking/fm-tools/",
+            local_repo=None,
+            doc_src=None,
+            in_file=None,
+            output=output_file,
+            graph_out=None,
+            graph_format="turtle",
+            codemeta_out=None,
+            pretty=True,
+            missing=True,
+            readme_only=False,
+            reconcile_authors=True
+        )
+
+        with open(output_file, "r") as f: 
+            json_content = json.load(f)
+
+        maintainers = json_content.get(constants.CAT_MAINTAINER, [])
+        self.assertTrue(len(maintainers) >= 2, "Expected at least two maintainers")
+
+        first = maintainers[0].get("result", {})
+        self.assertEqual(first.get("username"), "dbeyer")
+        self.assertEqual(first.get("name"), "Dirk Beyer")
+        self.assertEqual(first.get("email"), "dirk.beyer@sosy-lab.org")
+
+        second = maintainers[1].get("result", {})
+        self.assertEqual(second.get("username"), "FrNecas")
+        self.assertEqual(second.get("name"), "František Nečas")
+
+        os.remove(output_file)
