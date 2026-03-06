@@ -1,6 +1,11 @@
 import ast
 import os
-import tomli
+# for compatibility in python 3.11 projects
+try:
+    import tomllib as tomli
+except ModuleNotFoundError:
+    import tomli
+
 import logging
 import re
 from pathlib import Path

@@ -56,6 +56,8 @@ class TestExportTTL(unittest.TestCase):
         """ Uses a local JSON to test whether the mapping works"""
         mapping_path = str(Path(__file__).parent.parent) + os.path.sep + "mapping" + os.path.sep + "rml.ttl"
         data_path = str(Path(__file__).parent) + os.path.sep + "test_data" + os.path.sep + "export_test.json"
+        print(mapping_path)
+        print(Path(mapping_path).exists())
         a = turtle_export.DataGraph()
         g = a.apply_mapping(mapping_path, data_path)
         # print(g.serialize(format="turtle", encoding="UTF-8"))

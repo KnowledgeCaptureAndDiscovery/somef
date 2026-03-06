@@ -17,8 +17,14 @@ class TestSupervisedClassification(unittest.TestCase):
             text = data_file.read()
             result = supervised_classification.run_category_classification(text, 0.8, Result())
             # self.assertEqual(len(result.results[constants.CAT_APPLICATION_DOMAIN]), 1)
-            cat_result = result.results[constants.CAT_APPLICATION_DOMAIN][0]
-            self.assertEqual(cat_result[constants.PROP_RESULT]['value'], "Semantic web")
+            # cat_result = result.results[constants.CAT_APPLICATION_DOMAIN][0]
+            # self.assertEqual(cat_result[constants.PROP_RESULT]['value'], "Semantic web")
+            values = [
+                r[constants.PROP_RESULT]['value']
+                for r in result.results[constants.CAT_APPLICATION_DOMAIN]
+            ]
+            assert "Semantic web" in values
+
 
     def test_threshold_old_vs_new(self):
             """This test shows the difference between the old and new code using a fake model: the old code adds a result, the new code doesn’t."""

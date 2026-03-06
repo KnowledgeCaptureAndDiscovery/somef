@@ -161,6 +161,7 @@ CAT_ISSUE_TRACKER = "issue_tracker"
 CAT_KEYWORDS = "keywords"
 CAT_LICENSE = "license"
 CAT_LOGO = "logo"
+CAT_MAINTAINER = "maintainer"
 CAT_NAME = "name"
 CAT_ONTOLOGIES = "ontologies"
 CAT_OWNER = "owner"
@@ -235,6 +236,8 @@ AGENT_TYPE = "agent_type"  # Special type needed when objects are nested
 PROP_VALUE = "value"
 # For Result types
 PROP_AUTHOR = "author"
+PROP_AUTHOR_NAME = "name"
+PROP_AFFILIATION = "affiliation"
 PROP_BROWSER_URL = "browser_download_url"
 PROP_CONTENT_TYPE = "content_type"
 PROP_DOI = "doi"
@@ -243,7 +246,10 @@ PROP_DATE_CREATED = "date_created"
 PROP_DATE_CREATED_AT = "created_at"
 PROP_DATE_PUBLISHED = "date_published"
 PROP_DATE_UPDATED = "date_updated"
+PROP_DEPENDENCY_TYPE = "dependency_type"
+PROP_EMAIL = "email"
 PROP_HTML_URL = "html_url"
+PROP_IDENTIFIER = "identifier"
 PROP_NAME = "name"
 PROP_ORIGINAL_HEADER = "original_header"
 PROP_PARENT_HEADER = "parent_header"
@@ -252,6 +258,7 @@ PROP_SIZE = "size"
 PROP_SPDX_ID = "spdx_id"
 PROP_TAG = "tag"
 PROP_URL = "url"
+PROP_USERNAME = "username"
 PROP_VERSION = "version"
 PROP_ZIPBALL_URL = "zipball_url"
 PROP_TARBALL_URL = "tarball_url"
@@ -446,6 +453,7 @@ CAT_CODEMETA_IDENTIFIER = "identifier"
 CAT_CODEMETA_KEYWORDS = "keywords"
 CAT_CODEMETA_LICENSE = "license"
 CAT_CODEMETA_LOGO = "logo"
+CAT_CODEMETA_MAINTAINER = "maintainer"
 CAT_CODEMETA_NAME = "name"
 CAT_CODEMETA_PROGRAMMINGLANGUAGE = "programmingLanguage"
 CAT_CODEMETA_README = "readme"
@@ -471,3 +479,54 @@ REGEXP_DOCKER_VERSION = r'org\.opencontainers\.image\.version\s*=\s*"([^"]+)"'
 REGEXP_DOCKER_DOCUMENTATION = r'org\.opencontainers\.image\.documentation\s*=\s*"([^"]+)"'
 REGEXP_DOCKER_VENDOR = r'org\.opencontainers\.image\.vendor\s*=\s*"([^"]+)"'
 REGEXP_DOCKER_CREATED_DATE = r'org\.opencontainers\.image\.created\s*=\s*"([^"]+)"'
+
+# Schema.org properties accepted by Google for software metadata.
+# Any property not in this set will be prefixed as codemeta.
+# Just for -gc or --google_codemeta_out flag
+SCHEMA_ORG_PROPERTIES = { 
+    "@type", 
+    "name", 
+    "description", 
+    "author", 
+    "keywords",
+    "license",
+    "url",
+    "identifier",
+    "programmingLanguage",
+    "releaseNotes",
+    "releaseDate"
+    }
+
+# Filenames considered by SOMEF as structured dependency sources.
+STRUCTURED_REQUIREMENTS_SOURCES = [
+    "pom.xml", 
+    "requirements.txt", 
+    "setup.py", 
+    "environment.yml", 
+    "pyproject.toml"
+    ]
+
+# Schema.org software types used to classify requirement entries.
+# used in nex mapping
+SCHEMA_SOFTWARE_APPLICATION = "SoftwareApplication"
+SCHEMA_SOFTWARE_SOURCE_CODE = "SoftwareSourceCode"
+SCHEMA_SOFTWARE_SYSTEM = "SoftwareSystem"
+
+REQUIREMENT_ENTRIES_TYPE_MAP = {
+    "application": SCHEMA_SOFTWARE_APPLICATION,
+    "source": SCHEMA_SOFTWARE_SOURCE_CODE,
+    "system": SCHEMA_SOFTWARE_SYSTEM,
+}
+
+# Properties from codeowners file.
+PROP_CODEOWNERS_NAME = "name"
+PROP_CODEOWNERS_COMPANY = "company"
+PROP_CODEOWNERS_EMAIL = "email"
+
+NEGATIVE_PATTERNS_CITATION_HEADERS = [
+    "reference implementation",
+    "reference architecture",
+    "reference model",
+    "reference design",
+    "node references",
+]

@@ -106,3 +106,31 @@ class TestHeaderAnalysis(unittest.TestCase):
             json_test, results = extract_categories(file_text, Result())
             reqs = json_test.results[constants.CAT_REQUIREMENTS][0][constants.PROP_RESULT][constants.PROP_VALUE]
             assert reqs.replace('\n', '') == "Python 2.7 and 3.4+"
+
+    def test_issue_594(self):
+        """
+        Test that ensures sentences containing the word 'reference' in the README
+        are not incorrectly classified as citations when they are not bibliographic
+        references.
+        """
+        with open(test_data_path + "README-csl-editor.md", "r") as data_file:
+            file_text = data_file.read()
+            json_test, results = extract_categories(file_text, Result())
+            assert constants.CAT_CITATION not in json_test.results
+
+    def test_issue_564(self):
+        """
+        Test that ensures sentences containing the word 'reference' in the README
+        are not incorrectly classified as citations when they are not bibliographic
+        references. Similar to issue 594 but for a different file.
+        """
+        with open(test_data_path + "README-agora.md", "r") as data_file:
+            file_text = data_file.read()
+            json_test, results = extract_categories(file_text, Result())
+
+            assert constants.CAT_CITATION  in json_test.results
+            citations = json_test.results[constants.CAT_CITATION]
+            assert len(citations) == 1
+            citation_text = citations[0][constants.PROP_RESULT][constants.PROP_VALUE]
+            assert "Tim Berners-Lee" in citation_text
+

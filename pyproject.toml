@@ -18,7 +18,7 @@ classifiers = [
 homepage = "https://github.com/KnowledgeCaptureAndDiscovery/somef"
 
 [tool.poetry.dependencies]
-    python = ">=3.12,<3.13"
+    python = ">=3.11,<3.13"
     bs4 = "^0.0.1"
     click = "^8.1.7"
     click-option-group = "^0.5.6"
@@ -35,7 +35,7 @@ homepage = "https://github.com/KnowledgeCaptureAndDiscovery/somef"
     contractions = "^0.1.73"
     chardet = "^5.2.0"
     imbalanced-learn = "^0.12.0"
-    pytest = "^7.4.4"
+    pytest = "^8.0.0"
     morph-kgc = "^2.6.4"
     bibtexparser = "^1.4.1"
     nbformat = "^5.9.2"
