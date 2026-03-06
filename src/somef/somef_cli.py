@@ -74,9 +74,9 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             if process_repository.is_gitlab(servidor):
                 logging.info(f"{servidor} is GitLab.")
                 bGitLab = True
-                if reconcile_authors: 
-                    logging.info("Author enrichment disabled: GitLab repositories are not supported for GitHub user enrichment.") 
-                    reconcile_authors = False
+                # if reconcile_authors: 
+                #     logging.info("Author enrichment disabled: GitLab repositories are not supported for GitHub user enrichment.") 
+                #     reconcile_authors = False
 
             logging.info(f"DEBUG: {servidor} is_gitlab = {bGitLab}")
             if bGitLab:

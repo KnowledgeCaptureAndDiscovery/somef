@@ -49,7 +49,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
     -------
     @return: text of the main readme and a JSON dictionary (filtered_resp) with the findings in files
     """
-
+    global domain_gitlab
     if repo_type == constants.RepositoryType.GITLAB:      
         domain_gitlab = extract_gitlab_domain(metadata_result, repo_type)
 
@@ -244,12 +244,12 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                    )
                 if filename.upper() == constants.CODEOWNERS_FILE:
                     # codeowners_json = parse_codeowners_structured(dir_path,filename)
-                    print("Processing CODEOWNERS file...")
+                    logging.info("Processing CODEOWNERS file...")
                     codeowner_file_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
                                                        repo_dir,
                                                        repo_relative_path, filename)
-                    
-                    metadata_result = parse_codeowners_file(os.path.join(dir_path, filename), metadata_result, codeowner_file_url, reconcile_authors)
+
+                    metadata_result = parse_codeowners_file(os.path.join(dir_path, filename), metadata_result, codeowner_file_url, reconcile_authors, repo_type, server_url=domain_gitlab)
                     parsed_build_files.add(filename.lower())
 
                 if filename.lower() == "codemeta.json":

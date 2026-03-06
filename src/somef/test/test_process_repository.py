@@ -9,7 +9,7 @@ from ..utils import constants
 from ..process_results import Result
 
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
-
+test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 
 class TestProcessRepository(unittest.TestCase):
 
@@ -227,3 +227,33 @@ class TestProcessRepository(unittest.TestCase):
             source = entry.get("source", "").lower() 
             assert "lib/" not in source, f"Author extracted from ignored folder: {source}" 
             assert "authors.txt" not in source, f"'authors.txt' inside lib/ was incorrectly processed"
+
+
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
+    def test_issue_909(self):
+        """
+        Checks whether a repository with an ambiguous GitHub ref (HTTP 300) works fine.
+        The test ensures Somef can handle the repo and produces a JSON output.
+        """
+
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url="https://github.com/Balaje/iceFem",
+                        local_repo=None,
+                        doc_src=None,
+                        in_file=None,
+                        output=test_data_path + "test-909.json",
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out= None,
+                        pretty=True,
+                        missing=False,
+                        readme_only=False)
+        
+        with open(test_data_path + "test-909.json", "r") as text_file: 
+            json_content = json.load(text_file)
+
+        assert json_content is not None
+        assert os.path.exists(test_data_path + "test-909.json")
+
+        os.remove(test_data_path + "test-909.json")
