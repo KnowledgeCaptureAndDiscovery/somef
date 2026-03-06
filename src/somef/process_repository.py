@@ -11,7 +11,7 @@ from .utils import constants
 from . import configuration
 from .process_results import Result
 from .regular_expressions import detect_license_spdx
-from .parser.codeowners_parser import enrich_github_user
+from .parser.codeowners_parser import enrich_user
 
 # Constructs a template HTTP header, which:
 # - has a key for the authorization token if passed via the authorization argument, otherwise
@@ -58,15 +58,12 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=const
             content_length = head_response.headers.get("Content-Length")
             if content_length is not None:
                 size_bytes = int(content_length)
-                logging.info(f"HEAD Content-Length: {size_bytes}")
                 if size_bytes > size_limit_bytes:
                     logging.warning(
                         f"Download size {size_bytes} bytes exceeds limit of {size_limit_bytes} bytes. Skipping download."
                     )
                     return None, None
             else:
-                # logging.warning(f"Could not determine file size for {url}. Skipping download.")
-                # return None, None
                 logging.warning(f"No Content-Length header for {url}. Proceeding with download anyway (unable to estimate size).")
         except Exception as e:
             logging.warning(f"HEAD/stream request failed: {e}. Continuing with GET...")
@@ -587,7 +584,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
             if category == constants.CAT_OWNER:
                 if reconcile_authors:
                     logging.info("Enriching owner information from codeowners...")
-                    user_info = enrich_github_user(owner)
+                    user_info = enrich_user(owner,repo_type)
                     if user_info:
                         if user_info.get(constants.PROP_CODEOWNERS_NAME):
                             maintainer_data[constants.PROP_NAME] = user_info.get(constants.PROP_CODEOWNERS_NAME)
@@ -640,7 +637,12 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     if not ignore_api_metadata:
         languages_raw, date = rate_limit_get(filtered_resp['languages_url'], headers=header)
         
-        languages = languages_raw.json()
+        if languages_raw is None:
+            logging.warning("Skipping languages: rate_limit_get returned None (size limit or network error)")
+            languages = {}
+        else:
+            languages = languages_raw.json()
+
         if "message" in languages:
             logging.error("Error while retrieving languages: " + languages["message"])
         else:
@@ -778,12 +780,29 @@ def download_github_files(directory, owner, repo_name, repo_ref, authorization):
     # download the repo at the selected branch with the link
     repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip"
     logging.info(f"Downloading {repo_archive_url}")
+ 
     repo_download, date = rate_limit_get(repo_archive_url, headers=header_template(authorization))
 
     if repo_download is None:
         logging.warning(f"Repository archive skipped due to size limit: {constants.SIZE_DOWNLOAD_LIMIT_MB} MB or not content lenght.")
         return None
     
+    if repo_download.status_code == 300:
+        logging.warning(f"Ambiguous ref detected for {repo_ref}, trying tags/heads resolution")
+
+        for ref_type in ["tags", "heads"]:
+            repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/refs/{ref_type}/{repo_ref}.zip"
+            logging.info(f"Trying to download {repo_archive_url}")
+
+            repo_download, date = rate_limit_get(repo_archive_url, headers=header_template(authorization))
+
+            if repo_download is None:
+                    logging.warning(f"Repository archive skipped due to size limit: {constants.SIZE_DOWNLOAD_LIMIT_MB} MB or not content length.")
+                    return None
+
+            if repo_download.status_code == 200:
+                break
+
     if repo_download.status_code == 404:
         logging.error(f"Error: Archive request failed with HTTP {repo_download.status_code}")
         repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/main.zip"
@@ -794,7 +813,8 @@ def download_github_files(directory, owner, repo_name, repo_ref, authorization):
             return None
         
     if repo_download.status_code != 200:
-        sys.exit(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+        logging.error(f"Error: Archive request failed with HTTP {repo_download.status_code}")
+        return None
 
     repo_zip = repo_download.content
 
@@ -973,6 +993,10 @@ def get_all_paginated_results(base_url, headers, per_page=100):
         url = f"{base_url}?per_page={per_page}&page={page}"
         response, _ = rate_limit_get(url, headers=headers)
 
+        if response is None:
+            logging.warning(f"Skipping page {page}: rate_limit_get returned None (size limit or network error)")
+            break
+
         if response.status_code != 200:
             logging.warning(f"GitHub API error on page {page}: {response.status_code}")
             break
@@ -985,3 +1009,4 @@ def get_all_paginated_results(base_url, headers, per_page=100):
         page += 1
 
     return all_results
+
