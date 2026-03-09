@@ -239,6 +239,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                         req_type = x[constants.PROP_RESULT].get("type")
                         if req_type:
                             entry["@type"] = map_requirement_type(req_type)
+                            
                         if version:
                             if isinstance(version, str):
                                 entry["version"] = version.strip()
