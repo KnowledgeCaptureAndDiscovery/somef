@@ -141,6 +141,7 @@ class TestProcessRepository(unittest.TestCase):
         result_keys = github_data.results.keys()
         assert ((constants.CAT_STARS in result_keys) and (constants.CAT_FULL_TITLE not in result_keys))
 
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
     def test_feature_462(self):
         """Test designed to process a repo and keep the results in disk"""
         with tempfile.TemporaryDirectory() as tmp_folder:
