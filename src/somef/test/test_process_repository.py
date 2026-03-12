@@ -82,7 +82,7 @@ class TestProcessRepository(unittest.TestCase):
 
     def test_issue_no_readme(self):
         """Test designed to check if repositories with no readme are detected"""
-        github_data, owner, repo, def_br = process_repository.load_online_repository_metadata(Result(),
+        github_data, owner, repo, def_br, project_path = process_repository.load_online_repository_metadata(Result(),
             "https://github.com/oeg-upm/OpenRefineExtension_Transformation")
         assert constants.CAT_CODE_REPOSITORY in github_data.results.keys()
 
@@ -115,7 +115,7 @@ class TestProcessRepository(unittest.TestCase):
 
     def test_issue_286(self):
         """Test designed to check if gitlab repositories are properly parsed"""
-        gitlab_data, owner, name, def_br = process_repository.load_gitlab_repository_metadata(Result(),
+        gitlab_data, owner, name, def_br, project_path = process_repository.load_gitlab_repository_metadata(Result(),
             "https://gitlab.com/gitlab-org/ci-sample-projects/platform-team")
         # print(gitlab_data.results)
         assert len(gitlab_data.results[constants.CAT_DOWNLOAD_URL]) > 0
@@ -130,13 +130,13 @@ class TestProcessRepository(unittest.TestCase):
 
     def test_no_repository_metadata(self):
         """Test designed to assess repositories with no releases"""
-        github_data, owner, repo_name, default_branch = process_repository.load_online_repository_metadata(Result(),
+        github_data, owner, repo_name, default_branch, project_path = process_repository.load_online_repository_metadata(Result(),
             "https://github.com/oeg-upm/delta-ontology")
         assert constants.CAT_RELEASES not in github_data.results.keys()
 
     def test_issue_284_issue_272(self):
         """Test designed to check if there are errors detecting title or stargazers"""
-        github_data, owner, repo_name, default_br = process_repository.\
+        github_data, owner, repo_name, default_br, project_path = process_repository.\
             load_online_repository_metadata(Result(), "https://github.com/3b1b/manim")
         result_keys = github_data.results.keys()
         assert ((constants.CAT_STARS in result_keys) and (constants.CAT_FULL_TITLE not in result_keys))

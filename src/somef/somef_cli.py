@@ -82,7 +82,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             if bGitLab:
                 repo_type = constants.RepositoryType.GITLAB
 
-            repository_metadata, owner, repo_name, def_branch = process_repository.load_online_repository_metadata(
+            logging.info("Processing repository metadata.")
+            repository_metadata, owner, repo_name, def_branch, project_path = process_repository.load_online_repository_metadata(
                 repository_metadata,
                 repo_url,
                 ignore_github_metadata,
@@ -93,8 +94,9 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
 
             # download files and obtain path to download folder
             if readme_only:
+                logging.info("Downloading README only...")
                 # download readme only with the information above
-                readme_text = process_repository.download_readme(owner, repo_name, def_branch, repo_type, authorization)
+                readme_text = process_repository.download_readme(owner, repo_name, def_branch, repo_type, authorization, project_path)
 
             elif keep_tmp is not None:  # save downloaded files locally
                 os.makedirs(keep_tmp, exist_ok=True)

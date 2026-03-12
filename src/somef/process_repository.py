@@ -171,14 +171,41 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
 
     path_components = url.path.split('/')
 
-    if len(path_components) < 3:
-        logging.error("Gitlab link is not correct.")
+    # if len(path_components) < 3:
+    #     logging.error("Gitlab link is not correct.")
+    #     return " ", {}
+
+    # owner = path_components[1]
+    # repo_name = path_components[2]
+    # if len(path_components) == 4:
+    #     repo_name = repo_name + '/' + path_components[3]
+
+    # new code to support complex gitlab urls. Before this we just accepted urls in the format https://gitlab.com/{owner}/{repo_name} 
+    # clean path components 
+    path_components = [p for p in url.path.split('/') if p]
+
+    # GitLab requires at least owner + repo
+    if len(path_components) < 2:
+        logging.error("GitLab link is not correct. Expected https://gitlab.com/<owner>/<repo>")
         return " ", {}
 
-    owner = path_components[1]
-    repo_name = path_components[2]
-    if len(path_components) == 4:
-        repo_name = repo_name + '/' + path_components[3]
+    # the owner is alwyas the first
+    owner = path_components[0]
+
+    # and repo name is the last
+    routing_markers = {"-", "tree", "blob", "issues", "merge_requests"}
+
+    # If the last component is a routing marker, the repo is the previous one
+    if path_components[-1] in routing_markers:
+        repo_name = path_components[-2]
+    else:
+        repo_name = path_components[-1]
+
+    default_branch = None
+    if "tree" in path_components:
+        idx = path_components.index("tree")
+        if idx + 1 < len(path_components):
+            default_branch = "/".join(path_components[idx+1:])
 
     # could be gitlab.com or some gitlab self-hosted GitLab servers like gitlab.in2p3.fr
     if repository_url.rfind("gitlab.com") > 0:
@@ -255,20 +282,6 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
 
         repo_metadata.add_result(constants.CAT_RELEASES, release_obj, 1, constants.TECHNIQUE_GITLAB_API)
 
-
-    default_branch = None
-
-    if len(path_components) >= 5:
-        if not path_components[4] == "tree":
-            logging.error(
-                "GitLab link is not correct. \nThe correct format is https://gitlab.com/{owner}/{repo_name}.")
-
-            return " ", {}
-
-        # we must join all after 4, as sometimes tags have "/" in them.
-        default_branch = "/".join(path_components[5:])
-        ref_param = {"ref": default_branch}
-
     if 'defaultBranch' in project_details.keys():
         general_resp = {'defaultBranch': project_details['defaultBranch']}
     elif 'default_branch' in project_details.keys():
@@ -289,17 +302,19 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
     if default_branch is None:
         default_branch = general_resp['defaultBranch']
 
-    repo_metadata.add_result(constants.CAT_CODE_REPOSITORY,
-                             {constants.PROP_VALUE: f"https://{url.netloc}/{owner}/{repo_name}/",
-                              constants.PROP_TYPE: constants.URL
-                              }, 1, constants.TECHNIQUE_GITLAB_API)
+    project_path = "/".join(path_components)
 
-    # filtered_resp = do_crosswalk(general_resp, github_crosswalk_table)
-    # filtered_resp = {"downloadUrl": f"https://gitlab.com/{owner}/{repo_name}/-/branches"}
+    #                          {constants.PROP_VALUE: f"https://{url.netloc}/{owner}/{repo_name}/",
+    repo_metadata.add_result(constants.CAT_CODE_REPOSITORY,
+                            {constants.PROP_VALUE: f"https://{url.netloc}/{project_path}/",
+                            constants.PROP_TYPE: constants.URL
+                            }, 1, constants.TECHNIQUE_GITLAB_API)
+
+    #                          {constants.PROP_VALUE: f"https://{url.netloc}/{owner}/{repo_name}/-/branches",
     repo_metadata.add_result(constants.CAT_DOWNLOAD_URL,
-                             {constants.PROP_VALUE: f"https://{url.netloc}/{owner}/{repo_name}/-/branches",
-                              constants.PROP_TYPE: constants.URL
-                             }, 1, constants.TECHNIQUE_GITLAB_API)
+                            {constants.PROP_VALUE: f"https://{url.netloc}/{project_path}/-/branches",
+                            constants.PROP_TYPE: constants.URL
+                            }, 1, constants.TECHNIQUE_GITLAB_API)
 
     # condense license information
     license_result = {constants.PROP_TYPE: constants.URL}
@@ -330,11 +345,6 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
     if constants.PROP_VALUE in license_result:
         repo_metadata.add_result(constants.CAT_LICENSE, license_result, 1, constants.TECHNIQUE_GITLAB_API)
 
-    # get keywords / topics
-    # topics_headers = header
-    # topics_headers['accept'] = 'application/vnd.github.mercy-preview+json'
-    # topics_resp, date = rate_limit_get(repo_api_base_url + "/topics",
-    #                                   headers=topics_headers)
     topics_resp = {}
 
     keywords = []
@@ -388,7 +398,9 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
         }, 1, constants.TECHNIQUE_GITLAB_API)
 
     logging.info("Repository information successfully loaded. \n")
-    return repo_metadata, owner, repo_name, default_branch
+    # return repo_metadata, owner, repo_name, default_branch
+    return repo_metadata, owner, repo_name, default_branch, project_path
+
 
 
 def download_gitlab_files(directory, owner, repo_name, repo_branch, repo_ref):
@@ -409,9 +421,15 @@ def download_gitlab_files(directory, owner, repo_name, repo_branch, repo_ref):
     url = urlparse(repo_ref)
     path_components = url.path.split('/')
 
-    repo_archive_url = f"https://{url.netloc}/{owner}/{repo_name}/-/archive/{repo_branch}/{repo_name}-{repo_branch}.zip"
-    if len(path_components) == 4:
-            repo_archive_url = f"https://{url.netloc}/{owner}/{repo_name}/-/archive/{repo_branch}/{path_components[3]}.zip"
+    path_components = [p for p in path_components if p]
+    project_path = "/".join(path_components)
+
+    # repo_archive_url = f"https://{url.netloc}/{owner}/{repo_name}/-/archive/{repo_branch}/{repo_name}-{repo_branch}.zip"
+    # if len(path_components) == 4:
+    #         repo_archive_url = f"https://{url.netloc}/{owner}/{repo_name}/-/archive/{repo_branch}/{path_components[3]}.zip"
+    repo_archive_url = (
+        f"https://{url.netloc}/{project_path}/-/archive/{repo_branch}/{repo_name}-{repo_branch}.zip"
+    )
 
     logging.info(f"Downloading {repo_archive_url}")
     repo_download = requests.get(repo_archive_url)
@@ -435,7 +453,7 @@ def download_gitlab_files(directory, owner, repo_name, repo_branch, repo_ref):
         return None
 
 
-def download_readme(owner, repo_name, default_branch, repo_type, authorization):
+def download_readme(owner, repo_name, default_branch, repo_type, authorization, project_path = None):
     """
     Method that given a repository owner, name and default branch, it downloads the readme content only.
     The readme is assumed to be README.md
@@ -451,8 +469,11 @@ def download_readme(owner, repo_name, default_branch, repo_type, authorization):
     @return: text with the contents of the readme file
     """
     if repo_type is constants.RepositoryType.GITLAB:
-        primary_url = f"https://gitlab.com/{owner}/{repo_name}/-/raw/{default_branch}/README.md"
-        secondary_url = f"https://gitlab.com/{owner}/{repo_name}/-/raw/master/README.md"
+        base = f"https://gitlab.com/{project_path}" if project_path else f"https://gitlab.com/{owner}/{repo_name}"
+        primary_url = f"{base}/-/raw/{default_branch}/README.md"
+        secondary_url = f"{base}/-/raw/master/README.md"
+        # primary_url = f"https://gitlab.com/{owner}/{repo_name}/-/raw/{default_branch}/README.md"
+        # secondary_url = f"https://gitlab.com/{owner}/{repo_name}/-/raw/master/README.md"
     elif repo_type is constants.RepositoryType.GITHUB:
         primary_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{default_branch}/README.md"
         secondary_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/master/README.md"
@@ -705,7 +726,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
             repository_metadata.add_result(constants.CAT_RELEASES, release_obj, 1,
                                             constants.TECHNIQUE_GITHUB_API)
     logging.info("Repository information successfully loaded.\n")
-    return repository_metadata, owner, repo_name, default_branch
+    return repository_metadata, owner, repo_name, default_branch, None
 
 
 def get_path(obj, path):

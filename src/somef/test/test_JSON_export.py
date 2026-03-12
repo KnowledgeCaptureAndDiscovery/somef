@@ -626,3 +626,40 @@ class TestJSONExport(unittest.TestCase):
         self.assertEqual(second.get("name"), "František Nečas")
 
         os.remove(output_file)
+
+
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
+    def test_issue_914(self):
+        """
+        Checks that somef can correctly handle and download a GitLab repository whose URL includes nested group/subgroup paths, 
+        ensuring complex GitLab routes are processed without errors.
+        """
+
+        output_file = test_data_path + "test-issue-914.json"
+
+        somef_cli.run_cli(threshold=0.8,
+            ignore_classifiers=False,
+            repo_url="https://gitlab.com/gitlab-org/frontend/playground/batch-issue-creator",
+            local_repo=None,
+            doc_src=None,
+            in_file=None,
+            output=output_file,
+            graph_out=None,
+            graph_format="turtle",
+            codemeta_out=None,
+            pretty=True,
+            missing=True,
+            readme_only=False,
+            reconcile_authors=True
+        )
+
+        with open(output_file, "r") as f: 
+            json_content = json.load(f)
+
+        title = json_content.get(constants.CAT_FULL_TITLE, [])
+        self.assertEqual(title[0].get("result", {}).get("value"), "batch-issue-creator")
+
+        requirements = json_content.get(constants.CAT_REQUIREMENTS, [])
+        self.assertEqual(requirements[0].get("result", {}).get("version"), "3.20.3")
+
+        os.remove(output_file)
