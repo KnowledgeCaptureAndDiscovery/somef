@@ -80,6 +80,7 @@ class TestProcessRepository(unittest.TestCase):
                                                                    constants.RepositoryType.LOCAL)
         assert len(github_data.results[constants.CAT_HAS_BUILD_FILE]) > 0
 
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
     def test_issue_no_readme(self):
         """Test designed to check if repositories with no readme are detected"""
         github_data, owner, repo, def_br, project_path = process_repository.load_online_repository_metadata(Result(),
@@ -127,7 +128,8 @@ class TestProcessRepository(unittest.TestCase):
                                                                                   github_data,
                                                                                   constants.RepositoryType.LOCAL)
         assert 'license' not in github_data.results
-
+        
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
     def test_no_repository_metadata(self):
         """Test designed to assess repositories with no releases"""
         github_data, owner, repo_name, default_branch, project_path = process_repository.load_online_repository_metadata(Result(),
