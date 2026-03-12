@@ -503,7 +503,8 @@ def download_readme(owner, repo_name, default_branch, repo_type, authorization, 
 
 
 def load_online_repository_metadata(repository_metadata: Result, repository_url, ignore_api_metadata=False,
-                                    repo_type=constants.RepositoryType.GITHUB, authorization=None, reconcile_authors=False):
+                                    repo_type=constants.RepositoryType.GITHUB, authorization=None, reconcile_authors=False,
+                                    branch=None,tag=None):
     """
     Function uses the repository_url provided to load required information from GitHub or Gitlab.
     Information kept from the repository is written in keep_keys.
@@ -515,6 +516,8 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     @param repository_url: target repository URL.
     @param authorization: GitHub authorization token
     @param reconcile_authors: flag to indicate if additional should be extracted from certain files as codeowners. More request.
+    @param branch: branch of the repository to analyze. Overrides the default branch detected from the repository metadata.
+    @param tag: tag of the repository to analyze. Cannot be used together with the branch parameter.
 
     Returns
     -------
@@ -588,6 +591,11 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
         default_branch = 'master'
     elif default_branch is None:
         default_branch = general_resp['default_branch']
+
+    if branch:
+        default_branch = branch
+    if tag:
+        default_branch = tag
 
     # filter the general response with only the fields we are interested in, mapping them to our keys
     filtered_resp = {}

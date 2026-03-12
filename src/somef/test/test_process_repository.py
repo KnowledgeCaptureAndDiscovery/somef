@@ -128,7 +128,7 @@ class TestProcessRepository(unittest.TestCase):
                                                                                   github_data,
                                                                                   constants.RepositoryType.LOCAL)
         assert 'license' not in github_data.results
-        
+
     @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
     def test_no_repository_metadata(self):
         """Test designed to assess repositories with no releases"""
@@ -260,3 +260,73 @@ class TestProcessRepository(unittest.TestCase):
         assert os.path.exists(test_data_path + "test-909.json")
 
         os.remove(test_data_path + "test-909.json")
+
+    # These tests can only run against the real GitHub API because it requires the ability to verify 
+    # that SOMEF downloads the branch or tag requested by the user.
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
+    def test_issue_905_branch(self):
+        """
+        Checks whether what SOMEF correctly downloads and analyzes a non-default branch
+        when the user specifies --branch.
+        """
+
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url="https://github.com/dgarijo/Widoco/",
+                        local_repo=None,
+                        doc_src=None,
+                        in_file=None,
+                        output=test_data_path + "test-905_branch.json",
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out= None,
+                        pretty=True,
+                        missing=False,
+                        readme_only=False,
+                        branch="develop")
+        
+        with open(test_data_path + "test-905_branch.json", "r") as text_file: 
+            json_content = json.load(text_file)
+
+        assert json_content is not None
+        assert os.path.exists(test_data_path + "test-905_branch.json")
+
+        code_repository = json_content.get(constants.CAT_CODE_REPOSITORY, [])
+        sources = code_repository[0].get("source", [])
+        assert any("Widoco/develop" in source for source in sources), "The downloaded branch does not match the requested one."
+
+        os.remove(test_data_path + "test-905_branch.json")
+
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
+    def test_issue_905_tag(self):
+        """
+        Checks whether what SOMEF correctly downloads and analyzes a non-default tag
+        when the user specifies --tag.
+        """
+
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url="https://github.com/dgarijo/Widoco/",
+                        local_repo=None,
+                        doc_src=None,
+                        in_file=None,
+                        output=test_data_path + "test-905_tag.json",
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out= None,
+                        pretty=True,
+                        missing=False,
+                        readme_only=False,
+                        tag='v1.4.25')
+        
+        with open(test_data_path + "test-905_tag.json", "r") as text_file: 
+            json_content = json.load(text_file)
+
+        assert json_content is not None
+        assert os.path.exists(test_data_path + "test-905_tag.json")
+
+        package = json_content.get(constants.CAT_PACKAGE_ID, [])
+        source = package[0].get("source", "")
+        assert "Widoco/v1.4.25" in source, f"The downloaded tag does not match the requested one. Source: {source}"
+
+        os.remove(test_data_path + "test-905_tag.json") 

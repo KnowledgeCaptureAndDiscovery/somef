@@ -337,6 +337,11 @@ Options:
                                   requests and increase execution time
 
   -h, --help                      Show this message and exit.
+  
+  Repoository versions [mutually_exclusive]:
+  -b, --branch name branch        Branch of the repository to analyze. Overrides the default branch.
+
+      --tag text                  Tag of the repository to analyze. Cannot be used together with --branch.
 ```
 
 ## Usage example:

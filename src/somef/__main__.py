@@ -184,6 +184,19 @@ def configure(auto, base_uri):
     default=False,
     help="""SOMEF will extract additional information from certain files like CODEOWNERS, etc."""
 )
+@click.option(
+    "--branch",
+    "-b",
+    type=str,
+    default=None,
+    help="Branch of the repository to analyze. Overrides the default branch."
+)
+@click.option(
+    "--tag",
+    type=str,
+    default=None,
+    help="Tag of the repository to analyze. Incompatible with --branch"
+)
 def describe(requirements_v, requirements_all, **kwargs):
     # import so missing packages get installed when appropriate
     if requirements_v:
