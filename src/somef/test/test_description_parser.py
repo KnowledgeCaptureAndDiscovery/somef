@@ -98,6 +98,19 @@ class TestDescriptionParser(unittest.TestCase):
         self.assertTrue(len(issue_tracker_results) > 0, "No issue tracker found")
         self.assertEqual(issue_tracker_results[0]["result"]["value"], "https://github.com/tidyverse/ggplot2/issues")
 
+        requirements_results = metadata_result.results.get(constants.CAT_REQUIREMENTS, [])
+        self.assertTrue(len(requirements_results) > 0, "No dependencies found")
+
+        found_scales = False
+        for req_result in requirements_results:
+            dependency = req_result["result"]
+            if dependency.get("name") == "scales":
+                found_scales = True
+                self.assertEqual(dependency.get("version"), ">= 1.4.0")
+                self.assertEqual(dependency.get("value"), "scales (>= 1.4.0)")
+                break
+        self.assertTrue(found_scales, "scales dependency not found")
+
         
 if __name__ == "__main__":
     unittest.main()

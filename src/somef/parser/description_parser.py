@@ -197,7 +197,6 @@ def parse_description_file(file_path, metadata_result: Result, source):
 
                 for field in ('Depends', 'Imports'):
                     section_match = re.search(r'^' + field + r':\s*(.*(?:\n[ \t]+.*)*)', content, re.MULTILINE)
-                    import pdb; pdb.set_trace()
                     if section_match:
                         section_text = section_match.group(1)
                         dependencies = re.findall(r'([A-Za-z][A-Za-z0-9.]*)\s*(?:\(([^)]*)\))?', section_text)
