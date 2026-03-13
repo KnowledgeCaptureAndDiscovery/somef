@@ -7,6 +7,7 @@ from pathlib import Path
 from .. import process_repository, process_files, somef_cli
 from ..utils import constants
 from ..process_results import Result
+from somef.parser import pom_xml_parser
 
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
@@ -269,14 +270,15 @@ class TestProcessRepository(unittest.TestCase):
         Checks whether what SOMEF correctly downloads and analyzes a non-default branch
         when the user specifies --branch.
         """
-
+        
+        pom_xml_parser.processed_pom = False  
         somef_cli.run_cli(threshold=0.8,
                         ignore_classifiers=False,
                         repo_url="https://github.com/dgarijo/Widoco/",
                         local_repo=None,
                         doc_src=None,
                         in_file=None,
-                        output=test_data_path + "test-905_branch.json",
+                        output=test_data_path + "test_905_branch.json",
                         graph_out=None,
                         graph_format="turtle",
                         codemeta_out= None,
@@ -285,17 +287,18 @@ class TestProcessRepository(unittest.TestCase):
                         readme_only=False,
                         branch="develop")
         
-        with open(test_data_path + "test-905_branch.json", "r") as text_file: 
+        with open(test_data_path + "test_905_branch.json", "r") as text_file: 
             json_content = json.load(text_file)
 
         assert json_content is not None
-        assert os.path.exists(test_data_path + "test-905_branch.json")
+        assert os.path.exists(test_data_path + "test_905_branch.json")
 
         code_repository = json_content.get(constants.CAT_CODE_REPOSITORY, [])
         sources = code_repository[0].get("source", [])
         assert any("Widoco/develop" in source for source in sources), "The downloaded branch does not match the requested one."
 
-        os.remove(test_data_path + "test-905_branch.json")
+        os.remove(test_data_path + "test_905_branch.json")
+
 
     @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
     def test_issue_905_tag(self):
@@ -303,6 +306,7 @@ class TestProcessRepository(unittest.TestCase):
         Checks whether what SOMEF correctly downloads and analyzes a non-default tag
         when the user specifies --tag.
         """
+        pom_xml_parser.processed_pom = False    
 
         somef_cli.run_cli(threshold=0.8,
                         ignore_classifiers=False,
@@ -310,7 +314,7 @@ class TestProcessRepository(unittest.TestCase):
                         local_repo=None,
                         doc_src=None,
                         in_file=None,
-                        output=test_data_path + "test-905_tag.json",
+                        output=test_data_path + "test_905_tag.json",
                         graph_out=None,
                         graph_format="turtle",
                         codemeta_out= None,
@@ -319,14 +323,15 @@ class TestProcessRepository(unittest.TestCase):
                         readme_only=False,
                         tag='v1.4.25')
         
-        with open(test_data_path + "test-905_tag.json", "r") as text_file: 
+        with open(test_data_path + "test_905_tag.json", "r") as text_file: 
             json_content = json.load(text_file)
 
         assert json_content is not None
-        assert os.path.exists(test_data_path + "test-905_tag.json")
+        assert os.path.exists(test_data_path + "test_905_tag.json")
 
-        package = json_content.get(constants.CAT_PACKAGE_ID, [])
-        source = package[0].get("source", "")
+        version = json_content.get(constants.CAT_VERSION, [])
+        print(version)
+        source = version[0].get("source", "")
         assert "Widoco/v1.4.25" in source, f"The downloaded tag does not match the requested one. Source: {source}"
 
-        os.remove(test_data_path + "test-905_tag.json") 
+        os.remove(test_data_path + "test_905_tag.json") 
