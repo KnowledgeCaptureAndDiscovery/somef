@@ -195,6 +195,30 @@ def parse_description_file(file_path, metadata_result: Result, source):
                         source
                     )
 
+                for field in ('Depends', 'Imports'):
+                    section_match = re.search(r'^' + field + r':\s*(.*(?:\n[ \t]+.*)*)', content, re.MULTILINE)
+                    if section_match:
+                        section_text = section_match.group(1)
+                        dependencies = re.findall(r'([A-Za-z][A-Za-z0-9.]*)\s*(?:\(([^)]*)\))?', section_text)
+                        for dependency in dependencies:
+                            name = dependency[0]
+                            version = dependency[1] if len(dependency) > 1 and dependency[1] else ""
+                            req = f"{name} ({version})" if version else f"{name}"
+ 
+                            metadata_result.add_result(
+                                constants.CAT_REQUIREMENTS,
+                                {
+                                    "value": req,
+                                    "name": name,
+                                    "version": version,
+                                    "type": constants.SOFTWARE_APPLICATION
+                                },
+                                1,
+                                constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                                source
+                            )
+
+
 
     except Exception as e:
         logging.error(f"Error parsing gemspec file from {file_path}: {str(e)}")
