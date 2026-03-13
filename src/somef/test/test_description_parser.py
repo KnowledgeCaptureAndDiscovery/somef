@@ -50,6 +50,19 @@ class TestDescriptionParser(unittest.TestCase):
         self.assertEqual(license_results[0]["result"]["value"], "MIT + file LICENSE")
         self.assertEqual(license_results[0]["result"]["type"], constants.STRING)
 
+        requirements_results = metadata_result.results.get(constants.CAT_REQUIREMENTS, [])
+        self.assertTrue(len(requirements_results) > 0, "No dependencies found")
+        
+        found_jsonlite = False
+        for req_result in requirements_results:
+            dependency = req_result["result"]
+            if dependency.get("name") == "jsonlite":
+                found_jsonlite = True
+                self.assertEqual(dependency.get("version"), ">= 1.8.7")
+                self.assertEqual(dependency.get("value"), "jsonlite (>= 1.8.7)")
+                break
+        self.assertTrue(found_jsonlite, "jsonlite dependency not found")
+
 
     def test_description_2(self):
         description_file_path = test_data_repositories + os.path.sep + "ggplot2" + os.path.sep + "DESCRIPTION"
