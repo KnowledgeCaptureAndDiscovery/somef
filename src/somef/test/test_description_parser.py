@@ -50,6 +50,19 @@ class TestDescriptionParser(unittest.TestCase):
         self.assertEqual(license_results[0]["result"]["value"], "MIT + file LICENSE")
         self.assertEqual(license_results[0]["result"]["type"], constants.STRING)
 
+        requirements_results = metadata_result.results.get(constants.CAT_REQUIREMENTS, [])
+        self.assertTrue(len(requirements_results) > 0, "No dependencies found")
+        
+        found_jsonlite = False
+        for req_result in requirements_results:
+            dependency = req_result["result"]
+            if dependency.get("name") == "jsonlite":
+                found_jsonlite = True
+                self.assertEqual(dependency.get("version"), ">= 1.8.7")
+                self.assertEqual(dependency.get("value"), "jsonlite (>= 1.8.7)")
+                break
+        self.assertTrue(found_jsonlite, "jsonlite dependency not found")
+
 
     def test_description_2(self):
         description_file_path = test_data_repositories + os.path.sep + "ggplot2" + os.path.sep + "DESCRIPTION"
@@ -84,6 +97,19 @@ class TestDescriptionParser(unittest.TestCase):
         issue_tracker_results = metadata_result.results.get(constants.CAT_ISSUE_TRACKER, [])
         self.assertTrue(len(issue_tracker_results) > 0, "No issue tracker found")
         self.assertEqual(issue_tracker_results[0]["result"]["value"], "https://github.com/tidyverse/ggplot2/issues")
+
+        requirements_results = metadata_result.results.get(constants.CAT_REQUIREMENTS, [])
+        self.assertTrue(len(requirements_results) > 0, "No dependencies found")
+
+        found_scales = False
+        for req_result in requirements_results:
+            dependency = req_result["result"]
+            if dependency.get("name") == "scales":
+                found_scales = True
+                self.assertEqual(dependency.get("version"), ">= 1.4.0")
+                self.assertEqual(dependency.get("value"), "scales (>= 1.4.0)")
+                break
+        self.assertTrue(found_scales, "scales dependency not found")
 
         
 if __name__ == "__main__":
