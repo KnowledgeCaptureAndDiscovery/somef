@@ -7,6 +7,7 @@ from pathlib import Path
 from .. import process_repository, process_files, somef_cli
 from ..utils import constants
 from ..process_results import Result
+from somef.parser import pom_xml_parser
 
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
@@ -80,9 +81,10 @@ class TestProcessRepository(unittest.TestCase):
                                                                    constants.RepositoryType.LOCAL)
         assert len(github_data.results[constants.CAT_HAS_BUILD_FILE]) > 0
 
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
     def test_issue_no_readme(self):
         """Test designed to check if repositories with no readme are detected"""
-        github_data, owner, repo, def_br = process_repository.load_online_repository_metadata(Result(),
+        github_data, owner, repo, def_br, project_path = process_repository.load_online_repository_metadata(Result(),
             "https://github.com/oeg-upm/OpenRefineExtension_Transformation")
         assert constants.CAT_CODE_REPOSITORY in github_data.results.keys()
 
@@ -115,7 +117,7 @@ class TestProcessRepository(unittest.TestCase):
 
     def test_issue_286(self):
         """Test designed to check if gitlab repositories are properly parsed"""
-        gitlab_data, owner, name, def_br = process_repository.load_gitlab_repository_metadata(Result(),
+        gitlab_data, owner, name, def_br, project_path = process_repository.load_gitlab_repository_metadata(Result(),
             "https://gitlab.com/gitlab-org/ci-sample-projects/platform-team")
         # print(gitlab_data.results)
         assert len(gitlab_data.results[constants.CAT_DOWNLOAD_URL]) > 0
@@ -128,19 +130,21 @@ class TestProcessRepository(unittest.TestCase):
                                                                                   constants.RepositoryType.LOCAL)
         assert 'license' not in github_data.results
 
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
     def test_no_repository_metadata(self):
         """Test designed to assess repositories with no releases"""
-        github_data, owner, repo_name, default_branch = process_repository.load_online_repository_metadata(Result(),
+        github_data, owner, repo_name, default_branch, project_path = process_repository.load_online_repository_metadata(Result(),
             "https://github.com/oeg-upm/delta-ontology")
         assert constants.CAT_RELEASES not in github_data.results.keys()
 
     def test_issue_284_issue_272(self):
         """Test designed to check if there are errors detecting title or stargazers"""
-        github_data, owner, repo_name, default_br = process_repository.\
+        github_data, owner, repo_name, default_br, project_path = process_repository.\
             load_online_repository_metadata(Result(), "https://github.com/3b1b/manim")
         result_keys = github_data.results.keys()
         assert ((constants.CAT_STARS in result_keys) and (constants.CAT_FULL_TITLE not in result_keys))
 
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
     def test_feature_462(self):
         """Test designed to process a repo and keep the results in disk"""
         with tempfile.TemporaryDirectory() as tmp_folder:
@@ -257,3 +261,77 @@ class TestProcessRepository(unittest.TestCase):
         assert os.path.exists(test_data_path + "test-909.json")
 
         os.remove(test_data_path + "test-909.json")
+
+    # These tests can only run against the real GitHub API because it requires the ability to verify 
+    # that SOMEF downloads the branch or tag requested by the user.
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
+    def test_issue_905_branch(self):
+        """
+        Checks whether what SOMEF correctly downloads and analyzes a non-default branch
+        when the user specifies --branch.
+        """
+        
+        pom_xml_parser.processed_pom = False  
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url="https://github.com/dgarijo/Widoco/",
+                        local_repo=None,
+                        doc_src=None,
+                        in_file=None,
+                        output=test_data_path + "test_905_branch.json",
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out= None,
+                        pretty=True,
+                        missing=False,
+                        readme_only=False,
+                        branch="develop")
+        
+        with open(test_data_path + "test_905_branch.json", "r") as text_file: 
+            json_content = json.load(text_file)
+
+        assert json_content is not None
+        assert os.path.exists(test_data_path + "test_905_branch.json")
+
+        code_repository = json_content.get(constants.CAT_CODE_REPOSITORY, [])
+        sources = code_repository[0].get("source", [])
+        assert any("Widoco/develop" in source for source in sources), "The downloaded branch does not match the requested one."
+
+        os.remove(test_data_path + "test_905_branch.json")
+
+
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
+    def test_issue_905_tag(self):
+        """
+        Checks whether what SOMEF correctly downloads and analyzes a non-default tag
+        when the user specifies --tag.
+        """
+        pom_xml_parser.processed_pom = False    
+
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url="https://github.com/dgarijo/Widoco/",
+                        local_repo=None,
+                        doc_src=None,
+                        in_file=None,
+                        output=test_data_path + "test_905_tag.json",
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out= None,
+                        pretty=True,
+                        missing=False,
+                        readme_only=False,
+                        tag='v1.4.25')
+        
+        with open(test_data_path + "test_905_tag.json", "r") as text_file: 
+            json_content = json.load(text_file)
+
+        assert json_content is not None
+        assert os.path.exists(test_data_path + "test_905_tag.json")
+
+        version = json_content.get(constants.CAT_VERSION, [])
+        print(version)
+        source = version[0].get("source", "")
+        assert "Widoco/v1.4.25" in source, f"The downloaded tag does not match the requested one. Source: {source}"
+
+        os.remove(test_data_path + "test_905_tag.json") 

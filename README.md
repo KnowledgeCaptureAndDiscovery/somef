@@ -337,6 +337,11 @@ Options:
                                   requests and increase execution time
 
   -h, --help                      Show this message and exit.
+  
+  Repoository versions [mutually_exclusive] (see section *Repository versions*t):
+  -b, --branch name branch        Branch of the repository to analyze. Overrides the default branch.
+
+      --tag text                  Tag of the repository to analyze. Cannot be used together with --branch.
 ```
 
 ## Usage example:
@@ -370,3 +375,51 @@ This includes identifying dependencies, runtime requirements, and development to
 
 SOMEF is designed to work primarily with repositories written in English.  
 Repositories in other languages may not be processed as effectively, and results could be incomplete or less accurate.
+
+
+## Repository versions: default behavior, branch and tag
+
+SOMEF allows analyzing specific versions of a repository. If no version is specified, SOMEF will analyze the default branch of the repository (usually `main` or `master`). The following options let you control exactly which version of the codebase is inspected.
+
+### Default behavior
+
+If neither `--branch` nor `--tag` is provided, SOMEF will:
+
+- Clone the repository.
+- Detect and analyze the **default branch** set up in github.
+
+This is the recommended option when you want to describe the current version of a a project.
+
+### Using a branch
+
+```bash
+somef describe -r <repo_url> --branch <branch_name> ...
+somef describe -r <repo_url> --b <branch_name> ...
+```
+
+Forces SOMEF to analyze a specific branch of the repository.
+
+Useful when:
+
+- The project maintains development, release or feature branches.
+- You need to compare metadata across branches.
+- You want to reproduce an analysis on a branch that is not the default one.
+
+### Using a tag
+
+```bash
+somef describe -r <repo_url> --tag <tag_name> ...
+```
+
+Analyzes a specific tagged version of the repository.
+
+Recommended when:
+
+- You need reproducible results (tags do not change over time).
+- You want to document a released version of the software.
+- You integrate SOMEF into pipelines that operate on versioned artifacts.
+
+### Restrictions
+
+- `--branch` and `--tag` are mutually exclusive.
+- If either option is provided, it overrides the default branch behavior.
