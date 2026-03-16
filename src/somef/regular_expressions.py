@@ -776,7 +776,6 @@ def extract_readthedocs_badgeds(readme_text, repository_metadata: Result, source
 
     # RST
     for match in re.findall(constants.REGEXP_READTHEDOCS_RST, readme_text):
-        print(match)
         if isinstance(match, tuple):
             urls.update([u for u in match if u])
         elif match:
@@ -790,12 +789,20 @@ def extract_readthedocs_badgeds(readme_text, repository_metadata: Result, source
             urls.add(match)
 
     # HTML
-    pattern_html = re.compile(constants.REGEXP_READTHEDOCS_HTML, flags=re.VERBOSE |re.DOTALL | re.IGNORECASE)
-    for match in pattern_html.findall(readme_text):
-        if isinstance(match, tuple):
-            urls.update([u for u in match if u])
-        elif match:
-            urls.add(match)
+    # pattern_html = re.compile(constants.REGEXP_READTHEDOCS_HTML, flags=re.VERBOSE |re.DOTALL | re.IGNORECASE)
+    # for match in pattern_html.findall(readme_text):
+    #     if isinstance(match, tuple):
+    #         urls.update([u for u in match if u])
+    #     elif match:
+    #         urls.add(match)
+    pattern_html = re.compile(
+        constants.REGEXP_READTHEDOCS_HTML,
+        flags=re.VERBOSE | re.IGNORECASE    
+        )   
+    for match in pattern_html.finditer(readme_text):
+        url = match.group(1)
+        if url:
+            urls.add(url)
 
     for url in urls:
         if "pypi.org/project" in url: 

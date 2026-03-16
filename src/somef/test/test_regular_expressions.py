@@ -545,4 +545,28 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
                                                          test_data_path + "README-lighttwin.md", "master")
             images = results.results[constants.CAT_IMAGE]
             assert len(images) == 6, f"Should be 6 images, but got {len(images)}"
-           
+
+
+    def test_issue_904(self):
+        """Test designed to ensure ReadTheDocs badges are extracted correctly without regex getting stuck. 
+        Ej: https://github.com/PBjam-projects/reggae""" 
+ 
+        with open(test_data_path + "README-reggae.md", "r") as data_file:
+            test_text = data_file.read()
+
+            documentation = regular_expressions.extract_readthedocs_badgeds(test_text, Result(),
+                                                  test_data_path + "README-reggae.md")
+
+            expected_doc_url = "https://pb-reggae.readthedocs.io/en/latest/?badge=latest"
+
+            documentation_values = []
+
+            if "documentation" in documentation.results:
+                for result in documentation.results["documentation"]:
+                    value = result.get("result", {}).get("value")
+                    if isinstance(value, str):
+                        documentation_values.append(value)
+
+            assert expected_doc_url in documentation_values, (
+                f"Expected documentation url {expected_doc_url} not found in {documentation_values}"
+            )
