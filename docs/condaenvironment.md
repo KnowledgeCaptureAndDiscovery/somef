@@ -13,14 +13,15 @@ Only dependency information is mapped, since it is the only part of the Conda en
 | requirements - value          |     requirements[i].result.value      | dependencies | 
 | requirements - name           |     requirements[i].result.name       | dependencies extract name       |        
 | requirements - version            |     requirements[i].result.version    | dependencies extract version |
-<!-- | requirements - dependency type           |     requirements[i].result.dependency_type            | conda if dependencies or pip if dependencies/pip  *(1)* | -->
+| requirements - dependency type           |     requirements[i].result.dependency_type            | runtime always |
+| requirements - dependency resolver           |     requirements[i].result.dependency_resolver            | conda if dependencies or pip if dependencies/pip  *(1)* |
 
 
 ---
 
-<!-- 
+
 *(1)* 
-- Example of a dependency conda and a dependency pip:
+- Example of a dependency resolver conda and a dependency resolver pip:
 ```
 name: ldm
 dependencies:
@@ -35,13 +36,15 @@ dependencies:
         "name": "python",
         "version": "3.8.5",
         "type": "Software_application",
-        "dependency_type": "conda"
+        "dependency_type": "runtime",
+        "dependency_resolver": "conda"
     },
     "result": {
         "value": "albumentations==0.4.3",
         "name": "albumentations",
         "version": "0.4.3",
         "type": "Software_application",
-        "dependency_type": "pip"
+        "dependency_type": "runtime",
+        "dependency_resolver": "pip"
     },
- -->
+

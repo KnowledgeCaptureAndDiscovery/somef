@@ -155,35 +155,38 @@ def parse_package_json_file(file_path, metadata_result: Result, source):
                     metadata_result.add_result(
                         constants.CAT_RUNTIME_PLATFORM,
                         runtime,
-                        # {
-                        #     "value": runtime["version"],
-                        #     "version": runtime["version"],
-                        #     "name": runtime["name"],
-                        #     "type": constants.STRING
-                        # },
                         1,
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,
                         source
                     )
          
-            deps = {}
-            deps.update(data.get("dependencies", {}))
-            deps.update(data.get("devDependencies", {}))
+            # deps = {}
+            # deps.update(data.get("dependencies", {}))
+            # deps.update(data.get("devDependencies", {}))
             
-            for name, version in deps.items():
-                req = f"{name}@{version}"
-                metadata_result.add_result(
-                    constants.CAT_REQUIREMENTS,
-                    {
-                        "value": req, 
-                        "name": name, 
-                        "version": version, 
-                        "type": constants.SOFTWARE_APPLICATION
-                    },
-                    1,
-                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                    source
-                )
+            # for name, version in deps.items():
+            sections = {
+                "dependencies": "runtime",
+                "devDependencies": "dev"
+            }
+
+            for section, dep_type in sections.items():
+                for name, version in data.get(section, {}).items():
+                    req = f"{name}@{version}"
+                    metadata_result.add_result(
+                        constants.CAT_REQUIREMENTS,
+                        {
+                            "value": req,
+                            "name": name,
+                            "version": version,
+                            "type": constants.SOFTWARE_APPLICATION,
+                            "dependency_type": dep_type,
+                            "dependency_resolver": "npm"
+                        },
+                        1,
+                        constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                        source
+                    )
 
             metadata_result.add_result(
                 constants.CAT_HAS_PACKAGE_FILE,
