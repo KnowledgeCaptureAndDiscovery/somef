@@ -5,14 +5,17 @@ These fields are defined in the [DESCRIPTON specification](https://r-pkgs.org/de
 |-------------------------------|---------------------------------|---------------------|
 | authors                   |   authors[i].result.value      |  Authors *(1)*  |
 | authors                   |   authors[i].result.email      | Authors *(2)*  |
-| code_repository          |   code_repository[i].result.value   |     URL *(3)* |
-| description               |   description[i].result.value   |    Description *(3)*  |
+| code_repository           |   code_repository[i].result.value   |     URL *(3)* |
+| description               |   description[i].result.value   |    Description *(4)*  |
 | has_package_file          |   has_package_file[i].result.value    |  URL of the DESCRIPTION file       |
 | homepage                  |   homepage[i].result.value   |  URL    *(3)*   |
-| issue_tracker            |   issue_tracker[i].result.value   | BugReports  *(5)*   |
+| issue_tracker             |   issue_tracker[i].result.value   | BugReports  *(5)*   |
 | license                   |   license[i].result.value   | License   *(6)*   |
-| package_id                |   package_id[i].result.value   |   Package   *(6)*    |
-| version                   |   version[i].result.value   |   Version  *(7)*   |
+| package_id                |   package_id[i].result.value   |   Package   *(7)*    |
+| version                   |   version[i].result.value   |   Version  *(8)*   |
+| requirements - value      |   requirements[i].result.value   | Depends and Imports *(9)*   |
+| requirements - name       |   requirements[i].result.name  | Depends and Imports *(9)*   |
+| requirements - version    |   requirements[i].result.version   | Depends and Imports *(9)*   |
 
 ---
 
@@ -49,7 +52,7 @@ URL: https://ggplot2.tidyverse.org,
 - Result hompeage: `'result': {'value': 'https://tidyverse.tidyverse.org', 'type': 'Url'}}`
 
 
-*(3)*
+*(4)*
 - Regex: `r'Description:\s*([^\n]+(?:\n\s+[^\n]+)*)', content)`
 - Example: 
 ```Description: A system for 'declaratively' creating graphics, based on "The
@@ -70,17 +73,30 @@ A system for 'declaratively' creating graphics, based on "The
 - Example: `BugReports: https://github.com/tidyverse/ggplot2/issues`
 - Result: `https://github.com/tidyverse/ggplot2/issues`
 
-*(5)*
+*(6)*
 - Regex: `r'License:\s*([^\n]+)'``
 - Example: `License: MIT + file LICENSE`
 - Result: `MIT + file LICENSE`
 
-*(6)*
+*(7)*
 - Regex: `r'Package:\s*([^\n]+)`
 - Example: `Package: ggplot2`
 - Result: `ggplot2`
 
-*(6)*
+*(8)*
 - Regex: `r'Version:\s*([^\n]+)'`
 - Example: `Version: 2.0.0.9000`
 - Result: `2.0.0.9000`
+
+*(9)*
+- Regex 1: `r'^Imports:\s*(.*(?:\n[ \t]+.*)*)'` and `r'^Depends:\s*(.*(?:\n[ \t]+.*)*)'`
+- Regex 2: `For each section extracted with the above, extract individual dependencies using r'([A-Za-z][A-Za-z0-9.]*)\s*(?:\(([^)]*)\))?'`
+- Example: 
+```
+Depends: gtable (>= 0.3.6)
+Imports:
+ rlang (>= 1.1.0),
+ S7
+```
+- Result:
+```[{'value': 'gtable (>= 0.3.6)', 'name': 'gtable', 'version': '>= 0.3.6'}, {'value': 'rlang (>= 1.1.0)', 'name': 'rlang', 'version': '>= 1.1.0'}, {'value': 'S7', 'name': 'S7', 'version': ''}]```
