@@ -169,9 +169,9 @@ def parse_composer_json(file_path, metadata_result: Result, source):
                                     "value": req,
                                     "name": name,
                                     "version": version,
-                                    "type": constants.SOFTWARE_APPLICATION
-                                    # ,
-                                    # "dependency_type": dep_type
+                                    "type": constants.SOFTWARE_APPLICATION,
+                                    "dependency_type": dep_type,
+                                    "dependency_resolver": "composer"
                                 },
                                 1,
                                 constants.TECHNIQUE_CODE_CONFIG_PARSER,

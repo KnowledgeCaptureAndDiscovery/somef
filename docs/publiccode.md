@@ -17,7 +17,9 @@ These fields are defined in the [PublicCode specification](https://yml.publiccod
 | name                        |   name[i].result.value                |     name or description.[lang].localisedName     *(5)*                 |  
 | requirements - value        |   requirements[i].result.value        |  dependsOn.open / dependsOn.proprietary / dependsOn.hardware  name + version *(6)*          |  
 | requirements - name         |   requirements[i].result.name         |    dependsOn.open / dependsOn.proprietary / dependsOn.hardware  name      *(6)*         |  
-| requiriments - version      |   requirements[i].result.version      |  dependsOn.open / dependsOn.proprietary / dependsOn.hardware   more than one label of version *(6)*     |
+| requirements - version      |   requirements[i].result.version      |  dependsOn.open / dependsOn.proprietary / dependsOn.hardware   more than one label of version *(6)*     |
+| requirements - dependency type      |   requirements[i].result.dependency_type      |  runtime    |
+| requirements - dependency resolver      |   requirements[i].result.dependency_resolver      |  publiccode always    |
 | runtime_platform            |   runtime_platform[i].result.value    |    platforms                |  
 | version                     |   version[i].result.value             |    softwareVersion                |  
 
@@ -129,15 +131,16 @@ dependsOn:
  
     },
 ```
-<!-- ```
+```
     "result": {
         "value": "PostgreSQL>=14.0",
         "name": "PostgreSQL",
         "version": ">=14.0",
         "type": "Software_application",
-        "dependency_type": "runtime"
+        "dependency_type": "runtime",
+        "dependency_resolver": "pucliccode"
     },
-``` -->
+```
 
 
 

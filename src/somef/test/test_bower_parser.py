@@ -59,13 +59,15 @@ class TestBowerParser(unittest.TestCase):
         self.assertEqual(authors_results[0]["result"]["value"], "Andrew Accuardi <andrewaccuardi@gmail.com>")
         self.assertEqual(authors_results[1]["result"]["value"], "Another Author <anotherauthor@gmail.com>")
 
-        # found_jquery = False
-        # found_bootstrap = False
-        # for req_result in requirements_results:
-        #     dependency = req_result["result"]
-        #     if dependency.get("name") == "jquery" and dependency.get("dependency_type") == "runtime":
-        #         found_jquery = True
-        # self.assertTrue(found_jquery, "jQuery dependency not found")
+        found_jquery = False
+        found_bootstrap = False
+        for req_result in requirements_results:
+            dependency = req_result["result"]       
+            if dependency.get("name") == "jquery" and dependency.get("dependency_type") == "runtime":
+                found_jquery = True
+                self.assertEqual(dependency.get("dependency_resolver"),"bower","jQuery should come from the bower resolver")
+            
+        self.assertTrue(found_jquery, "jQuery dependency not found")
         
     def test_parse_2_bower_json(self):
         bower_file_path = test_data_repositories + os.path.sep + "chosen" + os.path.sep + "bower.json"

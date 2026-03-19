@@ -50,14 +50,14 @@ class TestGemSpecParser(unittest.TestCase):
         requirements_results = metadata_result.results.get(constants.CAT_REQUIREMENTS, [])
         self.assertTrue(len(requirements_results) > 0, "No dependencies found")
 
-        # found_jquery = False
-        # found_bootstrap = False
-        # for req_result in requirements_results:
-        #     dependency = req_result["result"]
-        #     if dependency.get("name") == "railties" and dependency.get("dependency_type") == "runtime":
-        #         found_jquery = True
+        found_jquery = False
+        found_bootstrap = False
+        for req_result in requirements_results:
+            dependency = req_result["result"]
+            if dependency.get("name") == "railties" and dependency.get("dependency_type") == "runtime":
+                found_jquery = True
 
-        # self.assertTrue(found_jquery, "Dependency not found")
+        self.assertTrue(found_jquery, "Dependency not found")
 
     def test_parse_gemspec_another_authors(self):
         gemspec_file_path = test_data_repositories + os.path.sep + "bootstrap-datepicker-rails" + os.path.sep + "bootstrap-datepicker-rails-2.gemspec"

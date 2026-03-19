@@ -14,8 +14,9 @@ These fields are defined in the [Ruby Gems specification](https://guides.rubygem
 | requirements - value              |  requirements[i].result.value                  |   requirements/add_dependency/add_development_dependency    name:version   *(6)*    |
 | requirements - name              |  requirements[i].result.name                   |  requirements/add_dependency/add_development_dependency   name    *(6)*      |
 | requirements - version             |  requirements[i].result.version                |     requirements/add_dependency/add_development_dependency  version     *(6)*      |
-<!-- | requirements - dependency type             |  requirements[i].result.development_type               |     add_dependency -> runtime     *(6)*     |
-| requirements - dependency type                |  requirements[i].result.development_type               |     add_development_dependency -> dev      *(6)*    | -->
+| requirements - dependency type             |  requirements[i].result.dependency_type               |     add_dependency -> runtime     *(6)*     |
+| requirements - dependency type                |  requirements[i].result.dependency_type               |     add_development_dependency -> dev      *(6)*    |
+| requirements - dependency resolver               |  requirements[i].result.dependency_resolver            |     bundler   |
 
 ---
 
@@ -75,13 +76,13 @@ spec.requirements = [
     gem.add_dependency "railties", ">= 3.0"
     gem.add_development_dependency "bundler", ">= 1.0"
 ``` 
-<!-- 
+
 Result: add_depency -> type runtime; add_development_dependencyd -> type dev 
 ```
-    [{'result': {'value': 'railties: >= 3.0', 'name': 'railties', 'version': '>= 3.0', 'type': 'Software_application', 'dependency_type': 'runtime'}, 'confidence': 1, 'technique': 'code_parser', 'source': 'https://example.org/bootstrap-datepicker-rails.gemspec'}, {'result': {'value': 'bundler: >= 1.0', 'name': 'bundler', 'version': '>= 1.0', 'type': 'Software_application', 'dependency_type': 'dev'}, 'confidence': 1, 'technique': 'code_parser', 'source': 'https://example.org/bootstrap-datepicker-rails.gemspec'}]
+    [{'result': {'value': 'railties: >= 3.0', 'name': 'railties', 'version': '>= 3.0', 'type': 'Software_application', 'dependency_type': 'runtime', 'dependency_resolver': 'bundler'}, 'confidence': 1, 'technique': 'code_parser', 'source': 'https://example.org/bootstrap-datepicker-rails.gemspec'}, {'result': {'value': 'bundler: >= 1.0', 'name': 'bundler', 'version': '>= 1.0', 'type': 'Software_application', 'dependency_type': 'dev','dependency_resolver': 'bundler'}, 'confidence': 1, 'technique': 'code_parser', 'source': 'https://example.org/bootstrap-datepicker-rails.gemspec'}]
 ```
 
--->
+
 
 
 
