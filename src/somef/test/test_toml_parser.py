@@ -152,7 +152,7 @@ class TestTomlParser(unittest.TestCase):
         self.assertIn("REPL", dep_values)
 
         for req in requirements_results:
-            self.assertEqual(req["result"]["type"], constants.STRING)
+            self.assertEqual(req["result"]["type"], constants.SOFTWARE_APPLICATION)
             self.assertEqual(req["technique"], constants.TECHNIQUE_CODE_CONFIG_PARSER)
 
         runtime_results = metadata_result.results.get(constants.CAT_RUNTIME_PLATFORM, [])

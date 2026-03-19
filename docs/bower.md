@@ -13,9 +13,11 @@ These fields are defined in the [Bower specification](https://github.com/bower/s
 | requirements - value          |     requirements[i].result.value      | "dependencies": {"paq":"version"}  -> paq: version    *(1)* | 
 | requirements - name           |     requirements[i].result.name       | "dependencies": {"paq":"version"}  -> paq       |        
 | requirements - version            |     requirements[i].result.version    | "dependencies": {"paq":"version"}  -> version |
+| requirements - dependency type           |     requirements[i].result.dependency_type            | dependencies -> runtime , devDependencies -> dev |
+| requirements - dependency resolver          |     requirements[i].result.dependency_resolver            |  bower always |
 | version                 |     version[i].result.value           | version |
 
-<!-- | requirements - dependency type           |     requirements[i].result.dependency_type            | dependencies -> runtime , devDependencies -> dev | -->
+
 ---
 
 *(1)*  
@@ -35,4 +37,4 @@ These fields are defined in the [Bower specification](https://github.com/bower/s
   - Result value: "jquery: ^3.1.1"
   - Result name": "jquery"
   - Result version": "^3.1.1"
-  <!-- - Result dependency_type": "runtime" because it is "dependencies"s -->
+  - Result dependency_type": "runtime" because it is "dependencies"

@@ -19,8 +19,9 @@ These fields are defined in the [Composer.json specification](https://getcompose
 | package_id                |  package_id[i].result.value   |   name                        |
 | requirements - value              |  requirements[i].result.value                  |   require.name require.version or require-dev.name reire-dev.version       |
 | requirements - name              |  requirements[i].result.name                   |   require.name or require-dev.name           |
+| requirements - dependency type              |  requirements[i].result.dependency_type        |     require = runtime or require-dev = dev            |
+| requirements - dependency resolver              |  requirements[i].result.dependency_resolver       |     composer always          |
 | requirements - version              |  requirements[i].result.version                |     require.version or require-dev.version            |
 | version - value                   |  version[i].result.value                      |   version                    |
 | version - tag                   |  version[i].result.tag                        |   version                   |
 
-<!-- | requirements - dependency type              |  requirements[i].result.dependency_type        |     require = runtime or require-dev = dev            | -->

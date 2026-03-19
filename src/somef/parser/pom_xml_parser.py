@@ -157,13 +157,26 @@ def parse_pom_file(file_path, metadata_result: Result, source):
  
         if project_data["dependencies"]:
             for dependency in project_data["dependencies"]:
+                name_d = dependency.get("artifactId", "")
+                version_d = dependency.get("version", "")
+                scope = dependency.get("scope", None)
+
+                if scope == "test":
+                    dep_type = "dev"
+                elif scope == "import":
+                    continue 
+                else:
+                    dep_type = "runtime"
+
                 metadata_result.add_result(
                     constants.CAT_REQUIREMENTS,
                     {
                         "value": f'{dependency.get("groupId", "")}.{dependency.get("artifactId", "")}'.strip("."),
-                        "name": dependency.get("artifactId", ""),
-                        "version": dependency.get("version", ""),
-                        "type": constants.SOFTWARE_APPLICATION
+                        "name": name_d,
+                        "version": version_d,
+                        "type": constants.SOFTWARE_APPLICATION,
+                        "dependency_type": dep_type,
+                        "dependency_resolver": "maven"
                     },
                     1,
                     constants.TECHNIQUE_CODE_CONFIG_PARSER,

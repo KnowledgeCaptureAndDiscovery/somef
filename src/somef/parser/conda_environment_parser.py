@@ -49,9 +49,9 @@ def parse_conda_environment_file(file_path, metadata_result: Result, source):
         dep_dict = {
             constants.PROP_VALUE: dep,
             constants.PROP_NAME: re.split(r"[=<>!]", dep)[0],
-            constants.PROP_TYPE: constants.SOFTWARE_APPLICATION
-            # ,
-            # constants.PROP_DEPENDENCY_TYPE: "conda"
+            constants.PROP_TYPE: constants.SOFTWARE_APPLICATION,
+            constants.PROP_DEPENDENCY_TYPE: "runtime",
+            constants.PROP_DEPENDENCY_RESOLVER: "conda"
         }
 
         match = re.search(r"[=<>!]+(.+)", dep)
@@ -71,9 +71,9 @@ def parse_conda_environment_file(file_path, metadata_result: Result, source):
         dep_dict = {
             constants.PROP_VALUE: dep,
             constants.PROP_NAME: re.split(r"[=<>!~]", dep)[0],
-            constants.PROP_TYPE: constants.SOFTWARE_APPLICATION
-            # ,
-            # constants.PROP_DEPENDENCY_TYPE: "pip"
+            constants.PROP_TYPE: constants.SOFTWARE_APPLICATION,
+            constants.PROP_DEPENDENCY_TYPE: "runtime",
+            constants.PROP_DEPENDENCY_RESOLVER: "pip"
         }
 
         match = re.search(r"[=<>!~]+(.+)", dep)

@@ -120,7 +120,9 @@ def parse_requirements_txt(file_path, metadata_result: Result, source):
                                 "value": runtime["value"],
                                 "version": runtime["version"],
                                 "name": runtime["name"],
-                                "type": constants.STRING
+                                "type": constants.STRING,
+                                "dependency_type": "runtime",
+                                "dependency_resolver": "pip"
                             },
                             1,
                             constants.TECHNIQUE_CODE_CONFIG_PARSER,
