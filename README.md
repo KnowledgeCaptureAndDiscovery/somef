@@ -126,7 +126,7 @@ pages={3032-3037}
 
 ## Requirements
 
-- Python 3.9 or Python 3.10 (default version support)
+- Python 3.11 + (default version support). Python 3.9 and 3.10 will work, but are not supported anymore.
 
 SOMEF has been tested on Unix, MacOS and Windows Microsoft operating systems.
 
@@ -273,7 +273,9 @@ Options:
 
 ### Updating SOMEF
 
-If you update SOMEF to a newer version, we recommend you `configure` again the library (by running `somef configure`). The rationale is that different versions may rely on classifiers which may be stored in a different path.
+If you update SOMEF to a newer version, you must `configure` again the library (by running `somef configure`). The rationale is that different versions may rely on classifiers which may be stored in a different path.
+
+If you installed through poetry and you  have upgraded the python environment (e.g., from 3.10 to 3.11), you may need to run `poetry env use python3.11` and `poetry install` to update your environment.
 
 ## Usage
 
