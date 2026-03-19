@@ -284,14 +284,14 @@ A RELEASE has the following properties:
 | **zipball_url** | Url | URL to the zip file where to download a software release |
 
 
-<!-- A REQUIREMENTS has the following properties:
+ A REQUIREMENTS has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
 | **name** | String | Name of the requeriment |
 | **version** | String | named version of a requeriment |
-| **dependency_type** | String | type: dev, runtime... | -->
-
+| **dependency_type** | String | type: dev, runtime... Indicates whether the dependency is required at runtime or only for development/testing | 
+| **dependency_resolver** | String | Identifies the ecosystem or package manager that resolves the dependency (e.g., npm, bower, pip, python, poetry, pdm, cargo, julia, maven, publicode).| 
 
 A RUNTIME_PLATFORM has the following properties:
 
