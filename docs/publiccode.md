@@ -17,7 +17,7 @@ These fields are defined in the [PublicCode specification](https://yml.publiccod
 | name                        |   name[i].result.value                |     name or description.[lang].localisedName     *(5)*                 |  
 | requirements - value        |   requirements[i].result.value        |  dependsOn.open / dependsOn.proprietary / dependsOn.hardware  name + version *(6)*          |  
 | requirements - name         |   requirements[i].result.name         |    dependsOn.open / dependsOn.proprietary / dependsOn.hardware  name      *(6)*         |  
-| requiriments - version      |   requirements[i].result.version      |  dependsOn.open / dependsOn.proprietary / dependsOn.hardware   more than one label of version *(6)*     |
+| requirements - version      |   requirements[i].result.version      |  dependsOn.open / dependsOn.proprietary / dependsOn.hardware   more than one label of version *(6)*     |
 | requiriments - dependency type      |   requirements[i].result.dependency_type      |  runtime    |
 | requiriments - dependency resolver      |   requirements[i].result.dependency_resolver      |  publiccode always    |
 | runtime_platform            |   runtime_platform[i].result.value    |    platforms                |  
