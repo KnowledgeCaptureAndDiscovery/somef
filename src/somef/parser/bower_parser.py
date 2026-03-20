@@ -139,7 +139,7 @@ def parse_bower_json_file(file_path, metadata_result: Result, source):
                                 "name": name,
                                 "version": version,
                                 "type": constants.SOFTWARE_APPLICATION,
-                                "dependency_type": "runtime",
+                                "dependency_type": constants.DEPENDENCY_TYPE_RUNTIME,
                                 "dependency_resolver": "bower"
                             },
                             1,
@@ -158,7 +158,7 @@ def parse_bower_json_file(file_path, metadata_result: Result, source):
                                 "name": name,
                                 "version": version,
                                 "type": constants.SOFTWARE_APPLICATION,
-                                "dependency_type": "runtime",
+                                "dependency_type": constants.DEPENDENCY_TYPE_RUNTIME,
                                 "dependency_resolver": "bower"      
                             },
                             1,

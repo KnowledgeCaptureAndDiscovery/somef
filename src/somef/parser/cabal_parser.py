@@ -208,7 +208,7 @@ def parse_cabal_file(file_path, metadata_result: Result, source):
                                             "name": name,
                                             "version": version_constraint,
                                             "type": constants.SOFTWARE_APPLICATION,
-                                            "dependency_type": "runtime",
+                                            "dependency_type": constants.DEPENDENCY_TYPE_RUNTIME,
                                             "dependency_resolver": "cabal"
                                         },
                                         1,
