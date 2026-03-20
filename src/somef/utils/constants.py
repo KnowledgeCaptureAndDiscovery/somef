@@ -38,7 +38,7 @@ REGEXP_PAGES = r'pages\s*=\s*{([\d-]+)}'
 # Project Homepage badge'
 REGEXP_PROJECT_HOMEPAGE = r'\[\!\[Project homepage\]([^\]]+)\]\(([^)]+)\)'
 
-# Redthedocs badges'
+# Readthedocs badges'
 # REGEXP_READTHEDOCS_BADGES = r"https?://[^\s]*readthedocs\.org/projects/[^\s]*/badge/\?version=[^\s]*(?:.|\n)*?:target:\s*(https?://[^\s]+)"
 # REGEXP_READTHEDOCS_BADGES = r"https?://readthedocs\.org/projects/[^/\s]+/badge/\?version=[^)\s]+"
 # REGEXP_READTHEDOCS_BADGES = (
@@ -61,9 +61,9 @@ REGEXP_READTHEDOCS_MD = (
 #     r"<img\b[^>]+?src=['\"]https?://(?:readthedocs\.org/projects/|img\.shields\.io/pypi/)[^'\"\s]*"
 # )
 REGEXP_READTHEDOCS_HTML = r"""
-<a[^>]*href=['"](https?://[^'"]+)['"][^>]*>          # Captura href
-(?:\s*|\n*)                                         # Saltos de línea y espacios opcionales
-<img[^>]*src=['"]https?://(?:readthedocs\.org/projects/|img\.shields\.io/pypi/)[^'"]+['"]  # Captura badge
+<a[^>]*href=['"](https?://[^'"]+)['"][^>]*>          # Capture href
+(?:\s*|\n*)                                         # breaklines and optional spaces
+<img[^>]*src=['"]https?://(?:readthedocs\.org/projects/|img\.shields\.io/pypi/)[^'"]+['"]  # Badge
 """
 # For natural language citation
 REGEXP_DOI_NATURAL = r'10\.\d{4,9}/[-._;()/:A-Za-z0-9]+'
