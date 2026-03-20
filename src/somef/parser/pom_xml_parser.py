@@ -162,11 +162,11 @@ def parse_pom_file(file_path, metadata_result: Result, source):
                 scope = dependency.get("scope", None)
 
                 if scope == "test":
-                    dep_type = "dev"
+                    dep_type = constants.DEPENDENCY_TYPE_DEVELOPMENT
                 elif scope == "import":
                     continue 
                 else:
-                    dep_type = "runtime"
+                    dep_type = constants.DEPENDENCY_TYPE_RUNTIME
 
                 metadata_result.add_result(
                     constants.CAT_REQUIREMENTS,

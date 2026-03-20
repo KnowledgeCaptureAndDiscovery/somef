@@ -49,7 +49,7 @@ class TestCabalParser(unittest.TestCase):
         found_dep = False
         for req_result in requirements_results:
             dependency = req_result["result"]
-            if dependency.get("name") == "terminal-progress-bar" and dependency.get("dependency_type") == "runtime":
+            if dependency.get("name") == "terminal-progress-bar" and dependency.get("dependency_type") == constants.DEPENDENCY_TYPE_RUNTIME:
                 found_dep = True
         self.assertTrue(found_dep, "Dependency not found")
 

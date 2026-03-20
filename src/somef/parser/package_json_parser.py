@@ -166,8 +166,8 @@ def parse_package_json_file(file_path, metadata_result: Result, source):
             
             # for name, version in deps.items():
             sections = {
-                "dependencies": "runtime",
-                "devDependencies": "dev"
+                "dependencies": constants.DEPENDENCY_TYPE_RUNTIME,
+                "devDependencies": constants.DEPENDENCY_TYPE_DEVELOPMENT
             }
 
             for section, dep_type in sections.items():

@@ -189,7 +189,7 @@ def parse_gemspec_file(file_path, metadata_result: Result, source):
                             "name": name,
                             "version": version,
                             "type": constants.SOFTWARE_APPLICATION,
-                            "dependency_type": "runtime",
+                            "dependency_type": constants.DEPENDENCY_TYPE_RUNTIME,
                             "dependency_resolver": "bundler"
                         },
                         1,
@@ -210,7 +210,7 @@ def parse_gemspec_file(file_path, metadata_result: Result, source):
                             "name": name,
                             "version": version,
                             "type": constants.SOFTWARE_APPLICATION,
-                            "dependency_type": "dev",
+                            "dependency_type": constants.DEPENDENCY_TYPE_DEVELOPMENT,
                             "dependency_resolver": "bundler"
                         },
                         1,

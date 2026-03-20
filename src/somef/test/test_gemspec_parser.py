@@ -54,7 +54,7 @@ class TestGemSpecParser(unittest.TestCase):
         found_bootstrap = False
         for req_result in requirements_results:
             dependency = req_result["result"]
-            if dependency.get("name") == "railties" and dependency.get("dependency_type") == "runtime":
+            if dependency.get("name") == "railties" and dependency.get("dependency_type") == constants.DEPENDENCY_TYPE_RUNTIME:
                 found_jquery = True
 
         self.assertTrue(found_jquery, "Dependency not found")

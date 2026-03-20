@@ -406,7 +406,7 @@ def parse_pyproject_metadata(data, metadata_result, source, file_path):
                         "name": name,
                         "version": version,
                         "type": constants.SOFTWARE_APPLICATION,
-                        "dependency_type": "runtime",
+                        "dependency_type":constants.DEPENDENCY_TYPE_RUNTIME,
                         "dependency_resolver": "python"
                     },
                     1,
@@ -423,7 +423,7 @@ def parse_pyproject_metadata(data, metadata_result, source, file_path):
                     "name": name,
                     "version": version,
                     "type": constants.SOFTWARE_APPLICATION,
-                    "dependency_type": "runtime",
+                    "dependency_type": constants.DEPENDENCY_TYPE_RUNTIME,
                     "dependency_resolver": "python"
                 },
                 1,
@@ -445,7 +445,7 @@ def parse_pyproject_metadata(data, metadata_result, source, file_path):
                             "name": name,
                             "version": version,
                             "type": constants.SOFTWARE_APPLICATION,
-                            "dependency_type": "runtime",
+                            "dependency_type": constants.DEPENDENCY_TYPE_RUNTIME,
                             "dependency_resolver": "python"
                         },
                         1,
@@ -574,7 +574,7 @@ def parse_julia_project_metadata(data, metadata_result, source):
                     "value": req,
                     "name": req,
                     "type": constants.SOFTWARE_APPLICATION,
-                    "dependency_type": "runtime",
+                    "dependency_type": constants.DEPENDENCY_TYPE_RUNTIME,
                     "dependency_resolver": "julia"
                 },
                 1,
@@ -582,7 +582,7 @@ def parse_julia_project_metadata(data, metadata_result, source):
                 source
             )
             
-    # devs requiriments      
+    # devs requirements      
     dev_deps = set()
 
     if "extras" in data:
@@ -599,7 +599,7 @@ def parse_julia_project_metadata(data, metadata_result, source):
                 "value": req,
                 "name": req,
                 "type": constants.SOFTWARE_APPLICATION,
-                "dependency_type": "dev",
+                "dependency_type": constants.DEPENDENCY_TYPE_DEVELOPMENT,
                 "dependency_resolver": "julia"
             },
             1,
