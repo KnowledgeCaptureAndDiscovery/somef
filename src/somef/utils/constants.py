@@ -520,3 +520,6 @@ NEGATIVE_PATTERNS_CITATION_HEADERS = [
     "reference design",
     "node references",
 ]
+
+DEPENDENCY_TYPE_RUNTIME = "runtime"
+DEPENDENCY_TYPE_DEVELOPMENT = "development"

@@ -284,7 +284,7 @@ A RELEASE has the following properties:
 | **zipball_url** | Url | URL to the zip file where to download a software release |
 
 
- A REQUIREMENTS has the following properties:
+ A REQUIREMENT has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|

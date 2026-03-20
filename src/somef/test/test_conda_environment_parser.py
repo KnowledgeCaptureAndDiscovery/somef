@@ -40,7 +40,7 @@ class TestCondaEnvironmentParser(unittest.TestCase):
             if r["result"].get("name") == "python"
         ]
         assert python_reqs, "Expected python dependency not found"
-        assert python_reqs[0]["result"]["dependency_type"] == "runtime"
+        assert python_reqs[0]["result"]["dependency_type"] == constants.DEPENDENCY_TYPE_RUNTIME
         assert python_reqs[0]["result"]["dependency_resolver"] == "conda"
         assert python_reqs[0]["result"]["version"] == "3.8.5"
 
@@ -49,7 +49,7 @@ class TestCondaEnvironmentParser(unittest.TestCase):
             if r["result"].get("name") == "albumentations"
         ]
         assert albumentations_reqs, "Expected albumentations dependency not found"
-        assert albumentations_reqs[0]["result"]["dependency_type"] == "runtime"
+        assert albumentations_reqs[0]["result"]["dependency_type"] == constants.DEPENDENCY_TYPE_RUNTIME
         assert albumentations_reqs[0]["result"]["dependency_resolver"] == "pip"
         assert albumentations_reqs[0]["result"]["version"] == "0.4.3"
 
