@@ -472,8 +472,6 @@ def download_readme(owner, repo_name, default_branch, repo_type, authorization, 
         base = f"https://gitlab.com/{project_path}" if project_path else f"https://gitlab.com/{owner}/{repo_name}"
         primary_url = f"{base}/-/raw/{default_branch}/README.md"
         secondary_url = f"{base}/-/raw/master/README.md"
-        # primary_url = f"https://gitlab.com/{owner}/{repo_name}/-/raw/{default_branch}/README.md"
-        # secondary_url = f"https://gitlab.com/{owner}/{repo_name}/-/raw/master/README.md"
     elif repo_type is constants.RepositoryType.GITHUB:
         primary_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{default_branch}/README.md"
         secondary_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/master/README.md"

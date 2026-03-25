@@ -75,6 +75,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `continuous_integration`: Link to continuous integration service, supported on GitHub as well as in GitLab.
 - `contributing guidelines`: Guidelines indicating how to contribute to a software component.
 - `contributors`: Contributors to a software component
+- `copyright_holder`: Entity or individual owning the rights to the software. Also year if possible.
 - `date_created`: Date when the software component was created.
 - `date_updated`: Date when the software component was last updated (note that this will always be older than the date of the extraction).
 - `description`: A description of what the software component does.

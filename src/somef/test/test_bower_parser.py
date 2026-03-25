@@ -65,7 +65,7 @@ class TestBowerParser(unittest.TestCase):
             dependency = req_result["result"]       
             if dependency.get("name") == "jquery" and dependency.get("dependency_type") == constants.DEPENDENCY_TYPE_RUNTIME:
                 found_jquery = True
-                self.assertEqual(dependency.get("dependency_resolver"),"bower","jQuery should come from the bower resolver")
+                self.assertEqual(dependency.get("dependency_resolver"),"bower","Bower should come from the bower resolver")
             
         self.assertTrue(found_jquery, "jQuery dependency not found")
         

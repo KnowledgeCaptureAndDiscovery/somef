@@ -5,6 +5,7 @@ from pathlib import Path
 from .. import somef_cli
 from ..parser import pom_xml_parser
 from ..export import json_export
+from ..utils import constants
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
@@ -587,69 +588,35 @@ class TestCodemetaExport(unittest.TestCase):
         
         os.remove(output_path)
 
-    # def test_codemeta_local(self):
-       
-    #     """
-    #     codemeta local
-    #     """
 
-    #     pom_xml_parser.processed_pom = False
-
-    #     output_path = test_data_path + 'test_urban_pfr.json'
-    #     if os.path.exists(output_path):
-    #         os.remove(output_path)
-            
-    #     somef_cli.run_cli(threshold=0.9,
-    #                       ignore_classifiers=False,
-    #                       repo_url=None,
-    #                       doc_src=None,
-    #                       local_repo=test_data_repositories + "urban_pfr_toolbox_hamburg",
-    #                       in_file=None,
-    #                       output=None,
-    #                       graph_out=None,
-    #                       graph_format="turtle",
-    #                       codemeta_out= output_path,
-    #                       pretty=True,
-    #                       missing=False,
-    #                       readme_only=False)
+    def test_issue_886_apache_code(self):
+        """Checks whether copyright holder are correctly extracted from Apache license text in codemeta"""
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "widoco",
+                            doc_src=None,
+                            in_file=None,
+                            output=None,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=test_data_path + "test_issue_886_apache_code.json",
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
         
-    #     with open(output_path, "r") as f:
-    #         json_content = json.load(f)
+        text_file = open(test_data_path + "test_issue_886_apache_code.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
 
-        # runtime = json_content.get("runtimePlatform", [])
-        # assert runtime == "Java: 1.8", f"It was expected 'Java: 1.8' but it was '{runtime}'"
-        # os.remove(output_path)
+        copyright_holder = json_content[constants.CAT_CODEMETA_COPYRIGHTHOLDER]
+        copyright_year = json_content[constants.CAT_CODEMETA_COPYRIGHTYEAR]
+    
+        assert copyright_holder == "Daniel Garijo, Information Sciences Institute, USC."
+        assert copyright_year == "2016"
 
-
-    # def test_codemeta_local_2(self):
-       
-    #     """
-    #     codemeta local
-    #     """
-
-    #     pom_xml_parser.processed_pom = False
-
-    #     output_path = test_data_path + 'test_json_urban_pfr.json'
-    #     if os.path.exists(output_path):
-    #         os.remove(output_path)
-            
-    #     somef_cli.run_cli(threshold=0.9,
-    #                       ignore_classifiers=False,
-    #                       repo_url=None,
-    #                       doc_src=None,
-    #                       local_repo=test_data_repositories + "urban_pfr_toolbox_hamburg",
-    #                       in_file=None,
-    #                       output=output_path,
-    #                       graph_out=None,
-    #                       graph_format="turtle",
-    #                       codemeta_out= None,
-    #                       pretty=True,
-    #                       missing=False,
-    #                       readme_only=False)
-        
-    #     with open(output_path, "r") as f:
-            # json_content = json.load(f)
-
+        os.remove(test_data_path + "test_issue_886_apache_code.json")
 
     @classmethod
     def tearDownClass(cls):

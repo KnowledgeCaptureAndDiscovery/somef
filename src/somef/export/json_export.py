@@ -8,7 +8,6 @@ from dateutil import parser as date_parser
 from ..utils import constants
 from ..regular_expressions import detect_license_spdx,extract_scholarly_article_natural, extract_scholarly_article_properties
 
-
 def save_json_output(repo_data, out_path, missing, pretty=False):
     """
     Function that saves the final json Object in the output file
@@ -49,22 +48,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         date_object = date_parser.parse(date_string)
         return date_object.strftime("%Y-%m-%d")
 
-    # latest_release = None
-    # releases = data_path(["releases", "excerpt"])
-    #
-    # if releases is not None and len(releases) > 0:
-    #     latest_release = releases[0]
-    #     latest_pub_date = date_parser.parse(latest_release["datePublished"])
-    #     for index in range(1, len(releases)):
-    #         release = releases[index]
-    #         pub_date = date_parser.parse(release["datePublished"])
-    #
-    #         if pub_date > latest_pub_date:
-    #             latest_release = release
-    #             latest_pub_date = pub_date
-
-    # def release_path(path):
-    #     return DataGraph.resolve_path(latest_release, path)
     code_repository = None
     if constants.CAT_CODE_REPOSITORY in repo_data:
         code_repository = repo_data[constants.CAT_CODE_REPOSITORY][0][constants.PROP_RESULT][constants.PROP_VALUE]
@@ -109,12 +92,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                     flat_descriptions.append(value)
 
         descriptions_text = flat_descriptions
-
-        # descriptions_text = [d[constants.PROP_RESULT][constants.PROP_VALUE] for d in selected]
-        # descriptions.sort(key=lambda x: (x[constants.PROP_CONFIDENCE] + (1 if x[constants.PROP_TECHNIQUE] == constants.GITHUB_API else 0)),
-        #                   reverse=True)
-        # descriptions_text = [x[constants.PROP_RESULT][constants.PROP_VALUE] for x in descriptions]
-
 
     codemeta_output = {
         "@context": "https://w3id.org/codemeta/3.0",
@@ -171,6 +148,13 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         value = repo_data[constants.CAT_DATE_UPDATED][0][constants.PROP_RESULT][constants.PROP_VALUE]
         if value:
             codemeta_output[constants.CAT_CODEMETA_DATEMODIFIED] = format_date(value)
+    if constants.CAT_COPYRIGHT in repo_data:
+        holder = repo_data[constants.CAT_COPYRIGHT][0][constants.PROP_RESULT][constants.PROP_VALUE]
+        year = repo_data[constants.CAT_COPYRIGHT][0][constants.PROP_RESULT].get(constants.PROP_YEAR)
+        if holder:
+            codemeta_output[constants.CAT_CODEMETA_COPYRIGHTHOLDER] = holder
+        if year:
+            codemeta_output[constants.CAT_CODEMETA_COPYRIGHTYEAR] = year    
     if constants.CAT_DOWNLOAD_URL in repo_data:
         codemeta_output[constants.CAT_CODEMETA_DOWNLOADURL] = repo_data[constants.CAT_DOWNLOAD_URL][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_NAME in repo_data:
@@ -192,10 +176,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
             for item in items:
                 if item not in codemeta_output[constants.CAT_CODEMETA_KEYWORDS]:
                     codemeta_output[constants.CAT_CODEMETA_KEYWORDS].append(item)
-        # for key in repo_data[constants.CAT_KEYWORDS]:
-        #   key_value = key[constants.PROP_RESULT][constants.PROP_VALUE]
-        #   if key_value not in codemeta_output[constants.CAT_CODEMETA_KEYWORDS]:
-        #     codemeta_output[constants.CAT_CODEMETA_KEYWORDS].append(key_value)
 
     if constants.CAT_PROGRAMMING_LANGUAGES in repo_data:
         # Calculate the total code size of all the programming languages
@@ -239,7 +219,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                         req_type = x[constants.PROP_RESULT].get("type")
                         if req_type:
                             entry["@type"] = map_requirement_type(req_type)
-                            
+
                         if version:
                             if isinstance(version, str):
                                 entry["version"] = version.strip()
@@ -268,10 +248,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                     other_requirements.append(value)
                     seen_text.add(normalized)
 
-        # if requirements_mode == "v":
-        #     codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = code_parser_requirements
-        # else:
-        #     codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = code_parser_requirements + other_requirements
   
         if requirements_mode == "v":
             codemeta_output[constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS] = code_parser_requirements

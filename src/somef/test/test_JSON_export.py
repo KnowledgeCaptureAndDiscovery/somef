@@ -663,3 +663,60 @@ class TestJSONExport(unittest.TestCase):
         self.assertEqual(requirements[0].get("result", {}).get("version"), "3.20.3")
 
         os.remove(output_file)
+
+
+    def test_issue_886_bsd3(self):
+        """Checks whether copyright holder are correctly extracted from BSD 3-Clause license text"""
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "captum",
+                            doc_src=None,
+                            in_file=None,
+                            output=test_data_path + "test_issue_886_bsd3.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        text_file = open(test_data_path + "test_issue_886_bsd3.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+
+        copyright_entries = json_content[constants.CAT_COPYRIGHT]
+        copy = copyright_entries[0]["result"]
+        assert copy["value"] == "PyTorch team"
+        assert copy["year"] == "2019"
+        
+        os.remove(test_data_path + "test_issue_886_bsd3.json")
+
+
+    def test_issue_886_apache(self):
+        """Checks whether copyright holder are correctly extracted from Apache license text"""
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "widoco",
+                            doc_src=None,
+                            in_file=None,
+                            output=test_data_path + "test_issue_886_apache.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        text_file = open(test_data_path + "test_issue_886_apache.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+
+        copyright_entries = json_content[constants.CAT_COPYRIGHT]  
+        copy = copyright_entries[0]["result"]
+        assert copy["value"] == "Daniel Garijo, Information Sciences Institute, USC."
+        assert copy["year"] == "2016"
+        os.remove(test_data_path + "test_issue_886_apache.json")

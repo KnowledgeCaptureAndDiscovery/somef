@@ -4,10 +4,11 @@ import unittest
 import json
 from pathlib import Path
 
+from ..parser import pom_xml_parser
 from .. import process_repository, process_files, somef_cli
 from ..utils import constants
 from ..process_results import Result
-from somef.parser import pom_xml_parser
+
 
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
