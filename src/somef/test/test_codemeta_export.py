@@ -594,7 +594,7 @@ class TestCodemetaExport(unittest.TestCase):
         somef_cli.run_cli(threshold=0.8,
                             ignore_classifiers=False,
                             repo_url=None,
-                            local_repo=test_data_repositories + "widoco",
+                            local_repo=test_data_repositories + "Widoco",
                             doc_src=None,
                             in_file=None,
                             output=None,

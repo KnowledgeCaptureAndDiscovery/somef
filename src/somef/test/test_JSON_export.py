@@ -699,7 +699,7 @@ class TestJSONExport(unittest.TestCase):
         somef_cli.run_cli(threshold=0.8,
                             ignore_classifiers=False,
                             repo_url=None,
-                            local_repo=test_data_repositories + "widoco",
+                            local_repo=test_data_repositories + "Widoco",
                             doc_src=None,
                             in_file=None,
                             output=test_data_path + "test_issue_886_apache.json",
@@ -715,7 +715,7 @@ class TestJSONExport(unittest.TestCase):
         text_file.close()
         json_content = json.loads(data)
 
-        copyright_entries = json_content[constants.CAT_COPYRIGHT]  
+        copyright_entries = json_content[constants.CAT_COPYRIGHT] 
         copy = copyright_entries[0]["result"]
         assert copy["value"] == "Daniel Garijo, Information Sciences Institute, USC."
         assert copy["year"] == "2016"
