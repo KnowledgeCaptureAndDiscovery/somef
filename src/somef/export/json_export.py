@@ -722,6 +722,10 @@ def canonicalize_value(value, value_type):
             clean_path = path
             return urlunparse((parsed.scheme, parsed.netloc, clean_path, '', '', ''))
 
+        domains_to_keep_path = ['github.com', 'api.github.com', 'gitlab.com', 'bitbucket.org']
+        if any(d in parsed.netloc for d in domains_to_keep_path):
+            return urlunparse((parsed.scheme, parsed.netloc, path, '', '', ''))
+        
         # It's a directory/page → unify to domain
         return f"{parsed.scheme}://{parsed.netloc}"
 
@@ -776,6 +780,7 @@ def unify_results(repo_data: dict) -> dict:
         seen = {}
 
         for item in items:
+            
             result = item.get(constants.PROP_RESULT, {})
             normalized_type = normalize_type(result)
             result[constants.PROP_TYPE] = normalized_type
@@ -785,7 +790,6 @@ def unify_results(repo_data: dict) -> dict:
             canonical = canonicalize_value(value, value_type)
 
             key = str(canonical)
-
             if key in seen:
                 existing = seen[key]
 
