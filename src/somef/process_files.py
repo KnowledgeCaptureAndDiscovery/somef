@@ -174,6 +174,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
                                                                metadata_result, constants.CAT_LICENSE)
+                    
 
                 if "CODE_OF_CONDUCT" == filename.upper() or "CODE_OF_CONDUCT.MD" == filename.upper():
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
@@ -502,6 +503,38 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 if license_info:
                     result[constants.PROP_NAME] = license_info['name']
                     result[constants.PROP_SPDX_ID] = license_info['spdx_id']
+
+
+                # Extraction copyright holder from license text
+                matches_copyright = re.findall(constants.REGEXP_COPYRIGHT, license_text, flags=re.IGNORECASE)
+
+                for year, holder in matches_copyright:
+                    holder = holder.strip() if holder else None
+                    year = year.strip() if year else None
+
+                    if not holder:
+                        logging.info("Skipping copyright holder with empty name")
+                        continue
+
+                    # sometimes we get not desired characters
+                    holder = holder.lstrip(",;: ").strip()
+
+                    result_copy = {
+                        constants.PROP_VALUE: holder,
+                        constants.PROP_TYPE: constants.AGENT
+                    }
+
+                    if year:
+                        result_copy[constants.PROP_YEAR] = year
+
+                    logging.info(f"Extracted copyright holder: {holder.strip()} with year: {year}")
+                    metadata_result.add_result(
+                        constants.CAT_COPYRIGHT,
+                        result_copy,
+                        1,
+                        constants.TECHNIQUE_FILE_EXPLORATION,
+                        url
+                    )
 
             if category is constants.CAT_AUTHORS:
                 result = {}

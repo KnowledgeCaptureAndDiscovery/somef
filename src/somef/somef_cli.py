@@ -36,7 +36,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     @param keep_tmp: path where to store TMP files in case SOMEF is instructed to keep them
     @param authorization: GitHub authorization token
     @param ignore_test_folder: Ignore contents of test folders
-    @param requiriments_mode: flag to indicate what requirements show in codemeta 
+    @param requirements_mode: flag to indicate what requirements show in codemeta 
     @param reconcile_authors: flag to indicate if additional should be extracted from certain files as codeowners. Bear in mind that using this flags consumes more requests to the GitHub API.
     @param branch: branch of the repository to analyze. Overrides the default branch detected from the repository metadata.
     @param tag: tag of the repository to analyze. Cannot be used together with the branch parameter.

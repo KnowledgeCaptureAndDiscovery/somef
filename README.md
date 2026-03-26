@@ -37,6 +37,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Contribution guidelines**: Text indicating how to contribute to this code repository
 - **Contributors**: Contributors to a software component
 - **Creation date**: Date when the repository was created
+- **Copyright holder**: Entity or individual owning the rights to the software. The year is also extracted, if available.
 - **Date updated**: Date of last release.
 - **Description**: A description of what the software does
 - **Documentation**: Where to find additional documentation about a software component

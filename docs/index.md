@@ -43,6 +43,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Continuous integration**: Link to continuous integration service(s)
 - **Contribution guidelines**: Text indicating how to contribute to this code repository
 - **Contributors**: Contributors to a software component
+- **Copyright holder**: Entity or individual owning the rights to the software. The year is also extracted, if available.
 - **Creation date**: Date when the repository was created
 - **Date updated**: Date of last release.
 - **Description**: A description of what the software does
