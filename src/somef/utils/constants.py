@@ -39,14 +39,6 @@ REGEXP_PAGES = r'pages\s*=\s*{([\d-]+)}'
 REGEXP_PROJECT_HOMEPAGE = r'\[\!\[Project homepage\]([^\]]+)\]\(([^)]+)\)'
 
 # Readthedocs badges'
-# REGEXP_READTHEDOCS_BADGES = r"https?://[^\s]*readthedocs\.org/projects/[^\s]*/badge/\?version=[^\s]*(?:.|\n)*?:target:\s*(https?://[^\s]+)"
-# REGEXP_READTHEDOCS_BADGES = r"https?://readthedocs\.org/projects/[^/\s]+/badge/\?version=[^)\s]+"
-# REGEXP_READTHEDOCS_BADGES = (
-#     r"https?://readthedocs\.org/projects/[^/\s]+/badge/\?version=[^)\s]+"
-#     r"(?:.|\n)*?:target:\s*(https?://[^\s]+)"  # rst
-#     r"|" 
-#     r"\((https?://readthedocs\.org/projects/[^/\s]+/[^)\s]+)\)"  # md
-# )
 REGEXP_READTHEDOCS_RST = (
     r"https?://readthedocs\.org/projects/[^\s/]+/badge/[^\s]*"
     r"[^\n]*?:target:\s*(https?://[^\s\"']+)"
@@ -55,16 +47,12 @@ REGEXP_READTHEDOCS_MD = (
     r"\(\s*(https?://[^\s\)]+\.readthedocs\.io[^\s\)]*)\s*\)"
 )
 
-# REGEXP_READTHEDOCS_HTML = (
-#     r"<a\b[^>]+?href=['\"](https?://[^'\"\s]+?)['\"][^>]*?>"  
-#     r"(?:(?!</a>)[\s\S])*?"                                  
-#     r"<img\b[^>]+?src=['\"]https?://(?:readthedocs\.org/projects/|img\.shields\.io/pypi/)[^'\"\s]*"
-# )
 REGEXP_READTHEDOCS_HTML = r"""
 <a[^>]*href=['"](https?://[^'"]+)['"][^>]*>          # Capture href
 (?:\s*|\n*)                                         # breaklines and optional spaces
 <img[^>]*src=['"]https?://(?:readthedocs\.org/projects/|img\.shields\.io/pypi/)[^'"]+['"]  # Badge
 """
+
 # For natural language citation
 REGEXP_DOI_NATURAL = r'10\.\d{4,9}/[-._;()/:A-Za-z0-9]+'
 REGEXP_YEAR_NATURAL = r'\b(19|20)\d{2}\b'
@@ -99,6 +87,9 @@ REGEXP_ZENODO_LATEST_DOI = r':target:\s*(https://zenodo\.org/badge/latestdoi/\d+
 REGEXP_ZENODO_DOI = r'https://zenodo\.org/badge/DOI/\d+'
 REGEXP_ZENODO_JSON_LD = r"<script[^>]*type=['\"]application/ld\+json['\"][^>]*>(.*?)</script>"
 
+# Detect copyright information in license files. 
+REGEXP_COPYRIGHT = r"copyright\s*(?:\(c\)|©|\(C\))?\s*\{?(\d{4}(?:-\d{4})?)\}?\s*\{?([^\n}]+)\}?"
+
 LICENSES_DICT = {
     "Apache License 2.0": {"regex": REGEXP_APACHE, "spdx_id": "Apache-2.0"},
     "GNU General Public License v3.0": {"regex": REGEXP_GPL3, "spdx_id": "GPL-3.0"},
@@ -125,6 +116,7 @@ CAT_CONTRIBUTING_GUIDELINES = "contributing_guidelines"
 CAT_COC = "code_of_conduct"
 CAT_CODE_REPOSITORY = "code_repository"
 CAT_CONTACT = "contact"
+CAT_COPYRIGHT = "copyright_holder"
 CAT_DATE_CREATED = "date_created"
 CAT_DATE_UPDATED = "date_updated"
 CAT_DATE_PUBLISHED = "date_published"
@@ -196,7 +188,7 @@ supervised_categories = [CAT_DESCRIPTION]
 # list with all categories
 all_categories = [CAT_APPLICATION_DOMAIN, CAT_ACKNOWLEDGEMENT, CAT_AUTHORS, CAT_CITATION, CAT_CONTRIBUTORS,
                   CAT_CONTRIBUTING_GUIDELINES, CAT_CONTINUOUS_INTEGRATION,
-                  CAT_COC, CAT_CODE_REPOSITORY, CAT_CONTACT, CAT_DESCRIPTION, CAT_DATE_CREATED, CAT_DATE_UPDATED,
+                  CAT_COC, CAT_CODE_REPOSITORY, CAT_CONTACT, CAT_COPYRIGHT, CAT_DESCRIPTION, CAT_DATE_CREATED, CAT_DATE_UPDATED,
                   CAT_DOCUMENTATION, CAT_DOWNLOAD, CAT_DOWNLOAD_URL, CAT_EXECUTABLE_EXAMPLE,
                   CAT_FAQ, CAT_FORK_COUNTS, CAT_FORKS_URLS, CAT_FULL_NAME, CAT_FULL_TITLE, CAT_HAS_BUILD_FILE,
                   CAT_HAS_SCRIPT_FILE, CAT_IDENTIFIER, CAT_IMAGE, CAT_INSTALLATION,
@@ -250,6 +242,7 @@ PROP_TAG = "tag"
 PROP_URL = "url"
 PROP_USERNAME = "username"
 PROP_VERSION = "version"
+PROP_YEAR = "year"
 PROP_ZIPBALL_URL = "zipball_url"
 PROP_TARBALL_URL = "tarball_url"
 # Publications
@@ -432,6 +425,8 @@ CAT_CODEMETA_AUTHOR = "author"
 CAT_CODEMETA_BUILDINSTRUCTIONS = "buildInstructions"
 CAT_CODEMETA_CODEREPOSITORY = "codeRepository"
 CAT_CODEMETA_CONTINUOUSINTEGRATION = "continuousIntegration"
+CAT_CODEMETA_COPYRIGHTHOLDER = "copyrightHolder"
+CAT_CODEMETA_COPYRIGHTYEAR = "copyrightYear"
 CAT_CODEMETA_DATECREATED = "dateCreated"
 CAT_CODEMETA_DATEMODIFIED = "dateModified"
 CAT_CODEMETA_DATEPUBLISHED = "datePublished"
