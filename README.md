@@ -361,6 +361,9 @@ Try SOMEF in Binder with our sample notebook: [![Binder](https://mybinder.org/ba
 
 If you want to contribute with a pull request, please do so by submitting it to the `dev` branch.
 
+## Contributors:
+Priyanka O.
+
 ## Next features:
 
 To see upcoming features, please have a look at our [open issues](https://github.com/KnowledgeCaptureAndDiscovery/somef/issues) and [milestones](https://github.com/KnowledgeCaptureAndDiscovery/somef/milestones)
