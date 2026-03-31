@@ -1,9 +1,11 @@
+import io
 import os
 import tempfile
 import unittest
 import json
+import zipfile
 from pathlib import Path
-
+from unittest.mock import MagicMock, patch, call
 from ..parser import pom_xml_parser
 from .. import process_repository, process_files, somef_cli
 from ..utils import constants
@@ -336,3 +338,170 @@ class TestProcessRepository(unittest.TestCase):
         assert "Widoco/v1.4.25" in source, f"The downloaded tag does not match the requested one. Source: {source}"
 
         os.remove(test_data_path + "test_905_tag.json") 
+
+
+def _make_mock_response(status_code, content=b""):
+    """Helper: create a minimal mock requests.Response."""
+    resp = MagicMock()
+    resp.status_code = status_code
+    resp.content = content
+    resp.headers = {}
+    return resp
+
+
+def _make_zip_bytes(inner_dir="owner_repo"):
+    """Helper: build a minimal valid zip archive containing one file."""
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        zf.writestr(f"{inner_dir}/README.md", "# Test")
+    return buf.getvalue()
+
+class TestIssue909ArchiveFallback(unittest.TestCase):
+    """
+    Tests for download_github_files HTTP-300 fallback chain (issue #909).
+
+    GitHub returns HTTP 300 (Multiple Choices) when the short-form archive URL
+    /archive/{ref}.zip is ambiguous — i.e. a branch and a tag share the same
+    name.  The fix adds a cascade of unambiguous fallback URLs so SOMEF can
+    still download the archive instead of crashing.
+    """
+
+    @patch("somef.process_repository.rate_limit_get")
+    def test_http_300_falls_back_to_refs_heads(self, mock_rlg):
+        """
+        HTTP 300 on the short-form URL must trigger the refs/heads/ fallback.
+        Scenario: balaje/icefem whose default branch 'v2.0' is also a tag name.
+        """
+        zip_bytes = _make_zip_bytes("balaje_icefem")
+        mock_rlg.side_effect = [
+            (_make_mock_response(300), ""),                  # /archive/v2.0.zip       → 300
+            (_make_mock_response(200, zip_bytes), ""),       # refs/heads/v2.0.zip     → 200
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            result = process_repository.download_github_files(tmp, "balaje", "icefem", "v2.0", None)
+
+        self.assertIsNotNone(result, "Should succeed via refs/heads/ fallback")
+        urls_tried = [c[0][0] for c in mock_rlg.call_args_list]
+        self.assertIn("archive/v2.0.zip", urls_tried[0])
+        self.assertIn("refs/heads/v2.0.zip", urls_tried[1])
+
+    @patch("somef.process_repository.rate_limit_get")
+    def test_http_300_falls_back_to_refs_tags(self, mock_rlg):
+        """
+        When refs/heads/ also fails, refs/tags/ must be tried next.
+        """
+        zip_bytes = _make_zip_bytes("owner_repo")
+        mock_rlg.side_effect = [
+            (_make_mock_response(300), ""),                  # short form        → 300
+            (_make_mock_response(404), ""),                  # refs/heads/       → 404
+            (_make_mock_response(200, zip_bytes), ""),       # refs/tags/        → 200
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            result = process_repository.download_github_files(tmp, "owner", "repo", "v1.0", None)
+
+        self.assertIsNotNone(result, "Should succeed via refs/tags/ fallback")
+        urls_tried = [c[0][0] for c in mock_rlg.call_args_list]
+        self.assertIn("refs/tags/v1.0.zip", urls_tried[2])
+
+    @patch("somef.process_repository.rate_limit_get")
+    def test_http_404_falls_back_to_main(self, mock_rlg):
+        """
+        HTTP 404 on all ref-specific URLs must reach the legacy main.zip fallback.
+        """
+        zip_bytes = _make_zip_bytes("owner_repo")
+        mock_rlg.side_effect = [
+            (_make_mock_response(404), ""),  # short form
+            (_make_mock_response(404), ""),  # refs/heads/
+            (_make_mock_response(404), ""),  # refs/tags/
+            (_make_mock_response(200, zip_bytes), ""),  # main.zip → 200
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            result = process_repository.download_github_files(tmp, "owner", "repo", "oldmaster", None)
+
+        self.assertIsNotNone(result, "Should succeed via main.zip fallback")
+        urls_tried = [c[0][0] for c in mock_rlg.call_args_list]
+        self.assertIn("archive/main.zip", urls_tried[-1])
+
+    @patch("somef.process_repository.rate_limit_get")
+    def test_all_fallbacks_fail_returns_none_not_exit(self, mock_rlg):
+        """
+        When all four candidate URLs fail, download_github_files must return None
+        instead of calling sys.exit() (which would crash the whole process).
+        """
+        mock_rlg.return_value = (_make_mock_response(404), "")
+        with tempfile.TemporaryDirectory() as tmp:
+            result = process_repository.download_github_files(tmp, "owner", "repo", "branch", None)
+
+        self.assertIsNone(result)
+        # All four candidates should have been attempted
+        self.assertEqual(mock_rlg.call_count, 4)
+
+    @patch("somef.process_repository.rate_limit_get")
+    def test_size_limit_stops_loop_immediately(self, mock_rlg):
+        """
+        When rate_limit_get returns None (size limit exceeded), the fallback loop
+        must stop immediately — there is no point retrying other URLs for the same
+        oversized archive.
+        """
+        mock_rlg.return_value = (None, None)
+        with tempfile.TemporaryDirectory() as tmp:
+            result = process_repository.download_github_files(tmp, "owner", "repo", "main", None)
+
+        self.assertIsNone(result)
+        self.assertEqual(mock_rlg.call_count, 1, "Should stop after first None response")
+
+
+class TestRateLimitGetHeadRequest(unittest.TestCase):
+    """
+    Tests for the socket-leak fix in rate_limit_get (issue #909 follow-up).
+
+    The previous implementation used requests.get(..., stream=True) to inspect
+    the Content-Length header before downloading.  A streaming GET opens a full
+    TCP connection whose socket is never released if the stream body is never
+    read and the response is never closed.  The fix uses requests.head() instead,
+    which retrieves headers only and whose connection is explicitly closed.
+    """
+
+    @patch("somef.process_repository.requests.get")
+    @patch("somef.process_repository.requests.head")
+    def test_head_used_instead_of_streaming_get(self, mock_head, mock_get):
+        """rate_limit_get must call requests.head() (not streaming GET) for size check."""
+        head_resp = MagicMock()
+        head_resp.headers = {"Content-Length": "1024"}
+        head_resp.close = MagicMock()
+        mock_head.return_value = head_resp
+
+        get_resp = MagicMock()
+        get_resp.status_code = 200
+        get_resp.headers = {}
+        # Simulate a small non-streaming response
+        get_resp.iter_content = MagicMock(return_value=iter([b"data"]))
+        mock_get.return_value = get_resp
+
+        process_repository.rate_limit_get(
+            "https://github.com/owner/repo/archive/main.zip"
+        )
+
+        mock_head.assert_called_once()
+        head_resp.close.assert_called_once()
+
+    @patch("somef.process_repository.requests.get")
+    @patch("somef.process_repository.requests.head")
+    def test_head_response_closed_on_size_exceeded(self, mock_head, mock_get):
+        """
+        The HEAD response must be closed even when the size check triggers an
+        early return — otherwise the connection stays open in the pool indefinitely.
+        """
+        oversized = (constants.SIZE_DOWNLOAD_LIMIT_MB + 1) * 1024 * 1024
+        head_resp = MagicMock()
+        head_resp.headers = {"Content-Length": str(oversized)}
+        head_resp.close = MagicMock()
+        mock_head.return_value = head_resp
+
+        result, _ = process_repository.rate_limit_get(
+            "https://github.com/owner/repo/archive/main.zip"
+        )
+
+        self.assertIsNone(result)
+        head_resp.close.assert_called_once()
+        mock_get.assert_not_called()  # full GET should never be issued
