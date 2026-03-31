@@ -57,7 +57,6 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=const
         try:
             # head_response = requests.get(url, stream=True, allow_redirects=True, **kwargs)
             # Use a proper HEAD request to read only the response headers.
-            # Previously this used requests.get(..., stream=True) which opens a full
             # TCP connection and starts the response stream but never closes it —
             # leaking a socket for every archive we inspect.  HEAD is the correct
             # tool here: it retrieves headers without downloading the body.
