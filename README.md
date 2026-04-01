@@ -35,7 +35,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Contact**: Contact person responsible for maintaining a software component
 - **Continuous integration**: Link to continuous integration service(s)
 - **Contribution guidelines**: Text indicating how to contribute to this code repository
-- **Contributors**: Contributors to a software component. Note: Due to the potentially large number of contributors, information is extracted directly from the repository file.
+- **Contributors**: Contributors to a software component. Note: Contributor metadata is exported from metadata files (e.g., CodeMeta, CONTRIBUTORS, etc.) not from git logs.
 - **Creation date**: Date when the repository was created
 - **Copyright holder**: Entity or individual owning the rights to the software. The year is also extracted, if available.
 - **Date updated**: Date of last release.
