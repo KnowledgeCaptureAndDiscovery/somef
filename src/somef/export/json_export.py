@@ -581,8 +581,10 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         if runtimes:
             codemeta_output[constants.CAT_CODEMETA_RUNTIMEPLATFORM] = ", ".join(runtimes)
 
-    # if "contributors" in repo_data:
-    #     codemeta_output["contributor"] = data_path(["contributors", "excerpt"])
+    if constants.CAT_CONTRIBUTORS in repo_data:
+        raw_contributors = repo_data[constants.CAT_CONTRIBUTORS]
+        codemeta_output[constants.CAT_CODEMETA_CONTRIBUTOR] = parse_contributors(raw_contributors)
+
     # A person is expected, and we extract text at the moment
     if descriptions_text:
         codemeta_output[constants.CAT_CODEMETA_DESCRIPTION] = descriptions_text
@@ -684,6 +686,74 @@ def map_requirement_type(t):
     # default
     return constants.SCHEMA_SOFTWARE_APPLICATION
 
+def parse_contributors(raw):
+    contributors = []
+    seen = set()
+
+    for entry in raw:
+        result = entry.get("result", {})
+        rtype = result.get("type")
+        name = result.get("value")
+
+        if not name:
+            continue
+
+        if rtype == "Agent":
+
+            if name not in seen:
+
+                if re.search(constants.REGEXP_LTD_INC, name, re.IGNORECASE):
+                    type_contributor = "Organization"
+                else:
+                    type_contributor = "Person"
+
+                contributor = {
+                    "@type": type_contributor,
+                    "name": name
+                }
+                if "given_name" in result:
+                    contributor["givenName"] = result["given_name"]
+
+                if "last_name" in result:
+                    contributor["familyName"] = result["last_name"]
+
+                if "email" in result:
+                    contributor["email"] = result["email"]
+
+                if "identifier" in result:
+                    contributor["@id"] = result["identifier"]
+
+                contributors.append(contributor)
+                seen.add(name)
+
+        if rtype == "File_dump":
+            for line in result.get("value", "").splitlines():
+                line = line.strip()
+
+                if (not line or line.startswith(("#", "##", "|")) or "[" in line):
+                    continue
+
+                # avoid sentences
+                if len(line.split()) > 4: 
+                    continue
+
+                if line in seen:
+                    continue
+
+                if re.search(constants.REGEXP_LTD_INC, line, re.IGNORECASE):
+                    type_contributor = "Organization"
+                else:
+                    type_contributor = "Person"
+
+                contributors.append({
+                    "@type": type_contributor,
+                    "name": line
+                })
+
+                seen.add(line)
+
+
+    return contributors
 
 
 """

@@ -234,6 +234,82 @@ def parse_programming_language(language_data):
 
     return None
 
+def parse_contributors(contributors_data):
+    """
+    Parse contributors from codemeta.json
+
+    Parameters
+    ----------
+    contributors_data: list, dict
+        Contributor data from codemeta.json
+
+    Returns
+    -------
+    list
+        List of contributor dictionaries
+    """
+    contributors_list = []
+
+    if isinstance(contributors_data, dict):
+        contributors_data = [contributors_data]
+
+    if not isinstance(contributors_data, list):
+        return contributors_list
+
+    for contributor in contributors_data:
+
+        if isinstance(contributor, dict):
+
+            given = contributor.get("givenName")
+            family = contributor.get("familyName")
+            name = contributor.get("name")
+
+            if given and family:
+                full_name = f"{given} {family}"
+            elif name:
+                full_name = name
+            else:
+                continue
+
+            contributor_info = {
+                "value": full_name,
+                "name": full_name,
+                "type": constants.AGENT
+            }
+
+            if given:
+                contributor_info["given_name"] = given
+
+            if family:
+                contributor_info["last_name"] = family
+
+            if "email" in contributor:
+                contributor_info["email"] = contributor["email"]
+
+            affil = contributor.get("affiliation")
+            if affil:
+                if isinstance(affil, dict) and affil.get("name"):
+                    contributor_info["affiliation"] = affil["name"]
+                elif isinstance(affil, str):
+                    contributor_info["affiliation"] = affil
+
+            identifier = contributor.get("identifier") or contributor.get("@id")
+            if identifier:
+                contributor_info["identifier"] = identifier
+
+            contributors_list.append(contributor_info)
+
+        elif isinstance(contributor, str):
+            name = contributor.strip()
+            if name:
+                contributors_list.append({
+                    "value": name,
+                    "type": constants.AGENT
+                })
+
+    return contributors_list
+
+
 def parse_codemeta_json_file(file_path, metadata_result: Result, source):
     """
 
@@ -289,6 +365,17 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                     constants.TECHNIQUE_CODE_CONFIG_PARSER,
                     source
                 )
+
+            if "contributor" in data:
+                contributors = parse_contributors(data["contributor"])
+                for contributor in contributors:
+                    metadata_result.add_result(
+                        constants.CAT_CONTRIBUTORS,
+                        contributor,
+                        1,
+                        constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                        source
+                    )
 
             if "issueTracker" in data:
                 metadata_result.add_result(
@@ -570,7 +657,7 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                             if author_name:
                                 author_info = {
                                     "value": author_name,
-                                    "type": constants.STRING
+                                    "type": constants.AGENT
                                 }
 
                                 if "email" in author:
@@ -604,7 +691,7 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                     if author_name:
                         author_info = {
                             "value": author_name,
-                            "type": constants.STRING
+                            "type": constants.AGENT
                         }
 
                         if "email" in author:

@@ -15,7 +15,7 @@ CAT_IDENTIFIER: 10.5281/zenodo.7638833 # Passed
 CAT_DESCRIPTION: An astronomical HiPS visualizer in the browser. # Passed
 CAT_AUTHORS: # Passed
   value: Matthieu Baumann
-  type: String
+  type: Agent
   email: matthieu.baumann@unistra.fr
   affiliation: "Universit\u00e9 de Strasbourg, CNRS, Observatoire astronomique de Strasbourg, UMR 7550, F-67000 Strasbourg, France"
   identifier: "https://orcid.org/0000-0002-7123-773X"
