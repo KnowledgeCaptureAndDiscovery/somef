@@ -618,6 +618,55 @@ class TestCodemetaExport(unittest.TestCase):
 
         os.remove(test_data_path + "test_issue_886_apache_code.json")
 
+
+
+    def test_issue_936_contributors(self):
+        """Checks whether contributors are correctly extracted from the repository"""
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "codemeta_repo",
+                            doc_src=None,
+                            in_file=None,
+                            output=None,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=test_data_path + "test_issue_936_contributors.json",
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        text_file = open(test_data_path + "test_issue_936_contributors.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+
+        contributors = json_content[constants.CAT_CODEMETA_CONTRIBUTOR]
+        print(contributors)
+        self.assertTrue(any(
+            c["name"] == "Abby Cabunoc Mayes" and
+            c.get("givenName") == "Abby Cabunoc"
+            for c in contributors
+        ),
+        "Expected contributor Abby Cabunoc Mayes with givenName='Abby Cabunoc' not found")
+
+        self.assertTrue(any(
+            c["name"] == "Arfon Smith" and
+            c.get("@id") == "http://orcid.org/0000-0002-3957-2474"
+            for c in contributors
+        ),
+        "Expected contributor Arfon Smith with @id='http://orcid.org/0000-0002-3957-2474' not found")
+
+        self.assertTrue(any(
+            c["name"] == "Dan Katz" and
+            c.get("email") == "dskatz@illinois.edu"
+            for c in contributors
+        ),
+        "Expected contributor Dan Katz with email='dskatz@illinois.edu' not found")
+
+        os.remove(test_data_path + "test_issue_936_contributors.json")
+        
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""
