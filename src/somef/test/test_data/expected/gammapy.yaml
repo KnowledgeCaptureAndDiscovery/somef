@@ -28,4 +28,4 @@ CAT_REQUIREMENTS: # Passed
 
 CAT_AUTHORS: # Passed
     value: Fabio Acero
-    type: String    
+    type: Agent   

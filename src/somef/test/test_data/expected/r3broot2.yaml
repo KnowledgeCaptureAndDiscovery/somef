@@ -36,7 +36,7 @@ CAT_REQUIREMENTS: # Passed
   version: Null
 CAT_AUTHORS: # Passed
   value: "Jose Luis Rodr\u00edguez-S\u00e1nchez"
-  type: String
+  type: Agent
   email: j.l.rodriguez.sanchez@udc.es
   affiliation: "CITENI, Industrial Campus of Ferrol, University of Coruña, 15403 Ferrol, Spain" # Passed
   identifier: https://orcid.org/0000-0002-4702-5294

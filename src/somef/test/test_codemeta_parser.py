@@ -17,6 +17,8 @@ class TestCodemetaParser(unittest.TestCase):
         """Load expected YAML for a given repo."""
         yaml_path = EXPECT_DIR / f"{repo_name}.yaml"
         if not yaml_path.exists():
+            if repo_name == "codemeta_repo":
+                return {}
             self.skipTest(f"No expected YAML for repository '{repo_name}'")
         with open(yaml_path, "r", encoding="utf-8") as f:
             return yaml.safe_load(f)
@@ -61,6 +63,35 @@ class TestCodemetaParser(unittest.TestCase):
                             first.get("value"), expected_val,
                             f"[{repo_folder}] Mismatch in {cat_name}"
                         )
+
+
+    def test_parse_contributors(self):
+        codemeta_path = REPOS_DIR / "codemeta_repo" / "codemeta.json"
+        result = Result()
+
+        metadata_result = parse_codemeta_json_file(codemeta_path, result, "https://example.org/codemeta.json")
+        
+        self.assertIn(constants.CAT_CONTRIBUTORS, metadata_result.results)
+        contributors = result.results[constants.CAT_CONTRIBUTORS]
+ 
+        self.assertTrue(any(
+            c["result"]["name"] == "Abby Cabunoc Mayes" and
+            c["result"].get("given_name") == "Abby Cabunoc"
+            for c in contributors
+        ))
+
+        self.assertTrue(any(
+            c["result"]["name"] == "Arfon Smith" and
+            c["result"].get("identifier") == "http://orcid.org/0000-0002-3957-2474"
+            for c in contributors
+        ))
+
+        self.assertTrue(any(
+            c["result"]["name"] == "Dan Katz" and
+            c["result"].get("email") == "dskatz@illinois.edu"
+            for c in contributors
+        ))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -15,6 +15,12 @@ These fields are defined in the [Codemeta specification](https://github.com/code
 | citation - doi                   |   citation[i].result.doi       |     referencePublication.identifier   | 
 | code_repository           |   code_repository[i].result.value   |     codeRepository           |
 | continuous_integration    |   continuous_integration[i].result.value |     contIntegration          |
+| contributors - value   |   contributors[i].result.value |     contributor.givenName + contributor.familyName or just name if organization       |
+| contributors - name  |   contributors[i].result.value |     contributor.givenName + contributor.familyName or just name if organization       |
+| contributors - last_name  |   contributors[i].result.value |     contributor.familyName         |
+| contributors - given_name  |   contributors[i].result.value |     contributor.givenName         |
+| contributors - identifier  |   contributors[i].result.value |     contributor.@id          |
+| contributors - email   |   contributors[i].result.value |     contributor.email         |
 | date_created              |   date_created[i].result.value  |     dateCreated              |
 | date_updated              |   date_updated[i].result.value   |     dateModified             |
 | date_published            |   date_published[i].result .value   |     datePublished  |
