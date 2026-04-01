@@ -17,6 +17,8 @@ class TestCodemetaParser(unittest.TestCase):
         """Load expected YAML for a given repo."""
         yaml_path = EXPECT_DIR / f"{repo_name}.yaml"
         if not yaml_path.exists():
+            if repo_name == "codemeta_repo":
+                return {}
             self.skipTest(f"No expected YAML for repository '{repo_name}'")
         with open(yaml_path, "r", encoding="utf-8") as f:
             return yaml.safe_load(f)
