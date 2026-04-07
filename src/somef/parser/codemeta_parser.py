@@ -260,9 +260,9 @@ def parse_contributors(contributors_data):
 
         if isinstance(contributor, dict):
 
-            given = contributor.get("givenName")
-            family = contributor.get("familyName")
-            name = contributor.get("name")
+            given = contributor.get(constants.PROP_CODEMETA_GIVENAME)
+            family = contributor.get(constants.PROP_CODEMETA_FAMILYNAME)
+            name = contributor.get(constants.PROP_NAME)
 
             if given and family:
                 full_name = f"{given} {family}"
@@ -272,30 +272,30 @@ def parse_contributors(contributors_data):
                 continue
 
             contributor_info = {
-                "value": full_name,
-                "name": full_name,
-                "type": constants.AGENT
+                constants.PROP_VALUE: full_name,
+                constants.PROP_NAME: full_name,
+                constants.PROP_TYPE: constants.AGENT
             }
 
             if given:
-                contributor_info["given_name"] = given
+                contributor_info[constants.PROP_GIVEN_NAME] = given
 
             if family:
-                contributor_info["last_name"] = family
+                contributor_info[constants.PROP_LAST_NAME] = family
 
             if "email" in contributor:
-                contributor_info["email"] = contributor["email"]
+                contributor_info[constants.PROP_EMAIL] = contributor[constants.PROP_EMAIL]
 
-            affil = contributor.get("affiliation")
+            affil = contributor.get(constants.PROP_AFFILIATION)
             if affil:
-                if isinstance(affil, dict) and affil.get("name"):
-                    contributor_info["affiliation"] = affil["name"]
+                if isinstance(affil, dict) and affil.get(constants.PROP_NAME):
+                    contributor_info[constants.PROP_AFFILIATION] = affil[constants.PROP_NAME]
                 elif isinstance(affil, str):
-                    contributor_info["affiliation"] = affil
+                    contributor_info[constants.PROP_AFFILIATION] = affil
 
-            identifier = contributor.get("identifier") or contributor.get("@id")
+            identifier = contributor.get(constants.PROP_IDENTIFIER) or contributor.get(constants.PROP_CODEMETA_ID)
             if identifier:
-                contributor_info["identifier"] = identifier
+                contributor_info[constants.PROP_IDENTIFIER] = identifier
 
             contributors_list.append(contributor_info)
 
@@ -303,8 +303,8 @@ def parse_contributors(contributors_data):
             name = contributor.strip()
             if name:
                 contributors_list.append({
-                    "value": name,
-                    "type": constants.AGENT
+                    constants.PROP_VALUE: name,
+                    constants.PROP_TYPE: constants.AGENT
                 })
 
     return contributors_list

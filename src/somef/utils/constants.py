@@ -229,8 +229,10 @@ PROP_DATE_UPDATED = "date_updated"
 PROP_DEPENDENCY_TYPE = "dependency_type"
 PROP_DEPENDENCY_RESOLVER = "dependency_resolver"
 PROP_EMAIL = "email"
+PROP_GIVEN_NAME = "given_name"
 PROP_HTML_URL = "html_url"
 PROP_IDENTIFIER = "identifier"
+PROP_LAST_NAME = "last_name"
 PROP_NAME = "name"
 PROP_ORIGINAL_HEADER = "original_header"
 PROP_PARENT_HEADER = "parent_header"
@@ -450,6 +452,12 @@ CAT_CODEMETA_SOFTWAREREQUIREMENTS = "softwareRequirements"
 CAT_CODEMETA_SOFTWAREVERSION = "softwareVersion"
 CAT_CODEMETA_URL = "url"
 
+PROP_CODEMETA_GIVENAME = "givenName"
+PROP_CODEMETA_FAMILYNAME = "familyName"
+PROP_CODEMETA_ID= "@id"
+PROP_CODEMETA_TYPE = "@type"
+TYPE_CONTRIBUTOR_ORGANIZATION = "Organization"
+TYPE_CONTRIBUTOR_PERSON = "Person"
 
 # DOCKER labels maintainer
 # REGEXP_MAINTAINER_LABEL_OCI = r'^\s*LABEL\s+org\.opencontainers\.image\.authors\s*=\s*["\']?(.+?)["\']?\s*$'

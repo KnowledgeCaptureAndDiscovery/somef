@@ -153,6 +153,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         year = repo_data[constants.CAT_COPYRIGHT][0][constants.PROP_RESULT].get(constants.PROP_YEAR)
         if holder:
             codemeta_output[constants.CAT_CODEMETA_COPYRIGHTHOLDER] = holder
+
         if year:
             codemeta_output[constants.CAT_CODEMETA_COPYRIGHTYEAR] = year    
     if constants.CAT_DOWNLOAD_URL in repo_data:
@@ -162,7 +163,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
     if constants.CAT_LOGO in repo_data:
         codemeta_output[constants.CAT_CODEMETA_LOGO] = repo_data[constants.CAT_LOGO][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_KEYWORDS in repo_data:
-        # codemeta_output[constants.CAT_CODEMETA_KEYWORDS] = repo_data[constants.CAT_KEYWORDS][0][constants.PROP_RESULT][constants.PROP_VALUE]
         codemeta_output[constants.CAT_CODEMETA_KEYWORDS] = []
         for key in repo_data[constants.CAT_KEYWORDS]:
             key_value = key[constants.PROP_RESULT][constants.PROP_VALUE]
@@ -703,25 +703,26 @@ def parse_contributors(raw):
             if name not in seen:
 
                 if re.search(constants.REGEXP_LTD_INC, name, re.IGNORECASE):
-                    type_contributor = "Organization"
+                    type_contributor = constants.TYPE_CONTRIBUTOR_ORGANIZATION
                 else:
-                    type_contributor = "Person"
+                    type_contributor = constants.TYPE_CONTRIBUTOR_PERSON
 
                 contributor = {
-                    "@type": type_contributor,
-                    "name": name
+                    constants.PROP_CODEMETA_TYPE: type_contributor,
+                    constants.PROP_NAME: name
                 }
+
                 if "given_name" in result:
-                    contributor["givenName"] = result["given_name"]
+                    contributor[constants.PROP_CODEMETA_GIVENAME] = result["given_name"]
 
                 if "last_name" in result:
-                    contributor["familyName"] = result["last_name"]
+                    contributor[constants.PROP_CODEMETA_FAMILYNAME] = result["last_name"]
 
                 if "email" in result:
-                    contributor["email"] = result["email"]
+                    contributor[constants.PROP_EMAIL] = result["email"]
 
                 if "identifier" in result:
-                    contributor["@id"] = result["identifier"]
+                    contributor[constants.PROP_CODEMETA_ID] = result["identifier"]
 
                 contributors.append(contributor)
                 seen.add(name)
@@ -741,13 +742,13 @@ def parse_contributors(raw):
                     continue
 
                 if re.search(constants.REGEXP_LTD_INC, line, re.IGNORECASE):
-                    type_contributor = "Organization"
+                    type_contributor = constants.TYPE_CONTRIBUTOR_ORGANIZATION
                 else:
-                    type_contributor = "Person"
+                    type_contributor = constants.TYPE_CONTRIBUTOR_PERSON
 
                 contributors.append({
-                    "@type": type_contributor,
-                    "name": line
+                    constants.PROP_CODEMETA_TYPE: type_contributor,
+                    constants.PROP_NAME: line
                 })
 
                 seen.add(line)
