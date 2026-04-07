@@ -611,6 +611,7 @@ class TestCodemetaExport(unittest.TestCase):
         json_content = json.loads(data)
 
         copyright_holder = json_content[constants.CAT_CODEMETA_COPYRIGHTHOLDER]
+        print(copyright_holder)
         copyright_year = json_content[constants.CAT_CODEMETA_COPYRIGHTYEAR]
     
         assert copyright_holder == "Daniel Garijo, Information Sciences Institute, USC."

@@ -267,6 +267,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                         filename.lower() == "pyproject.toml" or filename.lower() == "setup.py" or filename.endswith(".gemspec") or \
                         filename.lower() == "requirements.txt" or filename.lower() == "bower.json" or filename == "DESCRIPTION" or \
                         (filename.lower() == "environment.yml" or filename.lower() == "environment.yaml") or \
+                        (filename.lower() == ".zenodo.json") or \
                         (filename.lower() == "cargo.toml" and repo_relative_path == ".") or (filename.lower() == "composer.json" and repo_relative_path == ".") or \
                         (filename == "Project.toml" or (filename.lower()== "publiccode.yml" or filename.lower()== "publiccode.yaml") and repo_relative_path == "."):
                         if filename.lower() in parsed_build_files and repo_relative_path != ".":
@@ -309,9 +310,9 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                         if filename.lower() == "publiccode.yml" or filename.lower() == "publiccode.yaml":
                             metadata_result = parse_publiccode_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "environment.yml" or filename.lower() == "environment.yaml":
-                            print("Processing conda environment file...")
                             metadata_result = parse_conda_environment_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
-
+                        # if filename.lower() == ".zenodo":
+                        #     metadata_result = parse_zenodo_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         parsed_build_files.add(filename.lower())
                           
                 # if repo_type == constants.RepositoryType.GITLAB: 
@@ -567,6 +568,8 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 yaml_content = yaml.safe_load(file_text)
                 preferred_citation = yaml_content.get("preferred-citation", {})
                 doi = yaml_content.get("doi") or preferred_citation.get("doi")
+                license_citation = yaml_content.get(constants.PROP_LICENSE)
+                version_citation = yaml_content.get(constants.PROP_VERSION)
                 identifiers = yaml_content.get("identifiers", [])
                 url_citation = preferred_citation.get("url") or yaml_content.get("url")
 
@@ -576,7 +579,7 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 identifier_url = next((id["value"] for id in identifiers if id["type"] == "url"), None)
                 identifier_doi = next((id["value"] for id in identifiers if id["type"] == "doi"), None)
 
-                title = yaml_content.get("title") or preferred_citation.get("title", None)
+                title = yaml_content.get(constants.PROP_TITLE) or preferred_citation.get(constants.PROP_TITLE, None)
                 authors = yaml_content.get("authors", [])
 
                 if identifier_doi:
@@ -594,15 +597,15 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 for author in authors:
                     family_name = author.get("family-names")
                     given_name = author.get("given-names")
-                    orcid = author.get("orcid")
-                    name = author.get("name")
+                    orcid = author.get("orcid") 
+                    name = author.get(constants.PROP_NAME)
 
                     if family_name and given_name:
                         author_entry = {
-                            "type": "Agent",
-                            "name": f"{given_name} {family_name}",
-                            "family_name": family_name,
-                            "given_name": given_name
+                            constants.PROP_TYPE: "Agent",
+                            constants.PROP_NAME: f"{given_name} {family_name}",
+                            constants.PROP_FAMILY_NAME: family_name, 
+                            constants.PROP_GIVEN_NAME: given_name
                         }
                         if orcid:
                             if not orcid.startswith("http"):  # check if is a url
@@ -613,8 +616,8 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                         # it could be not enough acurate
 
                         author_entry = {
-                            "type": "Agent",
-                            "name": name
+                            constants.PROP_TYPE: "Agent",
+                            constants.PROP_NAME: name
                         }
                     
                     author_list.append({k: v for k, v in author_entry.items() if v is not None})
@@ -627,7 +630,10 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                     result[constants.PROP_URL] = final_url
                 if doi:
                     result[constants.PROP_DOI] = doi
-
+                if license_citation:
+                    result[constants.PROP_LICENSE] = license_citation
+                if version_citation:
+                    result[constants.PROP_VERSION] = version_citation
             if format_result != "":
                 result[constants.PROP_FORMAT] = format_result
 
