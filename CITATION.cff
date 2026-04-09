@@ -27,7 +27,7 @@ authors:
     given-names: Jenifer
   - family-names: Mendoza
     given-names: Juanje
-license: Apache-2.0
+license: MIT
 preferred-citation:
   authors:
     - family-names: Kelley
