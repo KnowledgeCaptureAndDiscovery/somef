@@ -308,6 +308,10 @@ A SCHOLARLY_ARTICLE has the following properties:
 | Property | Expected value | Definition |
 |---|---|---|
 | **title** | String | Title of reference or citation |
+| **authors** | List | List of authors with structured information (name, given_name, family_name) |
+| **journal** | String | Journal where the publication appeared |
+| **year** | Number | Year of publication |
+| **pages** | String | Page range of the publication |
 | **value** | String | Title of reference or citation |
 | **url** | String | Link to reference or citation |
 | **date_published** | String | date of publication reference or citation |

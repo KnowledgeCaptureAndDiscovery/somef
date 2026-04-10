@@ -486,25 +486,9 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
 
                     for pub in ref_publications:
                         pub_data = parse_referenced_publication(pub)
-                        if pub_data:
-                     
-                            result_dict = {
-                                "value": pub_data.get("title", ""),
-                                "title": pub_data.get("title", ""),
-                                "type": constants.SCHOLARLY_ARTICLE
-                            }
-
-                            if pub_data.get("url"):
-                                result_dict["url"] = pub_data.get("url")
-
-                            if pub_data.get("date_published"):
-                                result_dict["date_published"] = pub_data.get("date_published")
-
-                            if pub_data.get("identifier"):
-                                result_dict["doi"] = pub_data.get("identifier")
-
+                        result_dict = map_reference_publication(pub_data)
+                        if result_dict:
                             metadata_result.add_result(
-                                # constants.CAT_REF_PUBLICATION,
                                 constants.CAT_CITATION,
                                 result_dict,
                                 1,
@@ -514,24 +498,9 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                 elif isinstance(ref_publications, dict):
                 
                     pub_data = parse_referenced_publication(ref_publications)
-                    if pub_data:
-                        result_dict = {
-                            "value": pub_data.get("title", ""),
-                            "title": pub_data.get("title", ""),
-                            "type": constants.SCHOLARLY_ARTICLE
-                        }
-
-                        if pub_data.get("url"):
-                            result_dict["url"] = pub_data.get("url")
-
-                        if pub_data.get("date_published"):
-                            result_dict["date_published"] = pub_data.get("date_published")
-
-                        if pub_data.get("identifier"):
-                            result_dict["doi"] = pub_data.get("identifier")
-
+                    result_dict = map_reference_publication(pub_data)
+                    if result_dict:
                         metadata_result.add_result(
-                            # constants.CAT_REF_PUBLICATION,
                             constants.CAT_CITATION,
                             result_dict,
                             1,
@@ -540,7 +509,6 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                         )
                 else:
                     metadata_result.add_result(
-                        # constants.CAT_REF_PUBLICATION,
                         constants.CAT_CITATION,
                         {
                             "value": data["referencePublication"],
@@ -779,4 +747,64 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
         logging.error(f"Error parsing codemeta JSON file {file_path}: {str(e)}")
 
     return metadata_result
+
+def map_codemeta_author(author):
+    given = author.get("givenName")
+    family = author.get("familyName")
+    name = author.get("name")
+
+    if not name and (given or family):
+        name = f"{given or ''} {family or ''}".strip()
+
+    mapped = {
+        constants.PROP_TYPE: constants.AGENT,
+        constants.PROP_NAME: name,
+        constants.PROP_GIVEN_NAME: given,
+        constants.PROP_FAMILY_NAME: family
+    }
+
+    identifier = author.get("identifier") or author.get("@id")
+    if isinstance(identifier, str) and "orcid.org" in identifier:
+        mapped[constants.PROP_URL] = identifier
+
+    return {k: v for k, v in mapped.items() if v is not None}
+
+def map_reference_publication(pub_data):
+    if not pub_data:
+        return None
+
+    result = {
+        constants.PROP_VALUE: pub_data.get("title", ""),
+        constants.PROP_TITLE: pub_data.get("title", ""),
+        constants.PROP_TYPE: constants.SCHOLARLY_ARTICLE
+    }
+
+    if pub_data.get("url"):
+        result[constants.PROP_URL] = pub_data.get("url")
+
+    if pub_data.get("date_published"):
+        result[constants.PROP_DATE_PUBLISHED] = pub_data.get("date_published")
+
+    if pub_data.get("identifier"):
+        result[constants.PROP_DOI] = pub_data.get("identifier")
+
+    authors_raw = pub_data.get("author")
+
+    if authors_raw:
+        if isinstance(authors_raw, dict):
+            authors_iter = [authors_raw]
+        elif isinstance(authors_raw, list):
+            authors_iter = authors_raw
+        else:
+            authors_iter = []
+
+        mapped_authors = [
+            map_codemeta_author(a)
+            for a in authors_iter
+            if isinstance(a, dict)
+        ]
+
+        result["authors"] = mapped_authors
+
+    return result
 

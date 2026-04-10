@@ -156,7 +156,7 @@ class TestJSONExport(unittest.TestCase):
             "doi" in entry.get("result", {}) and
             "title" in entry.get("result", {})
             for entry in citation
-        ), "Citation.cff must have doi and title"
+        ), "Citation.cff must have doi and title in the result"
 
         # os.remove(test_data_path + "test_issue_629.json")
 
@@ -528,7 +528,7 @@ class TestJSONExport(unittest.TestCase):
             json_content = json.load(f)
 
         requirements = json_content.get(constants.CAT_REQUIREMENTS, [])
-        print(json.dumps(requirements, indent=2))
+        # print(json.dumps(requirements, indent=2))
 
         unified_reqs = [ r for r in requirements if "You will need Java 1.8" in r["result"].get("value", "") ]
         assert unified_reqs, "There should be at least one unified Java requirement entry" 
@@ -587,6 +587,59 @@ class TestJSONExport(unittest.TestCase):
         os.remove(test_data_path + "test_somef_unify.json")
 
     
+
+    def test_new_properties_citation_issue_935(self):
+        """
+        Checks that duplicated requirement entries extracted by different techniques
+        are unified into a single item, preserving all complementary information
+        (techniques, sources, and result fields).
+        """
+
+        output_path = test_data_path + 'test_new_properties_citation_issue_935.json'
+
+        somef_cli.run_cli(  threshold=0.8,
+                            local_repo=test_data_repositories + "somef_repo",
+                            doc_src=None,
+                            in_file=None,
+                            output=output_path,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+
+
+        with open(output_path, "r") as f:
+            json_content = json.load(f)
+
+        citations = json_content.get(constants.CAT_CITATION, [])
+
+        software_entry = next(
+            (cit for cit in citations if str(cit["result"].get("is_preferred_citation")) == "False"),
+            None
+        )
+        preferred_entry = next(
+            (cit for cit in citations if str(cit["result"].get("is_preferred_citation")) == "True"),
+            None
+        )
+
+        assert software_entry is not None, "Software citation (root) not found"
+        sw_result = software_entry["result"]
+        assert sw_result["title"] == 'SOMEF: Software metadata extraction framework'
+        assert sw_result["version"] == "0.1.0"
+        assert "doi" not in sw_result or sw_result.get("doi") is None # it is in preferred (referencePublication) but not in the root
+
+        assert preferred_entry is not None, "Preferred citation (article) not found"
+        pref_result = preferred_entry["result"]
+        assert pref_result["title"] == "A Framework for Creating Knowledge Graphs of Scientific Software Metadata"
+        assert pref_result["doi"] == "10.1162/qss_a_00167"
+        assert pref_result["journal"] == "Quantitative Science Studies"
+        assert "version" not in pref_result # it is in the root in citation but not in the preferred (referencePublication)
+
+        os.remove(test_data_path + "test_new_properties_citation_issue_935.json")
+
+
     @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
     def test_issue_gitlab_enrich_authors(self):
         """Tests if a gitlab repository with codeowners file gets enriched with the information of the users in the codeowners file.
