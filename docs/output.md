@@ -119,7 +119,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `usage`: Usage examples and considerations of a code repository.
 - `workflows`: URL and path to the computational workflow files present in the repository.
 - `homepage`: URL to the homepage of the software or organization.
-- `reference_publication`: Scholarly publications associated with the repository (e.g., articles, books). Each entry may include structured metadata such as title, authors, DOI, URL, journal, publication date, and pagination.
+- `reference_publication`: URL to the paper associated with the code repository.
 - `package_id`: Identifier extracted from packages. (e.g., `packages.json`)
 -  `funding`: Funding code for the related project.
 - `has_package_file`: Specifies what package file is present in the code repository.

@@ -46,6 +46,8 @@ class TestCodemetaParser(unittest.TestCase):
                 for cat_name, expected_val in expected.items():
                     cat_const = getattr(constants, cat_name)
                     actual_list = metadata_result.results.get(cat_const, [])
+                    # print(f"Actual list for {cat_name}: {actual_list}")
+
                     self.assertTrue(
                         actual_list,
                         f"[{repo_folder}] No results for {cat_name}"
@@ -91,6 +93,29 @@ class TestCodemetaParser(unittest.TestCase):
             c["result"].get("email") == "dskatz@illinois.edu"
             for c in contributors
         ))
+
+
+    def test_parse_reference_publications_authors_issue_957(self):
+        """
+        Test to ensure that authors in the citation category correctly use the 'given_name' and 
+        'family_name' properties instead of the old camelCase convention.
+        """
+        codemeta_path = REPOS_DIR / "widoco" / "codemeta.json"
+        result = Result()
+
+        metadata_result = parse_codemeta_json_file(codemeta_path, result, "https://example.org/codemeta.json")
+        
+        self.assertIn(constants.CAT_CITATION, metadata_result.results)
+        citations = result.results[constants.CAT_CITATION]
+        found = False
+
+        for cit in citations:
+            authors = cit["result"].get("authors", [])
+            if any(a.get("name") == "Daniel Garijo" and a.get("family_name") == "Garijo" and a.get("given_name") == "Daniel" for a in authors):
+                found = True
+                break
+        
+        self.assertTrue(found, "Author 'Daniel Garijo' with 'given_name' not found in citation authors")
 
 
 if __name__ == "__main__":

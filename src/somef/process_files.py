@@ -594,7 +594,7 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                         pref_result[constants.PROP_VALUE] = yaml.dump({"preferred-citation": pref}, default_flow_style=False)
                         # pref_result[constants.PROP_TYPE] = constants.FILE_DUMP
                         metadata_result.add_result(
-                            constants.CAT_REFERENCE_PUBLICATION, pref_result, 1,
+                            constants.CAT_CITATION, pref_result, 1,
                             constants.TECHNIQUE_FILE_EXPLORATION, url
                         )
 
@@ -731,7 +731,7 @@ def parse_cff_root(yaml_content, metadata_result, url):
     if identifiers:
         result[constants.PROP_IDENTIFIER] = identifiers
 
-    # result[constants.PROP_PREFERRED] = "False"
+    result[constants.PROP_PREFERRED_CITATION] = "False"
     result[constants.PROP_FORMAT] = "cff"
 
     return clean_nulls(result)
@@ -750,7 +750,7 @@ def parse_cff_preferred(pref):
     # cff_type = pref.get("type")
     # result[constants.PROP_TYPE] = cff_type if cff_type else constants.FILE_DUMP
 
-    # result[constants.PROP_PREFERRED] = "True"
+    result[constants.PROP_PREFERRED_CITATION] = "True"
     result[constants.PROP_FORMAT] = "cff"
 
     return clean_nulls(result)

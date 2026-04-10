@@ -614,14 +614,13 @@ class TestJSONExport(unittest.TestCase):
             json_content = json.load(f)
 
         citations = json_content.get(constants.CAT_CITATION, [])
-        referencePublications = json_content.get(constants.CAT_REFERENCE_PUBLICATION, [])
 
         software_entry = next(
-            (cit for cit in citations if cit["result"]["title"] == 'SOMEF: Software metadata extraction framework'),
+            (cit for cit in citations if str(cit["result"].get("is_preferred_citation")) == "False"),
             None
         )
         preferred_entry = next(
-            (ref for ref in referencePublications if ref["result"]["title"] == "A Framework for Creating Knowledge Graphs of Scientific Software Metadata"),
+            (cit for cit in citations if str(cit["result"].get("is_preferred_citation")) == "True"),
             None
         )
 

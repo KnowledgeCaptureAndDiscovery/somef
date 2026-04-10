@@ -32,15 +32,17 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
   - Affiliation: name of organization or affiliation
 - **Build file**: Build file(s) of the project. For example, files used to create a Docker image for the target software, package files, etc.
 - **Citation**: Preferred citation as the authors have stated in their readme file. SOMEF recognizes Bibtex, Citation File Format files and other means by which authors cite their papers (e.g., by in-text citation). 
-SOMEF now generates two separate entries: one for the software and another for the preferred citation which corresponds to the reference_publication category. This ensures metadata like DOI or version is correctly assigned to each entity.
+For CITATION.cff files, SOMEF now generates two separate entries: one for the software (is_preferred_citation: False) and another for the preferred citation (is_preferred_citation: True). This ensures metadata like DOI or version is correctly assigned to each entity.
 We aim to recognize the following properties:
   - Title: Title of the publication
   - Author: list of author names in the publication
   - URL: URL of the publication 
   - DOI: Digital object identifier of the publication
   - Date published
-  - License: Software license (if applicable)
   - Version: Software version (if applicable)
+  - Journal: Journal name where the paper was published
+  - Year: Year of publication
+  - Pages: Page range in the journal
 - **Code of conduct**: Link to the code of conduct of the project
 - **Code repository**: Link to the GitHub/GitLab repository used for the extraction
 - **Contact**: Contact person responsible for maintaining a software component
@@ -66,7 +68,7 @@ We aim to recognize the following properties:
 - **Invocation**: Execution command(s) needed to run a scientific software component
 - **Issue tracker**: Link where to open issues for the target repository
 - **Keywords**: set of terms used to commonly identify a software component
-- **License**: License and usage terms of a software component
+- **License**: License and usage terms of a software component. Now we also extract license from citation.cff.
 - **Logo**: Main logo used to represent the target software component
 - **Name**: Name identifying a software component
 - **Ontologies**: URL and path to the ontology files present in the repository
@@ -74,16 +76,6 @@ We aim to recognize the following properties:
 - **Package distribution**: Links to package sites like pypi in case the repository has a package available.
 - **Package files**: Links to package files used to wrap the project in a package.
 - **Programming languages**: Languages used in the repository
-- **Reference publication**: Scholarly works (e.g., articles, books) associated with the software that should be cited, either instead of or in addition to the software itself. These references can be extracted from multiple sources, such as CITATION.cff files (e.g., `preferred-citation`), BibTeX entries, or citation text in documentation (e.g., README files).
-We aim to recognize the following properties across these categories:
-  - Title: Title of the publication
-  - Author: list of author names in the publication
-  - URL: URL of the publication 
-  - DOI: Digital object identifier of the publication
-  - Date published
-  - Journal: Journal name where the paper was published
-  - Year: Year of publication
-  - Pages: Page range in the journal
 - **Related papers**: URL to possible related papers within the repository stated within the readme file (from Arxiv)
 - **Releases** (GitHub and Gitlab): Pointer to the available versions of a software component. For each release, somef will track the following properties:
   - Assets: files attached to the release

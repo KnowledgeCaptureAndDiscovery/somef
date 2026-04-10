@@ -391,20 +391,17 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
             #     codemeta_output[constants.CAT_CODEMETA_AUTHOR].append(author_l)
 
 
-    if constants.CAT_REFERENCE_PUBLICATION in repo_data or constants.CAT_CITATION in repo_data:
+    if constants.CAT_CITATION in repo_data:
         codemeta_output[constants.CAT_CODEMETA_REFERENCEPUBLICATION] = []
         author_orcids = {}
         all_reference_publications = []
 
-        if constants.CAT_REFERENCE_PUBLICATION in repo_data:
-            publications_source = repo_data[constants.CAT_REFERENCE_PUBLICATION]
-        elif constants.CAT_CITATION in repo_data:
+        if constants.CAT_CITATION in repo_data:
             publications_source = repo_data[constants.CAT_CITATION]
         else:
             publications_source = []
 
         if publications_source:
-            # for cit in repo_data[constants.CAT_REFERENCE_PUBLICATION]:
             for cit in publications_source:
                 scholarlyArticle = {"@type": "ScholarlyArticle"} 
 
@@ -511,8 +508,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                         key = (family_name.lower(), given_name.lower()) if given_name else None
 
                         if key and key in author_orcids:
-                            author["@id"] = author_orcids[key]  
-        
+                            author["@id"] = author_orcids[key] 
+
             codemeta_output[constants.CAT_CODEMETA_REFERENCEPUBLICATION] = deduplicate_publications(all_reference_publications)
 
     if constants.CAT_STATUS in repo_data:
