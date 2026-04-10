@@ -613,21 +613,30 @@ class TestJSONExport(unittest.TestCase):
         with open(output_path, "r") as f:
             json_content = json.load(f)
 
-        citation = json_content.get(constants.CAT_CITATION, [])
+        citations = json_content.get(constants.CAT_CITATION, [])
+        referencePublications = json_content.get(constants.CAT_REFERENCE_PUBLICATION, [])
 
-        cff_entry = next(
-            (entry for entry in citation if entry["result"].get("format") == "cff"),
+        software_entry = next(
+            (cit for cit in citations if cit["result"]["title"] == 'SOMEF: Software metadata extraction framework'),
+            None
+        )
+        preferred_entry = next(
+            (ref for ref in referencePublications if ref["result"]["title"] == "A Framework for Creating Knowledge Graphs of Scientific Software Metadata"),
             None
         )
 
-        assert cff_entry is not None
+        assert software_entry is not None, "Software citation (root) not found"
+        sw_result = software_entry["result"]
+        assert sw_result["title"] == 'SOMEF: Software metadata extraction framework'
+        assert sw_result["version"] == "0.1.0"
+        assert "doi" not in sw_result or sw_result.get("doi") is None # it is in preferred (referencePublication) but not in the root
 
-        result = cff_entry["result"]
-
-        assert "doi" in result
-        assert "title" in result
-        assert result["license"] == "Apache-2.0"
-        assert result["version"] == "0.1.0"
+        assert preferred_entry is not None, "Preferred citation (article) not found"
+        pref_result = preferred_entry["result"]
+        assert pref_result["title"] == "A Framework for Creating Knowledge Graphs of Scientific Software Metadata"
+        assert pref_result["doi"] == "10.1162/qss_a_00167"
+        assert pref_result["journal"] == "Quantitative Science Studies"
+        assert "version" not in pref_result # it is in the root in citation but not in the preferred (referencePublication)
 
         os.remove(test_data_path + "test_new_properties_citation_issue_935.json")
 

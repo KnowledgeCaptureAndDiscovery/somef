@@ -193,6 +193,7 @@ class TestProcessRepository(unittest.TestCase):
         # after solving issue refernce_publication it must be 2 citations in results citation. 
         # assert len(github_data.results[constants.CAT_CITATION]) == 1
         assert len(github_data.results[constants.CAT_CITATION]) == 2
+        assert len(github_data.results[constants.CAT_REFERENCE_PUBLICATION]) == 1
 
     def test_issue_530(self):
         """
@@ -204,8 +205,10 @@ class TestProcessRepository(unittest.TestCase):
                                                                    constants.RepositoryType.LOCAL)
         licenses = github_data.results[constants.CAT_LICENSE]
         citation = github_data.results[constants.CAT_CITATION]
+    
         # there are two licenses because the codemeta parser obtains one
-        assert len(licenses) == 2 and "LICENSE" or "codemeta" in licenses[0]["source"] and \
+        # after extracting the license from citation.cff now we should have 3
+        assert len(licenses) == 3 and "LICENSE" or "codemeta" in licenses[0]["source"] and \
             len(citation) == 1 and "example_onto" not in citation[0]["source"]
 
     def test_issue_611(self):
@@ -333,7 +336,6 @@ class TestProcessRepository(unittest.TestCase):
         assert os.path.exists(test_data_path + "test_905_tag.json")
 
         version = json_content.get(constants.CAT_VERSION, [])
-        print(version)
         source = version[0].get("source", "")
         assert "Widoco/v1.4.25" in source, f"The downloaded tag does not match the requested one. Source: {source}"
 
