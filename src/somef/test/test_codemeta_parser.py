@@ -100,7 +100,7 @@ class TestCodemetaParser(unittest.TestCase):
         Test to ensure that authors in the citation category correctly use the 'given_name' and 
         'family_name' properties instead of the old camelCase convention.
         """
-        codemeta_path = REPOS_DIR / "widoco" / "codemeta.json"
+        codemeta_path = REPOS_DIR / "Widoco" / "codemeta.json"
         result = Result()
 
         metadata_result = parse_codemeta_json_file(codemeta_path, result, "https://example.org/codemeta.json")
