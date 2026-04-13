@@ -1013,24 +1013,33 @@ def detect_license_spdx(license_text, type):
 
     for license_name, license_info in constants.LICENSES_DICT.items():
         if re.search(license_info["regex"], license_text, re.IGNORECASE):
+            spdx_id = license_info['spdx_id']
+            spdx_url = f"https://spdx.org/licenses/{spdx_id}"
             if type == 'JSON':
                 return {
                     "name": license_name,
                     "spdx_id": f"{license_info['spdx_id']}",
-                    "@id": f"https://spdx.org/licenses/{license_info['spdx_id']}"
+                    "@id": spdx_url,
+                    "url": spdx_url,       
+                    "identifier": spdx_url
                 }
             else:
                 return {
                     "name": license_name,
-                    "identifier": f"https://spdx.org/licenses/{license_info['spdx_id']}"
+                    "identifier": spdx_url,
+                    "spdx_id": spdx_id,
+                    "url": spdx_url
                 }
     for license_name, license_info in constants.LICENSES_DICT.items():
         spdx_id = license_info["spdx_id"]
         if re.search(rf'\b{re.escape(spdx_id)}\b', license_text, re.IGNORECASE):
+            spdx_url = f"https://spdx.org/licenses/{spdx_id}"
             return {
                 "name": license_name,
                 "spdx_id": spdx_id,
-                "@id": f"https://spdx.org/licenses/{spdx_id}"
+                "@id": spdx_url,
+                "identifier": spdx_url,
+                "url": spdx_url
             }
     return None
 

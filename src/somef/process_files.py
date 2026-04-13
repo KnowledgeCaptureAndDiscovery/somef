@@ -506,7 +506,9 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 if license_info:
                     result[constants.PROP_NAME] = license_info['name']
                     result[constants.PROP_SPDX_ID] = license_info['spdx_id']
-
+                    if '@id' in license_info:
+                        result[constants.PROP_URL] = license_info['@id']
+                        result[constants.PROP_IDENTIFIER] = license_info['@id']
 
                 # Extraction copyright holder from license text
                 matches_copyright = re.findall(constants.REGEXP_COPYRIGHT, license_text, flags=re.IGNORECASE)

@@ -63,9 +63,21 @@ def parse_license(license_data):
             spdx_id = identifier.split("spdx.org/licenses/")[-1].split("/")[0]
             license_info["spdx_id"] = spdx_id
     elif isinstance(license_data, str):
-        license_info["name"] = license_data
-        license_info["identifier"] = f"https://spdx.org/licenses/{license_data}"
-        license_info["spdx_id"] = license_data
+        # license_info["name"] = license_data
+        # license_info["identifier"] = f"https://spdx.org/licenses/{license_data}"
+        # license_info["spdx_id"] = license_data
+        license_str = license_data.strip()
+
+        if "spdx.org/licenses/" in license_str:
+            # Already a full SPDX URL
+            license_info["identifier"] = license_str
+            license_info["name"] = license_str.split("/")[-1]
+            license_info["spdx_id"] = license_info["name"]
+        else:
+            # we assume it's an spdx id like "MIT"
+            license_info["name"] = license_str
+            license_info["identifier"] = f"https://spdx.org/licenses/{license_str}"
+            license_info["spdx_id"] = license_str
     else:
         return None
     return license_info
@@ -680,10 +692,16 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                         )
 
             if "license" in data:
-                license_info = parse_license(data["license"])
+                license_raw = data["license"]
+                license_info = parse_license(license_raw)
                 if license_info:
+                    if isinstance(license_raw, str):
+                        val_lic = license_raw
+                    else:
+                        val_lic = license_info.get("name", "")
+
                     result_dict = {
-                        "value": license_info.get("name", ""),
+                        "value": val_lic,
                         "type": constants.LICENSE
                     }
 

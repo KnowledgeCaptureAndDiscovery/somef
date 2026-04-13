@@ -767,9 +767,52 @@ class TestJSONExport(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-
         copyright_entries = json_content[constants.CAT_COPYRIGHT] 
         copy = copyright_entries[0]["result"]
         assert copy["value"] == "Daniel Garijo, Information Sciences Institute, USC."
         assert copy["year"] == "2016"
         os.remove(test_data_path + "test_issue_886_apache.json")
+
+
+    def test_issue_955_license_consolidation(self):
+        """Checks whether licenses are correctly consolidated and enriched with SPDX metadata"""
+        output_path = test_data_path + "test_issue_955_license_consolidation.json"
+        
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "Widoco",
+                            doc_src=None,
+                            in_file=None,
+                            output=output_path,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        with open(output_path, "r") as text_file:
+            json_content = json.loads(text_file.read())
+        
+        assert constants.CAT_LICENSE in json_content
+        license_entries = json_content[constants.CAT_LICENSE]
+        
+        assert len(license_entries) == 1
+        
+        license_res = license_entries[0]["result"]
+        
+        assert license_res["value"] == "Apache-2.0"
+        assert license_res["spdx_id"] == "Apache-2.0"
+        assert license_res["name"] == "Apache License 2.0"
+        assert license_res["url"] == "https://spdx.org/licenses/Apache-2.0"
+        assert license_res["identifier"] == "https://spdx.org/licenses/Apache-2.0"
+        
+        assert isinstance(license_entries[0]["technique"], list)
+        assert "file_exploration" in license_entries[0]["technique"]
+        assert "code_parser" in license_entries[0]["technique"]
+        
+        assert isinstance(license_entries[0]["source"], list)
+        assert len(license_entries[0]["source"]) >= 2
+
+        os.remove(output_path)

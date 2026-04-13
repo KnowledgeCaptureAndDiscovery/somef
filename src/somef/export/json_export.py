@@ -859,16 +859,29 @@ def unify_results(repo_data: dict) -> dict:
             value = result.get(constants.PROP_VALUE)
             value_type = result.get(constants.PROP_TYPE)
 
-            canonical = canonicalize_value(value, value_type)
+            # --- SPECIAL LOGIC FOR LICENSES ---
+            if category == constants.CAT_LICENSE and result.get(constants.PROP_SPDX_ID):
+                # If we have SPDX, that is our unification key
+                key = f"LICENSE-{result[constants.PROP_SPDX_ID]}"
+            else:
+                # Normal behavior for the rest of the categories
+                canonical = canonicalize_value(value, value_type)
+                key = str(canonical)
+            # --------------------------------------------------
+            # canonical = canonicalize_value(value, value_type)
 
-            key = str(canonical)
+            # key = str(canonical)
             if key in seen:
                 existing = seen[key]
-
-                # If types match, merge normally
-                existing[constants.PROP_RESULT][constants.PROP_VALUE] = choose_more_general(
-                    existing[constants.PROP_RESULT][constants.PROP_VALUE], value
-                )
+                if category == constants.CAT_LICENSE:
+                    # prefer SPDX ID if available for licenses
+                    if result.get(constants.PROP_SPDX_ID):
+                        existing[constants.PROP_RESULT][constants.PROP_VALUE] = result[constants.PROP_SPDX_ID]
+                else:
+                    # If types match, merge normally
+                    existing[constants.PROP_RESULT][constants.PROP_VALUE] = choose_more_general(
+                        existing[constants.PROP_RESULT][constants.PROP_VALUE], value
+                    )
 
                 # merge other result fields because different techniques might have extracted different information 
                 # (e.g., email in authors extracted by file exploration or code parser.
