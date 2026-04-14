@@ -68,7 +68,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `acknowledgement`: Any text that the authors have prepared to acknnowledge the contribution from others, or project funding.
 - `application_domain`: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects). See all current recognized application domains [here](https://somef.readthedocs.io/en/latest/#myfootnote1).
 - `authors`: Person or organization responsible of the project. This property is also used to indicate the responsible entities of a publication associated with the code repository.
-- `citation`: Software citation (usually in `.bib` form) as the authors have stated in their readme file, or through a `CFF` file.
+- `citation`: Software citation (usually in .bib or .cff format). SOMEF extracts and structures the metadata from these files (including authors, titles, and DOIs) instead of just returning a raw string.
 - `code_of_conduct`: Link to the code of conduct file of the project
 - `code_repository`: Link to the source code (typically the repository where the readme can be found)
 - `contact`: Contact person responsible for maintaining a software component.
@@ -88,7 +88,9 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `forks_url`: Links to forks made of the project (GitHub only)
 - `full_name`: Name + owner (owner/name) (if available)
 - `full_title`: If the repository has a short name, we will attempt to extract the longer version of the repository name. For example, a repository may be called "Widoco", but the longer title is "Wizard for documenting ontologies".
+- `funding`: Funding code for the related project.
 - `has_build_file`: Build file to create a Docker image for the target software 
+- `has_package_file`: Specifies what package file is present in the code repository.
 - `has_script_file`: Snippets of code contained in the repository.
 - `homepage`: URL of the item.
 - `identifier`: Identifiers detected within a repository (e.g., Digital Object Identifier).
@@ -105,8 +107,10 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `owner`: Name of the user or organization in charge of the repository
 - `package_distribution`: Link to official package repositories where the software can be downloaded from (e.g., `pypi`).
 - `package_file`: Link to a package file used in the repository (e.g., `pyproject.toml`, `setup.py`).
+- `package_id`: Identifier extracted from packages. (e.g., `packages.json`)
 - `programming_languages`: Languages used in the repository.
 - `readme_url`: URL to the main README file in the repository.
+- `reference_publication`: URL to the paper associated with the code repository.
 - `related_papers`: URL to possible related papers within the repository stated within the readme file.
 - `releases`: Pointer to the available versions of a software component.
 - `repository_status`: Repository status as it is described in [repostatus.org](https://www.repostatus.org/).
@@ -118,11 +122,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `type`: Software type: Commandline Application, Notebook Application, Ontology, Scientific Workflow. Non-Software types: Static Website, Uncategorized
 - `usage`: Usage examples and considerations of a code repository.
 - `workflows`: URL and path to the computational workflow files present in the repository.
-- `homepage`: URL to the homepage of the software or organization.
-- `reference_publication`: URL to the paper associated with the code repository.
-- `package_id`: Identifier extracted from packages. (e.g., `packages.json`)
--  `funding`: Funding code for the related project.
-- `has_package_file`: Specifies what package file is present in the code repository.
+
 
 The following table summarized the properties used to describe a `category`:
 
@@ -211,22 +211,24 @@ The table below summarizes all types and their corresponding properties:
 | **zipball_url** | Release | Url | URL to the zip file where to download a software release | -->
 
 
-The tables below summarizes all types and their corresponding properties-
+The tables below summarizes all types and their corresponding properties.
+The following object types are currently supported (aligned with Schema.org and CodeMeta vocabularies)
 
-An AGENT has the following properties:
+An Agent has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
+| **affiliation** | String | name of organization or affiliation  |
 | **email** | String | Email of an author |
 | **family_name** | String | Last name of an author |
 | **given_name** | String | First name of an author |
-| **name** | String | Name used to designate the person or organization|
-| **url** | Url | Uniform resource locator of the resource |
-| **affiliation** | String | name of organization or affiliation  |
 | **identifier** | String | id of an agent  |
-| **role** | String | role of agent  |
+| **name** | String | Name used to designate the person or organization|
+| **role** | String | The role of the agent in the development or maintenance of this software component  |
+| **url** | Url | Uniform resource locator of the resource |
 
-An ASSET has the following properties:
+
+An Asset has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
@@ -239,17 +241,17 @@ An ASSET has the following properties:
 | **url** |  Url | Uniform resource locator of the resource |
 
 
-
-A LICENSE has the following properties:
+A License has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
+| **identifier** |  String | id of licence |
 | **name** | String | Title or name of the license |
 | **spdx_id** | String | Spdx id corresponding to this license |
 | **url** |  Url | Uniform resource locator of the license |
-| **identifier** |  String | id of licence |
 
-A PROGRAMMING_LANGUAGE has the following properties:
+
+A Programming_language has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
@@ -257,7 +259,7 @@ A PROGRAMMING_LANGUAGE has the following properties:
 | **size** | Integer | File size content (bytes) of a code repository using a given programming language |
 
 
-A PUBLICATION has the following properties:
+A Publication has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
@@ -267,7 +269,7 @@ A PUBLICATION has the following properties:
 | **url** | Url | Uniform resource locator of the resource |
 
 
-A RELEASE has the following properties:
+A Release has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
@@ -285,49 +287,51 @@ A RELEASE has the following properties:
 | **zipball_url** | Url | URL to the zip file where to download a software release |
 
 
- A REQUIREMENT has the following properties:
+ A Requirement has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
-| **name** | String | Name of the requeriment |
-| **version** | String | named version of a requeriment |
 | **dependency_type** | String | type: dev, runtime... Indicates whether the dependency is required at runtime or only for development/testing | 
 | **dependency_resolver** | String | Identifies the ecosystem or package manager that resolves the dependency (e.g., npm, bower, pip, python, poetry, pdm, cargo, julia, maven, publicode).| 
+| **name** | String | Name of the requeriment |
+| **version** | String | named version of a requeriment |
 
-A RUNTIME_PLATFORM has the following properties:
+
+A Runtime_platform has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
 | **name** | String | Name of the runtime platform (e.g., Java) |
-  **version** | String | version of the runtime platform |
 | **value** | String | name and version of the runtime platform |
+| **version** | String | version of the runtime platform |
 
 
-A SCHOLARLY_ARTICLE has the following properties:
+A Scholarly_article has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
-| **title** | String | Title of reference or citation |
-| **authors** | List | List of authors with structured information (name, given_name, family_name) |
+| **authors** | List of Agent| List of authors responsible for the publication, providing structured metadata for each |
+| **date_published** | String | Date when the article or citation was officially published. |
+| **doi** | String | Digital Object Identifier (DOI) of the reference, usually returned as a full URL.|
 | **journal** | String | Journal where the publication appeared |
-| **year** | Number | Year of publication |
 | **pages** | String | Page range of the publication |
-| **value** | String | Title of reference or citation |
+| **title** | String | Title of reference or citation |
 | **url** | String | Link to reference or citation |
-| **date_published** | String | date of publication reference or citation |
-| **doi** | String | Identifier of reference|
+| **value** | String | Title of reference or citation |
+| **year** | Number | Year of publication |
 
 
-A SOFTWARE_APPLICATION has the following properties:
+A Software_application has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
+| **development_type** | String | runtime or dev |
 | **name** | String | Name of the software |
 | **value** | String | Name and version of the software |
 | **version** | String | version of software |
-| **development_type** | String | runtime or dev |
 
-A TEXT_EXCERPT has the following properties:
+
+A Text_excerpt has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
