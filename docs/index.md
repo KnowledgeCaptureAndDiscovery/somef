@@ -68,7 +68,7 @@ We recognize the following properties:
 - **Invocation**: Execution command(s) needed to run a scientific software component
 - **Issue tracker**: Link where to open issues for the target repository
 - **Keywords**: set of terms used to commonly identify a software component
-- **License**: License and usage terms of a software component. Now we also extract license from citation.cff.
+- **License**: License and usage terms of a software component. 
 - **Logo**: Main logo used to represent the target software component
 - **Name**: Name identifying a software component
 - **Ontologies**: URL and path to the ontology files present in the repository
