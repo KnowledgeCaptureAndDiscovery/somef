@@ -531,37 +531,35 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                         source
                     )
 
-            if "funding" in data:
-                funding_data = data["funding"]
-                if isinstance(funding_data, list):
-                    for fund in funding_data:
-                        fund_info = parse_funding(fund)
-                        if fund_info:
-                            metadata_result.add_result(
-                                constants.CAT_FUNDING,
-                                {
-                                    "funder": fund_info.get("funder", ""),
-                                    "funding": fund_info.get("funding", ""),
-                                    "type": constants.STRING
-                                },
-                                1,
-                                constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                                source
-                            )
-                elif isinstance(funding_data, dict):
-                    fund_info = parse_funding(funding_data)
-                    if fund_info:
-                        metadata_result.add_result(
-                            constants.CAT_FUNDING,
-                            {
-                                "funder": fund_info.get("funder", ""),
-                                "funding": fund_info.get("funding", ""),
-                                "type": constants.STRING
-                            },
-                            1,
-                            constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                            source
-                        )
+
+            funder_data = data.get("funder")
+            funding_data = data.get("funding")
+
+            if funder_data or funding_data:
+                main_value = funding_data if funding_data else funder_data
+                
+                if isinstance(main_value, (list, dict)):
+                    main_value = str(main_value)
+
+                res_fund = {
+                    "value": main_value,
+                    "type": constants.STRING
+                }
+
+                if funder_data and (not isinstance(funder_data, list) or len(funder_data) > 0):
+                    res_fund[constants.PROP_FUNDER] = funder_data
+                
+                if funding_data and (not isinstance(funding_data, list) or len(funding_data) > 0):
+                    res_fund[constants.PROP_FUNDING] = funding_data
+
+                if res_fund.get("value"):
+                    metadata_result.add_result(
+                        constants.CAT_FUNDING,
+                        res_fund,
+                        1,
+                        constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                        source
+                    )
 
             if "developmentStatus" in data:
                 metadata_result.add_result(

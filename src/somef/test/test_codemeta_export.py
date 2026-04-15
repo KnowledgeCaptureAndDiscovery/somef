@@ -666,6 +666,46 @@ class TestCodemetaExport(unittest.TestCase):
         os.remove(test_data_path + "test_issue_936_contributors.json")
         
 
+
+    def test_issue_960_funding(self):
+        """Checks whether funding and funder information are correctly extracted and exported to CodeMeta"""
+        output_path = test_data_path + "test_issue_960_funding.json"
+
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "codemeta_repo",
+                            doc_src=None,
+                            in_file=None,
+                            output=None,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=output_path,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        text_file = open(output_path, "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+
+        expected_funding = "1549758; Codemeta: A Rosetta Stone for Metadata in Scientific Software"
+        self.assertEqual(json_content.get("funding"), expected_funding, 
+                        f"Expected funding '{expected_funding}' not found in exported CodeMeta")
+
+        funder = json_content.get("funder") 
+        self.assertIsNotNone(funder, "Funder field missing in exported CodeMeta")
+        
+        if isinstance(funder, dict):
+            self.assertEqual(funder.get("name"), "National Science Foundation", "Funder name mismatch")
+            self.assertEqual(funder.get("@id"), "https://doi.org/10.13039/100000001", "Funder @id mismatch")
+        else:
+            self.assertEqual(funder, "National Science Foundation", "Funder name mismatch")
+
+        os.remove(output_path)
+
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""

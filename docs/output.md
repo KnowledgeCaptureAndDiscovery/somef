@@ -89,7 +89,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `forks_url`: Links to forks made of the project (GitHub only)
 - `full_name`: Name + owner (owner/name) (if available)
 - `full_title`: If the repository has a short name, we will attempt to extract the longer version of the repository name. For example, a repository may be called "Widoco", but the longer title is "Wizard for documenting ontologies".
-- `funding`: Funding code for the related project.
+- `funding`: Funding code for the related project. Currently, this information is only extracted from existing `codemeta.json` files within the repository.
 - `has_build_file`: Build file to create a Docker image for the target software 
 - `has_package_file`: Specifies what package file is present in the code repository.
 - `has_script_file`: Snippets of code contained in the repository.

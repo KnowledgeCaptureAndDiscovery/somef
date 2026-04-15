@@ -587,6 +587,16 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         raw_contributors = repo_data[constants.CAT_CONTRIBUTORS]
         codemeta_output[constants.CAT_CODEMETA_CONTRIBUTOR] = parse_contributors(raw_contributors)
 
+    if constants.CAT_FUNDING in repo_data:
+        for funding_entry in repo_data[constants.CAT_FUNDING]:
+            res_fun = funding_entry[constants.PROP_RESULT]
+
+            if constants.PROP_FUNDING in res_fun and res_fun[constants.PROP_FUNDING] != "": 
+                codemeta_output[constants.CAT_CODEMETA_FUNDING] = res_fun[constants.PROP_FUNDING]
+
+            if constants.PROP_FUNDER in res_fun and res_fun[constants.PROP_FUNDER] != "":
+                codemeta_output[constants.CAT_CODEMETA_FUNDER] = res_fun[constants.PROP_FUNDER]
+
     # A person is expected, and we extract text at the moment
     if descriptions_text:
         codemeta_output[constants.CAT_CODEMETA_DESCRIPTION] = descriptions_text
