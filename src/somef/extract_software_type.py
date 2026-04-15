@@ -16,7 +16,7 @@ def check_repository_type(path_repo, title, metadata_result: Result):
         output depending on the software type or if the repository is not considered software"""
 
     if check_static_websites(path_repo, metadata_result):
-        metadata_result.add_result(constants.CAT_TYPE,
+        metadata_result.add_result(constants.CAT_APPLICATION_TYPE,
                                    {
                                        constants.PROP_VALUE: 'static-website',
                                        constants.PROP_TYPE: constants.STRING
@@ -24,7 +24,7 @@ def check_repository_type(path_repo, title, metadata_result: Result):
                                    1,
                                    constants.TECHNIQUE_HEURISTICS)
     elif check_ontologies(path_repo):
-        metadata_result.add_result(constants.CAT_TYPE,
+        metadata_result.add_result(constants.CAT_APPLICATION_TYPE,
                                    {
                                        constants.PROP_VALUE: 'ontology',
                                        constants.PROP_TYPE: constants.STRING
@@ -32,7 +32,7 @@ def check_repository_type(path_repo, title, metadata_result: Result):
                                    1,
                                    constants.TECHNIQUE_HEURISTICS)
     elif check_notebooks(path_repo):
-        metadata_result.add_result(constants.CAT_TYPE,
+        metadata_result.add_result(constants.CAT_APPLICATION_TYPE,
                                    {
                                        constants.PROP_VALUE: 'notebook-application',
                                        constants.PROP_TYPE: constants.STRING
@@ -51,7 +51,7 @@ def check_repository_type(path_repo, title, metadata_result: Result):
     elif check_command_line(path_repo):
         """The 0.82 confidence result is from running the analysis on 300 repos and showing the precision 
             of the heuristic"""
-        metadata_result.add_result(constants.CAT_TYPE,
+        metadata_result.add_result(constants.CAT_APPLICATION_TYPE,
                                    {
                                        constants.PROP_VALUE: 'commandline-application',
                                        constants.PROP_TYPE: constants.STRING
@@ -60,7 +60,7 @@ def check_repository_type(path_repo, title, metadata_result: Result):
                                    constants.TECHNIQUE_HEURISTICS)
 
     elif check_extras(path_repo):
-        metadata_result.add_result(constants.CAT_TYPE,
+        metadata_result.add_result(constants.CAT_APPLICATION_TYPE,
                                    {
                                        constants.PROP_VALUE: 'non-software',
                                        constants.PROP_TYPE: constants.STRING

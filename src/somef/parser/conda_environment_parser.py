@@ -49,7 +49,7 @@ def parse_conda_environment_file(file_path, metadata_result: Result, source):
         dep_dict = {
             constants.PROP_VALUE: dep,
             constants.PROP_NAME: re.split(r"[=<>!]", dep)[0],
-            constants.PROP_TYPE: constants.SOFTWARE_APPLICATION,
+            constants.PROP_TYPE: constants.SOFTWARE_DEPENDENCY,
             constants.PROP_DEPENDENCY_TYPE: constants.DEPENDENCY_TYPE_RUNTIME,
             constants.PROP_DEPENDENCY_RESOLVER: "conda"
         }
@@ -71,7 +71,7 @@ def parse_conda_environment_file(file_path, metadata_result: Result, source):
         dep_dict = {
             constants.PROP_VALUE: dep,
             constants.PROP_NAME: re.split(r"[=<>!~]", dep)[0],
-            constants.PROP_TYPE: constants.SOFTWARE_APPLICATION,
+            constants.PROP_TYPE: constants.SOFTWARE_DEPENDENCY,
             constants.PROP_DEPENDENCY_TYPE: constants.DEPENDENCY_TYPE_RUNTIME,
             constants.PROP_DEPENDENCY_RESOLVER: "pip"
         }

@@ -731,7 +731,7 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                             # "version": requirement.get("version"),
                             **({"name": requirement["name"]} if "name" in requirement else {}),
                             **({"version": requirement["version"]} if "version" in requirement else {}),
-                            "type": constants.SOFTWARE_APPLICATION
+                            "type": constants.SOFTWARE_DEPENDENCY
                         },
                         1,
                         constants.TECHNIQUE_CODE_CONFIG_PARSER,

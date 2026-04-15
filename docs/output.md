@@ -67,6 +67,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 
 - `acknowledgement`: Any text that the authors have prepared to acknnowledge the contribution from others, or project funding.
 - `application_domain`: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects). See all current recognized application domains [here](https://somef.readthedocs.io/en/latest/#myfootnote1).
+- `application_type`: Software type: Commandline Application, Notebook Application, Ontology, Scientific Workflow. Non-Software types: Static Website, Uncategorized
 - `authors`: Person or organization responsible of the project. This property is also used to indicate the responsible entities of a publication associated with the code repository.
 - `citation`: Software citation (usually in .bib or .cff format). SOMEF extracts and structures the metadata from these files (including authors, titles, and DOIs) instead of just returning a raw string.
 - `code_of_conduct`: Link to the code of conduct file of the project
@@ -116,10 +117,10 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `repository_status`: Repository status as it is described in [repostatus.org](https://www.repostatus.org/).
 - `requirements`: Pre-requisites and dependencies needed to execute a software component.
 - `run`: Running instructions of a software component. It may be wider than the `invocation` category, as it may include several steps and explanations.
+- `runtime_platform`: Specifies the runtime environment or script interpreter dependencies required to run the project (e.g., Python, Java, Julia).
 - `stargazers_count`: Total number of stargazers of the project.
 - `support`: Guidelines and links of where to obtain support for a software component.
 - `support_channels`: Help channels one can use to get support about the target software component.
-- `type`: Software type: Commandline Application, Notebook Application, Ontology, Scientific Workflow. Non-Software types: Static Website, Uncategorized
 - `usage`: Usage examples and considerations of a code repository.
 - `workflows`: URL and path to the computational workflow files present in the repository.
 
@@ -171,9 +172,10 @@ The following object `types` are currently supported:
 - `Programming_language`: Programming language used in the repository. 
 - `License`: object representing all the metadata SOMEF extracts from a license.
 - `Agent`: user (typically, a person) or organization responsible for authoring a software release or a paper.
-- `Publication`: Scientific paper associated with the code repository.
-- `SoftwareApplication`: Class to represent software dependencies between projects.
-- `Runtime_platform`: specifies runtime platform or script interpreter dependencies required to run the project..
+- `ScholarlyArticle`: Scientific paper or article associated with the code repository. 
+- `SoftwareApplication`: Class to represent the main software component metadata.
+- `SoftwareDependency`: Class to represent software dependencies and runtime platforms required to run the project.
+
 The following literal types are currently supported:
 
 - `Number`: A numerical value. We do not distinguish between integer, long or float.
@@ -182,33 +184,6 @@ The following literal types are currently supported:
   - `Text_excerpt`: The value is a string that has been extracted from a file.
   - `File_dump`: The  value is a string with the contents of a file (e.g., a `citation.cff` file, or a `license.md` file).
 - `Url`: uniform resource locator of a file.
-
-
-<!-- |
-The table below summarizes all types and their corresponding properties:
-
-| Property | Describes | Expected value | Definition |
-|---|---|---|---|
-| **author** | Release, Publication | Agent,  Organization | Person or organization responsible for creating an article or a software release. |
-| **doi** | Publication | Url | When a publication is detected, but the format is in bibtek or CFF, SOMEF will add a `doi`  field with the detected DOI value. The result includes a full URL. |
-| **description** | Release | String | Descriptive text with the purpose of the release |
-| **date_created** | Release | Date | Date of creation of a release |
-| **date_published** | Release | Date | Date of publication of a release |
-| **email** | Agent | String | Email of an author |
-| **family_name** | Agent | String | Last name of an author |
-| **given_name** | Agent | String | First name of an author |
-| **html_url** | Release | Url | link to the HTML representation of a release |
-| **name** | License, Release,  User, Programming_language | String | Title or name used to designate the release, license user or programming language. |
-| **original_header** | Text_excerpt | String | If the result value is extracted from a markdown file like a README, the original header of that section is also returned. |
-| **parent_header** | Text_excerpt | [String] | If the result value is extracted from a markdown file like a README, the parent header(s) of the current section are also returned (in case they exist). |
-| **release_id** | Release | String | Id of a software release. |
-| **size** | Programming_language | Number | File size content (bytes) of a code repository using a given programming language |
-| **spdx_id** | License | String | Spdx id corresponding to this license |
-| **tag** | Release | String | named version of a release |
-| **tarball_url** | Release | Url | URL to the tar ball file where to download a software release |
-| **title** | Publication | String | Title of the publication |
- **url** | Release, Publication, License, Agent | Url | Uniform resource locator of the resource |
-| **zipball_url** | Release | Url | URL to the zip file where to download a software release | -->
 
 
 The tables below summarizes all types and their corresponding properties.
@@ -259,16 +234,6 @@ A Programming_language has the following properties:
 | **size** | Integer | File size content (bytes) of a code repository using a given programming language |
 
 
-A Publication has the following properties:
-
-| Property | Expected value | Definition |
-|---|---|---|
-| **author** | Agent,  Organization | Person or organization responsible for creating an article or a software release. |
-| **doi** | Url | When a publication is detected, but the format is in bibtek or CFF, SOMEF will add a `doi`  field with the detected DOI value. The result includes a full URL. |
-| **title** | String | Title of the publication |
-| **url** | Url | Uniform resource locator of the resource |
-
-
 A Release has the following properties:
 
 | Property | Expected value | Definition |
@@ -287,26 +252,7 @@ A Release has the following properties:
 | **zipball_url** | Url | URL to the zip file where to download a software release |
 
 
- A Requirement has the following properties:
-
-| Property | Expected value | Definition |
-|---|---|---|
-| **dependency_type** | String | type: dev, runtime... Indicates whether the dependency is required at runtime or only for development/testing | 
-| **dependency_resolver** | String | Identifies the ecosystem or package manager that resolves the dependency (e.g., npm, bower, pip, python, poetry, pdm, cargo, julia, maven, publicode).| 
-| **name** | String | Name of the requeriment |
-| **version** | String | named version of a requeriment |
-
-
-A Runtime_platform has the following properties:
-
-| Property | Expected value | Definition |
-|---|---|---|
-| **name** | String | Name of the runtime platform (e.g., Java) |
-| **value** | String | name and version of the runtime platform |
-| **version** | String | version of the runtime platform |
-
-
-A Scholarly_article has the following properties:
+A ScholarlyArticle has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
@@ -321,14 +267,17 @@ A Scholarly_article has the following properties:
 | **year** | Number | Year of publication |
 
 
-A Software_application has the following properties:
+A SoftwareApplication or SoftwareDependency has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
-| **development_type** | String | runtime or dev |
-| **name** | String | Name of the software |
-| **value** | String | Name and version of the software |
-| **version** | String | version of software |
+| **dependency_type** | String | Indicates whether the dependency is required at runtime or only for development/testing (e.g., `dev`, `runtime`, `os`). | 
+| **dependency_resolver** | String | Identifies the ecosystem or package manager that resolves the dependency (e.g., `npm`, `pip`, `julia`, `conda`).| 
+| **is_preferred_citation** | Boolean | Set to `True` if the authors explicitly state this is the preferred citation. Omitted otherwise. |
+| **name** | String | Name of the software, dependency, or runtime platform (e.g., "pandas", "python"). |
+| **type** | String | The object type: `SoftwareApplication` (for the main repository) or `SoftwareDependency` (for requirements and platforms). |
+| **value** | String | A string representation typically combining name and version. |
+| **version** | String | The version or version range of the software/dependency. |
 
 
 A Text_excerpt has the following properties:

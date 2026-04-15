@@ -43,7 +43,7 @@ SOMEF can extract metadata from a wide range of files commonly found in software
 | Keywords             | keywords                  |
 | License              | license                   |
 | Release              | version                   |
-| Software_application | requirements              |
+| SoftwareDependency | requirements              |
 | String               | description               |
 | String               | name                      |
 | String               | package_id                |
@@ -86,7 +86,7 @@ The following Python code snippet show the logic used by the SOMEF parser to tra
                         "value": f'{dependency.get("groupId", "")}.{dependency.get("artifactId", "")}'.strip("."),
                         "name": dependency.get("artifactId", ""),
                         "version": dependency.get("version", ""),
-                        "type": constants.SOFTWARE_APPLICATION
+                        "type": constants.SOFTWARE_DEPENDENCY
                     },
                     1,
                     constants.TECHNIQUE_CODE_CONFIG_PARSER,
@@ -105,7 +105,7 @@ After applying the mapping logic, the metadata for the dependency is stored unde
                 "value": "org.apache.maven.maven-model",
                 "name": "maven-model",
                 "version": "3.9.0",
-                "type": "Software_application"
+                "type": "SoftwareDependency"
             },
             "confidence": 1,
             "technique": "code_parser",

@@ -733,7 +733,6 @@ def parse_cff_root(yaml_content, metadata_result, url):
     if identifiers:
         result[constants.PROP_IDENTIFIER] = identifiers
 
-    result[constants.PROP_PREFERRED_CITATION] = "False"
     result[constants.PROP_FORMAT] = "cff"
 
     return clean_nulls(result)

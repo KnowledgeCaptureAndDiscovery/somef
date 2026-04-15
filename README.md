@@ -23,9 +23,10 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
   - Family name: Last name of an author
   - Email: email of author
   - URL: website or ORCID associated with the author
+- **Application type**: type of software (command line application, notebook, ontology, scientific workflow, etc.)
 - **Build file**: Build file(s) of the project. For example, files used to create a Docker image for the target software, package files, etc.
 - **Citation**: Preferred citation as the authors have stated in their readme file. SOMEF recognizes Bibtex, Citation File Format files and other means by which authors cite their papers (e.g., by in-text citation). 
-For CITATION.cff files, SOMEF now generates two separate entries: one for the software (is_preferred_citation: False) and another for the preferred citation (is_preferred_citation: True). This ensures metadata like DOI or version is correctly assigned to each entity.
+For CITATION.cff files, SOMEF now generates two separate entries: one for the software and another for the preferred citation (is_preferred_citation: True). This ensures metadata like DOI or version is correctly assigned to each entity.
 We aim to recognize the following properties:
   - Title: Title of the publication
   - Author: list of author names in the publication
@@ -83,12 +84,11 @@ We aim to recognize the following properties:
 - **Repository status**: Repository status as it is described in [repostatus.org](https://www.repostatus.org/).
 - **Requirements**: Pre-requisites and dependencies needed to execute a software component
 - **Run**: Running instructions of a software component. It may be wider than the `invocation` category, as it may include several steps and explanations.
-- **Runtime platform**: specifies runtime platform or script interpreter dependencies required to run the project..
+- **Runtime platform**: specifies the runtime environment or script interpreter dependencies (e.g., Python, Java).
 - **Script files**: Bash script files contained in the repository
 - **Stargazers count**: Total number of stargazers of the project
 - **Support**: Guidelines and links of where to obtain support for a software component
 - **Support channels**: Help channels one can use to get support about the target software component
-- **Type**: type of software (command line application, notebook, ontology, scientific workflow, etc.)
 - **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it
 - **Workflows**: URL and path to the computational workflow files present in the repository
 

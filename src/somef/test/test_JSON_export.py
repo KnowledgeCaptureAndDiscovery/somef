@@ -615,8 +615,11 @@ class TestJSONExport(unittest.TestCase):
 
         citations = json_content.get(constants.CAT_CITATION, [])
 
+       # We omit 'is_preferred_citation: False'.
+       # we use just the flag is_preferred_citation: True to identify the preferred citation.
         software_entry = next(
-            (cit for cit in citations if str(cit["result"].get("is_preferred_citation")) == "False"),
+            (cit for cit in citations if not cit["result"].get("is_preferred_citation") and 
+            cit["result"].get("type") == "SoftwareApplication"),
             None
         )
         preferred_entry = next(

@@ -172,7 +172,7 @@ CAT_SUPPORT = "support"
 CAT_SUPPORT_CHANNELS = "support_channels"
 CAT_USAGE = "usage"
 CAT_WORKFLOWS = "workflows"
-CAT_TYPE = "type"
+CAT_APPLICATION_TYPE = "application_type"  # former CAT_TYPE
 CAT_PACKAGE_ID = "package_id"
 CAT_HAS_PACKAGE_FILE = "has_package_file"
 CAT_VERSION = "version"
@@ -198,7 +198,7 @@ all_categories = [CAT_APPLICATION_DOMAIN, CAT_ACKNOWLEDGEMENT, CAT_AUTHORS, CAT_
                   CAT_OWNER, CAT_PACKAGE_DISTRIBUTION, CAT_HAS_PACKAGE_FILE, CAT_PROGRAMMING_LANGUAGES, CAT_README_URL,
                   CAT_RELATED_DOCUMENTATION, CAT_RELEASES, CAT_RUN, CAT_RUNTIME_PLATFORM, CAT_RELATED_PAPERS,
                   CAT_STATUS, CAT_REQUIREMENTS, CAT_STARS, CAT_SUPPORT, CAT_SUPPORT_CHANNELS, CAT_USAGE,
-                  CAT_WORKFLOWS, CAT_TYPE]
+                  CAT_WORKFLOWS, CAT_APPLICATION_TYPE]
 
 # All properties used by SOMEF to label the output JSON
 # Provenance:
@@ -291,10 +291,11 @@ FILE_DUMP = "File_dump"
 AGENT = "Agent"
 RELEASE = "Release"
 LICENSE = "License"
-PUBLICATION = "Publication"
+# PUBLICATION = "Publication"
 LANGUAGE = "Programming_language"
-SOFTWARE_APPLICATION = "Software_application"
-SCHOLARLY_ARTICLE = "Scholarly_article"
+SOFTWARE_APPLICATION = "SoftwareApplication"
+SOFTWARE_DEPENDENCY = "SoftwareDependency"
+SCHOLARLY_ARTICLE = "ScholarlyArticle"
 
 # Different techniques
 TECHNIQUE_SUPERVISED_CLASSIFICATION = "supervised_classification"

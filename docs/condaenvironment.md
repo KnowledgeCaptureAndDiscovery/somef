@@ -35,7 +35,7 @@ dependencies:
         "value": "python=3.8.5",
         "name": "python",
         "version": "3.8.5",
-        "type": "Software_application",
+        "type": "SoftwareDependency",
         "dependency_type": "runtime",
         "dependency_resolver": "conda"
     },
@@ -43,7 +43,7 @@ dependencies:
         "value": "albumentations==0.4.3",
         "name": "albumentations",
         "version": "0.4.3",
-        "type": "Software_application",
+        "type": "SoftwareDependency",
         "dependency_type": "runtime",
         "dependency_resolver": "pip"
     },

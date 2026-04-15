@@ -211,7 +211,7 @@ def parse_description_file(file_path, metadata_result: Result, source):
                                     "value": req,
                                     "name": name,
                                     "version": version,
-                                    "type": constants.SOFTWARE_APPLICATION
+                                    "type": constants.SOFTWARE_DEPENDENCY
                                 },
                                 1,
                                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
