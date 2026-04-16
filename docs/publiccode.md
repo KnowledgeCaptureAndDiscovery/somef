@@ -127,7 +127,7 @@ dependsOn:
         "value": "PostgreSQL>=14.0",
         "name": "PostgreSQL",
         "version": ">=14.0",
-        "type": "Software_application"
+        "type": "SoftwareDependency"
  
     },
 ```
@@ -136,7 +136,7 @@ dependsOn:
         "value": "PostgreSQL>=14.0",
         "name": "PostgreSQL",
         "version": ">=14.0",
-        "type": "Software_application",
+        "type": "SoftwareDependency",
         "dependency_type": "runtime",
         "dependency_resolver": "pucliccode"
     },

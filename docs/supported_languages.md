@@ -24,7 +24,7 @@ SoMEF also detects the following files to recognize build instructions, workflow
 
 | Language  | Supported Files                    | Software metadata category  |
 |-----------|------------------------------------|-----------------------------|
-| Docker    |  `Dockerfile`, `docker-compose.yml` | has_built_file
+| Docker    |  `Dockerfile`, `docker-compose.yml` | has_build_file
 | Jupyter Notebook |  `*.ipynb`                | executable_example |
 | Ontologies | `*.ttl`, `*.owl`, `*.nt`, `*.xml`, `*.jsonld` | ontologies |
 | Shell |  `*.sh`                                | has_script_file   |

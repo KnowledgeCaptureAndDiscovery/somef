@@ -168,7 +168,7 @@ def parse_gemspec_file(file_path, metadata_result: Result, source):
                             constants.CAT_REQUIREMENTS,
                             {
                                 "value": dependencies,
-                                "type": constants.SOFTWARE_APPLICATION,
+                                "type": constants.SOFTWARE_DEPENDENCY
                             },
                             1,
                             constants.TECHNIQUE_CODE_CONFIG_PARSER,
@@ -188,7 +188,7 @@ def parse_gemspec_file(file_path, metadata_result: Result, source):
                             "value": req,
                             "name": name,
                             "version": version,
-                            "type": constants.SOFTWARE_APPLICATION,
+                            "type": constants.SOFTWARE_DEPENDENCY,
                             "dependency_type": constants.DEPENDENCY_TYPE_RUNTIME,
                             "dependency_resolver": "bundler"
                         },
@@ -209,7 +209,7 @@ def parse_gemspec_file(file_path, metadata_result: Result, source):
                             "value": req,
                             "name": name,
                             "version": version,
-                            "type": constants.SOFTWARE_APPLICATION,
+                            "type": constants.SOFTWARE_DEPENDENCY,
                             "dependency_type": constants.DEPENDENCY_TYPE_DEVELOPMENT,
                             "dependency_resolver": "bundler"
                         },

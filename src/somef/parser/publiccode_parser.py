@@ -231,7 +231,7 @@ def parse_publiccode_file(file_path, metadata_result: Result, source):
                     "value": f"{name}{version_str}" if version_str else name,
                     "name": name,
                     "version": version,
-                    "type": constants.SOFTWARE_APPLICATION,
+                    "type": constants.SOFTWARE_DEPENDENCY,
                     "dependency_type": constants.DEPENDENCY_TYPE_RUNTIME,
                     "dependency_resolver": "publiccode"
                 },

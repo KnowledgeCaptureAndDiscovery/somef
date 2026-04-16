@@ -80,7 +80,7 @@ package_distribution': [{'result': {'value': 'http://127.0.0.1/websvn/my-project
         {'value': 'org.apache.maven.maven-model', 
         'name': 'maven-model', 
         'version': '3.9.0', 
-        'type': 'Software_application'}, 
+        'type': 'SoftwareDependency'}, 
 
 ```
 

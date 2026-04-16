@@ -1013,24 +1013,33 @@ def detect_license_spdx(license_text, type):
 
     for license_name, license_info in constants.LICENSES_DICT.items():
         if re.search(license_info["regex"], license_text, re.IGNORECASE):
+            spdx_id = license_info['spdx_id']
+            spdx_url = f"https://spdx.org/licenses/{spdx_id}"
             if type == 'JSON':
                 return {
                     "name": license_name,
                     "spdx_id": f"{license_info['spdx_id']}",
-                    "@id": f"https://spdx.org/licenses/{license_info['spdx_id']}"
+                    "@id": spdx_url,
+                    "url": spdx_url,       
+                    "identifier": spdx_url
                 }
             else:
                 return {
                     "name": license_name,
-                    "identifier": f"https://spdx.org/licenses/{license_info['spdx_id']}"
+                    "identifier": spdx_url,
+                    "spdx_id": spdx_id,
+                    "url": spdx_url
                 }
     for license_name, license_info in constants.LICENSES_DICT.items():
         spdx_id = license_info["spdx_id"]
         if re.search(rf'\b{re.escape(spdx_id)}\b', license_text, re.IGNORECASE):
+            spdx_url = f"https://spdx.org/licenses/{spdx_id}"
             return {
                 "name": license_name,
                 "spdx_id": spdx_id,
-                "@id": f"https://spdx.org/licenses/{spdx_id}"
+                "@id": spdx_url,
+                "identifier": spdx_url,
+                "url": spdx_url
             }
     return None
 
@@ -1062,7 +1071,8 @@ def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle, type):
     year_match = re.search(constants.REGEXP_YEAR, bibtex_entry)
     month_match = re.search(constants.REGEXP_MONTH, bibtex_entry)
     pages_match = re.search(constants.REGEXP_PAGES, bibtex_entry)
-    author_match = re.search(r'author\s*=\s*\{([^}]+)\}', bibtex_entry) 
+    # author_match = re.search(r'author\s*=\s*\{([^}]+)\}', bibtex_entry)
+    author_match = re.search(r'author\s*=\s*\{(.+?)\}\s*,', bibtex_entry)
     orcid_match = re.search(r'orcid\s*=\s*\{([^}]+)\}', bibtex_entry)  # Look for ORCID explícit
     note_orcid_match = re.search(r'ORCID[:\s]*([\d-]+X?)', bibtex_entry)  # Look in notes
 
@@ -1087,12 +1097,24 @@ def extract_scholarly_article_properties(bibtex_entry, scholarlyArticle, type):
         authors = author_match.group(1).split(" and ")  # Split several authors
 
         for author in authors:
-            parts = author.split(", ") 
-            if len(parts) == 2:
+            # parts = author.split(", ") 
+            # if len(parts) == 2:
+            #     family_name, given_name = parts
+            # else:
+            #     family_name = author
+            #     given_name = None  
+            match_author = re.match(r'(.+?)\s*\{(.+?)\}', author)
+            
+            if match_author:
+                given_name = match_author.group(1).strip()
+                family_name = match_author.group(2).strip()
+            elif "," in author:
+                parts = [p.strip() for p in author.split(",", 1)]
                 family_name, given_name = parts
             else:
-                family_name = author
-                given_name = None  
+                parts = author.split()
+                family_name = parts[-1]
+                given_name = " ".join(parts[:-1]) if len(parts) > 1 else None
 
             if type == 'JSON':
                 author_entry = {
