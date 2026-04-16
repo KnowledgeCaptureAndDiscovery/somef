@@ -271,7 +271,7 @@ A SoftwareApplication or SoftwareDependency has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
-| **dependency_type** | String | Indicates whether the dependency is required at runtime or only for development/testing (e.g., `dev`, `runtime`, `os`). | 
+| **dependency_type** | String | Indicates the scope of the dependency: development, runtime or documentation. | 
 | **dependency_resolver** | String | Identifies the ecosystem or package manager that resolves the dependency (e.g., `npm`, `pip`, `julia`, `conda`).| 
 | **is_preferred_citation** | Boolean | Set to `True` if the authors explicitly state this is the preferred citation. Omitted otherwise. |
 | **name** | String | Name of the software, dependency, or runtime platform (e.g., "pandas", "python"). |
