@@ -1,3 +1,5 @@
+extra_css:
+  - stylesheets/mkdocs.css
 site_name: SOMEF documentation
 nav:
   - Home: index.md
@@ -6,24 +8,11 @@ nav:
   - Output: output.md
   - Supported metadata files: supported_metadata_files.md
   - Supported languages: supported_languages.md
-    # - Authors: author.md
-    # - Bower: bower.md
-    # - Cabal: cabal.md
-    # - Cargo: cargo.md
-    # - Codemeta: codemetajson.md
-    # - Composer: composer.md
-    # - Description: description.md
-    # - Gemespec: gemspec.md
-    # - Julia Projects: julia.md
-    # - Package JSON: packagejson.md
-    # - Pom: pom.md
-    # - Pyproject: pyprojecttoml.md
-    # - Requirements: requirementstxt.md
-    # - Setup: setuppy.md
 
 theme:
   name: material
-
+  features:
+    - navigation.expand
 markdown_extensions:
   - admonition
   - codehilite:
