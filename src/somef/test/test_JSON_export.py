@@ -630,7 +630,7 @@ class TestJSONExport(unittest.TestCase):
         assert software_entry is not None, "Software citation (root) not found"
         sw_result = software_entry["result"]
         assert sw_result["title"] == 'SOMEF: Software metadata extraction framework'
-        assert sw_result["version"] == "0.1.0"
+        # assert sw_result["version"] == "0.1.0"
         assert "doi" not in sw_result or sw_result.get("doi") is None # it is in preferred (referencePublication) but not in the root
 
         assert preferred_entry is not None, "Preferred citation (article) not found"
@@ -638,7 +638,17 @@ class TestJSONExport(unittest.TestCase):
         assert pref_result["title"] == "A Framework for Creating Knowledge Graphs of Scientific Software Metadata"
         assert pref_result["doi"] == "10.1162/qss_a_00167"
         assert pref_result["journal"] == "Quantitative Science Studies"
-        assert "version" not in pref_result # it is in the root in citation but not in the preferred (referencePublication)
+        # assert "version" not in pref_result # it is in the root in citation but not in the preferred (referencePublication)
+
+        versions = json_content.get(constants.CAT_VERSION, [])
+        cff_version_entry = next(
+            (v for v in versions if "CITATION.cff" in v.get("source", "")),
+            None
+        )
+
+        # 2. Validamos que la versión existe en su nueva ubicación
+        assert cff_version_entry is not None, "Version from CFF not found in global version field"
+        assert cff_version_entry["result"]["value"] == "0.1.0"
 
         os.remove(test_data_path + "test_new_properties_citation_issue_935.json")
 

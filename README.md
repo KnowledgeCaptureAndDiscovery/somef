@@ -33,7 +33,6 @@ We aim to recognize the following properties:
   - URL: URL of the publication 
   - DOI: Digital object identifier of the publication
   - Date published
-  - Version: Software version (if applicable)
   - Journal: Journal name where the paper was published
   - Year: Year of publication
   - Pages: Page range in the journal

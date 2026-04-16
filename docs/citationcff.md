@@ -18,7 +18,7 @@ These fields are defined in the [CITATION.cff specification](https://citation-fi
 | license - value | license[i].result.value | license |
 | license - spdx_id | license[i].result.spdx_id | license |
 | license - name | license[i].result.name | license  |
-
+| version - value | version[i].result.value	|version
 ---
 
 *(1)* 

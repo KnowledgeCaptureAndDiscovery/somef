@@ -576,11 +576,19 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
 
                 if yaml_content:
                     license_value = yaml_content.get("license")
+                    version_value = yaml_content.get("version")
+
                     logging.info(f"Extracted license value from CFF: {license_value}")
                     if license_value:
                         if isinstance(license_value, list):
                             license_value = license_value[0]
                         parse_license_cff(license_value, metadata_result, url)
+
+                    logging.info(f"Extracted version value from CFF: {version_value}")
+                    if version_value:
+                        if isinstance(version_value, list):
+                            version_value = version_value[0]
+                        parse_version_cff(version_value, metadata_result, url)
 
                     root_result = parse_cff_root(yaml_content, metadata_result,url)
                     root_result[constants.PROP_VALUE] = file_text
@@ -722,7 +730,7 @@ def parse_cff_root(yaml_content, metadata_result, url):
 
     result[constants.PROP_TITLE] = yaml_content.get("title")
     result["authors"] = parse_authors_citation(yaml_content.get("authors", []))
-    result[constants.PROP_VERSION] = yaml_content.get("version")
+    # result[constants.PROP_VERSION] = yaml_content.get("version")
     result[constants.PROP_DOI] = yaml_content.get("doi")
     result[constants.PROP_URL] = yaml_content.get("url")
     result[constants.PROP_TYPE] = constants.SOFTWARE_APPLICATION
@@ -789,4 +797,25 @@ def parse_license_cff(license_value, metadata_result, url):
         logging.error(f"Error parsing license from CFF: {str(e)}")
 
 
+def parse_version_cff(version_value, metadata_result, url):
+    """
+    Parses the version from a CFF file and adds it to the global version metadata.
+    """
+    try:
 
+        version_result = {
+            constants.PROP_VALUE: str(version_value),
+            constants.PROP_TYPE: "String" 
+            
+        }
+
+        metadata_result.add_result(
+            constants.CAT_VERSION,
+            version_result,
+            1, 
+            constants.TECHNIQUE_FILE_EXPLORATION,
+            url
+        )
+
+    except Exception as e:
+        logging.error(f"Error parsing version from CFF: {str(e)}")
