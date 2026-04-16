@@ -33,7 +33,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
   - Affiliation: name of organization or affiliation
 - **Build file**: Build file(s) of the project. For example, files used to create a Docker image for the target software, package files, etc.
 - **Citation**: Preferred citation(s) as the authors have stated in their readme file. SOMEF recognizes Bibtex, Citation File Format files and other means by which authors cite their papers (e.g., by in-text citation). 
-For CITATION.cff files, SOMEF now generates two separate entries: one for the software and another for the preferred citation (is_preferred_citation: True). This ensures metadata like DOI or version is correctly assigned to each entity.
+For CITATION.cff files, SOMEF now generates two separate entries: one for the software tool and another for the preferred citation (if available). This ensures metadata like DOI or version is correctly assigned to each entity.
 We aim to recognize the following properties:
   - Title: Title of the publication
   - Author: list of author names in the publication
@@ -70,7 +70,7 @@ We aim to recognize the following properties:
 - **Invocation**: Execution command(s) needed to run a scientific software component
 - **Issue tracker**: Link where to open issues for the target repository
 - **Keywords**: set of terms used to commonly identify a software component
-- **License**: License and usage terms of a software component. 
+- **License**: License and usage terms of a software component 
 - **Logo**: Main logo used to represent the target software component
 - **Name**: Name identifying a software component
 - **Ontologies**: URL and path to the ontology files present in the repository
@@ -93,7 +93,7 @@ We aim to recognize the following properties:
 - **Repository status**: Repository status as it is described in [repostatus.org](https://www.repostatus.org/).
 - **Requirements**: Pre-requisites and dependencies needed to execute a software component
 - **Run**: Running instructions of a software component. It may be wider than the `invocation` category, as it may include several steps and explanations.
-- **Runtime platform**: specifies the runtime environment or script interpreter dependencies (e.g., Python, Java).
+- **Runtime platform**: specifies the runtime environment or script interpreter dependencies (e.g., Python, Java)
 - **Script files**: Bash script files contained in the repository
 - **Stargazers count**: Total number of stargazers of the project
 - **Support**: Guidelines and links of where to obtain support for a software component
