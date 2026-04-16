@@ -961,7 +961,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        repo_status = json_content[constants.CAT_TYPE][0]
+        repo_status = json_content[constants.CAT_APPLICATION_TYPE][0]
         print(repo_status)
         repo_type = repo_status[constants.PROP_RESULT][constants.PROP_VALUE]
         print(repo_type)
@@ -990,6 +990,6 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         text_file.close()
         json_content = json.loads(data)
-        t = json_content[constants.CAT_TYPE][0]
+        t = json_content[constants.CAT_APPLICATION_TYPE][0]
         assert t[constants.PROP_RESULT][constants.PROP_VALUE] == "ontology"
         os.remove(test_data_path + "test-ecfo.json")

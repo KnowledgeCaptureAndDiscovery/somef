@@ -80,7 +80,7 @@ or
     ...
 ```
 Resutl:
-```{'result': {'value': 'foo@1.0.0 - 2.9999.9999', 'name': 'foo', 'version': '1.0.0 - 2.9999.9999', 'type': 'Software_application'}, 'confidence': 1, 'technique': 'code_parser', 'source': 'http://example.com/package_neors.json'}```
+```{'result': {'value': 'foo@1.0.0 - 2.9999.9999', 'name': 'foo', 'version': '1.0.0 - 2.9999.9999', 'type': 'SoftwareDependency'}, 'confidence': 1, 'technique': 'code_parser', 'source': 'http://example.com/package_neors.json'}```
 
 *(5)*  
 - Example: 

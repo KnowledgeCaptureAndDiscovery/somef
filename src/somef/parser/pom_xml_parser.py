@@ -174,7 +174,7 @@ def parse_pom_file(file_path, metadata_result: Result, source):
                         "value": f'{dependency.get("groupId", "")}.{dependency.get("artifactId", "")}'.strip("."),
                         "name": name_d,
                         "version": version_d,
-                        "type": constants.SOFTWARE_APPLICATION,
+                        "type": constants.SOFTWARE_DEPENDENCY,
                         "dependency_type": dep_type,
                         "dependency_resolver": "maven"
                     },

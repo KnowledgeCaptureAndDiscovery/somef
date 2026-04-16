@@ -64,7 +64,8 @@ REGEXP_TITLE_NATURAL = r'["“](.+?)["”]'
 # REGEXP_APACHE = r'(?i)apache\s+license\s*,?\s*version\s*2\.0'
 REGEXP_APACHE = r'(?i)apache(?:\s+license)?\s*(?:,?\s*version\s*)?2\.0'
 REGEXP_GPL3 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*3\.0'
-REGEXP_MIT = r'(?i)mit\s+license'
+# REGEXP_MIT = r'(?i)mit\s+license'
+REGEXP_MIT = r'(?i)(mit\s+license|permission\s+is\s+hereby\s+granted|THE\s+SOFTWARE\s+IS\s+PROVIDED\s+"AS\s+IS")'
 REGEXP_BSD2 = r'(?i)(bsd\s*-?\s*2-?clause(?:\s*license)?|redistribution\s+and\s+use\s+in\s+source\s+and\s+binary\s+forms)'
 REGEXP_BSD3 = r'(?i)bsd\s+3-clause\s+license'
 REGEXP_BOOST = r'(?i)boost\s+software\s+license\s*,?\s*version\s*1\.0'
@@ -158,6 +159,7 @@ REGEXP_PACKAGE_MANAGER = r"""
 """
 CAT_PROGRAMMING_LANGUAGES = "programming_languages"
 CAT_README_URL = "readme_url"
+# CAT_REFERENCE_PUBLICATION = "reference_publication"
 CAT_RELATED_DOCUMENTATION = "related_documentation"
 CAT_RELATED_PAPERS = "related_papers"
 CAT_RELEASES = "releases"
@@ -170,7 +172,7 @@ CAT_SUPPORT = "support"
 CAT_SUPPORT_CHANNELS = "support_channels"
 CAT_USAGE = "usage"
 CAT_WORKFLOWS = "workflows"
-CAT_TYPE = "type"
+CAT_APPLICATION_TYPE = "application_type"  # former CAT_TYPE
 CAT_PACKAGE_ID = "package_id"
 CAT_HAS_PACKAGE_FILE = "has_package_file"
 CAT_VERSION = "version"
@@ -196,7 +198,7 @@ all_categories = [CAT_APPLICATION_DOMAIN, CAT_ACKNOWLEDGEMENT, CAT_AUTHORS, CAT_
                   CAT_OWNER, CAT_PACKAGE_DISTRIBUTION, CAT_HAS_PACKAGE_FILE, CAT_PROGRAMMING_LANGUAGES, CAT_README_URL,
                   CAT_RELATED_DOCUMENTATION, CAT_RELEASES, CAT_RUN, CAT_RUNTIME_PLATFORM, CAT_RELATED_PAPERS,
                   CAT_STATUS, CAT_REQUIREMENTS, CAT_STARS, CAT_SUPPORT, CAT_SUPPORT_CHANNELS, CAT_USAGE,
-                  CAT_WORKFLOWS, CAT_TYPE]
+                  CAT_WORKFLOWS, CAT_APPLICATION_TYPE]
 
 # All properties used by SOMEF to label the output JSON
 # Provenance:
@@ -230,12 +232,19 @@ PROP_DEPENDENCY_TYPE = "dependency_type"
 PROP_DEPENDENCY_RESOLVER = "dependency_resolver"
 PROP_EMAIL = "email"
 PROP_GIVEN_NAME = "given_name"
+PROP_FAMILY_NAME = "family_name"
+PROP_FUNDER = "funder"
+PROP_FUNDING = "funding"
 PROP_HTML_URL = "html_url"
 PROP_IDENTIFIER = "identifier"
+PROP_JOURNAL = "journal"
 PROP_LAST_NAME = "last_name"
+PROP_LICENSE = "license"
 PROP_NAME = "name"
 PROP_ORIGINAL_HEADER = "original_header"
+PROP_PAGES = "pages"
 PROP_PARENT_HEADER = "parent_header"
+PROP_PREFERRED_CITATION = "is_preferred_citation"
 PROP_RELEASE_ID = "release_id"
 PROP_ROLE = "role"
 PROP_SIZE = "size"
@@ -284,10 +293,11 @@ FILE_DUMP = "File_dump"
 AGENT = "Agent"
 RELEASE = "Release"
 LICENSE = "License"
-PUBLICATION = "Publication"
+# PUBLICATION = "Publication"
 LANGUAGE = "Programming_language"
-SOFTWARE_APPLICATION = "Software_application"
-SCHOLARLY_ARTICLE = "Scholarly_article"
+SOFTWARE_APPLICATION = "SoftwareApplication"
+SOFTWARE_DEPENDENCY = "SoftwareDependency"
+SCHOLARLY_ARTICLE = "ScholarlyArticle"
 
 # Different techniques
 TECHNIQUE_SUPERVISED_CLASSIFICATION = "supervised_classification"
@@ -436,6 +446,8 @@ CAT_CODEMETA_DATEPUBLISHED = "datePublished"
 CAT_CODEMETA_DESCRIPTION = "description"
 CAT_CODEMETA_DEVELOPMENTSTATUS = "developmentStatus"
 CAT_CODEMETA_DOWNLOADURL = "downloadUrl"
+CAT_CODEMETA_FUNDER = "funder"
+CAT_CODEMETA_FUNDING = "funding"
 CAT_CODEMETA_ISSUETRACKER = "issueTracker"
 CAT_CODEMETA_IDENTIFIER = "identifier"
 CAT_CODEMETA_KEYWORDS = "keywords"

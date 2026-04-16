@@ -28,8 +28,9 @@ These fields are defined in the [Codemeta specification](https://github.com/code
 | development_status       |   development_status[i].result.value  |     developmentStatus  |
 | download_url              |   download_url[i].result.value          |     downloadUrl              |
 | has_package_file         |   has_package_file[i].result.value         |   URL of the codemeta.json file |
-| funding - funder                   |   funding[i].result.funder       |     funding.funder or funding.funder.name  |    
-| funding - funding                   |   funding[i].result.funding     |     String.fundingIdentifier | 
+| funding - funder          |   funding[i].result.funder       |     funder.@id or funder.name  *(1)*|    
+| funding - funding         |   funding[i].result.funding     |     funding *(1)*| 
+| funding - value	        |   funding[i].result.value	|   funding string or funder.name *(1)*|
 | identifier               |   identifier[i].result.value       |     identifier                     |
 | issue_tracker             |   issue_tracker[i].result.value           |     issueTracker             |
 | keywords                  |   keywords[i].result.value          |     keywords                 |
@@ -49,4 +50,41 @@ These fields are defined in the [Codemeta specification](https://github.com/code
 | version                   |   version[i].result.value   |     softwareVersion  or version        |
 
 
- 
+---
+
+*(1)* 
+
+- SOMEF json result: 
+
+```
+"funding": [
+  {
+    "result": {
+      "value": "1549758; Codemeta: A Rosetta Stone for Metadata in Scientific Software",
+      "type": "String",
+      "funder": {
+        "@id": "https://doi.org/10.13039/100000001",
+        "@type": "Organization",
+        "name": "National Science Foundation"
+      },
+      "funding": "1549758; Codemeta: A Rosetta Stone for Metadata in Scientific Software"
+    },
+    "confidence": 1,
+    "technique": "code_parser",
+    "source": "https://raw.githubusercontent.com/.../codemeta.json"
+  }
+]
+```
+
+- CODEMETA output: 
+```
+"funder": {
+    "@id": "https://doi.org/10.13039/100000001",
+    "@type": "Organization",
+    "name": "National Science Foundation"
+  },
+"funding": "1549758; Codemeta: A Rosetta Stone for Metadata in Scientific Software",
+```
+
+
+

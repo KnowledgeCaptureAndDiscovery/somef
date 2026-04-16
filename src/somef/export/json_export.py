@@ -392,123 +392,125 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
 
 
     if constants.CAT_CITATION in repo_data:
-        # url_cit = []
         codemeta_output[constants.CAT_CODEMETA_REFERENCEPUBLICATION] = []
-        all_reference_publications = []
-        # scholarlyArticles = {}
         author_orcids = {}
+        all_reference_publications = []
 
-        for cit in repo_data[constants.CAT_CITATION]:
-            scholarlyArticle = {"@type": "ScholarlyArticle"} 
+        if constants.CAT_CITATION in repo_data:
+            publications_source = repo_data[constants.CAT_CITATION]
+        else:
+            publications_source = []
 
-            doi = None
-            title = None
-            is_bibtex = False
+        if publications_source:
+            for cit in publications_source:
+                scholarlyArticle = {"@type": "ScholarlyArticle"} 
 
-            if constants.PROP_FORMAT in cit[constants.PROP_RESULT] and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == "cff":
-                yaml_content = yaml.safe_load(cit[constants.PROP_RESULT]["value"])
-                preferred_citation = yaml_content.get("preferred-citation", {})
-                doi = yaml_content.get("doi") or preferred_citation.get("doi")
-                identifiers = yaml_content.get("identifiers", [])
-                url_citation = preferred_citation.get("url") or yaml_content.get("url")
-                identifier_url = next((id["value"] for id in identifiers if id["type"] == "url"), None)
-                identifier_doi = next((id["value"] for id in identifiers if id["type"] == "doi"), None)
+                doi = None
+                title = None
+                is_bibtex = False
 
-                authors = yaml_content.get("authors", [])
+                if constants.PROP_FORMAT in cit[constants.PROP_RESULT] and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == "cff":
+                    yaml_content = yaml.safe_load(cit[constants.PROP_RESULT]["value"])
+                    preferred_citation = yaml_content.get("preferred-citation", {})
+                    doi = yaml_content.get("doi") or preferred_citation.get("doi")
+                    identifiers = yaml_content.get("identifiers", [])
+                    url_citation = preferred_citation.get("url") or yaml_content.get("url")
+                    identifier_url = next((id["value"] for id in identifiers if id["type"] == "url"), None)
+                    identifier_doi = next((id["value"] for id in identifiers if id["type"] == "doi"), None)
+                    authors = yaml_content.get("authors", []) or preferred_citation.get("authors", [])
+                    title = normalize_title(preferred_citation.get("title") or yaml_content.get("title"))
 
-                title = normalize_title(preferred_citation.get("title") or yaml_content.get("title"))
+                    if identifier_doi:
+                        final_url = f"https://doi.org/{identifier_doi}"
+                    elif doi:
+                        final_url = f"https://doi.org/{doi}"
+                    elif identifier_url:
+                        final_url = identifier_url
+                    elif url_citation:
+                        final_url = url_citation
+                    else:
+                        final_url = ''
 
-                if identifier_doi:
-                    final_url = f"https://doi.org/{identifier_doi}"
-                elif doi:
-                    final_url = f"https://doi.org/{doi}"
-                elif identifier_url:
-                    final_url = identifier_url
-                elif url_citation:
-                    final_url = url_citation
+                    scholarlyArticle[constants.PROP_NAME] = title 
+                    scholarlyArticle[constants.CAT_IDENTIFIER] = doi 
+                    scholarlyArticle[constants.PROP_URL] = final_url
+
+                    author_list = []
+                    for author in authors:
+                        family_name = author.get("family-names")
+                        given_name = author.get("given-names")
+                        orcid = author.get("orcid")
+                        name = author.get("name")
+
+                        if family_name and given_name:
+                            author_entry = {
+                                "@type": "Person",
+                                "familyName": family_name,
+                                "givenName": given_name
+                            }
+                            if orcid:
+                                if not orcid.startswith("http"):  # check if orcid is a url
+                                    orcid = f"https://orcid.org/{orcid}"
+                                author_entry["@id"] = orcid
+                        elif name:
+                            # If there is only a name, we assume this to be an Organization.
+                            # it could be not enough acurate
+
+                            author_entry = {
+                                "@type": "Organization",
+                                "name": name
+                            }
+
+                        if family_name and given_name and orcid:
+                            key = (family_name.lower(), given_name.lower())
+                            author_orcids[key] = orcid
+
+                        author_list.append({k: v for k, v in author_entry.items() if v is not None})  
+
+                    if author_list:
+                        scholarlyArticle[constants.PROP_AUTHOR] = author_list 
                 else:
-                    final_url = ''
+                    if constants.PROP_DOI in cit[constants.PROP_RESULT].keys():
+                        doi = cit[constants.PROP_RESULT][constants.PROP_DOI]
+                        scholarlyArticle[constants.CAT_IDENTIFIER] = cit[constants.PROP_RESULT][constants.PROP_DOI]
 
-                scholarlyArticle[constants.PROP_NAME] = title 
-                scholarlyArticle[constants.CAT_IDENTIFIER] = doi 
-                scholarlyArticle[constants.PROP_URL] = final_url
+                    if constants.PROP_URL in cit[constants.PROP_RESULT].keys():
+                        scholarlyArticle[constants.PROP_URL] = cit[constants.PROP_RESULT][constants.PROP_URL]
 
-                author_list = []
-                for author in authors:
-                    family_name = author.get("family-names")
-                    given_name = author.get("given-names")
-                    orcid = author.get("orcid")
-                    name = author.get("name")
+                    if constants.PROP_TITLE in cit[constants.PROP_RESULT].keys():
+                        title = normalize_title(cit[constants.PROP_RESULT][constants.PROP_TITLE])
+                        scholarlyArticle[constants.PROP_NAME] = cit[constants.PROP_RESULT][constants.PROP_TITLE]    
 
-                    if family_name and given_name:
-                        author_entry = {
-                            "@type": "Person",
-                            "familyName": family_name,
-                            "givenName": given_name
-                        }
-                        if orcid:
-                            if not orcid.startswith("http"):  # check if orcid is a url
-                                orcid = f"https://orcid.org/{orcid}"
-                            author_entry["@id"] = orcid
-                    elif name:
-                        # If there is only a name, we assume this to be an Organization.
-                        # it could be not enough acurate
+                    if constants.PROP_ORIGINAL_HEADER in cit[constants.PROP_RESULT].keys():
+                        if cit[constants.PROP_RESULT][constants.PROP_ORIGINAL_HEADER] == "Citation":
+                            if constants.PROP_SOURCE in cit.keys():
+                                scholarlyArticle[constants.PROP_URL] = cit[constants.PROP_SOURCE]
 
-                        author_entry = {
-                            "@type": "Organization",
-                            "name": name
-                        }
+                    is_bibtex = True
 
-                    if family_name and given_name and orcid:
-                        key = (family_name.lower(), given_name.lower())
-                        author_orcids[key] = orcid
+                if len(scholarlyArticle) > 1:  
+                    # look por information in values as pagination, issn and others
+                    if re.search(r'@\w+\{', cit[constants.PROP_RESULT][constants.PROP_VALUE]):  
+                        scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle, 'CODEMETA')
+                    else:
+                        scholarlyArticle = extract_scholarly_article_natural(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle, 'CODEMETA')
 
-                    author_list.append({k: v for k, v in author_entry.items() if v is not None})  
+                    all_reference_publications.append({
+                        **scholarlyArticle,
+                        "_source_format": "cff" if not is_bibtex else "bibtex"
+                    })
 
-                if author_list:
-                    scholarlyArticle[constants.PROP_AUTHOR] = author_list 
-            else:
-                if constants.PROP_DOI in cit[constants.PROP_RESULT].keys():
-                    doi = cit[constants.PROP_RESULT][constants.PROP_DOI]
-                    scholarlyArticle[constants.CAT_IDENTIFIER] = cit[constants.PROP_RESULT][constants.PROP_DOI]
+            for article in all_reference_publications:
+                if "author" in article:
+                    for author in article["author"]:
+                        family_name = author.get("familyName", "").strip()
+                        given_name = author.get("givenName", "").strip()
+                        key = (family_name.lower(), given_name.lower()) if given_name else None
 
-                if constants.PROP_URL in cit[constants.PROP_RESULT].keys():
-                    scholarlyArticle[constants.PROP_URL] = cit[constants.PROP_RESULT][constants.PROP_URL]
+                        if key and key in author_orcids:
+                            author["@id"] = author_orcids[key] 
 
-                if constants.PROP_TITLE in cit[constants.PROP_RESULT].keys():
-                    title = normalize_title(cit[constants.PROP_RESULT][constants.PROP_TITLE])
-                    scholarlyArticle[constants.PROP_NAME] = cit[constants.PROP_RESULT][constants.PROP_TITLE]    
-
-                if constants.PROP_ORIGINAL_HEADER in cit[constants.PROP_RESULT].keys():
-                    if cit[constants.PROP_RESULT][constants.PROP_ORIGINAL_HEADER] == "Citation":
-                        if constants.PROP_SOURCE in cit.keys():
-                            scholarlyArticle[constants.PROP_URL] = cit[constants.PROP_SOURCE]
-
-                is_bibtex = True
-
-            if len(scholarlyArticle) > 1:  
-                # look por information in values as pagination, issn and others
-                if re.search(r'@\w+\{', cit[constants.PROP_RESULT][constants.PROP_VALUE]):  
-                    scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle, 'CODEMETA')
-                else:
-                    scholarlyArticle = extract_scholarly_article_natural(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle, 'CODEMETA')
-
-                all_reference_publications.append({
-                    **scholarlyArticle,
-                    "_source_format": "cff" if not is_bibtex else "bibtex"
-                })
-
-        for article in all_reference_publications:
-            if "author" in article:
-                for author in article["author"]:
-                    family_name = author.get("familyName", "").strip()
-                    given_name = author.get("givenName", "").strip()
-                    key = (family_name.lower(), given_name.lower()) if given_name else None
-
-                    if key and key in author_orcids:
-                        author["@id"] = author_orcids[key]  
-     
-        codemeta_output[constants.CAT_CODEMETA_REFERENCEPUBLICATION] = deduplicate_publications(all_reference_publications)
+            codemeta_output[constants.CAT_CODEMETA_REFERENCEPUBLICATION] = deduplicate_publications(all_reference_publications)
 
     if constants.CAT_STATUS in repo_data:
         url_status = repo_data[constants.CAT_STATUS][0]['result'].get('value', '')
@@ -584,6 +586,16 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
     if constants.CAT_CONTRIBUTORS in repo_data:
         raw_contributors = repo_data[constants.CAT_CONTRIBUTORS]
         codemeta_output[constants.CAT_CODEMETA_CONTRIBUTOR] = parse_contributors(raw_contributors)
+
+    if constants.CAT_FUNDING in repo_data:
+        for funding_entry in repo_data[constants.CAT_FUNDING]:
+            res_fun = funding_entry[constants.PROP_RESULT]
+
+            if constants.PROP_FUNDING in res_fun and res_fun[constants.PROP_FUNDING] != "": 
+                codemeta_output[constants.CAT_CODEMETA_FUNDING] = res_fun[constants.PROP_FUNDING]
+
+            if constants.PROP_FUNDER in res_fun and res_fun[constants.PROP_FUNDER] != "":
+                codemeta_output[constants.CAT_CODEMETA_FUNDER] = res_fun[constants.PROP_FUNDER]
 
     # A person is expected, and we extract text at the moment
     if descriptions_text:
@@ -840,7 +852,6 @@ def unify_results(repo_data: dict) -> dict:
     This function canonicalizes simple values, detects equivalent items
     and merges them into a single unified entry while preserving all available information.
     """
-    print("Unifying results...")
     unified_data = {}
 
     for category, items in repo_data.items():
@@ -858,16 +869,29 @@ def unify_results(repo_data: dict) -> dict:
             value = result.get(constants.PROP_VALUE)
             value_type = result.get(constants.PROP_TYPE)
 
-            canonical = canonicalize_value(value, value_type)
+            # --- SPECIAL LOGIC FOR LICENSES ---
+            if category == constants.CAT_LICENSE and result.get(constants.PROP_SPDX_ID):
+                # If we have SPDX, that is our unification key
+                key = f"LICENSE-{result[constants.PROP_SPDX_ID]}"
+            else:
+                # Normal behavior for the rest of the categories
+                canonical = canonicalize_value(value, value_type)
+                key = str(canonical)
+            # --------------------------------------------------
+            # canonical = canonicalize_value(value, value_type)
 
-            key = str(canonical)
+            # key = str(canonical)
             if key in seen:
                 existing = seen[key]
-
-                # If types match, merge normally
-                existing[constants.PROP_RESULT][constants.PROP_VALUE] = choose_more_general(
-                    existing[constants.PROP_RESULT][constants.PROP_VALUE], value
-                )
+                if category == constants.CAT_LICENSE:
+                    # prefer SPDX ID if available for licenses
+                    if result.get(constants.PROP_SPDX_ID):
+                        existing[constants.PROP_RESULT][constants.PROP_VALUE] = result[constants.PROP_SPDX_ID]
+                else:
+                    # If types match, merge normally
+                    existing[constants.PROP_RESULT][constants.PROP_VALUE] = choose_more_general(
+                        existing[constants.PROP_RESULT][constants.PROP_VALUE], value
+                    )
 
                 # merge other result fields because different techniques might have extracted different information 
                 # (e.g., email in authors extracted by file exploration or code parser.

@@ -24,7 +24,7 @@ CAT_REQUIREMENTS: # Passed
     value: numpy>=1.21
     name: numpy
     version: ">=1.21"
-    type: Software_application
+    type: SoftwareDependency
 
 CAT_AUTHORS: # Passed
     value: Fabio Acero

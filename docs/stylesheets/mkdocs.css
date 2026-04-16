@@ -1,0 +1,27 @@
+
+/* .md-typeset table td:nth-child(1) code,
+.md-typeset table th:nth-child(1) code {
+  white-space: nowrap;
+}  */
+
+
+.md-content {
+    margin-right: 0 !important; 
+}
+
+.md-main__inner {
+    max-width: 100% !important; 
+}
+
+.md-typeset table {
+    width: 100% !important;
+    display: table !important;
+}
+
+.md-typeset table td:nth-child(1) code {
+    white-space: nowrap !important;
+}
+
+.md-typeset table td:nth-child(3) {
+    white-space: normal !important;
+}

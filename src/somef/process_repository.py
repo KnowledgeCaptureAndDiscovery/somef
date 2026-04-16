@@ -330,10 +330,11 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
             license_result[constants.PROP_NAME] = general_resp["license"]["name"]
         if "url" in general_resp['license']:
             license_result[constants.PROP_VALUE] = general_resp["license"]["url"]
-
-        # for k in ('name', 'url'):
-        #     if k in general_resp['license']:
-        #         license_info[k] = general_resp['license'][k]
+            temp_info_lic = detect_license_spdx(general_resp["license"]["name"], 'JSON')
+            if temp_info_lic:
+                license_result[constants.PROP_SPDX_ID] = temp_info_lic['spdx_id']
+                license_result[constants.PROP_URL] = temp_info_lic['url']
+                license_result[constants.PROP_IDENTIFIER] = temp_info_lic['identifier']
 
     # If we didn't find it, look for the license
     if constants.PROP_VALUE not in license_result or license_result[constants.PROP_VALUE] is None:
@@ -347,6 +348,7 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
             if license_info:
                  license_result[constants.PROP_NAME] = license_info['name']
                  license_result[constants.PROP_SPDX_ID] = license_info['spdx_id']
+                 license_result[constants.PROP_IDENTIFIER] = license_info['identifier']
 
     if constants.PROP_VALUE in license_result:
         repo_metadata.add_result(constants.CAT_LICENSE, license_result, 1, constants.TECHNIQUE_GITLAB_API)
@@ -646,7 +648,11 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
                     constants.PROP_URL: value["url"]
                 }
                 if "spdx_id" in value.keys():
-                    result[constants.PROP_SPDX_ID] = value["spdx_id"]
+                    spdx_id = value["spdx_id"]
+                    spdx_url = f"https://spdx.org/licenses/{spdx_id}"
+                    result[constants.PROP_SPDX_ID] = spdx_id
+                    result[constants.PROP_URL] = spdx_url
+                    result[constants.PROP_IDENTIFIER] = spdx_url
             elif category == constants.CAT_OWNER:
                 result = {
                     constants.PROP_VALUE: value,
