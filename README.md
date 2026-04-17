@@ -27,13 +27,12 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 - **Build file**: Build file(s) of the project. For example, files used to create a Docker image for the target software, package files, etc.
 - **Citation**: Preferred citation(s) as the authors have stated in their readme file. SOMEF recognizes Bibtex, Citation File Format files and other means by which authors cite their papers (e.g., by in-text citation). 
 For CITATION.cff files, SOMEF now generates two separate entries: one for the software tool and another for the preferred citation (if available). This ensures metadata like DOI or version is correctly assigned to each entity.
-We aim to recognize the following properties:
+We recognize the following properties:
   - Title: Title of the publication
   - Author: list of author names in the publication
   - URL: URL of the publication 
   - DOI: Digital object identifier of the publication
   - Date published
-  - Version: Software version (if applicable)
   - Journal: Journal name where the paper was published
   - Year: Year of publication
   - Pages: Page range in the journal
