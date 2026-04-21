@@ -3,8 +3,8 @@ These fields are defined in the [Setup.py specification](https://packaging.pytho
 
 | Software metadata category    |       SOMEF metadata JSON path  | SETUP.PY metadata file field  |
 |-------------------------------|------------------------------|------------------------------|
-| authors - value                   |  authors[i].result.value   |     author     *(1)*          |
-| authors - email                   |  authors[i].result.email   |  author_email or EMAIL  *(1)*   |
+| author - value                   |  authors[i].result.value   |     author     *(1)*          |
+| author - email                   |  authors[i].result.email   |  author_email or EMAIL  *(1)*   |
 | code_repository           |  code_repository[i].result.value   |   url or URL      |
 | description               |  description[i].result .value  |   description or DESCRIPTION  |
 | keywords                  |  keywords[i].result.value          |     keywords |

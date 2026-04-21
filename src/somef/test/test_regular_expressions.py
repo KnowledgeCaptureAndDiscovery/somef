@@ -19,6 +19,8 @@ class TestRegExp(unittest.TestCase):
             c = regular_expressions.extract_bibtex(test_text, Result(), test_data_path + "test_extract_bibtex.txt")
             result = c.results[constants.CAT_CITATION][0]
             assert "@inproceedings" in result["result"]["value"]
+            assert result[constants.PROP_RESULT].get(constants.PROP_PAGES) == "94--102", f"Expected pages '94--102', found {result[constants.PROP_RESULT].get(constants.PROP_PAGES)}"
+            assert result[constants.PROP_RESULT].get(constants.PROP_YEAR) == "2017", f"Expected year '2017', found {result[constants.PROP_RESULT].get(constants.PROP_YEAR)}"
 
     def test_issue_553(self):
         """

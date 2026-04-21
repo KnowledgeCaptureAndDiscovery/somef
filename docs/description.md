@@ -3,8 +3,8 @@ These fields are defined in the [DESCRIPTON specification](https://r-pkgs.org/de
 
 | Software metadata category    | SOMEF metadata JSON path          | DESCRIPTION metadata file field    |
 |-------------------------------|---------------------------------|---------------------|
-| authors                   |   authors[i].result.value      |  Authors *(1)*  |
-| authors                   |   authors[i].result.email      | Authors *(2)*  |
+| author                   |   authors[i].result.value      |  Authors *(1)*  |
+| author                   |   authors[i].result.email      | Authors *(2)*  |
 | code_repository           |   code_repository[i].result.value   |     URL *(3)* |
 | description               |   description[i].result.value   |    Description *(4)*  |
 | has_package_file          |   has_package_file[i].result.value    |  URL of the DESCRIPTION file       |

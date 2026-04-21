@@ -6,8 +6,8 @@ according to the OCI Image Specification, following the
 
 | Software metadata category  | SOMEF metadata JSON path                | DOCKERFILE metadata file field     |
 |-----------------------------|-----------------------------------------|------------------------------------| 
-| authors                       |     authors[i].result.value           |   org.opencontainers.image.authors *(1)*  |
-| authors                       |     authors[i].result.value           |   LABEL maintainer *(1)*  |
+| author                       |     author[i].result.value           |   org.opencontainers.image.authors *(1)*  |
+| author                       |     author[i].result.value           |   LABEL maintainer *(1)*  |
 | code_repository               |     code_repository[i].result.value   |   org.opencontainers.image.url     |
 | description                   |     description[i].result.value       |     org.opencontainers.image.description    |
 | documentation                 |     documentation[i].result.value     |   org.opencontainers.image.documentation    |

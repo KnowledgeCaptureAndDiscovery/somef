@@ -3,8 +3,8 @@ These fields are defined in the [Julia projects specification](https://docs.juli
 
 | Software metadata category    |    SOMEF metadata JSON path  | julia pyproject.toml metadata file field               |
 |-------------------------------|--------------------------------|---------------------------------------------------|
-| authors - name                 |   authors[i].result.name   |     authors    *(1)*    |
-| authors - email                   |   authors[i].result.email   |     authors    *(1)*    |
+| author - name                 |   author[i].result.name   |     authors    *(1)*    |
+| author - email                |   author[i].result.email   |     authors    *(1)*    |
 | package_id                |   package_id[i].result.value   |   name   |
 | has_package_file          |   has_package_file[i].result.value    |  URL of the Project.toml file      |
 | identifier                |   identifier[i].result .value  | uuid                    |

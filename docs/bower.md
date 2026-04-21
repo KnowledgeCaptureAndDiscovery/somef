@@ -3,7 +3,7 @@ These fields are defined in the [Bower specification](https://github.com/bower/s
 
 | Software metadata category  | SOMEF metadata JSON path              | BOWER.JSON metadata file field     |
 |-----------------------------|---------------------------------------|---------------------|
-| authors                 |     authors[i].result.value           |     authors[]         |
+| author                 |     author[i].result.value           |     authors[]         |
 | description             |     description[i].result.value       |     description     |
 | has_package_file        |     has_package_file[i].result.value  |   URL of the bower.json file   |
 | homepage                |     homepage[i].result.value          |     homepage |

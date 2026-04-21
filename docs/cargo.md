@@ -3,9 +3,9 @@ These fields are defined in the [Cargo.toml specification](https://doc.rust-lang
 
 | Software metadata category        |      SOMEF metadata JSON path  | CARGO.TOML metadata file field                |
 |-------------------------------|--------------------------------------------|------------------------------|
-| authors - value                 |   authors[i].result.value   |     package.authors      |
-| authors - name                |   authors[i].result.name   |     package.authors  *(1)*     |
-| authors - email                  |   authors[i].result.email   |    package.authors  *(2)*      |
+| author - value                 |   author[i].result.value   |     package.authors      |
+| author - name                |   author[i].result.name   |     package.authors  *(1)*     |
+| author - email                  |   author[i].result.email   |    package.authors  *(2)*      |
 | code_repository           |   code_repository[i].result.value   |   package.repository      |
 | description              |   description[i].result.value   |   package.description   |
 | has_package_file         |   has_package_file[i].result.value    |  URL of the cargo.toml file        |

@@ -68,7 +68,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `acknowledgement`: Any text that the authors have prepared to acknnowledge the contribution from others, or project funding.
 - `application_domain`: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects). See all current recognized application domains [here](https://somef.readthedocs.io/en/latest/#myfootnote1).
 - `application_type`: Software type: Commandline Application, Notebook Application, Ontology, Scientific Workflow. Non-Software types: Static Website, Uncategorized
-- `authors`: Person or organization responsible of the project. This property is also used to indicate the responsible entities of a publication associated with the code repository.
+- `author`: Person or organization responsible of the project. This property is also used to indicate the responsible entities of a publication associated with the code repository.
 - `citation`: Software citation (usually in .bib or .cff format). SOMEF extracts and structures the metadata from these files (including authors, titles, and DOIs) instead of just returning a raw string.
 - `code_of_conduct`: Link to the code of conduct file of the project
 - `code_repository`: Link to the source code (typically the repository where the readme can be found)
@@ -77,6 +77,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `contributing guidelines`: Guidelines indicating how to contribute to a software component.
 - `contributors`: Contributors to a software component. Note: Contributor metadata is exported from metadata files (e.g., CodeMeta, CONTRIBUTORS, etc.) not from git logs.
 - `copyright_holder`: Entity or individual owning the rights to the software. The year is also extracted, if available.
+- `credit_text`: A formatted citation string used to provide credit for the software component, keeping it separate from any associated scholarly publications.
 - `date_created`: Date when the software component was created.
 - `date_updated`: Date when the software component was last updated (note that this will always be older than the date of the extraction).
 - `description`: A description of what the software component does.
@@ -256,7 +257,7 @@ A ScholarlyArticle has the following properties:
 
 | Property | Expected value | Definition |
 |---|---|---|
-| **authors** | List of Agent| List of authors responsible for the publication, providing structured metadata for each |
+| **author** | List of Agent| List of authors responsible for the publication, providing structured metadata for each |
 | **date_published** | String | Date when the article or citation was officially published. |
 | **doi** | String | Digital Object Identifier (DOI) of the reference, usually returned as a full URL.|
 | **journal** | String | Journal where the publication appeared |
@@ -405,6 +406,24 @@ A more detailed explanation is provided in the [wiki](https://github.com/oeg-upm
 
 ```
 As shown in the Turtle snippet above, SOMEF represents the software as an entity, its relationship with each release (software version), the license found in the repository and the Person who owns it.
+
+
+## Citation Reconciliation
+
+SOMEF implements logic to distinguish between scholarly publications and software citations when processing metadata (e.g., from `CITATION.cff` or README files). This ensures that metadata is correctly reconciled in the output:
+
+-`referencePublication`: This field is populated with citations identified as scholarly articles. SOMEF identifies these based on the presence of specific fields like `DOI`, `journal` or by classifying them as `ScholarlyArticle`.
+- `creditText`: This field contains citations that describe the software itself. When SOMEF detects that a citation refers to the repository tool (e.g., from the root of a `CITATION.cff`), it adds this information here to ensure the tool is properly credited, separating it from the associated academic papers. 
+Example: 
+```
+    "creditText": [
+        "Garijo, D., Mao, A., Dharmala, H., Diwanji, C., Wang, J., et al. (somef: software metadata extraction framework). "
+    ],
+    
+  ```
+
+In the CodeMeta export, these categories are mapped to their respective fields, ensuring compliance with scientific metadata standards.
+
 
 ## Codemeta format 
 JSON-LD representation following the [Codemeta specification](https://codemeta.github.io/) (which itself extends [Schema.org](https://schema.org/)). The `result`, `provenance` and `confidence` fields are ommitted in this representation (every category with confidence above the threshold specified when running SOMEF will be included in the results). In addition, any metadata category outside from what is defined in Codemeta will be avoided.

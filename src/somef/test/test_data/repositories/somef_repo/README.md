@@ -17,7 +17,7 @@ Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the follo
 
 - **Acknowledgement**: Text acknowledging funding sources or contributors
 - **Application domain**: The application domain of the repository. Current supported domains include: Astrophysics, Audio, Computer vision, Graphs, Natural language processing, Reinforcement learning, Semantc web, Sequential. Domains are not mutually exclusive. These domains have been extracted from [awesome lists](https://github.com/topics/awesome-list) and [Papers with code](https://paperswithcode.com/). Find more information in our [documentation](https://somef.readthedocs.io/en/latest/)
-- **Authors**: Person(s) or organization(s) responsible for the project. We recognize the following properties:
+- **Author**: Person(s) or organization(s) responsible for the project. We recognize the following properties:
   - Name: name of the author (including last name)
   - Given name: First name of an author
   - Family name: Last name of an author

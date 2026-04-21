@@ -24,7 +24,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
   - encoding_format: format of the file
   - upload_date: date of publishing
   - download_count: numbers of downloads
-- **Authors**: Person(s) or organization(s) responsible for the project. We recognize the following properties:
+- **Author**: Person(s) or organization(s) responsible for the project. We recognize the following properties:
   - Name: name of the author (including last name)
   - Given name: First name of an author
   - Family name: Last name of an author
@@ -34,6 +34,7 @@ Given a readme file (or a GitHub repository) SOMEF will extract the following ca
 - **Build file**: Build file(s) of the project. For example, files used to create a Docker image for the target software, package files, etc.
 - **Citation**: Preferred citation(s) as the authors have stated in their readme file. SOMEF recognizes Bibtex, Citation File Format files and other means by which authors cite their papers (e.g., by in-text citation). 
 For CITATION.cff files, SOMEF now generates two separate entries: one for the software tool and another for the preferred citation (if available). This ensures metadata like DOI or version is correctly assigned to each entity.
+Important change: SOMEF now performs citation reconciliation: scholarly publications (articles) are assigned in codemeta to `referencePublication`, while the software itself is credited in `creditText`.
 We recognize the following properties:
   - Title: Title of the publication
   - Author: list of author names in the publication

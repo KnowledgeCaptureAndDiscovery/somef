@@ -181,11 +181,21 @@ class TestCodemetaExport(unittest.TestCase):
         assert "developmentStatus" in self.json_content, "Missing developmentStatus in JSON"
 
     def test_reference_publication_url_natural_language(self):
+        # Note: this test has changed completely because we have changed the logic 
+        # of how we generate the creditText and referencePublication.
+        # This test now expects only `creditText` for this repository.
+        # """Checks that referencePublication contains a ScholarlyArticle with a URL in citation natural language"""
+        # print(self.json_content["creditText"])
+        # assert "referencePublication" in self.json_content, "Missing referencePublication in JSON"
+        # assert isinstance(self.json_content["referencePublication"], list), "referencePublication should be a list"
+        # assert any("url" in pub for pub in self.json_content["referencePublication"]), "No URL found in referencePublication"
 
-        """Checks that referencePublication contains a ScholarlyArticle with a URL in citation natural language"""
-        assert "referencePublication" in self.json_content, "Missing referencePublication in JSON"
-        assert isinstance(self.json_content["referencePublication"], list), "referencePublication should be a list"
-        assert any("url" in pub for pub in self.json_content["referencePublication"]), "No URL found in referencePublication"
+        """Checks that software is correctly credited in creditText"""
+        assert "referencePublication" not in self.json_content or not self.json_content["referencePublication"]
+        
+        assert "creditText" in self.json_content
+        assert len(self.json_content["creditText"]) > 0
+        assert "somef demo repo" in self.json_content["creditText"][0].lower()
 
     def test_date_published(self):
         """Checks that if exist the first date published"""
@@ -237,6 +247,7 @@ class TestCodemetaExport(unittest.TestCase):
 
     def test_codemeta_author_file(self):
         """Checks if codemeta file has extracted the authors in the author file"""
+        print(self.json_content["author"])
         authors = [author.get("name") for author in self.json_content["author"] if author["@type"] == "Person"]
         expected_authors = {"Daniel Garijo", "Juanje Mendoza"}
         assert set(authors) >= expected_authors, f"Mismatch in authors: {authors}"
@@ -268,13 +279,25 @@ class TestCodemetaExport(unittest.TestCase):
         text_file.close()
 
         reference_publications = json_content.get("referencePublication", [])
-
+        credit_text = json_content.get("creditText", [])
         # just one reference
+        # Now we expect 2 because the Zenodo DOI (software) and the 
+        # scientific publication DOI are correctly identified as distinct entities.
+        # new changes again. Now we expect 1 because the scientific publication DOI is correctly identified as the main reference. 
+        # The software is correctly included in the creditText using its Zenodo DOI.
         assert len(reference_publications) == 1, f"Expected 1 referencePublication, found {len(reference_publications)}"
 
         # reference with doi expected
+        # assert reference_publications[0].get("identifier") == "10.5281/zenodo.5907936", \
+        #     f"Expected identifier '10.5281/zenodo.5907936', found '{reference_publications[0].get('identifier')}'"
         assert reference_publications[0].get("identifier") == "10.1145/3524842.3528497", \
             f"Expected identifier '10.1145/3524842.3528497', found '{reference_publications[0].get('identifier')}'"
+
+        assert len(credit_text) == 1, f"Expected 1 creditText entry, found {len(credit_text)}"
+        
+        expected_credit = "Filgueira, R., Garijo, D. (inspect4py: a knowledge extraction framework for python code repositories). 10.5281/zenodo.5907936"
+        assert credit_text[0] == expected_credit, \
+            f"Expected creditText '{expected_credit}', found '{credit_text[0]}'"
         os.remove(json_file_path)
 
     def test_codemeta_duplicate_dois(self):
@@ -705,6 +728,52 @@ class TestCodemetaExport(unittest.TestCase):
 
         os.remove(output_path)
 
+
+    def test_issue_953_publication_reconciliation_codemeta(self):
+        """Checks that citations are correctly separated in the CodeMeta output as referencePublication and creditText"""
+
+        output_path = test_data_path + "test_issue_953_publication_reconciliation_codemeta.json"
+        
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "somef_repo",
+                            doc_src=None,
+                            in_file=None,
+                            output= None,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=output_path,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        with open(output_path, "r") as text_file:
+            json_content = json.loads(text_file.read())
+        
+        referencePublication = json_content[constants.CAT_CODEMETA_REFERENCEPUBLICATION]
+        creditText = json_content.get(constants.CAT_CODEMETA_CREDITTEXT, [])
+
+        assert len(referencePublication) == 2, f"Expected 2 publications, found {len(referencePublication)}"
+        
+        qss_pub = next((p for p in referencePublication if p.get("identifier") == "10.1162/qss_a_00167"), None)
+        assert qss_pub is not None, "QSS publication not found in referencePublication"
+        assert qss_pub["@type"] == "ScholarlyArticle"
+        assert qss_pub["name"] == "A Framework for Creating Knowledge Graphs of Scientific Software Metadata"
+
+        ieee_pub = next((p for p in referencePublication if p.get("identifier") == "10.1109/BigData47090.2019.9006447"), None)
+        assert ieee_pub is not None, "IEEE publication not found in referencePublication"
+        assert ieee_pub["@type"] == "ScholarlyArticle"
+        assert "SoMEF" in ieee_pub["name"]
+
+  
+        assert len(creditText) > 0, "creditText list should not be empty"
+        assert any("somef: software metadata extraction framework" in c.lower() for c in creditText), \
+            "Software citation not found in creditText"
+
+        print("Test passed successfully: referencePublication and creditText content verified.")
+        
+        os.remove(output_path)
 
     @classmethod
     def tearDownClass(cls):

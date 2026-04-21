@@ -4,10 +4,10 @@ These fields are defined in the [Codemeta specification](https://github.com/code
 | Software metadata category    |    SOMEF metadata JSON path  | CODEMETA.JSON metadata file field          |
 |-------------------------------|------------------------------|--------------------------------------------|
 | application_domain        |   application_domain[i].result.value   |     applicationCategory      |
-| authors - value                   |   authors[i].result.value |     author.name or author.givenName + author.familyName                   |
-| authors - email                   |   authors[i].result.email                 |     author.email    |
-| authors - affiliation                  |   authors[i].result.affiliation    |     author.affiliation  |
-| authors - identifier                   |   authors[i].result.identifier     |     author.identifier or author.@id  |
+| author - value                   |   author[i].result.value |     author.name or author.givenName + author.familyName                   |
+| author - email                   |   author[i].result.email                 |     author.email    |
+| author - affiliation                  |   author[i].result.affiliation    |     author.affiliation  |
+| author - identifier                   |   author[i].result.identifier     |     author.identifier or author.@id  |
 | citation - value                 |   citation[i].result.value     |     referencePublication.name or referencePublication.title           |    
 | citation - title                  |   citation[i].result.title     |      referencePublication.name or referencePublication.title            |    
 | citation - url                  |   citation[i].result.url  |         referencePublication.url   |    
