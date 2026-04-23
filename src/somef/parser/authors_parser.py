@@ -82,17 +82,14 @@ def parse_author_file(author_str):
 
 def parse_bibtex_authors(author_str):
     """
-    Específica para strings extraídos de entradas BibTeX.
+    parses author strings extracted from BibTeX entries.
     """
     if not author_str:
         return []
 
-    # 1. Limpiar llaves de LaTeX/BibTeX y saltos de línea
-    # Ej: {A}mador-Dom{\'{\i}}nguez -> Amador-Domínguez
     clean_str = re.sub(r'\{|\}|\\(?P<char>.)', r'\g<char>', author_str)
     clean_str = clean_str.replace('\n', ' ').strip()
 
-    # 2. BibTeX separa autores por la palabra 'and'
     raw_authors = re.split(r'\s+and\s+', clean_str, flags=re.IGNORECASE)
     
     authors = []

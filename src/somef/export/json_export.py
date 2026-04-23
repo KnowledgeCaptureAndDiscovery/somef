@@ -137,9 +137,12 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                 # l_result["spdx_id"] = l[constants.PROP_RESULT][constants.PROP_SPDX_ID]
 
         codemeta_output[constants.CAT_CODEMETA_LICENSE] = l_result
+
     if code_repository is not None:
         codemeta_output[constants.CAT_CODEMETA_CODEREPOSITORY] = code_repository
-        codemeta_output[constants.CAT_CODEMETA_ISSUETRACKER] = code_repository + "/issues"
+        trackers = repo_data.get(constants.CAT_ISSUE_TRACKER, [])
+        codemeta_output[constants.CAT_CODEMETA_ISSUETRACKER] = resolve_issue_tracker(trackers, code_repository)
+
     if constants.CAT_DATE_CREATED in repo_data:
         value = repo_data[constants.CAT_DATE_CREATED][0][constants.PROP_RESULT][constants.PROP_VALUE]
         if value:
@@ -498,10 +501,9 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
 
                     if not is_article:
                         if authors or title or doi or identifier_doi:
-                            credit_str = format_to_credit_text(authors, title, doi, identifier_doi)
+                            credit_str = format_to_credit_text(authors, title, doi, identifier_doi,repo_link=code_repository)
                             credit_text_list.append(credit_str)
-
-                    if is_article:
+                    else:
                         # look por information in values as pagination, issn and others
                         if re.search(r'@\w+\{', cit[constants.PROP_RESULT][constants.PROP_VALUE]):  
                             scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle, 'CODEMETA')
@@ -782,6 +784,7 @@ def parse_contributors(raw):
 
     return contributors
 
+
 def is_scholarly_article(article_dict):
     if article_dict.get("type") in ["SoftwareApplication", "software"]:
         return False
@@ -794,7 +797,8 @@ def is_scholarly_article(article_dict):
         
     return False
 
-def format_to_credit_text(authors, title, doi_or_url, identifier_doi = None):
+
+def format_to_credit_text(authors, title, doi_or_url, identifier_doi = None, repo_link=None):
 
     if authors:
         author_names = []
@@ -813,7 +817,35 @@ def format_to_credit_text(authors, title, doi_or_url, identifier_doi = None):
         authors_str = "Unknown Authors"
 
     final_id = identifier_doi if identifier_doi else doi_or_url
-    return f"{authors_str} ({title}). {final_id if final_id else ''}"
+
+    credit_str = f"{authors_str} ({title}). {final_id if final_id else ''}"
+
+    if repo_link:
+        credit_str = f"{credit_str.rstrip('. ')}. Available at: {repo_link}"
+
+    return credit_str
+
+def resolve_issue_tracker(trackers, code_repository):
+    
+    if len(trackers) == 1:
+        return trackers[0][constants.PROP_RESULT][constants.PROP_VALUE]
+    
+    if len(trackers) > 1:
+        return select_best_tracker(trackers)
+    
+    if code_repository:
+        return f"{code_repository}/issues"
+        
+    return None
+
+def select_best_tracker(trackers):
+
+    for t in trackers:
+        url = t[constants.PROP_RESULT][constants.PROP_VALUE]
+        if "api." not in url:
+            return url
+
+    return trackers[0][constants.PROP_RESULT][constants.PROP_VALUE]
 
 """
 This part of code implements the post processing and unification logic applied to the

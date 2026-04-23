@@ -75,9 +75,8 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `contact`: Contact person responsible for maintaining a software component.
 - `continuous_integration`: Link to continuous integration service, supported on GitHub as well as in GitLab.
 - `contributing guidelines`: Guidelines indicating how to contribute to a software component.
-- `contributors`: Contributors to a software component. Note: Contributor metadata is exported from metadata files (e.g., CodeMeta, CONTRIBUTORS, etc.) not from git logs.
+- `contributor`: Contributors to a software component. Note: Contributor metadata is exported from metadata files (e.g., CodeMeta, CONTRIBUTORS, etc.) not from git logs.
 - `copyright_holder`: Entity or individual owning the rights to the software. The year is also extracted, if available.
-- `credit_text`: A formatted citation string used to provide credit for the software component, keeping it separate from any associated scholarly publications.
 - `date_created`: Date when the software component was created.
 - `date_updated`: Date when the software component was last updated (note that this will always be older than the date of the extraction).
 - `description`: A description of what the software component does.
@@ -112,7 +111,6 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `package_id`: Identifier extracted from packages. (e.g., `packages.json`)
 - `programming_languages`: Languages used in the repository.
 - `readme_url`: URL to the main README file in the repository.
-- `reference_publication`: URL to the paper associated with the code repository.
 - `related_papers`: URL to possible related papers within the repository stated within the readme file.
 - `releases`: Pointer to the available versions of a software component.
 - `repository_status`: Repository status as it is described in [repostatus.org](https://www.repostatus.org/).
@@ -333,10 +331,10 @@ If SOMEF is run with the `-m` flag, a report of the categories that the program 
   "citation"
 ]
 ```
-In this case, SOMEF was not able to find a description or a citation in the target repository. Missing categories will not be added in Codemeta and Turtle exports. Note that the prefix `somef` is added in the field, to indicate that this is a special type of category.
+In this case, SOMEF was not able to find a description or a citation in the target repository. Missing categories will not be added in Codemeta and Turtle exports (in construction). Note that the prefix `somef` is added in the field, to indicate that this is a special type of category.
 
 
-## Turtle format 
+<!-- ## Turtle format 
 RDF represents information in triples (subject, predicate and object), where the subject is the entity to be described (in this case a code repository), the predicate is the property describing the subject (e.g., `description`) and the object is the value obtained (which can be an object or a literal). Representing the provenance information returned by SOMEF is therefore challenging, and would require adopting reification mechanisms that make the output more complex. Therefore we simplify the output by providing our _best guess_ for each of the extracted fields. This is done by analyzing the results, comparing those that may be redundant or come from the same files, and removing those with low confidence or included in other fields.
 
 Our RDF representation uses the [Software Description Ontology](https://w3id.org/okn/o/sd/). The `result`, `provenance` and `confidence` fields are ommitted in this representation (every category with confidence above the threshold specified when running SOMEF will be included in the results). 
@@ -406,24 +404,71 @@ A more detailed explanation is provided in the [wiki](https://github.com/oeg-upm
 
 ```
 As shown in the Turtle snippet above, SOMEF represents the software as an entity, its relationship with each release (software version), the license found in the repository and the Person who owns it.
-
+ -->
 
 ## Citation Reconciliation
 
-SOMEF implements logic to distinguish between scholarly publications and software citations when processing metadata (e.g., from `CITATION.cff` or README files). This ensures that metadata is correctly reconciled in the output:
+SOMEF reconciles extracted citations by matching unique identifiers (such as DOIs or URLs) to ensure a single, non-duplicated list of references. During this process, each entry retains its provenance, including the original source and the extraction technique used, ensuring full metadata transparency. 
+Once reconciled, the Codemeta export module distinguishes between scholarly articles and the software itself, mapping them respectively to referencePublication and creditText in the final output.
 
--`referencePublication`: This field is populated with citations identified as scholarly articles. SOMEF identifies these based on the presence of specific fields like `DOI`, `journal` or by classifying them as `ScholarlyArticle`.
-- `creditText`: This field contains citations that describe the software itself. When SOMEF detects that a citation refers to the repository tool (e.g., from the root of a `CITATION.cff`), it adds this information here to ensure the tool is properly credited, separating it from the associated academic papers. 
-Example: 
-```
-    "creditText": [
-        "Garijo, D., Mao, A., Dharmala, H., Diwanji, C., Wang, J., et al. (somef: software metadata extraction framework). "
-    ],
-    
-  ```
-
-In the CodeMeta export, these categories are mapped to their respective fields, ensuring compliance with scientific metadata standards.
+For a detailed breakdown of how these categories are structured and exported, please refer to the Codemeta format section.
 
 
 ## Codemeta format 
 JSON-LD representation following the [Codemeta specification](https://codemeta.github.io/) (which itself extends [Schema.org](https://schema.org/)). The `result`, `provenance` and `confidence` fields are ommitted in this representation (every category with confidence above the threshold specified when running SOMEF will be included in the results). In addition, any metadata category outside from what is defined in Codemeta will be avoided.
+
+In the CodeMeta export, these categories are mapped to their respective fields, ensuring compliance with scientific metadata standards.
+
+The table below summarizes the mapping between the SOMEF internal JSON structure and the Codemeta/Schema.org output:
+
+| Codemeta / Schema.org Field  | SOMEF Category | Description |
+| :---                  | :---                  | :--- |
+| `author`              | `author`              | Principal authors |
+| `buildInstructions`   | `installation` / `documentation` | Installation or build instructions |
+| `creditText`          | `citation` (Software)   | Human-readable citation for the software  *1*|
+| `codeRepository`      | `code_repository`       | Source code repository URL |
+| `contributor`         | `contributor`           | Project contributors |
+| `copyrightHolder`     | `copyright_holder`      | Entity holding the copyright |
+| `copyrightYear`       | `copyright_holder`      | Year of copyright |
+| `dateCreated`         | `date_created`          | Creation date |
+| `dateModified`        | `date_modified`         | Last modification date |
+| `datePublished`       | `date_published`        | Initial publication date |
+| `description`         | `description`           | Project description |
+| `developmentStatus`   |  `repository_status`     | Current development status |
+| `downloadUrl`         | `download_url`          | Link to download the software |
+| `funder`              | `funding`               | Organization funding the project |
+| `funding`             | `funding`               | Funding details/grants |
+| `identifier`          | `identifier`            | Unique identifiers (e.g., DOI, SWHID) |
+| `issueTracker`        | `code_repository` / `issue_tracker` | Issue tracker URL (derived from codeRepository) or issue_tracker|
+| `keywords`            | `keywords`              | Project tags or keywords |
+| `license`             | `license`               | Software license |
+| `logo`                | `logo`                  | Project logo URL |
+| `maintainer`          | `maintainer`            | Project maintainers |
+| `name`                | `name`                  | Software name |
+| `programmingLanguage` | `programming_languages` | Languages used |
+| `readme`              | `readme_url`            | README file URL |
+| `referencePublication`| `citation` (Papers)     || References to related publications/articles *1*|
+| `releaseNotes`        | `releases`              | Release notes extracted from the release description |
+| `runtimePlatform`     | `runtime_platform`      || Supported runtime platforms |
+| `softwareRequirements`| `requirements`          | Technical dependencies and requirements extracted from config files or text|
+| `softwareVersion`     | `releases`              | Current version extracted from version of releases|
+| `url` | `homepage`              | Project homepage URL |
+
+*1* Handling Citations: `creditText` vs. `referencePublication`
+
+SOMEF reconciles extracted citations by distinguishing between the software itself and its associated scholarly articles. To ensure compliance with the Codemeta specification, the `citation` category from the internal JSON is processed and mapped to two distinct fields in the output:
+
+* **`creditText`**: This field is intended for the software itself, providing a ready-to-use citation string for users. It includes authors, the software title, and a direct link to the repository (added during the export process). SOMEF populates this when it detects software-related citations (e.g., from `CITATION.cff` or root metadata).
+* **`referencePublication`**: This field is intended for scholarly articles (including *preferred-citations* and general papers). These are mapped as `ScholarlyArticle` objects containing structured metadata such as DOI, journal, and title. SOMEF populates this field when it identifies citations based on specific indicators like `DOI`, `journal`, or explicit `ScholarlyArticle` classification.
+
+This transformation ensures that the final Codemeta JSON-LD remains clean, compliant, and clearly separates the software project from its associated academic literature.
+
+Example: 
+```
+    "creditText": [
+        "Garijo, D., Mao, A., Dharmala, H., Diwanji, C., Wang, J., et al. (somef: software metadata extraction framework). Available at: https://github.com/KnowledgeCaptureAndDiscovery/somef"
+    ],
+    
+  ```
+
+

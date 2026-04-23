@@ -295,7 +295,7 @@ class TestCodemetaExport(unittest.TestCase):
 
         assert len(credit_text) == 1, f"Expected 1 creditText entry, found {len(credit_text)}"
         
-        expected_credit = "Filgueira, R., Garijo, D. (inspect4py: a knowledge extraction framework for python code repositories). 10.5281/zenodo.5907936"
+        expected_credit = "Filgueira, R., Garijo, D. (inspect4py: a knowledge extraction framework for python code repositories). 10.5281/zenodo.5907936. Available at: https://github.com/SoftwareUnderstanding/inspect4py"
         assert credit_text[0] == expected_credit, \
             f"Expected creditText '{expected_credit}', found '{credit_text[0]}'"
         os.remove(json_file_path)
