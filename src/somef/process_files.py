@@ -170,6 +170,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                 logging.error(f"{type(err).__name__} was raised: {err}")
                 if ("LICENCE" == filename.upper() or "LICENSE" == filename.upper() or "LICENSE.MD"== filename.upper()
                         or "LICENSE.RST"== filename.upper()):
+                    print(f"[DEBUG LICENSE] Found license file: {filename} at {dir_path}")
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
                                                                repo_dir, repo_relative_path, filename, dir_path,
@@ -501,9 +502,12 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 constants.PROP_TYPE: constants.FILE_DUMP
             }
             if category is constants.CAT_LICENSE:
+                print(f"[DEBUG LICENSE] Processing license file: {filename} (url={url})")
                 license_text = file_text
                 license_info = detect_license_spdx(license_text, 'JSON')
+             
                 if license_info:
+                    print(f"[DEBUG LICENSE] SPDX detected: {license_info}")
                     result[constants.PROP_NAME] = license_info['name']
                     result[constants.PROP_SPDX_ID] = license_info['spdx_id']
                     if '@id' in license_info:
@@ -514,6 +518,8 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 matches_copyright = re.findall(constants.REGEXP_COPYRIGHT, license_text, flags=re.IGNORECASE)
 
                 for year, holder in matches_copyright:
+                    print(f"[DEBUG LICENSE] Adding copyright holder: holder={holder}, year={year}")
+
                     holder = holder.strip() if holder else None
                     year = year.strip() if year else None
 
