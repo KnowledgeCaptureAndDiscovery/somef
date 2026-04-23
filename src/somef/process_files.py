@@ -61,7 +61,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
     try:
         parsed_build_files = set()
 
-        for dir_path, dir_names, filenames in os.walk(repo_dir):
+        for dir_path, dir_names, filenames in sorted(os.walk(repo_dir),key=lambda x: x[0].count(os.sep)):
 
             dir_names[:] = [d for d in dir_names if d.lower() not in constants.IGNORED_DIRS]
             if is_local_repo:
@@ -171,12 +171,12 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                 if ("LICENCE" == filename.upper() or "LICENSE" == filename.upper() or "LICENSE.MD"== filename.upper()
                         or "LICENSE.RST"== filename.upper()):
                     print(f"[DEBUG LICENSE] Found license file: {filename} at {dir_path}")
-                    metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
-                                                               repo_default_branch,
-                                                               repo_dir, repo_relative_path, filename, dir_path,
-                                                               metadata_result, constants.CAT_LICENSE)
-                    
 
+                    metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
+                                                            repo_default_branch,
+                                                            repo_dir, repo_relative_path, filename, dir_path,
+                                                            metadata_result, constants.CAT_LICENSE)
+                    
                 if "CODE_OF_CONDUCT" == filename.upper() or "CODE_OF_CONDUCT.MD" == filename.upper():
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                                repo_default_branch,
