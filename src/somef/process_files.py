@@ -63,12 +63,19 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
 
         for dir_path, dir_names, filenames in sorted(os.walk(repo_dir),key=lambda x: x[0].count(os.sep)):
 
-            dir_names[:] = [d for d in dir_names if d.lower() not in constants.IGNORED_DIRS]
-            if is_local_repo:
-                dir_names[:] = [d for d in dir_names if d.lower() != "lib"]
+            # dir_names[:] = [d for d in dir_names if d.lower() not in constants.IGNORED_DIRS]
+            # if is_local_repo:
+            #     dir_names[:] = [d for d in dir_names if d.lower() != "lib"]
 
+            # repo_relative_path = os.path.relpath(dir_path, repo_dir)
+            # current_dir = os.path.basename(repo_relative_path).lower()
             repo_relative_path = os.path.relpath(dir_path, repo_dir)
+            path_parts = repo_relative_path.split(os.sep)
             current_dir = os.path.basename(repo_relative_path).lower()
+            is_in_ignored = any(part.lower() in constants.IGNORED_DIRS for part in path_parts)
+            is_lib = is_local_repo and "lib" in path_parts
+            if is_in_ignored or is_lib:
+                continue
             # if this is a test folder, we ignore it (except for the root repo)
             # if ignore_test_folder and repo_relative_path != "." and "test" in repo_relative_path.lower():
             if ignore_test_folder and repo_relative_path != "." and current_dir in constants.IGNORED_DIRS:
@@ -170,7 +177,6 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                 logging.error(f"{type(err).__name__} was raised: {err}")
                 if ("LICENCE" == filename.upper() or "LICENSE" == filename.upper() or "LICENSE.MD"== filename.upper()
                         or "LICENSE.RST"== filename.upper()):
-                    print(f"[DEBUG LICENSE] Found license file: {filename} at {dir_path}")
 
                     metadata_result = get_file_content_or_link(repo_type, file_path, owner, repo_name,
                                                             repo_default_branch,
@@ -484,9 +490,11 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                             entry[constants.PROP_TECHNIQUE] is constants.TECHNIQUE_FILE_EXPLORATION):
                         new_file_path = extract_directory_path(url)
                         existing_path = extract_directory_path(entry[constants.PROP_SOURCE])
-                        if new_file_path.startswith(existing_path):
-                            # the existing file is higher, ignore this one
-                            return metadata_result
+                        # if new_file_path.startswith(existing_path):
+                        #     # the existing file is higher, ignore this one
+                        #     return metadata_result
+                        if repo_relative_path != ".": 
+                            return metadata_result 
                         else:
                             # replace result in hierarchy (below)
                             replace = True
@@ -501,14 +509,12 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 constants.PROP_VALUE: file_text,
                 constants.PROP_TYPE: constants.FILE_DUMP
             }
-            print(f"[DEBUG] category: {category}")
+
             if category is constants.CAT_LICENSE:
-                print(f"[DEBUG LICENSE] Processing license file: {filename}")
                 license_text = file_text
                 license_info = detect_license_spdx(license_text, 'JSON')
              
                 if license_info:
-                    print(f"[DEBUG LICENSE] SPDX detected: {license_info}")
                     result[constants.PROP_NAME] = license_info['name']
                     result[constants.PROP_SPDX_ID] = license_info['spdx_id']
                     if '@id' in license_info:
@@ -519,7 +525,6 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 matches_copyright = re.findall(constants.REGEXP_COPYRIGHT, license_text, flags=re.IGNORECASE)
 
                 for year, holder in matches_copyright:
-                    print(f"[DEBUG LICENSE] Adding copyright holder: holder={holder}, year={year}")
 
                     holder = holder.strip() if holder else None
                     year = year.strip() if year else None
@@ -576,7 +581,6 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                         ) 
             # Properties extraction from cff
             if format_result == 'cff':
-                print(f"[DEBUG cff] Processing cff: {filename} ")
                 try:
                     yaml_content = yaml.safe_load(file_text)
                 except Exception:
