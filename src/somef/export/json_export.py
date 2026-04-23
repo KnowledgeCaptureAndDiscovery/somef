@@ -840,12 +840,17 @@ def resolve_issue_tracker(trackers, code_repository):
 
 def select_best_tracker(trackers):
 
-    for t in trackers:
-        url = t[constants.PROP_RESULT][constants.PROP_VALUE]
-        if "api." not in url:
-            return url
+    try:
+        for t in trackers:
+            result = t.get(constants.PROP_RESULT, {})
+            if isinstance(result, dict):
+                url = result.get(constants.PROP_VALUE)
+                if url and "api." not in url:
+                    return url
 
-    return trackers[0][constants.PROP_RESULT][constants.PROP_VALUE]
+        return trackers[0][constants.PROP_RESULT][constants.PROP_VALUE]
+    except Exception:
+        return None
 
 """
 This part of code implements the post processing and unification logic applied to the
