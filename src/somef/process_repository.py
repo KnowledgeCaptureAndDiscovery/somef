@@ -548,13 +548,13 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
 
     if url.netloc != constants.GITHUB_DOMAIN:
         logging.error("Repository must be from Github")
-        return repository_metadata, "", "", ""
+        return repository_metadata, "", "", "", ""
 
     path_components = url.path.split('/')
 
     if len(path_components) < 3:
         logging.error("Repository link is not correct. \nThe correct format is https://github.com/{owner}/{repo_name}.")
-        return repository_metadata, "", "", ""
+        return repository_metadata, "", "", "", ""
 
     owner = path_components[1]
     repo_name = path_components[2]
@@ -567,7 +567,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
             logging.error(f"Github link is not correct. \n"
                 f"The correct format is https://github.com/{owner}/{repo_name}/tree/... \n"
                 f"or  https://github.com/{owner}/{repo_name}/blob/....")
-            return repository_metadata, "", "", ""
+            return repository_metadata, "", "", "", ""
 
         # we must join all after 4, as sometimes tags have "/" in them.
         # default_branch = "/".join(path_components[4:])
@@ -580,7 +580,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
         general_resp_raw, date = rate_limit_get(repo_api_base_url, headers=header)
         if general_resp_raw is None:
             logging.warning(f"Repository archive skipped due to size limit: {constants.SIZE_DOWNLOAD_LIMIT_MB} MB or content-lenght none")
-            return repository_metadata, "", "", ""
+            return repository_metadata, "", "", "", ""
         
         general_resp = general_resp_raw.json()
  
