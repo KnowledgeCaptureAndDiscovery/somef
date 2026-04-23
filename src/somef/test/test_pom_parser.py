@@ -14,7 +14,7 @@ test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories
 class TestPomParser(unittest.TestCase):
 
     def test_parse_pom_file(self):
-        pom_xml_parser.processed_pom = False
+        # pom_xml_parser.processed_pom = False
         pom_file_path = test_data_repositories + os.path.sep + "Widoco" + os.path.sep + "pom.xml"
         result = Result()
 
@@ -82,7 +82,7 @@ class TestPomParser(unittest.TestCase):
 
 
     def test_parse_pom_file_2(self):
-        pom_xml_parser.processed_pom = False
+        # pom_xml_parser.processed_pom = False
         pom_file_path = test_data_repositories + os.path.sep + "maven" + os.path.sep + "pom.xml"
         result = Result()
 

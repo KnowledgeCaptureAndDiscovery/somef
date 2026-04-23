@@ -3,11 +3,11 @@ These fields are defined in the [Authors file specification](https://opensource.
 
 | Software metadata category        |   SOMEF metadata JSON path  | AUTHORS metadata file field               |
 |-------------------------------|---------------------------------------------|------------------------------|  
-| authors - value                  |  authors[i].result.value   |   *(1)* value    |
-| authors - name                 |  authors[i].result.name   |    *(2)*   name  |
-| authors - email                 |  authors[i].result.email   |   *(3)*   email      |
-| authors - given name                 |  authors[i].result.given_name   | *(4)* if type person      |
-| authors - last name                 |  authors[i].result.last_name   |  *(5)* if type person     |
+| author - value                  |  author[i].result.value   |   *(1)* value    |
+| author - name                 |  author[i].result.name   |    *(2)*   name  |
+| author - email                 |  author[i].result.email   |   *(3)*   email      |
+| author - given name                 |  author[i].result.given_name   | *(4)* if type person      |
+| author - last name                 |  author[i].result.last_name   |  *(5)* if type person     |
 
 ---
 

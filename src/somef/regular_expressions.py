@@ -8,6 +8,7 @@ import validators
 from .utils import constants
 from .process_results import Result
 from urllib.parse import urlparse
+from .parser.authors_parser import parse_bibtex_authors
 
 import bibtexparser
 
@@ -636,9 +637,16 @@ def extract_bibtex(readme_text, repository_metadata: Result, readme_source) -> R
             if constants.PROP_DOI in entry:
                 result[constants.PROP_DOI] = entry[constants.PROP_DOI]
             if constants.PROP_TITLE in entry:
-                result[constants.PROP_TITLE] = entry[constants.PROP_TITLE]
+                clean_title = entry[constants.PROP_TITLE].strip("{}")
+                result[constants.PROP_TITLE] = clean_title
             if constants.PROP_AUTHOR in entry:
-                result[constants.PROP_AUTHOR] = entry[constants.PROP_AUTHOR]
+                result[constants.PROP_AUTHOR] = parse_bibtex_authors(entry[constants.PROP_AUTHOR])
+            if constants.PROP_PAGES in entry:
+                result[constants.PROP_PAGES] = entry[constants.PROP_PAGES]
+            if constants.PROP_YEAR in entry:
+                result[constants.PROP_YEAR] = entry[constants.PROP_YEAR]
+            if constants.PROP_JOURNAL in entry:
+                result[constants.PROP_JOURNAL] = entry[constants.PROP_JOURNAL]
             if constants.PROP_URL in entry:
                 result[constants.PROP_URL] = entry[constants.PROP_URL]
             repository_metadata.add_result(constants.CAT_CITATION, result, 1,
@@ -822,29 +830,6 @@ def extract_readthedocs_badgeds(readme_text, repository_metadata: Result, source
         )
 
     return repository_metadata
-
-# def extract_package_manager_badgeds(readme_text, repository_metadata: Result, source) -> Result:
-#     """
-#     Function that takes the text of a readme file and searches if there are package manager badges.
-#     Parameters
-#     ----------
-#     @param readme_text: Text of the readme
-#     @param repository_metadata: Result with all the findings in the repo
-#     @param source: source file on top of which the extraction is performed (provenance)
-#     Returns
-#     -------
-#     @returns Result with the package badges found
-#     """
-#     package_manager_badges = re.findall(constants.REGEXP_READTHEDOCS_BADGES, readme_text, re.DOTALL)
-#     for package in package_manager_badges:
-#         repository_metadata.add_result(constants.CAT_DOCUMENTATION,
-#                                        {
-#                                            constants.PROP_TYPE: constants.URL,
-#                                            constants.PROP_VALUE: package
-#                                        }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
-
-
-#     return repository_metadata
 
 
 def extract_swh_badges(readme_text, repository_metadata: Result, source) -> Result:

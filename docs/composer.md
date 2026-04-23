@@ -3,11 +3,11 @@ These fields are defined in the [Composer.json specification](https://getcompose
 
 | Software metadata category    | SOMEF metadata JSON path          | COMPOSER.JSON metadata file field     |
 |-------------------------------|-----------------------------------|-----------------------------------|
-| authors - value                  |  authors[i].result.value      |     authors.name |
-| authors - name                   |  authors[i].result.name       |     authors.name |
-| authors - name                |  authors[i].result email      |     authors.email |
-| authors - url                  |  authors[i].result.url   |     authors.homepage |
-| authors - role                 |  authors[i].result.role        |    authors.role     |
+| author - value                  |  author[i].result.value      |     authors.name |
+| author - name                   |  author[i].result.name       |     authors.name |
+| author - name                |  author[i].result email      |     authors.email |
+| author - url                  |  author[i].result.url   |     authors.homepage |
+| author - role                 |  author[i].result.role        |    authors.role     |
 | code_repository           |  code_repository[i].result.value   |     repository or repository.url           |
 | description               |  description[i].result.value  |   description                       |
 | has_package_file          |  has_package_file[i].result.value    |   URL of the composer.json file        |

@@ -4,10 +4,10 @@ These fields are defined in the [Codemeta specification](https://github.com/code
 | Software metadata category    |    SOMEF metadata JSON path  | CODEMETA.JSON metadata file field          |
 |-------------------------------|------------------------------|--------------------------------------------|
 | application_domain        |   application_domain[i].result.value   |     applicationCategory      |
-| authors - value                   |   authors[i].result.value |     author.name or author.givenName + author.familyName                   |
-| authors - email                   |   authors[i].result.email                 |     author.email    |
-| authors - affiliation                  |   authors[i].result.affiliation    |     author.affiliation  |
-| authors - identifier                   |   authors[i].result.identifier     |     author.identifier or author.@id  |
+| author - value                   |   author[i].result.value |     author.name or author.givenName + author.familyName                   |
+| author - email                   |   author[i].result.email                 |     author.email    |
+| author - affiliation                  |   author[i].result.affiliation    |     author.affiliation  |
+| author - identifier                   |   author[i].result.identifier     |     author.identifier or author.@id  |
 | citation - value                 |   citation[i].result.value     |     referencePublication.name or referencePublication.title           |    
 | citation - title                  |   citation[i].result.title     |      referencePublication.name or referencePublication.title            |    
 | citation - url                  |   citation[i].result.url  |         referencePublication.url   |    
@@ -15,12 +15,12 @@ These fields are defined in the [Codemeta specification](https://github.com/code
 | citation - doi                   |   citation[i].result.doi       |     referencePublication.identifier   | 
 | code_repository           |   code_repository[i].result.value   |     codeRepository           |
 | continuous_integration    |   continuous_integration[i].result.value |     contIntegration          |
-| contributors - value   |   contributors[i].result.value |     contributor.givenName + contributor.familyName or just name if organization       |
-| contributors - name  |   contributors[i].result.value |     contributor.givenName + contributor.familyName or just name if organization       |
-| contributors - last_name  |   contributors[i].result.value |     contributor.familyName         |
-| contributors - given_name  |   contributors[i].result.value |     contributor.givenName         |
-| contributors - identifier  |   contributors[i].result.value |     contributor.@id          |
-| contributors - email   |   contributors[i].result.value |     contributor.email         |
+| contributor - value   |   contributor[i].result.value |     contributor.givenName + contributor.familyName or just name if organization       |
+| contributor - name  |   contributor[i].result.value |     contributor.givenName + contributor.familyName or just name if organization       |
+| contributor - last_name  |   contributor[i].result.value |     contributor.familyName         |
+| contributor - given_name  |   contributor[i].result.value |     contributor.givenName         |
+| contributor - identifier  |   contributor[i].result.value |     contributor.@id          |
+| contributor - email   |   contributor[i].result.value |     contributor.email         |
 | date_created              |   date_created[i].result.value  |     dateCreated              |
 | date_updated              |   date_updated[i].result.value   |     dateModified             |
 | date_published            |   date_published[i].result .value   |     datePublished  |

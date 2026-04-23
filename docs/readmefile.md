@@ -7,7 +7,7 @@ Unlike others files formats (pom, cargo, cabal...), README documents do not foll
 | citation                       |     citation[i].result.value      |  headers with citation, reference, cite. Extract bibtext  **(1)**       |
 | contact                       |     contact[i].result.value      |  headers with contact       |
 | contributing_guidelines                      |     contributing_guidelines[i].result.value      |  headers with contributing     |
-| contributors                       |     contributors[i].result.value      |  headers with contributor      |
+| contributor                       |     contributor[i].result.value      |  headers with contributor      |
 | description                       |     description[i].result.value      |  headers with description, introduction, basics, initiation, overview      |
 | documentation                  |     documentation[i].result.value      |  github or gitlab url documentation **(2)**, headers with documentation, readthedocs same name project, readthedocs in badges, wiki links in badges and text       |
 | download                       |     download[i].result.value      |  headers with download       |

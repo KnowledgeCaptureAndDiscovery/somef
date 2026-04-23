@@ -590,8 +590,13 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                             version_value = version_value[0]
                         parse_version_cff(version_value, metadata_result, url)
 
-                    root_result = parse_cff_root(yaml_content, metadata_result,url)
-                    root_result[constants.PROP_VALUE] = file_text
+                    root_result = parse_cff_root(yaml_content)
+                    clean_yaml = dict(yaml_content)
+                    clean_yaml.pop("preferred-citation", None)
+                    root_result[constants.PROP_VALUE] = yaml.dump(
+                        clean_yaml, sort_keys=False, allow_unicode=True
+                    )
+                    # root_result[constants.PROP_VALUE] = file_text
                     # root_result[constants.PROP_TYPE] = constants.FILE_DUMP
                     metadata_result.add_result(
                         category, root_result, 1,
@@ -725,11 +730,11 @@ def parse_authors_citation(author_list):
     return authors
 
 
-def parse_cff_root(yaml_content, metadata_result, url):
+def parse_cff_root(yaml_content):
     result = {}
 
     result[constants.PROP_TITLE] = yaml_content.get("title")
-    result["authors"] = parse_authors_citation(yaml_content.get("authors", []))
+    result[constants.PROP_AUTHOR] = parse_authors_citation(yaml_content.get("authors", []))
     # result[constants.PROP_VERSION] = yaml_content.get("version")
     result[constants.PROP_DOI] = yaml_content.get("doi")
     result[constants.PROP_URL] = yaml_content.get("url")
@@ -749,7 +754,7 @@ def parse_cff_preferred(pref):
     result = {}
 
     result[constants.PROP_TITLE] = pref.get("title")
-    result["authors"] = parse_authors_citation(pref.get("authors", []))
+    result[constants.PROP_AUTHOR] = parse_authors_citation(pref.get("authors", []))
     result[constants.PROP_DOI] = pref.get("doi")
     result[constants.PROP_URL] = pref.get("url")
     result[constants.PROP_JOURNAL] = pref.get("journal")

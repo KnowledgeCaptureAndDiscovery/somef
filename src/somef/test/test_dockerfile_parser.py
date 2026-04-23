@@ -78,7 +78,7 @@ class TestDockerfileParser(unittest.TestCase):
             f"Found: {doc_urls}"
         )
 
-        authors = json_content.get("authors", [])
+        authors = json_content.get(constants.CAT_AUTHORS, [])
 
         author_values = [
             entry["result"]["value"]

@@ -3,11 +3,11 @@ These fields are defined in the [Maven POM specification](https://maven.apache.o
 
 | Software metadata category       |   SOMEF metadata JSON path                 | POM.XML metadata file field    |
 |-------------------------------|---------------------------------------------|----------------------------------|
-| authors - value                   |  authors[i].result.value       |    developers.developer.name |
-| authors - name                   |  authors[i].result.name       |     developers.developer.name |
-| authors - email                   |  Aauthors[i].result.email      |     developers.developer.email |
-| authors - url                   |  authors[i].result.url         |     developers.developer.url |
-| authors - affiliation                   |  authors[i].result.affiliation |     developers.developer.organization |
+| author - value                   |  author[i].result.value       |    developers.developer.name |
+| author - name                   |  author[i].result.name       |     developers.developer.name |
+| author - email                   |  author[i].result.email      |     developers.developer.email |
+| author - url                   |  author[i].result.url         |     developers.developer.url |
+| author - affiliation                   |  authors[i].result.affiliation |     developers.developer.organization |
 | has_package_file          | has_package_file[i].result .value      |  URL of the pom.xml file |
 | homepage                  |  homepage[i].result.value | homepage |
 | issue_tracker             | issue_tracker[i].result .value    | issueManagement.url                  |
