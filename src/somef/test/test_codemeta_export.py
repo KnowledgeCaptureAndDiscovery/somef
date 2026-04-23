@@ -447,7 +447,7 @@ class TestCodemetaExport(unittest.TestCase):
         Checks runtime in codemeta file
         """
 
-        pom_xml_parser.processed_pom = False
+        # pom_xml_parser.processed_pom = False
 
         output_path = test_data_path + 'test_codemeta_widoco_runtime_platform.json'
         if os.path.exists(output_path):

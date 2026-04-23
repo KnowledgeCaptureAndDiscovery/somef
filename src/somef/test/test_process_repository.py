@@ -275,7 +275,7 @@ class TestProcessRepository(unittest.TestCase):
         when the user specifies --branch.
         """
         
-        pom_xml_parser.processed_pom = False  
+        # pom_xml_parser.processed_pom = False  
         somef_cli.run_cli(threshold=0.8,
                         ignore_classifiers=False,
                         repo_url="https://github.com/dgarijo/Widoco/",
@@ -310,7 +310,7 @@ class TestProcessRepository(unittest.TestCase):
         Checks whether what SOMEF correctly downloads and analyzes a non-default tag
         when the user specifies --tag.
         """
-        pom_xml_parser.processed_pom = False    
+        # pom_xml_parser.processed_pom = False    
 
         somef_cli.run_cli(threshold=0.8,
                         ignore_classifiers=False,
