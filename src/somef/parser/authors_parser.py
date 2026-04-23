@@ -79,3 +79,43 @@ def parse_author_file(author_str):
             authors.append(raw_author)
 
     return authors
+
+def parse_bibtex_authors(author_str):
+    """
+    parses author strings extracted from BibTeX entries.
+    """
+    if not author_str:
+        return []
+
+    clean_str = re.sub(r'\{|\}|\\(?P<char>.)', r'\g<char>', author_str)
+    clean_str = clean_str.replace('\n', ' ').strip()
+
+    raw_authors = re.split(r'\s+and\s+', clean_str, flags=re.IGNORECASE)
+    
+    authors = []
+    for raw_name in raw_authors:
+        raw_name = raw_name.strip()
+        if not raw_name:
+            continue
+
+        agent = {
+            constants.PROP_TYPE: "Agent",
+            constants.PROP_NAME: raw_name 
+        }
+
+        if ',' in raw_name:
+            last, first = raw_name.split(',', 1)
+            last = last.strip()
+            first = first.strip()
+            agent[constants.PROP_NAME] = f"{first} {last}"
+            agent["family_name"] = last
+            agent["given_name"] = first
+        else:
+            words = raw_name.split()
+            if len(words) >= 2:
+                agent["given_name"] = words[0]
+                agent["family_name"] = " ".join(words[1:])
+
+        authors.append(agent)
+
+    return authors

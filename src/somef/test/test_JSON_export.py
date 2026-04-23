@@ -829,3 +829,50 @@ class TestJSONExport(unittest.TestCase):
         assert len(license_entries[0]["source"]) >= 2
 
         os.remove(output_path)
+
+    def test_issue_953_publication_reconciliation(self):
+        """Checks that citations are correctly extracted and reconciled from CFF and README."""
+
+        output_path = test_data_path + "test_issue_953_publication_reconciliation.json"
+        
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "somef_repo",
+                            doc_src=None,
+                            in_file=None,
+                            output=output_path,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        with open(output_path, "r") as text_file:
+            json_content = json.loads(text_file.read())
+        
+        citations = json_content[constants.CAT_CITATION]
+
+        assert constants.CAT_CITATION in json_content, "Missing citation field in JSON"
+        citations = json_content[constants.CAT_CITATION]
+        assert len(citations) == 3, f"Expected 3 citations, but found {len(citations)}"
+
+        software_cit = next((c for c in citations if c["result"]["type"] == "SoftwareApplication"), None)
+        # this is the root in the citation.cff. It is not the preferred
+        assert software_cit is not None, "SoftwareApplication citation not found"
+        assert software_cit["result"]["title"] == "SOMEF: Software metadata extraction framework"
+        assert len(software_cit["result"]["author"]) == 9 
+
+        # This is the preferred. It's a schoplarly article 
+        article_cit = next((c for c in citations if c["result"].get("doi") == "10.1162/qss_a_00167"), None)
+        assert article_cit is not None, "Preferred citation (ScholarlyArticle) not found"
+        assert article_cit["result"]["type"] == "ScholarlyArticle"
+        assert article_cit["result"]["journal"] == "Quantitative Science Studies"
+
+        bibtex_cit = next((c for c in citations if c["result"].get("doi") == "10.1109/BigData47090.2019.9006447"), None)
+        assert bibtex_cit is not None, "Bibtex citation (Text_excerpt) not found"
+        assert bibtex_cit["result"]["format"] == "bibtex"
+        assert bibtex_cit["result"]["year"] == "2019"
+        
+        os.remove(output_path)

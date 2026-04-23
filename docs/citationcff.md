@@ -3,10 +3,10 @@ These fields are defined in the [CITATION.cff specification](https://citation-fi
 
 | Software metadata category | SOMEF metadata JSON path | CITATION.cff metadata file field |
 |----------------------------|---------------------------------------|---------------------|
-| citation - authors - name | citation[i].result.authors[j].name | authors / preferred-citation.authors |
-| citation - authors - family_name | citation[i].result.authors[j].family_name | authors.family-names |
-| citation - authors - given_name | citation[i].result.authors[j].given_name | authors.given-names |
-| citation - authors - url | citation[i].result.authors[j].url | authors.orcid |
+| citation - author - name | citation[i].result.author[j].name | authors / preferred-citation.authors |
+| citation - author - family_name | citation[i].result.author[j].family_name | authors.family-names |
+| citation - author - given_name | citation[i].result.author[j].given_name | authors.given-names |
+| citation - author - url | citation[i].result.author[j].url | authors.orcid |
 | citation - doi | citation[i].result.doi | doi / preferred-citation.doi |
 | citation - datePublished | citation[i].result.datePublished | date-released |
 | citation - is_preferred_citation | citation[i].result.is_preferred_citation | "True" if from preferred-citation. Omitted otherwise|

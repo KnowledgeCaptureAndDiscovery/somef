@@ -3,7 +3,7 @@ These fields are defined in the [Ruby Gems specification](https://guides.rubygem
 
 | Software metadata category    |   SOMEF metadata JSON path     | .gemspec metadata file field               |
 |-------------------------------|--------------------------------|--------------------------------------|
-| authors                  |  authors[i].result.value   |   gem.authors    *(1)*    |
+| author                  |  authors[i].result.value   |   gem.authors    *(1)*    |
 | description              |  description[i].resultvalue   |   description   *(2)* |
 | has_package_file          |  has_package_file[i].result.value    |  URL of the filename.gemspec file      |
 | homepage                  |  homepage[i].result.value   |  homepage *(3)*   |

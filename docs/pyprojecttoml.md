@@ -3,10 +3,10 @@ These fields are defined in the [pyproject.toml specification](https://packaging
 
 | Software metadata category  |    SOMEF metadata JSON path    | PYPROJECT.TOML metadata file field     |
 |--------------------------------|-----------------------------|----------------------------------------|
-| authors - value                   |  authors[i].result.value       |     authors.name                  |
-| authors - email                   |  authors[i].result.email       |     authors.email                  |
-| authors - name                   |  authors[i].result.name        |     authors.name                |
-| authors - url                   |  authors[i].result.url         |     authors.url               |
+| author - value                   |  author[i].result.value       |     authors.name                  |
+| author - email                   |  author[i].result.email       |     authors.email                  |
+| author - name                   |  author[i].result.name        |     authors.name                |
+| author - url                   |  author[i].result.url         |     authors.url               |
 | code_repository           |  code_repository[i].result.value  |  project.urls.repository or tool.poetry.repository |
 | description               |  description[i].result.value |  project.description or tool.poetry.description                |
 | documentation             |  documentation[i].result.value  |  project.urls.documentation or tool.poetry.documentation |

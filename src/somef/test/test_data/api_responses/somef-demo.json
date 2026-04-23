@@ -248,7 +248,7 @@
             "technique": "file_exploration"
         }
     ],
-    "authors": [
+    "author": [
         {
             "result": {
                 "name": "Google Inc.",
@@ -312,7 +312,7 @@
         {
             "result": {
                 "value": "cff-version: 1.2.0\nmessage: If you use this software, please cite it using these metadata.\ntitle: SOMEF DEMO REPO\nabstract: Demo repository for new version (0.9.10) of SOMEF \nauthors:\n  - family-names: Thomas\n    given-names: Pronk\n    orcid: https://orcid.org/0000-0001-9334-7190\nversion: 0.0.1\ndate-released: 2023-11-23\nlicense: AGPL-3.0\nurl: \"https://github.com/tpronk/somef-demo-repo\"",
-                "type": "File_dump",
+                "type": "SoftwareApplication",
                 "author": [
                     {
                         "type": "Agent",

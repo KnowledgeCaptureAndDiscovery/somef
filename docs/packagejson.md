@@ -3,10 +3,10 @@ These fields are defined in the [Package.json specification](https://docs.npmjs.
 
 | Software metadata category    |  SOMEF metadata JSON path                | PACKAGE.JSON metadata file field     |
 |-------------------------------|----------------------------------------|---------------------  |
-| authors - value                   |    authors[i].result.value                |       author.name    |
-| authors - email                   |    authors[i].result.email                |       author.email  |
-| authors - url                   |    authors[i].result.url                  |       author.url  |
-| authors - name                  |    authors[i].result.name                 |       author.name  |
+| author - value                   |    author[i].result.value                |       author.name    |
+| author - email                   |    author[i].result.email                |       author.email  |
+| author - url                   |    author[i].result.url                  |       author.url  |
+| author - name                  |    author[i].result.name                 |       author.name  |
 | code_repository           |    code_repository[i].result.value         |    repository/repository.url/repository.directory  *(1)*|
 | description               |    description[i].result.value               | description            |
 | has_package_file          |    has_package_file[i].result.value   |  URL of the package.json file   |
