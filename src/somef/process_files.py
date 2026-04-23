@@ -62,7 +62,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
         parsed_build_files = set()
 
         for dir_path, dir_names, filenames in sorted(os.walk(repo_dir),key=lambda x: x[0].count(os.sep)):
-
+            dir_names.sort()
+            filenames.sort()   
             # dir_names[:] = [d for d in dir_names if d.lower() not in constants.IGNORED_DIRS]
             # if is_local_repo:
             #     dir_names[:] = [d for d in dir_names if d.lower() != "lib"]
@@ -490,15 +491,26 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                             entry[constants.PROP_TECHNIQUE] is constants.TECHNIQUE_FILE_EXPLORATION):
                         new_file_path = extract_directory_path(url)
                         existing_path = extract_directory_path(entry[constants.PROP_SOURCE])
+
+                        if new_file_path != existing_path and new_file_path.startswith(existing_path):
+                            return metadata_result
                         # if new_file_path.startswith(existing_path):
                         #     # the existing file is higher, ignore this one
                         #     return metadata_result
-                        if repo_relative_path != ".": 
-                            return metadata_result 
-                        else:
-                            # replace result in hierarchy (below)
-                            replace = True
-                        break
+                        # if existing_path == new_file_path:
+                        #     return metadata_result
+                        
+                        # if (category == constants.CAT_CITATION and existing_path == "." and new_file_path != "."):
+                        #     return metadata_result
+
+                        # replace = True
+                        # break
+                        # if repo_relative_path != "." and category == constants.CAT_LICENSE:
+                        #     return metadata_result 
+                        # else:
+                        #     # replace result in hierarchy (below)
+                        #     replace = True
+                        # break
     except Exception as e:
         logging.warning("Error when trying to determine if redundant files exist " + str(e))
     try:
@@ -616,7 +628,7 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                     )
 
                     pref = yaml_content.get("preferred-citation")
-                    if pref:
+                    if pref and not should_skip_citation(metadata_result, url):
                         pref_result = parse_cff_preferred(pref)
                         pref_result[constants.PROP_VALUE] = yaml.dump({"preferred-citation": pref}, default_flow_style=False)
                         # pref_result[constants.PROP_TYPE] = constants.FILE_DUMP
@@ -781,6 +793,23 @@ def parse_cff_preferred(pref):
 
     return clean_nulls(result)
 
+def should_skip_citation(metadata_result, new_path):
+    for entry in metadata_result.results.get(constants.CAT_CITATION, []):
+        if entry.get(constants.PROP_TECHNIQUE) != constants.TECHNIQUE_FILE_EXPLORATION:
+            continue
+
+        existing_path = extract_directory_path(entry[constants.PROP_SOURCE])
+
+        # mismo fichero
+        if existing_path == new_path:
+            return True
+
+        # ya existe uno en raíz → bloquea subcarpetas
+        if existing_path == ".":
+            return True
+
+    return False
+
 def clean_nulls(d: dict) -> dict:
     return {k: v for k, v in d.items() if v not in (None, "")}
 
@@ -802,7 +831,6 @@ def parse_license_cff(license_value, metadata_result, url):
         else:
             license_result[constants.PROP_NAME] = license_value
 
-
         metadata_result.add_result(
             constants.CAT_LICENSE,
             license_result,
@@ -810,6 +838,7 @@ def parse_license_cff(license_value, metadata_result, url):
             constants.TECHNIQUE_FILE_EXPLORATION,
             url
         )
+
     except Exception as e:
         logging.error(f"Error parsing license from CFF: {str(e)}")
 
