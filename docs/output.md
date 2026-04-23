@@ -68,14 +68,14 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `acknowledgement`: Any text that the authors have prepared to acknnowledge the contribution from others, or project funding.
 - `application_domain`: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects). See all current recognized application domains [here](https://somef.readthedocs.io/en/latest/#myfootnote1).
 - `application_type`: Software type: Commandline Application, Notebook Application, Ontology, Scientific Workflow. Non-Software types: Static Website, Uncategorized
-- `author`: Person or organization responsible of the project. This property is also used to indicate the responsible entities of a publication associated with the code repository.
+- `author`: Person(s) or organization(s) responsible of the project. This property is also used to indicate the responsible entities of a publication associated with the code repository.
 - `citation`: Software citation (usually in .bib or .cff format). SOMEF extracts and structures the metadata from these files (including authors, titles, and DOIs) instead of just returning a raw string.
 - `code_of_conduct`: Link to the code of conduct file of the project
 - `code_repository`: Link to the source code (typically the repository where the readme can be found)
 - `contact`: Contact person responsible for maintaining a software component.
 - `continuous_integration`: Link to continuous integration service, supported on GitHub as well as in GitLab.
 - `contributing guidelines`: Guidelines indicating how to contribute to a software component.
-- `contributor`: Contributors to a software component. Note: Contributor metadata is exported from metadata files (e.g., CodeMeta, CONTRIBUTORS, etc.) not from git logs.
+- `contributor`: Contributors to this software. Note: Contributor metadata is exported from metadata files (e.g., CodeMeta, CONTRIBUTORS, etc.) not from git logs.
 - `copyright_holder`: Entity or individual owning the rights to the software. The year is also extracted, if available.
 - `date_created`: Date when the software component was created.
 - `date_updated`: Date when the software component was last updated (note that this will always be older than the date of the extraction).
@@ -447,9 +447,9 @@ The table below summarizes the mapping between the SOMEF internal JSON structure
 | `name`                | `name`                  | Software name |
 | `programmingLanguage` | `programming_languages` | Languages used |
 | `readme`              | `readme_url`            | README file URL |
-| `referencePublication`| `citation` (Papers)     || References to related publications/articles *1*|
-| `releaseNotes`        | `releases`              | Release notes extracted from the release description |
-| `runtimePlatform`     | `runtime_platform`      || Supported runtime platforms |
+| `referencePublication`| `citation` (Papers)     || References to the main publication associated with this software component (as per author preference) *1*|
+| `releaseNotes`        | `releases`              | Release notes extracted from each release description |
+| `runtimePlatform`     | `runtime_platform`      || Supported runtime platforms (e.g., Python3, Java1.8)  |
 | `softwareRequirements`| `requirements`          | Technical dependencies and requirements extracted from config files or text|
 | `softwareVersion`     | `releases`              | Current version extracted from version of releases|
 | `url` | `homepage`              | Project homepage URL |
