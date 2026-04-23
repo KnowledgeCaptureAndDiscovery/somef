@@ -501,8 +501,9 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 constants.PROP_VALUE: file_text,
                 constants.PROP_TYPE: constants.FILE_DUMP
             }
+            print(f"[DEBUG] category: {category}")
             if category is constants.CAT_LICENSE:
-                print(f"[DEBUG LICENSE] Processing license file: {filename} (url={url})")
+                print(f"[DEBUG LICENSE] Processing license file: {filename}")
                 license_text = file_text
                 license_info = detect_license_spdx(license_text, 'JSON')
              
@@ -575,6 +576,7 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                         ) 
             # Properties extraction from cff
             if format_result == 'cff':
+                print(f"[DEBUG cff] Processing cff: {filename} ")
                 try:
                     yaml_content = yaml.safe_load(file_text)
                 except Exception:
