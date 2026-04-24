@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 from datetime import datetime
 from urllib.parse import urlparse, urlunparse
@@ -22,7 +23,7 @@ def save_json_output(repo_data, out_path, missing, pretty=False):
     -------
     @return: Does not return a value
     """
-    print("Saving json data to", out_path)
+    logging.info("Saving json data to %s", out_path)
     if missing:
         # add a new key-value papir to the dictionary
         repo_data[constants.CAT_MISSING] = create_missing_fields(repo_data)
@@ -872,6 +873,10 @@ def canonicalize_value(value, value_type):
        - Otherwise, unify to scheme://domain (documentation, badges, pages)
        - Always remove query, fragment, trailing slash
     """
+    if isinstance(value, (list, dict)):
+        logging.warning(f"Warning: Unexpected structured value for type {value_type}. Skipping canonicalization.")
+        return value
+    
     if value_type == constants.RELEASE:
         return value
     
