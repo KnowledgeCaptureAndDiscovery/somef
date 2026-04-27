@@ -974,6 +974,14 @@ def unify_results(repo_data: dict) -> dict:
                 else:
                     canonical = canonicalize_value(value, value_type)
                     key = str(canonical)
+            elif category == constants.CAT_REQUIREMENTS:  
+                req_name = result.get("name", "").strip().lower()
+                req_version = result.get("version", "").strip()
+                if req_name:
+                    key = f"REQ-{req_name}-{req_version}"
+                else:
+                    canonical = canonicalize_value(value, value_type)
+                    key = str(canonical)
             else:
                 # Normal behavior for the rest of the categories
                 canonical = canonicalize_value(value, value_type)

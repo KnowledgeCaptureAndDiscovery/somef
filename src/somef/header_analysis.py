@@ -138,13 +138,25 @@ def extract_header_content(text: str) -> Tuple[pd.DataFrame, str | None]:
 
     content, none_header_content = mardown_parser.extract_content_per_header(text, headers)
     parents = mardown_parser.extract_headers_parents(text)
+
+    # parent_list = [parents.get(h) for h in header_list]
+
+    content_map = dict(zip(header_list, content))
     
+    aligned_content = [content_map[h] for h in header_list]
+    aligned_parents = [parents.get(h) for h in header_list]
+
+    # df = pd.DataFrame({
+    #     'Header': header_list,
+    #     'Content': content,
+    #     'ParentHeader': [parents.get(h) for h in header_list],
+    # })
+
     df = pd.DataFrame({
         'Header': header_list,
-        'Content': content,
-        'ParentHeader': [parents.get(h) for h in header_list],
+        'Content': aligned_content,
+        'ParentHeader': aligned_parents,
     })
-
     # df['Content'].replace('', np.nan, inplace=True)
     df['Content'] = df['Content'].replace('', np.nan)
     df = df.dropna(subset=['Content'])
