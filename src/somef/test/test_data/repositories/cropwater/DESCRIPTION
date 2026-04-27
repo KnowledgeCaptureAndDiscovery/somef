@@ -1,0 +1,61 @@
+Package: CropWaterBalance
+Title: Climate Water Balance for Irrigation Purposes
+Version: 0.2.0.9000
+Authors@R: c(
+  person(
+    given = "Gabriel Constantino",
+    family = "Blain",
+    role = c("aut", "cre"),
+    email = "gabriel.blain@sp.gov.br",
+    comment = c(ORCID = "0000-0001-8832-7734")),
+  person(
+    given = "Graciela R.",
+    family = "Sobierajski",
+    role = "aut",
+    comment = c(ORCID = "0000-0002-7211-9268")),
+  person(
+    given = "Regina C.",
+    family = "Matos Pires",
+    role = "aut",
+    comment = c(ORCID = "0000-0003-4200-7094")),
+  person(
+    given = "Adam H.",
+    family = "Sparks",
+    email = "adamhsparks@gmail.com",
+    role = "aut",
+    comment = c(ORCID = "0000-0002-0061-8359")),
+  person(
+    given = "Leticia L.",
+    family = "Martins",
+    role = "aut",
+    comment = c(ORCID = "0000-0002-0299-3005"))
+  )
+Description: Calculates daily climate water balance for irrigation purposes and 
+  also calculates the reference evapotranspiration (ET) using three methods,
+  Penman and Monteith  (Allen et al. 1998, ISBN:92-5-104219-5);
+  Priestley and Taylor (1972) <doi:10/cr3qwn>; or Hargreaves and Samani (1985)
+  <doi:10.13031/2013.26773>.  Users may specify a management allowed depletion
+  (MAD), which is used to suggest when to irrigate.  The functionality allows
+  for the use of crop and water stress coefficients as well.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: 
+    R (>= 3.10)
+LazyData: true
+Suggests: 
+    knitr,
+    rmarkdown,
+    spelling,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Config/testthat/parallel: true
+Imports: 
+    PowerSDI,
+    lubridate,
+    stats
+URL: https://github.com/gabrielblain/CropWaterBalance, https://gabrielblain.github.io/CropWaterBalance/
+BugReports: https://github.com/gabrielblain/CropWaterBalance/issues
+VignetteBuilder: knitr
+Language: en-US

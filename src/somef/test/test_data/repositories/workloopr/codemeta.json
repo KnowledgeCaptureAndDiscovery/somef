@@ -1,0 +1,144 @@
+{
+  "@context": [
+    "https://doi.org/10.5063/schema/codemeta-2.0",
+    "http://schema.org"
+  ],
+  "@type": "SoftwareSourceCode",
+  "identifier": "workloopR",
+  "description": "Functions for the import, transformation, and analysis of data from muscle physiology experiments. The work loop technique is used to evaluate the mechanical work and power output of muscle. Josephson (1985) <https://jeb.biologists.org/content/114/1/493> modernized the technique for application in comparative biomechanics. Although our initial motivation was to provide functions to analyze work loop experiment data, as we developed the package we incorporated the ability to analyze data from experiments that are often complementary to work loops. There are currently three supported experiment types: work loops, simple twitches, and tetanus trials. Data can be imported directly from .ddf files or via an object constructor function. Through either method, data can then be cleaned or transformed via methods typically used in studies of muscle physiology. Data can then be analyzed to determine the timing and magnitude of force development and relaxation (for isometric trials) or the magnitude of work, net power, and instantaneous power among other things (for work loops). Although we do not provide plotting functions, all resultant objects are designed to be friendly to visualization via either base-R plotting or 'tidyverse' functions.",
+  "name": "workloopR: Analysis of Work Loops and Other Data from Muscle Physiology Experiments",
+  "license": "https://spdx.org/licenses/GPL-3.0",
+  "version": "1.0.1",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "version": "3.6.1",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 3.6.1 (2019-07-05)",
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Vikram B.",
+      "familyName": "Baliga",
+      "email": "vbaliga87@gmail.com",
+      "@id": "https://orcid.org/0000-0002-9367-8974"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Shreeram",
+      "familyName": "Senthivasan",
+      "email": "shreeramsenthi@gmail.com",
+      "@id": "https://orcid.org/0000-0002-7118-9547"
+    }
+  ],
+  "contributor": {},
+  "copyrightHolder": {},
+  "funder": {},
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Vikram B.",
+      "familyName": "Baliga",
+      "email": "vbaliga87@gmail.com",
+      "@id": "https://orcid.org/0000-0002-9367-8974"
+    }
+  ],
+  "softwareSuggestions": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "testthat",
+      "name": "testthat",
+      "version": ">= 2.1.1",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=testthat"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "knitr",
+      "name": "knitr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=knitr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "rmarkdown",
+      "name": "rmarkdown",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
+    }
+  ],
+  "softwareRequirements": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "pracma",
+      "name": "pracma",
+      "version": ">= 2.0.7",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=pracma"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "signal",
+      "name": "signal",
+      "version": ">= 0.7-6",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=signal"
+    }
+  ],
+  "codeRepository": "https://github.com/vbaliga/workloopR",
+  "fileSize": "873.059KB",
+  "citation": [
+    {
+      "@type": "SoftwareSourceCode",
+      "datePublished": "2019",
+      "author": [
+        {
+          "@type": "Person",
+          "givenName": "Vikram B.",
+          "familyName": "Baliga"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Shreeram",
+          "familyName": "Senthivasan"
+        }
+      ],
+      "name": "workloopR: Analysis of Work Loops and Other Data from Muscle Physiology Experiments",
+      "url": "https://github.com/vbaliga/workloopR"
+    }
+  ],
+  "issueTracker": "https://github.com/vbaliga/workloopR/issues",
+  "readme": "https://github.com/vbaliga/workloopR/blob/master/README.md",
+  "contIntegration": [
+    "https://ci.appveyor.com/project/vbaliga/workloopR",
+    "https://travis-ci.org/vbaliga/workloopR"
+  ],
+  "developmentStatus": "https://www.repostatus.org/#wip",
+  "releaseNotes": "https://github.com/vbaliga/workloopR/blob/master/NEWS.md"
+}
