@@ -874,5 +874,133 @@ class TestJSONExport(unittest.TestCase):
         assert bibtex_cit is not None, "Bibtex citation (Text_excerpt) not found"
         assert bibtex_cit["result"]["format"] == "bibtex"
         assert bibtex_cit["result"]["year"] == "2019"
-        
+
         os.remove(output_path)
+
+
+    def test_issue_reconciliation_workloop(self):
+        """Checks that key metadata is correctly extracted and reconciled from codemeta.json and README. 
+        Issue with canolicalization ofvalues"""
+
+        output_path = test_data_path + "test_issue_reconciliation_workloopr.json"
+        
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "workloopr",
+                            doc_src=None,
+                            in_file=None,
+                            output=output_path,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        with open(output_path, "r") as text_file:
+            json_content = json.loads(text_file.read())
+        
+        assert constants.CAT_AUTHORS in json_content
+        authors = json_content[constants.CAT_AUTHORS]
+        assert len(authors) == 2
+        author_names = [a["result"]["value"] for a in authors]
+        assert "Vikram B. Baliga" in author_names
+        assert "Shreeram Senthivasan" in author_names
+
+        assert constants.CAT_INSTALLATION in json_content
+        installation = json_content[constants.CAT_INSTALLATION]
+        assert any("devtools::install_github" in i["result"]["value"] for i in installation)
+
+        assert constants.CAT_CITATION in json_content
+        citations = json_content[constants.CAT_CITATION]
+        # print(citations)
+        assert any("workloopR" in c["result"]["value"] for c in citations)
+
+        os.remove(output_path)
+        
+
+    
+    def test_issue_reconciliation_cropwater(self):
+        """Checks that key metadata is correctly extracted and reconciled from codemeta.json and README. 
+        Issue with canolicalization ofvalues"""
+
+        output_path = test_data_path + "test_issue_reconciliation_cropwater.json"
+        
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "cropwater",
+                            doc_src=None,
+                            in_file=None,
+                            output=output_path,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        with open(output_path, "r") as text_file:
+            json_content = json.loads(text_file.read())
+        
+        assert constants.CAT_AUTHORS in json_content
+        authors = json_content[constants.CAT_AUTHORS]
+        assert len(authors) == 5
+        author_names = [a["result"]["value"] for a in authors]
+        assert "Gabriel Constantino Blain" in author_names
+        assert "Adam H. Sparks" in author_names
+
+
+        assert constants.CAT_INSTALLATION in json_content
+        installation = json_content[constants.CAT_INSTALLATION]
+        assert any("gabrielblain/CropWaterBalance" in i["result"]["value"] for i in installation)
+
+        assert constants.CAT_LICENSE in json_content
+        licenses = json_content[constants.CAT_LICENSE]
+        spdx = next((l for l in licenses if l["result"].get("spdx_id") == "MIT"), None)
+        assert spdx is not None, "MIT license not found"
+
+        assert constants.CAT_DESCRIPTION in json_content
+
+        os.remove(output_path)
+
+
+    def test_issue_980_reconciliation_requirements(self):
+        """Checks that requirements with the same name and version are correctly reconciled
+        into a single entry merging sources, even when their raw values are not the same
+        (ej. 'pracma (>= 2.0.7)' vs 'pracma==>= 2.0.7')."""
+
+        output_path = test_data_path + "test_issue_980_reconciliation_requirements.json"
+        
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "ggstatsplot",
+                            doc_src=None,
+                            in_file=None,
+                            output=output_path,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        with open(output_path, "r") as text_file:
+            json_content = json.loads(text_file.read())
+
+        requirements = json_content[constants.CAT_REQUIREMENTS]
+        # print(requirements)
+
+        seen_keys = [(r["result"]["name"], r["result"].get("version", "")) for r in requirements]
+        unique_keys = set(seen_keys)
+
+        assert len(seen_keys) == len(unique_keys), (
+            f"Duplicate requirements found: "
+            f"{[k for k in unique_keys if seen_keys.count(k) > 1]}"
+        )
+
+        os.remove(output_path)
+
+

@@ -1,0 +1,159 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "identifier": "CropWaterBalance",
+  "description": "Calculates daily climate water balance for irrigation purposes and also calculates the reference evapotranspiration (ET) using three methods, Penman and Monteith (Allen et al. 1998, ISBN:92-5-104219-5); Priestley and Taylor (1972) <doi:10/cr3qwn>; or Hargreaves and Samani (1985) <doi:10.13031/2013.26773>. Users may specify a management allowed depletion (MAD), which is used to suggest when to irrigate. The functionality allows for the use of crop and water stress coefficients as well.",
+  "name": "CropWaterBalance: Climate Water Balance for Irrigation Purposes",
+  "codeRepository": "https://github.com/gabrielblain/CropWaterBalance",
+  "issueTracker": "https://github.com/gabrielblain/CropWaterBalance/issues",
+  "license": "https://spdx.org/licenses/MIT",
+  "version": "0.2.0.9000",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 4.4.1 (2024-06-14)",
+  "provider": {
+    "@id": "https://cran.r-project.org",
+    "@type": "Organization",
+    "name": "Comprehensive R Archive Network (CRAN)",
+    "url": "https://cran.r-project.org"
+  },
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Gabriel Constantino",
+      "familyName": "Blain",
+      "email": "gabriel.blain@sp.gov.br",
+      "@id": "https://orcid.org/0000-0001-8832-7734"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Graciela R.",
+      "familyName": "Sobierajski",
+      "@id": "https://orcid.org/0000-0002-7211-9268"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Regina C.",
+      "familyName": "Matos Pires",
+      "@id": "https://orcid.org/0000-0003-4200-7094"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Adam H.",
+      "familyName": "Sparks",
+      "email": "adamhsparks@gmail.com",
+      "@id": "https://orcid.org/0000-0002-0061-8359"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Leticia L.",
+      "familyName": "Martins",
+      "@id": "https://orcid.org/0000-0002-0299-3005"
+    }
+  ],
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Gabriel Constantino",
+      "familyName": "Blain",
+      "email": "gabriel.blain@sp.gov.br",
+      "@id": "https://orcid.org/0000-0001-8832-7734"
+    }
+  ],
+  "softwareSuggestions": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "knitr",
+      "name": "knitr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=knitr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "rmarkdown",
+      "name": "rmarkdown",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "spelling",
+      "name": "spelling",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=spelling"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "testthat",
+      "name": "testthat",
+      "version": ">= 3.0.0",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=testthat"
+    }
+  ],
+  "softwareRequirements": {
+    "1": {
+      "@type": "SoftwareApplication",
+      "identifier": "R",
+      "name": "R",
+      "version": ">= 3.10"
+    },
+    "2": {
+      "@type": "SoftwareApplication",
+      "identifier": "PowerSDI",
+      "name": "PowerSDI",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=PowerSDI"
+    },
+    "3": {
+      "@type": "SoftwareApplication",
+      "identifier": "lubridate",
+      "name": "lubridate",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=lubridate"
+    },
+    "4": {
+      "@type": "SoftwareApplication",
+      "identifier": "stats",
+      "name": "stats"
+    },
+    "SystemRequirements": null
+  },
+  "fileSize": "176.519KB",
+  "releaseNotes": "https://github.com/gabrielblain/CropWaterBalance/blob/master/NEWS.md",
+  "readme": "https://github.com/gabrielblain/CropWaterBalance/blob/master/README.md",
+  "contIntegration": ["https://github.com/gabrielblain/CropWaterBalance/actions/workflows/R-CMD-check.yaml", "https://github.com/adamhsparks/CropWaterBalance/actions/workflows/R-CMD-check.yaml"]
+}

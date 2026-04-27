@@ -134,3 +134,18 @@ class TestHeaderAnalysis(unittest.TestCase):
             citation_text = citations[0][constants.PROP_RESULT][constants.PROP_VALUE]
             assert "Tim Berners-Lee" in citation_text
 
+
+    def test_extract_headers_with_separators(self):
+        """Tests that headers underlined with separators (---) are correctly parsed
+        and not marked as False due to <hr /> being mistaken for a header element."""
+
+        with open(test_data_path + "README-laueNN.md", "r") as data_file:
+            text = data_file.read()
+            result, non_header_content = extract_header_content(text)
+            print(result)
+            assert len(result.index) == 11
+
+            headers = result['Header'].tolist()
+            assert 'Installation' in headers
+            assert 'Citation' in headers
+            assert 'Funding' in headers

@@ -83,7 +83,7 @@
         }
     ],
     "softwareRequirements": "https://raw.githubusercontent.com/KnowledgeCaptureAndDiscovery/somef/refs/heads/master/pyproject.toml",
-    "version": "0.10.2",
+    "version": "0.10.3",
     "developmentStatus": "active",
     "issueTracker": "https://github.com/KnowledgeCaptureAndDiscovery/somef/issues",
     "@type": "SoftwareSourceCode"
