@@ -759,6 +759,38 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                             source
                         )
 
+            if "runtimePlatform" in data:
+                runtime_platforms = data["runtimePlatform"]
+                if isinstance(runtime_platforms, str):
+                    runtime_platforms = [runtime_platforms]
+                if isinstance(runtime_platforms, list):
+                    for rp in runtime_platforms:
+                        if isinstance(rp, str):
+                            metadata_result.add_result(
+                                constants.CAT_RUNTIME_PLATFORM,
+                                {
+                                    "value": rp,
+                                    "type": constants.STRING
+                                },
+                                1,
+                                constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                                source
+                            )
+                            match = re.search(r'^([a-zA-Z0-9_\-\.]+)\s+version\s+([0-9][0-9a-zA-Z\.\-]*)', rp, re.IGNORECASE)
+                            if match:
+                                metadata_result.add_result(
+                                    constants.CAT_PROGRAMMING_LANGUAGES,
+                                    {
+                                        "name": match.group(1),
+                                        "value": match.group(1),
+                                        "version": match.group(2),
+                                        "type": constants.LANGUAGE
+                                    },
+                                    1,
+                                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                                    source
+                                )
+
     except Exception as e:
         logging.error(f"Error parsing codemeta JSON file {file_path}: {str(e)}")
 
