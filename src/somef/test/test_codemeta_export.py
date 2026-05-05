@@ -775,6 +775,43 @@ class TestCodemetaExport(unittest.TestCase):
         
         os.remove(output_path)
 
+    def test_author_organization_issue_983(self):
+        """
+        Checks that when a repository has an organization as owner (GitHub) and an author declared
+        in pyproject.toml, both are merged into a single author entry with name, email, @id and identifier.
+        """
+        output_path = test_data_path + 'test_codemeta_sunpy_author.json'
+
+        somef_cli.run_cli(threshold=0.9,
+                        ignore_classifiers=False,
+                        repo_url=None,
+                        doc_src=None,
+                        local_repo=test_data_repositories + "sunpy",
+                        in_file=None,
+                        output=None,
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out=output_path,
+                        pretty=True,
+                        missing=False,
+                        requirements_mode="all")
+
+        with open(output_path, "r") as f:
+            json_content = json.load(f)
+
+        authors = json_content.get("author", [])
+
+        assert len(authors) == 1, f"Expected a single merged author entry, found {len(authors)}: {authors}"
+
+        author = authors[0]
+
+        assert author.get("@type") == "Organization", f"Expected @type 'Organization', got: {author.get('@type')}"
+
+        assert author.get("name") == "The SunPy Community", f"Expected name 'The SunPy Community', got: {author.get('name')}"
+
+        assert author.get("email") == "sunpy@googlegroups.com", f"Expected email 'sunpy@googlegroups.com', got: {author.get('email')}"
+
+        os.remove(output_path)
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""
