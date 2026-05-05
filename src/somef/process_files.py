@@ -294,7 +294,6 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                },
                                                1,
                                                constants.TECHNIQUE_FILE_EXPLORATION, build_file_url)
-                        logging.info(f"############### (NEW UPDATE) Processing package file: {filename} ############### ")
                         if filename.lower() == "pom.xml":
                             metadata_result = parse_pom_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "package.json":
