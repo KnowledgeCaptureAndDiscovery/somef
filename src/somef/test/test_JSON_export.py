@@ -1025,10 +1025,18 @@ class TestJSONExport(unittest.TestCase):
         json_content = json.loads(data)
 
         descriptions = json_content[constants.CAT_DESCRIPTION]
+      
+        # assert all(len(d[constants.PROP_RESULT][constants.PROP_VALUE].split()) >= 5
+        #        for d in descriptions if isinstance(d[constants.PROP_RESULT][constants.PROP_VALUE], str)), \
+        # f"Found descriptions with less than 5 words: {descriptions}"
+        pyproject_descriptions = [d for d in descriptions if "pyproject.toml" in d.get("source", "")]
+        assert len(pyproject_descriptions) >= 1, f"Short description from pyproject.toml was incorrectly filtered: {descriptions}"
 
+        # descriptions from README should have >= 5 words. But rest of files can have short descriptions.
+        readme_descriptions = [d for d in descriptions if "readme" in d.get("source", "").lower()]
         assert all(len(d[constants.PROP_RESULT][constants.PROP_VALUE].split()) >= 5
-               for d in descriptions if isinstance(d[constants.PROP_RESULT][constants.PROP_VALUE], str)), \
-        f"Found descriptions with less than 5 words: {descriptions}"
+                for d in readme_descriptions if isinstance(d[constants.PROP_RESULT][constants.PROP_VALUE], str)), \
+            f"Found short descriptions from README that should have been filtered: {readme_descriptions}"
         
         os.remove(test_data_path + "test_issue_487_short_descriptions.json")
 
