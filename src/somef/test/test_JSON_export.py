@@ -1004,3 +1004,41 @@ class TestJSONExport(unittest.TestCase):
         os.remove(output_path)
 
 
+    def test_issue_634_header_license(self):
+        """
+        Checks that a license mentioned in a README header is resolved to SPDX and merged with other license entries into a single unified entry.
+        """
+
+        output_path = test_data_path + "test_issue_634_header_license.json"
+        
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "mira",
+                            doc_src=None,
+                            in_file=None,
+                            output=output_path,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        with open(output_path, "r") as text_file:
+            json_content = json.loads(text_file.read())
+
+        licenses = json_content[constants.CAT_LICENSE]
+        # print(licenses)
+        assert len(licenses) == 1, f"Expected just a merged license entry, found {len(licenses)}: {licenses}"
+
+        result = licenses[0][constants.PROP_RESULT]
+
+        assert result.get(constants.PROP_SPDX_ID) == "Apache-2.0", f"Expected spdx_id 'Apache-2.0', got: {result.get(constants.PROP_SPDX_ID)}"
+
+        techniques = licenses[0].get("technique", [])
+        assert "header_analysis" in techniques, f"Expected 'header_analysis' in techniques, got: {techniques}"
+
+        os.remove(output_path)
+
+
