@@ -1003,4 +1003,33 @@ class TestJSONExport(unittest.TestCase):
 
         os.remove(output_path)
 
+    def test_issue_487_short_descriptions(self):
+        """Checks that descriptions with less than 5 words are filtered out from the output."""
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "sunpy_short_desc",
+                            doc_src=None,
+                            in_file=None,
+                            output=test_data_path + "test_issue_487_short_descriptions.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        text_file = open(test_data_path + "test_issue_487_short_descriptions.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+
+        descriptions = json_content[constants.CAT_DESCRIPTION]
+
+        assert all(len(d[constants.PROP_RESULT][constants.PROP_VALUE].split()) >= 5
+               for d in descriptions if isinstance(d[constants.PROP_RESULT][constants.PROP_VALUE], str)), \
+        f"Found descriptions with less than 5 words: {descriptions}"
+        
+        os.remove(test_data_path + "test_issue_487_short_descriptions.json")
+
 
