@@ -230,6 +230,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                      repository_metadata, readme_source, def_branch)
             repository_metadata = regular_expressions.extract_arxiv_links(readme_unfiltered_text, repository_metadata,
                                                                           readme_source)
+            repository_metadata = regular_expressions.extract_license_badges(readme_unfiltered_text, repository_metadata, readme_source)
+
             logging.info("Completed extracting regular expressions")
 
         return repository_metadata
