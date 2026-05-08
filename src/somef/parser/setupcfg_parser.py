@@ -60,6 +60,7 @@ def parse_setup_cfg(file_path, metadata_result: Result, source):
             metadata_result.add_result(
                 constants.CAT_AUTHORS, author_data,
                 1, constants.TECHNIQUE_CODE_CONFIG_PARSER, source
+            )
 
         if "license" in metadata:
             license_value = metadata["license"]
@@ -75,12 +76,12 @@ def parse_setup_cfg(file_path, metadata_result: Result, source):
                 }
             else:
                 license_data = {"value": license_value, "type": constants.LICENSE}
-
+                
             metadata_result.add_result(
                 constants.CAT_LICENSE, license_data,
                 1, constants.TECHNIQUE_CODE_CONFIG_PARSER, source
             )
-            
+
         if "keywords" in metadata:
             for kw in re.split(r'[,\n]', metadata["keywords"]):
                 kw = kw.strip()
