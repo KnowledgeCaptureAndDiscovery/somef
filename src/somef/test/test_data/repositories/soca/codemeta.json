@@ -1,0 +1,75 @@
+{
+  "@context": "https://w3id.org/codemeta/3.0",
+  "@type": [
+    "SoftwareSourceCode",
+    "SoftwareApplication"
+  ],
+  "license": {
+    "name": "Apache License 2.0",
+    "url": "https://raw.githubusercontent.com/oeg-upm/soca/main/LICENSE",
+    "identifier": "https://spdx.org/licenses/Apache-2.0"
+  },
+  "codeRepository": "https://github.com/oeg-upm/soca",
+  "issueTracker": "https://github.com/oeg-upm/soca/issues",
+  "dateCreated": "2021-09-01",
+  "dateModified": "2025-10-06",
+  "downloadUrl": "https://github.com/oeg-upm/soca/releases",
+  "name": "soca",
+  "logo": "https://raw.githubusercontent.com/oeg-upm/soca/main/doc/images/soca-logo.png",
+  "keywords": [
+    "software",
+    "software-engineering",
+    "software-metadata"
+  ],
+  "programmingLanguage": [
+    "Python",
+    "HTML",
+    "JavaScript",
+    "CSS"
+  ],
+  "softwareRequirements": [
+    {
+      "name": "setuptools",
+      "@type": "SoftwareApplication",
+      "version": ">=42"
+    },
+    {
+      "name": "wheel",
+      "@type": "SoftwareApplication"
+    }
+  ],
+  "continuousIntegration": "https://raw.githubusercontent.com/oeg-upm/soca/main/.github/workflows/pypi-publish.yml",
+  "releaseNotes": "This release is a minor update to fix issues and the integration with the dasboards. See an example here: (https://software.oeg.fi.upm.es).\r\n\r\nThis release contains the version of the tool that has been sent to the MSR 2024 conference",
+  "softwareVersion": "0.0.3",
+  "datePublished": "2023-03-30",
+  "buildInstructions": [
+    "https://raw.githubusercontent.com/oeg-upm/soca/main/README.md"
+  ],
+  "author": [
+    {
+      "@type": "Person",
+      "@id": "https://github.com/dgarijo",
+      "name": "Daniel Garijo"
+    },
+    {
+      "@type": "Person",
+      "name": "Daniel Rodríguez Mariblanca"
+    },
+    {
+      "@type": "Person",
+      "name": "Miguel Arroyo Márquez"
+    },
+    {
+      "@type": "Person",
+      "name": "Esteban Gonzalez"
+    }
+  ],
+  "developmentStatus": "active",
+  "identifier": [
+    "https://doi.org/10.5281/zenodo.10316197"
+  ],
+  "readme": "https://raw.githubusercontent.com/oeg-upm/soca/main/README.md",
+  "description": [
+    "Software Catalog Creator. A repository that given an organization URL, it will create a software catalog for browsing all repositories"
+  ]
+}
