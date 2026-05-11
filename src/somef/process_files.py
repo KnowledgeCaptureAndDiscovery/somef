@@ -25,6 +25,7 @@ from .parser.dockerfile_parser import parse_dockerfile
 from .parser.publiccode_parser import parse_publiccode_file
 from .parser.codeowners_parser import parse_codeowners_file
 from .parser.conda_environment_parser import parse_conda_environment_file
+from .parser.setupcfg_parser import parse_setup_cfg
 from chardet import detect
 
 
@@ -277,7 +278,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                         (filename.lower() == "environment.yml" or filename.lower() == "environment.yaml") or \
                         (filename.lower() == ".zenodo.json") or \
                         (filename.lower() == "cargo.toml" and repo_relative_path == ".") or (filename.lower() == "composer.json" and repo_relative_path == ".") or \
-                        (filename == "Project.toml" or (filename.lower()== "publiccode.yml" or filename.lower()== "publiccode.yaml") and repo_relative_path == "."):
+                        (filename == "Project.toml" or (filename.lower()== "publiccode.yml" or filename.lower()== "publiccode.yaml") and repo_relative_path == ".") or \
+                        filename.lower() == "setup.cfg":
                         if filename.lower() in parsed_build_files and repo_relative_path != ".":
                             logging.info(f"Ignoring secondary {filename} in {dir_path}")
                             continue
@@ -318,6 +320,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             metadata_result = parse_publiccode_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "environment.yml" or filename.lower() == "environment.yaml":
                             metadata_result = parse_conda_environment_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
+                        if filename.lower() == "setup.cfg":
+                            metadata_result = parse_setup_cfg(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         # if filename.lower() == ".zenodo":
                         #     metadata_result = parse_zenodo_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         parsed_build_files.add(filename.lower())
