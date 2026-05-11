@@ -77,6 +77,9 @@ REGEXP_LGPL1 = r'(?i)gnu\s+lesser\s+general\s+public\s+license\s*,?\s*version\s*
 REGEXP_MPL2 = r'(?i)mozilla\s+public\s+license\s*,?\s*version\s*2\.0'
 REGEXP_UNLICENSE = r'(?i)the\s+unlicense'
 
+# detect choosealicense in badges
+REGEXP_CHOOSE_LICENSE = r'choosealicense\.com/licenses/([^/\s]+)'
+
 # Detect organization in authors.md
 # REGEXP_LTD_INC = r'\b(inc|ltd|llc|corporation)([.,]|\b)'
 REGEXP_LTD_INC = r'\b(inc|ltd|llc|corporation|foundation|community|project|team|group|society|institute|association|consortium|organization|organisation)([.,]|\b)'
