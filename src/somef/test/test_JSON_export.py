@@ -1035,3 +1035,38 @@ class TestJSONExport(unittest.TestCase):
         os.remove(test_data_path + "test_issue_770.json")
 
 
+    def test_issue_533_choosealicense_badge(self):
+        """
+        Checks that a license badge with a choosealicense.com URL is detected and resolved to SPDX.
+        """
+        output_path = test_data_path + "test_issue_533_choosealicense_badge.json"
+
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=None,
+                            doc_src=test_data_path + "README-manim.md",
+                            in_file=None,
+                            output=output_path,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+
+        with open(output_path, "r") as f:
+            json_content = json.loads(f.read())
+
+        licenses = json_content.get(constants.CAT_LICENSE, [])
+
+        mit_license = next(
+            (l for l in licenses if l[constants.PROP_RESULT].get(constants.PROP_SPDX_ID) == "MIT"),
+            None
+        )
+        assert mit_license is not None, f"Expected a MIT license resolved from choosealicense.com badge, got: {licenses}"
+
+        techniques = mit_license.get("technique", [])
+        assert constants.TECHNIQUE_REGULAR_EXPRESSION in techniques, f"Expected 'regular_expressions' in techniques, got: {techniques}"
+        
+        os.remove(output_path)
