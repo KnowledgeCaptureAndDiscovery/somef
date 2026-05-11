@@ -198,8 +198,13 @@ def extract_repo_status(unfiltered_text, repository_metadata: Result, readme_sou
     if init > 0:
         end = unfiltered_text.find("](", init)
         repo_status = unfiltered_text[init + 3:end]
-        repo_status = repo_status.replace("Project Status: ", "")
-        short_status = repo_status[0:repo_status.find(" ")].lower()
+        # repo_status = repo_status.replace("Project Status: ", "")
+        # short_status = repo_status[0:repo_status.find(" ")].lower()
+        
+        status_value = repo_status.replace("Project Status:", "").strip()
+        parts = re.split(r'[ \]]', status_value)
+        short_status = parts[0].lower()
+
         repository_metadata.add_result(constants.CAT_STATUS,
                                        {
                                            constants.PROP_TYPE: constants.URL,
