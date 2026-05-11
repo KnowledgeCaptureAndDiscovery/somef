@@ -1001,6 +1001,14 @@ def unify_results(repo_data: dict) -> dict:
                 else:
                     canonical = canonicalize_value(value, value_type)
                     key = str(canonical)
+            elif category == constants.CAT_RUNTIME_PLATFORM:
+                rt_name = result.get("name", "").strip().lower()
+                rt_version = result.get("version", "").strip()
+                if rt_name:
+                    key = f"RT-{rt_name}-{rt_version}"
+                else:
+                    canonical = canonicalize_value(value, value_type)
+                    key = str(canonical)
             else:
                 # Normal behavior for the rest of the categories
                 canonical = canonicalize_value(value, value_type)
