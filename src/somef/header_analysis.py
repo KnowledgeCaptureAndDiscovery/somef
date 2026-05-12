@@ -327,11 +327,20 @@ def is_false_positive_header(text: str, category: str) -> bool:
 
     text_lower = text.lower()
 
+    if '?' in text or '!' in text:
+        return True
+    
     # false positives for bibliographic citations
     if category == constants.CAT_CITATION:
         for pattern in constants.NEGATIVE_PATTERNS_CITATION_HEADERS:
             if pattern in text_lower:
                 return True
+
+    if category in constants.MAX_HEADER_WORDS:
+        num_words = len(text.split())
+        if num_words > constants.MAX_HEADER_WORDS[category]:
+            return True
+        
     return False
 
 
@@ -460,10 +469,11 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
             if row[constants.PROP_PARENT_HEADER]:
                 result[constants.PROP_PARENT_HEADER] = row[constants.PROP_PARENT_HEADER]
 
+            confidence = calculate_header_confidence(row[constants.PROP_ORIGINAL_HEADER])
             repository_metadata.add_result(
                 row['Group'],
                 result,
-                1,
+                confidence,
                 constants.TECHNIQUE_HEADER_ANALYSIS,
                 source,
             )
@@ -567,3 +577,12 @@ def build_wordnet_groups() -> Dict[str, List]:
     ]
 
     return g
+
+
+def calculate_header_confidence(header: str) -> float:
+    """Returns a confidence value based on the header length."""
+    num_words = len(header.split())
+    for max_words, confidence in constants.HEADER_CONFIDENCE_THRESHOLDS:
+        if num_words <= max_words:
+            return confidence
+    return 0.1
