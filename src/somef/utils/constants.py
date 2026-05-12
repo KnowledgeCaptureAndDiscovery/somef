@@ -544,3 +544,9 @@ NEGATIVE_PATTERNS_CITATION_HEADERS = [
 
 DEPENDENCY_TYPE_RUNTIME = "runtime"
 DEPENDENCY_TYPE_DEVELOPMENT = "development"
+
+# in case not exist in config file. But config file has higher priority than this default value.
+CONF_SIMILARITY_THRESHOLD = "similarity_threshold"
+CONF_DEFAULT_SIMILARITY_THRESHOLD = 0.8
+
+
