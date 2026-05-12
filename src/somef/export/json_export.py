@@ -975,7 +975,15 @@ def unify_results(repo_data: dict) -> dict:
             result[constants.PROP_TYPE] = normalized_type
             value = result.get(constants.PROP_VALUE)
             value_type = result.get(constants.PROP_TYPE)
-
+            
+            # Descriptions of <5 words should probably be removed
+            if category == constants.CAT_DESCRIPTION:
+                value = result.get(constants.PROP_VALUE, "")
+                source = item.get(constants.PROP_SOURCE, "")
+                if isinstance(value, str) and len(value.split()) < 5:
+                    if isinstance(source, str) and "readme" in source.lower():
+                        continue
+                    
             # --- SPECIAL LOGIC FOR LICENSES and citations ---
             if category == constants.CAT_LICENSE and result.get(constants.PROP_SPDX_ID):
                 # If we have SPDX, that is our unification key
