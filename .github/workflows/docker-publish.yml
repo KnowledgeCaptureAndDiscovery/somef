@@ -3,7 +3,7 @@ name: Build and Publish Docker Image after Release (view instruccions for Docker
 on:
   release:
     types: [published]
-  workflow_dispatch:
+  # workflow_dispatch:
 
 jobs:
   build-and-push:
@@ -29,5 +29,5 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            juanjeoeg/somef:latest
-            juanjeoeg/somef:${{ github.event.release.tag_name || 'test' }}
+            kcapd/somef:latest
+            kcapd/somef:${{ github.event.release.tag_name }}
