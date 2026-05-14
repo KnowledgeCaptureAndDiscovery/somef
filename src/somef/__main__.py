@@ -195,7 +195,13 @@ def configure(auto, base_uri):
     "--tag",
     type=str,
     default=None,
-    help="Tag of the repository to analyze. Incompatible with --branch"
+    help="Tag of the repository to analyze. Incompatible with --branch and --commit"
+)
+@click.option(
+    "--commit",
+    type=str,
+    default=None,
+    help="Commit SHA of the repository to analyze. Incompatible with --branch and --tag"
 )
 def describe(requirements_v, requirements_all, **kwargs):
     # import so missing packages get installed when appropriate
