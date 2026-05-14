@@ -812,6 +812,20 @@ class TestCodemetaExport(unittest.TestCase):
         assert author.get("email") == "sunpy@googlegroups.com", f"Expected email 'sunpy@googlegroups.com', got: {author.get('email')}"
 
         os.remove(output_path)
+
+
+    def test_schema_owner(self):
+        """Checks that organization owner is correctly exported as schema:owner with expanded context (issue #892)"""
+   
+        assert isinstance(self.json_content["@context"], list), "Context should be a list when schema:owner is present"
+        assert {"schema": "https://schema.org/"} in self.json_content["@context"], "schema.org prefix missing from context"
+
+        assert "schema:owner" in self.json_content, "Missing schema:owner in JSON"
+        owners = self.json_content["schema:owner"]
+        assert isinstance(owners, list), "schema:owner should be a list"
+        assert any(o.get("@type") == "Organization" for o in owners), "schema:owner should contain an Organization"
+        assert any(o.get("name") == "KnowledgeCaptureAndDiscovery" for o in owners), "Expected KnowledgeCaptureAndDiscovery as owner"
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""
