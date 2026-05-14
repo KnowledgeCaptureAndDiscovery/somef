@@ -29,5 +29,5 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            juanjeoeg/somef:latest
-            juanjeoeg/somef:${{ github.event.release.tag_name || 'test' }}
+            juanjeOeg/somef:latest
+            juanjeOeg/somef:${{ github.event.release.tag_name || 'test' }}
