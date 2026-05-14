@@ -140,6 +140,7 @@ class TestProcessRepository(unittest.TestCase):
             "https://github.com/oeg-upm/delta-ontology")
         assert constants.CAT_RELEASES not in github_data.results.keys()
 
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
     def test_issue_284_issue_272(self):
         """Test designed to check if there are errors detecting title or stargazers"""
         github_data, owner, repo_name, default_br, project_path = process_repository.\

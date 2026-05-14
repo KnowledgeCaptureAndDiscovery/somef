@@ -149,3 +149,21 @@ class TestHeaderAnalysis(unittest.TestCase):
             assert 'Installation' in headers
             assert 'Citation' in headers
             assert 'Funding' in headers
+
+
+    def test_issue_770(self):
+        """
+        Test that ensures OS/platform information is extracted from headers.
+        """
+        with open(test_data_path + "README-os-platforms.md", "r") as data_file:
+            file_text = data_file.read()
+            json_test, results = extract_categories(file_text, Result())
+            assert constants.CAT_RUNTIME_PLATFORM in json_test.results
+            platforms = json_test.results[constants.CAT_RUNTIME_PLATFORM]
+
+            values = [p[constants.PROP_RESULT][constants.PROP_VALUE] for p in platforms]
+            assert any("Windows" in v for v in values)
+            assert any("Linux" in v or "Ubuntu" in v for v in values)
+            assert any("macOS" in v for v in values)
+            assert any("Docker" in v for v in values)
+            assert any("Conda" in v for v in values)
