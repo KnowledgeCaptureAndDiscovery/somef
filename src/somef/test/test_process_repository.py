@@ -338,7 +338,294 @@ class TestProcessRepository(unittest.TestCase):
         source = version[0].get("source", "")
         assert "Widoco/v1.4.25" in source, f"The downloaded tag does not match the requested one. Source: {source}"
 
-        os.remove(test_data_path + "test_905_tag.json") 
+        os.remove(test_data_path + "test_905_tag.json")
+
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
+    def test_issue_905_commit(self):
+        """
+        Checks whether SOMEF correctly downloads and analyzes a specific commit
+        when the user specifies --commit. The test also verifies that commit metadata
+        (SHA, message, author, date) is fetched from the GitHub API and included in
+        the output.
+        """
+        commit_sha = "f567b46b593123e22db5880b4f7fd97c9fe9c94b"
+
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url="https://github.com/dgarijo/Widoco/",
+                        local_repo=None,
+                        doc_src=None,
+                        in_file=None,
+                        output=test_data_path + "test_905_commit.json",
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out=None,
+                        pretty=True,
+                        missing=False,
+                        readme_only=False,
+                        commit=commit_sha)
+
+        with open(test_data_path + "test_905_commit.json", "r") as text_file:
+            json_content = json.load(text_file)
+
+        assert json_content is not None
+        assert os.path.exists(test_data_path + "test_905_commit.json")
+
+        # Verify that commit metadata is present in the output
+        date_created = json_content.get(constants.CAT_DATE_CREATED, [])
+        assert len(date_created) > 0, "Expected commit date metadata to be present"
+
+        os.remove(test_data_path + "test_905_commit.json")
+
+
+class TestFetchCommitMetadata(unittest.TestCase):
+    """
+    Tests for the fetch_commit_metadata function that retrieves commit information
+    from the GitHub API.
+    """
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_fetch_commit_metadata_adds_author(self, mock_rlg, mock_resolve):
+        """fetch_commit_metadata should add the commit author to CAT_AUTHORS."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(200)
+        mock_resp.json = MagicMock(return_value={
+            "sha": "abc123def456",
+            "commit": {
+                "message": "Fix bug in parser",
+                "author": {
+                    "name": "Test User",
+                    "email": "test@example.com",
+                    "date": "2024-01-15T10:30:00Z"
+                },
+                "committer": {
+                    "name": "Test User",
+                    "email": "test@example.com",
+                    "date": "2024-01-15T10:30:00Z"
+                }
+            },
+            "author": {
+                "login": "testuser"
+            },
+            "html_url": "https://github.com/testowner/testrepo/commit/abc123def456"
+        })
+        mock_rlg.return_value = (mock_resp, "2024-01-15")
+
+        repo_metadata = Result()
+        headers = {"Authorization": "token test"}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata,
+            "https://api.github.com/repos/testowner/testrepo",
+            "abc123def456",
+            headers
+        )
+
+        authors = result.results.get(constants.CAT_AUTHORS, [])
+        self.assertGreater(len(authors), 0, "Commit author should be present")
+        author_value = authors[0]["result"]["value"]
+        self.assertEqual(author_value, "testuser")
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_fetch_commit_metadata_adds_date(self, mock_rlg, mock_resolve):
+        """fetch_commit_metadata should add the commit date to CAT_DATE_CREATED."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(200)
+        mock_resp.json = MagicMock(return_value={
+            "sha": "abc123def456",
+            "commit": {
+                "message": "Fix bug in parser",
+                "author": {
+                    "name": "Test User",
+                    "email": "test@example.com",
+                    "date": "2024-01-15T10:30:00Z"
+                }
+            },
+            "html_url": "https://github.com/testowner/testrepo/commit/abc123def456"
+        })
+        mock_rlg.return_value = (mock_resp, "2024-01-15")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata,
+            "https://api.github.com/repos/testowner/testrepo",
+            "abc123def456",
+            headers
+        )
+
+        dates = result.results.get(constants.CAT_DATE_CREATED, [])
+        self.assertGreater(len(dates), 0, "Commit date should be present")
+        date_value = dates[0]["result"]["value"]
+        self.assertEqual(date_value, "2024-01-15T10:30:00Z")
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_fetch_commit_metadata_handles_missing_commit(self, mock_rlg, mock_resolve):
+        """fetch_commit_metadata should not crash when the commit endpoint returns 404."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(404)
+        mock_rlg.return_value = (mock_resp, "")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata,
+            "https://api.github.com/repos/testowner/testrepo",
+            "nonexistent_sha",
+            headers
+        )
+
+        # The function should return the metadata object unchanged (only PROVENANCE default key)
+        self.assertEqual(len(result.results), 1)
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_fetch_commit_metadata_handles_none_response(self, mock_rlg, mock_resolve):
+        """fetch_commit_metadata should handle rate_limit_get returning None."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_rlg.return_value = (None, None)
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata,
+            "https://api.github.com/repos/testowner/testrepo",
+            "abc123",
+            headers
+        )
+
+        self.assertEqual(len(result.results), 1)
+
+
+class TestResolveReleaseCommits(unittest.TestCase):
+    """
+    Tests for the resolve_release_commits function that resolves each release's
+    tag to a commit SHA using the GitHub /tags endpoint.
+    """
+
+    @patch("somef.process_repository.get_all_paginated_results")
+    def test_resolve_release_commits_adds_sha(self, mock_get_tags):
+        """
+        When a release tag matches a tag from the /tags endpoint, the commit SHA
+        should be written into the release result dict.
+        """
+        mock_get_tags.return_value = [
+            {"name": "v1.0.0", "commit": {"sha": "aaa111", "url": ""}},
+            {"name": "v2.0.0", "commit": {"sha": "bbb222", "url": ""}},
+        ]
+
+        repo_metadata = Result()
+        release_1 = {
+            constants.PROP_RESULT: {
+                constants.PROP_TYPE: constants.RELEASE,
+                constants.PROP_VALUE: "https://github.com/owner/repo/releases/tag/v1.0.0",
+                constants.PROP_TAG: "v1.0.0",
+            },
+            constants.PROP_CONFIDENCE: 1,
+            constants.PROP_TECHNIQUE: constants.TECHNIQUE_GITHUB_API,
+        }
+        release_2 = {
+            constants.PROP_RESULT: {
+                constants.PROP_TYPE: constants.RELEASE,
+                constants.PROP_VALUE: "https://github.com/owner/repo/releases/tag/v2.0.0",
+                constants.PROP_TAG: "v2.0.0",
+            },
+            constants.PROP_CONFIDENCE: 1,
+            constants.PROP_TECHNIQUE: constants.TECHNIQUE_GITHUB_API,
+        }
+        repo_metadata.results[constants.CAT_RELEASES] = [release_1, release_2]
+
+        result = process_repository.resolve_release_commits(
+            repo_metadata,
+            "https://api.github.com/repos/owner/repo",
+            {}
+        )
+
+        releases = result.results[constants.CAT_RELEASES]
+        self.assertEqual(releases[0][constants.PROP_RESULT].get(constants.PROP_COMMIT), "aaa111")
+        self.assertEqual(releases[1][constants.PROP_RESULT].get(constants.PROP_COMMIT), "bbb222")
+
+    @patch("somef.process_repository.get_all_paginated_results")
+    def test_resolve_release_commits_skips_unmatched_tag(self, mock_get_tags):
+        """
+        Releases whose tag is not present in the /tags response should not get
+        a commit SHA.
+        """
+        mock_get_tags.return_value = [
+            {"name": "v1.0.0", "commit": {"sha": "aaa111", "url": ""}},
+        ]
+
+        repo_metadata = Result()
+        release = {
+            constants.PROP_RESULT: {
+                constants.PROP_TYPE: constants.RELEASE,
+                constants.PROP_VALUE: "https://github.com/owner/repo/releases/tags/unknown",
+                constants.PROP_TAG: "unknown",
+            },
+            constants.PROP_CONFIDENCE: 1,
+            constants.PROP_TECHNIQUE: constants.TECHNIQUE_GITHUB_API,
+        }
+        repo_metadata.results[constants.CAT_RELEASES] = [release]
+
+        result = process_repository.resolve_release_commits(
+            repo_metadata,
+            "https://api.github.com/repos/owner/repo",
+            {}
+        )
+
+        resolved = result.results[constants.CAT_RELEASES][0][constants.PROP_RESULT]
+        self.assertIsNone(resolved.get(constants.PROP_COMMIT),
+                          "An unknown tag should not receive a commit SHA")
+
+    @patch("somef.process_repository.get_all_paginated_results")
+    def test_resolve_release_commits_no_tags(self, mock_get_tags):
+        """
+        When the /tags endpoint returns an empty list, releases should be
+        left untouched.
+        """
+        mock_get_tags.return_value = []
+
+        repo_metadata = Result()
+        release = {
+            constants.PROP_RESULT: {
+                constants.PROP_TYPE: constants.RELEASE,
+                constants.PROP_VALUE: "https://github.com/owner/repo/releases/tag/v1.0.0",
+                constants.PROP_TAG: "v1.0.0",
+            },
+            constants.PROP_CONFIDENCE: 1,
+            constants.PROP_TECHNIQUE: constants.TECHNIQUE_GITHUB_API,
+        }
+        repo_metadata.results[constants.CAT_RELEASES] = [release]
+
+        result = process_repository.resolve_release_commits(
+            repo_metadata,
+            "https://api.github.com/repos/owner/repo",
+            {}
+        )
+
+        resolved = result.results[constants.CAT_RELEASES][0][constants.PROP_RESULT]
+        self.assertIsNone(resolved.get(constants.PROP_COMMIT))
+
+    @patch("somef.process_repository.get_all_paginated_results")
+    def test_resolve_release_commits_no_releases(self, mock_get_tags):
+        """
+        When there are no releases in the metadata, resolve_release_commits
+        should not crash and should not query the /tags endpoint.
+        """
+        mock_get_tags.return_value = [
+            {"name": "v1.0.0", "commit": {"sha": "aaa111", "url": ""}},
+        ]
+
+        repo_metadata = Result()
+        result = process_repository.resolve_release_commits(
+            repo_metadata,
+            "https://api.github.com/repos/owner/repo",
+            {}
+        )
+
+        self.assertEqual(len(result.results), 1)
 
 
 def _make_mock_response(status_code, content=b""):

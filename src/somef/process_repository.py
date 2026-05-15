@@ -510,7 +510,7 @@ def download_readme(owner, repo_name, default_branch, repo_type, authorization, 
 
 def load_online_repository_metadata(repository_metadata: Result, repository_url, ignore_api_metadata=False,
                                     repo_type=constants.RepositoryType.GITHUB, authorization=None, reconcile_authors=False,
-                                    branch=None,tag=None):
+                                    branch=None,tag=None,commit=None):
     """
     Function uses the repository_url provided to load required information from GitHub or Gitlab.
     Information kept from the repository is written in keep_keys.
@@ -524,6 +524,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     @param reconcile_authors: flag to indicate if additional should be extracted from certain files as codeowners. More request.
     @param branch: branch of the repository to analyze. Overrides the default branch detected from the repository metadata.
     @param tag: tag of the repository to analyze. Cannot be used together with the branch parameter.
+    @param commit: commit SHA of the repository to analyze. Cannot be used together with the branch or tag parameters.
 
     Returns
     -------
@@ -602,6 +603,8 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
         default_branch = branch
     if tag:
         default_branch = tag
+    if commit:
+        default_branch = commit
 
     # filter the general response with only the fields we are interested in, mapping them to our keys
     filtered_resp = {}
@@ -743,8 +746,181 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
 
             repository_metadata.add_result(constants.CAT_RELEASES, release_obj, 1,
                                             constants.TECHNIQUE_GITHUB_API)
+    if not ignore_api_metadata and commit:
+        repository_metadata = fetch_commit_metadata(repository_metadata, repo_api_base_url, commit, header)
     logging.info("Repository information successfully loaded.\n")
     return repository_metadata, owner, repo_name, default_branch, None
+
+
+def fetch_commit_metadata(repository_metadata, repo_api_base_url, commit_sha, headers):
+    """
+    Fetches metadata for a specific commit from the GitHub API and adds it to the repository metadata.
+    Parameters
+    ----------
+    @param repository_metadata: Result object to store the findings
+    @param repo_api_base_url: Base URL of the repository API (e.g. https://api.github.com/repos/owner/repo)
+    @param commit_sha: The commit SHA to fetch metadata for
+    @param headers: HTTP headers to use for the request
+    Returns
+    -------
+    @return: Result object enriched with commit metadata
+    """
+    commit_url = f"{repo_api_base_url}/commits/{commit_sha}"
+    logging.info(f"Fetching commit metadata from {commit_url}")
+    commit_resp, _ = rate_limit_get(commit_url, headers=headers)
+    if commit_resp is None:
+        logging.warning("Skipping commit metadata: rate_limit_get returned None (size limit or network error)")
+        return repository_metadata
+    if commit_resp.status_code != 200:
+        logging.warning(f"Could not fetch commit metadata: HTTP {commit_resp.status_code}")
+        return repository_metadata
+    commit_data = commit_resp.json()
+    commit_details = commit_data.get("commit", {})
+    commit_author = commit_data.get("author", {})
+
+    # Extract commit author name
+    author_name = None
+    if commit_author and commit_author.get("login"):
+        author_name = commit_author["login"]
+    elif commit_details.get("author") and commit_details["author"].get("name"):
+        author_name = commit_details["author"]["name"]
+    if author_name:
+        author_result = {
+            constants.PROP_VALUE: author_name,
+            constants.PROP_TYPE: constants.AGENT
+        }
+        repository_metadata.add_result(constants.CAT_AUTHORS, author_result, 1, constants.TECHNIQUE_GITHUB_API)
+
+    # Extract commit date and store as date_created
+    commit_date_str = None
+    if commit_details.get("author") and commit_details["author"].get("date"):
+        commit_date_str = commit_details["author"]["date"]
+    elif commit_details.get("committer") and commit_details["committer"].get("date"):
+        commit_date_str = commit_details["committer"]["date"]
+    if commit_date_str:
+        date_result = {
+            constants.PROP_VALUE: commit_date_str,
+            constants.PROP_TYPE: constants.DATE
+        }
+        repository_metadata.add_result(constants.CAT_DATE_CREATED, date_result, 1, constants.TECHNIQUE_GITHUB_API)
+
+    # Extract commit URL
+    commit_html_url = commit_data.get("html_url")
+    if commit_html_url:
+        url_result = {
+            constants.PROP_VALUE: commit_html_url,
+            constants.PROP_TYPE: constants.URL,
+            constants.PROP_COMMIT: commit_sha
+        }
+        repository_metadata.add_result(constants.CAT_CODE_REPOSITORY, url_result, 1, constants.TECHNIQUE_GITHUB_API)
+
+    # Resolve release tags to commit SHAs and store them on each release entry
+    repository_metadata = resolve_release_commits(repository_metadata, repo_api_base_url, headers)
+
+    # In here, we keep only releases whose date is at or before the commit date. This will guarantee that the output JSON 
+    # contains the releases that existed up to the point in time of the requested commit, 
+    # with the closest one sitting at the end of the list. 
+    # In some edge cases, like the commit is after ALL releases, we would keep the list of releases as it is. 
+    
+    if commit_date_str and constants.CAT_RELEASES in repository_metadata.results:
+        try:
+            commit_dt = datetime.fromisoformat(commit_date_str[:19])
+            filtered = []
+            closest_release_date = None
+            closest_release_tag = None
+            next_release_date = None
+            next_release_tag = None
+            found_closest = False
+            for release in repository_metadata.results[constants.CAT_RELEASES]:
+                release_result = release.get(constants.PROP_RESULT, {})
+                release_date = release_result.get(constants.PROP_DATE_CREATED)
+                if release_date is None:
+                    release_date = release_result.get(constants.PROP_DATE_PUBLISHED)
+                if release_date is None:
+                    continue
+                try:
+                    release_dt = datetime.fromisoformat(release_date[:19])
+                except (ValueError, TypeError):
+                    continue
+                if release_dt <= commit_dt:
+                    filtered.append(release)
+                    if not found_closest:
+                        found_closest = True
+                        closest_release_date = release_date
+                        closest_release_tag = release_result.get(constants.PROP_TAG, release_result.get(constants.PROP_NAME, "unknown"))
+                else:
+                    if next_release_date is None:
+                        next_release_date = release_date
+                        next_release_tag = release_result.get(constants.PROP_TAG, release_result.get(constants.PROP_NAME, "unknown"))
+            if filtered:
+                repository_metadata.results[constants.CAT_RELEASES] = filtered
+                if found_closest:
+                    msg = f"Closest release behind commit date found. Commit date: {commit_date_str}. Matched release: {closest_release_tag} (date: {closest_release_date})."
+                    if next_release_tag:
+                        msg += f" Next release: {next_release_tag} (date: {next_release_date})."
+                    logging.info(msg)
+            else:
+                logging.warning("All releases are after the commit date; keeping the unfiltered release list.")
+        except (ValueError, TypeError) as e:
+            logging.warning(f"Could not parse commit date for filtering releases: {e}")
+
+    logging.info("Commit metadata successfully loaded.")
+    return repository_metadata
+
+
+def resolve_release_commits(repository_metadata, repo_api_base_url, headers):
+    """
+    Resolves the commit SHA for each release's tag using the GitHub tags API
+    and stores the SHA directly on each release result dict.
+
+    This returns each tag name alongside its commit SHA.
+
+    Parameters
+    ----------
+    @param repository_metadata: Result object containing releases loaded from the API
+    @param repo_api_base_url: Base URL of the repository API (e.g. https://api.github.com/repos/owner/repo)
+    @param headers: HTTP headers to use for the request
+    Returns
+    -------
+    @return: Result object with release entries enriched with commit SHAs (when resolvable)
+    """
+    # Retrieve all tags from the paginated /tags endpoint
+    tags_url = f"{repo_api_base_url}/tags"
+    logging.info(f"Resolving release tags to commit SHAs via {tags_url}")
+    all_tags = get_all_paginated_results(tags_url, headers=headers)
+    if not all_tags:
+        logging.warning("No tags found, cannot resolve release commits.")
+        return repository_metadata
+
+    # Build a mapping from tag name to commit SHA
+    # I am doing this in case the user want to trace back a specific
+    # commit to it respective release
+    tag_to_sha = {}
+    for tag_entry in all_tags:
+        tag_name = tag_entry.get("name")
+        commit_info = tag_entry.get("commit")
+        if tag_name and commit_info and commit_info.get("sha"):
+            tag_to_sha[tag_name] = commit_info["sha"]
+
+    if not tag_to_sha:
+        return repository_metadata
+
+    # Walk through existing releases and add the commit SHA when the tag matches
+    if constants.CAT_RELEASES not in repository_metadata.results:
+        return repository_metadata
+
+    for release_entry in repository_metadata.results[constants.CAT_RELEASES]:
+        release_result = release_entry.get(constants.PROP_RESULT)
+        if release_result is None:
+            continue
+        tag_name = release_result.get(constants.PROP_TAG)
+        if tag_name is None:
+            continue
+        commit_sha = tag_to_sha.get(tag_name)
+        if commit_sha is not None:
+            release_result[constants.PROP_COMMIT] = commit_sha
+
+    return repository_metadata
 
 
 def get_path(obj, path):
