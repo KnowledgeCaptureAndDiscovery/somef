@@ -438,6 +438,13 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
         df.loc[df['Group'].str.len() == 0, 'Group'] = df['ParentGroup']
         df = df.drop(columns=['ParentGroup'])
 
+        # Installation keywords that wordnet cannot handle correctly
+        mask = df['Group'].str.len() == 0
+        df.loc[mask, 'Group'] = df.loc[mask, 'Header'].map(
+            lambda h: [constants.CAT_INSTALLATION]
+            if any(kw in h.lower() for kw in constants.INSTALLATION_HEADER_KEYWORDS)
+            else []
+        )
         # detection for os/platform headers that wordnet cannot handle correctly
         mask = df['Group'].str.len() == 0
         df.loc[mask, 'Group'] = df.loc[mask, 'Header'].map(

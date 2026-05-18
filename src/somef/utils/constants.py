@@ -572,6 +572,20 @@ OS_PLATFORM_HEADER_KEYWORDS = [
     "supported platforms", "tested on", "runs on", "environment",
 ]
 
+INSTALLATION_HEADER_KEYWORDS = [
+    "importing",
+    "downloading",
+    "download",
+    "as a dependency",
+    "as dependency",
+    "via pip",
+    "via conda",
+    "via npm",
+    "via maven",
+    "getting started",
+    "quick start",
+    "quickstart",
+]
 # Regular expressions for OS/platform detection in header analysis
 REGEXP_OS_WINDOWS = r'(?i)\bwindows\s*(\d[\d.]*\d|\d+)?'
 REGEXP_OS_MACOS = r'(?i)(?:\bmacos|\bmac\s*os|\bos\s*x|\bosx)\s*([\d.]+)?'
