@@ -545,6 +545,23 @@ NEGATIVE_PATTERNS_CITATION_HEADERS = [
 DEPENDENCY_TYPE_RUNTIME = "runtime"
 DEPENDENCY_TYPE_DEVELOPMENT = "development"
 
+# same length for all categories or different length depending on the category????????.
+# This is used in the header analysis technique, to determine how many words from the header should be included in the analysis
+# and avoid including false positives.
+MAX_HEADER_WORDS = {
+    CAT_DOCUMENTATION: 5,
+    CAT_REQUIREMENTS: 3,
+    CAT_CITATION: 5,
+}
+
+# Confidence thresholds for header analysis based on header length
+# not sure about this values of confidence
+HEADER_CONFIDENCE_THRESHOLDS = [
+    (3, 1.0),   # 1-3 words -> confidence 1.0
+    (6, 0.8),   # 4-6 words -> confidence 0.8
+    (10, 0.5),  # 7-10 words -> confidence 0.5
+    (11, 0.1),  # 11+ words -> confidence 0.1
+]
 # Keywords for OS/platform header detection (terms WordNet cannot handle semantically)
 OS_PLATFORM_HEADER_KEYWORDS = [
     "windows", "linux", "macos", "mac os", "osx", "os x", "unix",
@@ -555,6 +572,20 @@ OS_PLATFORM_HEADER_KEYWORDS = [
     "supported platforms", "tested on", "runs on", "environment",
 ]
 
+INSTALLATION_HEADER_KEYWORDS = [
+    "importing",
+    "downloading",
+    "download",
+    "as a dependency",
+    "as dependency",
+    "via pip",
+    "via conda",
+    "via npm",
+    "via maven",
+    "getting started",
+    "quick start",
+    "quickstart",
+]
 # Regular expressions for OS/platform detection in header analysis
 REGEXP_OS_WINDOWS = r'(?i)\bwindows\s*(\d[\d.]*\d|\d+)?'
 REGEXP_OS_MACOS = r'(?i)(?:\bmacos|\bmac\s*os|\bos\s*x|\bosx)\s*([\d.]+)?'
