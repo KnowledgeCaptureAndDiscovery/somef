@@ -1041,6 +1041,37 @@ class TestJSONExport(unittest.TestCase):
         os.remove(test_data_path + "test_issue_487_short_descriptions.json")
 
 
+    def test_issue_770(self):
+        """ Test that ensures OS/platform information is extracted from headers"""
+
+        output_path = test_data_path + "test_issue_770.json"
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=test_data_path + "README-os-platforms.md",
+                          in_file=None,
+                          output=output_path,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=True,
+                          readme_only=False)
+        
+        with open(output_path, "r") as text_file:
+            json_content = json.loads(text_file.read())
+            
+        platforms = json_content[constants.CAT_RUNTIME_PLATFORM]
+        values = [p[constants.PROP_RESULT][constants.PROP_VALUE] for p in platforms]
+        assert any("Windows" in v for v in values)
+        assert any("Linux" in v or "Ubuntu" in v for v in values)
+        assert any("macOS" in v for v in values)
+        assert any("Docker" in v for v in values)
+        assert any("Conda" in v for v in values)
+
+        os.remove(test_data_path + "test_issue_770.json")
+
+
     def test_issue_533_choosealicense_badge(self):
         """
         Checks that a license badge with a choosealicense.com URL is detected and resolved to SPDX.
