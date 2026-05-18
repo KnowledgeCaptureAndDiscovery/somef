@@ -1003,4 +1003,107 @@ class TestJSONExport(unittest.TestCase):
 
         os.remove(output_path)
 
+    def test_issue_487_short_descriptions(self):
+        """Checks that descriptions with less than 5 words are filtered out from the output."""
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "sunpy_short_desc",
+                            doc_src=None,
+                            in_file=None,
+                            output=test_data_path + "test_issue_487_short_descriptions.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        text_file = open(test_data_path + "test_issue_487_short_descriptions.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
 
+        descriptions = json_content[constants.CAT_DESCRIPTION]
+      
+        # assert all(len(d[constants.PROP_RESULT][constants.PROP_VALUE].split()) >= 5
+        #        for d in descriptions if isinstance(d[constants.PROP_RESULT][constants.PROP_VALUE], str)), \
+        # f"Found descriptions with less than 5 words: {descriptions}"
+        pyproject_descriptions = [d for d in descriptions if "pyproject.toml" in d.get("source", "")]
+        assert len(pyproject_descriptions) >= 1, f"Short description from pyproject.toml was incorrectly filtered: {descriptions}"
+
+        # descriptions from README should have >= 5 words. But rest of files can have short descriptions.
+        readme_descriptions = [d for d in descriptions if "readme" in d.get("source", "").lower()]
+        assert all(len(d[constants.PROP_RESULT][constants.PROP_VALUE].split()) >= 5
+                for d in readme_descriptions if isinstance(d[constants.PROP_RESULT][constants.PROP_VALUE], str)), \
+            f"Found short descriptions from README that should have been filtered: {readme_descriptions}"
+        
+        os.remove(test_data_path + "test_issue_487_short_descriptions.json")
+
+
+    def test_issue_770(self):
+        """ Test that ensures OS/platform information is extracted from headers"""
+
+        output_path = test_data_path + "test_issue_770.json"
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=test_data_path + "README-os-platforms.md",
+                          in_file=None,
+                          output=output_path,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=True,
+                          readme_only=False)
+        
+        with open(output_path, "r") as text_file:
+            json_content = json.loads(text_file.read())
+            
+        platforms = json_content[constants.CAT_RUNTIME_PLATFORM]
+        values = [p[constants.PROP_RESULT][constants.PROP_VALUE] for p in platforms]
+        assert any("Windows" in v for v in values)
+        assert any("Linux" in v or "Ubuntu" in v for v in values)
+        assert any("macOS" in v for v in values)
+        assert any("Docker" in v for v in values)
+        assert any("Conda" in v for v in values)
+
+        os.remove(test_data_path + "test_issue_770.json")
+
+
+    def test_issue_533_choosealicense_badge(self):
+        """
+        Checks that a license badge with a choosealicense.com URL is detected and resolved to SPDX.
+        """
+        output_path = test_data_path + "test_issue_533_choosealicense_badge.json"
+
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=None,
+                            doc_src=test_data_path + "README-manim.md",
+                            in_file=None,
+                            output=output_path,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+
+        with open(output_path, "r") as f:
+            json_content = json.loads(f.read())
+
+        licenses = json_content.get(constants.CAT_LICENSE, [])
+
+        mit_license = next(
+            (l for l in licenses if l[constants.PROP_RESULT].get(constants.PROP_SPDX_ID) == "MIT"),
+            None
+        )
+        assert mit_license is not None, f"Expected a MIT license resolved from choosealicense.com badge, got: {licenses}"
+
+        techniques = mit_license.get("technique", [])
+        assert constants.TECHNIQUE_REGULAR_EXPRESSION in techniques, f"Expected 'regular_expressions' in techniques, got: {techniques}"
+        
+        os.remove(output_path)

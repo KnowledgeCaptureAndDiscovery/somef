@@ -181,6 +181,31 @@ def extract_support_channels(readme_text, repository_metadata: Result, readme_so
 
     return repository_metadata
 
+def extract_license_badges(readme_text, repository_metadata, readme_source):
+    """
+    Extracts license information from choosealicense.com URLs found in README badges.
+    """
+    matches = re.finditer(constants.REGEXP_CHOOSE_LICENSE, readme_text)
+    for match in matches:
+        license_url = match.group(0)  # full URL
+        license_info = detect_license_spdx(license_url, 'HEADER')
+        if license_info:
+            result = {
+                constants.PROP_VALUE: license_info['spdx_id'],
+                constants.PROP_TYPE: constants.PROP_LICENSE,
+                constants.PROP_NAME: license_info['name'],
+                constants.PROP_SPDX_ID: license_info['spdx_id'],
+                constants.PROP_URL: license_info['url'],
+                constants.PROP_IDENTIFIER: license_info['url'],
+            }
+            repository_metadata.add_result(
+                constants.CAT_LICENSE,
+                result,
+                1,
+                constants.TECHNIQUE_REGULAR_EXPRESSION,
+                readme_source
+            )
+    return repository_metadata
 
 def extract_repo_status(unfiltered_text, repository_metadata: Result, readme_source) -> Result:
     """
@@ -198,8 +223,13 @@ def extract_repo_status(unfiltered_text, repository_metadata: Result, readme_sou
     if init > 0:
         end = unfiltered_text.find("](", init)
         repo_status = unfiltered_text[init + 3:end]
-        repo_status = repo_status.replace("Project Status: ", "")
-        short_status = repo_status[0:repo_status.find(" ")].lower()
+        # repo_status = repo_status.replace("Project Status: ", "")
+        # short_status = repo_status[0:repo_status.find(" ")].lower()
+        
+        status_value = repo_status.replace("Project Status:", "").strip()
+        parts = re.split(r'[ \]]', status_value)
+        short_status = parts[0].lower()
+
         repository_metadata.add_result(constants.CAT_STATUS,
                                        {
                                            constants.PROP_TYPE: constants.URL,
@@ -995,7 +1025,29 @@ def detect_license_spdx(license_text, type):
     -------
     A JSON dictionary with name and spdx id
     """
-
+    match = re.search(constants.REGEXP_CHOOSE_LICENSE, license_text)
+    if match:
+        slug = match.group(1).lower().rstrip('/')
+        for license_name, license_info in constants.LICENSES_DICT.items():
+            if license_info['spdx_id'].lower() == slug:
+                spdx_id = license_info['spdx_id']
+                spdx_url = f"https://spdx.org/licenses/{spdx_id}"
+                if type == 'JSON':
+                    return {
+                        "name": license_name,
+                        "spdx_id": spdx_id,
+                        "@id": spdx_url,
+                        "url": spdx_url,
+                        "identifier": spdx_url
+                    }
+                else:
+                    return {
+                        "name": license_name,
+                        "spdx_id": spdx_id,
+                        "identifier": spdx_url,
+                        "url": spdx_url
+                    }
+            
     for license_name, license_info in constants.LICENSES_DICT.items():
         if re.search(license_info["regex"], license_text, re.IGNORECASE):
             spdx_id = license_info['spdx_id']

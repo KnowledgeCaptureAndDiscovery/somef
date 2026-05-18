@@ -54,7 +54,22 @@ class TestCodemetaParser(unittest.TestCase):
                     )
 
                     first = actual_list[0]["result"]
-                    if isinstance(expected_val, dict):
+                    if isinstance(expected_val, list):
+                        first_value = first.get("value")
+                        if isinstance(first_value, list):
+                            self.assertEqual(
+                                first_value, expected_val,
+                                f"[{repo_folder}] Mismatch in {cat_name} list (single entry)"
+                            )
+                        else:
+                            actual_values = []
+                            for entry in actual_list:
+                                actual_values.append(entry["result"]["value"])
+                            self.assertEqual(
+                                actual_values, expected_val,
+                                f"[{repo_folder}] Mismatch in {cat_name} list"
+                            )
+                    elif isinstance(expected_val, dict):
                         for key, val in expected_val.items():
                             self.assertEqual(
                                 first.get(key), val,
