@@ -438,6 +438,14 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
         df.loc[df['Group'].str.len() == 0, 'Group'] = df['ParentGroup']
         df = df.drop(columns=['ParentGroup'])
 
+        # detection for os/platform headers that wordnet cannot handle correctly
+        mask = df['Group'].str.len() == 0
+        df.loc[mask, 'Group'] = df.loc[mask, 'Header'].map(
+            lambda h: [constants.CAT_RUNTIME_PLATFORM]
+            if any(kw in h.lower() for kw in constants.OS_PLATFORM_HEADER_KEYWORDS)
+            else []
+        )
+
         if not df.iloc[0]['Group']:
             df.loc[df.index[0], 'Group'] = ['unknown']
 
@@ -460,6 +468,29 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
         logging.info("Valid rows: %s", len(valid))
 
         for _, row in valid.iterrows():
+            if row['Group'] in constants.OS_EXTRACTION_CATEGORIES:
+                os_entries = extract_os_from_content(row[constants.PROP_VALUE])
+                for entry in os_entries:
+                    result = {
+                        constants.PROP_VALUE: entry["value"],
+                        constants.PROP_TYPE: constants.STRING,
+                        constants.PROP_ORIGINAL_HEADER: row[constants.PROP_ORIGINAL_HEADER],
+                    }
+                    if "name" in entry:
+                        result["name"] = entry["name"]
+                    if "version" in entry:
+                        result[constants.PROP_VERSION] = entry["version"]
+                    if row[constants.PROP_PARENT_HEADER]:
+                        result[constants.PROP_PARENT_HEADER] = row[constants.PROP_PARENT_HEADER]
+                    repository_metadata.add_result(
+                       constants.CAT_RUNTIME_PLATFORM,
+                        result,
+                        1,
+                        constants.TECHNIQUE_HEADER_ANALYSIS,
+                        source,
+                    )
+                # continue
+
             result = {
                 constants.PROP_VALUE: row[constants.PROP_VALUE],
                 constants.PROP_TYPE: constants.TEXT_EXCERPT,
@@ -586,3 +617,48 @@ def calculate_header_confidence(header: str) -> float:
         if num_words <= max_words:
             return confidence
     return 0.1
+  
+  
+def extract_os_from_content(text: str) -> List[dict]:
+    """
+    Scans a text block for mentions of operating systems, platforms or runtime
+    environments and returns a list of structured results.
+
+    Parameters
+    ----------
+    text : str
+        Content of a README section identified as related to OS/platform.
+
+    Returns
+    -------
+    list of dict
+        Each dict has 'value' (required) and optionally 'name' and 'version',
+        following the same contract as parse_runtime_platform in the pom.xml parser.
+        e.g. [{'value': 'Ubuntu 20.04', 'name': 'Ubuntu', 'version': '20.04'}]
+    """
+    results = []
+    seen = set()
+
+    for pattern, name in constants.OS_PATTERNS:
+        for match in re.finditer(pattern, text):
+            version = None
+            if match.lastindex and match.group(1):
+                version = match.group(1).strip()
+
+            key = (name, version)
+            if key in seen:
+                continue
+            seen.add(key)
+
+            if version:
+                results.append({
+                    "value": f"{name} {version}",
+                    "name": name,
+                    "version": version,
+                })
+            else:
+                results.append({
+                    "value": name,
+                })
+
+    return results
