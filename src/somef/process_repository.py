@@ -152,7 +152,8 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=const
     return response, date
 
 
-def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
+def load_gitlab_repository_metadata(repo_metadata: Result, repository_url,
+                                    ignore_api_metadata=False, commit=None):
     """
     Function uses the repository_url provided to load required information from gitlab.
     Information kept from the repository is written in keep_keys.
@@ -160,6 +161,8 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
     ----------
     @param repo_metadata: Result object with the metadata found in the repository so far
     @param repository_url: URL of the Gitlab repository to analyze
+    @param ignore_api_metadata: true if you do not want to do an additional request to the target API
+    @param commit: commit SHA of the repository to analyze
 
     Returns
     -------
@@ -308,6 +311,9 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
     if default_branch is None:
         default_branch = general_resp['defaultBranch']
 
+    if commit:
+        default_branch = commit
+
     project_path = "/".join(path_components)
 
     #                          {constants.PROP_VALUE: f"https://{url.netloc}/{owner}/{repo_name}/",
@@ -404,6 +410,12 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url):
             constants.PROP_VALUE: project_details['readme_url'],
             constants.PROP_TYPE: constants.URL
         }, 1, constants.TECHNIQUE_GITLAB_API)
+
+    if not ignore_api_metadata and commit:
+        repo_metadata = fetch_commit_metadata(
+            repo_metadata, constants.RepositoryType.GITLAB, commit,
+            headers=header_template(), project_api_url=project_api_url
+        )
 
     logging.info("Repository information successfully loaded. \n")
     # return repo_metadata, owner, repo_name, default_branch
@@ -531,7 +543,9 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     @return: Result object with the available metadata from online APIs plus its owner, repo name and default branch
     """
     if repo_type == constants.RepositoryType.GITLAB:
-        return load_gitlab_repository_metadata(repository_metadata, repository_url)
+        return load_gitlab_repository_metadata(repository_metadata, repository_url,
+                                               ignore_api_metadata=ignore_api_metadata,
+                                               commit=commit)
     elif repo_type == constants.RepositoryType.LOCAL:
         logging.warning("Trying to download metadata from a local repository")
         return None
@@ -747,25 +761,41 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
             repository_metadata.add_result(constants.CAT_RELEASES, release_obj, 1,
                                             constants.TECHNIQUE_GITHUB_API)
     if not ignore_api_metadata and commit:
-        repository_metadata = fetch_commit_metadata(repository_metadata, repo_api_base_url, commit, header)
+        repository_metadata = fetch_commit_metadata(
+            repository_metadata, constants.RepositoryType.GITHUB, commit, header,
+            repo_api_base_url=repo_api_base_url
+        )
     logging.info("Repository information successfully loaded.\n")
     return repository_metadata, owner, repo_name, default_branch, None
 
 
-def fetch_commit_metadata(repository_metadata, repo_api_base_url, commit_sha, headers):
+def fetch_commit_metadata(repository_metadata, repo_type, commit_sha, headers,
+                          repo_api_base_url=None, project_api_url=None):
     """
-    Fetches metadata for a specific commit from the GitHub API and adds it to the repository metadata.
+    Fetches metadata for a specific commit from the GitHub or GitLab API and
+    adds it to the repository metadata.
     Parameters
     ----------
     @param repository_metadata: Result object to store the findings
-    @param repo_api_base_url: Base URL of the repository API (e.g. https://api.github.com/repos/owner/repo)
+    @param repo_type: type of the repository (GITHUB or GITLAB)
     @param commit_sha: The commit SHA to fetch metadata for
     @param headers: HTTP headers to use for the request
+    @param repo_api_base_url: Base URL of the GitHub repository API (e.g. https://api.github.com/repos/owner/repo)
+    @param project_api_url: Base URL of the GitLab project API (e.g. https://gitlab.com/api/v4/projects/123)
     Returns
     -------
     @return: Result object enriched with commit metadata
     """
-    commit_url = f"{repo_api_base_url}/commits/{commit_sha}"
+    if repo_type == constants.RepositoryType.GITLAB:
+        if not project_api_url:
+            logging.warning("No project API URL provided for GitLab commit metadata fetch.")
+            return repository_metadata
+        commit_url = f"{project_api_url}/repository/commits/{commit_sha}"
+        is_gitlab = True
+    else:
+        commit_url = f"{repo_api_base_url}/commits/{commit_sha}"
+        is_gitlab = False
+
     logging.info(f"Fetching commit metadata from {commit_url}")
     commit_resp, _ = rate_limit_get(commit_url, headers=headers)
     if commit_resp is None:
@@ -775,15 +805,28 @@ def fetch_commit_metadata(repository_metadata, repo_api_base_url, commit_sha, he
         logging.warning(f"Could not fetch commit metadata: HTTP {commit_resp.status_code}")
         return repository_metadata
     commit_data = commit_resp.json()
-    commit_details = commit_data.get("commit", {})
-    commit_author = commit_data.get("author", {})
 
-    # Extract commit author name
+    # Extract commit metadata since fields differ between GitHub and GitLab
     author_name = None
-    if commit_author and commit_author.get("login"):
-        author_name = commit_author["login"]
-    elif commit_details.get("author") and commit_details["author"].get("name"):
-        author_name = commit_details["author"]["name"]
+    commit_date_str = None
+    commit_html_url = None
+    if is_gitlab:
+        author_name = commit_data.get("author_name")
+        commit_date_str = commit_data.get("authored_date") or commit_data.get("committed_date")
+        commit_html_url = commit_data.get("web_url")
+    else:
+        commit_details = commit_data.get("commit", {})
+        commit_author = commit_data.get("author", {})
+        if commit_author and commit_author.get("login"):
+            author_name = commit_author["login"]
+        elif commit_details.get("author") and commit_details["author"].get("name"):
+            author_name = commit_details["author"]["name"]
+        if commit_details.get("author") and commit_details["author"].get("date"):
+            commit_date_str = commit_details["author"]["date"]
+        elif commit_details.get("committer") and commit_details["committer"].get("date"):
+            commit_date_str = commit_details["committer"]["date"]
+        commit_html_url = commit_data.get("html_url")
+
     if author_name:
         author_result = {
             constants.PROP_VALUE: author_name,
@@ -791,12 +834,6 @@ def fetch_commit_metadata(repository_metadata, repo_api_base_url, commit_sha, he
         }
         repository_metadata.add_result(constants.CAT_AUTHORS, author_result, 1, constants.TECHNIQUE_GITHUB_API)
 
-    # Extract commit date and store as date_created
-    commit_date_str = None
-    if commit_details.get("author") and commit_details["author"].get("date"):
-        commit_date_str = commit_details["author"]["date"]
-    elif commit_details.get("committer") and commit_details["committer"].get("date"):
-        commit_date_str = commit_details["committer"]["date"]
     if commit_date_str:
         date_result = {
             constants.PROP_VALUE: commit_date_str,
@@ -804,8 +841,6 @@ def fetch_commit_metadata(repository_metadata, repo_api_base_url, commit_sha, he
         }
         repository_metadata.add_result(constants.CAT_DATE_CREATED, date_result, 1, constants.TECHNIQUE_GITHUB_API)
 
-    # Extract commit URL
-    commit_html_url = commit_data.get("html_url")
     if commit_html_url:
         url_result = {
             constants.PROP_VALUE: commit_html_url,
@@ -815,7 +850,10 @@ def fetch_commit_metadata(repository_metadata, repo_api_base_url, commit_sha, he
         repository_metadata.add_result(constants.CAT_CODE_REPOSITORY, url_result, 1, constants.TECHNIQUE_GITHUB_API)
 
     # Resolve release tags to commit SHAs and store them on each release entry
-    repository_metadata = resolve_release_commits(repository_metadata, repo_api_base_url, headers)
+    repository_metadata = resolve_release_commits(
+        repository_metadata, repo_type, headers,
+        repo_api_base_url=repo_api_base_url, project_api_url=project_api_url
+    )
 
     # In here, we keep only releases whose date is at or before the commit date. This will guarantee that the output JSON 
     # contains the releases that existed up to the point in time of the requested commit, 
@@ -868,24 +906,34 @@ def fetch_commit_metadata(repository_metadata, repo_api_base_url, commit_sha, he
     return repository_metadata
 
 
-def resolve_release_commits(repository_metadata, repo_api_base_url, headers):
+def resolve_release_commits(repository_metadata, repo_type, headers,
+                            repo_api_base_url=None, project_api_url=None):
     """
-    Resolves the commit SHA for each release's tag using the GitHub tags API
-    and stores the SHA directly on each release result dict.
-
-    This returns each tag name alongside its commit SHA.
+    Resolves the commit SHA for each release's tag using the GitHub or GitLab
+    tags API and stores the SHA directly on each release result dict.
 
     Parameters
     ----------
     @param repository_metadata: Result object containing releases loaded from the API
-    @param repo_api_base_url: Base URL of the repository API (e.g. https://api.github.com/repos/owner/repo)
+    @param repo_type: type of the repository (GITHUB or GITLAB)
     @param headers: HTTP headers to use for the request
+    @param repo_api_base_url: Base URL of the GitHub repository API (e.g. https://api.github.com/repos/owner/repo)
+    @param project_api_url: Base URL of the GitLab project API (e.g. https://gitlab.com/api/v4/projects/123)
     Returns
     -------
     @return: Result object with release entries enriched with commit SHAs (when resolvable)
     """
+    if repo_type == constants.RepositoryType.GITLAB:
+        if not project_api_url:
+            logging.warning("No project API URL provided for GitLab tag resolution.")
+            return repository_metadata
+        tags_url = f"{project_api_url}/repository/tags"
+        is_gitlab = True
+    else:
+        tags_url = f"{repo_api_base_url}/tags"
+        is_gitlab = False
+
     # Retrieve all tags from the paginated /tags endpoint
-    tags_url = f"{repo_api_base_url}/tags"
     logging.info(f"Resolving release tags to commit SHAs via {tags_url}")
     all_tags = get_all_paginated_results(tags_url, headers=headers)
     if not all_tags:
@@ -893,14 +941,17 @@ def resolve_release_commits(repository_metadata, repo_api_base_url, headers):
         return repository_metadata
 
     # Build a mapping from tag name to commit SHA
-    # I am doing this in case the user want to trace back a specific
-    # commit to it respective release
     tag_to_sha = {}
     for tag_entry in all_tags:
         tag_name = tag_entry.get("name")
         commit_info = tag_entry.get("commit")
-        if tag_name and commit_info and commit_info.get("sha"):
-            tag_to_sha[tag_name] = commit_info["sha"]
+        if tag_name and commit_info:
+            if is_gitlab:
+                sha = commit_info.get("id")
+            else:
+                sha = commit_info.get("sha")
+            if sha:
+                tag_to_sha[tag_name] = sha
 
     if not tag_to_sha:
         return repository_metadata

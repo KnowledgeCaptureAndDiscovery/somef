@@ -392,13 +392,7 @@ class TestFetchCommitMetadata(unittest.TestCase):
         mock_resp.json = MagicMock(return_value={
             "sha": "abc123def456",
             "commit": {
-                "message": "Fix bug in parser",
                 "author": {
-                    "name": "Test User",
-                    "email": "test@example.com",
-                    "date": "2024-01-15T10:30:00Z"
-                },
-                "committer": {
                     "name": "Test User",
                     "email": "test@example.com",
                     "date": "2024-01-15T10:30:00Z"
@@ -415,9 +409,10 @@ class TestFetchCommitMetadata(unittest.TestCase):
         headers = {"Authorization": "token test"}
         result = process_repository.fetch_commit_metadata(
             repo_metadata,
-            "https://api.github.com/repos/testowner/testrepo",
+            constants.RepositoryType.GITHUB,
             "abc123def456",
-            headers
+            headers,
+            repo_api_base_url="https://api.github.com/repos/testowner/testrepo"
         )
 
         authors = result.results.get(constants.CAT_AUTHORS, [])
@@ -434,7 +429,6 @@ class TestFetchCommitMetadata(unittest.TestCase):
         mock_resp.json = MagicMock(return_value={
             "sha": "abc123def456",
             "commit": {
-                "message": "Fix bug in parser",
                 "author": {
                     "name": "Test User",
                     "email": "test@example.com",
@@ -449,9 +443,10 @@ class TestFetchCommitMetadata(unittest.TestCase):
         headers = {}
         result = process_repository.fetch_commit_metadata(
             repo_metadata,
-            "https://api.github.com/repos/testowner/testrepo",
+            constants.RepositoryType.GITHUB,
             "abc123def456",
-            headers
+            headers,
+            repo_api_base_url="https://api.github.com/repos/testowner/testrepo"
         )
 
         dates = result.results.get(constants.CAT_DATE_CREATED, [])
@@ -471,9 +466,10 @@ class TestFetchCommitMetadata(unittest.TestCase):
         headers = {}
         result = process_repository.fetch_commit_metadata(
             repo_metadata,
-            "https://api.github.com/repos/testowner/testrepo",
+            constants.RepositoryType.GITHUB,
             "nonexistent_sha",
-            headers
+            headers,
+            repo_api_base_url="https://api.github.com/repos/testowner/testrepo"
         )
 
         # The function should return the metadata object unchanged (only PROVENANCE default key)
@@ -490,9 +486,10 @@ class TestFetchCommitMetadata(unittest.TestCase):
         headers = {}
         result = process_repository.fetch_commit_metadata(
             repo_metadata,
-            "https://api.github.com/repos/testowner/testrepo",
+            constants.RepositoryType.GITHUB,
             "abc123",
-            headers
+            headers,
+            repo_api_base_url="https://api.github.com/repos/testowner/testrepo"
         )
 
         self.assertEqual(len(result.results), 1)
@@ -538,8 +535,9 @@ class TestResolveReleaseCommits(unittest.TestCase):
 
         result = process_repository.resolve_release_commits(
             repo_metadata,
-            "https://api.github.com/repos/owner/repo",
-            {}
+            constants.RepositoryType.GITHUB,
+            {},
+            repo_api_base_url="https://api.github.com/repos/owner/repo"
         )
 
         releases = result.results[constants.CAT_RELEASES]
@@ -570,8 +568,9 @@ class TestResolveReleaseCommits(unittest.TestCase):
 
         result = process_repository.resolve_release_commits(
             repo_metadata,
-            "https://api.github.com/repos/owner/repo",
-            {}
+            constants.RepositoryType.GITHUB,
+            {},
+            repo_api_base_url="https://api.github.com/repos/owner/repo"
         )
 
         resolved = result.results[constants.CAT_RELEASES][0][constants.PROP_RESULT]
@@ -600,8 +599,9 @@ class TestResolveReleaseCommits(unittest.TestCase):
 
         result = process_repository.resolve_release_commits(
             repo_metadata,
-            "https://api.github.com/repos/owner/repo",
-            {}
+            constants.RepositoryType.GITHUB,
+            {},
+            repo_api_base_url="https://api.github.com/repos/owner/repo"
         )
 
         resolved = result.results[constants.CAT_RELEASES][0][constants.PROP_RESULT]
@@ -620,11 +620,195 @@ class TestResolveReleaseCommits(unittest.TestCase):
         repo_metadata = Result()
         result = process_repository.resolve_release_commits(
             repo_metadata,
-            "https://api.github.com/repos/owner/repo",
+            constants.RepositoryType.GITHUB,
+            {},
+            repo_api_base_url="https://api.github.com/repos/owner/repo"
+        )
+
+        self.assertEqual(len(result.results), 1)
+
+
+class TestFetchCommitMetadataGitLab(unittest.TestCase):
+    """
+    Tests for fetch_commit_metadata with GitLab API response format.
+    GitLab returns flat fields (author_name, authored_date, web_url) instead of
+    nested objects like GitHub.
+    """
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_gitlab_fetch_commit_metadata_adds_author(self, mock_rlg, mock_resolve):
+        """GitLab commit author should be read from author_name."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(200)
+        mock_resp.json = MagicMock(return_value={
+            "id": "abc123def456",
+            "author_name": "GitLab User",
+            "authored_date": "2024-01-15T10:30:00.000Z",
+            "committed_date": "2024-01-15T10:35:00.000Z",
+            "web_url": "https://gitlab.com/testowner/testrepo/-/commit/abc123def456"
+        })
+        mock_rlg.return_value = (mock_resp, "2024-01-15")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata,
+            constants.RepositoryType.GITLAB,
+            "abc123def456",
+            headers,
+            project_api_url="https://gitlab.com/api/v4/projects/123"
+        )
+
+        authors = result.results.get(constants.CAT_AUTHORS, [])
+        self.assertGreater(len(authors), 0, "GitLab commit author should be present")
+        author_value = authors[0]["result"]["value"]
+        self.assertEqual(author_value, "GitLab User")
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_gitlab_fetch_commit_metadata_adds_date(self, mock_rlg, mock_resolve):
+        """GitLab commit date should prefer authored_date."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(200)
+        mock_resp.json = MagicMock(return_value={
+            "id": "abc123def456",
+            "author_name": "GitLab User",
+            "authored_date": "2024-01-15T10:30:00.000Z",
+            "web_url": "https://gitlab.com/testowner/testrepo/-/commit/abc123def456"
+        })
+        mock_rlg.return_value = (mock_resp, "2024-01-15")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata,
+            constants.RepositoryType.GITLAB,
+            "abc123def456",
+            headers,
+            project_api_url="https://gitlab.com/api/v4/projects/123"
+        )
+
+        dates = result.results.get(constants.CAT_DATE_CREATED, [])
+        self.assertGreater(len(dates), 0, "GitLab commit date should be present")
+        date_value = dates[0]["result"]["value"]
+        self.assertEqual(date_value, "2024-01-15T10:30:00.000Z")
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_gitlab_fetch_commit_metadata_adds_url(self, mock_rlg, mock_resolve):
+        """GitLab commit URL should be read from web_url."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(200)
+        mock_resp.json = MagicMock(return_value={
+            "id": "abc123def456",
+            "author_name": "GitLab User",
+            "authored_date": "2024-01-15T10:30:00.000Z",
+            "web_url": "https://gitlab.com/testowner/testrepo/-/commit/abc123def456"
+        })
+        mock_rlg.return_value = (mock_resp, "2024-01-15")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata,
+            constants.RepositoryType.GITLAB,
+            "abc123def456",
+            headers,
+            project_api_url="https://gitlab.com/api/v4/projects/123"
+        )
+
+        urls = result.results.get(constants.CAT_CODE_REPOSITORY, [])
+        self.assertGreater(len(urls), 0, "GitLab commit URL should be present")
+        url_value = urls[0]["result"]["value"]
+        self.assertEqual(url_value, "https://gitlab.com/testowner/testrepo/-/commit/abc123def456")
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_gitlab_fetch_commit_metadata_handles_404(self, mock_rlg, mock_resolve):
+        """GitLab 404 should not crash."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(404)
+        mock_rlg.return_value = (mock_resp, "")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata,
+            constants.RepositoryType.GITLAB,
+            "nonexistent",
+            headers,
+            project_api_url="https://gitlab.com/api/v4/projects/123"
+        )
+
+        self.assertEqual(len(result.results), 1)
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_gitlab_fetch_commit_metadata_no_project_api_url(self, mock_rlg, mock_resolve):
+        """When project_api_url is missing for GitLab, return early."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+
+        repo_metadata = Result()
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata,
+            constants.RepositoryType.GITLAB,
+            "abc123",
             {}
         )
 
         self.assertEqual(len(result.results), 1)
+        mock_rlg.assert_not_called()
+
+
+class TestResolveReleaseCommitsGitLab(unittest.TestCase):
+    """
+    Tests for resolve_release_commits with GitLab tag API response format.
+    GitLab uses commit.id instead of commit.sha for the commit SHA.
+    """
+
+    @patch("somef.process_repository.get_all_paginated_results")
+    def test_gitlab_resolve_release_commits_adds_sha(self, mock_get_tags):
+        """GitLab tags use commit.id instead of commit.sha."""
+        mock_get_tags.return_value = [
+            {"name": "v1.0.0", "commit": {"id": "aaa111", "short_id": "aaa"}},
+            {"name": "v2.0.0", "commit": {"id": "bbb222", "short_id": "bbb"}},
+        ]
+
+        repo_metadata = Result()
+        release = {
+            constants.PROP_RESULT: {
+                constants.PROP_TYPE: constants.RELEASE,
+                constants.PROP_VALUE: "https://gitlab.com/owner/repo/-/releases/v1.0.0",
+                constants.PROP_TAG: "v1.0.0",
+            },
+            constants.PROP_CONFIDENCE: 1,
+            constants.PROP_TECHNIQUE: constants.TECHNIQUE_GITLAB_API,
+        }
+        repo_metadata.results[constants.CAT_RELEASES] = [release]
+
+        result = process_repository.resolve_release_commits(
+            repo_metadata,
+            constants.RepositoryType.GITLAB,
+            {},
+            project_api_url="https://gitlab.com/api/v4/projects/123"
+        )
+
+        releases = result.results[constants.CAT_RELEASES]
+        self.assertEqual(releases[0][constants.PROP_RESULT].get(constants.PROP_COMMIT), "aaa111")
+
+    @patch("somef.process_repository.get_all_paginated_results")
+    def test_gitlab_resolve_release_commits_no_project_api_url(self, mock_get_tags):
+        """When project_api_url is missing for GitLab, return early without API call."""
+        repo_metadata = Result()
+        result = process_repository.resolve_release_commits(
+            repo_metadata,
+            constants.RepositoryType.GITLAB,
+            {},
+        )
+
+        self.assertEqual(len(result.results), 1)
+        mock_get_tags.assert_not_called()
 
 
 def _make_mock_response(status_code, content=b""):
