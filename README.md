@@ -55,8 +55,15 @@ We recognize the following properties:
 - **Forks url**: Links to forks made of the project
 - **Full name**: Name + owner (owner/name)
 - **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository name
-- **Funding**: Funding information associated with the project. **Note**: Currently, this information is only extracted from existing `codemeta.json` files within the repository.
-- **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers and Software Heritage identifiers (SWH). DOIs associated with publications will also be detected. 
+- **Funding**: Funding information associated with the project. **Note**: This information is extracted from existing `codemeta.json` files within the repository. When using `-e`, the project data is enriched with OpenAIRE, adding:
+  - `project_code`: Project code
+  - `project_title`: Project title
+  - `project_acronym`: Project acronym
+  - `grant_id`: Call/grant identifier
+- **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers and Software Heritage identifiers (SWH). DOIs associated with publications will also be detected. When using `-e`, the following enrichment identifiers are also added:
+  - `openalex_id`: OpenAlex ID for the software
+  - `openaire_id`: URL to the OpenAIRE explore page
+  - `swhid`: Software Heritage identifier (for Zenodo DOIs)
 - **Images**: Images used to illustrate the software component
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component
@@ -347,11 +354,14 @@ Options:
                                   requests and increase execution time
 
   -h, --help                      Show this message and exit.
-  
+
+  -e, --enrichment                Enrich metadata with external APIs (OpenAlex, OpenAIRE, Zenodo)
+
   Repoository versions [mutually_exclusive] (see section *Repository versions*t):
   -b, --branch name branch        Branch of the repository to analyze. Overrides the default branch.
 
       --tag text                  Tag of the repository to analyze. Cannot be used together with --branch.
+ 
 ```
 
 ## Usage example:
@@ -389,6 +399,14 @@ This includes identifying dependencies, runtime requirements, and development to
 SOMEF is designed to work primarily with repositories written in English.  
 Repositories in other languages may not be processed as effectively, and results could be incomplete or less accurate.
 
+### Enrichment with `-e`
+
+The `-e` (or `--enrichment`) flag queries external APIs to complete the extracted metadata:
+- **OpenAlex**: adds `openalex_id` to DOIs of publications and software.
+- **OpenAIRE**: adds `openaire_id` and enriches funding information (project code, title, acronym, grant id).
+- **Zenodo**: adds `swhid` (Software Heritage ID) for Zenodo DOIs.
+
+**Note:** Enrichment makes additional network requests to external services, which may slow down the overall execution time. Use this flag only when you need the extra metadata.
 
 ## Repository versions: default behavior, branch and tag
 

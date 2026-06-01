@@ -197,6 +197,14 @@ def configure(auto, base_uri):
     default=None,
     help="Tag of the repository to analyze. Incompatible with --branch"
 )
+@click.option(
+    "--enrich",
+    "-e",
+    is_flag=True,
+    default=False,
+    help="Enrich metadata with external APIs (OpenAlex, OpenAIRE, Zenodo)"
+)
+
 def describe(requirements_v, requirements_all, **kwargs):
     # import so missing packages get installed when appropriate
     if requirements_v:
