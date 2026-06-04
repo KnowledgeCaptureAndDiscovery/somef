@@ -48,12 +48,15 @@ def update_base_uri(base_uri):
             json.dump(data, fh)
 
 
-def configure(authorization="",
-              description=default_description,
-              invocation=default_invocation,
-              installation=default_installation,
-              citation=default_citation,
-              base_uri=constants.CONF_DEFAULT_BASE_URI):
+def configure(
+    github_authorization="",
+    gitlab_authorization="",
+    description=default_description,
+    invocation=default_invocation,
+    installation=default_installation,
+    citation=default_citation,
+    base_uri=constants.CONF_DEFAULT_BASE_URI,
+):
     """ Function to configure the main program"""
     import nltk
     nltk.download('wordnet')
@@ -72,16 +75,21 @@ def configure(authorization="",
     #         data = json.load(fh)
     # else:
     data = {
-        constants.CONF_AUTHORIZATION: "token " + authorization,
         constants.CONF_DESCRIPTION: description,
         constants.CONF_INVOCATION: invocation,
         constants.CONF_INSTALLATION: installation,
         constants.CONF_CITATION: citation,
-        constants.CONF_BASE_URI: base_uri
+        constants.CONF_BASE_URI: base_uri,
     }
 
-    if data[constants.CONF_AUTHORIZATION] == "token ":
-        del data[constants.CONF_AUTHORIZATION]
+    if github_authorization:
+        data[constants.CONF_GITHUB_AUTHORIZATION] = "token " + github_authorization
+
+    if gitlab_authorization:
+        token = gitlab_authorization
+        if not token.lower().startswith("bearer "):
+            token = "Bearer " + token
+        data[constants.CONF_GITLAB_AUTHORIZATION] = token
 
     with credentials_file.open("w") as fh:
         credentials_file.parent.chmod(0o700)

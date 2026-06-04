@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import click
-from click_option_group import optgroup, RequiredMutuallyExclusiveOptionGroup, RequiredAnyOptionGroup
+from click_option_group import (
+    optgroup,
+    RequiredMutuallyExclusiveOptionGroup,
+    RequiredAnyOptionGroup,
+)
 
 import logging
 from . import configuration
@@ -13,33 +17,53 @@ class URLParamType(click.types.StringParamType):
     name = "url"
 
 
-@click.group(context_settings={'help_option_names': ['-h', '--help']})
+@click.group(context_settings={"help_option_names": ["-h", "--help"]})
 @click.version_option(__version__)
 def cli():
     click.echo("SOftware Metadata Extraction Framework (SOMEF) Command Line Interface")
 
 
-@cli.command(help="Configure GitHub credentials and classifiers file path")
-@click.option('-a', '--auto', help="Automatically configure SOMEF", is_flag=True, default=False)
-@click.option('-b', '--base_uri', type=URLParamType(), help="Base URI for somef transformations",
-              default=constants.CONF_DEFAULT_BASE_URI)
+@cli.command(help="Configure GitHub/GitLab credentials and classifiers file path")
+@click.option("-a", "--auto", help="Automatically configure SOMEF", is_flag=True, default=False)
+@click.option(
+    "-b",
+    "--base_uri",
+    type=URLParamType(),
+    help="Base URI for somef transformations",
+    default=constants.CONF_DEFAULT_BASE_URI,
+)
 def configure(auto, base_uri):
     if auto:
-        click.echo(
-            "Configuring SOMEF automatically. To assign credentials edit the configuration file or run "
-            "the interactive mode")
+        click.echo("Configuring SOMEF automatically. To assign credentials edit the configuration file or run the interactive mode")
         configuration.configure()
     elif base_uri is not constants.CONF_DEFAULT_BASE_URI:
         configuration.update_base_uri(base_uri)
     else:
-        authorization = click.prompt("Authorization", default="")
-        description = click.prompt("Documentation classifier model file", default=configuration.default_description)
+        github_authorization = click.prompt("GitHub Authorization token (leave blank to skip)", default="")
+        gitlab_authorization = click.prompt(
+            "GitLab Authorization token (leave blank to skip; works for gitlab.com and self-hosted instances)",
+            default="",
+        )
+        description = click.prompt(
+            "Documentation classifier model file",
+            default=configuration.default_description,
+        )
         invocation = click.prompt("Invocation classifier model file", default=configuration.default_invocation)
-        installation = click.prompt("Installation classifier model file", default=configuration.default_installation)
+        installation = click.prompt(
+            "Installation classifier model file",
+            default=configuration.default_installation,
+        )
         citation = click.prompt("Citation classifier model file", default=configuration.default_citation)
         base_uri = click.prompt("Base URI for RDF generation", default=base_uri)
-        # configuration.configure()
-        configuration.configure(authorization, description, invocation, installation, citation, base_uri)
+        configuration.configure(
+            github_authorization,
+            gitlab_authorization,
+            description,
+            invocation,
+            installation,
+            citation,
+            base_uri,
+        )
     click.secho(f"Success", fg="green")
 
 
@@ -57,14 +81,14 @@ def configure(auto, base_uri):
     "-ic",
     is_flag=True,
     default=False,
-    help="Flag to ignore running the classifiers (by default False)"
+    help="Flag to ignore running the classifiers (by default False)",
 )
 @click.option(
     "--ignore_github_metadata",
     "-igm",
     is_flag=True,
     default=False,
-    help="Flag to ignore Github Metadata (by default False)"
+    help="Flag to ignore Github Metadata (by default False)",
 )
 @click.option(
     "--readme_only",
@@ -72,9 +96,9 @@ def configure(auto, base_uri):
     is_flag=True,
     default=False,
     help="Flag to retrieve only the README.md file from the Github/Gitlab Repository URL. If such file does not exist, "
-         "no metadata will be retrieved (by default False)"
+    "no metadata will be retrieved (by default False)",
 )
-@optgroup.group('Input', cls=RequiredMutuallyExclusiveOptionGroup)
+@optgroup.group("Input", cls=RequiredMutuallyExclusiveOptionGroup)
 @optgroup.option(
     "--repo_url",
     "-r",
@@ -85,13 +109,13 @@ def configure(auto, base_uri):
     "--doc_src",
     "-d",
     type=click.Path(exists=True),
-    help="Path to the README file source"
+    help="Path to the README file source",
 )
 @optgroup.option(
     "--local_repo",
     "-l",
     type=click.Path(exists=True),
-    help="Path to local repository"
+    help="Path to local repository",
 )
 @optgroup.option(
     "--in_file",
@@ -99,9 +123,9 @@ def configure(auto, base_uri):
     type=click.Path(exists=True),
     help=""""A file of newline separated links to GitHub/Gitlab repositories to process in bulk. Each repository will be 
          stored in a different file called $out_$url.json where $out is the name selected as out file and $url is the
-         url of the target repository (url encoded)"""
+         url of the target repository (url encoded)""",
 )
-@optgroup.group('Output', cls=RequiredAnyOptionGroup)
+@optgroup.group("Output", cls=RequiredAnyOptionGroup)
 @optgroup.option(
     "--output",
     "-o",
@@ -112,34 +136,34 @@ def configure(auto, base_uri):
     "--codemeta_out",
     "-c",
     type=click.Path(),
-    help="Path to an output codemeta file"
+    help="Path to an output codemeta file",
 )
 @optgroup.option(
     "--google_codemeta_out",
     "-gc",
     type=click.Path(),
-    help="Path to an output Google-compliant codemeta file"
+    help="Path to an output Google-compliant codemeta file",
 )
 @optgroup.option(
     "--graph_out",
     "-g",
     type=click.Path(),
     help="""Path to the output Knowledge Graph export file. If supplied, the output will be a Knowledge Graph,
-            in the format given in the --format option chosen (turtle, json-ld)"""
+            in the format given in the --format option chosen (turtle, json-ld)""",
 )
 @click.option(
     "--graph_format",
     "-f",
     type=click.Choice(["turtle", "json-ld"]),
     default="turtle",
-    help="""If the --graph_out option is given, this is the format that the graph will be stored in"""
+    help="""If the --graph_out option is given, this is the format that the graph will be stored in""",
 )
 @click.option(
     "--pretty",
     "-p",
     is_flag=True,
     default=False,
-    help="""Pretty print the JSON output file so that it is easy to compare to another JSON output file."""
+    help="""Pretty print the JSON output file so that it is easy to compare to another JSON output file.""",
 )
 @click.option(
     "--missing",
@@ -147,55 +171,63 @@ def configure(auto, base_uri):
     is_flag=True,
     default=False,
     help="""The JSON will include a field missing_categories to report with the missing metadata fields SOMEF was not 
-    able to find. """
+    able to find. """,
 )
 @click.option(
     "--keep_tmp",
     "-kt",
     type=click.Path(),
     help="""SOMEF will NOT delete the temporary folder where files are stored for analysis. Files will be stored at the
-    desired path"""
+    desired path""",
 )
 @click.option(
     "--ignore_test_folder",
     "-itf",
     is_flag=True,
     default=True,
-    help="""SOMEF will ignore the contents of all files within folders named test (True by default)"""
+    help="""SOMEF will ignore the contents of all files within folders named test (True by default)""",
 )
 @click.option(
     "--requirements_all",
     "-all",
     is_flag=True,
     default=False,
-    help="Export all detected requirements, including text and libraries (default)."
+    help="Export all detected requirements, including text and libraries (default).",
 )
 @click.option(
     "--requirements_v",
     "-v",
     is_flag=True,
     default=False,
-    help="Export only requirements from structured sources (pom.xml, requirements.txt, etc.)"
+    help="Export only requirements from structured sources (pom.xml, requirements.txt, etc.)",
 )
 @click.option(
     "--reconcile_authors",
     "-ra",
     is_flag=True,
     default=False,
-    help="""SOMEF will extract additional information from certain files like CODEOWNERS, etc."""
+    help="""SOMEF will extract additional information from certain files like CODEOWNERS, etc.""",
 )
 @click.option(
     "--branch",
     "-b",
     type=str,
     default=None,
-    help="Branch of the repository to analyze. Overrides the default branch."
+    help="Branch of the repository to analyze. Overrides the default branch.",
+)
+@click.option(
+    "--gitlab_token",
+    "-gt",
+    type=str,
+    default=None,
+    help="GitLab personal access token to avoid API rate limits. Works for gitlab.com and self-hosted GitLab instances. "
+    "Can also be set via the SOMEF_GITLAB_TOKEN environment variable or with 'somef configure'.",
 )
 @click.option(
     "--tag",
     type=str,
     default=None,
-    help="Tag of the repository to analyze. Incompatible with --branch"
+    help="Tag of the repository to analyze. Incompatible with --branch",
 )
 def describe(requirements_v, requirements_all, **kwargs):
     # import so missing packages get installed when appropriate
@@ -204,9 +236,9 @@ def describe(requirements_v, requirements_all, **kwargs):
     elif requirements_all:
         kwargs["requirements_mode"] = "all"
     else:
-        kwargs["requirements_mode"] = "all" 
+        kwargs["requirements_mode"] = "all"
 
     from . import somef_cli
+
     somef_cli.run_cli(**kwargs)
     click.secho(f"Success", fg="green")
-    

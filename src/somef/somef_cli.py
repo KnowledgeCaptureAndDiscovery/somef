@@ -8,20 +8,30 @@ import tempfile
 import urllib.parse
 
 from os import path
-from . import header_analysis, regular_expressions, process_repository, configuration, process_files, \
-    supervised_classification
+from . import header_analysis, regular_expressions, process_repository, configuration, process_files
 from .process_results import Result
 from .utils import constants, markdown_utils
-from .parser import mardown_parser, create_excerpts
-from .export.turtle_export import DataGraph
 from .export import json_export
 from .export import google_codemeta_export
 from .extract_software_type import check_repository_type
 from urllib.parse import urlparse, quote
 
-def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
-                 ignore_github_metadata=False, readme_only=False, keep_tmp=None, authorization=None,
-                 ignore_test_folder=True,requirements_mode='all', reconcile_authors=False, branch=None, tag=None) -> Result:
+def cli_get_data(
+    threshold,
+    ignore_classifiers,
+    repo_url=None,
+    doc_src=None,
+    local_repo=None,
+    ignore_github_metadata=False, 
+    readme_only=False, 
+    keep_tmp=None, 
+    github_authorization=None,
+    ignore_test_folder=True,
+    requirements_mode='all',
+    reconcile_authors=False,
+    branch=None, tag=None,
+    gitlab_authorization=None
+    ) -> Result:
     """
     Main function to get the data through the command line
     Parameters
@@ -34,12 +44,14 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     @param ignore_github_metadata: flag used to avoid doing extra requests to the GitHub API
     @param readme_only: flag to indicate that only the readme should be analyzed
     @param keep_tmp: path where to store TMP files in case SOMEF is instructed to keep them
-    @param authorization: GitHub authorization token
+    @param github_authorization: GitHub authorization token
     @param ignore_test_folder: Ignore contents of test folders
-    @param requirements_mode: flag to indicate what requirements show in codemeta 
+    @param requirements_mode: flag to indicate what requirements show in codemeta
     @param reconcile_authors: flag to indicate if additional should be extracted from certain files as codeowners. Bear in mind that using this flags consumes more requests to the GitHub API.
     @param branch: branch of the repository to analyze. Overrides the default branch detected from the repository metadata.
     @param tag: tag of the repository to analyze. Cannot be used together with the branch parameter.
+    @param gitlab_authorization: GitLab personal access token (works for gitlab.com and self-hosted instances)
+
     Returns
     -------
     @return: Dictionary with the results found by SOMEF, formatted as a Result object.
@@ -64,58 +76,51 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     if repo_url is not None:
         try:
 
-            """
-            It is necessary to make changes to all methods related to GitLab because, until now, 
-            they only worked with repositories on GitLab.com but not with self-hosted GitLab servers like gitlab.in2p3.fr, for example. 
-            We are going to split the process so that it also takes these servers into account.
-            """
+            # It is necessary to make changes to all methods related to GitLab because, until now,
+            # they only worked with repositories on GitLab.com but not with self-hosted GitLab servers
+            # like gitlab.in2p3.fr, for example. We are going to split the process so that it also
+            # takes these servers into account.
 
-            """
-            The only sure way to know if a server is from GitLab is by checking its API. 
-            GitLab servers are usually of the type gitlab.com, gitlab.in2p3.fr, or even salsa.debian.org, 
-            so you cannot discriminate solely with the string 'gitlab'.
-            """
+            # The only sure way to know if a server is from GitLab is by checking its API.
+            # GitLab servers are usually of the type gitlab.com, gitlab.in2p3.fr, or even
+            # salsa.debian.org, so you cannot discriminate solely with the string 'gitlab'.
             url = urlparse(repo_url)
             servidor = url.netloc
             bGitLab = False
             if process_repository.is_gitlab(servidor):
                 logging.info(f"{servidor} is GitLab.")
                 bGitLab = True
-                # if reconcile_authors: 
-                #     logging.info("Author enrichment disabled: GitLab repositories are not supported for GitHub user enrichment.") 
-                #     reconcile_authors = False
 
             logging.info(f"DEBUG: {servidor} is_gitlab = {bGitLab}")
             if bGitLab:
                 repo_type = constants.RepositoryType.GITLAB
 
-            logging.info("Processing repository metadata.")
             repository_metadata, owner, repo_name, def_branch, project_path = process_repository.load_online_repository_metadata(
                 repository_metadata,
                 repo_url,
                 ignore_github_metadata,
                 repo_type,
-                authorization,
+                github_authorization,
                 reconcile_authors,
                 branch=branch,
-                tag=tag
+                tag=tag,
+                gitlab_authorization=gitlab_authorization
             )
 
             # download files and obtain path to download folder
             if readme_only:
-                logging.info("Downloading README only...")
                 # download readme only with the information above
-                readme_text = process_repository.download_readme(owner, repo_name, def_branch, repo_type, authorization, project_path)
+                readme_text = process_repository.download_readme(owner, repo_name, def_branch, repo_type, github_authorization, project_path, gitlab_authorization=gitlab_authorization)
 
             elif keep_tmp is not None:  # save downloaded files locally
                 os.makedirs(keep_tmp, exist_ok=True)
                 local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
-                                                                            keep_tmp, repo_url, authorization)
+                                                                            keep_tmp, repo_url, github_authorization,
+                                                                            gitlab_authorization=gitlab_authorization)
                 if local_folder is not None:
                     readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
                                                                                                repository_metadata,
-                                                                                               repo_type, 
-                                                                                               owner,
+                                                                                               repo_type, owner,
                                                                                                repo_name,
                                                                                                def_branch,
                                                                                                ignore_test_folder,
@@ -128,12 +133,12 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
               
                 with tempfile.TemporaryDirectory() as temp_dir:
                     local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
-                                                                                temp_dir, repo_url, authorization)
+                                                                                temp_dir, repo_url, github_authorization,
+                                                                                gitlab_authorization=gitlab_authorization)
                     if local_folder is not None:
                         readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
                                                                                                     repository_metadata,
-                                                                                                    repo_type, 
-                                                                                                    owner,
+                                                                                                    repo_type, owner,
                                                                                                     repo_name,
                                                                                                     def_branch,
                                                                                                     ignore_test_folder,
@@ -154,7 +159,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             readme_text, full_repository_metadata = process_files.process_repository_files(local_repo,
                                                                                            repository_metadata,
                                                                                            repo_type,
-                                                                                           ignore_test_folder = ignore_test_folder,
+                                                                                           ignore_test_folder,
                                                                                            reconcile_authors = reconcile_authors)
             if readme_text == "":
                 logging.warning("Warning: README document does not exist in the local repository")
@@ -177,28 +182,13 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         logging.info("Extracted categories from headers successfully.")
         readme_text_unmarked = markdown_utils.unmark(readme_text)
         logging.info("readme text unmarked successfully.") 
-        if not ignore_classifiers and readme_unfiltered_text != '':
-            logging.info("Supervised classification")
-            repository_metadata = supervised_classification.run_category_classification(readme_unfiltered_text,
-                                                                                        threshold,
-                                                                                        repository_metadata)
-            logging.info("Create excerpts")                                                                           
-            excerpts = create_excerpts.create_excerpts(string_list)
-            logging.info("Extract text excerpts headers")  
-            excerpts_headers = mardown_parser.extract_text_excerpts_header(readme_unfiltered_text)
-            header_parents = mardown_parser.extract_headers_parents(readme_unfiltered_text)
-            score_dict = supervised_classification.run_classifiers(excerpts, file_paths)
-            repository_metadata = supervised_classification.classify(score_dict, threshold, excerpts_headers,
-                                                                     header_parents, repository_metadata)
+
         if readme_text_unmarked != "":
             try:
                 readme_source = repository_metadata.results[constants.CAT_README_URL][0]
                 readme_source = readme_source[constants.PROP_RESULT][constants.PROP_VALUE]
             except:
                 readme_source = "README.md"
-                
-
-            logging.info("Extracting regular expressions...")
             repository_metadata = regular_expressions.extract_bibtex(readme_unfiltered_text, repository_metadata,
                                                                      readme_source)
             repository_metadata = regular_expressions.extract_doi_badges(readme_unfiltered_text, repository_metadata,
@@ -264,7 +254,8 @@ def run_cli(*,
             requirements_mode="all",
             reconcile_authors=False,
             branch=None,
-            tag=None
+            tag=None,
+            gitlab_token=None
             ):
     """Function to run all the required components of the cli for a repository"""
     # check if it is a valid url
@@ -298,14 +289,15 @@ def run_cli(*,
                     encoded_url = encoded_url.replace(".","") #removing dots just in case
                     repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                              ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
-                                             keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, requirements_mode=requirements_mode, reconcile_authors=reconcile_authors,
-                                             branch=branch, tag=tag)
+                                             keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, requirements_mode=requirements_mode,
+                                             reconcile_authors=reconcile_authors, branch=branch, tag=tag,
+                                             gitlab_authorization=gitlab_token)
                     
                     if hasattr(repo_data, "get_json"): 
                         repo_data = repo_data.get_json()
            
                     repo_data = json_export.unify_results(repo_data.results)
-
+                    
                     if output is not None:
                         output = output.replace(".json","")
                         output = output + "_" + encoded_url + ".json"
@@ -332,37 +324,29 @@ def run_cli(*,
         if repo_url:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                      ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
-                                     keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors,
-                                     branch=branch, tag=tag)
+                                     keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder,
+                                     reconcile_authors=reconcile_authors, branch=branch, tag=tag,
+                                     gitlab_authorization=gitlab_token)
         elif local_repo:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
-                                     local_repo=local_repo, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors,
-                                     branch=branch, tag=tag)
+                                     local_repo=local_repo, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder,
+                                     reconcile_authors=reconcile_authors,branch=branch, tag=tag)
         else:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
-                                     doc_src=doc_src, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors,
-                                     branch=branch, tag=tag)
-        
+                                     doc_src=doc_src, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder,
+                                     reconcile_authors=reconcile_authors,branch=branch, tag=tag)
+            
         if hasattr(repo_data, "get_json"): 
             repo_data = repo_data.get_json()
 
         repo_data = json_export.unify_results(repo_data.results)
-
+        
         if output is not None:
             json_export.save_json_output(repo_data, output, missing, pretty=pretty)
         if codemeta_out is not None:
             json_export.save_codemeta_output(repo_data, codemeta_out, pretty=pretty, requirements_mode=requirements_mode)
         if google_codemeta_out is not None:
             google_codemeta_export.save_google_codemeta_output(repo_data, google_codemeta_out, pretty=pretty, requirements_mode=requirements_mode)
-    if graph_out is not None:
-        logging.info("Generating triples...")
-        data_graph = DataGraph()
-        if multiple_repos:
-            for repo in repo_data:
-                data_graph.somef_data_to_graph(repo.results)
-        else:
-            data_graph.somef_data_to_graph(repo_data.results)
 
-        data_graph.export_to_file(graph_out, graph_format)
 
 

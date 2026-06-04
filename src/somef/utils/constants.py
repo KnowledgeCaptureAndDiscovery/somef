@@ -3,7 +3,10 @@ import os
 from pathlib import Path
 
 # constants about SOMEF configuration
-CONF_AUTHORIZATION = "Authorization"
+CONF_GITHUB_AUTHORIZATION = "GitHubAuthorization"
+CONF_GITLAB_AUTHORIZATION = "GitlabAuthorization"
+# Backward-compatible key used in legacy code paths for GitHub authorization.
+CONF_AUTHORIZATION = CONF_GITHUB_AUTHORIZATION
 CONF_DESCRIPTION = "description"
 CONF_INVOCATION = "invocation"
 CONF_INSTALLATION = "installation"
