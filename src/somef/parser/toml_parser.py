@@ -118,7 +118,8 @@ def extract_common_version_field(data, metadata_result, source, file_type):
     For Project.toml: data["version"]
     """
     version_value = None
-
+    version_type = None
+    
     if file_type == "cargo" and "package" in data and "version" in data["package"]:
         version_value = data["package"]["version"]
         version_type = constants.RELEASE

@@ -12,7 +12,7 @@ To know more about the extraction details for each type of file, click on it.
 | JavaScript | [`package.json`](./packagejson.md), [`bower.json`](./bower.md) | 
 | Julia | [`Project.toml`](./julia.md) | 
 | PHP | [`composer.json`](./composer.md) |  
-| Python | [`setup.py`](./setuppy.md), [`pyproject.toml`](./pyprojecttoml.md), [`requirements.txt`](./requirementstxt.md) | 
+| Python | [`setup.py`](./setuppy.md), [`setup.cfg`](./setupcfg.md), [`pyproject.toml`](./pyprojecttoml.md), [`requirements.txt`](./requirementstxt.md) | 
 | R | [`DESCRIPTION`](./description.md) | 
 | Ruby | [`*.gemspec`](./gemspec.md) |  
 | Rust | [`Cargo.toml`](./cargo.md) |  
