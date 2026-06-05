@@ -220,15 +220,14 @@ def extract_repo_status(unfiltered_text, repository_metadata: Result, readme_sou
 
     repo_status = ""
     init = unfiltered_text.find("[![Project Status:")
-    if init > 0:
+    if init >= 0:
         end = unfiltered_text.find("](", init)
-        repo_status = unfiltered_text[init + 3:end]
-        # repo_status = repo_status.replace("Project Status: ", "")
-        # short_status = repo_status[0:repo_status.find(" ")].lower()
-        
-        status_value = repo_status.replace("Project Status:", "").strip()
-        parts = re.split(r'[ \]]', status_value)
-        short_status = parts[0].lower()
+
+        start_badge_url = end + 2
+        end_badge_url = unfiltered_text.find(")", start_badge_url)
+        badge_url = unfiltered_text[start_badge_url:end_badge_url]
+        short_status = badge_url.split("/")[-1].replace(".svg", "").lower()
+        # short_status = "active"
 
         repository_metadata.add_result(constants.CAT_STATUS,
                                        {
@@ -236,6 +235,7 @@ def extract_repo_status(unfiltered_text, repository_metadata: Result, readme_sou
                                            constants.PROP_VALUE: "https://www.repostatus.org/#" + short_status,
                                            constants.PROP_DESCRIPTION: repo_status
                                        }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+
     return repository_metadata
 
 
