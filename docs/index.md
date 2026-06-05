@@ -46,7 +46,7 @@ We recognize the following properties:
   - Year: Year of publication
   - Pages: Page range in the journal
 - **Code of conduct**: Link to the code of conduct of the project
-- **Code repository**: Link to the GitHub/GitLab repository used for the extraction
+- **Code repository**: Link to the GitHub/GitLab/Codeberg repository used for the extraction
 - **Contact**: Contact person responsible for maintaining a software component
 - **Continuous integration**: Link to continuous integration service(s)
 - **Contribution guidelines**: Text indicating how to contribute to this code repository
@@ -80,7 +80,7 @@ We recognize the following properties:
 - **Package files**: Links to package files used to wrap the project in a package.
 - **Programming languages**: Languages used in the repository
 - **Related papers**: URL to possible related papers within the repository stated within the readme file (from Arxiv)
-- **Releases** (GitHub and Gitlab): Pointer to the available versions of a software component. For each release, somef will track the following properties:
+- **Releases** (GitHub, Gitlab and Codeberg): Pointer to the available versions of a software component. For each release, somef will track the following properties:
   - Assets: files attached to the release
   - Description: Release notes
   - Author: Agent responsible of creating the release
@@ -102,7 +102,7 @@ We recognize the following properties:
 - **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it
 - **Workflows**: URL and path to the computational workflow files present in the repository
 
-We use different supervised classifiers, header analysis, regular expressions, the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field) and language specific metadata parsers (e.g., for package files). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description](https://somef.readthedocs.io/en/latest/output/)
+We use different supervised classifiers, header analysis, regular expressions, the GitHub/Gitlab/Codeberg API to retrieve all these fields (more than one technique may be used for each field) and language specific metadata parsers (e.g., for package files). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description](https://somef.readthedocs.io/en/latest/output/)
 
 <a name="myfootnote1">1</a> The available application domains currently are: 
 

@@ -345,14 +345,20 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                     {
                                                         constants.PROP_VALUE: workflow_url,
                                                         constants.PROP_TYPE: constants.URL
-                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)        
+                                                    }, 1, constants.TECHNIQUE_FILE_EXPLORATION)     
+                    elif repo_type == constants.RepositoryType.CODEBERG:
+                        if (file_path.startswith(".forgejo/workflows/") or file_path.startswith(".gitea/workflows/")):
+                            category = constants.CAT_CONTINUOUS_INTEGRATION
+                        else:
+                            category = None 
+
+                        if category:
+                            workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
+                                                        repo_dir, repo_relative_path, filename)
+                            metadata_result.add_result(category,
+                                                    {constants.PROP_VALUE: workflow_url, constants.PROP_TYPE: constants.URL},
+                                                    1, constants.TECHNIQUE_FILE_EXPLORATION)  
                     elif repo_type == constants.RepositoryType.GITHUB:
-                        # if file_path.startswith(".github/workflows/"):
-                        #     category = constants.CAT_WORKFLOWS
-                        # elif filename in [".travis.yml", "azure-pipelines.yml", "jenkinsfile"] or file_path.startswith(".circleci/"):
-                        #     category = constants.CAT_CONTINUOUS_INTEGRATION
-                        # else:
-                        #     category = None
                         if file_path.startswith(".github/workflows/"):
                             category = constants.CAT_CONTINUOUS_INTEGRATION
                         else:
@@ -413,6 +419,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                 docs_url = f"https://github.com/{owner}/{repo_name}/tree/{urllib.parse.quote(repo_default_branch)}/{docs_path}"
                             elif repo_type == constants.RepositoryType.GITLAB:
                                 docs_url = f"https://{domain_gitlab}/{owner}/{repo_name}/-/tree/{urllib.parse.quote(repo_default_branch)}/{docs_path}"
+                            elif repo_type == constants.RepositoryType.CODEBERG:
+                                docs_url = f"https://codeberg.org/{owner}/{repo_name}/src/branch/{urllib.parse.quote(repo_default_branch)}/{docs_path}"
                             else:
                                 docs_url = os.path.join(repo_dir, docs_path)
                             # docs.append(docs_url)
@@ -452,6 +460,8 @@ def get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, r
         return convert_to_raw_user_content_github(file_path, owner, repo_name, repo_default_branch)
     elif repo_type == constants.RepositoryType.GITLAB:
         return convert_to_raw_user_content_gitlab(file_path, owner, repo_name, repo_default_branch)
+    elif repo_type == constants.RepositoryType.CODEBERG:
+        return convert_to_raw_user_content_codeberg(file_path, owner, repo_name, repo_default_branch)
     else:
         return os.path.join(repo_dir, repo_relative_path, filename)
 
@@ -693,6 +703,15 @@ def convert_to_raw_user_content_github(partial, owner, repo_name, repo_ref):
         partial = re.sub("\\\\", "/", partial)
 
     return f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse.quote(partial)}"
+
+
+def convert_to_raw_user_content_codeberg(partial, owner, repo_name, repo_ref):
+    """Converts Codeberg paths into raw content URLs"""
+    if partial.startswith("./"):
+        partial = partial.replace("./", "")
+    if partial.startswith(".\\"):
+        partial = partial.replace(".\\", "")
+    return f"https://codeberg.org/{owner}/{repo_name}/raw/branch/{repo_ref}/{urllib.parse.quote(partial)}"
 
 
 def convert_to_raw_user_content_gitlab(partial, owner, repo_name, repo_ref):

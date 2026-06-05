@@ -73,7 +73,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `code_of_conduct`: Link to the code of conduct file of the project
 - `code_repository`: Link to the source code (typically the repository where the readme can be found)
 - `contact`: Contact person responsible for maintaining a software component.
-- `continuous_integration`: Link to continuous integration service, supported on GitHub as well as in GitLab.
+- `continuous_integration`: Link to continuous integration service, supported on GitHub as well as in GitLab and Codeberg.
 - `contributing guidelines`: Guidelines indicating how to contribute to a software component.
 - `contributor`: Contributors to this software. Note: Contributor metadata is exported from metadata files (e.g., CodeMeta, CONTRIBUTORS, etc.) not from git logs.
 - `copyright_holder`: Entity or individual owning the rights to the software. The year is also extracted, if available.
@@ -167,7 +167,7 @@ Depending on the `type` of the result, additional properties may be found.
 
 The following object `types` are currently supported:
 
-- `Release`: software releases of the current code repository, as available from GitHub.
+- `Release`: software releases of the current code repository, as available from GitHub, GitLab and Codeberg
 - `Programming_language`: Programming language used in the repository. 
 - `License`: object representing all the metadata SOMEF extracts from a license.
 - `Agent`: user (typically, a person) or organization responsible for authoring a software release or a paper.
@@ -317,6 +317,7 @@ The techniques can be of several types:
 - `file_exploration`: the result comes from an exploration of the files in the repository
 - `GitHub_API`: the result was obtained from the GitHub API.
 - `GitLab_API`: the result was obtained from the GitLab API.
+- `Codeberg_API`: the result was obtained from the Codeberg API.
 - `regular_expression`: the result was obtained after performing regular expressions on the files in the repository.
 - `software_type_heuristics`: the result was obtained from analysis of the repository based on various heuristics from the README, code and extension analysis. 
 - `supervised_classification`: the results were obtained after running text classifiers trained for detecting that type of header.
@@ -405,6 +406,32 @@ A more detailed explanation is provided in the [wiki](https://github.com/oeg-upm
 ```
 As shown in the Turtle snippet above, SOMEF represents the software as an entity, its relationship with each release (software version), the license found in the repository and the Person who owns it.
  -->
+## Codeberg API Crosswalk
+
+When analyzing a Codeberg repository, SOMEF uses the [Codeberg API](https://codeberg.org/api/v1/swagger) 
+(`GET /api/v1/repos/{owner}/{repo}`) to retrieve metadata. The table below shows how Codeberg API 
+fields map to SOMEF categories:
+
+| SOMEF category | Codeberg API field | Notes |
+|---|---|---|
+| `name` | `name` | |
+| `description` | `description` | |
+| `code_repository` | `html_url` | |
+| `owner` | `owner.login` | |
+| `date_created` | `created_at` | |
+| `date_updated` | `updated_at` | |
+| `stars` | `stars_count` | In GitHub this field is `stargazers_count` |
+| `forks_count` | `forks_count` | |
+| `homepage` | `website` | In GitHub this field is `homepage` |
+| `keywords` | `topics` | |
+| `issue_tracker` | *(constructed)* | Built as `{html_url}/issues` |
+| `license` | *(not available)* | Codeberg API does not return license information |
+| `programming_languages` | `languages_url` | Additional GET request to the languages endpoint |
+| `releases` | `/repos/{owner}/{repo}/releases` | Additional GET request |
+
+For releases, the field mapping is identical to GitHub. The only differences are that Codeberg 
+uses `attachments` instead of `assets` for release files, and it does not provide 
+`author.type` (`AGENT_TYPE`) for release authors.
 
 ## Citation Reconciliation
 

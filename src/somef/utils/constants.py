@@ -311,12 +311,17 @@ TECHNIQUE_FILE_EXPLORATION = "file_exploration"
 TECHNIQUE_CODE_CONFIG_PARSER = "code_parser"
 TECHNIQUE_GITHUB_API = "GitHub_API"
 TECHNIQUE_GITLAB_API = "GitLab_API"
+TECHNIQUE_CODEBERG_API = "Codeberg_API"
 TECHNIQUE_HEURISTICS = "software_type_heuristics"
 
 # GitHub properties
 GITHUB_DOMAIN = "github.com"
 GITHUB_ACCEPT_HEADER = "application/vnd.github.v3+json"
 GITHUB_API = "https://api.github.com/repos"
+
+#Codeberg properties
+CODEBERG_DOMAIN = "codeberg.org"
+CODEBERG_API = "https://codeberg.org/api/v1/repos"
 
 # Software Heritage
 SWH_ROOT = "https://archive.softwareheritage.org/"
@@ -347,6 +352,25 @@ github_crosswalk_table = {
     CAT_KEYWORDS: "topics",
     CAT_FORK_COUNTS: "forks_count",
     CAT_HOMEPAGE: "homepage"
+}
+
+# Crosswalk to retrieve easily contents of interest from the codeberg response
+codeberg_crosswalk_table = {
+    CAT_CODE_REPOSITORY: "html_url",
+    "languages_url": "languages_url",
+    CAT_OWNER: ["owner", "login"],
+    # AGENT_TYPE: ["owner", "type"],
+    CAT_DATE_CREATED: "created_at",
+    CAT_DATE_UPDATED: "updated_at",
+    # CAT_LICENSE: "license",
+    CAT_DESCRIPTION: "description",
+    CAT_NAME: "name",
+    CAT_FULL_NAME: "full_name",
+    # CAT_ISSUE_TRACKER: "issues_url",
+    CAT_STARS: "stars_count",              
+    CAT_KEYWORDS: "topics",
+    CAT_FORK_COUNTS: "forks_count",
+    CAT_HOMEPAGE: "website"
 }
 
 # Mapping for releases
@@ -391,6 +415,31 @@ release_assets_github = {
     PROP_DOWNLOAD_COUNT: "download_count"
 }
 
+release_assets_codeberg = {
+    PROP_URL: "url",
+    PROP_NAME: "name",
+    PROP_SIZE: "size",
+    PROP_BROWSER_URL: "browser_download_url",
+    PROP_CONTENT_TYPE: "content_type",
+    PROP_DATE_CREATED_AT: "created_at",
+    PROP_DOWNLOAD_COUNT: "download_count"
+}
+
+release_codeberg_crosswalk_table = {
+    PROP_TAG: 'tag_name',
+    PROP_NAME: 'name',
+    PROP_AUTHOR: ['author', 'login'],
+    # AGENT_TYPE: ['author', 'type'],
+    PROP_DESCRIPTION: 'body',
+    PROP_TARBALL_URL: 'tarball_url',
+    PROP_ZIPBALL_URL: 'zipball_url',
+    PROP_HTML_URL: 'html_url',
+    PROP_URL: 'url',
+    PROP_RELEASE_ID: 'id',
+    PROP_DATE_CREATED: 'created_at',
+    PROP_DATE_PUBLISHED: "published_at",
+    # CAT_ASSETS: "attachments"               
+}
 # Minimum percentage of total bytes a programming language must have to be considered relevant in CodeMeta file.
 MINIMUM_PERCENTAGE_LANGUAGE_PROGRAMMING = 10
 
@@ -423,6 +472,7 @@ class RepositoryType(Enum):
     GITHUB = 1
     GITLAB = 2
     LOCAL = 3
+    CODEBERG = 4
 
 # Media/script/non-software sets
 workflow_extensions=('.ga','.cwl','.nf','.knwf','.t2flow','.dag','.kar','.wdl',".smk",".snake")

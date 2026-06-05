@@ -483,6 +483,9 @@ def download_readme(owner, repo_name, default_branch, repo_type, authorization, 
     elif repo_type is constants.RepositoryType.GITHUB:
         primary_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{default_branch}/README.md"
         secondary_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/master/README.md"
+    elif repo_type is constants.RepositoryType.CODEBERG:
+        primary_url = f"https://codeberg.org/{owner}/{repo_name}/raw/branch/{default_branch}/README.md"
+        secondary_url = f"https://codeberg.org/{owner}/{repo_name}/raw/branch/master/README.md"
     else:
         logging.error("Repository type not supported")
         return None
@@ -531,6 +534,8 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     """
     if repo_type == constants.RepositoryType.GITLAB:
         return load_gitlab_repository_metadata(repository_metadata, repository_url)
+    elif repo_type == constants.RepositoryType.CODEBERG:
+        return load_codeberg_repository_metadata(repository_metadata, repository_url)
     elif repo_type == constants.RepositoryType.LOCAL:
         logging.warning("Trying to download metadata from a local repository")
         return None
@@ -796,6 +801,8 @@ def download_repository_files(owner, repo_name, default_branch, repo_type, targe
         return download_github_files(target_dir, owner, repo_name, default_branch, authorization)
     elif repo_type == constants.RepositoryType.GITLAB:
         return download_gitlab_files(target_dir, owner, repo_name, default_branch, repo_ref)
+    elif repo_type == constants.RepositoryType.CODEBERG:
+        return download_codeberg_files(target_dir, owner, repo_name, default_branch)
     else:
         logging.error("Cannot download files from a local repository!")
         return None
@@ -1143,3 +1150,148 @@ def get_all_paginated_results(base_url, headers, per_page=100):
 
     return all_results
 
+
+def load_codeberg_repository_metadata(repo_metadata: Result, repository_url):
+    logging.info(f"Loading Repository {repository_url} Information....")
+    if repository_url[-1] == '/':
+        repository_url = repository_url[:-1]
+    url = urlparse(repository_url)
+
+    path_components = [p for p in url.path.split('/') if p]
+    if len(path_components) < 2:
+        logging.error("Codeberg link is not correct. Expected https://codeberg.org/<owner>/<repo>")
+        return repo_metadata, "", "", "", ""
+
+    owner = path_components[0]
+    repo_name = path_components[1]
+    default_branch = None
+
+    if len(path_components) >= 4 and path_components[2] == "tree":
+        default_branch = path_components[3]
+
+    repo_api_url = f"{constants.CODEBERG_API}/{owner}/{repo_name}"
+    resp = requests.get(repo_api_url)
+    if resp.status_code != 200:
+        logging.error(f"Error fetching Codeberg repository: {resp.status_code}")
+        return repo_metadata, "", "", "", ""
+    general_resp = resp.json()
+
+    if default_branch is None:
+        default_branch = general_resp.get('default_branch', 'main')
+
+    filtered_resp = do_crosswalk(general_resp, constants.codeberg_crosswalk_table)
+    if 'html_url' in general_resp:
+        filtered_resp[constants.CAT_ISSUE_TRACKER] = f"{general_resp['html_url']}/issues"
+
+    filtered_resp[constants.CAT_DOWNLOAD_URL] = f"https://codeberg.org/{owner}/{repo_name}/releases"
+
+    for category, value in filtered_resp.items():
+        value_type = constants.STRING
+        if category in constants.all_categories:
+            if category == constants.CAT_ISSUE_TRACKER:
+                value = value.replace("{/number}", "") if isinstance(value, str) else value
+            if category == constants.CAT_OWNER:
+                value_type = "User" 
+            if category == constants.CAT_KEYWORDS:
+                value = '%s,' % (', '.join(value))
+                value = value.rstrip(',')
+            if category in [constants.CAT_CODE_REPOSITORY, constants.CAT_ISSUE_TRACKER,
+                            constants.CAT_DOWNLOAD_URL, constants.CAT_HOMEPAGE]:
+                value_type = constants.URL
+            if category in [constants.CAT_DATE_CREATED, constants.CAT_DATE_UPDATED]:
+                value_type = constants.DATE
+            if category in [constants.CAT_FORK_COUNTS, constants.CAT_STARS]:
+                value_type = constants.NUMBER
+            # Saltamos CAT_LICENSE porque la API de Codeberg no lo devuelve
+
+            result = {
+                constants.PROP_VALUE: value,
+                constants.PROP_TYPE: value_type
+            }
+            if result['value']:
+                repo_metadata.add_result(category, result, 1, constants.TECHNIQUE_CODEBERG_API)
+
+    if 'languages_url' in filtered_resp:
+        lang_resp = requests.get(filtered_resp['languages_url'])
+        if lang_resp.status_code == 200:
+            languages = lang_resp.json()
+            for l, s in languages.items():
+                result = {
+                    constants.PROP_VALUE: l,
+                    constants.PROP_NAME: l,
+                    constants.PROP_TYPE: constants.LANGUAGE,
+                    constants.PROP_SIZE: s,
+                }
+                repo_metadata.add_result(constants.CAT_PROGRAMMING_LANGUAGES, result, 1,
+                                         constants.TECHNIQUE_CODEBERG_API)
+
+    releases_url = f"{constants.CODEBERG_API}/{owner}/{repo_name}/releases"
+    releases_resp = requests.get(releases_url)
+    if releases_resp.status_code == 200:
+        releases_list = releases_resp.json()
+        release_list_filtered = [do_crosswalk(r, constants.release_codeberg_crosswalk_table) 
+                                 for r in releases_list]
+        for release in release_list_filtered:
+            release_obj = {
+                constants.PROP_TYPE: constants.RELEASE,
+                constants.PROP_VALUE: release.get(constants.PROP_URL, "")
+            }
+            for category, value in release.items():
+                if category == constants.PROP_AUTHOR:
+                    value = {
+                        constants.PROP_NAME: value,
+                        constants.PROP_TYPE: release.get(constants.AGENT_TYPE, "Person")
+                    }
+                if value:
+                    release_obj[category] = value
+                if category == constants.CAT_ASSETS and isinstance(value, list):
+                    assets_filtered = [do_crosswalk(a, constants.release_assets_codeberg) for a in value]
+                    key_mapping = {
+                        constants.PROP_BROWSER_URL: constants.PROP_CONTENT_URL,
+                        constants.PROP_SIZE: constants.PROP_CONTENT_SIZE,
+                        constants.PROP_CONTENT_TYPE: constants.PROP_ENCODING_FORMAT,
+                        constants.PROP_DATE_CREATED_AT: constants.PROP_UPLOAD_DATE
+                    }
+                    assets_filtered = [{key_mapping.get(k, k): v for k, v in a.items()} for a in assets_filtered]
+                    release_obj[category] = assets_filtered
+            repo_metadata.add_result(constants.CAT_RELEASES, release_obj, 1, constants.TECHNIQUE_CODEBERG_API)
+    
+    logging.info("Repository information successfully loaded.\n")
+    return repo_metadata, owner, repo_name, default_branch, "/".join(path_components)
+
+
+def download_codeberg_files(directory, owner, repo_name, repo_branch):
+    """
+    Download all repository files from a Codeberg repository.
+    """
+    repo_archive_url = f"https://codeberg.org/{owner}/{repo_name}/archive/{repo_branch}.zip"
+    logging.info(f"Downloading {repo_archive_url}")
+
+    repo_download = requests.get(repo_archive_url)
+    if repo_download.status_code != 200:
+        logging.error(f"Error downloading Codeberg archive: HTTP {repo_download.status_code}")
+        return None
+
+    repo_zip = repo_download.content
+
+    repo_name_full = owner + "_" + repo_name
+    repo_zip_file = os.path.join(directory, repo_name_full + ".zip")
+    repo_extract_dir = os.path.join(directory, repo_name_full)
+
+    with open(repo_zip_file, "wb") as f:
+        f.write(repo_zip)
+
+    try:
+        with zipfile.ZipFile(repo_zip_file, "r") as zip_ref:
+            zip_ref.extractall(repo_extract_dir)
+    except zipfile.BadZipFile:
+        logging.error("Downloaded archive is not a valid zip")
+        return None
+
+    repo_folders = os.listdir(repo_extract_dir)
+    if not repo_folders:
+        logging.warning("Repository archive is empty")
+        return None
+
+    repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
+    return repo_dir

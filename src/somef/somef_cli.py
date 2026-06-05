@@ -78,16 +78,20 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             url = urlparse(repo_url)
             servidor = url.netloc
             bGitLab = False
+            bCodeberg = False
             if process_repository.is_gitlab(servidor):
                 logging.info(f"{servidor} is GitLab.")
-                bGitLab = True
-                # if reconcile_authors: 
-                #     logging.info("Author enrichment disabled: GitLab repositories are not supported for GitHub user enrichment.") 
-                #     reconcile_authors = False
-
-            logging.info(f"DEBUG: {servidor} is_gitlab = {bGitLab}")
-            if bGitLab:
                 repo_type = constants.RepositoryType.GITLAB
+                bGitLab = True
+                logging.info(f"DEBUG: {servidor} is_gitlab = {bGitLab}")
+            elif servidor == constants.CODEBERG_DOMAIN:
+                repo_type = constants.RepositoryType.CODEBERG
+                bCodeberg = True
+                logging.info(f"DEBUG: {servidor} is_codeberg = {bCodeberg}")
+           
+
+            # if bGitLab:
+            #     repo_type = constants.RepositoryType.GITLAB
 
             logging.info("Processing repository metadata.")
             repository_metadata, owner, repo_name, def_branch, project_path = process_repository.load_online_repository_metadata(
