@@ -451,7 +451,8 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
             'ParentHeader': constants.PROP_PARENT_HEADER,
         })
 
-        source = None
+        # source = None
+        source = ''
         if constants.CAT_README_URL in repository_metadata.results:
             source = repository_metadata.results[constants.CAT_README_URL][0]
             source = source[constants.PROP_RESULT][constants.PROP_VALUE]
