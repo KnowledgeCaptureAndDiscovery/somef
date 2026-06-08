@@ -323,6 +323,9 @@ GITHUB_API = "https://api.github.com/repos"
 CODEBERG_DOMAIN = "codeberg.org"
 CODEBERG_API = "https://codeberg.org/api/v1/repos"
 
+# Token codeberg
+CONF_CODEBERG_AUTHORIZATION = "codeberg_authorization"
+
 # Software Heritage
 SWH_ROOT = "https://archive.softwareheritage.org/"
 REGEXP_SWH = r'\[\!\[SWH\]([^\]]+)\]\(([^)]+)\)'

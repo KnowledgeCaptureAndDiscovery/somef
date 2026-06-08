@@ -535,7 +535,7 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     if repo_type == constants.RepositoryType.GITLAB:
         return load_gitlab_repository_metadata(repository_metadata, repository_url)
     elif repo_type == constants.RepositoryType.CODEBERG:
-        return load_codeberg_repository_metadata(repository_metadata, repository_url)
+        return load_codeberg_repository_metadata(repository_metadata, repository_url, authorization)
     elif repo_type == constants.RepositoryType.LOCAL:
         logging.warning("Trying to download metadata from a local repository")
         return None
@@ -802,11 +802,10 @@ def download_repository_files(owner, repo_name, default_branch, repo_type, targe
     elif repo_type == constants.RepositoryType.GITLAB:
         return download_gitlab_files(target_dir, owner, repo_name, default_branch, repo_ref)
     elif repo_type == constants.RepositoryType.CODEBERG:
-        return download_codeberg_files(target_dir, owner, repo_name, default_branch)
+        return download_codeberg_files(target_dir, owner, repo_name, default_branch, authorization)
     else:
         logging.error("Cannot download files from a local repository!")
         return None
-
 
 # def download_github_files(directory, owner, repo_name, repo_ref, authorization):
 #     """
@@ -1151,8 +1150,12 @@ def get_all_paginated_results(base_url, headers, per_page=100):
     return all_results
 
 
-def load_codeberg_repository_metadata(repo_metadata: Result, repository_url):
+def load_codeberg_repository_metadata(repo_metadata: Result, repository_url, authorization=None):
     logging.info(f"Loading Repository {repository_url} Information....")
+
+    file_paths = configuration.get_configuration_file()
+    headers = codeberg_header_template(authorization)
+
     if repository_url[-1] == '/':
         repository_url = repository_url[:-1]
     url = urlparse(repository_url)
@@ -1170,7 +1173,8 @@ def load_codeberg_repository_metadata(repo_metadata: Result, repository_url):
         default_branch = path_components[3]
 
     repo_api_url = f"{constants.CODEBERG_API}/{owner}/{repo_name}"
-    resp = requests.get(repo_api_url)
+    # resp = requests.get(repo_api_url)
+    resp, _ = rate_limit_get(repo_api_url, headers=headers)
     if resp.status_code != 200:
         logging.error(f"Error fetching Codeberg repository: {resp.status_code}")
         return repo_metadata, "", "", "", ""
@@ -1212,7 +1216,7 @@ def load_codeberg_repository_metadata(repo_metadata: Result, repository_url):
                 repo_metadata.add_result(category, result, 1, constants.TECHNIQUE_CODEBERG_API)
 
     if 'languages_url' in filtered_resp:
-        lang_resp = requests.get(filtered_resp['languages_url'])
+        lang_resp, _ = rate_limit_get(filtered_resp['languages_url'], headers=headers)
         if lang_resp.status_code == 200:
             languages = lang_resp.json()
             for l, s in languages.items():
@@ -1226,7 +1230,7 @@ def load_codeberg_repository_metadata(repo_metadata: Result, repository_url):
                                          constants.TECHNIQUE_CODEBERG_API)
 
     releases_url = f"{constants.CODEBERG_API}/{owner}/{repo_name}/releases"
-    releases_resp = requests.get(releases_url)
+    releases_resp, _ = rate_limit_get(releases_url, headers=headers)
     if releases_resp.status_code == 200:
         releases_list = releases_resp.json()
         release_list_filtered = [do_crosswalk(r, constants.release_codeberg_crosswalk_table) 
@@ -1260,14 +1264,16 @@ def load_codeberg_repository_metadata(repo_metadata: Result, repository_url):
     return repo_metadata, owner, repo_name, default_branch, "/".join(path_components)
 
 
-def download_codeberg_files(directory, owner, repo_name, repo_branch):
+def download_codeberg_files(directory, owner, repo_name, repo_branch,authorization=None):
     """
     Download all repository files from a Codeberg repository.
     """
     repo_archive_url = f"https://codeberg.org/{owner}/{repo_name}/archive/{repo_branch}.zip"
     logging.info(f"Downloading {repo_archive_url}")
 
-    repo_download = requests.get(repo_archive_url)
+    headers = codeberg_header_template(authorization)
+
+    repo_download, _ = rate_limit_get(repo_archive_url, headers=headers)
     if repo_download.status_code != 200:
         logging.error(f"Error downloading Codeberg archive: HTTP {repo_download.status_code}")
         return None
@@ -1295,3 +1301,12 @@ def download_codeberg_files(directory, owner, repo_name, repo_branch):
 
     repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
     return repo_dir
+
+def codeberg_header_template(authorization=None):
+    header = {}
+    file_paths = configuration.get_configuration_file()
+    if authorization is not None:
+        header["Authorization"] = authorization
+    elif constants.CONF_CODEBERG_AUTHORIZATION in file_paths:
+        header["Authorization"] = file_paths[constants.CONF_CODEBERG_AUTHORIZATION]
+    return header
