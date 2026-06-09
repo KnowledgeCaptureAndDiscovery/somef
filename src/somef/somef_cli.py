@@ -79,6 +79,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             servidor = url.netloc
             bGitLab = False
             bCodeberg = False
+            bBitbucket = False
             if process_repository.is_gitlab(servidor):
                 logging.info(f"{servidor} is GitLab.")
                 repo_type = constants.RepositoryType.GITLAB
@@ -88,6 +89,9 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 repo_type = constants.RepositoryType.CODEBERG
                 bCodeberg = True
                 logging.info(f"DEBUG: {servidor} is_codeberg = {bCodeberg}")
+            elif "bitbucket.org" in servidor:
+                repo_type = constants.RepositoryType.BITBUCKET
+                bBitbucket = True
            
 
             # if bGitLab:

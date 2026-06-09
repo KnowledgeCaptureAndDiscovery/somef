@@ -85,20 +85,23 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=const
             stream=use_stream,
             **kwargs
         )
-        # Detect invalid or insufficient GitHub token 
+        # Detect invalid or insufficient token 
         if response.status_code == 401: 
-            raise Exception("Invalid GitHub token. Run `somef configure` to set a valid token.") 
+            raise Exception("Invalid token. Run `somef configure` to set a valid token.") 
         if response.status_code == 403: 
-            raise Exception("GitHub token lacks required permissions or scopes.")
+            raise Exception("Token lacks required permissions or scopes.")
         
         date = response.headers.get("Date", "")
         # Show rate limit information if available
         if "X-RateLimit-Remaining" in response.headers:
             rate_limit_remaining = response.headers["X-RateLimit-Remaining"]
             epochtime = int(response.headers["X-RateLimit-Reset"])
+            if epochtime < 1000000000:
+                epochtime = int(time.time()) + epochtime
+
             date_reset = datetime.fromtimestamp(epochtime)
             logging.info(
-                "Remaining GitHub API requests: " + rate_limit_remaining + " ### Next rate limit reset at: " + str(
+                "Remaining repository API requests: " + rate_limit_remaining + " ### Next rate limit reset at: " + str(
                     date_reset))
             
             if not use_stream:
@@ -486,6 +489,9 @@ def download_readme(owner, repo_name, default_branch, repo_type, authorization, 
     elif repo_type is constants.RepositoryType.CODEBERG:
         primary_url = f"https://codeberg.org/{owner}/{repo_name}/raw/branch/{default_branch}/README.md"
         secondary_url = f"https://codeberg.org/{owner}/{repo_name}/raw/branch/master/README.md"
+    elif repo_type is constants.RepositoryType.BITBUCKET:
+        primary_url = f"https://bitbucket.org/{owner}/{repo_name}/raw/{default_branch}/README.md"
+        secondary_url = f"https://bitbucket.org/{owner}/{repo_name}/raw/master/README.md"
     else:
         logging.error("Repository type not supported")
         return None
@@ -536,6 +542,8 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
         return load_gitlab_repository_metadata(repository_metadata, repository_url)
     elif repo_type == constants.RepositoryType.CODEBERG:
         return load_codeberg_repository_metadata(repository_metadata, repository_url, authorization)
+    elif repo_type == constants.RepositoryType.BITBUCKET:
+        return load_bitbucket_repository_metadata(repository_metadata, repository_url, authorization)
     elif repo_type == constants.RepositoryType.LOCAL:
         logging.warning("Trying to download metadata from a local repository")
         return None
@@ -773,7 +781,7 @@ def do_crosswalk(data, crosswalk_table):
         if value is not None:
             output[somef_key] = value
         else:
-            logging.error(f"Error: key {path} not present in github repository")
+            logging.error(f"Error: key {path} not present in repository")
     return output
 
 
@@ -803,6 +811,8 @@ def download_repository_files(owner, repo_name, default_branch, repo_type, targe
         return download_gitlab_files(target_dir, owner, repo_name, default_branch, repo_ref)
     elif repo_type == constants.RepositoryType.CODEBERG:
         return download_codeberg_files(target_dir, owner, repo_name, default_branch, authorization)
+    elif repo_type == constants.RepositoryType.BITBUCKET:
+        return download_bitbucket_files(target_dir, owner, repo_name, default_branch, authorization)
     else:
         logging.error("Cannot download files from a local repository!")
         return None
@@ -1302,6 +1312,7 @@ def download_codeberg_files(directory, owner, repo_name, repo_branch,authorizati
     repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
     return repo_dir
 
+
 def codeberg_header_template(authorization=None):
     header = {}
     file_paths = configuration.get_configuration_file()
@@ -1310,3 +1321,146 @@ def codeberg_header_template(authorization=None):
     elif constants.CONF_CODEBERG_AUTHORIZATION in file_paths:
         header["Authorization"] = file_paths[constants.CONF_CODEBERG_AUTHORIZATION]
     return header
+
+
+def bitbucket_header_template(authorization=None):
+    header = {}
+    file_paths = configuration.get_configuration_file()
+    if authorization is not None:
+        header["Authorization"] = authorization
+    elif constants.CONF_BITBUCKET_AUTHORIZATION in file_paths:
+        header["Authorization"] = file_paths[constants.CONF_BITBUCKET_AUTHORIZATION]
+    return header
+
+
+def load_bitbucket_repository_metadata(repo_metadata: Result, repository_url, authorization=None):
+    logging.info(f"Loading Repository {repository_url} Information....")
+    if repository_url[-1] == '/':
+        repository_url = repository_url[:-1]
+    url = urlparse(repository_url)
+
+    path_components = [p for p in url.path.split('/') if p]
+    if len(path_components) < 2:
+        logging.error("Bitbucket link is not correct. Expected https://bitbucket.org/<workspace>/<repo_slug>")
+        return repo_metadata, "", "", "", ""
+
+    owner = path_components[0]
+    repo_name = path_components[1]
+    default_branch = None
+
+    if len(path_components) >= 4 and path_components[2] == "tree":
+        default_branch = path_components[3]
+
+    # API call
+    repo_api_url = f"{constants.BITBUCKET_API}/{owner}/{repo_name}"
+    headers = bitbucket_header_template(authorization)
+    resp, _ = rate_limit_get(repo_api_url, headers=headers)
+    if resp.status_code != 200:
+        logging.error(f"Error fetching Bitbucket repository: {resp.status_code}")
+        return repo_metadata, "", "", "", ""
+    general_resp = resp.json()
+
+    if default_branch is None:
+        default_branch = general_resp.get('mainbranch', {}).get('name', 'main')
+
+    filtered_resp = do_crosswalk(general_resp, constants.bitbucket_crosswalk_table)
+
+    if constants.CAT_OWNER not in filtered_resp or not filtered_resp[constants.CAT_OWNER]:
+        owner_obj = general_resp.get('owner', {})
+        owner_val = owner_obj.get('nickname') or owner_obj.get('username')
+        if owner_val:
+            filtered_resp[constants.CAT_OWNER] = owner_val
+
+    # Issue tracker
+    if general_resp.get('has_issues', False) and 'links' in general_resp and 'html' in general_resp['links']:
+        html_url = general_resp['links']['html']['href']
+        filtered_resp[constants.CAT_ISSUE_TRACKER] = f"{html_url}/issues"
+
+
+    if 'language' in general_resp and general_resp['language']:
+        lang_value = general_resp['language']
+        result = {
+            constants.PROP_VALUE: lang_value,
+            constants.PROP_NAME: lang_value,
+            constants.PROP_TYPE: constants.LANGUAGE,
+        }
+        repo_metadata.add_result(constants.CAT_PROGRAMMING_LANGUAGES, result, 1,
+                                  constants.TECHNIQUE_BITBUCKET_API)
+
+  
+    if 'links' in general_resp and 'html' in general_resp['links']:
+        filtered_resp[constants.CAT_DOWNLOAD_URL] = f"{general_resp['links']['html']['href']}/downloads"
+
+    for category, value in filtered_resp.items():
+        value_type = constants.STRING
+        if category in constants.all_categories:
+            if category == constants.CAT_OWNER:
+                value_type = "User"
+            if category in [constants.CAT_CODE_REPOSITORY, constants.CAT_ISSUE_TRACKER,
+                            constants.CAT_DOWNLOAD_URL, constants.CAT_HOMEPAGE, constants.CAT_FORKS_URLS]:
+                value_type = constants.URL
+            if category in [constants.CAT_DATE_CREATED, constants.CAT_DATE_UPDATED]:
+                value_type = constants.DATE
+            if category == constants.CAT_PROGRAMMING_LANGUAGES:
+                value_type = constants.LANGUAGE
+
+            result = {
+                constants.PROP_VALUE: value,
+                constants.PROP_TYPE: value_type
+            }
+            if result['value']:
+                repo_metadata.add_result(category, result, 1, constants.TECHNIQUE_BITBUCKET_API)
+
+    # Releases from /refs/tags
+    tags_url = f"{constants.BITBUCKET_API}/{owner}/{repo_name}/refs/tags"
+    tags_resp, _ = rate_limit_get(tags_url, headers=headers)
+    if tags_resp.status_code == 200:
+        tags_data = tags_resp.json()
+        tags_list = tags_data.get('values', [])
+        for tag in tags_list:
+            release_obj = do_crosswalk(tag, constants.release_bitbucket_crosswalk_table)
+            release_obj[constants.PROP_TYPE] = constants.RELEASE
+            release_obj[constants.PROP_VALUE] = tag.get('name', '')
+            repo_metadata.add_result(constants.CAT_RELEASES, release_obj, 1,
+                                      constants.TECHNIQUE_BITBUCKET_API)
+
+    logging.info("Repository information successfully loaded.\n")
+    return repo_metadata, owner, repo_name, default_branch, "/".join(path_components)
+
+
+def download_bitbucket_files(directory, owner, repo_name, repo_branch, authorization=None):
+    repo_archive_url = f"https://bitbucket.org/{owner}/{repo_name}/get/{repo_branch}.zip"
+    logging.info(f"Downloading {repo_archive_url}")
+
+    headers = bitbucket_header_template(authorization)
+    repo_download, _ = rate_limit_get(repo_archive_url, headers=headers)
+    if repo_download is None:
+        logging.warning(f"Repository archive skipped due to size limit: {constants.SIZE_DOWNLOAD_LIMIT_MB} MB or no content-length")
+        return None
+    if repo_download.status_code != 200:
+        logging.error(f"Error downloading Bitbucket archive: HTTP {repo_download.status_code}")
+        return None
+
+    repo_zip = repo_download.content
+
+    repo_name_full = owner + "_" + repo_name
+    repo_zip_file = os.path.join(directory, repo_name_full + ".zip")
+    repo_extract_dir = os.path.join(directory, repo_name_full)
+
+    with open(repo_zip_file, "wb") as f:
+        f.write(repo_zip)
+
+    try:
+        with zipfile.ZipFile(repo_zip_file, "r") as zip_ref:
+            zip_ref.extractall(repo_extract_dir)
+    except zipfile.BadZipFile:
+        logging.error("Downloaded archive is not a valid zip")
+        return None
+
+    repo_folders = os.listdir(repo_extract_dir)
+    if not repo_folders:
+        logging.warning("Repository archive is empty")
+        return None
+
+    repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
+    return repo_dir

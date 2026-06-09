@@ -328,6 +328,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                           
                 # if repo_type == constants.RepositoryType.GITLAB: 
                 if filename.endswith(".yml"):
+                    category = None
                     if repo_type == constants.RepositoryType.GITLAB: 
                         analysis = extract_workflows.is_file_continuous_integration_gitlab(os.path.join(repo_dir, file_path))                  
                         if analysis:
@@ -351,26 +352,23 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             category = constants.CAT_CONTINUOUS_INTEGRATION
                         else:
                             category = None 
-
-                        if category:
-                            workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
-                                                        repo_dir, repo_relative_path, filename)
-                            metadata_result.add_result(category,
-                                                    {constants.PROP_VALUE: workflow_url, constants.PROP_TYPE: constants.URL},
-                                                    1, constants.TECHNIQUE_FILE_EXPLORATION)  
+                    elif repo_type == constants.RepositoryType.BITBUCKET:
+                        if os.path.basename(file_path) == "bitbucket-pipelines.yml":
+                            category = constants.CAT_CONTINUOUS_INTEGRATION
+                        else:
+                            category = None
                     elif repo_type == constants.RepositoryType.GITHUB:
                         if file_path.startswith(".github/workflows/"):
                             category = constants.CAT_CONTINUOUS_INTEGRATION
                         else:
                             category = None
 
-                        if category:
-                            workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
-                                                        repo_dir, repo_relative_path, filename)
-                            metadata_result.add_result(category,
-                                                    {constants.PROP_VALUE: workflow_url, constants.PROP_TYPE: constants.URL},
-                                                    1, constants.TECHNIQUE_FILE_EXPLORATION)
-                            
+                    if category:
+                        workflow_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch,
+                                                    repo_dir, repo_relative_path, filename)
+                        metadata_result.add_result(category,
+                                                {constants.PROP_VALUE: workflow_url, constants.PROP_TYPE: constants.URL},
+                                                1, constants.TECHNIQUE_FILE_EXPLORATION)      
                 if filename.endswith(".ga") or filename.endswith(".cwl") or filename.endswith(".nf") or (
                         filename.endswith(".snake") or filename.endswith(
                     ".smk") or "Snakefile" == filename_no_ext) or filename.endswith(".knwf") or filename.endswith(
@@ -421,6 +419,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                 docs_url = f"https://{domain_gitlab}/{owner}/{repo_name}/-/tree/{urllib.parse.quote(repo_default_branch)}/{docs_path}"
                             elif repo_type == constants.RepositoryType.CODEBERG:
                                 docs_url = f"https://codeberg.org/{owner}/{repo_name}/src/branch/{urllib.parse.quote(repo_default_branch)}/{docs_path}"
+                            elif repo_type == constants.RepositoryType.BITBUCKET:
+                                docs_url = f"https://bitbucket.org/{owner}/{repo_name}/src/{urllib.parse.quote(repo_default_branch)}/{docs_path}"
                             else:
                                 docs_url = os.path.join(repo_dir, docs_path)
                             # docs.append(docs_url)
@@ -462,6 +462,8 @@ def get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, r
         return convert_to_raw_user_content_gitlab(file_path, owner, repo_name, repo_default_branch)
     elif repo_type == constants.RepositoryType.CODEBERG:
         return convert_to_raw_user_content_codeberg(file_path, owner, repo_name, repo_default_branch)
+    elif repo_type == constants.RepositoryType.BITBUCKET:
+        return convert_to_raw_user_content_bitbucket(file_path, owner, repo_name, repo_default_branch)
     else:
         return os.path.join(repo_dir, repo_relative_path, filename)
 
@@ -712,6 +714,15 @@ def convert_to_raw_user_content_codeberg(partial, owner, repo_name, repo_ref):
     if partial.startswith(".\\"):
         partial = partial.replace(".\\", "")
     return f"https://codeberg.org/{owner}/{repo_name}/raw/branch/{repo_ref}/{urllib.parse.quote(partial)}"
+
+
+def convert_to_raw_user_content_bitbucket(partial, owner, repo_name, repo_ref):
+    """Converts Bitbucket paths into raw content URLs"""
+    if partial.startswith("./"):
+        partial = partial.replace("./", "")
+    if partial.startswith(".\\"):
+        partial = partial.replace(".\\", "")
+    return f"https://bitbucket.org/{owner}/{repo_name}/raw/{repo_ref}/{urllib.parse.quote(partial)}"
 
 
 def convert_to_raw_user_content_gitlab(partial, owner, repo_name, repo_ref):

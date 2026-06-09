@@ -13,7 +13,7 @@ A command line interface for automatically extracting relevant metadata from cod
 
 ## Features
 
-Given a readme file (or a GitHub/Gitlab/Codeberg repository) SOMEF will extract the following categories (if present), listed in alphabetical order:
+Given a readme file (or a GitHub/Gitlab/Codeberg/Bitbucket repository) SOMEF will extract the following categories (if present), listed in alphabetical order:
 
 - **Acknowledgement**: Text acknowledging funding sources or contributors
 - **Application domain**: The application domain of the repository. Current supported domains include: Astrophysics, Audio, Computer vision, Graphs, Natural language processing, Reinforcement learning, Semantc web, Sequential. Domains are not mutually exclusive. These domains have been extracted from [awesome lists](https://github.com/topics/awesome-list) and [Papers with code](https://paperswithcode.com/). Find more information in our [documentation](https://somef.readthedocs.io/en/latest/)
@@ -38,7 +38,7 @@ We recognize the following properties:
   - Year: Year of publication
   - Pages: Page range in the journal
 - **Code of conduct**: Link to the code of conduct of the project
-- **Code repository**: Link to the GitHub/GitLab/Codeberg repository used for the extraction
+- **Code repository**: Link to the GitHub/GitLab/Codeberg and Bitbucket repository used for the extraction
 - **Contact**: Contact person responsible for maintaining a software component
 - **Continuous integration**: Link to continuous integration service(s)
 - **Contribution guidelines**: Text indicating how to contribute to this code repository
@@ -93,7 +93,7 @@ We recognize the following properties:
 - **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it
 - **Workflows**: URL and path to the computational workflow files present in the repository
 
-We use different supervised classifiers, header analysis, regular expressions, the GitHub/Gitlab/Codeberg API to retrieve all these fields (more than one technique may be used for each field) and language specific metadata parsers (e.g., for package files). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description](https://somef.readthedocs.io/en/latest/output/)
+We use different supervised classifiers, header analysis, regular expressions, the GitHub/Gitlab/Codeberg and Bitbucket API to retrieve all these fields (more than one technique may be used for each field) and language specific metadata parsers (e.g., for package files). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description](https://somef.readthedocs.io/en/latest/output/)
 
 ## Documentation
 
@@ -297,10 +297,10 @@ Usage: somef describe [OPTIONS]
 Options:
   -t, --threshold FLOAT           Threshold to classify the text  [required]
   Input: [mutually_exclusive, required]
-    -r, --repo_url URL            Github/Gitlab/Codeberg Repository URL
+    -r, --repo_url URL            Github/Gitlab/Codeberg/Bitbucket Repository URL
     -d, --doc_src PATH            Path to the README file source
     -i, --in_file PATH            A file of newline separated links to GitHub/
-                                  Gitlab/Codeberg repositories
+                                  Gitlab/Codeberg/Bitbucket repositories
     -l, --local_repo PATH         Path to the local repository source. No APIs will be used
 
   Output: [required_any]

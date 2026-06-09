@@ -73,7 +73,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `code_of_conduct`: Link to the code of conduct file of the project
 - `code_repository`: Link to the source code (typically the repository where the readme can be found)
 - `contact`: Contact person responsible for maintaining a software component.
-- `continuous_integration`: Link to continuous integration service, supported on GitHub as well as in GitLab and Codeberg.
+- `continuous_integration`: Link to continuous integration service, supported on GitHub as well as in GitLab, Codeberg and Bitbucket.
 - `contributing guidelines`: Guidelines indicating how to contribute to a software component.
 - `contributor`: Contributors to this software. Note: Contributor metadata is exported from metadata files (e.g., CodeMeta, CONTRIBUTORS, etc.) not from git logs.
 - `copyright_holder`: Entity or individual owning the rights to the software. The year is also extracted, if available.
@@ -318,6 +318,7 @@ The techniques can be of several types:
 - `GitHub_API`: the result was obtained from the GitHub API.
 - `GitLab_API`: the result was obtained from the GitLab API.
 - `Codeberg_API`: the result was obtained from the Codeberg API.
+- `Bitbucket_API`: the result was obtained from the Bitbucket API.
 - `regular_expression`: the result was obtained after performing regular expressions on the files in the repository.
 - `software_type_heuristics`: the result was obtained from analysis of the repository based on various heuristics from the README, code and extension analysis. 
 - `supervised_classification`: the results were obtained after running text classifiers trained for detecting that type of header.
@@ -432,6 +433,32 @@ fields map to SOMEF categories:
 For releases, the field mapping is identical to GitHub. The only differences are that Codeberg 
 uses `attachments` instead of `assets` for release files, and it does not provide 
 `author.type` (`AGENT_TYPE`) for release authors.
+
+
+## Bitbucket API Crosswalk
+
+When analyzing a Bitbucket repository, SOMEF uses the [Bitbucket Cloud API](https://developer.atlassian.com/cloud/bitbucket/rest/api-group-repositories/)
+(`GET /2.0/repositories/{workspace}/{repo_slug}`) to retrieve metadata. The table below shows how Bitbucket API
+fields map to SOMEF categories:
+
+| SOMEF category | Bitbucket API field | Notes |
+|---|---|---|
+| `name` | `slug` | |
+| `description` | `description` | |
+| `full_name` | `full_name` | Format: `{workspace}/{slug}` |
+| `code_repository` | `links.html.href` | |
+| `owner` | `owner.nickname` | Falls back to `owner.username` for team workspaces |
+| `date_created` | `created_on` | |
+| `date_updated` | `updated_on` | |
+| `homepage` | `website` | |
+| `forks_url` | `links.forks.href` | |
+| `download_url` | *(constructed)* | Built as `{html_url}/downloads` |
+| `issue_tracker` | *(constructed)* | Built as `{html_url}/issues` when `has_issues` is true |
+| `programming_languages` | `language` | Single string, not a dictionary with sizes |
+| `releases` | `/refs/tags` | Bitbucket has no dedicated releases endpoint; uses the tags endpoint |
+| `stars` | *(not available)* | Bitbucket does not have a stargazers feature |
+| `forks_count` | *(not available)* | Bitbucket does not expose fork counts in its API |
+
 
 ## Citation Reconciliation
 

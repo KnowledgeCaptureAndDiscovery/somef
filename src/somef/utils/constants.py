@@ -312,6 +312,7 @@ TECHNIQUE_CODE_CONFIG_PARSER = "code_parser"
 TECHNIQUE_GITHUB_API = "GitHub_API"
 TECHNIQUE_GITLAB_API = "GitLab_API"
 TECHNIQUE_CODEBERG_API = "Codeberg_API"
+TECHNIQUE_BITBUCKET_API = "Bitbucket_API"
 TECHNIQUE_HEURISTICS = "software_type_heuristics"
 
 # GitHub properties
@@ -323,8 +324,14 @@ GITHUB_API = "https://api.github.com/repos"
 CODEBERG_DOMAIN = "codeberg.org"
 CODEBERG_API = "https://codeberg.org/api/v1/repos"
 
+# Bitbucket properties
+BITBUCKET_DOMAIN = "bitbucket.org"
+BITBUCKET_API = "https://api.bitbucket.org/2.0/repositories"
+
 # Token codeberg
 CONF_CODEBERG_AUTHORIZATION = "codeberg_authorization"
+# Token bitbucket
+CONF_BITBUCKET_AUTHORIZATION = "bitbucket_authorization"
 
 # Software Heritage
 SWH_ROOT = "https://archive.softwareheritage.org/"
@@ -374,6 +381,20 @@ codeberg_crosswalk_table = {
     CAT_KEYWORDS: "topics",
     CAT_FORK_COUNTS: "forks_count",
     CAT_HOMEPAGE: "website"
+}
+
+
+bitbucket_crosswalk_table = {
+    CAT_FULL_NAME: "full_name",
+    CAT_NAME: "name",
+    CAT_DESCRIPTION: "description",
+    CAT_DATE_CREATED: "created_on",
+    CAT_DATE_UPDATED: "updated_on",
+    CAT_OWNER: ["owner", "nickname"],
+    CAT_CODE_REPOSITORY: ["links", "html", "href"],
+    CAT_HOMEPAGE: "website",
+    CAT_FORKS_URLS: ["links", "forks", "href"]
+    # CAT_PROGRAMMING_LANGUAGES: "language",
 }
 
 # Mapping for releases
@@ -443,6 +464,11 @@ release_codeberg_crosswalk_table = {
     PROP_DATE_PUBLISHED: "published_at",
     # CAT_ASSETS: "attachments"               
 }
+
+release_bitbucket_crosswalk_table = {
+    PROP_TAG: "name",
+    PROP_NAME: "name",
+}
 # Minimum percentage of total bytes a programming language must have to be considered relevant in CodeMeta file.
 MINIMUM_PERCENTAGE_LANGUAGE_PROGRAMMING = 10
 
@@ -476,6 +502,7 @@ class RepositoryType(Enum):
     GITLAB = 2
     LOCAL = 3
     CODEBERG = 4
+    BITBUCKET = 5
 
 # Media/script/non-software sets
 workflow_extensions=('.ga','.cwl','.nf','.knwf','.t2flow','.dag','.kar','.wdl',".smk",".snake")
