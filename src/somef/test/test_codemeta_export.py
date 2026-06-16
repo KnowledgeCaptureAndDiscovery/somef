@@ -812,6 +812,51 @@ class TestCodemetaExport(unittest.TestCase):
         assert author.get("email") == "sunpy@googlegroups.com", f"Expected email 'sunpy@googlegroups.com', got: {author.get('email')}"
 
         os.remove(output_path)
+
+
+    def test_codemeta_sunpy_reference_publication(self):
+        """
+        Checks that a CITATION.cff with DOI, title and structured authors is exported as
+        referencePublication (not creditText) in codemeta, and that individual authors
+        are considered Person with familyName/givenName rather than @type Organization.
+        """
+        output_path = test_data_path + 'test_codemeta_sunpy_refpub.json'
+
+        somef_cli.run_cli(threshold=0.9,
+                        ignore_classifiers=False,
+                        repo_url=None,
+                        doc_src=None,
+                        local_repo=test_data_repositories + "sunpy",
+                        in_file=None,
+                        output=None,
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out=output_path,
+                        pretty=True,
+                        missing=False,
+                        requirements_mode="all")
+
+        with open(output_path, "r") as f:
+            json_content = json.load(f)
+
+        ref_pub = json_content.get(constants.CAT_CODEMETA_REFERENCEPUBLICATION, [])
+        # print(f"Reference publications: {ref_pub}")
+        assert len(ref_pub) > 0, "Expected referencePublication entries"
+        assert ref_pub[0].get("@type") == "ScholarlyArticle"
+
+        found_person = False
+        for pub in ref_pub:
+            for author in pub.get("author", []):
+                if author.get("@type") == "Person":
+                    assert "familyName" in author
+                    assert "givenName" in author
+                    found_person = True
+
+        assert found_person, "No Person-type author found with familyName/givenName"
+
+        os.remove(output_path)
+
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""
