@@ -3,7 +3,15 @@ import os
 from pathlib import Path
 
 # constants about SOMEF configuration
-CONF_AUTHORIZATION = "Authorization"
+# CONF_AUTHORIZATION = "Authorization"
+CONF_GITHUB_AUTHORIZATION = "GitHubAuthorization"
+CONF_GITLAB_AUTHORIZATION = "GitlabAuthorization"
+CONF_CODEBERG_AUTHORIZATION = "CodebergAuthorization"
+CONF_BITBUCKET_AUTHORIZATION = "BitbucketAuthorization"
+# Backward-compatible key used in legacy code paths for GitHub authorization.
+CONF_AUTHORIZATION = CONF_GITHUB_AUTHORIZATION
+PROP_AUTHORIZATION = "Authorization"
+
 CONF_DESCRIPTION = "description"
 CONF_INVOCATION = "invocation"
 CONF_INSTALLATION = "installation"
@@ -327,11 +335,6 @@ CODEBERG_API = "https://codeberg.org/api/v1/repos"
 # Bitbucket properties
 BITBUCKET_DOMAIN = "bitbucket.org"
 BITBUCKET_API = "https://api.bitbucket.org/2.0/repositories"
-
-# Token codeberg
-CONF_CODEBERG_AUTHORIZATION = "codeberg_authorization"
-# Token bitbucket
-CONF_BITBUCKET_AUTHORIZATION = "bitbucket_authorization"
 
 # Software Heritage
 SWH_ROOT = "https://archive.softwareheritage.org/"

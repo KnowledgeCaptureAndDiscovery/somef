@@ -380,7 +380,7 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
                                                                             test_data_path + "README-mapeathor.md")
             result = repo_status.results[constants.CAT_PACKAGE_DISTRIBUTION]
             assert len(result) > 0 and result[0][constants.PROP_RESULT][
-                constants.PROP_VALUE] == "https://pypi.org/project/mapeathor/"
+                constants.PROP_VALUE] == "https://pypi.org/pypi/mapeathor"
 
     def test_package_distribution_2(self):
         """Test designed to check if a repository with pypi links is properly recovered"""
@@ -432,7 +432,7 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
                 assert expected_doc_url in documentation_values, f"Expected url documentation {expected_doc_url} not found in documentation"
 
             expected_packages = {
-                "https://pypi.org/project/sunpy/",
+                "https://pypi.org/pypi/sunpy",
                 "https://anaconda.org/conda-forge/sunpy"
             }
 

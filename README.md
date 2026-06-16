@@ -252,10 +252,14 @@ somef configure
 
 And you will be asked to provide the following:
 
-- A GitHub authentication token [**optional, leave blank if not used**], which SOMEF uses to retrieve metadata from GitHub. If you don't include an authentication token, you can still use SOMEF. However, you may be limited to a series of requests per hour. For more information, see [https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
-- The path to the trained classifiers (pickle files). If you have your own classifiers, you can provide them here. Otherwise, you can leave it blank
+- A **GitHub** authentication token [**optional, leave blank if not used**], which SOMEF uses to retrieve metadata from GitHub. If you don't include an authentication token, you can still use SOMEF. However, you may be limited to a series of requests per hour. For more information, see [https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
+- A **GitLab** authentication token [**optional**], used for GitLab.com and self-hosted GitLab instances (e.g., `gitlab.in2p3.fr`). Tokens are per-instance. Note: **a token from GitLab.com does not work for self-hosted servers**. Create one at `https://gitlab.com/-/user_settings/personal_access_tokens` (scope: `read_api`). Without a token, some self-hosted GitLab instances may not return rate limit information.
+- A **Codeberg** authentication token [**optional**], used to retrieve metadata from Codeberg. Create one at `https://codeberg.org/user/settings/applications` (permissions: `read:repository`, `read:user`). Codeberg (Forgejo) does not expose rate limit headers even with a token.
+- A **Bitbucket** authentication token [**optional**], used for Bitbucket Cloud. Create an API token with scopes at `https://bitbucket.org/account/settings/api-tokens/` (permissions: `read:repository:bitbucket`, `read:account`). You will also need to provide your Atlassian account email, as Bitbucket API tokens use Basic authentication (`email:token` encoded in base64). Without a token you are limited to 60 requests/hour.
+- The path to the trained classifiers (pickle files). If you have your own classifiers, you can provide them here. Otherwise, you can leave it blank.
 
-If you want somef to be automatically configured (without GitHUb authentication key and using the default classifiers) just type:
+
+If you want SOMEF to be automatically configured (without any tokens and using the default classifiers) just type:
 
 ```bash
 somef configure -a
