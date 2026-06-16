@@ -9,6 +9,7 @@ from textblob import Word
 from .process_results import Result
 from .parser import mardown_parser
 from .utils import constants
+from .regular_expressions import detect_license_spdx
 from typing import Dict, Iterable, List, Tuple
 from functools import lru_cache
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -450,7 +451,8 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
             'ParentHeader': constants.PROP_PARENT_HEADER,
         })
 
-        source = None
+        # source = None
+        source = ''
         if constants.CAT_README_URL in repository_metadata.results:
             source = repository_metadata.results[constants.CAT_README_URL][0]
             source = source[constants.PROP_RESULT][constants.PROP_VALUE]
@@ -490,6 +492,16 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
 
             if row[constants.PROP_PARENT_HEADER]:
                 result[constants.PROP_PARENT_HEADER] = row[constants.PROP_PARENT_HEADER]
+
+            if row['Group'] == constants.CAT_LICENSE:
+                license_text = row[constants.PROP_VALUE]
+                license_info = detect_license_spdx(license_text, 'HEADER')
+                if license_info:
+                    result[constants.PROP_TYPE] = constants.PROP_LICENSE
+                    result[constants.PROP_NAME] = license_info['name']
+                    result[constants.PROP_SPDX_ID] = license_info['spdx_id']
+                    result[constants.PROP_URL] = license_info.get('url', '')
+                    result[constants.PROP_VALUE] = license_info['spdx_id']
 
             repository_metadata.add_result(
                 row['Group'],
