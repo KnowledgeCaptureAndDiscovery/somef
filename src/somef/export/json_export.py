@@ -624,6 +624,15 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         raw_contributors = repo_data[constants.CAT_CONTRIBUTORS]
         codemeta_output[constants.CAT_CODEMETA_CONTRIBUTOR] = parse_contributors(raw_contributors)
 
+    if constants.CAT_APPLICATION_DOMAIN in repo_data:
+        application_categories = []
+        for entry in repo_data[constants.CAT_APPLICATION_DOMAIN]:
+            value = entry[constants.PROP_RESULT][constants.PROP_VALUE]
+            if value not in application_categories:
+                application_categories.append(value)
+        if application_categories:
+            codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY] = application_categories
+
     if constants.CAT_FUNDING in repo_data:
         for funding_entry in repo_data[constants.CAT_FUNDING]:
             res_fun = funding_entry[constants.PROP_RESULT]
