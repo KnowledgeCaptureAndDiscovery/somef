@@ -351,12 +351,31 @@ Options:
                                   requests and increase execution time
 
   -h, --help                      Show this message and exit.
+
+  --github-token TEXT             GitHub personal access token (if invalid,
+                                  stored config is used instead)
+
+  --gitlab-token TEXT             GitLab personal access token (if invalid,
+                                  stored config is used instead)
+
+  --codeberg-token TEXT           Codeberg personal access token (if invalid,
+                                  stored config is used instead)
+
+  --bitbucket-token TEXT          Bitbucket app password (if invalid, stored 
+                                  config is used instead)
+
+  --bitbucket-email TEXT          Bitbucket Atlassian account email (required
+                                  with --bitbucket-token)
   
   Repoository versions [mutually_exclusive] (see section *Repository versions*t):
   -b, --branch name branch        Branch of the repository to analyze. Overrides the default branch.
 
       --tag text                  Tag of the repository to analyze. Cannot be used together with --branch.
 ```
+
+Alternatively, you can set tokens via environment variables or by running `somef configure`, which stores them permanently.
+The CLI flags take precedence over stored config when valid.
+
 
 ## Usage example:
 
