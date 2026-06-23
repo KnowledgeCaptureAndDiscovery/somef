@@ -77,6 +77,9 @@ REGEXP_LGPL1 = r'(?i)gnu\s+lesser\s+general\s+public\s+license\s*,?\s*version\s*
 REGEXP_MPL2 = r'(?i)mozilla\s+public\s+license\s*,?\s*version\s*2\.0'
 REGEXP_UNLICENSE = r'(?i)the\s+unlicense'
 
+# detect choosealicense in badges
+REGEXP_CHOOSE_LICENSE = r'choosealicense\.com/licenses/([^/\s]+)'
+
 # Detect organization in authors.md
 # REGEXP_LTD_INC = r'\b(inc|ltd|llc|corporation)([.,]|\b)'
 REGEXP_LTD_INC = r'\b(inc|ltd|llc|corporation|foundation|community|project|team|group|society|institute|association|consortium|organization|organisation)([.,]|\b)'
@@ -394,7 +397,7 @@ MINIMUM_PERCENTAGE_LANGUAGE_PROGRAMMING = 10
 # TO DO: Assess run and download.
 categories_files_header = [CAT_INSTALLATION, CAT_CITATION, CAT_ACKNOWLEDGEMENT, "run", "download", CAT_REQUIREMENTS,
                            CAT_CONTACT, CAT_DESCRIPTION, CAT_CONTRIBUTORS, CAT_DOCUMENTATION, CAT_LICENSE, CAT_USAGE,
-                           CAT_FAQ, CAT_SUPPORT, CAT_IDENTIFIER, CAT_HAS_BUILD_FILE, CAT_EXECUTABLE_EXAMPLE, CAT_KEYWORDS]
+                           CAT_FAQ, CAT_SUPPORT, CAT_IDENTIFIER, CAT_HAS_BUILD_FILE, CAT_EXECUTABLE_EXAMPLE, CAT_KEYWORDS, CAT_RUNTIME_PLATFORM]
 
 # Config to materialize with yarrrml.yml.
 MAPPING_CONFIG = """
