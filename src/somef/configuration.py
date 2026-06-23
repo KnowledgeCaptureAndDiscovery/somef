@@ -26,6 +26,8 @@ def get_configuration_file():
     if credentials_file.exists():
         with credentials_file.open("r") as fh:
             file_paths = json.load(fh)
+        if constants.CONF_SIMILARITY_THRESHOLD not in file_paths:
+            file_paths[constants.CONF_SIMILARITY_THRESHOLD] = constants.CONF_DEFAULT_SIMILARITY_THRESHOLD
     else:
         sys.exit("Error: Please provide a config.json file or run somef configure.")
     return file_paths
@@ -53,7 +55,8 @@ def configure(authorization="",
               invocation=default_invocation,
               installation=default_installation,
               citation=default_citation,
-              base_uri=constants.CONF_DEFAULT_BASE_URI):
+              base_uri=constants.CONF_DEFAULT_BASE_URI,
+              similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD):
     """ Function to configure the main program"""
     import nltk
     nltk.download('wordnet')
@@ -77,7 +80,8 @@ def configure(authorization="",
         constants.CONF_INVOCATION: invocation,
         constants.CONF_INSTALLATION: installation,
         constants.CONF_CITATION: citation,
-        constants.CONF_BASE_URI: base_uri
+        constants.CONF_BASE_URI: base_uri,
+        constants.CONF_SIMILARITY_THRESHOLD: similarity_threshold
     }
 
     if data[constants.CONF_AUTHORIZATION] == "token ":
@@ -88,3 +92,4 @@ def configure(authorization="",
         credentials_file.chmod(0o600)
         json.dump(data, fh)
         logging.info("Configuration file saved at "+os.path.dirname(credentials_file))
+
