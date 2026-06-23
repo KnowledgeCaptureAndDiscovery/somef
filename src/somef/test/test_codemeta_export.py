@@ -814,6 +814,38 @@ class TestCodemetaExport(unittest.TestCase):
         os.remove(output_path)
 
 
+    def test_issue_544(self):
+        """Checks whether application domain is correctly exported to applicationCategory in codemeta"""
+        
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "Widoco",
+                            doc_src=None,
+                            in_file=None,
+                            output=None,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=test_data_path + "test_issue_544.json",
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        text_file = open(test_data_path + "test_issue_544.json", "r")
+        data = text_file.read()
+        text_file.close()
+        json_content = json.loads(data)
+
+        applicationCategory = json_content[constants.CAT_CODEMETA_APPLICATIONCATEGORY]
+    
+        assert constants.CAT_CODEMETA_APPLICATIONCATEGORY in json_content
+        applicationCategory = json_content[constants.CAT_CODEMETA_APPLICATIONCATEGORY]
+        assert isinstance(applicationCategory, list)
+        assert "Semantic web" in applicationCategory
+
+        os.remove(test_data_path + "test_issue_544.json")
+        
+        
     def test_codemeta_sunpy_reference_publication(self):
         """
         Checks that a CITATION.cff with DOI, title and structured authors is exported as
