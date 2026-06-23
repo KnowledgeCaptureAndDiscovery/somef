@@ -482,10 +482,10 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
 
                 author_list = []
                 for author in authors:
-                    family_name = author.get("family-names")
-                    given_name = author.get("given-names")
+                    family_name = author.get(constants.PROP_FAMILY_NAME)
+                    given_name = author.get(constants.PROP_GIVEN_NAME)
                     orcid = author.get("orcid")
-                    name = author.get("name")
+                    name = author.get(constants.PROP_NAME)
 
                     if family_name and given_name:
                         author_entry = {
@@ -806,12 +806,11 @@ def parse_contributors(raw):
 
 
 def is_scholarly_article(article_dict):
-    if article_dict.get("type") in ["SoftwareApplication", "software"]:
-        return False
-        
+
     if article_dict.get("doi") or article_dict.get("journal"):
         return True
-        
+    if article_dict.get("type") in ["SoftwareApplication", "software"]:
+        return False
     if article_dict.get("type") == "ScholarlyArticle":
         return True
         
