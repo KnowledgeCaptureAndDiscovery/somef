@@ -1,12 +1,14 @@
 import unittest
 import os
 import yaml
+import logging
 from pathlib import Path
 
 from somef.parser.codemeta_parser import parse_codemeta_json_file
 from somef.process_results import Result
 from somef.utils import constants
 
+logging.basicConfig(level=logging.INFO)
 TEST_ROOT = Path(__file__).parent
 REPOS_DIR = TEST_ROOT / "test_data" / "repositories"
 EXPECT_DIR = TEST_ROOT / "test_data" / "expected"
@@ -19,19 +21,23 @@ class TestCodemetaParser(unittest.TestCase):
         if not yaml_path.exists():
             if repo_name == "codemeta_repo":
                 return {}
-            self.skipTest(f"No expected YAML for repository '{repo_name}'")
+            # self.skipTest(f"No expected YAML for repository '{repo_name}'")
+            logging.warning(f"No expected YAML for repository '{repo_name}'")
+            return None
         with open(yaml_path, "r", encoding="utf-8") as f:
             return yaml.safe_load(f)
 
     def test_parse_multiple_codemeta_files(self):
         for repo_folder in os.listdir(REPOS_DIR):
-            print(f"################# Testing {repo_folder} #################")
+            logging.info(f"################# Testing {repo_folder} #################")
             repo_path = REPOS_DIR / repo_folder
             codemeta_path = repo_path / "codemeta.json"
             if not codemeta_path.is_file():
                 continue 
 
             expected = self.load_expected(repo_folder)
+            if expected is None:
+                continue
             result = Result()
             metadata_result = parse_codemeta_json_file(
                 str(codemeta_path),
@@ -42,7 +48,7 @@ class TestCodemetaParser(unittest.TestCase):
             with self.subTest(repo=repo_folder):
                 # In order for us to check every test, we need every file in "expected" directory to be of .yaml, 
                 # and make sure the name is the same as the repo folder  
-                print(f"################# Processing expectation of {repo_folder} #################")
+                logging.info(f"################# Processing expectation of {repo_folder} #################")
                 for cat_name, expected_val in expected.items():
                     cat_const = getattr(constants, cat_name)
                     actual_list = metadata_result.results.get(cat_const, [])
@@ -54,7 +60,22 @@ class TestCodemetaParser(unittest.TestCase):
                     )
 
                     first = actual_list[0]["result"]
-                    if isinstance(expected_val, dict):
+                    if isinstance(expected_val, list):
+                        first_value = first.get("value")
+                        if isinstance(first_value, list):
+                            self.assertEqual(
+                                first_value, expected_val,
+                                f"[{repo_folder}] Mismatch in {cat_name} list (single entry)"
+                            )
+                        else:
+                            actual_values = []
+                            for entry in actual_list:
+                                actual_values.append(entry["result"]["value"])
+                            self.assertEqual(
+                                actual_values, expected_val,
+                                f"[{repo_folder}] Mismatch in {cat_name} list"
+                            )
+                    elif isinstance(expected_val, dict):
                         for key, val in expected_val.items():
                             self.assertEqual(
                                 first.get(key), val,

@@ -83,3 +83,13 @@ class TestParserSomef(unittest.TestCase):
             content, non_header_content = extract_content_per_header(text, headers)         
             assert content == []
             assert non_header_content.strip() == text.strip()
+
+    def test_content_per_header_gammalearn(self):
+        with open(test_data_path + "README-gammalearn.md", "r") as f:
+            text = f.read()
+        headers = extract_headers(text)
+        # print(headers)
+        content, non_header_content = extract_content_per_header(text, headers)
+        self.assertGreater(len(content), 0)
+        header_list = [h for h, v in headers.items() if v]
+        self.assertEqual(len(content), len(header_list))

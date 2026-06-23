@@ -1,0 +1,9 @@
+CAT_NAME: RuntimePlatformTest
+CAT_RUNTIME_PLATFORM:
+  - Docker
+  - Java version 1.8
+CAT_PROGRAMMING_LANGUAGES:
+  name: Java
+  value: Java
+  version: "1.8"
+  type: Programming_language

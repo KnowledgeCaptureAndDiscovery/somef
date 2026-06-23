@@ -482,10 +482,10 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
 
                 author_list = []
                 for author in authors:
-                    family_name = author.get("family-names")
-                    given_name = author.get("given-names")
+                    family_name = author.get(constants.PROP_FAMILY_NAME)
+                    given_name = author.get(constants.PROP_GIVEN_NAME)
                     orcid = author.get("orcid")
-                    name = author.get("name")
+                    name = author.get(constants.PROP_NAME)
 
                     if family_name and given_name:
                         author_entry = {
@@ -813,12 +813,11 @@ def parse_contributors(raw):
 
 
 def is_scholarly_article(article_dict):
-    if article_dict.get("type") in ["SoftwareApplication", "software"]:
-        return False
-        
+
     if article_dict.get("doi") or article_dict.get("journal"):
         return True
-        
+    if article_dict.get("type") in ["SoftwareApplication", "software"]:
+        return False
     if article_dict.get("type") == "ScholarlyArticle":
         return True
         
@@ -982,7 +981,15 @@ def unify_results(repo_data: dict) -> dict:
             result[constants.PROP_TYPE] = normalized_type
             value = result.get(constants.PROP_VALUE)
             value_type = result.get(constants.PROP_TYPE)
-
+            
+            # Descriptions of <5 words should probably be removed
+            if category == constants.CAT_DESCRIPTION:
+                value = result.get(constants.PROP_VALUE, "")
+                source = item.get(constants.PROP_SOURCE, "")
+                if isinstance(value, str) and len(value.split()) < 5:
+                    if isinstance(source, str) and "readme" in source.lower():
+                        continue
+                    
             # --- SPECIAL LOGIC FOR LICENSES and citations ---
             if category == constants.CAT_LICENSE and result.get(constants.PROP_SPDX_ID):
                 # If we have SPDX, that is our unification key
@@ -1005,6 +1012,14 @@ def unify_results(repo_data: dict) -> dict:
                 req_version = result.get("version", "").strip()
                 if req_name:
                     key = f"REQ-{req_name}-{req_version}"
+                else:
+                    canonical = canonicalize_value(value, value_type)
+                    key = str(canonical)
+            elif category == constants.CAT_RUNTIME_PLATFORM:
+                rt_name = result.get("name", "").strip().lower()
+                rt_version = result.get("version", "").strip()
+                if rt_name:
+                    key = f"RT-{rt_name}-{rt_version}"
                 else:
                     canonical = canonicalize_value(value, value_type)
                     key = str(canonical)
