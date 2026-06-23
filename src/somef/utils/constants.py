@@ -549,4 +549,46 @@ DEPENDENCY_TYPE_DEVELOPMENT = "development"
 CONF_SIMILARITY_THRESHOLD = "similarity_threshold"
 CONF_DEFAULT_SIMILARITY_THRESHOLD = 0.8
 
+# Keywords for OS/platform header detection (terms WordNet cannot handle semantically)
+OS_PLATFORM_HEADER_KEYWORDS = [
+    "windows", "linux", "macos", "mac os", "osx", "os x", "unix",
+    "ubuntu", "debian", "centos", "fedora", "red hat",
+    "platform", "platforms", "operating system", "os",
+    "docker", "container", "conda", "anaconda", "miniconda",
+    "compatibility", "system requirements", "supported os",
+    "supported platforms", "tested on", "runs on", "environment",
+]
 
+# Regular expressions for OS/platform detection in header analysis
+REGEXP_OS_WINDOWS = r'(?i)\bwindows\s*(\d[\d.]*\d|\d+)?'
+REGEXP_OS_MACOS = r'(?i)(?:\bmacos|\bmac\s*os|\bos\s*x|\bosx)\s*([\d.]+)?'
+REGEXP_OS_UBUNTU = r'(?i)\bubuntu\s*([\d.]+(?:\.\d+)?)?'
+REGEXP_OS_DEBIAN = r'(?i)\bdebian\s*([\d.]+)?'
+REGEXP_OS_CENTOS = r'(?i)\bcentos\s*([\d.]+)?'
+REGEXP_OS_FEDORA = r'(?i)\bfedora\s*([\d.]+)?'
+REGEXP_OS_REDHAT = r'(?i)\bred\s*hat\b'
+REGEXP_OS_LINUX = r'(?i)\blinux\b'
+REGEXP_OS_UNIX = r'(?i)\bunix\b'
+REGEXP_OS_DOCKER = r'(?i)\bdocker\b'
+REGEXP_OS_CONDA = r'(?i)\bconda\b|\banaconda\b|\bminiconda\b'
+
+# Mapping of OS/platform patterns to their normalized names
+OS_PATTERNS = [
+    (REGEXP_OS_WINDOWS, "Windows"),
+    (REGEXP_OS_MACOS, "macOS"),
+    (REGEXP_OS_UBUNTU, "Ubuntu"),
+    (REGEXP_OS_DEBIAN, "Debian"),
+    (REGEXP_OS_CENTOS, "CentOS"),
+    (REGEXP_OS_FEDORA, "Fedora"),
+    (REGEXP_OS_REDHAT, "Red Hat"),
+    (REGEXP_OS_LINUX, "Linux"),
+    (REGEXP_OS_UNIX, "Unix"),
+    (REGEXP_OS_DOCKER, "Docker"),
+    (REGEXP_OS_CONDA, "Conda")
+]
+
+OS_EXTRACTION_CATEGORIES = {
+    CAT_RUNTIME_PLATFORM,
+    CAT_REQUIREMENTS,
+    CAT_INSTALLATION,
+}
