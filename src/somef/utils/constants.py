@@ -437,6 +437,7 @@ SIZE_DOWNLOAD_LIMIT_MB = 200
 DOWNLOAD_TIMEOUT_SECONDS = 120
 
 # CODEMETA Categories. All start with CAT_CODEMETA
+CAT_CODEMETA_APPLICATIONCATEGORY = "applicationCategory"
 CAT_CODEMETA_AUTHOR = "author"
 CAT_CODEMETA_BUILDINSTRUCTIONS = "buildInstructions"
 CAT_CODEMETA_CODEREPOSITORY = "codeRepository"
@@ -562,6 +563,10 @@ HEADER_CONFIDENCE_THRESHOLDS = [
     (10, 0.5),  # 7-10 words -> confidence 0.5
     (11, 0.1),  # 11+ words -> confidence 0.1
 ]
+# in case not exist in config file. But config file has higher priority than this default value.
+CONF_SIMILARITY_THRESHOLD = "similarity_threshold"
+CONF_DEFAULT_SIMILARITY_THRESHOLD = 0.8
+
 # Keywords for OS/platform header detection (terms WordNet cannot handle semantically)
 OS_PLATFORM_HEADER_KEYWORDS = [
     "windows", "linux", "macos", "mac os", "osx", "os x", "unix",

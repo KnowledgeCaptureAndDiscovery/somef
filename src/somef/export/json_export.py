@@ -484,7 +484,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                 for author in authors:
                     family_name = author.get(constants.PROP_FAMILY_NAME)
                     given_name = author.get(constants.PROP_GIVEN_NAME)
-                    orcid = author.get("orcid")
+                    orcid = author.get("orcid") or author.get(constants.PROP_URL)
                     name = author.get(constants.PROP_NAME)
 
                     if family_name and given_name:
@@ -555,6 +555,13 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         if status:
             codemeta_output[constants.CAT_CODEMETA_DEVELOPMENTSTATUS] = status
 
+    if constants.CAT_APPLICATION_DOMAIN in repo_data:
+        codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY] = []
+        for domain in repo_data[constants.CAT_APPLICATION_DOMAIN]:
+            value = domain[constants.PROP_RESULT][constants.PROP_VALUE]
+            if value not in codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY]:
+                codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY].append(value)
+                
     if constants.CAT_IDENTIFIER in repo_data:
         codemeta_output[constants.CAT_CODEMETA_IDENTIFIER] = []
 
@@ -623,6 +630,15 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
     if constants.CAT_CONTRIBUTORS in repo_data:
         raw_contributors = repo_data[constants.CAT_CONTRIBUTORS]
         codemeta_output[constants.CAT_CODEMETA_CONTRIBUTOR] = parse_contributors(raw_contributors)
+
+    if constants.CAT_APPLICATION_DOMAIN in repo_data:
+        application_categories = []
+        for entry in repo_data[constants.CAT_APPLICATION_DOMAIN]:
+            value = entry[constants.PROP_RESULT][constants.PROP_VALUE]
+            if value not in application_categories:
+                application_categories.append(value)
+        if application_categories:
+            codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY] = application_categories
 
     if constants.CAT_FUNDING in repo_data:
         for funding_entry in repo_data[constants.CAT_FUNDING]:

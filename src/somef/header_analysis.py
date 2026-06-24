@@ -15,7 +15,7 @@ from functools import lru_cache
 pd.options.mode.chained_assignment = None  # default='warn'
 
 
-SIMILARITY_THRESHOLD = 0.8
+# SIMILARITY_THRESHOLD = 0.8
 
 
 # Define wordnet groups
@@ -204,7 +204,7 @@ def find_sim(wordlist, wd):
 #     return maxgroup
 
 
-def label_header(header):
+def label_header(header, similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD):
     """Function designed to label a header with a subgroup"""
     # remove punctuation
     header_clean = header.translate(str.maketrans('', '', string.punctuation))
@@ -214,13 +214,13 @@ def label_header(header):
         synn = Word(s).synsets 
         if len(synn) > 0:
             # bestgroup = match_group(synn, group, 0.8)
-            bestgroup = match_group(synn)
+            bestgroup = match_group(synn, similarity_threshold)
             if bestgroup != "" and bestgroup not in label:
                 label.append(bestgroup) 
     return label
 
 
-def label_parent_headers(parentHeaders):
+def label_parent_headers(parentHeaders, similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD):
     """label the header with a subgroup"""
     header = ""
     for value in parentHeaders:
@@ -233,7 +233,7 @@ def label_parent_headers(parentHeaders):
         synn = Word(s).synsets
         if len(synn) > 0:
             # bestgroup = match_group(synn, group, 0.8)
-            bestgroup = match_group(synn)
+            bestgroup = match_group(synn, similarity_threshold)
             if bestgroup != "" and bestgroup not in label:
                 label.append(bestgroup)
     return label
@@ -262,13 +262,14 @@ def get_groups() -> Dict[str, List]:
         WORDNET_GROUPS = build_wordnet_groups()
     return WORDNET_GROUPS
 
-def match_group(word_synsets) -> str:
+def match_group(word_synsets,similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD) -> str:
     best_group = ""
     best_score = 0.0
 
     for key, synsets in get_groups().items():
         score = max_similarity(word_synsets, synsets)
-        if score > SIMILARITY_THRESHOLD and score > best_score:
+        # if score > SIMILARITY_THRESHOLD and score > best_score:
+        if score > similarity_threshold and score > best_score:
             best_score = score
             best_group = key
 
@@ -287,7 +288,7 @@ def tokenize_header(text) -> Iterable[str]:
     clean = text.translate(str.maketrans('', '', string.punctuation)) 
     return clean.strip().split()
 
-def label_text(text: str) -> List[str]:
+def label_text(text: str, similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD) -> List[str]:
     labels: List[str] = []
 
     if isinstance(text, list):
@@ -298,7 +299,7 @@ def label_text(text: str) -> List[str]:
     for token in tokenize_header(text):
         synsets = get_synsets(token)
         if synsets:
-            grp = match_group(synsets)
+            grp = match_group(synsets, similarity_threshold )
             # Skip if the header matches a known false positive for this group
            
             # if isinstance(text, list):
@@ -420,7 +421,7 @@ def is_false_positive_header(text: str, category: str) -> bool:
 #         logging.error("Error while extracting headers: ", str(e))
 #         return repository_metadata, [repo_data]
 
-def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Result, List[str]]:
+def extract_categories(repo_data: str, repository_metadata: Result, similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD) -> Tuple[Result, List[str]]:
     logging.info("Extracting information using headers")
 
     if not repo_data:
@@ -433,8 +434,8 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
             logging.warning("File to analyze has no headers")
             return repository_metadata, [repo_data]
 
-        df['Group'] = df['Header'].map(label_text)
-        df['ParentGroup'] = df['ParentHeader'].fillna('').map(label_text)
+        df['Group'] = df['Header'].map(lambda x: label_text(x, similarity_threshold))
+        df['ParentGroup'] = df['ParentHeader'].fillna('').map(lambda x: label_text(x, similarity_threshold))
 
         df.loc[df['Group'].str.len() == 0, 'Group'] = df['ParentGroup']
         df = df.drop(columns=['ParentGroup'])

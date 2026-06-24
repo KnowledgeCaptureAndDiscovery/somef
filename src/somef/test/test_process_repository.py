@@ -145,6 +145,7 @@ class TestProcessRepository(unittest.TestCase):
         """Test designed to check if there are errors detecting title or stargazers"""
         github_data, owner, repo_name, default_br, project_path = process_repository.\
             load_online_repository_metadata(Result(), "https://github.com/3b1b/manim")
+        
         result_keys = github_data.results.keys()
         assert ((constants.CAT_STARS in result_keys) and (constants.CAT_FULL_TITLE not in result_keys))
 
