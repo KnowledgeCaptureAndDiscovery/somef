@@ -491,10 +491,10 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
 
                 author_list = []
                 for author in authors:
-                    family_name = author.get("family-names")
-                    given_name = author.get("given-names")
-                    orcid = author.get("orcid")
-                    name = author.get("name")
+                    family_name = author.get(constants.PROP_FAMILY_NAME)
+                    given_name = author.get(constants.PROP_GIVEN_NAME)
+                    orcid = author.get("orcid") or author.get(constants.PROP_URL)
+                    name = author.get(constants.PROP_NAME)
 
                     if family_name and given_name:
                         author_entry = {
@@ -564,6 +564,13 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         if status:
             codemeta_output[constants.CAT_CODEMETA_DEVELOPMENTSTATUS] = status
 
+    if constants.CAT_APPLICATION_DOMAIN in repo_data:
+        codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY] = []
+        for domain in repo_data[constants.CAT_APPLICATION_DOMAIN]:
+            value = domain[constants.PROP_RESULT][constants.PROP_VALUE]
+            if value not in codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY]:
+                codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY].append(value)
+                
     if constants.CAT_IDENTIFIER in repo_data:
         codemeta_output[constants.CAT_CODEMETA_IDENTIFIER] = []
 
@@ -632,6 +639,15 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
     if constants.CAT_CONTRIBUTORS in repo_data:
         raw_contributors = repo_data[constants.CAT_CONTRIBUTORS]
         codemeta_output[constants.CAT_CODEMETA_CONTRIBUTOR] = parse_contributors(raw_contributors)
+
+    if constants.CAT_APPLICATION_DOMAIN in repo_data:
+        application_categories = []
+        for entry in repo_data[constants.CAT_APPLICATION_DOMAIN]:
+            value = entry[constants.PROP_RESULT][constants.PROP_VALUE]
+            if value not in application_categories:
+                application_categories.append(value)
+        if application_categories:
+            codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY] = application_categories
 
     if constants.CAT_FUNDING in repo_data:
         for funding_entry in repo_data[constants.CAT_FUNDING]:
@@ -815,12 +831,11 @@ def parse_contributors(raw):
 
 
 def is_scholarly_article(article_dict):
-    if article_dict.get("type") in ["SoftwareApplication", "software"]:
-        return False
-        
+
     if article_dict.get("doi") or article_dict.get("journal"):
         return True
-        
+    if article_dict.get("type") in ["SoftwareApplication", "software"]:
+        return False
     if article_dict.get("type") == "ScholarlyArticle":
         return True
         
@@ -1015,6 +1030,14 @@ def unify_results(repo_data: dict) -> dict:
                 req_version = result.get("version", "").strip()
                 if req_name:
                     key = f"REQ-{req_name}-{req_version}"
+                else:
+                    canonical = canonicalize_value(value, value_type)
+                    key = str(canonical)
+            elif category == constants.CAT_RUNTIME_PLATFORM:
+                rt_name = result.get("name", "").strip().lower()
+                rt_version = result.get("version", "").strip()
+                if rt_name:
+                    key = f"RT-{rt_name}-{rt_version}"
                 else:
                     canonical = canonicalize_value(value, value_type)
                     key = str(canonical)
