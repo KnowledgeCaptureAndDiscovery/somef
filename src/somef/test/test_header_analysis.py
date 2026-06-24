@@ -149,3 +149,35 @@ class TestHeaderAnalysis(unittest.TestCase):
             assert 'Installation' in headers
             assert 'Citation' in headers
             assert 'Funding' in headers
+
+
+    def test_issue_112_similarity_threshold(self):
+        """
+        Checks that the similarity_threshold parameter is respected in header analysis.
+        """
+        with open(test_data_path + "README-manim.md", "r") as data_file:
+            file_text = data_file.read()
+
+        json_default, _ = extract_categories(file_text, Result(), similarity_threshold=0.8)
+        assert constants.CAT_INSTALLATION in json_default.results, f"Expected CAT_INSTALLATION with threshold 0.8"
+
+        # threshold 2.0 (extremely high) nothing should be detected via similarity
+        json_impossible, _ = extract_categories(file_text, Result(), similarity_threshold=2.0)
+        assert constants.CAT_INSTALLATION not in json_impossible.results, \
+            f"Expected no CAT_INSTALLATION with threshold 2.0, got: {json_impossible.results.get(constants.CAT_INSTALLATION)}"
+    def test_issue_770(self):
+        """
+        Test that ensures OS/platform information is extracted from headers.
+        """
+        with open(test_data_path + "README-os-platforms.md", "r") as data_file:
+            file_text = data_file.read()
+            json_test, results = extract_categories(file_text, Result())
+            assert constants.CAT_RUNTIME_PLATFORM in json_test.results
+            platforms = json_test.results[constants.CAT_RUNTIME_PLATFORM]
+
+            values = [p[constants.PROP_RESULT][constants.PROP_VALUE] for p in platforms]
+            assert any("Windows" in v for v in values)
+            assert any("Linux" in v or "Ubuntu" in v for v in values)
+            assert any("macOS" in v for v in values)
+            assert any("Docker" in v for v in values)
+            assert any("Conda" in v for v in values)

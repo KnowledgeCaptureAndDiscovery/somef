@@ -1041,6 +1041,73 @@ class TestJSONExport(unittest.TestCase):
         os.remove(test_data_path + "test_issue_487_short_descriptions.json")
 
 
+    def test_issue_770(self):
+        """ Test that ensures OS/platform information is extracted from headers"""
+
+        output_path = test_data_path + "test_issue_770.json"
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=test_data_path + "README-os-platforms.md",
+                          in_file=None,
+                          output=output_path,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=True,
+                          readme_only=False)
+        
+        with open(output_path, "r") as text_file:
+            json_content = json.loads(text_file.read())
+            
+        platforms = json_content[constants.CAT_RUNTIME_PLATFORM]
+        values = [p[constants.PROP_RESULT][constants.PROP_VALUE] for p in platforms]
+        assert any("Windows" in v for v in values)
+        assert any("Linux" in v or "Ubuntu" in v for v in values)
+        assert any("macOS" in v for v in values)
+        assert any("Docker" in v for v in values)
+        assert any("Conda" in v for v in values)
+
+        os.remove(test_data_path + "test_issue_770.json")
+
+    def test_issue_634_header_license(self):
+        """
+        Checks that a license mentioned in a README header is resolved to SPDX and merged with other license entries into a single unified entry.
+        """
+
+        output_path = test_data_path + "test_issue_634_header_license.json"
+        
+        somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url=None,
+                            local_repo=test_data_repositories + "mira",
+                            doc_src=None,
+                            in_file=None,
+                            output=output_path,
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        
+        with open(output_path, "r") as text_file:
+            json_content = json.loads(text_file.read())
+
+        licenses = json_content[constants.CAT_LICENSE]
+        # print(licenses)
+        assert len(licenses) == 1, f"Expected just a merged license entry, found {len(licenses)}: {licenses}"
+
+        result = licenses[0][constants.PROP_RESULT]
+
+        assert result.get(constants.PROP_SPDX_ID) == "Apache-2.0", f"Expected spdx_id 'Apache-2.0', got: {result.get(constants.PROP_SPDX_ID)}"
+
+        techniques = licenses[0].get("technique", [])
+        assert "header_analysis" in techniques, f"Expected 'header_analysis' in techniques, got: {techniques}"
+
+        os.remove(output_path)
+
     def test_issue_533_choosealicense_badge(self):
         """
         Checks that a license badge with a choosealicense.com URL is detected and resolved to SPDX.
@@ -1076,3 +1143,5 @@ class TestJSONExport(unittest.TestCase):
         assert constants.TECHNIQUE_REGULAR_EXPRESSION in techniques, f"Expected 'regular_expressions' in techniques, got: {techniques}"
         
         os.remove(output_path)
+        
+ 
