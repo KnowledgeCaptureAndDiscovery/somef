@@ -892,10 +892,10 @@ class TestCodemetaExport(unittest.TestCase):
 
     def test_issue_1025_orcid(self):
        
-    """
-    Checks that an ORCID present in the extracted citation data (e.g., from CITATION.cff)
-    is correctly propagated to the author entry in referencePublication.
-    """
+        """
+        Checks that an ORCID present in the extracted citation data (e.g., from CITATION.cff)
+        is correctly propagated to the author entry in referencePublication.
+        """
         output_path = test_data_path + 'test_codemeta_widoco_author_orcid.json'
 
         somef_cli.run_cli(threshold=0.9,
