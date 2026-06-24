@@ -888,6 +888,32 @@ class TestCodemetaExport(unittest.TestCase):
 
         os.remove(output_path)
 
+    def test_issue_1015_application_category(self):
+        """Checks that applicationCategory is present in codemeta output"""
+        output_path = test_data_path + 'test_application_category.json'
+
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url=None,
+                        local_repo=test_data_repositories + "aladin-lite",
+                        doc_src=None,
+                        in_file=None,
+                        output=None,
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out=output_path,
+                        pretty=True,
+                        missing=False)
+
+        with open(output_path, "r") as f:
+            json_content = json.load(f)
+
+        assert "applicationCategory" in json_content, \
+            "Missing applicationCategory in codemeta output"
+        assert "Astronomy, Visualization" in json_content["applicationCategory"], \
+            f"Expected 'Astronomy, Visualization' in applicationCategory, got {json_content['applicationCategory']}"
+
+        os.remove(output_path)
 
     @classmethod
     def tearDownClass(cls):
