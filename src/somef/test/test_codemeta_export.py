@@ -814,6 +814,15 @@ class TestCodemetaExport(unittest.TestCase):
         os.remove(output_path)
 
 
+    def test_schema_owner(self):
+        """Checks that organization owner is correctly exported as schema:owner with expanded context (issue #892)"""
+
+
+        assert "schema:owner" in self.json_content, "Missing schema:owner in JSON"
+        owners = self.json_content["schema:owner"]
+        assert isinstance(owners, list), "schema:owner should be a list"
+        assert any(o.get("@type") == "Organization" for o in owners), "schema:owner should contain an Organization"
+        assert any(o.get("name") == "KnowledgeCaptureAndDiscovery" for o in owners), "Expected KnowledgeCaptureAndDiscovery as owner"
     def test_issue_544(self):
         """Checks whether application domain is correctly exported to applicationCategory in codemeta"""
         
