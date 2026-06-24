@@ -556,7 +556,6 @@ MAX_HEADER_WORDS = {
 }
 
 # Confidence thresholds for header analysis based on header length
-# not sure about this values of confidence
 HEADER_CONFIDENCE_THRESHOLDS = [
     (3, 1.0),   # 1-3 words -> confidence 1.0
     (6, 0.8),   # 4-6 words -> confidence 0.8
