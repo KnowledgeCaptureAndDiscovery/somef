@@ -423,6 +423,7 @@ The table below summarizes the mapping between the SOMEF internal JSON structure
 
 | Codemeta / Schema.org Field  | SOMEF Category | Description |
 | :---                  | :---                  | :--- |
+| `applicationCategory` | `application_domain`  | Categories |
 | `author`              | `author`              | Principal authors |
 | `buildInstructions`   | `installation` / `documentation` | Installation or build instructions |
 | `creditText`          | `citation` (Software)   | Human-readable citation for the software  *1*|

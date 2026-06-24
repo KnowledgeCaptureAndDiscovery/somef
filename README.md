@@ -362,6 +362,10 @@ The following command extracts all metadata available from [https://github.com/d
 somef describe -r https://github.com/dgarijo/Widoco/ -o test.json -t 0.8
 ```
 
+We recommend having a high value for the `threshold` parameter, 0.8 (default) or above.
+Additional configuration parameters (such as the `similarity_threshold` for header analysis) 
+can be set in `~/.somef/config.json`. See the [usage documentation](https://somef.readthedocs.io/en/latest/usage/) for details.
+
 Try SOMEF in Binder with our sample notebook: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)
 
 ## Contribute:
