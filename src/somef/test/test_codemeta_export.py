@@ -889,6 +889,47 @@ class TestCodemetaExport(unittest.TestCase):
         os.remove(output_path)
 
 
+
+    def test_issue_1025_orcid(self):
+       
+    """
+    Checks that an ORCID present in the extracted citation data (e.g., from CITATION.cff)
+    is correctly propagated to the author entry in referencePublication.
+    """
+        output_path = test_data_path + 'test_codemeta_widoco_author_orcid.json'
+
+        somef_cli.run_cli(threshold=0.9,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=None,
+                          local_repo=test_data_repositories + "Widoco",
+                          in_file=None,
+                          output=None,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out= output_path,
+                          pretty=True,
+                          missing=False,
+                          requirements_mode="v")
+        
+        with open(output_path, "r") as f:
+            json_content = json.load(f)
+
+        reference = json_content.get(constants.CAT_CODEMETA_REFERENCEPUBLICATION, [])
+
+        expected_id = "http://orcid.org/0000-0003-0454-7145"
+
+        found = any(
+            author.get("@id") == expected_id
+            for ref in reference
+            for author in ref.get("author", [])
+        )
+
+        assert found, f"ORCID {expected_id} not found in referencePublication authors"
+
+        os.remove(output_path)
+
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""

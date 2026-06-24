@@ -484,7 +484,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                 for author in authors:
                     family_name = author.get(constants.PROP_FAMILY_NAME)
                     given_name = author.get(constants.PROP_GIVEN_NAME)
-                    orcid = author.get("orcid")
+                    orcid = author.get("orcid") or author.get(constants.PROP_URL)
                     name = author.get(constants.PROP_NAME)
 
                     if family_name and given_name:
