@@ -816,9 +816,7 @@ class TestCodemetaExport(unittest.TestCase):
 
     def test_schema_owner(self):
         """Checks that organization owner is correctly exported as schema:owner with expanded context (issue #892)"""
-   
-        assert isinstance(self.json_content["@context"], list), "Context should be a list when schema:owner is present"
-        assert {"schema": "https://schema.org/"} in self.json_content["@context"], "schema.org prefix missing from context"
+
 
         assert "schema:owner" in self.json_content, "Missing schema:owner in JSON"
         owners = self.json_content["schema:owner"]

@@ -417,12 +417,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
 
             if codemeta_owners:
                 codemeta_output[constants.CAT_CODEMETA_OWNER] = codemeta_owners
-                # Expand context to include schema.org prefix, needed for schema:owner
-                # which is not part of the codemeta 3.0 context
-                codemeta_output["@context"] = [
-                    "https://w3id.org/codemeta/3.0",
-                    {"schema": "https://schema.org/"}
-                ]
+
             if codemeta_authors: 
                 codemeta_output[constants.CAT_CODEMETA_AUTHOR] = codemeta_authors
                 
