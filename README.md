@@ -95,6 +95,19 @@ We recognize the following properties:
 
 We use different supervised classifiers, header analysis, regular expressions, the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field) and language specific metadata parsers (e.g., for package files). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description](https://somef.readthedocs.io/en/latest/output/)
 
+### Confidence values in header analysis
+
+When extracting metadata using header analysis, SOMEF assigns a confidence value based on the length 
+of the header. Shorter headers are more likely to be a good fit for a category, while longer headers 
+may contain additional context that makes the classification less reliable:
+
+| Header length | Confidence |
+|---------------|------------|
+| 1–3 words     | 1.0        |
+| 4–6 words     | 0.8        |
+| 7–10 words    | 0.5        |
+| 11+ words     | 0.1        |
+
 ## Documentation
 
 See full documentation at [https://somef.readthedocs.io/en/latest/](https://somef.readthedocs.io/en/latest/)

@@ -531,12 +531,15 @@ class TestCodemetaExport(unittest.TestCase):
         json_content = json.loads(data)
         issue_tracker = json_content["issueTracker"]  # JSON is in Codemeta format
      
-        #len(json_content["citation"]) 
-        #codemeta category citation is now referencePublication
+
+        # buildInstructions was previously generated from the header "Browser issues (Why can't I see
+        # the generated documentation / visualization?)" which was incorrectly classified as documentation
+        # due to the word "documentation" in the header. This was a false positive fixed in issue #529
+        # (long headers with punctuation are now discarded), so buildInstructions is no longer expected here.
+        # len(json_content["buildInstructions"]) > 0 and 
         assert issue_tracker == 'https://github.com/dgarijo/Widoco/issues' and len(json_content["referencePublication"]) > 0 and \
             len(json_content["name"]) > 0 and len(json_content["identifier"]) > 0 and \
             len(json_content["description"]) > 0 and len(json_content["readme"]) > 0 and \
-            len(json_content["buildInstructions"]) > 0 and \
             len(json_content["softwareRequirements"]) > 0 and len(json_content["programmingLanguage"]) > 0 and \
             len(json_content["keywords"]) > 0 and len(json_content["logo"]) > 0 and \
             len(json_content["license"]) > 0 and len(json_content["dateCreated"]) > 0
