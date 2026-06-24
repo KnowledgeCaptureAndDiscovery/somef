@@ -572,3 +572,32 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
             assert expected_doc_url in documentation_values, (
                 f"Expected documentation url {expected_doc_url} not found in {documentation_values}"
             )
+
+
+    def test_issue_985(self):
+        """Test to ensure extract_repo_status are extracted correctly."""
+
+        with open(test_data_path + "repostatus-README-2.md", "r") as data_file:
+            test_text = data_file.read()
+            repo_status = regular_expressions.extract_repo_status(test_text, Result(),
+                                                                  test_data_path + "repostatus-README-2.md")
+            status = repo_status.results[constants.CAT_STATUS]
+
+            assert len(status) == 1, f"Should be 1 status, but got {len(status)}"
+            extracted_url = status[0]['result']['value']
+            expected_url = "https://www.repostatus.org/#active"
+            
+            assert extracted_url == expected_url, f"Expected {expected_url}, but got {extracted_url}"
+
+    def test_repo_status_issue_1014(self):
+        """Another test to ensure extract_repo_status are extracted correctly."""
+        with open(test_data_path + "README-FTR.md", "r") as data_file:
+            test_text = data_file.read()
+            repo_status = regular_expressions.extract_repo_status(test_text, Result(),
+                                                                  test_data_path + "README-FTR.md")
+            status = repo_status.results[constants.CAT_STATUS]
+
+            assert len(status) == 1, f"Should be 1 status, but got {len(status)}"
+            extracted_url = status[0]['result']['value']
+            expected_url = "https://www.repostatus.org/#active"
+            self.assertEqual(extracted_url, expected_url)

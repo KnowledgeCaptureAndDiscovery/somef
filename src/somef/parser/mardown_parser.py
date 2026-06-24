@@ -133,7 +133,8 @@ def remove_hash(text):
 def get_text(init_index, end_index, text_tokenized):
     if end_index == -1:
         end_index = len(text_tokenized)
-
+    if init_index >= len(text_tokenized) or init_index < 0:
+        return ""
     output = text_tokenized[init_index]
     init_index += 1
     while init_index < end_index:

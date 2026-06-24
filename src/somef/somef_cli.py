@@ -53,6 +53,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     logging.getLogger("urllib3").setLevel(logging.WARNING)
 
     file_paths = configuration.get_configuration_file()
+    similarity_threshold = file_paths.get(constants.CONF_SIMILARITY_THRESHOLD, constants.CONF_DEFAULT_SIMILARITY_THRESHOLD)
     repo_type = constants.RepositoryType.GITHUB
     repository_metadata = Result()
     def_branch = "main"
@@ -172,7 +173,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         # remove html comments from unfiltered text (to avoid detecting commented out (wrong) metadata
         readme_unfiltered_text = markdown_utils.remove_comments(readme_unfiltered_text)
         repository_metadata, string_list = header_analysis.extract_categories(readme_unfiltered_text,
-                                                                              repository_metadata)
+                                                                              repository_metadata,similarity_threshold)
         
         logging.info("Extracted categories from headers successfully.")
         readme_text_unmarked = markdown_utils.unmark(readme_text)
@@ -230,6 +231,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                                                                      repository_metadata, readme_source, def_branch)
             repository_metadata = regular_expressions.extract_arxiv_links(readme_unfiltered_text, repository_metadata,
                                                                           readme_source)
+            repository_metadata = regular_expressions.extract_license_badges(readme_unfiltered_text, repository_metadata, readme_source)
+
             logging.info("Completed extracting regular expressions")
 
         return repository_metadata
