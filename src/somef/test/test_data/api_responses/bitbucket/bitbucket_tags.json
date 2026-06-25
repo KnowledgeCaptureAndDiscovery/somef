@@ -1,1 +1,18 @@
-{"values": [], "pagelen": 10, "size": 0, "page": 1}
+{
+  "values": [
+    {
+      "name": "v1.0",
+      "links": {
+        "self": {"href": "https://api.bitbucket.org/2.0/repositories/bitbucketpipelines/pipelines-guide-python/refs/tags/v1.0"},
+        "html": {"href": "https://bitbucket.org/bitbucketpipelines/pipelines-guide-python/src/v1.0"}
+      },
+      "target": {
+        "type": "commit",
+        "hash": "abc123def456"
+      }
+    }
+  ],
+  "pagelen": 10,
+  "page": 1,
+  "size": 1
+}

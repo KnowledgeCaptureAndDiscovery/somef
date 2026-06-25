@@ -5,6 +5,7 @@ import time
 import requests
 import sys
 import re
+import base64
 from datetime import datetime
 from urllib.parse import urlparse, quote
 from .utils import constants
@@ -429,7 +430,7 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url, autho
 
 def download_gitlab_files(directory, owner, repo_name, repo_branch, repo_ref, authorization=None):
     """
-    Download all repository files from a GitHub repository
+    Download all repository files from a GitLab repository
     Parameters
     ----------
     @param repo_branch: Branch of the repo we are analysing
@@ -842,83 +843,6 @@ def download_repository_files(owner, repo_name, default_branch, repo_type, targe
         logging.error("Cannot download files from a local repository!")
         return None
 
-# def download_github_files(directory, owner, repo_name, repo_ref, authorization):
-#     """
-#     Download all repository files from a GitHub repository
-#     Parameters
-#     ----------
-#     repo_ref: link to branch of the repo
-#     repo_name: name of the repo
-#     owner: GitHub owner
-#     directory: directory where to extract all downloaded files
-#     authorization: GitHub authorization token
-
-#     Returns
-#     -------
-#     path to the folder where all files have been downloaded
-#     """
-#     # download the repo at the selected branch with the link
-#     repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip"
-#     logging.info(f"Downloading {repo_archive_url}")
- 
-#     repo_download, date = rate_limit_get(repo_archive_url, headers=header_template(authorization))
-
-#     if repo_download is None:
-#         logging.warning(f"Repository archive skipped due to size limit: {constants.SIZE_DOWNLOAD_LIMIT_MB} MB or not content lenght.")
-#         return None
-    
-#     if repo_download.status_code == 300:
-#         logging.warning(f"Ambiguous ref detected for {repo_ref}, trying tags/heads resolution")
-
-#         for ref_type in ["tags", "heads"]:
-#             repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/refs/{ref_type}/{repo_ref}.zip"
-#             logging.info(f"Trying to download {repo_archive_url}")
-
-#             repo_download, date = rate_limit_get(repo_archive_url, headers=header_template(authorization))
-
-#             if repo_download is None:
-#                     logging.warning(f"Repository archive skipped due to size limit: {constants.SIZE_DOWNLOAD_LIMIT_MB} MB or not content length.")
-#                     return None
-
-#             if repo_download.status_code == 200:
-#                 break
-
-#     if repo_download.status_code == 404:
-#         logging.error(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-#         repo_archive_url = f"https://github.com/{owner}/{repo_name}/archive/main.zip"
-#         logging.info(f"Trying to download {repo_archive_url}")
-#         repo_download, date = rate_limit_get(repo_archive_url, headers=header_template(authorization))
-#         if repo_download is None:
-#             logging.warning(f"Repository archive skipped due to size limit: {constants.SIZE_DOWNLOAD_LIMIT_MB} MB or not content lenght.")
-#             return None
-        
-#     if repo_download.status_code != 200:
-#         logging.error(f"Error: Archive request failed with HTTP {repo_download.status_code}")
-#         return None
-
-#     repo_zip = repo_download.content
-
-#     repo_name_full = owner + "_" + repo_name
-#     repo_zip_file = os.path.join(directory, repo_name_full + ".zip")
-#     repo_extract_dir = os.path.join(directory, repo_name_full)
-
-#     with open(repo_zip_file, "wb") as f:
-#         f.write(repo_zip)
-
-#     try:
-#         with zipfile.ZipFile(repo_zip_file, "r") as zip_ref: 
-#             zip_ref.extractall(repo_extract_dir) 
-#     except zipfile.BadZipFile: 
-#         logging.error("Downloaded archive is not a valid zip (repo may be empty)") 
-#         return None
-    
-#     repo_folders = os.listdir(repo_extract_dir)
-#     if not repo_folders: 
-#         logging.warning("Repository archive is empty") 
-#         return None
-
-#     repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
-#     return repo_dir
 
 def download_github_files(directory, owner, repo_name, repo_ref, authorization):
     """
@@ -1228,6 +1152,29 @@ def load_codeberg_repository_metadata(repo_metadata: Result, repository_url, aut
 
     filtered_resp[constants.CAT_DOWNLOAD_URL] = f"https://codeberg.org/{owner}/{repo_name}/releases"
 
+    detected_license_info = None
+    for license_filename in ["LICENSE", "LICENSE.md", "LICENCE", "COPYING"]:
+        license_url = f"{constants.CODEBERG_API}/{owner}/{repo_name}/contents/{license_filename}?ref={default_branch}"
+        lic_resp, _ = rate_limit_get(license_url, headers=headers)
+        if lic_resp.status_code == 200:
+            lic_data = lic_resp.json()
+            raw_b64 = lic_data.get("content", "")
+            if raw_b64:
+                license_text = base64.b64decode(raw_b64).decode("utf-8")
+                license_info = detect_license_spdx(license_text, 'JSON')
+                if license_info:
+                    result = {
+                        constants.PROP_VALUE: license_info["spdx_id"],
+                        constants.PROP_NAME: license_info["name"],
+                        constants.PROP_SPDX_ID: license_info["spdx_id"],
+                        constants.PROP_TYPE: "License",
+                        constants.PROP_URL: license_info["url"],
+                        constants.PROP_IDENTIFIER: license_info["identifier"],
+                        
+                    }
+                    repo_metadata.add_result(constants.CAT_LICENSE, result, 1, constants.TECHNIQUE_CODEBERG_API)
+                    break
+
     for category, value in filtered_resp.items():
         value_type = constants.STRING
         if category in constants.all_categories:
@@ -1245,7 +1192,7 @@ def load_codeberg_repository_metadata(repo_metadata: Result, repository_url, aut
                 value_type = constants.DATE
             if category in [constants.CAT_FORK_COUNTS, constants.CAT_STARS]:
                 value_type = constants.NUMBER
-            # Saltamos CAT_LICENSE porque la API de Codeberg no lo devuelve
+        
 
             result = {
                 constants.PROP_VALUE: value,

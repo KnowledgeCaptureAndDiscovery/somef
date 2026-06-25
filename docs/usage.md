@@ -100,6 +100,9 @@ Options:
       --tag text                  Tag of the repository to analyze. Cannot be used together with --branch.
 ```
 
+Note about tokens: GitHub, Codeberg and Bitbucket APIs can be used without authentication for basic metadata extraction. GitLab may require a token for self-hosted instances. User enrichment via CODEOWNERS (--reconcile_authors) works for 
+GitHub, GitLab and Codeberg; Bitbucket does not expose a public user API, so enrichment is not supported for that platform.
+
 Alternatively, you can set tokens via environment variables or by running `somef configure`, which stores them permanently.
 The CLI flags take precedence over stored config when valid.
 

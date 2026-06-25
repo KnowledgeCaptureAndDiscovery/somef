@@ -50,7 +50,9 @@ class TestBitbucketRepository(unittest.TestCase):
         # this repo has not issues 
         self.assertNotIn(constants.CAT_ISSUE_TRACKER, result.results)
         # this repo has not releases
-        self.assertNotIn(constants.CAT_RELEASES, result.results)
+        self.assertIn(constants.CAT_RELEASES, result.results)
+        self.assertEqual(len(result.results[constants.CAT_RELEASES]), 1)
+        self.assertEqual(result.results[constants.CAT_RELEASES][0]["result"]["value"], "v1.0")
         self.assertEqual(owner, "bitbucketpipelines")
         self.assertEqual(repo_name, "pipelines-guide-python")
         self.assertEqual(branch, "master")

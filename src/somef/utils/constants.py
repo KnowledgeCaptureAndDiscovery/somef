@@ -71,7 +71,8 @@ REGEXP_TITLE_NATURAL = r'["“](.+?)["”]'
 #License spdx
 # REGEXP_APACHE = r'(?i)apache\s+license\s*,?\s*version\s*2\.0'
 REGEXP_APACHE = r'(?i)apache(?:\s+license)?\s*(?:,?\s*version\s*)?2\.0'
-REGEXP_GPL3 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*3\.0'
+REGEXP_GPL3 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*3(?:\.0)?'
+
 # REGEXP_MIT = r'(?i)mit\s+license'
 REGEXP_MIT = r'(?i)(mit\s+license|permission\s+is\s+hereby\s+granted|THE\s+SOFTWARE\s+IS\s+PROVIDED\s+"AS\s+IS")'
 REGEXP_BSD2 = r'(?i)bsd\s*-?\s*2-?clause(?:\s*license)?'
@@ -80,7 +81,7 @@ REGEXP_BOOST = r'(?i)boost\s+software\s+license\s*,?\s*version\s*1\.0'
 REGEXP_CC0 = r'(?i)creative\s+commons\s+zero\s+v?1\.0\s+universal'
 REGEXP_EPL2 = r'(?i)eclipse\s+public\s+license\s*,?\s*version\s*2\.0'
 REGEXP_AGPL3 = r'(?i)gnu\s+affero\s+general\s+public\s+license\s*(?:v(?:ersion)?\.?\s*3(?:\.0)?)'
-REGEXP_GPL2 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*2\.0'
+REGEXP_GPL2 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*2(?:\.0)?'
 REGEXP_LGPL1 = r'(?i)gnu\s+lesser\s+general\s+public\s+license\s*,?\s*version\s*1\.0'
 REGEXP_MPL2 = r'(?i)mozilla\s+public\s+license\s*,?\s*version\s*2\.0'
 REGEXP_UNLICENSE = r'(?i)the\s+unlicense'
@@ -375,7 +376,6 @@ codeberg_crosswalk_table = {
     # AGENT_TYPE: ["owner", "type"],
     CAT_DATE_CREATED: "created_at",
     CAT_DATE_UPDATED: "updated_at",
-    # CAT_LICENSE: "license",
     CAT_DESCRIPTION: "description",
     CAT_NAME: "name",
     CAT_FULL_NAME: "full_name",

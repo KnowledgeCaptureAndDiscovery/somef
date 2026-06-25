@@ -422,55 +422,18 @@ As shown in the Turtle snippet above, SOMEF represents the software as an entity
  -->
 ## Codeberg API Crosswalk
 
-When analyzing a Codeberg repository, SOMEF uses the [Codeberg API](https://codeberg.org/api/v1/swagger) 
-(`GET /api/v1/repos/{owner}/{repo}`) to retrieve metadata. The table below shows how Codeberg API 
-fields map to SOMEF categories:
-
-| SOMEF category | Codeberg API field | Notes |
-|---|---|---|
-| `name` | `name` | |
-| `description` | `description` | |
-| `code_repository` | `html_url` | |
-| `owner` | `owner.login` | |
-| `date_created` | `created_at` | |
-| `date_updated` | `updated_at` | |
-| `stars` | `stars_count` | In GitHub this field is `stargazers_count` |
-| `forks_count` | `forks_count` | |
-| `homepage` | `website` | In GitHub this field is `homepage` |
-| `keywords` | `topics` | |
-| `issue_tracker` | *(constructed)* | Built as `{html_url}/issues` |
-| `license` | *(not available)* | Codeberg API does not return license information |
-| `programming_languages` | `languages_url` | Additional GET request to the languages endpoint |
-| `releases` | `/repos/{owner}/{repo}/releases` | Additional GET request |
-
-For releases, the field mapping is identical to GitHub. The only differences are that Codeberg 
-uses `attachments` instead of `assets` for release files, and it does not provide 
-`author.type` (`AGENT_TYPE`) for release authors.
+SOMEF now supports repositories hosted on Codeberg. 
+Metadata is extracted using the Codeberg (Forgejo) API. 
+For a detailed description of the API mapping, see 
+the [Codeberg platform documentation](codeberg.md).
 
 
 ## Bitbucket API Crosswalk
 
-When analyzing a Bitbucket repository, SOMEF uses the [Bitbucket Cloud API](https://developer.atlassian.com/cloud/bitbucket/rest/api-group-repositories/)
-(`GET /2.0/repositories/{workspace}/{repo_slug}`) to retrieve metadata. The table below shows how Bitbucket API
-fields map to SOMEF categories:
-
-| SOMEF category | Bitbucket API field | Notes |
-|---|---|---|
-| `name` | `slug` | |
-| `description` | `description` | |
-| `full_name` | `full_name` | Format: `{workspace}/{slug}` |
-| `code_repository` | `links.html.href` | |
-| `owner` | `owner.nickname` | Falls back to `owner.username` for team workspaces |
-| `date_created` | `created_on` | |
-| `date_updated` | `updated_on` | |
-| `homepage` | `website` | |
-| `forks_url` | `links.forks.href` | |
-| `download_url` | *(constructed)* | Built as `{html_url}/downloads` |
-| `issue_tracker` | *(constructed)* | Built as `{html_url}/issues` when `has_issues` is true |
-| `programming_languages` | `language` | Single string, not a dictionary with sizes |
-| `releases` | `/refs/tags` | Bitbucket has no dedicated releases endpoint; uses the tags endpoint |
-| `stars` | *(not available)* | Bitbucket does not have a stargazers feature |
-| `forks_count` | *(not available)* | Bitbucket does not expose fork counts in its API |
+SOMEF now supports repositories hosted on Bitbucket Cloud.
+Metadata is extracted using the Bitbucket API v2.0. 
+For a detailed description of the API mapping, see 
+the [Bitbucket platform documentation](bitbucket.md).
 
 
 ## Citation Reconciliation
