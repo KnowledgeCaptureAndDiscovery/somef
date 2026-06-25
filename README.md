@@ -61,8 +61,8 @@ We recognize the following properties:
   - `project_acronym`: Project acronym
   - `grant_id`: Call/grant identifier
 - **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers and Software Heritage identifiers (SWH). DOIs associated with publications will also be detected. When using `-e`, the following enrichment identifiers are also added:
-  - `openalex_id`: OpenAlex ID for the software
-  - `openaire_id`: URL to the OpenAIRE explore page
+  - `openalex_id`: OpenAlex ID of the publication
+  - `openaire_id`: URL to the OpenAIRE explore page for the software
   - `swhid`: Software Heritage identifier (for Zenodo DOIs)
 - **Images**: Images used to illustrate the software component
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
@@ -402,7 +402,7 @@ Repositories in other languages may not be processed as effectively, and results
 ### Enrichment with `-e`
 
 The `-e` (or `--enrichment`) flag queries external APIs to complete the extracted metadata:
-- **OpenAlex**: adds `openalex_id` to DOIs of publications and software.
+- **OpenAlex**: adds `openalex_id` to DOIs of publications.
 - **OpenAIRE**: adds `openaire_id` and enriches funding information (project code, title, acronym, grant id).
 - **Zenodo**: adds `swhid` (Software Heritage ID) for Zenodo DOIs.
 

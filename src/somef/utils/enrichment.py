@@ -33,7 +33,7 @@ def get_zenodo_swhid(doi):
         return None
     record_id = match.group(1)
     
-    url = f"https://zenodo.org/api/records/{record_id}"
+    url = f"{constants.ZENODO_API_BASE}/records/{record_id}"
     resp = requests.get(url)
     if resp.status_code != 200:
         return None
@@ -122,7 +122,7 @@ def has_orcid(result):
 
 
 def get_openaire_project(identifier):
-    """Busca un proyecto en OpenAIRE por grant ID o call identifier"""
+    """Search for a project in OpenAIRE by grant ID or call identifierr"""
     url = f"{constants.OPENAIRE_BASE}/search/projects?keywords={requests.utils.quote(identifier)}"
     resp = requests.get(url)
     if resp.status_code != 200:
@@ -152,18 +152,27 @@ def run_enrichment(results) -> dict:
     for citation in results.get(constants.CAT_CITATION, []):
         doi = extract_doi(citation["result"])
         if doi:
-            citation["result"][constants.PROP_OPENALEX_ID] = get_openalex_id(doi)
-            citation["result"][constants.PROP_OPENAIRE_ID] = get_openaire_id(doi)
+            openaire_id = get_openaire_id(doi)
+            if openaire_id:
+                citation["result"][constants.PROP_OPENAIRE_ID] = openaire_id
+            else:
+                citation["result"][constants.PROP_OPENALEX_ID] = get_openalex_id(doi)
 
     for identifier in results.get(constants.PROP_IDENTIFIER, []):
         value = identifier["result"].get("value", "")
         m = re.search(constants.REGEXP_DOI_IN_URL, value)
         if m:
             doi = m.group(0)
-            identifier["result"][constants.PROP_OPENALEX_ID] = get_openalex_id(doi)
-            identifier["result"][constants.PROP_OPENAIRE_ID] = get_openaire_id(doi)
+            if doi:
+                openaire_id = get_openaire_id(doi)
+                if openaire_id:
+                    identifier["result"][constants.PROP_OPENAIRE_ID] = openaire_id
+                else:
+                    identifier["result"][constants.PROP_OPENALEX_ID] = get_openalex_id(doi)
+
             if "zenodo" in doi.lower():
-                identifier["result"][constants.PROP_SWHID] = get_zenodo_swhid(doi)
+                if constants.PROP_SWHID not in identifier["result"]:
+                    identifier["result"][constants.PROP_SWHID] = get_zenodo_swhid(doi)
 
     orcid_map = collect_existing_orcids(results)
 
