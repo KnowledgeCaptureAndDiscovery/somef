@@ -133,6 +133,19 @@ The following table summarized the properties used to describe a `category`:
 | **source** | No | Url | URL of the source file used for the extraction. |
 | **technique** | Yes | String | Technique used for the extraction. One of the following list: Supervised classification, header analysis, regular expression, GitHub API, File exploration, Code parsing |
 
+### Confidence values in header analysis
+
+When extracting metadata using header analysis, SOMEF assigns a confidence value based on the length 
+of the header. Shorter headers are more likely to be a good fit for a category, while longer headers 
+may contain additional context that makes the classification less reliable:
+
+| Header length | Confidence |
+|---------------|------------|
+| 1–3 words     | 1.0        |
+| 4–6 words     | 0.8        |
+| 7–10 words    | 0.5        |
+| 11+ words     | 0.1        |
+
 ### Result
 Field returning the extracted output from the code repository. An example can be seen below for a citation found in BibteX format in a README file of a code repository:
 
@@ -423,6 +436,7 @@ The table below summarizes the mapping between the SOMEF internal JSON structure
 
 | Codemeta / Schema.org Field  | SOMEF Category | Description |
 | :---                  | :---                  | :--- |
+| `applicationCategory` | `application_domain`  | Categories |
 | `author`              | `author`              | Principal authors |
 | `buildInstructions`   | `installation` / `documentation` | Installation or build instructions |
 | `creditText`          | `citation` (Software)   | Human-readable citation for the software  *1*|
@@ -445,6 +459,7 @@ The table below summarizes the mapping between the SOMEF internal JSON structure
 | `logo`                | `logo`                  | Project logo URL |
 | `maintainer`          | `maintainer`            | Project maintainers |
 | `name`                | `name`                  | Software name |
+| `schema:owner`        | `owner`                  | Software owner |
 | `programmingLanguage` | `programming_languages` | Languages used |
 | `readme`              | `readme_url`            | README file URL |
 | `referencePublication`| `citation` (Papers)     || References to the main publication associated with this software component (as per author preference) *1*|
