@@ -63,7 +63,7 @@ def configure(
         installation=default_installation,
         citation=default_citation,
         base_uri=constants.CONF_DEFAULT_BASE_URI),
-        similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD)::
+        similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD):
 
     """ Function to configure the main program"""
     import nltk
