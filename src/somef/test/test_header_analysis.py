@@ -151,6 +151,54 @@ class TestHeaderAnalysis(unittest.TestCase):
             assert 'Funding' in headers
 
 
+    def test_issue_529(self):
+        """
+        Test that ensures long headers or headers with punctuation are not incorrectly
+        classified. 'Browser issues (Why can't I see...)' should not appear in documentation.
+        """
+        with open(test_data_path + "widoco_readme.md", "r") as data_file:
+            file_text = data_file.read()
+            json_test, results = extract_categories(file_text, Result())
+            if constants.CAT_DOCUMENTATION in json_test.results:
+                headers = [e[constants.PROP_RESULT].get(constants.PROP_ORIGINAL_HEADER, "")
+                        for e in json_test.results[constants.CAT_DOCUMENTATION]]
+                assert not any("Browser issues" in h for h in headers)
+
+
+    def test_issue_529_installation(self):
+        """
+        Test that ensures long headers or headers with punctuation are not incorrectly
+        classified. 'Importing WIDOCO as a dependency' should not appear in documentation.
+        """
+        with open(test_data_path + "widoco_readme.md", "r") as data_file:
+            file_text = data_file.read()
+            json_test, results = extract_categories(file_text, Result())
+
+            assert constants.CAT_INSTALLATION in json_test.results, "No installation category found"
+            # print(json_test.results[constants.CAT_INSTALLATION])
+            if constants.CAT_INSTALLATION in json_test.results:
+                headers = [e[constants.PROP_RESULT].get(constants.PROP_ORIGINAL_HEADER, "")
+                        for e in json_test.results[constants.CAT_INSTALLATION]]
+
+                assert any("Importing WIDOCO as a dependency" in h for h in headers)
+
+    def test_issue_138(self):
+        """
+        Test that ensures header analysis returns a confidence lower than 1
+        for long headers (4+ words).
+        """
+        with open(test_data_path + "widoco_readme.md", "r") as data_file:
+            file_text = data_file.read()
+            json_test, results = extract_categories(file_text, Result())
+            for category, entries in json_test.results.items():
+                if category == constants.PROP_PROVENANCE:
+                    continue
+                for entry in entries:
+                    if entry[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_HEADER_ANALYSIS:
+                        header = entry[constants.PROP_RESULT].get(constants.PROP_ORIGINAL_HEADER, "")
+                        if header and len(header.split()) > 3:
+                            print(f"Header: '{header}' | words: {len(header.split())} | confidence: {entry[constants.PROP_CONFIDENCE]}")
+                            assert entry[constants.PROP_CONFIDENCE] < 1.0
     def test_issue_112_similarity_threshold(self):
         """
         Checks that the similarity_threshold parameter is respected in header analysis.

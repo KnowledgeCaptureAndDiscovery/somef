@@ -329,11 +329,20 @@ def is_false_positive_header(text: str, category: str) -> bool:
 
     text_lower = text.lower()
 
+    if '?' in text or '!' in text:
+        return True
+    
     # false positives for bibliographic citations
     if category == constants.CAT_CITATION:
         for pattern in constants.NEGATIVE_PATTERNS_CITATION_HEADERS:
             if pattern in text_lower:
                 return True
+
+    if category in constants.MAX_HEADER_WORDS:
+        num_words = len(text.split())
+        if num_words > constants.MAX_HEADER_WORDS[category]:
+            return True
+        
     return False
 
 
@@ -431,6 +440,13 @@ def extract_categories(repo_data: str, repository_metadata: Result, similarity_t
         df.loc[df['Group'].str.len() == 0, 'Group'] = df['ParentGroup']
         df = df.drop(columns=['ParentGroup'])
 
+        # Installation keywords that wordnet cannot handle correctly
+        mask = df['Group'].str.len() == 0
+        df.loc[mask, 'Group'] = df.loc[mask, 'Header'].map(
+            lambda h: [constants.CAT_INSTALLATION]
+            if any(kw in h.lower() for kw in constants.INSTALLATION_HEADER_KEYWORDS)
+            else []
+        )
         # detection for os/platform headers that wordnet cannot handle correctly
         mask = df['Group'].str.len() == 0
         df.loc[mask, 'Group'] = df.loc[mask, 'Header'].map(
@@ -494,6 +510,7 @@ def extract_categories(repo_data: str, repository_metadata: Result, similarity_t
             if row[constants.PROP_PARENT_HEADER]:
                 result[constants.PROP_PARENT_HEADER] = row[constants.PROP_PARENT_HEADER]
 
+            confidence = calculate_header_confidence(row[constants.PROP_ORIGINAL_HEADER])
             if row['Group'] == constants.CAT_LICENSE:
                 license_text = row[constants.PROP_VALUE]
                 license_info = detect_license_spdx(license_text, 'HEADER')
@@ -507,7 +524,7 @@ def extract_categories(repo_data: str, repository_metadata: Result, similarity_t
             repository_metadata.add_result(
                 row['Group'],
                 result,
-                1,
+                confidence,
                 constants.TECHNIQUE_HEADER_ANALYSIS,
                 source,
             )
@@ -613,6 +630,15 @@ def build_wordnet_groups() -> Dict[str, List]:
     return g
 
 
+def calculate_header_confidence(header: str) -> float:
+    """Returns a confidence value based on the header length."""
+    num_words = len(header.split())
+    for max_words, confidence in constants.HEADER_CONFIDENCE_THRESHOLDS:
+        if num_words <= max_words:
+            return confidence
+    return 0.1
+  
+  
 def extract_os_from_content(text: str) -> List[dict]:
     """
     Scans a text block for mentions of operating systems, platforms or runtime

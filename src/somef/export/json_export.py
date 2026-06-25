@@ -53,10 +53,12 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
     if constants.CAT_CODE_REPOSITORY in repo_data:
         code_repository = repo_data[constants.CAT_CODE_REPOSITORY][0][constants.PROP_RESULT][constants.PROP_VALUE]
 
+    codemeta_output = {
+        "@context": "https://w3id.org/codemeta/3.0",
+        "@type": ["SoftwareSourceCode", "SoftwareApplication"]
+    }
+
     author_name = None
-    if constants.CAT_OWNER in repo_data:
-        author_name = repo_data[constants.CAT_OWNER][0][constants.PROP_RESULT][constants.PROP_VALUE]
-    
     # add a check for the existence of the 'description' property, similar way to most properties in the method.
     descriptions = None
     if constants.CAT_DESCRIPTION in repo_data:
@@ -94,10 +96,6 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
 
         descriptions_text = flat_descriptions
 
-    codemeta_output = {
-        "@context": "https://w3id.org/codemeta/3.0",
-        "@type": ["SoftwareSourceCode", "SoftwareApplication"]
-    }
     if constants.CAT_LICENSE in repo_data:
         # We mix the name of the license from github API with the URL of the file (if found)  
         l_result = {}
@@ -382,36 +380,47 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
     if constants.CAT_OWNER in repo_data:
             # if user then person, otherwise organization
             codemeta_authors = []
+            codemeta_owners = []
             for owner in repo_data[constants.CAT_OWNER]: 
                 result_owner = owner.get("result", {})
                 type_aux = repo_data[constants.CAT_OWNER][0][constants.PROP_RESULT][constants.PROP_TYPE]
                 if type_aux == "User":
                     type_aux = "Person"
 
-                author_obj = { "@type": type_aux }
-
-                if "name" in result_owner and result_owner[constants.PROP_AUTHOR_NAME]:
-                    author_obj[constants.PROP_AUTHOR_NAME] = result_owner[constants.PROP_AUTHOR_NAME]
-                if "value" in result_owner and result_owner[constants.PROP_VALUE]:
-                    author_obj[constants.PROP_IDENTIFIER] = result_owner[constants.PROP_VALUE]          
-                    author_obj["@id"] = "https://github.com/" + result_owner[constants.PROP_VALUE]
-                if "affiliation" in result_owner and result_owner[constants.PROP_AFFILIATION]:
-                    author_obj[constants.PROP_AFFILIATION] = result_owner[constants.PROP_AFFILIATION]
-                if "email" in result_owner and result_owner[constants.PROP_EMAIL]:
-                    author_obj[constants.PROP_EMAIL] = result_owner[constants.PROP_EMAIL]
-
-                existing = codemeta_output.get(constants.CAT_CODEMETA_AUTHOR, [])
-                if existing:
-                    if existing[0].get("@type") == author_obj.get("@type"):
-                        # ernich the existing author
-                        for key, val in author_obj.items():
-                            if key not in existing[0] or not existing[0][key]:
-                                existing[0][key] = val
+                if type_aux == "Organization":
+                    owner_obj = {"@type": "Organization"}
+                    if result_owner.get(constants.PROP_VALUE):
+                        owner_obj["name"] = result_owner.get(constants.PROP_VALUE)
+                    codemeta_owners.append(owner_obj)
                 else:
-                    codemeta_authors.append(author_obj)
+                    author_obj = { "@type": type_aux }
+
+                    if "name" in result_owner and result_owner[constants.PROP_AUTHOR_NAME]:
+                        author_obj[constants.PROP_AUTHOR_NAME] = result_owner[constants.PROP_AUTHOR_NAME]
+                    if "value" in result_owner and result_owner[constants.PROP_VALUE]:
+                        author_obj[constants.PROP_IDENTIFIER] = result_owner[constants.PROP_VALUE]          
+                        author_obj["@id"] = "https://github.com/" + result_owner[constants.PROP_VALUE]
+                    if "affiliation" in result_owner and result_owner[constants.PROP_AFFILIATION]:
+                        author_obj[constants.PROP_AFFILIATION] = result_owner[constants.PROP_AFFILIATION]
+                    if "email" in result_owner and result_owner[constants.PROP_EMAIL]:
+                        author_obj[constants.PROP_EMAIL] = result_owner[constants.PROP_EMAIL]
+
+                    existing = codemeta_output.get(constants.CAT_CODEMETA_AUTHOR, [])
+                    if existing:
+                        if existing[0].get("@type") == author_obj.get("@type"):
+                            # ernich the existing author
+                            for key, val in author_obj.items():
+                                if key not in existing[0] or not existing[0][key]:
+                                    existing[0][key] = val
+                    else:
+                        codemeta_authors.append(author_obj)
+
+            if codemeta_owners:
+                codemeta_output[constants.CAT_CODEMETA_OWNER] = codemeta_owners
 
             if codemeta_authors: 
                 codemeta_output[constants.CAT_CODEMETA_AUTHOR] = codemeta_authors
+                
     if constants.CAT_CITATION in repo_data:
         codemeta_output[constants.CAT_CODEMETA_REFERENCEPUBLICATION] = []
         credit_text_list = []
@@ -484,7 +493,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                 for author in authors:
                     family_name = author.get(constants.PROP_FAMILY_NAME)
                     given_name = author.get(constants.PROP_GIVEN_NAME)
-                    orcid = author.get("orcid")
+                    orcid = author.get("orcid") or author.get(constants.PROP_URL)
                     name = author.get(constants.PROP_NAME)
 
                     if family_name and given_name:
@@ -630,6 +639,15 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
     if constants.CAT_CONTRIBUTORS in repo_data:
         raw_contributors = repo_data[constants.CAT_CONTRIBUTORS]
         codemeta_output[constants.CAT_CODEMETA_CONTRIBUTOR] = parse_contributors(raw_contributors)
+
+    if constants.CAT_APPLICATION_DOMAIN in repo_data:
+        application_categories = []
+        for entry in repo_data[constants.CAT_APPLICATION_DOMAIN]:
+            value = entry[constants.PROP_RESULT][constants.PROP_VALUE]
+            if value not in application_categories:
+                application_categories.append(value)
+        if application_categories:
+            codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY] = application_categories
 
     if constants.CAT_FUNDING in repo_data:
         for funding_entry in repo_data[constants.CAT_FUNDING]:
