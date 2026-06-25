@@ -123,8 +123,33 @@ If you prefer to export as a [Codemeta](https://codemeta.github.io/) JSON-LD, ju
 somef describe -r https://github.com/dgarijo/Widoco/ -c test.json
 ```
 
-For more information about the output types supported by SOMEF, please see [the output format help page](https://somef.readthedocs.io/en/latest/output/).
+For more information about the output types supported by SOMEF, please see [the output format help page](https://somef.readthedocs.io/en/latest/output/). 
 
 We recommend having a high value for the `threshold` parameter, 0.8 (default) or above.
+
+## Configuration parameters
+
+SOMEF uses a configuration file located at `~/.somef/config.json` that can be edited to customize its behavior. 
+To generate it, run `somef configure`. The following parameters are available:
+
+### Similarity threshold
+
+Controls the minimum similarity score required for a README header to be matched to a 
+category (e.g., installation, usage, license). SOMEF uses WordNet path similarity to 
+compare header words against known category terms.
+
+- **Default value**: `0.8`
+- **Range**: `0.0` to `1.0` (higher values = stricter matching, lower values = more permissive)
+
+To change it, edit your `~/.somef/config.json`:
+
+```json
+{
+    "similarity_threshold": 0.75
+}
+```
+
+Note: This parameter is different from the `-t` threshold used in `somef describe`, 
+which controls the confidence of the supervised classifiers.
 
 To see a live usage example, try our Binder Notebook: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)

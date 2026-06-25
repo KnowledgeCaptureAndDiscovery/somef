@@ -17,8 +17,8 @@
     "owner": [
         {
             "result": {
-                "value": "juanjemdIos",
-                "type": "User"
+                "value": "KnowledgeCaptureAndDiscovery",
+                "type": "Organization"
             },
             "confidence": 1,
             "technique": "GitHub_API"

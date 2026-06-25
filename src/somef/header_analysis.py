@@ -9,12 +9,13 @@ from textblob import Word
 from .process_results import Result
 from .parser import mardown_parser
 from .utils import constants
+from .regular_expressions import detect_license_spdx
 from typing import Dict, Iterable, List, Tuple
 from functools import lru_cache
 pd.options.mode.chained_assignment = None  # default='warn'
 
 
-SIMILARITY_THRESHOLD = 0.8
+# SIMILARITY_THRESHOLD = 0.8
 
 
 # Define wordnet groups
@@ -203,7 +204,7 @@ def find_sim(wordlist, wd):
 #     return maxgroup
 
 
-def label_header(header):
+def label_header(header, similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD):
     """Function designed to label a header with a subgroup"""
     # remove punctuation
     header_clean = header.translate(str.maketrans('', '', string.punctuation))
@@ -213,13 +214,13 @@ def label_header(header):
         synn = Word(s).synsets 
         if len(synn) > 0:
             # bestgroup = match_group(synn, group, 0.8)
-            bestgroup = match_group(synn)
+            bestgroup = match_group(synn, similarity_threshold)
             if bestgroup != "" and bestgroup not in label:
                 label.append(bestgroup) 
     return label
 
 
-def label_parent_headers(parentHeaders):
+def label_parent_headers(parentHeaders, similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD):
     """label the header with a subgroup"""
     header = ""
     for value in parentHeaders:
@@ -232,7 +233,7 @@ def label_parent_headers(parentHeaders):
         synn = Word(s).synsets
         if len(synn) > 0:
             # bestgroup = match_group(synn, group, 0.8)
-            bestgroup = match_group(synn)
+            bestgroup = match_group(synn, similarity_threshold)
             if bestgroup != "" and bestgroup not in label:
                 label.append(bestgroup)
     return label
@@ -261,13 +262,14 @@ def get_groups() -> Dict[str, List]:
         WORDNET_GROUPS = build_wordnet_groups()
     return WORDNET_GROUPS
 
-def match_group(word_synsets) -> str:
+def match_group(word_synsets,similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD) -> str:
     best_group = ""
     best_score = 0.0
 
     for key, synsets in get_groups().items():
         score = max_similarity(word_synsets, synsets)
-        if score > SIMILARITY_THRESHOLD and score > best_score:
+        # if score > SIMILARITY_THRESHOLD and score > best_score:
+        if score > similarity_threshold and score > best_score:
             best_score = score
             best_group = key
 
@@ -286,7 +288,7 @@ def tokenize_header(text) -> Iterable[str]:
     clean = text.translate(str.maketrans('', '', string.punctuation)) 
     return clean.strip().split()
 
-def label_text(text: str) -> List[str]:
+def label_text(text: str, similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD) -> List[str]:
     labels: List[str] = []
 
     if isinstance(text, list):
@@ -297,7 +299,7 @@ def label_text(text: str) -> List[str]:
     for token in tokenize_header(text):
         synsets = get_synsets(token)
         if synsets:
-            grp = match_group(synsets)
+            grp = match_group(synsets, similarity_threshold )
             # Skip if the header matches a known false positive for this group
            
             # if isinstance(text, list):
@@ -327,11 +329,20 @@ def is_false_positive_header(text: str, category: str) -> bool:
 
     text_lower = text.lower()
 
+    if '?' in text or '!' in text:
+        return True
+    
     # false positives for bibliographic citations
     if category == constants.CAT_CITATION:
         for pattern in constants.NEGATIVE_PATTERNS_CITATION_HEADERS:
             if pattern in text_lower:
                 return True
+
+    if category in constants.MAX_HEADER_WORDS:
+        num_words = len(text.split())
+        if num_words > constants.MAX_HEADER_WORDS[category]:
+            return True
+        
     return False
 
 
@@ -410,7 +421,7 @@ def is_false_positive_header(text: str, category: str) -> bool:
 #         logging.error("Error while extracting headers: ", str(e))
 #         return repository_metadata, [repo_data]
 
-def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Result, List[str]]:
+def extract_categories(repo_data: str, repository_metadata: Result, similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD) -> Tuple[Result, List[str]]:
     logging.info("Extracting information using headers")
 
     if not repo_data:
@@ -423,12 +434,19 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
             logging.warning("File to analyze has no headers")
             return repository_metadata, [repo_data]
 
-        df['Group'] = df['Header'].map(label_text)
-        df['ParentGroup'] = df['ParentHeader'].fillna('').map(label_text)
+        df['Group'] = df['Header'].map(lambda x: label_text(x, similarity_threshold))
+        df['ParentGroup'] = df['ParentHeader'].fillna('').map(lambda x: label_text(x, similarity_threshold))
 
         df.loc[df['Group'].str.len() == 0, 'Group'] = df['ParentGroup']
         df = df.drop(columns=['ParentGroup'])
 
+        # Installation keywords that wordnet cannot handle correctly
+        mask = df['Group'].str.len() == 0
+        df.loc[mask, 'Group'] = df.loc[mask, 'Header'].map(
+            lambda h: [constants.CAT_INSTALLATION]
+            if any(kw in h.lower() for kw in constants.INSTALLATION_HEADER_KEYWORDS)
+            else []
+        )
         # detection for os/platform headers that wordnet cannot handle correctly
         mask = df['Group'].str.len() == 0
         df.loc[mask, 'Group'] = df.loc[mask, 'Header'].map(
@@ -450,7 +468,8 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
             'ParentHeader': constants.PROP_PARENT_HEADER,
         })
 
-        source = None
+        # source = None
+        source = ''
         if constants.CAT_README_URL in repository_metadata.results:
             source = repository_metadata.results[constants.CAT_README_URL][0]
             source = source[constants.PROP_RESULT][constants.PROP_VALUE]
@@ -491,10 +510,21 @@ def extract_categories(repo_data: str, repository_metadata: Result) -> Tuple[Res
             if row[constants.PROP_PARENT_HEADER]:
                 result[constants.PROP_PARENT_HEADER] = row[constants.PROP_PARENT_HEADER]
 
+            confidence = calculate_header_confidence(row[constants.PROP_ORIGINAL_HEADER])
+            if row['Group'] == constants.CAT_LICENSE:
+                license_text = row[constants.PROP_VALUE]
+                license_info = detect_license_spdx(license_text, 'HEADER')
+                if license_info:
+                    result[constants.PROP_TYPE] = constants.PROP_LICENSE
+                    result[constants.PROP_NAME] = license_info['name']
+                    result[constants.PROP_SPDX_ID] = license_info['spdx_id']
+                    result[constants.PROP_URL] = license_info.get('url', '')
+                    result[constants.PROP_VALUE] = license_info['spdx_id']
+
             repository_metadata.add_result(
                 row['Group'],
                 result,
-                1,
+                confidence,
                 constants.TECHNIQUE_HEADER_ANALYSIS,
                 source,
             )
@@ -600,6 +630,15 @@ def build_wordnet_groups() -> Dict[str, List]:
     return g
 
 
+def calculate_header_confidence(header: str) -> float:
+    """Returns a confidence value based on the header length."""
+    num_words = len(header.split())
+    for max_words, confidence in constants.HEADER_CONFIDENCE_THRESHOLDS:
+        if num_words <= max_words:
+            return confidence
+    return 0.1
+  
+  
 def extract_os_from_content(text: str) -> List[dict]:
     """
     Scans a text block for mentions of operating systems, platforms or runtime
