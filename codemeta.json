@@ -52,6 +52,11 @@
             "familyName": "Mendoza",
             "givenName": "Juanje",
             "@type": "Person"
+        },
+        {
+            "familyName": "Vuillaume",
+            "givenName": "Thomas",
+            "@type": "Person"
         }
     ],
     "codeRepository": "https://github.com/KnowledgeCaptureAndDiscovery/somef",
