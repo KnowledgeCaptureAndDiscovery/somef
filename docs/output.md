@@ -420,21 +420,6 @@ A more detailed explanation is provided in the [wiki](https://github.com/oeg-upm
 ```
 As shown in the Turtle snippet above, SOMEF represents the software as an entity, its relationship with each release (software version), the license found in the repository and the Person who owns it.
  -->
-## Codeberg API Crosswalk
-
-SOMEF now supports repositories hosted on Codeberg. 
-Metadata is extracted using the Codeberg (Forgejo) API. 
-For a detailed description of the API mapping, see 
-the [Codeberg platform documentation](codeberg.md).
-
-
-## Bitbucket API Crosswalk
-
-SOMEF now supports repositories hosted on Bitbucket Cloud.
-Metadata is extracted using the Bitbucket API v2.0. 
-For a detailed description of the API mapping, see 
-the [Bitbucket platform documentation](bitbucket.md).
-
 
 ## Citation Reconciliation
 
