@@ -18,6 +18,7 @@ CONF_INSTALLATION = "installation"
 CONF_CITATION = "citation"
 CONF_BASE_URI = "base_uri"
 CONF_DEFAULT_BASE_URI = "https://w3id.org/okn/i/"
+CONF_DOWNLOAD_LIMIT_MB = "download_limit_mb"
 
 __DEFAULT_SOMEF_CONFIGURATION_FILE__ = "~/.somef/config.json"
 
