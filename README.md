@@ -97,9 +97,12 @@ We use different supervised classifiers, header analysis, regular expressions, t
 
 ### Confidence values in header analysis
 
-When extracting metadata using header analysis, SOMEF assigns a confidence value based on the length 
-of the header. Shorter headers are more likely to be a good fit for a category, while longer headers 
-may contain additional context that makes the classification less reliable:
+When extracting metadata through header analysis, SOMEF filters out headers
+whose confidence is below a certain threshold to avoid false positives.
+For instance, a header with 11+ words receives a confidence of 0.1, which
+is considered too low for a reliable classification — such headers are
+discarded from the results. The filtering ensures that only headers with a
+reasonable match quality are reported in the output.
 
 | Header length | Confidence |
 |---------------|------------|
