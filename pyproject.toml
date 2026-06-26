@@ -44,7 +44,7 @@ homepage = "https://github.com/KnowledgeCaptureAndDiscovery/somef"
     scikit-learn = "1.5.0"
     pyyaml = "^6.0.2"
     lxml = "^6.1.1"
-    markdown-it-py = "^3.0"
+    markdown-it-py = ">=3,<5"
     
 [tool.poetry.scripts]
 somef = "somef.__main__:cli"
