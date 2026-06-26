@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 import sys
 import logging
+import base64
 
 from .utils import constants
 
@@ -50,13 +51,20 @@ def update_base_uri(base_uri):
             json.dump(data, fh)
 
 
-def configure(authorization="",
-              description=default_description,
-              invocation=default_invocation,
-              installation=default_installation,
-              citation=default_citation,
-              base_uri=constants.CONF_DEFAULT_BASE_URI,
-              similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD):
+def configure(
+        # authorization="",
+        github_authorization="",
+        gitlab_authorization="",
+        codeberg_authorization="",
+        bitbucket_authorization="",
+        bitbucket_email="",
+        description=default_description,
+        invocation=default_invocation,
+        installation=default_installation,
+        citation=default_citation,
+        base_uri=constants.CONF_DEFAULT_BASE_URI,
+        similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD):
+
     """ Function to configure the main program"""
     import nltk
     nltk.download('wordnet')
@@ -75,7 +83,7 @@ def configure(authorization="",
     #         data = json.load(fh)
     # else:
     data = {
-        constants.CONF_AUTHORIZATION: "token " + authorization,
+        # constants.CONF_AUTHORIZATION: "token " + authorization,
         constants.CONF_DESCRIPTION: description,
         constants.CONF_INVOCATION: invocation,
         constants.CONF_INSTALLATION: installation,
@@ -84,8 +92,32 @@ def configure(authorization="",
         constants.CONF_SIMILARITY_THRESHOLD: similarity_threshold
     }
 
-    if data[constants.CONF_AUTHORIZATION] == "token ":
-        del data[constants.CONF_AUTHORIZATION]
+    # if data[constants.CONF_AUTHORIZATION] == "token ":
+    #     del data[constants.CONF_AUTHORIZATION]
+
+    if github_authorization:
+        data[constants.CONF_GITHUB_AUTHORIZATION] = "token " + github_authorization
+
+    if gitlab_authorization:
+        token = gitlab_authorization
+        if not token.lower().startswith("bearer "):
+            token = "Bearer " + token
+        data[constants.CONF_GITLAB_AUTHORIZATION] = token
+
+    if codeberg_authorization:
+        token = codeberg_authorization
+        if not token.lower().startswith("token "):
+            token = "token " + token
+        data[constants.CONF_CODEBERG_AUTHORIZATION] = token
+
+
+    if bitbucket_authorization:
+        token = bitbucket_authorization
+        email = bitbucket_email  
+        if not token.lower().startswith("basic "):
+            raw = f"{email}:{token}"
+            token = "Basic " + base64.b64encode(raw.encode()).decode()
+        data[constants.CONF_BITBUCKET_AUTHORIZATION] = token
 
     with credentials_file.open("w") as fh:
         credentials_file.parent.chmod(0o700)

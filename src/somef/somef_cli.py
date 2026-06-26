@@ -6,6 +6,8 @@ import logging
 import os
 import tempfile
 import urllib.parse
+import requests 
+import base64
 
 from os import path
 from . import header_analysis, regular_expressions, process_repository, configuration, process_files, \
@@ -79,16 +81,24 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             url = urlparse(repo_url)
             servidor = url.netloc
             bGitLab = False
+            bCodeberg = False
+            bBitbucket = False
             if process_repository.is_gitlab(servidor):
                 logging.info(f"{servidor} is GitLab.")
-                bGitLab = True
-                # if reconcile_authors: 
-                #     logging.info("Author enrichment disabled: GitLab repositories are not supported for GitHub user enrichment.") 
-                #     reconcile_authors = False
-
-            logging.info(f"DEBUG: {servidor} is_gitlab = {bGitLab}")
-            if bGitLab:
                 repo_type = constants.RepositoryType.GITLAB
+                bGitLab = True
+                logging.info(f"DEBUG: {servidor} is_gitlab = {bGitLab}")
+            elif servidor == constants.CODEBERG_DOMAIN:
+                repo_type = constants.RepositoryType.CODEBERG
+                bCodeberg = True
+                logging.info(f"DEBUG: {servidor} is_codeberg = {bCodeberg}")
+            elif "bitbucket.org" in servidor:
+                repo_type = constants.RepositoryType.BITBUCKET
+                bBitbucket = True
+           
+
+            # if bGitLab:
+            #     repo_type = constants.RepositoryType.GITLAB
 
             logging.info("Processing repository metadata.")
             repository_metadata, owner, repo_name, def_branch, project_path = process_repository.load_online_repository_metadata(
@@ -267,7 +277,12 @@ def run_cli(*,
             requirements_mode="all",
             reconcile_authors=False,
             branch=None,
-            tag=None
+            tag=None,
+            github_token=None,
+            gitlab_token=None,
+            codeberg_token=None,
+            bitbucket_token=None,
+            bitbucket_email=None
             ):
     """Function to run all the required components of the cli for a repository"""
     # check if it is a valid url
@@ -297,11 +312,13 @@ def run_cli(*,
             #              urls_to_process]
             for repo_url in urls_to_process:
                 try:
+                    authorization = verify_and_resolve_token(
+                        repo_url, github_token, gitlab_token, codeberg_token, bitbucket_token, bitbucket_email)
                     encoded_url = urllib.parse.quote(repo_url, safe='')
                     encoded_url = encoded_url.replace(".","") #removing dots just in case
                     repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                              ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
-                                             keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, requirements_mode=requirements_mode, reconcile_authors=reconcile_authors,
+                                             keep_tmp=keep_tmp, authorization=authorization, ignore_test_folder=ignore_test_folder, requirements_mode=requirements_mode, reconcile_authors=reconcile_authors,
                                              branch=branch, tag=tag)
                     
                     if hasattr(repo_data, "get_json"): 
@@ -333,13 +350,15 @@ def run_cli(*,
 
     else:
         if repo_url:
+            authorization = verify_and_resolve_token(
+                repo_url, github_token, gitlab_token, codeberg_token, bitbucket_token, bitbucket_email)
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                      ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
-                                     keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors,
+                                     keep_tmp=keep_tmp, authorization=authorization, ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors,
                                      branch=branch, tag=tag)
         elif local_repo:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
-                                     local_repo=local_repo, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors,
+                                     local_repo=local_repo, keep_tmp=keep_tmp,  ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors,
                                      branch=branch, tag=tag)
         else:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
@@ -367,5 +386,70 @@ def run_cli(*,
             data_graph.somef_data_to_graph(repo_data.results)
 
         data_graph.export_to_file(graph_out, graph_format)
+
+
+def verify_and_resolve_token(repo_url, github_token, gitlab_token, codeberg_token, bitbucket_token, bitbucket_email):
+    if repo_url is None:
+        return None
+    
+    servidor = urlparse(repo_url).netloc
+
+    if process_repository.is_gitlab(servidor):
+        platform = "gitlab"
+    elif servidor == constants.CODEBERG_DOMAIN:
+        platform = "codeberg"
+    elif "bitbucket.org" in servidor:
+        platform = "bitbucket"
+    else:
+        platform = "github"
+
+    # Warnings if tokens not matching the platform of the repo
+    for p, flag in [("github", github_token), ("gitlab", gitlab_token),
+                    ("codeberg", codeberg_token), ("bitbucket", bitbucket_token)]:
+        if platform != p and flag is not None:
+            logging.warning(f"--{p}-token provided but repo is not on {p.capitalize()}. Ignoring token.")
+
+    authorization = None
+    verify_url = None
+    if platform == "github" and github_token is not None:
+        authorization = "token " + github_token
+        verify_url = "https://api.github.com/user"
+    elif platform == "gitlab" and gitlab_token is not None:
+        t = gitlab_token
+        if not t.lower().startswith("bearer "):
+            t = "Bearer " + t
+        authorization = t
+        verify_url = f"https://{servidor}/api/v4/user"
+    elif platform == "codeberg" and codeberg_token is not None:
+        authorization = "token " + codeberg_token
+        verify_url = "https://codeberg.org/api/v1/user"
+    elif platform == "bitbucket" and bitbucket_token is not None:
+        if not bitbucket_email:
+            logging.error("--bitbucket-email is required with --bitbucket-token.")
+            sys.exit(1)
+        raw = f"{bitbucket_email}:{bitbucket_token}"
+        authorization = "Basic " + base64.b64encode(raw.encode()).decode()
+        path_parts = [p for p in urlparse(repo_url).path.split('/') if p]
+        workspace = path_parts[0] if path_parts else ""
+        repo_slug = path_parts[1] if len(path_parts) > 1 else ""
+        verify_url = f"https://api.bitbucket.org/2.0/repositories/{workspace}/{repo_slug}"
+
+    if authorization is None:
+        return None
+
+    # verify
+    try:
+        resp = requests.get(verify_url, headers={constants.PROP_AUTHORIZATION: authorization}, timeout=10)
+        if resp.status_code == 401:
+            logging.error(f"{platform.capitalize()} token is invalid (401). "
+                          "Run `somef configure` or provide a correct token flag.")
+            # sys.exit(1)
+            return None 
+        elif resp.status_code == 403:
+            logging.warning(f"{platform.capitalize()} token lacks permissions (403). Proceeding anyway.")
+    except requests.RequestException as e:
+        logging.warning(f"Could not verify {platform} token: {e}. Proceeding anyway.")
+
+    return authorization
 
 

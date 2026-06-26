@@ -1,0 +1,261 @@
+[
+    {
+        "id": 9279765,
+        "tag_name": "v15.0.2",
+        "target_commitish": "",
+        "name": "v15.0.2",
+        "body": "See https://codeberg.org/forgejo/forgejo/src/branch/forgejo/release-notes-published/15.0.2.md",
+        "url": "https://codeberg.org/api/v1/repos/forgejo/forgejo/releases/9279765",
+        "html_url": "https://codeberg.org/forgejo/forgejo/releases/tag/v15.0.2",
+        "tarball_url": "https://codeberg.org/forgejo/forgejo/archive/v15.0.2.tar.gz",
+        "zipball_url": "https://codeberg.org/forgejo/forgejo/archive/v15.0.2.zip",
+        "hide_archive_links": false,
+        "upload_url": "https://codeberg.org/api/v1/repos/forgejo/forgejo/releases/9279765/assets",
+        "draft": false,
+        "prerelease": false,
+        "created_at": "2026-05-12T12:09:16+02:00",
+        "published_at": "2026-05-12T12:09:16+02:00",
+        "author": {
+            "id": 70541,
+            "login": "release-team",
+            "login_name": "",
+            "source_id": 0,
+            "full_name": "Forgejo Release Team",
+            "email": "release-team@noreply.codeberg.org",
+            "avatar_url": "https://codeberg.org/avatars/83623afe083e82955f79b2dfeea58bd9f34897fae0f6fd001bc282d3a40efc8b",
+            "html_url": "https://codeberg.org/release-team",
+            "language": "",
+            "is_admin": false,
+            "last_login": "0001-01-01T00:00:00Z",
+            "created": "2022-11-07T10:25:48+01:00",
+            "restricted": false,
+            "active": false,
+            "prohibit_login": false,
+            "location": "",
+            "pronouns": "",
+            "website": "https://codeberg.org/forgejo/forgejo",
+            "description": "Account for publishing Forgejo releases using the Forgejo CI",
+            "visibility": "public",
+            "followers_count": 16,
+            "following_count": 0,
+            "starred_repos_count": 0,
+            "username": "release-team"
+        },
+        "assets": [
+            {
+                "id": 1404560,
+                "name": "forgejo-15.0.2-linux-amd64",
+                "size": 0,
+                "download_count": 0,
+                "created_at": "2026-06-03T14:03:49+02:00",
+                "uuid": "4ba17d97-2885-4c38-a5cc-7c9a7f8be084",
+                "browser_download_url": "https://code.forgejo.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-amd64",
+                "type": "external"
+            },
+            {
+                "id": 1291356,
+                "name": "forgejo-15.0.2-linux-amd64.asc",
+                "size": 228,
+                "download_count": 1261,
+                "created_at": "2026-05-12T12:09:19+02:00",
+                "uuid": "4c7724d9-d9d4-41fc-9758-e2abf194fd61",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-amd64.asc",
+                "type": "attachment"
+            },
+            {
+                "id": 1291359,
+                "name": "forgejo-15.0.2-linux-amd64.sha256",
+                "size": 93,
+                "download_count": 6882,
+                "created_at": "2026-05-12T12:09:20+02:00",
+                "uuid": "814194b6-26ee-4ce8-aa58-e9b854f0ef40",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-amd64.sha256",
+                "type": "attachment"
+            },
+            {
+                "id": 1404536,
+                "name": "forgejo-15.0.2-linux-amd64.xz",
+                "size": 33843308,
+                "download_count": 68,
+                "created_at": "2026-06-03T13:57:40+02:00",
+                "uuid": "de77717e-973e-44aa-847f-37b5bdc9c0dc",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-amd64.xz",
+                "type": "attachment"
+            },
+            {
+                "id": 1291365,
+                "name": "forgejo-15.0.2-linux-amd64.xz.asc",
+                "size": 228,
+                "download_count": 158,
+                "created_at": "2026-05-12T12:09:21+02:00",
+                "uuid": "9d6858ef-6b0b-44c3-931f-e643448d71e2",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-amd64.xz.asc",
+                "type": "attachment"
+            },
+            {
+                "id": 1291368,
+                "name": "forgejo-15.0.2-linux-amd64.xz.sha256",
+                "size": 96,
+                "download_count": 251,
+                "created_at": "2026-05-12T12:09:22+02:00",
+                "uuid": "7e553e73-d979-4bd6-9b08-d1f0c14446c4",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-amd64.xz.sha256",
+                "type": "attachment"
+            },
+            {
+                "id": 1404557,
+                "name": "forgejo-15.0.2-linux-arm-6",
+                "size": 0,
+                "download_count": 0,
+                "created_at": "2026-06-03T14:03:49+02:00",
+                "uuid": "5fd81cd6-8afe-470b-9705-53a2b19908b2",
+                "browser_download_url": "https://code.forgejo.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-arm-6",
+                "type": "external"
+            },
+            {
+                "id": 1291374,
+                "name": "forgejo-15.0.2-linux-arm-6.asc",
+                "size": 228,
+                "download_count": 18,
+                "created_at": "2026-05-12T12:09:25+02:00",
+                "uuid": "c5cf70db-8b76-4ddb-aebf-9a08164a7d88",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-arm-6.asc",
+                "type": "attachment"
+            },
+            {
+                "id": 1291377,
+                "name": "forgejo-15.0.2-linux-arm-6.sha256",
+                "size": 93,
+                "download_count": 21,
+                "created_at": "2026-05-12T12:09:25+02:00",
+                "uuid": "51a849fa-543a-456b-81f0-70d2b54c08ac",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-arm-6.sha256",
+                "type": "attachment"
+            },
+            {
+                "id": 1404542,
+                "name": "forgejo-15.0.2-linux-arm-6.xz",
+                "size": 30797300,
+                "download_count": 1,
+                "created_at": "2026-06-03T13:59:10+02:00",
+                "uuid": "4bfb8fad-8795-4da2-acb3-121bbec2aa8c",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-arm-6.xz",
+                "type": "attachment"
+            },
+            {
+                "id": 1291383,
+                "name": "forgejo-15.0.2-linux-arm-6.xz.asc",
+                "size": 228,
+                "download_count": 16,
+                "created_at": "2026-05-12T12:09:26+02:00",
+                "uuid": "2f3e578d-6fef-4335-9ca0-e5c61432d836",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-arm-6.xz.asc",
+                "type": "attachment"
+            },
+            {
+                "id": 1291386,
+                "name": "forgejo-15.0.2-linux-arm-6.xz.sha256",
+                "size": 96,
+                "download_count": 19,
+                "created_at": "2026-05-12T12:09:27+02:00",
+                "uuid": "4ef9e8fc-8a72-4f0c-8133-2ce6042c0159",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-arm-6.xz.sha256",
+                "type": "attachment"
+            },
+            {
+                "id": 1404563,
+                "name": "forgejo-15.0.2-linux-arm64",
+                "size": 0,
+                "download_count": 0,
+                "created_at": "2026-06-03T14:03:49+02:00",
+                "uuid": "c3e8726e-087a-415d-bc73-4a9630f83c19",
+                "browser_download_url": "https://code.forgejo.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-arm64",
+                "type": "external"
+            },
+            {
+                "id": 1291392,
+                "name": "forgejo-15.0.2-linux-arm64.asc",
+                "size": 228,
+                "download_count": 118,
+                "created_at": "2026-05-12T12:09:30+02:00",
+                "uuid": "ce472907-e213-41a1-bc58-c9998737cce4",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-arm64.asc",
+                "type": "attachment"
+            },
+            {
+                "id": 1291395,
+                "name": "forgejo-15.0.2-linux-arm64.sha256",
+                "size": 93,
+                "download_count": 165,
+                "created_at": "2026-05-12T12:09:30+02:00",
+                "uuid": "df1a91a9-1c94-4545-bd35-710f87e695ad",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-arm64.sha256",
+                "type": "attachment"
+            },
+            {
+                "id": 1404539,
+                "name": "forgejo-15.0.2-linux-arm64.xz",
+                "size": 30275260,
+                "download_count": 6,
+                "created_at": "2026-06-03T13:59:10+02:00",
+                "uuid": "e7ef71c6-93a2-44ff-8af0-c07ba4d12a01",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-arm64.xz",
+                "type": "attachment"
+            },
+            {
+                "id": 1291401,
+                "name": "forgejo-15.0.2-linux-arm64.xz.asc",
+                "size": 228,
+                "download_count": 44,
+                "created_at": "2026-05-12T12:09:32+02:00",
+                "uuid": "6f0b2d62-1a06-4bc2-bb4d-2d632a6b68e4",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-arm64.xz.asc",
+                "type": "attachment"
+            },
+            {
+                "id": 1291404,
+                "name": "forgejo-15.0.2-linux-arm64.xz.sha256",
+                "size": 96,
+                "download_count": 84,
+                "created_at": "2026-05-12T12:09:32+02:00",
+                "uuid": "a6b6e43d-0e40-4ff5-bf8d-f0793658b90a",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-15.0.2-linux-arm64.xz.sha256",
+                "type": "attachment"
+            },
+            {
+                "id": 1404545,
+                "name": "forgejo-src-15.0.2.tar.gz",
+                "size": 49711959,
+                "download_count": 20,
+                "created_at": "2026-06-03T14:00:54+02:00",
+                "uuid": "45465223-70f5-4705-9289-c2d5fe7d269c",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-src-15.0.2.tar.gz",
+                "type": "attachment"
+            },
+            {
+                "id": 1291410,
+                "name": "forgejo-src-15.0.2.tar.gz.asc",
+                "size": 228,
+                "download_count": 42,
+                "created_at": "2026-05-12T12:09:34+02:00",
+                "uuid": "6db70858-d902-4d68-8bf2-10359c325599",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-src-15.0.2.tar.gz.asc",
+                "type": "attachment"
+            },
+            {
+                "id": 1291413,
+                "name": "forgejo-src-15.0.2.tar.gz.sha256",
+                "size": 92,
+                "download_count": 36,
+                "created_at": "2026-05-12T12:09:34+02:00",
+                "uuid": "5e710ccf-62f2-499e-96e9-f4833eaa9c72",
+                "browser_download_url": "https://codeberg.org/forgejo/forgejo/releases/download/v15.0.2/forgejo-src-15.0.2.tar.gz.sha256",
+                "type": "attachment"
+            }
+        ],
+        "archive_download_count": {
+            "zip": 224,
+            "tar_gz": 363
+        }
+    }
+]
