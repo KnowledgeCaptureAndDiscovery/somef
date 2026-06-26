@@ -52,7 +52,8 @@ class TestBitbucketRepository(unittest.TestCase):
         # this repo has not releases
         self.assertIn(constants.CAT_RELEASES, result.results)
         self.assertEqual(len(result.results[constants.CAT_RELEASES]), 1)
-        self.assertEqual(result.results[constants.CAT_RELEASES][0]["result"]["value"], "v1.0")
+        # print(result.results[constants.CAT_RELEASES])
+        self.assertEqual(result.results[constants.CAT_RELEASES][0]["result"]["value"], "0.0.0-5-10-0-SNAPSHOT-002-epic-AUI-4224-skate-responsive-header")
         self.assertEqual(owner, "bitbucketpipelines")
         self.assertEqual(repo_name, "pipelines-guide-python")
         self.assertEqual(branch, "master")

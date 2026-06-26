@@ -1,14 +1,81 @@
 {
   "values": [
     {
-      "name": "v1.0",
-      "links": {
-        "self": {"href": "https://api.bitbucket.org/2.0/repositories/bitbucketpipelines/pipelines-guide-python/refs/tags/v1.0"},
-        "html": {"href": "https://bitbucket.org/bitbucketpipelines/pipelines-guide-python/src/v1.0"}
+      "name": "0.0.0-5-10-0-SNAPSHOT-002-epic-AUI-4224-skate-responsive-header",
+      "type": "tag",
+      "message": "Release 0.0.0-5-10-0-SNAPSHOT-002-epic-AUI-4224-skate-responsive-header.\n",
+      "date": "2016-06-15T06:37:45+00:00",
+      "tagger": {
+        "type": "author",
+        "raw": "bambooagent <build-agent@atlassian.com>",
+        "user": {
+          "display_name": "Build Agent",
+          "links": {
+            "self": {"href": "https://api.bitbucket.org/2.0/users/%7Bf87c782c-77b3-4ad7-bfb2-1054b759bd5f%7D"},
+            "avatar": {"href": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/BA-4.png"},
+            "html": {"href": "https://bitbucket.org/%7Bf87c782c-77b3-4ad7-bfb2-1054b759bd5f%7D/"}
+          },
+          "type": "user",
+          "uuid": "{f87c782c-77b3-4ad7-bfb2-1054b759bd5f}",
+          "account_id": "557057:2ff479f7-af2d-45d0-aaaf-94d454f548f7",
+          "nickname": "bamboo_hg_user"
+        }
       },
       "target": {
         "type": "commit",
-        "hash": "abc123def456"
+        "hash": "427be59da7b7323591364a1efe3bb681fb3cd4b9",
+        "date": "2016-06-15T06:37:44+00:00",
+        "author": {
+          "type": "author",
+          "raw": "bambooagent <build-agent@atlassian.com>",
+          "user": {
+            "display_name": "Build Agent",
+            "links": {
+              "self": {"href": "https://api.bitbucket.org/2.0/users/%7Bf87c782c-77b3-4ad7-bfb2-1054b759bd5f%7D"},
+              "avatar": {"href": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/BA-4.png"},
+              "html": {"href": "https://bitbucket.org/%7Bf87c782c-77b3-4ad7-bfb2-1054b759bd5f%7D/"}
+            },
+            "type": "user",
+            "uuid": "{f87c782c-77b3-4ad7-bfb2-1054b759bd5f}",
+            "account_id": "557057:2ff479f7-af2d-45d0-aaaf-94d454f548f7",
+            "nickname": "bamboo_hg_user"
+          }
+        },
+        "message": "0.0.0-5-10-0-SNAPSHOT-002-epic-AUI-4224-skate-responsive-header\n",
+        "parents": [
+          {
+            "hash": "8535751e4890bde895e327cd52b0c336fb4946d5",
+            "type": "commit",
+            "links": {
+              "self": {"href": "https://api.bitbucket.org/2.0/repositories/atlassian/aui/commit/8535751e4890bde895e327cd52b0c336fb4946d5"},
+              "html": {"href": "https://bitbucket.org/atlassian/aui/commits/8535751e4890bde895e327cd52b0c336fb4946d5"}
+            }
+          }
+        ],
+        "repository": {
+          "type": "repository",
+          "full_name": "atlassian/aui",
+          "name": "aui",
+          "uuid": "{585074de-7b60-4fd1-81ed-e0bc7fafbda5}",
+          "links": {
+            "self": {"href": "https://api.bitbucket.org/2.0/repositories/atlassian/aui"},
+            "html": {"href": "https://bitbucket.org/atlassian/aui"},
+            "avatar": {"href": "https://bytebucket.org/ravatar/%7B585074de-7b60-4fd1-81ed-e0bc7fafbda5%7D?ts=86317"}
+          }
+        },
+        "links": {
+          "self": {"href": "https://api.bitbucket.org/2.0/repositories/atlassian/aui/commit/427be59da7b7323591364a1efe3bb681fb3cd4b9"},
+          "html": {"href": "https://bitbucket.org/atlassian/aui/commits/427be59da7b7323591364a1efe3bb681fb3cd4b9"},
+          "diff": {"href": "https://api.bitbucket.org/2.0/repositories/atlassian/aui/diff/427be59da7b7323591364a1efe3bb681fb3cd4b9"},
+          "approve": {"href": "https://api.bitbucket.org/2.0/repositories/atlassian/aui/commit/427be59da7b7323591364a1efe3bb681fb3cd4b9/approve"},
+          "comments": {"href": "https://api.bitbucket.org/2.0/repositories/atlassian/aui/commit/427be59da7b7323591364a1efe3bb681fb3cd4b9/comments"},
+          "patch": {"href": "https://api.bitbucket.org/2.0/repositories/atlassian/aui/patch/427be59da7b7323591364a1efe3bb681fb3cd4b9"}
+        }
+      },
+      "links": {
+        "self": {"href": "https://api.bitbucket.org/2.0/repositories/atlassian/aui/refs/tags/0.0.0-5-10-0-SNAPSHOT-002-epic-AUI-4224-skate-responsive-header"},
+        "commits": {"href": "https://api.bitbucket.org/2.0/repositories/atlassian/aui/commits/0.0.0-5-10-0-SNAPSHOT-002-epic-AUI-4224-skate-responsive-header"},
+        "html": {"href": "https://bitbucket.org/atlassian/aui/commits/tag/0.0.0-5-10-0-SNAPSHOT-002-epic-AUI-4224-skate-responsive-header"}
       }
     }
   ],
