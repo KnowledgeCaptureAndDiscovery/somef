@@ -73,7 +73,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `code_of_conduct`: Link to the code of conduct file of the project
 - `code_repository`: Link to the source code (typically the repository where the readme can be found)
 - `contact`: Contact person responsible for maintaining a software component.
-- `continuous_integration`: Link to continuous integration service, supported on GitHub as well as in GitLab.
+- `continuous_integration`: Link to continuous integration service, supported on GitHub as well as in GitLab, Codeberg and Bitbucket.
 - `contributing guidelines`: Guidelines indicating how to contribute to a software component.
 - `contributor`: Contributors to this software. Note: Contributor metadata is exported from metadata files (e.g., CodeMeta, CONTRIBUTORS, etc.) not from git logs.
 - `copyright_holder`: Entity or individual owning the rights to the software. The year is also extracted, if available.
@@ -183,7 +183,7 @@ Depending on the `type` of the result, additional properties may be found.
 
 The following object `types` are currently supported:
 
-- `Release`: software releases of the current code repository, as available from GitHub.
+- `Release`: software releases of the current code repository, as available from GitHub, GitLab and Codeberg
 - `Programming_language`: Programming language used in the repository. 
 - `License`: object representing all the metadata SOMEF extracts from a license.
 - `Agent`: user (typically, a person) or organization responsible for authoring a software release or a paper.
@@ -333,6 +333,8 @@ The techniques can be of several types:
 - `file_exploration`: the result comes from an exploration of the files in the repository
 - `GitHub_API`: the result was obtained from the GitHub API.
 - `GitLab_API`: the result was obtained from the GitLab API.
+- `Codeberg_API`: the result was obtained from the Codeberg API.
+- `Bitbucket_API`: the result was obtained from the Bitbucket API.
 - `regular_expression`: the result was obtained after performing regular expressions on the files in the repository.
 - `software_type_heuristics`: the result was obtained from analysis of the repository based on various heuristics from the README, code and extension analysis. 
 - `supervised_classification`: the results were obtained after running text classifiers trained for detecting that type of header.
