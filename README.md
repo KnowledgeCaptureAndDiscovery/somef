@@ -276,7 +276,7 @@ And you will be asked to provide the following:
 
 - A download size limit in MB [**optional, default 200**]. SOMEF skips repository archives larger than this limit. Increase it if you need to process large repositories. You can also override it with the `--download-limit` parameter in the `describe` command.
 
-If you want somef to be automatically configured (without GitHUb authentication key and using the default classifiers) just type:
+If you want SOMEF to be automatically configured (without any tokens and using the default classifiers) just type:
 
 ```bash
 somef configure -a
