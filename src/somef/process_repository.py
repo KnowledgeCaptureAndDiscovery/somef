@@ -39,11 +39,19 @@ def is_gitlab(gitlab_server):
     return False
 
 # the same as requests.get(args).json(), but protects against rate limiting
-def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=constants.SIZE_DOWNLOAD_LIMIT_MB, **kwargs):
+def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=None, **kwargs):
 # def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
     """Function to obtain how many requests we have pending with the repository API"""
 
     """GET request that handles rate limiting and prevents downloading excessively large files"""
+
+    if size_limit_mb is None:
+        try:
+            config = configuration.get_configuration_file()
+            size_limit_mb = config.get(constants.CONF_DOWNLOAD_LIMIT_MB, constants.SIZE_DOWNLOAD_LIMIT_MB)
+        except Exception:
+            size_limit_mb = constants.SIZE_DOWNLOAD_LIMIT_MB
+
     size_limit_bytes = size_limit_mb * 1024 * 1024
     url = args[0] if args else kwargs.get("url")
     if not url:
@@ -428,7 +436,7 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url, autho
 
 
 
-def download_gitlab_files(directory, owner, repo_name, repo_branch, repo_ref, authorization=None):
+def download_gitlab_files(directory, owner, repo_name, repo_branch, repo_ref, authorization=None, download_limit=None):
     """
     Download all repository files from a GitLab repository
     Parameters
@@ -458,7 +466,10 @@ def download_gitlab_files(directory, owner, repo_name, repo_branch, repo_ref, au
     )
 
     logging.info(f"Downloading {repo_archive_url}")
-    repo_download = requests.get(repo_archive_url, headers=gitlab_header_template(authorization))
+    repo_download, _ = rate_limit_get(repo_archive_url, headers=gitlab_header_template(authorization), size_limit_mb=download_limit)
+    if repo_download is None:
+        logging.warning(f"Repository archive skipped due to size limit: {constants.SIZE_DOWNLOAD_LIMIT_MB} MB")
+        return None
     repo_zip = repo_download.content
 
     repo_zip_file = os.path.join(directory, "repo.zip")
@@ -812,7 +823,7 @@ def do_crosswalk(data, crosswalk_table):
 
 
 def download_repository_files(owner, repo_name, default_branch, repo_type, target_dir, repo_ref=None,
-                              authorization=None):
+                              authorization=None, download_limit=None):
     """
     Given a repository, this method will download its files and return the readme text
     Parameters
@@ -832,19 +843,19 @@ def download_repository_files(owner, repo_name, default_branch, repo_type, targe
     """
 
     if repo_type == constants.RepositoryType.GITHUB:
-        return download_github_files(target_dir, owner, repo_name, default_branch, authorization)
+        return download_github_files(target_dir, owner, repo_name, default_branch, authorization, download_limit)
     elif repo_type == constants.RepositoryType.GITLAB:
-        return download_gitlab_files(target_dir, owner, repo_name, default_branch, repo_ref, authorization)
+        return download_gitlab_files(target_dir, owner, repo_name, default_branch, repo_ref, authorization,download_limit)
     elif repo_type == constants.RepositoryType.CODEBERG:
-        return download_codeberg_files(target_dir, owner, repo_name, default_branch, authorization)
+        return download_codeberg_files(target_dir, owner, repo_name, default_branch, authorization, download_limit)
     elif repo_type == constants.RepositoryType.BITBUCKET:
-        return download_bitbucket_files(target_dir, owner, repo_name, default_branch, authorization)
+        return download_bitbucket_files(target_dir, owner, repo_name, default_branch, authorization, download_limit)
     else:
         logging.error("Cannot download files from a local repository!")
         return None
 
 
-def download_github_files(directory, owner, repo_name, repo_ref, authorization):
+def download_github_files(directory, owner, repo_name, repo_ref, authorization, download_limit=None):
     """
     Download all repository files from a GitHub repository.
 
@@ -882,6 +893,7 @@ def download_github_files(directory, owner, repo_name, repo_ref, authorization):
     # works for the vast majority of repos and avoids an extra HTTP round-trip.  When
     # that returns 300 (ambiguous ref) or 404 (ref not found), we escalate to the
     # fully-qualified refs/heads/ and refs/tags/ forms before falling back to main.
+
     candidate_urls = [
         f"https://github.com/{owner}/{repo_name}/archive/{repo_ref}.zip",
         f"https://github.com/{owner}/{repo_name}/archive/refs/heads/{repo_ref}.zip",
@@ -892,7 +904,7 @@ def download_github_files(directory, owner, repo_name, repo_ref, authorization):
     repo_archive_url = None
     for repo_archive_url in candidate_urls:
         logging.info(f"Downloading {repo_archive_url}")
-        repo_download, date = rate_limit_get(repo_archive_url, headers=header_template(authorization))
+        repo_download, date = rate_limit_get(repo_archive_url, headers=header_template(authorization),size_limit_mb=download_limit)
         if repo_download is None:
             # Size limit exceeded or streaming error — no point trying other URLs
             logging.warning(
@@ -1250,7 +1262,7 @@ def load_codeberg_repository_metadata(repo_metadata: Result, repository_url, aut
     return repo_metadata, owner, repo_name, default_branch, "/".join(path_components)
 
 
-def download_codeberg_files(directory, owner, repo_name, repo_branch,authorization=None):
+def download_codeberg_files(directory, owner, repo_name, repo_branch, authorization=None, download_limit=None):
     """
     Download all repository files from a Codeberg repository.
     """
@@ -1259,7 +1271,10 @@ def download_codeberg_files(directory, owner, repo_name, repo_branch,authorizati
 
     headers = codeberg_header_template(authorization)
 
-    repo_download, _ = rate_limit_get(repo_archive_url, headers=headers)
+    repo_download, _ = rate_limit_get(repo_archive_url, headers=headers, size_limit_mb=download_limit)
+    if repo_download is None:
+        logging.warning(f"Repository archive skipped due to size limit: {constants.SIZE_DOWNLOAD_LIMIT_MB} MB or no content-length")
+        return None
     if repo_download.status_code != 200:
         logging.error(f"Error downloading Codeberg archive: HTTP {repo_download.status_code}")
         return None
@@ -1419,12 +1434,12 @@ def load_bitbucket_repository_metadata(repo_metadata: Result, repository_url, au
     return repo_metadata, owner, repo_name, default_branch, "/".join(path_components)
 
 
-def download_bitbucket_files(directory, owner, repo_name, repo_branch, authorization=None):
+def download_bitbucket_files(directory, owner, repo_name, repo_branch, authorization=None,download_limit=None):
     repo_archive_url = f"https://bitbucket.org/{owner}/{repo_name}/get/{repo_branch}.zip"
     logging.info(f"Downloading {repo_archive_url}")
 
     headers = bitbucket_header_template(authorization)
-    repo_download, _ = rate_limit_get(repo_archive_url, headers=headers)
+    repo_download, _ = rate_limit_get(repo_archive_url, headers=headers, size_limit_mb=download_limit)
     if repo_download is None:
         logging.warning(f"Repository archive skipped due to size limit: {constants.SIZE_DOWNLOAD_LIMIT_MB} MB or no content-length")
         return None

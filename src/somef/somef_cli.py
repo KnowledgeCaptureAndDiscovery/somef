@@ -23,7 +23,7 @@ from urllib.parse import urlparse, quote
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
                  ignore_github_metadata=False, readme_only=False, keep_tmp=None, authorization=None,
-                 ignore_test_folder=True,requirements_mode='all', reconcile_authors=False, branch=None, tag=None) -> Result:
+                 ignore_test_folder=True,requirements_mode='all', reconcile_authors=False, branch=None, tag=None, download_limit= None) -> Result:
     """
     Main function to get the data through the command line
     Parameters
@@ -121,7 +121,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             elif keep_tmp is not None:  # save downloaded files locally
                 os.makedirs(keep_tmp, exist_ok=True)
                 local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
-                                                                            keep_tmp, repo_url, authorization)
+                                                                            keep_tmp, repo_url, authorization, download_limit)
                 if local_folder is not None:
                     readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
                                                                                                repository_metadata,
@@ -139,7 +139,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
               
                 with tempfile.TemporaryDirectory() as temp_dir:
                     local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
-                                                                                temp_dir, repo_url, authorization)
+                                                                                temp_dir, repo_url, authorization, download_limit)
                     if local_folder is not None:
                         readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
                                                                                                     repository_metadata,
@@ -282,7 +282,8 @@ def run_cli(*,
             gitlab_token=None,
             codeberg_token=None,
             bitbucket_token=None,
-            bitbucket_email=None
+            bitbucket_email=None,
+            download_limit=None 
             ):
     """Function to run all the required components of the cli for a repository"""
     # check if it is a valid url
@@ -318,8 +319,9 @@ def run_cli(*,
                     encoded_url = encoded_url.replace(".","") #removing dots just in case
                     repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                              ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
-                                             keep_tmp=keep_tmp, authorization=authorization, ignore_test_folder=ignore_test_folder, requirements_mode=requirements_mode, reconcile_authors=reconcile_authors,
-                                             branch=branch, tag=tag)
+                                            keep_tmp=keep_tmp, authorization=authorization, ignore_test_folder=ignore_test_folder,
+                                            requirements_mode=requirements_mode, reconcile_authors=reconcile_authors,
+                                            branch=branch, tag=tag, download_limit=download_limit)
                     
                     if hasattr(repo_data, "get_json"): 
                         repo_data = repo_data.get_json()
@@ -355,15 +357,15 @@ def run_cli(*,
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                      ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
                                      keep_tmp=keep_tmp, authorization=authorization, ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors,
-                                     branch=branch, tag=tag)
+                                     branch=branch, tag=tag, download_limit=download_limit)
         elif local_repo:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
                                      local_repo=local_repo, keep_tmp=keep_tmp,  ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors,
-                                     branch=branch, tag=tag)
+                                     branch=branch, tag=tag, download_limit=download_limit)
         else:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
                                      doc_src=doc_src, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors,
-                                     branch=branch, tag=tag)
+                                     branch=branch, tag=tag, download_limit= download_limit)
         
         if hasattr(repo_data, "get_json"): 
             repo_data = repo_data.get_json()
