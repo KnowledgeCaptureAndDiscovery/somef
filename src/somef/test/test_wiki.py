@@ -38,6 +38,7 @@ class TestWiki(unittest.TestCase):
 
         os.remove(json_file_path)
 
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI: prone to rate limiting failures")
     def test_wiki_without_content(self):
         """Checks if codemeta file has been exported with wiki content"""
         somef_cli.run_cli(threshold=0.8,

@@ -1,0 +1,127 @@
+{
+    "type": "repository",
+    "full_name": "bitbucketpipelines/pipelines-guide-python",
+    "links": {
+        "self": {
+            "href": "https://api.bitbucket.org/2.0/repositories/bitbucketpipelines/pipelines-guide-python"
+        },
+        "html": {
+            "href": "https://bitbucket.org/bitbucketpipelines/pipelines-guide-python"
+        },
+        "avatar": {
+            "href": "https://bytebucket.org/ravatar/%7Bcfe0b566-69b6-44a1-a3cf-c124a7ce0f24%7D?ts=python"
+        },
+        "pullrequests": {
+            "href": "https://api.bitbucket.org/2.0/repositories/bitbucketpipelines/pipelines-guide-python/pullrequests"
+        },
+        "commits": {
+            "href": "https://api.bitbucket.org/2.0/repositories/bitbucketpipelines/pipelines-guide-python/commits"
+        },
+        "forks": {
+            "href": "https://api.bitbucket.org/2.0/repositories/bitbucketpipelines/pipelines-guide-python/forks"
+        },
+        "watchers": {
+            "href": "https://api.bitbucket.org/2.0/repositories/bitbucketpipelines/pipelines-guide-python/watchers"
+        },
+        "branches": {
+            "href": "https://api.bitbucket.org/2.0/repositories/bitbucketpipelines/pipelines-guide-python/refs/branches"
+        },
+        "tags": {
+            "href": "https://api.bitbucket.org/2.0/repositories/bitbucketpipelines/pipelines-guide-python/refs/tags"
+        },
+        "downloads": {
+            "href": "https://api.bitbucket.org/2.0/repositories/bitbucketpipelines/pipelines-guide-python/downloads"
+        },
+        "source": {
+            "href": "https://api.bitbucket.org/2.0/repositories/bitbucketpipelines/pipelines-guide-python/src"
+        },
+        "clone": [
+            {
+                "name": "https",
+                "href": "https://bitbucket.org/bitbucketpipelines/pipelines-guide-python.git"
+            },
+            {
+                "name": "ssh",
+                "href": "git@bitbucket.org:bitbucketpipelines/pipelines-guide-python.git"
+            }
+        ],
+        "hooks": {
+            "href": "https://api.bitbucket.org/2.0/repositories/bitbucketpipelines/pipelines-guide-python/hooks"
+        }
+    },
+    "name": "pipelines-guide-python",
+    "slug": "pipelines-guide-python",
+    "description": "This is an example repo showing pipelines with python",
+    "scm": "git",
+    "website": "",
+    "owner": {
+        "display_name": "Bitbucket Pipelines",
+        "links": {
+            "self": {
+                "href": "https://api.bitbucket.org/2.0/workspaces/%7Bb2919ebc-eb34-4395-b60f-cd937aaa001c%7D"
+            },
+            "avatar": {
+                "href": "https://bitbucket.org/account/bitbucketpipelines/avatar/"
+            },
+            "html": {
+                "href": "https://bitbucket.org/%7Bb2919ebc-eb34-4395-b60f-cd937aaa001c%7D/"
+            }
+        },
+        "type": "team",
+        "uuid": "{b2919ebc-eb34-4395-b60f-cd937aaa001c}",
+        "username": "bitbucketpipelines"
+    },
+    "workspace": {
+        "type": "workspace",
+        "uuid": "{b2919ebc-eb34-4395-b60f-cd937aaa001c}",
+        "name": "Bitbucket Pipelines",
+        "slug": "bitbucketpipelines",
+        "links": {
+            "avatar": {
+                "href": "https://bitbucket.org/workspaces/bitbucketpipelines/avatar/?ts=1569518620"
+            },
+            "html": {
+                "href": "https://bitbucket.org/bitbucketpipelines/"
+            },
+            "self": {
+                "href": "https://api.bitbucket.org/2.0/workspaces/bitbucketpipelines"
+            }
+        }
+    },
+    "is_private": false,
+    "project": {
+        "type": "project",
+        "key": "DOC",
+        "uuid": "{92800567-05cc-4bbd-8485-114b0e689717}",
+        "name": "documentation",
+        "links": {
+            "self": {
+                "href": "https://api.bitbucket.org/2.0/workspaces/bitbucketpipelines/projects/DOC"
+            },
+            "html": {
+                "href": "https://bitbucket.org/bitbucketpipelines/workspace/projects/DOC"
+            },
+            "avatar": {
+                "href": "https://bitbucket.org/bitbucketpipelines/workspace/projects/DOC/avatar/32?ts=1506484642"
+            }
+        }
+    },
+    "fork_policy": "allow_forks",
+    "created_on": "2018-10-05T04:53:15.008411+00:00",
+    "updated_on": "2026-01-29T16:48:15.149268+00:00",
+    "size": 1373327,
+    "language": "python",
+    "uuid": "{cfe0b566-69b6-44a1-a3cf-c124a7ce0f24}",
+    "mainbranch": {
+        "name": "master",
+        "type": "branch"
+    },
+    "override_settings": {
+        "default_merge_strategy": false,
+        "branching_model": false
+    },
+    "parent": null,
+    "enforced_signed_commits": null,
+    "has_issues": false,
+    "has_wiki": false
+}

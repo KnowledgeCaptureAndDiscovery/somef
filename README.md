@@ -9,11 +9,11 @@ A command line interface for automatically extracting relevant metadata from cod
 
 **Demo:** See a [demo running somef as a service](https://somef.linkeddata.es), through the [SOMEF-Vider tool](https://github.com/SoftwareUnderstanding/SOMEF-Vider/).
 
-**Authors:** Daniel Garijo, Allen Mao, Miguel Ángel García Delgado, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang, Aidan Kelley, Jenifer Tabita Ciuciu-Kiss, Luca Angheluta and Juanje Mendoza.
+**Authors:** Daniel Garijo, Allen Mao, Miguel Ángel García Delgado, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang, Aidan Kelley, Jenifer Tabita Ciuciu-Kiss, Luca Angheluta, Juanje Mendoza and Thomas Vuillaume.
 
 ## Features
 
-Given a readme file (or a GitHub/Gitlab repository) SOMEF will extract the following categories (if present), listed in alphabetical order:
+Given a readme file (or a GitHub/Gitlab/Codeberg/Bitbucket repository) SOMEF will extract the following categories (if present), listed in alphabetical order:
 
 - **Acknowledgement**: Text acknowledging funding sources or contributors
 - **Application domain**: The application domain of the repository. Current supported domains include: Astrophysics, Audio, Computer vision, Graphs, Natural language processing, Reinforcement learning, Semantc web, Sequential. Domains are not mutually exclusive. These domains have been extracted from [awesome lists](https://github.com/topics/awesome-list) and [Papers with code](https://paperswithcode.com/). Find more information in our [documentation](https://somef.readthedocs.io/en/latest/)
@@ -38,7 +38,7 @@ We recognize the following properties:
   - Year: Year of publication
   - Pages: Page range in the journal
 - **Code of conduct**: Link to the code of conduct of the project
-- **Code repository**: Link to the GitHub/GitLab repository used for the extraction
+- **Code repository**: Link to the GitHub/GitLab/Codeberg and Bitbucket repository used for the extraction
 - **Contact**: Contact person responsible for maintaining a software component
 - **Continuous integration**: Link to continuous integration service(s)
 - **Contribution guidelines**: Text indicating how to contribute to this code repository
@@ -72,7 +72,7 @@ We recognize the following properties:
 - **Package files**: Links to package files used to wrap the project in a package.
 - **Programming languages**: Languages used in the repository
 - **Related papers**: URL to possible related papers within the repository stated within the readme file (from Arxiv)
-- **Releases** (GitHub only): Pointer to the available versions of a software component. For each release, somef will track the following properties:
+- **Releases**: Pointer to the available versions of a software component. For each release, somef will track the following properties:
   - Description: Release notes
   - Author: Agent responsible of creating the release
   - Name: Name of the release
@@ -93,7 +93,7 @@ We recognize the following properties:
 - **Usage examples**: Assumptions and considerations recorded by the authors when executing a software component, or examples on how to use it
 - **Workflows**: URL and path to the computational workflow files present in the repository
 
-We use different supervised classifiers, header analysis, regular expressions, the GitHub/Gitlab API to retrieve all these fields (more than one technique may be used for each field) and language specific metadata parsers (e.g., for package files). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description](https://somef.readthedocs.io/en/latest/output/)
+We use different supervised classifiers, header analysis, regular expressions, the GitHub/Gitlab/Codeberg and Bitbucket API to retrieve all these fields (more than one technique may be used for each field) and language specific metadata parsers (e.g., for package files). Each extraction records its provenance, with the confidence and technique used on each step. For more information check the [output format description](https://somef.readthedocs.io/en/latest/output/)
 
 ### Confidence values in header analysis
 
@@ -268,10 +268,15 @@ somef configure
 
 And you will be asked to provide the following:
 
-- A GitHub authentication token [**optional, leave blank if not used**], which SOMEF uses to retrieve metadata from GitHub. If you don't include an authentication token, you can still use SOMEF. However, you may be limited to a series of requests per hour. For more information, see [https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
-- The path to the trained classifiers (pickle files). If you have your own classifiers, you can provide them here. Otherwise, you can leave it blank
+- A **GitHub** authentication token [**optional, leave blank if not used**], which SOMEF uses to retrieve metadata from GitHub. If you don't include an authentication token, you can still use SOMEF. However, you may be limited to a series of requests per hour. For more information, see [https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
+- A **GitLab** authentication token [**optional**], used for GitLab.com and self-hosted GitLab instances (e.g., `gitlab.in2p3.fr`). Tokens are per-instance. Note: **a token from GitLab.com does not work for self-hosted servers**. Create one at `https://gitlab.com/-/user_settings/personal_access_tokens` (scope: `read_api`). Without a token, some self-hosted GitLab instances may not return rate limit information.
+- A **Codeberg** authentication token [**optional**], used to retrieve metadata from Codeberg. Create one at `https://codeberg.org/user/settings/applications` (permissions: `read:repository`, `read:user`). Codeberg (Forgejo) does not expose rate limit headers even with a token.
+- A **Bitbucket** authentication token [**optional**], used for Bitbucket Cloud. Create an API token with scopes at `https://bitbucket.org/account/settings/api-tokens/` (permissions: `read:repository:bitbucket`, `read:account`). You will also need to provide your Atlassian account email, as Bitbucket API tokens use Basic authentication (`email:token` encoded in base64). Without a token you are limited to 60 requests/hour.
+- The path to the trained classifiers (pickle files). If you have your own classifiers, you can provide them here. Otherwise, you can leave it blank.
 
-If you want somef to be automatically configured (without GitHUb authentication key and using the default classifiers) just type:
+- A download size limit in MB [**optional, default 200**]. SOMEF skips repository archives larger than this limit. Increase it if you need to process large repositories. You can also override it with the `--download-limit` parameter in the `describe` command.
+
+If you want SOMEF to be automatically configured (without any tokens and using the default classifiers) just type:
 
 ```bash
 somef configure -a
@@ -313,10 +318,10 @@ Usage: somef describe [OPTIONS]
 Options:
   -t, --threshold FLOAT           Threshold to classify the text  [required]
   Input: [mutually_exclusive, required]
-    -r, --repo_url URL            Github/Gitlab Repository URL
+    -r, --repo_url URL            Github/Gitlab/Codeberg/Bitbucket Repository URL
     -d, --doc_src PATH            Path to the README file source
     -i, --in_file PATH            A file of newline separated links to GitHub/
-                                  Gitlab repositories
+                                  Gitlab/Codeberg/Bitbucket repositories
     -l, --local_repo PATH         Path to the local repository source. No APIs will be used
 
   Output: [required_any]
@@ -361,14 +366,36 @@ Options:
                                   from certain files like CODEOWNERS. 
                                   This may require extra API
                                   requests and increase execution time
+  --download-limit INTEGER        Download size limit in MB for repository
+                                  archives. Overrides the value set in the
+                                  configuration file.
 
   -h, --help                      Show this message and exit.
+
+  --github-token TEXT             GitHub personal access token (if invalid,
+                                  stored config is used instead)
+
+  --gitlab-token TEXT             GitLab personal access token (if invalid,
+                                  stored config is used instead)
+
+  --codeberg-token TEXT           Codeberg personal access token (if invalid,
+                                  stored config is used instead)
+
+  --bitbucket-token TEXT          Bitbucket app password (if invalid, stored 
+                                  config is used instead)
+
+  --bitbucket-email TEXT          Bitbucket Atlassian account email (required
+                                  with --bitbucket-token)
   
   Repoository versions [mutually_exclusive] (see section *Repository versions*t):
   -b, --branch name branch        Branch of the repository to analyze. Overrides the default branch.
 
       --tag text                  Tag of the repository to analyze. Cannot be used together with --branch.
 ```
+
+Alternatively, you can set tokens via environment variables or by running `somef configure`, which stores them permanently.
+The CLI flags take precedence over stored config when valid.
+
 
 ## Usage example:
 

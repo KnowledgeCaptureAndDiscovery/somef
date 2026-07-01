@@ -5,9 +5,9 @@ import unittest
 import json
 import zipfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch, call, mock_open
 from ..parser import pom_xml_parser
-from .. import process_repository, process_files, somef_cli
+from .. import process_repository, process_files, somef_cli, configuration
 from ..utils import constants
 from ..process_results import Result
 
@@ -380,7 +380,7 @@ class TestIssue909ArchiveFallback(unittest.TestCase):
             (_make_mock_response(200, zip_bytes), ""),       # refs/heads/v2.0.zip     → 200
         ]
         with tempfile.TemporaryDirectory() as tmp:
-            result = process_repository.download_github_files(tmp, "balaje", "icefem", "v2.0", None)
+            result = process_repository.download_github_files(tmp, "balaje", "icefem", "v2.0", None, None)
 
         self.assertIsNotNone(result, "Should succeed via refs/heads/ fallback")
         urls_tried = [c[0][0] for c in mock_rlg.call_args_list]
@@ -399,7 +399,7 @@ class TestIssue909ArchiveFallback(unittest.TestCase):
             (_make_mock_response(200, zip_bytes), ""),       # refs/tags/        → 200
         ]
         with tempfile.TemporaryDirectory() as tmp:
-            result = process_repository.download_github_files(tmp, "owner", "repo", "v1.0", None)
+            result = process_repository.download_github_files(tmp, "owner", "repo", "v1.0", None, None)
 
         self.assertIsNotNone(result, "Should succeed via refs/tags/ fallback")
         urls_tried = [c[0][0] for c in mock_rlg.call_args_list]
@@ -418,7 +418,7 @@ class TestIssue909ArchiveFallback(unittest.TestCase):
             (_make_mock_response(200, zip_bytes), ""),  # main.zip → 200
         ]
         with tempfile.TemporaryDirectory() as tmp:
-            result = process_repository.download_github_files(tmp, "owner", "repo", "oldmaster", None)
+            result = process_repository.download_github_files(tmp, "owner", "repo", "oldmaster", None, None)
 
         self.assertIsNotNone(result, "Should succeed via main.zip fallback")
         urls_tried = [c[0][0] for c in mock_rlg.call_args_list]
@@ -432,7 +432,7 @@ class TestIssue909ArchiveFallback(unittest.TestCase):
         """
         mock_rlg.return_value = (_make_mock_response(404), "")
         with tempfile.TemporaryDirectory() as tmp:
-            result = process_repository.download_github_files(tmp, "owner", "repo", "branch", None)
+            result = process_repository.download_github_files(tmp, "owner", "repo", "branch", None, None)
 
         self.assertIsNone(result)
         # All four candidates should have been attempted
@@ -447,10 +447,12 @@ class TestIssue909ArchiveFallback(unittest.TestCase):
         """
         mock_rlg.return_value = (None, None)
         with tempfile.TemporaryDirectory() as tmp:
-            result = process_repository.download_github_files(tmp, "owner", "repo", "main", None)
+            result = process_repository.download_github_files(tmp, "owner", "repo", "main", None, None)
 
         self.assertIsNone(result)
         self.assertEqual(mock_rlg.call_count, 1, "Should stop after first None response")
+
+
 
 
 class TestRateLimitGetHeadRequest(unittest.TestCase):
@@ -489,11 +491,13 @@ class TestRateLimitGetHeadRequest(unittest.TestCase):
 
     @patch("somef.process_repository.requests.get")
     @patch("somef.process_repository.requests.head")
-    def test_head_response_closed_on_size_exceeded(self, mock_head, mock_get):
+    @patch("somef.process_repository.configuration.get_configuration_file")
+    def test_head_response_closed_on_size_exceeded(self, mock_config, mock_head, mock_get):
         """
         The HEAD response must be closed even when the size check triggers an
         early return — otherwise the connection stays open in the pool indefinitely.
         """
+        mock_config.return_value = {constants.CONF_DOWNLOAD_LIMIT_MB: constants.SIZE_DOWNLOAD_LIMIT_MB}
         oversized = (constants.SIZE_DOWNLOAD_LIMIT_MB + 1) * 1024 * 1024
         head_resp = MagicMock()
         head_resp.headers = {"Content-Length": str(oversized)}
@@ -507,3 +511,69 @@ class TestRateLimitGetHeadRequest(unittest.TestCase):
         self.assertIsNone(result)
         head_resp.close.assert_called_once()
         mock_get.assert_not_called()  # full GET should never be issued
+
+
+    @patch("somef.process_repository.requests.get")
+    @patch("somef.process_repository.requests.head")
+    @patch("somef.process_repository.configuration.get_configuration_file")
+    def test_rate_limit_get_reads_limit_from_config(self, mock_config, mock_head, mock_get):
+        """When size_limit_mb=None, rate_limit_get must read from config file."""
+        mock_config.return_value = {"download_limit_mb": 500}
+        head_resp = MagicMock()
+        head_resp.headers = {"Content-Length": str(300 * 1024 * 1024)}  # 300 MB
+        head_resp.close = MagicMock()
+        mock_head.return_value = head_resp
+
+        result, _ = process_repository.rate_limit_get(
+            "https://github.com/owner/repo/archive/main.zip"
+        )
+
+        # 300 MB > 200 should warning but we have set 500 
+        mock_get.assert_called_once() 
+
+
+    @patch("somef.configuration.json.dump")
+    @patch("somef.configuration.Path")
+    @patch("somef.configuration.os.makedirs")
+    @patch("nltk.download")
+    def test_configure_saves_download_limit(self, mock_nltk, mock_makedirs, mock_path_cls, mock_json_dump):
+        """
+        Verifies that configure(download_limit_mb=X) persists the value to the configuration file.
+        Mocks json.dump at the configuration module level and checks that the written JSON
+        contains {"download_limit_mb": 500}.
+        """
+        configuration.configure(download_limit_mb=500)
+        args, _ = mock_json_dump.call_args
+        assert args[0]["download_limit_mb"] == 500
+
+
+    @patch("somef.configuration.json.load", return_value={"download_limit_mb": 500})
+    @patch("somef.configuration.Path")
+    def test_get_configuration_file_returns_download_limit(self, mock_path_cls, mock_json_load):
+        """
+        Verifies that get_configuration_file() reads the download_limit_mb key from the config file.
+        Mocks Path and json.load to return a config with download_limit_mb=500,
+        and asserts the returned dict contains that value.
+        """
+        instance = mock_path_cls.return_value
+        instance.expanduser.return_value = instance
+        instance.exists.return_value = True
+        
+        config = configuration.get_configuration_file()
+        assert config["download_limit_mb"] == 500
+
+
+    @patch("somef.process_repository.download_github_files")
+    def test_download_repository_files_propagates_limit(self, mock_dl):
+        """
+        Verifies that download_limit is propagated from download_repository_files
+        to download_github_files. Mocks download_github_files, calls
+        download_repository_files with download_limit=500, and asserts that
+        download_github_files receives 500 as its last argument.
+        """
+        with tempfile.TemporaryDirectory() as tmp:
+            process_repository.download_repository_files(
+                "owner", "repo", "main", constants.RepositoryType.GITHUB,
+                tmp, None, None, 500
+            )
+        mock_dl.assert_called_once_with(tmp, "owner", "repo", "main", None, 500)
