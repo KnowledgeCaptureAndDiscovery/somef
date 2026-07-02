@@ -28,7 +28,7 @@ Given a readme file (or a GitHub/Gitlab/Codeberg/Bitbucket repository) SOMEF wil
 - **Citation**: Preferred citation(s) as the authors have stated in their readme file. SOMEF recognizes Bibtex, Citation File Format files and other means by which authors cite their papers (e.g., by in-text citation). 
 For CITATION.cff files, SOMEF now generates two separate entries: one for the software tool and another for the preferred citation (if available). This ensures metadata like DOI or version is correctly assigned to each entity.
 SOMEF now performs citation reconciliation: scholarly publications (articles) are assigned in codemeta to `referencePublication`, while the software itself is credited in `creditText`. (See https://somef.readthedocs.io/en/latest/output/#codemeta-format).
-We recognize the following properties:
+When using `-e`, publication metadata is enriched via OpenAlex. We recognize the following properties:
   - Title: Title of the publication
   - Author: list of author names in the publication
   - URL: URL of the publication 
@@ -37,6 +37,7 @@ We recognize the following properties:
   - Journal: Journal name where the paper was published
   - Year: Year of publication
   - Pages: Page range in the journal
+  - `openalex_id`: OpenAlex ID of the publication
 - **Code of conduct**: Link to the code of conduct of the project
 - **Code repository**: Link to the GitHub/GitLab/Codeberg and Bitbucket repository used for the extraction
 - **Contact**: Contact person responsible for maintaining a software component
@@ -65,8 +66,6 @@ We recognize the following properties:
 
 - `grant_id`: Call/grant identifier
 - **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers and Software Heritage identifiers (SWH). DOIs associated with publications will also be detected. When using `-e`, the following enrichment identifiers are also added:
-
-- `openalex_id`: OpenAlex ID of the publication
 
 - `openaire_id`: URL to the OpenAIRE explore page for the software
 
@@ -386,7 +385,8 @@ Options:
 
   -h, --help                      Show this message and exit.
 
-  -e, --enrichment                Enrich metadata with external APIs (OpenAlex, OpenAIRE, Zenodo)
+  -e, --enrichment                Enrich metadata with external APIs (OpenAlex, 
+                                  OpenAIRE, Zenodo)
 
   --github-token TEXT             GitHub personal access token (if invalid,
                                   stored config is used instead)
@@ -416,9 +416,13 @@ The CLI flags take precedence over stored config when valid.
 ### Enrichment with `-e`
 
 The `-e` (or `--enrichment`) flag queries external APIs to complete the extracted metadata:
-- **OpenAlex**: adds `openalex_id` to DOIs of publications.
-- **OpenAIRE**: adds `openaire_id` and enriches funding information (project code, title, acronym, grant id).
-- **Zenodo**: adds `swhid` (Software Heritage ID) for Zenodo DOIs.
+- **OpenAlex**: Adds `openalex_id` to DOIs of publications and reconciles missing author ORCIDs.
+- **OpenAIRE**: Adds `openaire_id` to publications/identifiers and enriches project funding metadata.
+- **Zenodo**: Adds `swhid` (Software Heritage ID) for records matching Zenodo DOIs.
+
+For a detailed technical breakdown of the fields mapped by each external service, please refer to the specific documentation pages:
+- See the [OpenAlex Mapping Guide](openalex.md) for citation and author properties.
+- See the [OpenAIRE and Zenodo Mapping Guide](openaire.md) for funding and identifier properties.
 
 **Note:** Enrichment makes additional network requests to external services, which may slow down the overall execution time. Use this flag only when you need the extra metadata.
 

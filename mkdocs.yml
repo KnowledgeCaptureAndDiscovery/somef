@@ -1,6 +1,7 @@
 extra_css:
   - stylesheets/mkdocs.css
 site_name: SOMEF documentation
+
 nav:
   - Home: index.md
   - Install: install.md
@@ -13,8 +14,11 @@ nav:
       - GitLab: gitlab.md
       - Codeberg: codeberg.md
       - Bitbucket: bitbucket.md
+  - Enrichment:
+      - OpenAlex: openalex.md
+      - OpenAIRE / Zenodo: openaire.md
       
-  theme:
+theme:
   name: material
   features:
     - navigation.expand

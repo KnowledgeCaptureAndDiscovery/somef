@@ -82,7 +82,8 @@ Options:
 
   -h, --help                      Show this message and exit.
 
-  -e, --enrichment                Enrich metadata with external APIs (OpenAlex, OpenAIRE, Zenodo)
+  -e, --enrichment                Enrich metadata with external APIs (OpenAlex, 
+                                  OpenAIRE, Zenodo)
 
   --github-token TEXT             GitHub personal access token (if invalid,
                                   stored config is used instead)
@@ -111,6 +112,18 @@ GitHub, GitLab and Codeberg; Bitbucket does not expose a public user API, so enr
 Alternatively, you can set tokens via environment variables or by running `somef configure`, which stores them permanently.
 The CLI flags take precedence over stored config when valid.
 
+### Enrichment with `-e`
+
+The `-e` (or `--enrichment`) flag queries external APIs to complete the extracted metadata:
+- **OpenAlex**: Adds `openalex_id` to DOIs of publications and reconciles missing author ORCIDs.
+- **OpenAIRE**: Adds `openaire_id` to publications/identifiers and enriches project funding metadata.
+- **Zenodo**: Adds `swhid` (Software Heritage ID) for records matching Zenodo DOIs.
+
+For a detailed technical breakdown of the fields mapped by each external service, please refer to the specific documentation pages:
+- See the [OpenAlex Mapping Guide](openalex.md) for citation and author properties.
+- See the [OpenAIRE and Zenodo Mapping Guide](openaire.md) for funding and identifier properties.
+
+**Note:** Enrichment makes additional network requests to external services, which may slow down the overall execution time. Use this flag only when you need the extra metadata.
 
 ## Usage example:
 The following command extracts all metadata available from [https://github.com/dgarijo/Widoco/](https://github.com/dgarijo/Widoco/). 
