@@ -55,8 +55,22 @@ We recognize the following properties:
 - **Forks url**: Links to forks made of the project
 - **Full name**: Name + owner (owner/name)
 - **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository name
-- **Funding**: Funding information associated with the project. **Note**: Currently, this information is only extracted from existing `codemeta.json` files within the repository.
-- **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers and Software Heritage identifiers (SWH). DOIs associated with publications will also be detected. 
+- **Funding**: Funding information associated with the project. **Note**: This information is extracted from existing `codemeta.json` files within the repository. When using `-e`, the project data is enriched with OpenAIRE, adding:
+
+- `project_code`: Project code
+
+- `project_title`: Project title
+
+- `project_acronym`: Project acronym
+
+- `grant_id`: Call/grant identifier
+- **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers and Software Heritage identifiers (SWH). DOIs associated with publications will also be detected. When using `-e`, the following enrichment identifiers are also added:
+
+- `openalex_id`: OpenAlex ID of the publication
+
+- `openaire_id`: URL to the OpenAIRE explore page for the software
+
+- `swhid`: Software Heritage identifier (for Zenodo DOIs)
 - **Images**: Images used to illustrate the software component
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component
@@ -372,6 +386,8 @@ Options:
 
   -h, --help                      Show this message and exit.
 
+  -e, --enrichment                Enrich metadata with external APIs (OpenAlex, OpenAIRE, Zenodo)
+
   --github-token TEXT             GitHub personal access token (if invalid,
                                   stored config is used instead)
 
@@ -396,6 +412,15 @@ Options:
 Alternatively, you can set tokens via environment variables or by running `somef configure`, which stores them permanently.
 The CLI flags take precedence over stored config when valid.
 
+
+### Enrichment with `-e`
+
+The `-e` (or `--enrichment`) flag queries external APIs to complete the extracted metadata:
+- **OpenAlex**: adds `openalex_id` to DOIs of publications.
+- **OpenAIRE**: adds `openaire_id` and enriches funding information (project code, title, acronym, grant id).
+- **Zenodo**: adds `swhid` (Software Heritage ID) for Zenodo DOIs.
+
+**Note:** Enrichment makes additional network requests to external services, which may slow down the overall execution time. Use this flag only when you need the extra metadata.
 
 ## Usage example:
 

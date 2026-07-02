@@ -82,6 +82,8 @@ Options:
 
   -h, --help                      Show this message and exit.
 
+  -e, --enrichment                Enrich metadata with external APIs (OpenAlex, OpenAIRE, Zenodo)
+
   --github-token TEXT             GitHub personal access token (if invalid,
                                   stored config is used instead)
 
