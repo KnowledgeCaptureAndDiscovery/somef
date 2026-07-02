@@ -29,6 +29,8 @@ def get_configuration_file():
             file_paths = json.load(fh)
         if constants.CONF_SIMILARITY_THRESHOLD not in file_paths:
             file_paths[constants.CONF_SIMILARITY_THRESHOLD] = constants.CONF_DEFAULT_SIMILARITY_THRESHOLD
+        if constants.CONF_DOWNLOAD_LIMIT_MB not in file_paths:
+            file_paths[constants.CONF_DOWNLOAD_LIMIT_MB] = constants.SIZE_DOWNLOAD_LIMIT_MB
     else:
         sys.exit("Error: Please provide a config.json file or run somef configure.")
     return file_paths
@@ -63,8 +65,9 @@ def configure(
         installation=default_installation,
         citation=default_citation,
         base_uri=constants.CONF_DEFAULT_BASE_URI,
-        similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD):
-
+        similarity_threshold=constants.CONF_DEFAULT_SIMILARITY_THRESHOLD,
+        download_limit_mb=constants.SIZE_DOWNLOAD_LIMIT_MB):
+    
     """ Function to configure the main program"""
     import nltk
     nltk.download('wordnet')
@@ -89,7 +92,8 @@ def configure(
         constants.CONF_INSTALLATION: installation,
         constants.CONF_CITATION: citation,
         constants.CONF_BASE_URI: base_uri,
-        constants.CONF_SIMILARITY_THRESHOLD: similarity_threshold
+        constants.CONF_SIMILARITY_THRESHOLD: similarity_threshold,
+        constants.CONF_DOWNLOAD_LIMIT_MB: download_limit_mb
     }
 
     # if data[constants.CONF_AUTHORIZATION] == "token ":

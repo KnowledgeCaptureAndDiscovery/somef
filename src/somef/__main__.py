@@ -48,8 +48,11 @@ def configure(auto, base_uri):
         installation = click.prompt("Installation classifier model file", default=configuration.default_installation)
         citation = click.prompt("Citation classifier model file", default=configuration.default_citation)
         base_uri = click.prompt("Base URI for RDF generation", default=base_uri)
+        download_limit = click.prompt("Download size limit in MB", 
+                               default=constants.SIZE_DOWNLOAD_LIMIT_MB, type=int)
         # configuration.configure()
-        configuration.configure(github_authorization, gitlab_authorization, codeberg_authorization, bitbucket_authorization, bitbucket_email, description, invocation, installation, citation, base_uri)
+        configuration.configure(github_authorization, gitlab_authorization, codeberg_authorization, bitbucket_authorization, bitbucket_email, description, invocation, installation, citation, base_uri,  download_limit_mb= download_limit)
+        
     click.secho(f"Success", fg="green")
 
 
@@ -237,6 +240,12 @@ def configure(auto, base_uri):
     type=str,
     default=None,
     help="Bitbucket Atlassian account email (required with --bitbucket-token)"
+)
+@click.option(
+    "--download-limit",
+    type=int,
+    default=None,
+    help="Download size limit in MB (overrides config file value)"
 )
 
 def describe(requirements_v, requirements_all, **kwargs):

@@ -64,6 +64,9 @@ Options:
                                   where files are stored for analysis. Files
                                   will be stored at the
                                   desired path
+  --download-limit INTEGER        Download size limit in MB for repository
+                                  archives. Overrides the value set in the
+                                  configuration file.
 
   -all, --requirements_all        Export all detected requirements, including
                                   text and libraries (default).
@@ -154,5 +157,28 @@ To change it, edit your `~/.somef/config.json`:
 
 Note: This parameter is different from the `-t` threshold used in `somef describe`, 
 which controls the confidence of the supervised classifiers.
+
+
+### Download size limit
+
+Controls the maximum size (in MB) of repository archives that SOMEF will download.
+Repositories larger than this limit are skipped.
+
+- **Default value**: `200`
+
+To change it, run `somef configure` and enter the desired value when prompted,
+or edit your `~/.somef/config.json`:
+
+```json
+{
+    "download_limit_mb": 500
+}
+```
+You can also override it per command with the --download-limit option:
+
+
+```bash
+somef describe -r https://github.com/owner/repo --download-limit 1000 -o output.json
+```
 
 To see a live usage example, try our Binder Notebook: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb)

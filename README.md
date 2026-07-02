@@ -274,6 +274,7 @@ And you will be asked to provide the following:
 - A **Bitbucket** authentication token [**optional**], used for Bitbucket Cloud. Create an API token with scopes at `https://bitbucket.org/account/settings/api-tokens/` (permissions: `read:repository:bitbucket`, `read:account`). You will also need to provide your Atlassian account email, as Bitbucket API tokens use Basic authentication (`email:token` encoded in base64). Without a token you are limited to 60 requests/hour.
 - The path to the trained classifiers (pickle files). If you have your own classifiers, you can provide them here. Otherwise, you can leave it blank.
 
+- A download size limit in MB [**optional, default 200**]. SOMEF skips repository archives larger than this limit. Increase it if you need to process large repositories. You can also override it with the `--download-limit` parameter in the `describe` command.
 
 If you want SOMEF to be automatically configured (without any tokens and using the default classifiers) just type:
 
@@ -365,6 +366,9 @@ Options:
                                   from certain files like CODEOWNERS. 
                                   This may require extra API
                                   requests and increase execution time
+  --download-limit INTEGER        Download size limit in MB for repository
+                                  archives. Overrides the value set in the
+                                  configuration file.
 
   -h, --help                      Show this message and exit.
 
