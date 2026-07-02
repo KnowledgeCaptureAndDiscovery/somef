@@ -28,7 +28,7 @@ Given a readme file (or a GitHub/Gitlab/Codeberg/Bitbucket repository) SOMEF wil
 - **Citation**: Preferred citation(s) as the authors have stated in their readme file. SOMEF recognizes Bibtex, Citation File Format files and other means by which authors cite their papers (e.g., by in-text citation). 
 For CITATION.cff files, SOMEF now generates two separate entries: one for the software tool and another for the preferred citation (if available). This ensures metadata like DOI or version is correctly assigned to each entity.
 SOMEF now performs citation reconciliation: scholarly publications (articles) are assigned in codemeta to `referencePublication`, while the software itself is credited in `creditText`. (See https://somef.readthedocs.io/en/latest/output/#codemeta-format).
-We recognize the following properties:
+When using `-e`, publication metadata is enriched via OpenAlex. We recognize the following properties:
   - Title: Title of the publication
   - Author: list of author names in the publication
   - URL: URL of the publication 
@@ -37,6 +37,7 @@ We recognize the following properties:
   - Journal: Journal name where the paper was published
   - Year: Year of publication
   - Pages: Page range in the journal
+  - `openalex_id`: OpenAlex ID of the publication
 - **Code of conduct**: Link to the code of conduct of the project
 - **Code repository**: Link to the GitHub/GitLab/Codeberg and Bitbucket repository used for the extraction
 - **Contact**: Contact person responsible for maintaining a software component
@@ -55,8 +56,14 @@ We recognize the following properties:
 - **Forks url**: Links to forks made of the project
 - **Full name**: Name + owner (owner/name)
 - **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository name
-- **Funding**: Funding information associated with the project. **Note**: Currently, this information is only extracted from existing `codemeta.json` files within the repository.
-- **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers and Software Heritage identifiers (SWH). DOIs associated with publications will also be detected. 
+- **Funding**: Funding information associated with the project. **Note**: This information is extracted from existing `codemeta.json` files within the repository. When using `-e`, the project data is enriched with OpenAIRE, adding:
+  - `project_code`: Project code
+  - `project_title`: Project title
+  - `project_acronym`: Project acronym
+  - `grant_id`: Call/grant identifier
+- **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers and Software Heritage identifiers (SWH). DOIs associated with publications will also be detected. When using `-e`, the following enrichment identifiers are also added:
+  - `openaire_id`: URL to the OpenAIRE explore page for the software
+  - `swhid`: Software Heritage identifier (for Zenodo DOIs)
 - **Images**: Images used to illustrate the software component
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component
@@ -372,6 +379,8 @@ Options:
 
   -h, --help                      Show this message and exit.
 
+  -e, --enrichment                Enrich metadata with external APIs (OpenAlex, OpenAIRE, Zenodo)
+
   --github-token TEXT             GitHub personal access token (if invalid,
                                   stored config is used instead)
 
@@ -391,6 +400,7 @@ Options:
   -b, --branch name branch        Branch of the repository to analyze. Overrides the default branch.
 
       --tag text                  Tag of the repository to analyze. Cannot be used together with --branch.
+ 
 ```
 
 Alternatively, you can set tokens via environment variables or by running `somef configure`, which stores them permanently.
@@ -436,6 +446,14 @@ This includes identifying dependencies, runtime requirements, and development to
 SOMEF is designed to work primarily with repositories written in English.  
 Repositories in other languages may not be processed as effectively, and results could be incomplete or less accurate.
 
+### Enrichment with `-e`
+
+The `-e` (or `--enrichment`) flag queries external APIs to complete the extracted metadata:
+- **OpenAlex**: adds `openalex_id` to DOIs of publications.
+- **OpenAIRE**: adds `openaire_id` and enriches funding information (project code, title, acronym, grant id).
+- **Zenodo**: adds `swhid` (Software Heritage ID) for Zenodo DOIs.
+
+**Note:** Enrichment makes additional network requests to external services, which may slow down the overall execution time. Use this flag only when you need the extra metadata.
 
 ## Repository versions: default behavior, branch and tag
 

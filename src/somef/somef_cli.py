@@ -13,7 +13,7 @@ from os import path
 from . import header_analysis, regular_expressions, process_repository, configuration, process_files, \
     supervised_classification
 from .process_results import Result
-from .utils import constants, markdown_utils
+from .utils import constants, markdown_utils, enrichment
 from .parser import mardown_parser, create_excerpts
 from .export.turtle_export import DataGraph
 from .export import json_export
@@ -278,6 +278,7 @@ def run_cli(*,
             reconcile_authors=False,
             branch=None,
             tag=None,
+            enrich=False,
             github_token=None,
             gitlab_token=None,
             codeberg_token=None,
@@ -328,6 +329,9 @@ def run_cli(*,
            
                     repo_data = json_export.unify_results(repo_data.results)
 
+                    if enrich:                                       
+                        repo_data = enrichment.run_enrichment(repo_data)
+
                     if output is not None:
                         output = output.replace(".json","")
                         output = output + "_" + encoded_url + ".json"
@@ -371,6 +375,8 @@ def run_cli(*,
             repo_data = repo_data.get_json()
 
         repo_data = json_export.unify_results(repo_data.results)
+        if enrich:                                       
+            repo_data = enrichment.run_enrichment(repo_data)
 
         if output is not None:
             json_export.save_json_output(repo_data, output, missing, pretty=pretty)
