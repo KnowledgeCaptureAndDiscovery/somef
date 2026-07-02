@@ -105,16 +105,26 @@ def parse_codeowners_file(file_path, metadata_result: Result, source, reconcile_
 #         return None
     
 
-def enrich_user(username, repo_type, server_url=None):
+def enrich_user(username, repo_type, server_url=None, gitlab_authorization=None):
     """
     Enrich user metadata using the appropriate platform API.
-    
+
     Parameters
     ----------
-    username : str Username to enrich.
-    repo_type : str "GITHUB" or "GITLAB"
+    username : str
+        Username to enrich.
+    repo_type : RepositoryType
+        "GITHUB", "GITLAB" or "CODEBERG".
     server_url : str, optional
-        Base URL of GitLab instance if repo_type is "GITLAB"
+        Base URL of GitLab instance if repo_type is "GITLAB".
+    gitlab_authorization : str, optional
+        GitLab personal access token. Only needed for GitLab
+        (self-hosted instances or higher rate limits).
+        GitHub and Codeberg user APIs are public and do not
+        require authentication.
+        Bitbucket does not expose a public user endpoint,
+        so user enrichment is not supported for that platform.
+
     
     Returns
     -------
@@ -146,7 +156,15 @@ def enrich_user(username, repo_type, server_url=None):
             if not server_url.startswith("http"):
                 server_url = "https://" + server_url
             api_url = f"{server_url.rstrip('/')}/api/v4/users?username={username}"
-            response = requests.get(api_url, timeout=5)
+            # response = requests.get(api_url, timeout=5)
+            # Build auth header — same token works for gitlab.com and self-hosted instances
+            gl_headers = {}
+            if gitlab_authorization:
+                token = gitlab_authorization
+                if not token.startswith("Bearer "):
+                    token = "Bearer " + token
+                gl_headers["Authorization"] = token
+            response = requests.get(api_url, headers=gl_headers, timeout=5)
             if response.status_code != 200:
                 logging.warning(f"GitLab API request failed for {username}: {response.status_code}")
                 return None
@@ -163,6 +181,17 @@ def enrich_user(username, repo_type, server_url=None):
             logging.error(f"Error enriching GitLab user {username}: {e}")
             return None
 
+    elif repo_type == constants.RepositoryType.CODEBERG:
+        url = f"https://codeberg.org/api/v1/users/{username}"
+        response = requests.get(url, timeout=5)
+        if response.status_code != 200:
+            return None
+        data = response.json()
+        return {
+            constants.PROP_CODEOWNERS_NAME: data.get("full_name"),
+            constants.PROP_CODEOWNERS_EMAIL: data.get("email"),
+        }
+    
     else:
         logging.warning(f"Unsupported repo_type {repo_type}")
         return None

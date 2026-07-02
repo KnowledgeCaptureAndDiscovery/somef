@@ -1,0 +1,16 @@
+{
+    "Go": 16886294,
+    "go-html-template": 2256939,
+    "JavaScript": 563991,
+    "CSS": 395828,
+    "TypeScript": 377005,
+    "Vue": 136433,
+    "Roff": 58206,
+    "Makefile": 46509,
+    "Shell": 44058,
+    "Jsonnet": 15443,
+    "Dockerfile": 7283,
+    "Less": 5467,
+    "Scheme": 2253,
+    "Nix": 705
+}

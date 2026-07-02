@@ -19,7 +19,7 @@ def cli():
     click.echo("SOftware Metadata Extraction Framework (SOMEF) Command Line Interface")
 
 
-@cli.command(help="Configure GitHub credentials and classifiers file path")
+@cli.command(help="Configure repository credentials and classifiers file path")
 @click.option('-a', '--auto', help="Automatically configure SOMEF", is_flag=True, default=False)
 @click.option('-b', '--base_uri', type=URLParamType(), help="Base URI for somef transformations",
               default=constants.CONF_DEFAULT_BASE_URI)
@@ -32,14 +32,27 @@ def configure(auto, base_uri):
     elif base_uri is not constants.CONF_DEFAULT_BASE_URI:
         configuration.update_base_uri(base_uri)
     else:
-        authorization = click.prompt("Authorization", default="")
+        # authorization = click.prompt("Authorization", default="")
+        github_authorization = click.prompt("GitHub Authorization token (leave blank to skip)", default="")
+        gitlab_authorization = click.prompt(
+            "GitLab Authorization token (leave blank to skip; works for gitlab.com and self-hosted instances)",
+            default="",
+        )
+        codeberg_authorization = click.prompt("Codeberg Authorization token (leave blank to skip)", default="")
+        
+        bitbucket_authorization = click.prompt("Bitbucket Authorization token (leave blank to skip)", default="")
+        bitbucket_email = click.prompt("Bitbucket Atlassian account email (for API token auth)", default="")
+
         description = click.prompt("Documentation classifier model file", default=configuration.default_description)
         invocation = click.prompt("Invocation classifier model file", default=configuration.default_invocation)
         installation = click.prompt("Installation classifier model file", default=configuration.default_installation)
         citation = click.prompt("Citation classifier model file", default=configuration.default_citation)
         base_uri = click.prompt("Base URI for RDF generation", default=base_uri)
+        download_limit = click.prompt("Download size limit in MB", 
+                               default=constants.SIZE_DOWNLOAD_LIMIT_MB, type=int)
         # configuration.configure()
-        configuration.configure(authorization, description, invocation, installation, citation, base_uri)
+        configuration.configure(github_authorization, gitlab_authorization, codeberg_authorization, bitbucket_authorization, bitbucket_email, description, invocation, installation, citation, base_uri,  download_limit_mb= download_limit)
+        
     click.secho(f"Success", fg="green")
 
 
@@ -203,6 +216,43 @@ def configure(auto, base_uri):
     is_flag=True,
     default=False,
     help="Enrich metadata with external APIs (OpenAlex, OpenAIRE, Zenodo)"
+  )
+@click.option(
+    "--github-token",
+    type=str,
+    default=None,
+    help="GitHub personal access token (if invalid, stored config is used instead)"
+)
+@click.option(
+    "--gitlab-token",
+    "-gt",
+    type=str,
+    default=None,
+    help="GitLab personal access token (if invalid, stored config is used instead)"
+)
+@click.option(
+    "--codeberg-token",
+    type=str,
+    default=None,
+    help="Codeberg personal access token (if invalid, stored config is used instead)"
+)
+@click.option(
+    "--bitbucket-token",
+    type=str,
+    default=None,
+    help="Bitbucket API token (if invalid, stored config is used instead)"
+)
+@click.option(
+    "--bitbucket-email",
+    type=str,
+    default=None,
+    help="Bitbucket Atlassian account email (required with --bitbucket-token)"
+)
+@click.option(
+    "--download-limit",
+    type=int,
+    default=None,
+    help="Download size limit in MB (overrides config file value)"
 )
 
 def describe(requirements_v, requirements_all, **kwargs):

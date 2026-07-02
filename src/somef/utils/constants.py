@@ -3,13 +3,22 @@ import os
 from pathlib import Path
 
 # constants about SOMEF configuration
-CONF_AUTHORIZATION = "Authorization"
+# CONF_AUTHORIZATION = "Authorization"
+CONF_GITHUB_AUTHORIZATION = "GitHubAuthorization"
+CONF_GITLAB_AUTHORIZATION = "GitlabAuthorization"
+CONF_CODEBERG_AUTHORIZATION = "CodebergAuthorization"
+CONF_BITBUCKET_AUTHORIZATION = "BitbucketAuthorization"
+# Backward-compatible key used in legacy code paths for GitHub authorization.
+CONF_AUTHORIZATION = CONF_GITHUB_AUTHORIZATION
+PROP_AUTHORIZATION = "Authorization"
+
 CONF_DESCRIPTION = "description"
 CONF_INVOCATION = "invocation"
 CONF_INSTALLATION = "installation"
 CONF_CITATION = "citation"
 CONF_BASE_URI = "base_uri"
 CONF_DEFAULT_BASE_URI = "https://w3id.org/okn/i/"
+CONF_DOWNLOAD_LIMIT_MB = "download_limit_mb"
 
 __DEFAULT_SOMEF_CONFIGURATION_FILE__ = "~/.somef/config.json"
 
@@ -63,7 +72,8 @@ REGEXP_TITLE_NATURAL = r'["“](.+?)["”]'
 #License spdx
 # REGEXP_APACHE = r'(?i)apache\s+license\s*,?\s*version\s*2\.0'
 REGEXP_APACHE = r'(?i)apache(?:\s+license)?\s*(?:,?\s*version\s*)?2\.0'
-REGEXP_GPL3 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*3\.0'
+REGEXP_GPL3 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*3(?:\.0)?'
+
 # REGEXP_MIT = r'(?i)mit\s+license'
 REGEXP_MIT = r'(?i)(mit\s+license|permission\s+is\s+hereby\s+granted|THE\s+SOFTWARE\s+IS\s+PROVIDED\s+"AS\s+IS")'
 REGEXP_BSD2 = r'(?i)bsd\s*-?\s*2-?clause(?:\s*license)?'
@@ -72,7 +82,7 @@ REGEXP_BOOST = r'(?i)boost\s+software\s+license\s*,?\s*version\s*1\.0'
 REGEXP_CC0 = r'(?i)creative\s+commons\s+zero\s+v?1\.0\s+universal'
 REGEXP_EPL2 = r'(?i)eclipse\s+public\s+license\s*,?\s*version\s*2\.0'
 REGEXP_AGPL3 = r'(?i)gnu\s+affero\s+general\s+public\s+license\s*(?:v(?:ersion)?\.?\s*3(?:\.0)?)'
-REGEXP_GPL2 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*2\.0'
+REGEXP_GPL2 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*2(?:\.0)?'
 REGEXP_LGPL1 = r'(?i)gnu\s+lesser\s+general\s+public\s+license\s*,?\s*version\s*1\.0'
 REGEXP_MPL2 = r'(?i)mozilla\s+public\s+license\s*,?\s*version\s*2\.0'
 REGEXP_UNLICENSE = r'(?i)the\s+unlicense'
@@ -312,12 +322,22 @@ TECHNIQUE_FILE_EXPLORATION = "file_exploration"
 TECHNIQUE_CODE_CONFIG_PARSER = "code_parser"
 TECHNIQUE_GITHUB_API = "GitHub_API"
 TECHNIQUE_GITLAB_API = "GitLab_API"
+TECHNIQUE_CODEBERG_API = "Codeberg_API"
+TECHNIQUE_BITBUCKET_API = "Bitbucket_API"
 TECHNIQUE_HEURISTICS = "software_type_heuristics"
 
 # GitHub properties
 GITHUB_DOMAIN = "github.com"
 GITHUB_ACCEPT_HEADER = "application/vnd.github.v3+json"
 GITHUB_API = "https://api.github.com/repos"
+
+#Codeberg properties
+CODEBERG_DOMAIN = "codeberg.org"
+CODEBERG_API = "https://codeberg.org/api/v1/repos"
+
+# Bitbucket properties
+BITBUCKET_DOMAIN = "bitbucket.org"
+BITBUCKET_API = "https://api.bitbucket.org/2.0/repositories"
 
 # Software Heritage
 SWH_ROOT = "https://archive.softwareheritage.org/"
@@ -348,6 +368,38 @@ github_crosswalk_table = {
     CAT_KEYWORDS: "topics",
     CAT_FORK_COUNTS: "forks_count",
     CAT_HOMEPAGE: "homepage"
+}
+
+# Crosswalk to retrieve easily contents of interest from the codeberg response
+codeberg_crosswalk_table = {
+    CAT_CODE_REPOSITORY: "html_url",
+    "languages_url": "languages_url",
+    CAT_OWNER: ["owner", "login"],
+    # AGENT_TYPE: ["owner", "type"],
+    CAT_DATE_CREATED: "created_at",
+    CAT_DATE_UPDATED: "updated_at",
+    CAT_DESCRIPTION: "description",
+    CAT_NAME: "name",
+    CAT_FULL_NAME: "full_name",
+    # CAT_ISSUE_TRACKER: "issues_url",
+    CAT_STARS: "stars_count",              
+    CAT_KEYWORDS: "topics",
+    CAT_FORK_COUNTS: "forks_count",
+    CAT_HOMEPAGE: "website"
+}
+
+
+bitbucket_crosswalk_table = {
+    CAT_FULL_NAME: "full_name",
+    CAT_NAME: "name",
+    CAT_DESCRIPTION: "description",
+    CAT_DATE_CREATED: "created_on",
+    CAT_DATE_UPDATED: "updated_on",
+    CAT_OWNER: ["owner", "nickname"],
+    CAT_CODE_REPOSITORY: ["links", "html", "href"],
+    CAT_HOMEPAGE: "website",
+    CAT_FORKS_URLS: ["links", "forks", "href"]
+    # CAT_PROGRAMMING_LANGUAGES: "language",
 }
 
 # Mapping for releases
@@ -392,6 +444,36 @@ release_assets_github = {
     PROP_DOWNLOAD_COUNT: "download_count"
 }
 
+release_assets_codeberg = {
+    PROP_URL: "url",
+    PROP_NAME: "name",
+    PROP_SIZE: "size",
+    PROP_BROWSER_URL: "browser_download_url",
+    PROP_CONTENT_TYPE: "content_type",
+    PROP_DATE_CREATED_AT: "created_at",
+    PROP_DOWNLOAD_COUNT: "download_count"
+}
+
+release_codeberg_crosswalk_table = {
+    PROP_TAG: 'tag_name',
+    PROP_NAME: 'name',
+    PROP_AUTHOR: ['author', 'login'],
+    # AGENT_TYPE: ['author', 'type'],
+    PROP_DESCRIPTION: 'body',
+    PROP_TARBALL_URL: 'tarball_url',
+    PROP_ZIPBALL_URL: 'zipball_url',
+    PROP_HTML_URL: 'html_url',
+    PROP_URL: 'url',
+    PROP_RELEASE_ID: 'id',
+    PROP_DATE_CREATED: 'created_at',
+    PROP_DATE_PUBLISHED: "published_at",
+    # CAT_ASSETS: "attachments"               
+}
+
+release_bitbucket_crosswalk_table = {
+    PROP_TAG: "name",
+    PROP_NAME: "name",
+}
 # Minimum percentage of total bytes a programming language must have to be considered relevant in CodeMeta file.
 MINIMUM_PERCENTAGE_LANGUAGE_PROGRAMMING = 10
 
@@ -424,6 +506,8 @@ class RepositoryType(Enum):
     GITHUB = 1
     GITLAB = 2
     LOCAL = 3
+    CODEBERG = 4
+    BITBUCKET = 5
 
 # Media/script/non-software sets
 workflow_extensions=('.ga','.cwl','.nf','.knwf','.t2flow','.dag','.kar','.wdl',".smk",".snake")

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "somef"
-version = "0.10.3"
+version = "0.11.0"
 description = "SOftware Metadata Extraction Framework: A tool for automatically extracting relevant software metadata from a source code repository (README, package files, etc)."
 authors = ["Daniel Garijo <daniel.garijo@upm.es>"]
 readme = "README.md"
@@ -40,10 +40,10 @@ homepage = "https://github.com/KnowledgeCaptureAndDiscovery/somef"
     bibtexparser = "^1.4.1"
     nbformat = "^5.9.2"
     markdown = "^3.5.2"
-    requests = "^2.31.0"
+    requests = "^2.34.2"
     scikit-learn = "1.5.0"
     pyyaml = "^6.0.2"
-    lxml = "^6.1.0"
+    lxml = "^6.1.1"
     markdown-it-py = "^3.0"
     
 [tool.poetry.scripts]
