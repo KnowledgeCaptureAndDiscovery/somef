@@ -57,18 +57,12 @@ When using `-e`, publication metadata is enriched via OpenAlex. We recognize the
 - **Full name**: Name + owner (owner/name)
 - **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository name
 - **Funding**: Funding information associated with the project. **Note**: This information is extracted from existing `codemeta.json` files within the repository. When using `-e`, the project data is enriched with OpenAIRE, adding:
-
 - `project_code`: Project code
-
 - `project_title`: Project title
-
 - `project_acronym`: Project acronym
-
 - `grant_id`: Call/grant identifier
 - **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers and Software Heritage identifiers (SWH). DOIs associated with publications will also be detected. When using `-e`, the following enrichment identifiers are also added:
-
 - `openaire_id`: URL to the OpenAIRE explore page for the software
-
 - `swhid`: Software Heritage identifier (for Zenodo DOIs)
 - **Images**: Images used to illustrate the software component
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
@@ -407,6 +401,7 @@ Options:
   -b, --branch name branch        Branch of the repository to analyze. Overrides the default branch.
 
       --tag text                  Tag of the repository to analyze. Cannot be used together with --branch.
+ 
 ```
 
 Alternatively, you can set tokens via environment variables or by running `somef configure`, which stores them permanently.
@@ -465,6 +460,14 @@ This includes identifying dependencies, runtime requirements, and development to
 SOMEF is designed to work primarily with repositories written in English.  
 Repositories in other languages may not be processed as effectively, and results could be incomplete or less accurate.
 
+### Enrichment with `-e`
+
+The `-e` (or `--enrichment`) flag queries external APIs to complete the extracted metadata:
+- **OpenAlex**: adds `openalex_id` to DOIs of publications.
+- **OpenAIRE**: adds `openaire_id` and enriches funding information (project code, title, acronym, grant id).
+- **Zenodo**: adds `swhid` (Software Heritage ID) for Zenodo DOIs.
+
+**Note:** Enrichment makes additional network requests to external services, which may slow down the overall execution time. Use this flag only when you need the extra metadata.
 
 ## Repository versions: default behavior, branch and tag
 
