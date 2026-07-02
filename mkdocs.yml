@@ -8,8 +8,13 @@ nav:
   - Output: output.md
   - Supported metadata files: supported_metadata_files.md
   - Supported languages: supported_languages.md
-
-theme:
+  - Supported APIs:
+      - GitHub: github.md
+      - GitLab: gitlab.md
+      - Codeberg: codeberg.md
+      - Bitbucket: bitbucket.md
+      
+  theme:
   name: material
   features:
     - navigation.expand
