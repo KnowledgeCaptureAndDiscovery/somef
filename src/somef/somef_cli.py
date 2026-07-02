@@ -278,7 +278,7 @@ def run_cli(*,
             reconcile_authors=False,
             branch=None,
             tag=None,
-            enrich=False 
+            enrich=False,
             github_token=None,
             gitlab_token=None,
             codeberg_token=None,
