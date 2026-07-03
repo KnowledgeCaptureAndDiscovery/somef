@@ -1,5 +1,3 @@
-# This CITATION.cff file was generated with cffinit.
-# Visit https://bit.ly/cffinit to generate yours today!
 
 cff-version: 1.2.0
 title: 'SOMEF: Software metadata extraction framework'
@@ -29,6 +27,8 @@ authors:
     given-names: Juanje
   - family-names: Vuillaume
     given-names: Thomas
+  - family-names: El Hounsri
+    given-names: Anas
 license: MIT
 preferred-citation:
   authors:
