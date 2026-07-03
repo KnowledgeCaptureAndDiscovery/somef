@@ -57,6 +57,11 @@
             "familyName": "Vuillaume",
             "givenName": "Thomas",
             "@type": "Person"
+        },
+        {
+            "familyName": "El Hounsri",
+            "givenName": "Anas",
+            "@type": "Person"
         }
     ],
     "codeRepository": "https://github.com/KnowledgeCaptureAndDiscovery/somef",
@@ -88,7 +93,7 @@
         }
     ],
     "softwareRequirements": "https://raw.githubusercontent.com/KnowledgeCaptureAndDiscovery/somef/refs/heads/master/pyproject.toml",
-    "version": "0.10.3",
+    "version": "0.11.0",
     "developmentStatus": "active",
     "issueTracker": "https://github.com/KnowledgeCaptureAndDiscovery/somef/issues",
     "@type": "SoftwareSourceCode"

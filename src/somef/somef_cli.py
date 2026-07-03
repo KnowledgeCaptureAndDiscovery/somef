@@ -13,7 +13,7 @@ from os import path
 from . import header_analysis, regular_expressions, process_repository, configuration, process_files, \
     supervised_classification
 from .process_results import Result
-from .utils import constants, markdown_utils
+from .utils import constants, markdown_utils, enrichment
 from .parser import mardown_parser, create_excerpts
 from .export.turtle_export import DataGraph
 from .export import json_export
@@ -23,7 +23,7 @@ from urllib.parse import urlparse, quote
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
                  ignore_github_metadata=False, readme_only=False, keep_tmp=None, authorization=None,
-                 ignore_test_folder=True,requirements_mode='all', reconcile_authors=False, branch=None, tag=None, download_limit= None) -> Result:
+                 ignore_test_folder=True,requirements_mode='all', reconcile_authors=False, branch=None, tag=None, download_limit= None, commit=None) -> Result:
     """
     Main function to get the data through the command line
     Parameters
@@ -42,6 +42,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     @param reconcile_authors: flag to indicate if additional should be extracted from certain files as codeowners. Bear in mind that using this flags consumes more requests to the GitHub API.
     @param branch: branch of the repository to analyze. Overrides the default branch detected from the repository metadata.
     @param tag: tag of the repository to analyze. Cannot be used together with the branch parameter.
+    @param download_limit: download size limit in MB.
+    @param commit: commit SHA of the repository to analyze.
     Returns
     -------
     @return: Dictionary with the results found by SOMEF, formatted as a Result object.
@@ -62,6 +64,9 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
 
     if branch and tag:
         logging.error("You cannot use --branch and --tag at the same time. Mutually exclusive")
+        sys.exit()
+    if commit and (branch or tag):
+        logging.error("You cannot use --commit together with --branch or --tag. Mutually exclusive")
         sys.exit()
 
     if repo_url is not None:
@@ -109,7 +114,8 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 authorization,
                 reconcile_authors,
                 branch=branch,
-                tag=tag
+                tag=tag,
+                commit=commit
             )
 
             # download files and obtain path to download folder
@@ -278,12 +284,14 @@ def run_cli(*,
             reconcile_authors=False,
             branch=None,
             tag=None,
+            enrich=False,
             github_token=None,
             gitlab_token=None,
             codeberg_token=None,
             bitbucket_token=None,
             bitbucket_email=None,
-            download_limit=None 
+            download_limit=None,
+            commit=None 
             ):
     """Function to run all the required components of the cli for a repository"""
     # check if it is a valid url
@@ -321,12 +329,15 @@ def run_cli(*,
                                              ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
                                             keep_tmp=keep_tmp, authorization=authorization, ignore_test_folder=ignore_test_folder,
                                             requirements_mode=requirements_mode, reconcile_authors=reconcile_authors,
-                                            branch=branch, tag=tag, download_limit=download_limit)
+                                            branch=branch, tag=tag, download_limit=download_limit,commit=commit)
                     
                     if hasattr(repo_data, "get_json"): 
                         repo_data = repo_data.get_json()
            
                     repo_data = json_export.unify_results(repo_data.results)
+
+                    if enrich:                                       
+                        repo_data = enrichment.run_enrichment(repo_data)
 
                     if output is not None:
                         output = output.replace(".json","")
@@ -357,20 +368,22 @@ def run_cli(*,
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers, repo_url=repo_url,
                                      ignore_github_metadata=ignore_github_metadata, readme_only=readme_only,
                                      keep_tmp=keep_tmp, authorization=authorization, ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors,
-                                     branch=branch, tag=tag, download_limit=download_limit)
+                                     branch=branch, tag=tag, download_limit=download_limit, commit=commit)
         elif local_repo:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
                                      local_repo=local_repo, keep_tmp=keep_tmp,  ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors,
-                                     branch=branch, tag=tag, download_limit=download_limit)
+                                     branch=branch, tag=tag, download_limit=download_limit, commit=commit)
         else:
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
                                      doc_src=doc_src, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors,
-                                     branch=branch, tag=tag, download_limit= download_limit)
+                                     branch=branch, tag=tag, download_limit= download_limit, commit=commit)
         
         if hasattr(repo_data, "get_json"): 
             repo_data = repo_data.get_json()
 
         repo_data = json_export.unify_results(repo_data.results)
+        if enrich:                                       
+            repo_data = enrichment.run_enrichment(repo_data)
 
         if output is not None:
             json_export.save_json_output(repo_data, output, missing, pretty=pretty)

@@ -98,6 +98,7 @@ REGEXP_LTD_INC = r'\b(inc|ltd|llc|corporation|foundation|community|project|team|
 REGEXP_ALL_DOIS = r'10\.\d{4,9}/[-._;()/:A-Z0-9]+'
 
 # Detect zenodo latest doi in readme. 
+ZENODO_API_BASE = "https://zenodo.org/api"
 REGEXP_ZENODO_LATEST_DOI = r':target:\s*(https://zenodo\.org/badge/latestdoi/\d+)'
 REGEXP_ZENODO_DOI = r'https://zenodo\.org/badge/DOI/\d+'
 REGEXP_ZENODO_JSON_LD = r"<script[^>]*type=['\"]application/ld\+json['\"][^>]*>(.*?)</script>"
@@ -264,6 +265,7 @@ PROP_ROLE = "role"
 PROP_SIZE = "size"
 PROP_SPDX_ID = "spdx_id"
 PROP_TAG = "tag"
+PROP_COMMIT = "commit"
 PROP_URL = "url"
 PROP_USERNAME = "username"
 PROP_VERSION = "version"
@@ -708,3 +710,21 @@ OS_EXTRACTION_CATEGORIES = {
     CAT_REQUIREMENTS,
     CAT_INSTALLATION,
 }
+
+# Enrichment 
+OPENALEX_BASE = "https://api.openalex.org"
+OPENAIRE_BASE = "https://api.openaire.eu"
+OPENAIRE_EXPLORE = "https://explore.openaire.eu"
+OPENAIRE_NAMESPACE = "http://namespace.openaire.eu/oaf"
+REGEXP_DOI_IN_URL = r'(10\.\d{4,9}/[-._;()/:A-Za-z0-9]+)'
+REGEXP_FIND_ZENODO = r'zenodo\.(\d+)'
+PROP_OPENALEX_ID = "openalex_id"
+PROP_OPENAIRE_ID = "openaire_id"
+PROP_SWHID = "swhid"
+PROP_PROJECT_CODE = "project_code"
+PROP_PROJECT_TITLE = "project_title"
+PROP_PROJECT_ACRONYM = "project_acronym"
+PROP_GRANT_ID = "grant_id"
+PROP_FUNDER = "funder"
+PROP_START_DATE = "start_date"
+PROP_END_DATE = "end_date"
