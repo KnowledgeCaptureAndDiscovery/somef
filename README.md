@@ -395,12 +395,16 @@ Options:
 
   --bitbucket-email TEXT          Bitbucket Atlassian account email (required
                                   with --bitbucket-token)
+              
+
   
   Repoository versions [mutually_exclusive] (see section *Repository versions*t):
   -b, --branch name branch        Branch of the repository to analyze. Overrides the default branch.
 
-      --tag text                  Tag of the repository to analyze. Cannot be used together with --branch.
- 
+  --tag text                      Tag of the repository to analyze. Cannot be used together with --branch and --commit
+
+  --commit  TEXT                  Commit SHA to analyze. Cannot be used together 
+                                  with --branch or --tag.
 ```
 
 Alternatively, you can set tokens via environment variables or by running `somef configure`, which stores them permanently.
@@ -455,7 +459,7 @@ The `-e` (or `--enrichment`) flag queries external APIs to complete the extracte
 
 **Note:** Enrichment makes additional network requests to external services, which may slow down the overall execution time. Use this flag only when you need the extra metadata.
 
-## Repository versions: default behavior, branch and tag
+## Repository versions: default behavior, branch tag and commit
 
 SOMEF allows analyzing specific versions of a repository. If no version is specified, SOMEF will analyze the default branch of the repository (usually `main` or `master`). The following options let you control exactly which version of the codebase is inspected.
 
@@ -497,7 +501,14 @@ Recommended when:
 - You want to document a released version of the software.
 - You integrate SOMEF into pipelines that operate on versioned artifacts.
 
+
+### Using a commit
+
+```bash
+somef describe -r <repo_url> --commit <commit_sha> ...
+```
+
 ### Restrictions
 
-- `--branch` and `--tag` are mutually exclusive.
+- `--branch`, `--tag` and `--commit` are mutually exclusive.
 - If either option is provided, it overrides the default branch behavior.

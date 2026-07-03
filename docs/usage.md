@@ -96,11 +96,13 @@ Options:
 
   --bitbucket-email TEXT          Bitbucket Atlassian account email (required
                                   with --bitbucket-token)
-  
+
   Repoository versions [mutually_exclusive] (see section *Repository versions*t):
   -b, --branch name branch        Branch of the repository to analyze. Overrides the default branch.
 
-      --tag text                  Tag of the repository to analyze. Cannot be used together with --branch.
+  --tag TEXT                      Tag of the repository to analyze. Cannot be used together with --branch and --commit
+  
+  --commit TEXT                   Commit SHA to analyze. Cannot be used together with --branch or --tag.
 ```
 
 Note about tokens: GitHub, Codeberg and Bitbucket APIs can be used without authentication for basic metadata extraction. GitLab may require a token for self-hosted instances. User enrichment via CODEOWNERS (--reconcile_authors) works for 
