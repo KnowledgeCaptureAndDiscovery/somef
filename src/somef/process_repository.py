@@ -176,7 +176,7 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=None,
     return response, date
 
 
-def load_gitlab_repository_metadata(repo_metadata: Result, repository_url, authorization=None):
+def load_gitlab_repository_metadata(repo_metadata: Result, repository_url, authorization=None, ignore_api_metadata=False, commit=None):
     """
     Function uses the repository_url provided to load required information from gitlab.
     Information kept from the repository is written in keep_keys.
@@ -332,6 +332,8 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url, autho
 
     if default_branch is None:
         default_branch = general_resp['defaultBranch']
+    if commit: 
+        default_branch = commit
 
     project_path = "/".join(path_components)
 
@@ -430,6 +432,11 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url, autho
             constants.PROP_TYPE: constants.URL
         }, 1, constants.TECHNIQUE_GITLAB_API)
 
+    if not ignore_api_metadata and commit:
+        repo_metadata = fetch_commit_metadata(
+            repo_metadata, constants.RepositoryType.GITLAB, commit,
+            headers=gitlab_header_template(authorization), project_api_url=project_api_url
+        )
     logging.info("Repository information successfully loaded. \n")
     # return repo_metadata, owner, repo_name, default_branch
     return repo_metadata, owner, repo_name, default_branch, project_path
@@ -556,7 +563,7 @@ def download_readme(owner, repo_name, default_branch, repo_type, authorization, 
 
 def load_online_repository_metadata(repository_metadata: Result, repository_url, ignore_api_metadata=False,
                                     repo_type=constants.RepositoryType.GITHUB, authorization=None, reconcile_authors=False,
-                                    branch=None,tag=None):
+                                    branch=None,tag=None, commit=None):
     """
     Function uses the repository_url provided to load required information from GitHub or Gitlab.
     Information kept from the repository is written in keep_keys.
@@ -570,17 +577,18 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
     @param reconcile_authors: flag to indicate if additional should be extracted from certain files as codeowners. More request.
     @param branch: branch of the repository to analyze. Overrides the default branch detected from the repository metadata.
     @param tag: tag of the repository to analyze. Cannot be used together with the branch parameter.
+    @param commit: commit of the repository to analyze. Cannot be used together with the branch or tag parameter.
 
     Returns
     -------
     @return: Result object with the available metadata from online APIs plus its owner, repo name and default branch
     """
     if repo_type == constants.RepositoryType.GITLAB:
-        return load_gitlab_repository_metadata(repository_metadata, repository_url, authorization)
+        return load_gitlab_repository_metadata(repository_metadata, repository_url, authorization, commit=commit)
     elif repo_type == constants.RepositoryType.CODEBERG:
-        return load_codeberg_repository_metadata(repository_metadata, repository_url, authorization)
+        return load_codeberg_repository_metadata(repository_metadata, repository_url, authorization, commit=commit)
     elif repo_type == constants.RepositoryType.BITBUCKET:
-        return load_bitbucket_repository_metadata(repository_metadata, repository_url, authorization)
+        return load_bitbucket_repository_metadata(repository_metadata, repository_url, authorization, commit=commit)
     elif repo_type == constants.RepositoryType.LOCAL:
         logging.warning("Trying to download metadata from a local repository")
         return None
@@ -652,7 +660,8 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
         default_branch = branch
     if tag:
         default_branch = tag
-
+    if commit:
+        default_branch = commit
     # filter the general response with only the fields we are interested in, mapping them to our keys
     filtered_resp = {}
     if not ignore_api_metadata:
@@ -793,6 +802,12 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
 
             repository_metadata.add_result(constants.CAT_RELEASES, release_obj, 1,
                                             constants.TECHNIQUE_GITHUB_API)
+
+    if not ignore_api_metadata and commit:
+        repository_metadata = fetch_commit_metadata(
+            repository_metadata, constants.RepositoryType.GITHUB, commit, header,
+            repo_api_base_url=repo_api_base_url
+        )   
     logging.info("Repository information successfully loaded.\n")
     return repository_metadata, owner, repo_name, default_branch, None
 
@@ -1119,13 +1134,19 @@ def get_all_paginated_results(base_url, headers, per_page=100):
         if not page_data:
             break  # No more results
 
-        all_results.extend(page_data)
+        if isinstance(page_data, dict):
+            items = page_data.get("values", [])
+            if not items:
+                break
+            all_results.extend(items)
+        else:
+            all_results.extend(page_data)
         page += 1
 
     return all_results
 
 
-def load_codeberg_repository_metadata(repo_metadata: Result, repository_url, authorization=None):
+def load_codeberg_repository_metadata(repo_metadata: Result, repository_url, authorization=None, ignore_api_metadata=False, commit=None):
     logging.info(f"Loading Repository {repository_url} Information....")
 
     file_paths = configuration.get_configuration_file()
@@ -1157,6 +1178,8 @@ def load_codeberg_repository_metadata(repo_metadata: Result, repository_url, aut
 
     if default_branch is None:
         default_branch = general_resp.get('default_branch', 'main')
+    if commit: 
+        default_branch = commit
 
     filtered_resp = do_crosswalk(general_resp, constants.codeberg_crosswalk_table)
     if 'html_url' in general_resp:
@@ -1257,7 +1280,12 @@ def load_codeberg_repository_metadata(repo_metadata: Result, repository_url, aut
                     assets_filtered = [{key_mapping.get(k, k): v for k, v in a.items()} for a in assets_filtered]
                     release_obj[category] = assets_filtered
             repo_metadata.add_result(constants.CAT_RELEASES, release_obj, 1, constants.TECHNIQUE_CODEBERG_API)
-    
+
+    if not ignore_api_metadata and commit:
+        repo_metadata = fetch_commit_metadata(
+            repo_metadata, constants.RepositoryType.CODEBERG, commit, headers,
+            repo_api_base_url=repo_api_url
+        )
     logging.info("Repository information successfully loaded.\n")
     return repo_metadata, owner, repo_name, default_branch, "/".join(path_components)
 
@@ -1339,7 +1367,7 @@ def bitbucket_header_template(authorization=None):
     return header
 
 
-def load_bitbucket_repository_metadata(repo_metadata: Result, repository_url, authorization=None):
+def load_bitbucket_repository_metadata(repo_metadata: Result, repository_url, authorization=None, ignore_api_metadata=False, commit=None):
     logging.info(f"Loading Repository {repository_url} Information....")
     if repository_url[-1] == '/':
         repository_url = repository_url[:-1]
@@ -1368,6 +1396,9 @@ def load_bitbucket_repository_metadata(repo_metadata: Result, repository_url, au
 
     if default_branch is None:
         default_branch = general_resp.get('mainbranch', {}).get('name', 'main')
+
+    if commit: 
+        default_branch = commit
 
     filtered_resp = do_crosswalk(general_resp, constants.bitbucket_crosswalk_table)
 
@@ -1429,7 +1460,12 @@ def load_bitbucket_repository_metadata(repo_metadata: Result, repository_url, au
             release_obj[constants.PROP_VALUE] = tag.get('name', '')
             repo_metadata.add_result(constants.CAT_RELEASES, release_obj, 1,
                                       constants.TECHNIQUE_BITBUCKET_API)
-
+            
+    if not ignore_api_metadata and commit:
+        repo_metadata = fetch_commit_metadata(
+            repo_metadata, constants.RepositoryType.BITBUCKET, commit, headers,
+            repo_api_base_url=repo_api_url
+        )
     logging.info("Repository information successfully loaded.\n")
     return repo_metadata, owner, repo_name, default_branch, "/".join(path_components)
 
@@ -1470,3 +1506,230 @@ def download_bitbucket_files(directory, owner, repo_name, repo_branch, authoriza
 
     repo_dir = os.path.join(repo_extract_dir, repo_folders[0])
     return repo_dir
+
+
+def fetch_commit_metadata(repository_metadata, repo_type, commit_sha, headers,
+                          repo_api_base_url=None, project_api_url=None):
+    """
+    Fetches metadata for a specific commit from the GitHub or GitLab API and
+    adds it to the repository metadata.
+    Parameters
+    ----------
+    @param repository_metadata: Result object to store the findings
+    @param repo_type: type of the repository (GITHUB or GITLAB)
+    @param commit_sha: The commit SHA to fetch metadata for
+    @param headers: HTTP headers to use for the request
+    @param repo_api_base_url: Base URL of the GitHub repository API (e.g. https://api.github.com/repos/owner/repo)
+    @param project_api_url: Base URL of the GitLab project API (e.g. https://gitlab.com/api/v4/projects/123)
+    Returns
+    -------
+    @return: Result object enriched with commit metadata
+    """
+
+    if repo_type == constants.RepositoryType.GITLAB:
+        if not project_api_url:
+            logging.warning("No project API URL provided for GitLab commit metadata fetch.")
+            return repository_metadata
+        commit_url = f"{project_api_url}/repository/commits/{commit_sha}"
+        is_gitlab = True
+        technique = constants.TECHNIQUE_GITLAB_API
+    elif repo_type == constants.RepositoryType.BITBUCKET:
+        commit_url = f"{repo_api_base_url}/commit/{commit_sha}"
+        is_gitlab = False
+        technique = constants.TECHNIQUE_BITBUCKET_API
+    elif repo_type == constants.RepositoryType.CODEBERG:
+        commit_url = f"{repo_api_base_url}/git/commits/{commit_sha}"
+        is_gitlab = False
+        technique = constants.TECHNIQUE_CODEBERG_API
+    else:
+        commit_url = f"{repo_api_base_url}/commits/{commit_sha}"
+        is_gitlab = False
+        technique = constants.TECHNIQUE_GITHUB_API
+
+    logging.info(f"Fetching commit metadata from {commit_url}")
+    commit_resp, _ = rate_limit_get(commit_url, headers=headers)
+    if commit_resp is None:
+        logging.warning("Skipping commit metadata: rate_limit_get returned None (size limit or network error)")
+        return repository_metadata
+    if commit_resp.status_code != 200:
+        logging.warning(f"Could not fetch commit metadata: HTTP {commit_resp.status_code}")
+        return repository_metadata
+    commit_data = commit_resp.json()
+
+    # Extract commit metadata since fields differ between GitHub and GitLab
+    author_name = None
+    commit_date_str = None
+    commit_html_url = None
+    if is_gitlab:
+        author_name = commit_data.get("author_name")
+        commit_date_str = commit_data.get("authored_date") or commit_data.get("committed_date")
+        commit_html_url = commit_data.get("web_url")
+    elif repo_type == constants.RepositoryType.BITBUCKET:
+        author_data = commit_data.get("author", {})
+        author_name = author_data.get("nickname") or (author_data.get("user") or {}).get("nickname")
+        commit_date_str = commit_data.get("date")
+        commit_html_url = (commit_data.get("links") or {}).get("html", {}).get("href")
+    else:
+        commit_details = commit_data.get("commit", {})
+        commit_author = commit_data.get("author", {})
+        if commit_author and commit_author.get("login"):
+            author_name = commit_author["login"]
+        elif commit_details.get("author") and commit_details["author"].get("name"):
+            author_name = commit_details["author"]["name"]
+        if commit_details.get("author") and commit_details["author"].get("date"):
+            commit_date_str = commit_details["author"]["date"]
+        elif commit_details.get("committer") and commit_details["committer"].get("date"):
+            commit_date_str = commit_details["committer"]["date"]
+        commit_html_url = commit_data.get("html_url")
+
+    if author_name:
+        author_result = {
+            constants.PROP_VALUE: author_name,
+            constants.PROP_TYPE: constants.AGENT
+        }
+        repository_metadata.add_result(constants.CAT_AUTHORS, author_result, 1, technique)
+
+    if commit_date_str:
+        date_result = {
+            constants.PROP_VALUE: commit_date_str,
+            constants.PROP_TYPE: constants.DATE
+        }
+        repository_metadata.add_result(constants.CAT_DATE_CREATED, date_result, 1, technique)
+
+    if commit_html_url:
+        url_result = {
+            constants.PROP_VALUE: commit_html_url,
+            constants.PROP_TYPE: constants.URL,
+            constants.PROP_COMMIT: commit_sha
+        }
+        repository_metadata.add_result(constants.CAT_CODE_REPOSITORY, url_result, 1, technique)
+
+    # Resolve release tags to commit SHAs and store them on each release entry
+    repository_metadata = resolve_release_commits(
+        repository_metadata, repo_type, headers,
+        repo_api_base_url=repo_api_base_url, project_api_url=project_api_url
+    )
+
+    # In here, we keep only releases whose date is at or before the commit date. This will guarantee that the output JSON 
+    # contains the releases that existed up to the point in time of the requested commit, 
+    # with the closest one sitting at the end of the list. 
+    # In some edge cases, like the commit is after ALL releases, we would keep the list of releases as it is. 
+    
+    if commit_date_str and constants.CAT_RELEASES in repository_metadata.results:
+        try:
+            commit_dt = datetime.fromisoformat(commit_date_str[:19])
+            filtered = []
+            closest_release_date = None
+            closest_release_tag = None
+            next_release_date = None
+            next_release_tag = None
+            found_closest = False
+            for release in repository_metadata.results[constants.CAT_RELEASES]:
+                release_result = release.get(constants.PROP_RESULT, {})
+                release_date = release_result.get(constants.PROP_DATE_CREATED)
+                if release_date is None:
+                    release_date = release_result.get(constants.PROP_DATE_PUBLISHED)
+                if release_date is None:
+                    continue
+                try:
+                    release_dt = datetime.fromisoformat(release_date[:19])
+                except (ValueError, TypeError):
+                    continue
+                if release_dt <= commit_dt:
+                    filtered.append(release)
+                    if not found_closest:
+                        found_closest = True
+                        closest_release_date = release_date
+                        closest_release_tag = release_result.get(constants.PROP_TAG, release_result.get(constants.PROP_NAME, "unknown"))
+                else:
+                    if next_release_date is None:
+                        next_release_date = release_date
+                        next_release_tag = release_result.get(constants.PROP_TAG, release_result.get(constants.PROP_NAME, "unknown"))
+            if filtered:
+                repository_metadata.results[constants.CAT_RELEASES] = filtered
+                if found_closest:
+                    msg = f"Closest release behind commit date found. Commit date: {commit_date_str}. Matched release: {closest_release_tag} (date: {closest_release_date})."
+                    if next_release_tag:
+                        msg += f" Next release: {next_release_tag} (date: {next_release_date})."
+                    logging.info(msg)
+            else:
+                logging.warning("All releases are after the commit date; keeping the unfiltered release list.")
+        except (ValueError, TypeError) as e:
+            logging.warning(f"Could not parse commit date for filtering releases: {e}")
+
+    logging.info("Commit metadata successfully loaded.")
+    return repository_metadata
+
+def resolve_release_commits(repository_metadata, repo_type, headers,
+                            repo_api_base_url=None, project_api_url=None):
+    """
+    Resolves the commit SHA for each release's tag using the GitHub or GitLab
+    tags API and stores the SHA directly on each release result dict.
+
+    Parameters
+    ----------
+    @param repository_metadata: Result object containing releases loaded from the API
+    @param repo_type: type of the repository (GITHUB or GITLAB)
+    @param headers: HTTP headers to use for the request
+    @param repo_api_base_url: Base URL of the GitHub repository API (e.g. https://api.github.com/repos/owner/repo)
+    @param project_api_url: Base URL of the GitLab project API (e.g. https://gitlab.com/api/v4/projects/123)
+    Returns
+    -------
+    @return: Result object with release entries enriched with commit SHAs (when resolvable)
+    """
+    if repo_type == constants.RepositoryType.GITLAB:
+        if not project_api_url:
+            logging.warning("No project API URL provided for GitLab tag resolution.")
+            return repository_metadata
+        tags_url = f"{project_api_url}/repository/tags"
+        is_gitlab = True
+    elif repo_type == constants.RepositoryType.BITBUCKET:
+        tags_url = f"{repo_api_base_url}/refs/tags"
+        is_gitlab = False
+    else:
+        tags_url = f"{repo_api_base_url}/tags"
+        is_gitlab = False
+
+    # Retrieve all tags from the paginated /tags endpoint
+    logging.info(f"Resolving release tags to commit SHAs via {tags_url}")
+    all_tags = get_all_paginated_results(tags_url, headers=headers)
+    if not all_tags:
+        logging.warning("No tags found, cannot resolve release commits.")
+        return repository_metadata
+
+    # Build a mapping from tag name to commit SHA
+    tag_to_sha = {}
+    for tag_entry in all_tags:
+        tag_name = tag_entry.get("name")
+        commit_info = tag_entry.get("commit")
+        if tag_name and commit_info:
+            if is_gitlab:
+                sha = commit_info.get("id")
+            else:
+                sha = commit_info.get("sha")
+            if sha:
+                tag_to_sha[tag_name] = sha
+        elif tag_name and repo_type == constants.RepositoryType.BITBUCKET:
+            sha = tag_entry.get("target", {}).get("hash")
+            if sha:
+                tag_to_sha[tag_name] = sha
+
+    if not tag_to_sha:
+        return repository_metadata
+
+    # Walk through existing releases and add the commit SHA when the tag matches
+    if constants.CAT_RELEASES not in repository_metadata.results:
+        return repository_metadata
+
+    for release_entry in repository_metadata.results[constants.CAT_RELEASES]:
+        release_result = release_entry.get(constants.PROP_RESULT)
+        if release_result is None:
+            continue
+        tag_name = release_result.get(constants.PROP_TAG)
+        if tag_name is None:
+            continue
+        commit_sha = tag_to_sha.get(tag_name)
+        if commit_sha is not None:
+            release_result[constants.PROP_COMMIT] = commit_sha
+
+    return repository_metadata
