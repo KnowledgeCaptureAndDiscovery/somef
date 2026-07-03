@@ -211,6 +211,12 @@ def configure(auto, base_uri):
     help="Tag of the repository to analyze. Incompatible with --branch"
 )
 @click.option(
+    "--commit",
+    type=str,
+    default=None,
+    help="Commit SHA of the repository to analyze. Incompatible with --branch and --tag"
+)
+@click.option(
     "--enrich",
     "-e",
     is_flag=True,
