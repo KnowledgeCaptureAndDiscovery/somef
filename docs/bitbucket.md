@@ -33,9 +33,6 @@ via `--bitbucket-token` and `--bitbucket-email`, or by running `somef configure`
 Repository archives are downloaded from:
 `https://bitbucket.org/{owner}/{repo}/get/{branch}.zip`
 
-Bitbucket archive URLs typically include a `Content-Length` header, so the size limit check
-can be performed before downloading.
-
 ### Limitations
 
 - **No stargazers**: Bitbucket does not have a stargazers feature.
@@ -47,7 +44,3 @@ can be performed before downloading.
   without byte counts per language.
 - **CODEOWNERS enrichment**: Not supported for Bitbucket, as the platform does not
   expose a public user API.
-- **Rate limits**: Unauthenticated requests are limited to 60 requests/hour.
-  Authenticated requests (via `bitbucket-token` and `bitbucket-email` ) have higher limits) have higher limits.
-  Create an app password at `https://bitbucket.org/account/settings/api-tokens/`
-  with `read:repository:bitbucket` and `read:account` scopes.

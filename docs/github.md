@@ -39,13 +39,8 @@ HTTP 300. SOMEF handles this by trying the following fallback URLs in order:
 
 ### Limitations
 
-- **No Content-Length**: GitHub archive downloads lack a `Content-Length` header, so the
-  size limit check relies on streaming (reading 1 MB chunks until the limit is exceeded).
-- **Rate limits**: Unauthenticated requests are limited to 60 requests/hour. Authenticated
-  requests (via `github-token`) are limited to 5,000 requests/hour.
 - **Private repositories**: SOMEF cannot access private repositories without a valid token.
-- **Asset download count**: GitHub provides `download_count` for release assets; other
-  providers may not offer this field.
+
 
 ### Enrichment via CODEOWNERS
 

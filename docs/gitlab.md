@@ -46,12 +46,5 @@ own API endpoint; `gitlab.com` uses the standard `https://gitlab.com/api/v4/user
 
 ### Limitations
 
-- **Self-hosted detection**: SOMEF detects self-hosted instances by checking for `gitlab.com`
-  in the URL. If a self-hosted instance uses a custom domain without a GitLab API endpoint,
-  detection may fail.
-- **Rate limits**: GitLab.com unauthenticated requests are limited to 600 requests/hour.
-  Authenticated requests (via `gitlab-token`)have higher limits depending on the token type. Self-hosted
-  instances have their own rate limits.
-- **Programming languages**: GitLab returns only language names (no byte counts).
 - **Release assets**: GitLab releases include sources (tar.gz, zip) and links, but do not
   provide `download_count` or `content_size` like GitHub.

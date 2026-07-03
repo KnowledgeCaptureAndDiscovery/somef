@@ -17,7 +17,6 @@ fields map to SOMEF categories:
 | `download_url` | *(built from URL)* | `https://codeberg.org/{owner}/{repo}/releases` |
 | `keywords` | `topics` | |
 | `issue_tracker` | *(built from URL)* | `{html_url}/issues` |
-| `license` | *(content API)* | *1* |
 | `programming_languages` | `languages_url` | Additional GET request to the languages endpoint, returns byte counts per language |
 | `releases` | `/repos/{owner}/{repo}/releases` | Additional GET request, mapped via `release_codeberg_crosswalk_table` |
 
@@ -25,11 +24,6 @@ For releases, the field mapping is identical to GitHub. The only differences are
 uses `attachments` instead of `assets` for release files, and it does not provide
 `author.type` (`AGENT_TYPE`) for release authors.
 
-
---------------- 
-
-*1*
-Extracted by fetching the LICENSE file via `GET /api/v1/repos/{owner}/{repo}/contents/{filename}` (tries `LICENSE`, `LICENSE.md`, `LICENCE`, `COPYING`). The content is base64-decoded and analyzed with `detect_license_spdx()` to obtain the SPDX identifier, name and URL.
 
 ### Archive download
 
@@ -47,9 +41,6 @@ repository owner and for each CODEOWNERS entry.
 
 ### Limitations
 
-- **Rate limits**: Unauthenticated requests are limited to 60 requests/hour. Authenticated
-  requests (via `codeberg-token`) have higher limits. Create a token at
-  `https://codeberg.org/user/settings/applications`.
 - **License detection**: Codeberg does not provide a `license` field in the repository
   API response. SOMEF falls back to fetching LICENSE/COPYING files directly via the
   content API.
