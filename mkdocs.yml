@@ -1,6 +1,7 @@
 extra_css:
   - stylesheets/mkdocs.css
 site_name: SOMEF documentation
+
 nav:
   - Home: index.md
   - Install: install.md
@@ -8,7 +9,15 @@ nav:
   - Output: output.md
   - Supported metadata files: supported_metadata_files.md
   - Supported languages: supported_languages.md
-
+  - Supported APIs:
+      - GitHub: github.md
+      - GitLab: gitlab.md
+      - Codeberg: codeberg.md
+      - Bitbucket: bitbucket.md
+  - Enrichment:
+      - OpenAlex: openalex.md
+      - OpenAIRE / Zenodo: openaire.md
+      
 theme:
   name: material
   features:

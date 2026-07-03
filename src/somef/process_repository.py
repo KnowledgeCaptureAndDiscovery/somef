@@ -400,6 +400,57 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url, autho
         }
         repo_metadata.add_result(constants.CAT_KEYWORDS, result, 1, constants.TECHNIQUE_GITLAB_API)
 
+    # extract name
+    if project_details.get('name'):
+        repo_metadata.add_result(constants.CAT_NAME, {
+            constants.PROP_VALUE: project_details['name'],
+            constants.PROP_TYPE: constants.STRING
+        }, 1, constants.TECHNIQUE_GITLAB_API)
+
+    # extract full_name
+    if project_details.get('path_with_namespace'):
+        repo_metadata.add_result(constants.CAT_FULL_NAME, {
+            constants.PROP_VALUE: project_details['path_with_namespace'],
+            constants.PROP_TYPE: constants.STRING
+        }, 1, constants.TECHNIQUE_GITLAB_API)
+
+    # extract description
+    if project_details.get('description'):
+        repo_metadata.add_result(constants.CAT_DESCRIPTION, {
+            constants.PROP_VALUE: project_details['description'],
+            constants.PROP_TYPE: constants.STRING
+        }, 1, constants.TECHNIQUE_GITLAB_API)
+
+    # extract owner
+    if project_details.get('owner') and project_details['owner'].get('username'):
+        owner_type = "Person"
+        if project_details.get('namespace') and project_details['namespace'].get('kind'):
+            owner_type = "Organization" if project_details['namespace']['kind'] == 'group' else "Person"
+        repo_metadata.add_result(constants.CAT_OWNER, {
+            constants.PROP_VALUE: project_details['owner']['username'],
+            constants.PROP_TYPE: owner_type
+        }, 1, constants.TECHNIQUE_GITLAB_API)
+
+    # extract date_created
+    if project_details.get('created_at'):
+        repo_metadata.add_result(constants.CAT_DATE_CREATED, {
+            constants.PROP_VALUE: project_details['created_at'],
+            constants.PROP_TYPE: constants.DATE
+        }, 1, constants.TECHNIQUE_GITLAB_API)
+
+    # extract date_updated
+    if project_details.get('last_activity_at'):
+        repo_metadata.add_result(constants.CAT_DATE_UPDATED, {
+            constants.PROP_VALUE: project_details['last_activity_at'],
+            constants.PROP_TYPE: constants.DATE
+        }, 1, constants.TECHNIQUE_GITLAB_API)
+
+    # extract issue_tracker
+    repo_metadata.add_result(constants.CAT_ISSUE_TRACKER, {
+        constants.PROP_VALUE: f"https://{url.netloc}/{project_path}/-/issues",
+        constants.PROP_TYPE: constants.URL
+    }, 1, constants.TECHNIQUE_GITLAB_API)
+
     # get social features: stargazers_count
     if project_details['star_count'] is not None:
         result = {
