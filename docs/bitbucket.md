@@ -13,9 +13,34 @@ fields map to SOMEF categories:
 | `date_updated` | `updated_on` | |
 | `homepage` | `website` | |
 | `forks_url` | `links.forks.href` | |
-| `download_url` | *(constructed)* | Built as `{html_url}/downloads` |
-| `issue_tracker` | *(constructed)* | Built as `{html_url}/issues` when `has_issues` is true |
+| `download_url` | *(built from URL)*| Built as `{html_url}/downloads` |
+| `issue_tracker` | *(built from URL)* | Built as `{html_url}/issues` when `has_issues` is true |
 | `programming_languages` | `language` | Single string, not a dictionary with sizes |
 | `releases` | `/refs/tags` | Bitbucket has no dedicated releases endpoint; uses the tags endpoint |
-| `stars` | *(not available)* | Bitbucket does not have a stargazers feature |
+| `stargazers_count` | *(not available)* | Bitbucket does not have a stargazers feature |
 | `forks_count` | *(not available)* | Bitbucket does not expose fork counts in its API |
+
+
+### Authentication
+
+Bitbucket uses HTTP Basic authentication. The token is encoded as
+`base64(email:token)` and sent as the `Authorization` header.
+Provide both the Bitbucket app password and your Atlassian account email
+via `--bitbucket-token` and `--bitbucket-email`, or by running `somef configure`.
+
+### Archive download
+
+Repository archives are downloaded from:
+`https://bitbucket.org/{owner}/{repo}/get/{branch}.zip`
+
+### Limitations
+
+- **No stargazers**: Bitbucket does not have a stargazers feature.
+- **No forks count**: Bitbucket does not expose fork counts in its API.
+- **Tags-only releases**: Bitbucket has no dedicated releases endpoint.
+  SOMEF uses the `/refs/tags` endpoint instead, which does not include release
+  descriptions or assets.
+- **Programming languages**: Bitbucket returns only a single language string,
+  without byte counts per language.
+- **CODEOWNERS enrichment**: Not supported for Bitbucket, as the platform does not
+  expose a public user API.

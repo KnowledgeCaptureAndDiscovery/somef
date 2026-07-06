@@ -341,6 +341,111 @@ class TestProcessRepository(unittest.TestCase):
 
         os.remove(test_data_path + "test_905_tag.json") 
 
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
+    def test_issue_905_commit(self):
+        commit_sha = "f567b46b593123e22db5880b4f7fd97c9fe9c94b"
+
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url="https://github.com/dgarijo/Widoco/",
+                        local_repo=None,
+                        doc_src=None,
+                        in_file=None,
+                        output=test_data_path + "test_905_commit.json",
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out=None,
+                        pretty=True,
+                        missing=False,
+                        readme_only=False,
+                        commit=commit_sha)
+
+        with open(test_data_path + "test_905_commit.json", "r") as text_file:
+            json_content = json.load(text_file)
+
+        assert json_content is not None
+        assert os.path.exists(test_data_path + "test_905_commit.json")
+
+        date_created = json_content.get(constants.CAT_DATE_CREATED, [])
+        assert len(date_created) > 0, "Expected commit date metadata to be present"
+
+        os.remove(test_data_path + "test_905_commit.json")
+
+
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
+    def test_codeberg_commit(self):
+        commit_sha = "fee07385f8135599c1261b78784b2d99e5157648"
+
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url="https://codeberg.org/Codeberg/pages-server",
+                        local_repo=None,
+                        doc_src=None,
+                        in_file=None,
+                        output=test_data_path + "test_codeberg_commit.json",
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out=None,
+                        pretty=True,
+                        missing=False,
+                        readme_only=False,
+                        commit=commit_sha)
+
+        with open(test_data_path + "test_codeberg_commit.json", "r") as text_file:
+            json_content = json.load(text_file)
+
+        assert json_content is not None
+        assert os.path.exists(test_data_path + "test_codeberg_commit.json")
+
+        date_created = json_content.get(constants.CAT_DATE_CREATED, [])
+        assert len(date_created) > 0, "Expected commit date metadata to be present"
+
+        code_repository = json_content.get(constants.CAT_CODE_REPOSITORY, [])
+        commit_in_repo = any(
+            entry.get("result", {}).get(constants.PROP_COMMIT) == commit_sha
+            for entry in code_repository
+        )
+        assert commit_in_repo, f"Expected commit SHA {commit_sha} to appear in code_repository"
+
+        os.remove(test_data_path + "test_codeberg_commit.json")
+
+
+    @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
+    def test_bitbucket_commit(self):
+        commit_sha = "353e5bac96c39931311a63a11e0e7caf11d61e09"
+
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url="https://bitbucket.org/bitbucketpipelines/pipelines-guide-python",
+                        local_repo=None,
+                        doc_src=None,
+                        in_file=None,
+                        output=test_data_path + "test_bitbucket_commit.json",
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out=None,
+                        pretty=True,
+                        missing=False,
+                        readme_only=False,
+                        commit=commit_sha)
+
+        with open(test_data_path + "test_bitbucket_commit.json", "r") as text_file:
+            json_content = json.load(text_file)
+
+        assert json_content is not None
+        assert os.path.exists(test_data_path + "test_bitbucket_commit.json")
+
+        date_created = json_content.get(constants.CAT_DATE_CREATED, [])
+        assert len(date_created) > 0, "Expected commit date metadata to be present"
+
+        code_repository = json_content.get(constants.CAT_CODE_REPOSITORY, [])
+        commit_in_repo = any(
+            entry.get("result", {}).get(constants.PROP_COMMIT) == commit_sha
+            for entry in code_repository
+        )
+        assert commit_in_repo, f"Expected commit SHA {commit_sha} to appear in code_repository"
+
+        os.remove(test_data_path + "test_bitbucket_commit.json")
 
 def _make_mock_response(status_code, content=b""):
     """Helper: create a minimal mock requests.Response."""
@@ -577,3 +682,576 @@ class TestRateLimitGetHeadRequest(unittest.TestCase):
                 tmp, None, None, 500
             )
         mock_dl.assert_called_once_with(tmp, "owner", "repo", "main", None, 500)
+
+
+class TestFetchCommitMetadata(unittest.TestCase):
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_fetch_commit_metadata_adds_author(self, mock_rlg, mock_resolve):
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(200)
+        mock_resp.json = MagicMock(return_value={
+            "sha": "abc123def456",
+            "commit": {
+                "author": {
+                    "name": "Test User",
+                    "email": "test@example.com",
+                    "date": "2024-01-15T10:30:00Z"
+                }
+            },
+            "author": {"login": "testuser"},
+            "html_url": "https://github.com/testowner/testrepo/commit/abc123def456"
+        })
+        mock_rlg.return_value = (mock_resp, "2024-01-15")
+
+        repo_metadata = Result()
+        headers = {"Authorization": "token test"}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata, constants.RepositoryType.GITHUB, "abc123def456", headers,
+            repo_api_base_url="https://api.github.com/repos/testowner/testrepo"
+        )
+
+        authors = result.results.get(constants.CAT_AUTHORS, [])
+        self.assertGreater(len(authors), 0, "Commit author should be present")
+        self.assertEqual(authors[0]["result"]["value"], "testuser")
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_fetch_commit_metadata_adds_date(self, mock_rlg, mock_resolve):
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(200)
+        mock_resp.json = MagicMock(return_value={
+            "sha": "abc123def456",
+            "commit": {
+                "author": {
+                    "name": "Test User",
+                    "email": "test@example.com",
+                    "date": "2024-01-15T10:30:00Z"
+                }
+            },
+            "html_url": "https://github.com/testowner/testrepo/commit/abc123def456"
+        })
+        mock_rlg.return_value = (mock_resp, "2024-01-15")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata, constants.RepositoryType.GITHUB, "abc123def456", headers,
+            repo_api_base_url="https://api.github.com/repos/testowner/testrepo"
+        )
+
+        dates = result.results.get(constants.CAT_DATE_CREATED, [])
+        self.assertGreater(len(dates), 0, "Commit date should be present")
+        self.assertEqual(dates[0]["result"]["value"], "2024-01-15T10:30:00Z")
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_fetch_commit_metadata_handles_missing_commit(self, mock_rlg, mock_resolve):
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(404)
+        mock_rlg.return_value = (mock_resp, "")
+
+        repo_metadata = Result()
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata, constants.RepositoryType.GITHUB, "nonexistent_sha", {},
+            repo_api_base_url="https://api.github.com/repos/testowner/testrepo"
+        )
+        self.assertEqual(len(result.results), 1)
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_fetch_commit_metadata_handles_none_response(self, mock_rlg, mock_resolve):
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_rlg.return_value = (None, None)
+
+        repo_metadata = Result()
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata, constants.RepositoryType.GITHUB, "abc123", {},
+            repo_api_base_url="https://api.github.com/repos/testowner/testrepo"
+        )
+        self.assertEqual(len(result.results), 1)
+
+class TestResolveReleaseCommits(unittest.TestCase):
+    """
+    Tests for the resolve_release_commits function that resolves each release's
+    tag to a commit SHA using the GitHub /tags endpoint.
+    """
+
+    @patch("somef.process_repository.get_all_paginated_results")
+    def test_resolve_release_commits_adds_sha(self, mock_get_tags):
+        """
+        When a release tag matches a tag from the /tags endpoint, the commit SHA
+        should be written into the release result dict.
+        """
+        mock_get_tags.return_value = [
+            {"name": "v1.0.0", "commit": {"sha": "aaa111", "url": ""}},
+            {"name": "v2.0.0", "commit": {"sha": "bbb222", "url": ""}},
+        ]
+
+        repo_metadata = Result()
+        release_1 = {
+            constants.PROP_RESULT: {
+                constants.PROP_TYPE: constants.RELEASE,
+                constants.PROP_VALUE: "https://github.com/owner/repo/releases/tag/v1.0.0",
+                constants.PROP_TAG: "v1.0.0",
+            },
+            constants.PROP_CONFIDENCE: 1,
+            constants.PROP_TECHNIQUE: constants.TECHNIQUE_GITHUB_API,
+        }
+        release_2 = {
+            constants.PROP_RESULT: {
+                constants.PROP_TYPE: constants.RELEASE,
+                constants.PROP_VALUE: "https://github.com/owner/repo/releases/tag/v2.0.0",
+                constants.PROP_TAG: "v2.0.0",
+            },
+            constants.PROP_CONFIDENCE: 1,
+            constants.PROP_TECHNIQUE: constants.TECHNIQUE_GITHUB_API,
+        }
+        repo_metadata.results[constants.CAT_RELEASES] = [release_1, release_2]
+
+        result = process_repository.resolve_release_commits(
+            repo_metadata,
+            constants.RepositoryType.GITHUB,
+            {},
+            repo_api_base_url="https://api.github.com/repos/owner/repo"
+        )
+
+        releases = result.results[constants.CAT_RELEASES]
+        self.assertEqual(releases[0][constants.PROP_RESULT].get(constants.PROP_COMMIT), "aaa111")
+        self.assertEqual(releases[1][constants.PROP_RESULT].get(constants.PROP_COMMIT), "bbb222")
+
+    @patch("somef.process_repository.get_all_paginated_results")
+    def test_resolve_release_commits_skips_unmatched_tag(self, mock_get_tags):
+        """
+        Releases whose tag is not present in the /tags response should not get
+        a commit SHA.
+        """
+        mock_get_tags.return_value = [
+            {"name": "v1.0.0", "commit": {"sha": "aaa111", "url": ""}},
+        ]
+
+        repo_metadata = Result()
+        release = {
+            constants.PROP_RESULT: {
+                constants.PROP_TYPE: constants.RELEASE,
+                constants.PROP_VALUE: "https://github.com/owner/repo/releases/tags/unknown",
+                constants.PROP_TAG: "unknown",
+            },
+            constants.PROP_CONFIDENCE: 1,
+            constants.PROP_TECHNIQUE: constants.TECHNIQUE_GITHUB_API,
+        }
+        repo_metadata.results[constants.CAT_RELEASES] = [release]
+
+        result = process_repository.resolve_release_commits(
+            repo_metadata,
+            constants.RepositoryType.GITHUB,
+            {},
+            repo_api_base_url="https://api.github.com/repos/owner/repo"
+        )
+
+        resolved = result.results[constants.CAT_RELEASES][0][constants.PROP_RESULT]
+        self.assertIsNone(resolved.get(constants.PROP_COMMIT),
+                          "An unknown tag should not receive a commit SHA")
+
+    @patch("somef.process_repository.get_all_paginated_results")
+    def test_resolve_release_commits_no_tags(self, mock_get_tags):
+        """
+        When the /tags endpoint returns an empty list, releases should be
+        left untouched.
+        """
+        mock_get_tags.return_value = []
+
+        repo_metadata = Result()
+        release = {
+            constants.PROP_RESULT: {
+                constants.PROP_TYPE: constants.RELEASE,
+                constants.PROP_VALUE: "https://github.com/owner/repo/releases/tag/v1.0.0",
+                constants.PROP_TAG: "v1.0.0",
+            },
+            constants.PROP_CONFIDENCE: 1,
+            constants.PROP_TECHNIQUE: constants.TECHNIQUE_GITHUB_API,
+        }
+        repo_metadata.results[constants.CAT_RELEASES] = [release]
+
+        result = process_repository.resolve_release_commits(
+            repo_metadata,
+            constants.RepositoryType.GITHUB,
+            {},
+            repo_api_base_url="https://api.github.com/repos/owner/repo"
+        )
+
+        resolved = result.results[constants.CAT_RELEASES][0][constants.PROP_RESULT]
+        self.assertIsNone(resolved.get(constants.PROP_COMMIT))
+
+    @patch("somef.process_repository.get_all_paginated_results")
+    def test_resolve_release_commits_no_releases(self, mock_get_tags):
+        """
+        When there are no releases in the metadata, resolve_release_commits
+        should not crash and should not query the /tags endpoint.
+        """
+        mock_get_tags.return_value = [
+            {"name": "v1.0.0", "commit": {"sha": "aaa111", "url": ""}},
+        ]
+
+        repo_metadata = Result()
+        result = process_repository.resolve_release_commits(
+            repo_metadata,
+            constants.RepositoryType.GITHUB,
+            {},
+            repo_api_base_url="https://api.github.com/repos/owner/repo"
+        )
+
+        self.assertEqual(len(result.results), 1)
+
+
+class TestFetchCommitMetadataGitLab(unittest.TestCase):
+    """
+    Tests for fetch_commit_metadata with GitLab API response format.
+    GitLab returns flat fields (author_name, authored_date, web_url) instead of
+    nested objects like GitHub.
+    """
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_gitlab_fetch_commit_metadata_adds_author(self, mock_rlg, mock_resolve):
+        """GitLab commit author should be read from author_name."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(200)
+        mock_resp.json = MagicMock(return_value={
+            "id": "abc123def456",
+            "author_name": "GitLab User",
+            "authored_date": "2024-01-15T10:30:00.000Z",
+            "committed_date": "2024-01-15T10:35:00.000Z",
+            "web_url": "https://gitlab.com/testowner/testrepo/-/commit/abc123def456"
+        })
+        mock_rlg.return_value = (mock_resp, "2024-01-15")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata,
+            constants.RepositoryType.GITLAB,
+            "abc123def456",
+            headers,
+            project_api_url="https://gitlab.com/api/v4/projects/123"
+        )
+
+        authors = result.results.get(constants.CAT_AUTHORS, [])
+        self.assertGreater(len(authors), 0, "GitLab commit author should be present")
+        author_value = authors[0]["result"]["value"]
+        self.assertEqual(author_value, "GitLab User")
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_gitlab_fetch_commit_metadata_adds_date(self, mock_rlg, mock_resolve):
+        """GitLab commit date should prefer authored_date."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(200)
+        mock_resp.json = MagicMock(return_value={
+            "id": "abc123def456",
+            "author_name": "GitLab User",
+            "authored_date": "2024-01-15T10:30:00.000Z",
+            "web_url": "https://gitlab.com/testowner/testrepo/-/commit/abc123def456"
+        })
+        mock_rlg.return_value = (mock_resp, "2024-01-15")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata,
+            constants.RepositoryType.GITLAB,
+            "abc123def456",
+            headers,
+            project_api_url="https://gitlab.com/api/v4/projects/123"
+        )
+
+        dates = result.results.get(constants.CAT_DATE_CREATED, [])
+        self.assertGreater(len(dates), 0, "GitLab commit date should be present")
+        date_value = dates[0]["result"]["value"]
+        self.assertEqual(date_value, "2024-01-15T10:30:00.000Z")
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_gitlab_fetch_commit_metadata_adds_url(self, mock_rlg, mock_resolve):
+        """GitLab commit URL should be read from web_url."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(200)
+        mock_resp.json = MagicMock(return_value={
+            "id": "abc123def456",
+            "author_name": "GitLab User",
+            "authored_date": "2024-01-15T10:30:00.000Z",
+            "web_url": "https://gitlab.com/testowner/testrepo/-/commit/abc123def456"
+        })
+        mock_rlg.return_value = (mock_resp, "2024-01-15")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata,
+            constants.RepositoryType.GITLAB,
+            "abc123def456",
+            headers,
+            project_api_url="https://gitlab.com/api/v4/projects/123"
+        )
+
+        urls = result.results.get(constants.CAT_CODE_REPOSITORY, [])
+        self.assertGreater(len(urls), 0, "GitLab commit URL should be present")
+        url_value = urls[0]["result"]["value"]
+        self.assertEqual(url_value, "https://gitlab.com/testowner/testrepo/-/commit/abc123def456")
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_gitlab_fetch_commit_metadata_handles_404(self, mock_rlg, mock_resolve):
+        """GitLab 404 should not crash."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(404)
+        mock_rlg.return_value = (mock_resp, "")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata,
+            constants.RepositoryType.GITLAB,
+            "nonexistent",
+            headers,
+            project_api_url="https://gitlab.com/api/v4/projects/123"
+        )
+
+        self.assertEqual(len(result.results), 1)
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_gitlab_fetch_commit_metadata_no_project_api_url(self, mock_rlg, mock_resolve):
+        """When project_api_url is missing for GitLab, return early."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+
+        repo_metadata = Result()
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata,
+            constants.RepositoryType.GITLAB,
+            "abc123",
+            {}
+        )
+
+        self.assertEqual(len(result.results), 1)
+
+class TestFetchCommitMetadataCodeberg(unittest.TestCase):
+    """
+    Tests for fetch_commit_metadata with Codeberg (Gitea/Forgejo) API.
+    Codeberg uses a GitHub-compatible format for commit responses.
+    """
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_codeberg_fetch_commit_metadata_adds_author(self, mock_rlg, mock_resolve):
+        """Codeberg commit author should be read from author.login."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(200)
+        mock_resp.json = MagicMock(return_value={
+            "sha": "abc123def456",
+            "commit": {
+                "author": {
+                    "name": "Codeberg User",
+                    "date": "2024-01-15T10:30:00Z"
+                }
+            },
+            "author": {"login": "codeberguser"},
+            "html_url": "https://codeberg.org/owner/repo/commit/abc123def456"
+        })
+        mock_rlg.return_value = (mock_resp, "2024-01-15")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata, constants.RepositoryType.CODEBERG, "abc123def456", headers,
+            repo_api_base_url="https://codeberg.org/api/v1/repos/owner/repo"
+        )
+
+        authors = result.results.get(constants.CAT_AUTHORS, [])
+        self.assertGreater(len(authors), 0, "Codeberg commit author should be present")
+        self.assertEqual(authors[0]["result"]["value"], "codeberguser")
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_codeberg_fetch_commit_metadata_handles_404(self, mock_rlg, mock_resolve):
+        """Codeberg 404 should not crash."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(404)
+        mock_rlg.return_value = (mock_resp, "")
+
+        repo_metadata = Result()
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata, constants.RepositoryType.CODEBERG, "nonexistent", {},
+            repo_api_base_url="https://codeberg.org/api/v1/repos/owner/repo"
+        )
+        self.assertEqual(len(result.results), 1)
+
+
+class TestFetchCommitMetadataBitbucket(unittest.TestCase):
+    """
+    Tests for fetch_commit_metadata with Bitbucket API.
+    Bitbucket returns flat fields (author.nickname, date, links.html.href).
+    """
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_bitbucket_fetch_commit_metadata_adds_author(self, mock_rlg, mock_resolve):
+        """Bitbucket commit author should be read from author.nickname."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(200)
+        mock_resp.json = MagicMock(return_value={
+            "hash": "abc123def456",
+            "author": {
+                "nickname": "bitbucketuser",
+                "user": {"nickname": "bitbucketuser"}
+            },
+            "date": "2024-01-15T10:30:00Z",
+            "links": {
+                "html": {"href": "https://bitbucket.org/owner/repo/commit/abc123def456"}
+            }
+        })
+        mock_rlg.return_value = (mock_resp, "2024-01-15")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata, constants.RepositoryType.BITBUCKET, "abc123def456", headers,
+            repo_api_base_url="https://api.bitbucket.org/2.0/repositories/owner/repo"
+        )
+
+        authors = result.results.get(constants.CAT_AUTHORS, [])
+        self.assertGreater(len(authors), 0, "Bitbucket commit author should be present")
+        self.assertEqual(authors[0]["result"]["value"], "bitbucketuser")
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_bitbucket_fetch_commit_metadata_adds_date(self, mock_rlg, mock_resolve):
+        """Bitbucket commit date should be read from date field."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(200)
+        mock_resp.json = MagicMock(return_value={
+            "hash": "abc123def456",
+            "author": {"nickname": "user"},
+            "date": "2024-01-15T10:30:00Z",
+            "links": {
+                "html": {"href": "https://bitbucket.org/owner/repo/commit/abc123def456"}
+            }
+        })
+        mock_rlg.return_value = (mock_resp, "2024-01-15")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata, constants.RepositoryType.BITBUCKET, "abc123def456", headers,
+            repo_api_base_url="https://api.bitbucket.org/2.0/repositories/owner/repo"
+        )
+
+        dates = result.results.get(constants.CAT_DATE_CREATED, [])
+        self.assertGreater(len(dates), 0, "Bitbucket commit date should be present")
+        self.assertEqual(dates[0]["result"]["value"], "2024-01-15T10:30:00Z")
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_bitbucket_fetch_commit_metadata_adds_url(self, mock_rlg, mock_resolve):
+        """Bitbucket commit URL should be read from links.html.href."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(200)
+        mock_resp.json = MagicMock(return_value={
+            "hash": "abc123def456",
+            "author": {"nickname": "user"},
+            "date": "2024-01-15T10:30:00Z",
+            "links": {
+                "html": {"href": "https://bitbucket.org/owner/repo/commit/abc123def456"}
+            }
+        })
+        mock_rlg.return_value = (mock_resp, "2024-01-15")
+
+        repo_metadata = Result()
+        headers = {}
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata, constants.RepositoryType.BITBUCKET, "abc123def456", headers,
+            repo_api_base_url="https://api.bitbucket.org/2.0/repositories/owner/repo"
+        )
+
+        urls = result.results.get(constants.CAT_CODE_REPOSITORY, [])
+        self.assertGreater(len(urls), 0, "Bitbucket commit URL should be present")
+        url_value = urls[0]["result"]["value"]
+        self.assertEqual(url_value, "https://bitbucket.org/owner/repo/commit/abc123def456")
+
+    @patch("somef.process_repository.resolve_release_commits")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_bitbucket_fetch_commit_metadata_handles_404(self, mock_rlg, mock_resolve):
+        """Bitbucket 404 should not crash."""
+        mock_resolve.side_effect = lambda m, *a, **kw: m
+        mock_resp = _make_mock_response(404)
+        mock_rlg.return_value = (mock_resp, "")
+
+        repo_metadata = Result()
+        result = process_repository.fetch_commit_metadata(
+            repo_metadata, constants.RepositoryType.BITBUCKET, "nonexistent", {},
+            repo_api_base_url="https://api.bitbucket.org/2.0/repositories/owner/repo"
+        )
+        self.assertEqual(len(result.results), 1)
+
+
+class TestResolveReleaseCommitsBitbucket(unittest.TestCase):
+    """
+    Tests for resolve_release_commits with Bitbucket API.
+    Bitbucket tags return target.hash instead of commit.sha.
+    """
+
+    @patch("somef.process_repository.get_all_paginated_results")
+    def test_bitbucket_resolve_release_commits_adds_sha(self, mock_get_tags):
+        """Bitbucket tag SHA should be read from target.hash."""
+        mock_get_tags.return_value = [
+            {"name": "v1.0.0", "target": {"hash": "aaa111"}},
+            {"name": "v2.0.0", "target": {"hash": "bbb222"}},
+        ]
+
+        repo_metadata = Result()
+        release = {
+            constants.PROP_RESULT: {
+                constants.PROP_TYPE: constants.RELEASE,
+                constants.PROP_VALUE: "https://bitbucket.org/owner/repo/src/v1.0.0",
+                constants.PROP_TAG: "v1.0.0",
+            },
+            constants.PROP_CONFIDENCE: 1,
+            constants.PROP_TECHNIQUE: constants.TECHNIQUE_BITBUCKET_API,
+        }
+        repo_metadata.results[constants.CAT_RELEASES] = [release]
+
+        result = process_repository.resolve_release_commits(
+            repo_metadata, constants.RepositoryType.BITBUCKET, {},
+            repo_api_base_url="https://api.bitbucket.org/2.0/repositories/owner/repo"
+        )
+
+        releases = result.results[constants.CAT_RELEASES]
+        self.assertEqual(releases[0][constants.PROP_RESULT].get(constants.PROP_COMMIT), "aaa111")
+
+    @patch("somef.process_repository.get_all_paginated_results")
+    def test_bitbucket_resolve_release_commits_skips_unmatched(self, mock_get_tags):
+        """Unmatched Bitbucket tag should not get a SHA."""
+        mock_get_tags.return_value = [
+            {"name": "v1.0.0", "target": {"hash": "aaa111"}},
+        ]
+
+        repo_metadata = Result()
+        release = {
+            constants.PROP_RESULT: {
+                constants.PROP_TYPE: constants.RELEASE,
+                constants.PROP_VALUE: "https://bitbucket.org/owner/repo/src/unknown",
+                constants.PROP_TAG: "unknown",
+            },
+            constants.PROP_CONFIDENCE: 1,
+            constants.PROP_TECHNIQUE: constants.TECHNIQUE_BITBUCKET_API,
+        }
+        repo_metadata.results[constants.CAT_RELEASES] = [release]
+
+        result = process_repository.resolve_release_commits(
+            repo_metadata, constants.RepositoryType.BITBUCKET, {},
+            repo_api_base_url="https://api.bitbucket.org/2.0/repositories/owner/repo"
+        )
+
+        resolved = result.results[constants.CAT_RELEASES][0][constants.PROP_RESULT]
+        self.assertIsNone(resolved.get(constants.PROP_COMMIT))

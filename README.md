@@ -9,7 +9,7 @@ A command line interface for automatically extracting relevant metadata from cod
 
 **Demo:** See a [demo running somef as a service](https://somef.linkeddata.es), through the [SOMEF-Vider tool](https://github.com/SoftwareUnderstanding/SOMEF-Vider/).
 
-**Authors:** Daniel Garijo, Allen Mao, Miguel Ángel García Delgado, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang, Aidan Kelley, Jenifer Tabita Ciuciu-Kiss, Luca Angheluta, Juanje Mendoza and Thomas Vuillaume.
+**Authors:** Daniel Garijo, Allen Mao, Miguel Ángel García Delgado, Haripriya Dharmala, Vedant Diwanji, Jiaying Wang, Aidan Kelley, Jenifer Tabita Ciuciu-Kiss, Luca Angheluta, Juanje Mendoza, Anas El Hounsri and Thomas Vuillaume.
 
 ## Features
 
@@ -57,13 +57,13 @@ When using `-e`, publication metadata is enriched via OpenAlex. We recognize the
 - **Full name**: Name + owner (owner/name)
 - **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository name
 - **Funding**: Funding information associated with the project. **Note**: This information is extracted from existing `codemeta.json` files within the repository. When using `-e`, the project data is enriched with OpenAIRE, adding:
-  - `project_code`: Project code
-  - `project_title`: Project title
-  - `project_acronym`: Project acronym
-  - `grant_id`: Call/grant identifier
+- `project_code`: Project code
+- `project_title`: Project title
+- `project_acronym`: Project acronym
+- `grant_id`: Call/grant identifier
 - **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers and Software Heritage identifiers (SWH). DOIs associated with publications will also be detected. When using `-e`, the following enrichment identifiers are also added:
-  - `openaire_id`: URL to the OpenAIRE explore page for the software
-  - `swhid`: Software Heritage identifier (for Zenodo DOIs)
+- `openaire_id`: URL to the OpenAIRE explore page for the software
+- `swhid`: Software Heritage identifier (for Zenodo DOIs)
 - **Images**: Images used to illustrate the software component
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component
@@ -379,7 +379,8 @@ Options:
 
   -h, --help                      Show this message and exit.
 
-  -e, --enrichment                Enrich metadata with external APIs (OpenAlex, OpenAIRE, Zenodo)
+  -e, --enrichment                Enrich metadata with external APIs (OpenAlex, 
+                                  OpenAIRE, Zenodo)
 
   --github-token TEXT             GitHub personal access token (if invalid,
                                   stored config is used instead)
@@ -395,17 +396,34 @@ Options:
 
   --bitbucket-email TEXT          Bitbucket Atlassian account email (required
                                   with --bitbucket-token)
+              
+
   
   Repoository versions [mutually_exclusive] (see section *Repository versions*t):
   -b, --branch name branch        Branch of the repository to analyze. Overrides the default branch.
 
-      --tag text                  Tag of the repository to analyze. Cannot be used together with --branch.
- 
+  --tag text                      Tag of the repository to analyze. Cannot be used together with --branch and --commit
+
+  --commit  TEXT                  Commit SHA to analyze. Cannot be used together 
+                                  with --branch or --tag.
 ```
 
 Alternatively, you can set tokens via environment variables or by running `somef configure`, which stores them permanently.
 The CLI flags take precedence over stored config when valid.
 
+
+### Enrichment with `-e`
+
+The `-e` (or `--enrichment`) flag queries external APIs to complete the extracted metadata:
+- **OpenAlex**: Adds `openalex_id` to DOIs of publications and reconciles missing author ORCIDs.
+- **OpenAIRE**: Adds `openaire_id` to publications/identifiers and enriches project funding metadata.
+- **Zenodo**: Adds `swhid` (Software Heritage ID) for records matching Zenodo DOIs.
+
+For a detailed technical breakdown of the fields mapped by each external service, please refer to the specific documentation pages:
+- See the [OpenAlex Mapping Guide](openalex.md) for citation and author properties.
+- See the [OpenAIRE and Zenodo Mapping Guide](openaire.md) for funding and identifier properties.
+
+**Note:** Enrichment makes additional network requests to external services, which may slow down the overall execution time. Use this flag only when you need the extra metadata.
 
 ## Usage example:
 
@@ -455,7 +473,7 @@ The `-e` (or `--enrichment`) flag queries external APIs to complete the extracte
 
 **Note:** Enrichment makes additional network requests to external services, which may slow down the overall execution time. Use this flag only when you need the extra metadata.
 
-## Repository versions: default behavior, branch and tag
+## Repository versions: default behavior, branch tag and commit
 
 SOMEF allows analyzing specific versions of a repository. If no version is specified, SOMEF will analyze the default branch of the repository (usually `main` or `master`). The following options let you control exactly which version of the codebase is inspected.
 
@@ -497,7 +515,14 @@ Recommended when:
 - You want to document a released version of the software.
 - You integrate SOMEF into pipelines that operate on versioned artifacts.
 
+
+### Using a commit
+
+```bash
+somef describe -r <repo_url> --commit <commit_sha> ...
+```
+
 ### Restrictions
 
-- `--branch` and `--tag` are mutually exclusive.
+- `--branch`, `--tag` and `--commit` are mutually exclusive.
 - If either option is provided, it overrides the default branch behavior.

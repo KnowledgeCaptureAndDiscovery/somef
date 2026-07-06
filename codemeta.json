@@ -57,6 +57,11 @@
             "familyName": "Vuillaume",
             "givenName": "Thomas",
             "@type": "Person"
+        },
+        {
+            "familyName": "El Hounsri",
+            "givenName": "Anas",
+            "@type": "Person"
         }
     ],
     "codeRepository": "https://github.com/KnowledgeCaptureAndDiscovery/somef",
