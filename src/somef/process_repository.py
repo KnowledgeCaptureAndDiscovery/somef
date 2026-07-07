@@ -247,12 +247,12 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url, autho
         encoded_project_path = quote(project_path, safe="") # Codifica "/" como "%2F"
         # Build url of api to get id
         api_url = f"https://{url.netloc}/api/v4/projects/{encoded_project_path}"
-        project_id = get_project_id(api_url, True, authorization)
+        project_id = get_project_id(api_url, True, authorization,use_config=False)
         logging.info(f'Project_id: {project_id}')
         project_api_url = f"https://{url.netloc}/api/v4/projects/{project_id}"
     
     logging.info(f"Downloading {project_api_url}")
-    details, date = rate_limit_get(project_api_url, headers=gitlab_header_template(authorization))
+    details, date = rate_limit_get(project_api_url, headers=gitlab_header_template(authorization, use_config=False))
     project_details = details.json()
     # date = details.headers["date"]
 
@@ -1017,7 +1017,7 @@ def download_github_files(directory, owner, repo_name, repo_ref, authorization, 
     return repo_dir
 
 
-def get_project_id(repository_url,self_hosted, authorization=None):
+def get_project_id(repository_url,self_hosted, authorization=None,  use_config=True):
     """
     Function to download a repository, given its URL
     Parameters:
@@ -1029,7 +1029,7 @@ def get_project_id(repository_url,self_hosted, authorization=None):
 
     logging.info(f"Downloading {repository_url}")
     # response = requests.get(repository_url)
-    headers = gitlab_header_template(authorization)
+    headers = gitlab_header_template(authorization, use_config=use_config)
     response = requests.get(repository_url, headers=headers)
     project_id = "-1"
 
@@ -1383,13 +1383,13 @@ def download_codeberg_files(directory, owner, repo_name, repo_branch, authorizat
     return repo_dir
 
 
-def gitlab_header_template(authorization=None):
+def gitlab_header_template(authorization=None, use_config=True):
     header = {}
     file_paths = configuration.get_configuration_file()
     if authorization is not None:
         header[constants.PROP_AUTHORIZATION] = authorization
         logging.info("GitLab: using authorization token passed directly")   
-    elif constants.CONF_GITLAB_AUTHORIZATION in file_paths:
+    elif use_config and constants.CONF_GITLAB_AUTHORIZATION in file_paths:
         header[constants.PROP_AUTHORIZATION] = file_paths[constants.CONF_GITLAB_AUTHORIZATION]
         logging.info("GitLab: authorization token found in config")
     return header

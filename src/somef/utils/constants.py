@@ -396,7 +396,7 @@ bitbucket_crosswalk_table = {
     CAT_DESCRIPTION: "description",
     CAT_DATE_CREATED: "created_on",
     CAT_DATE_UPDATED: "updated_on",
-    CAT_OWNER: ["owner", "nickname"],
+    CAT_OWNER: ["owner", "username"],
     CAT_CODE_REPOSITORY: ["links", "html", "href"],
     CAT_HOMEPAGE: "website",
     CAT_FORKS_URLS: ["links", "forks", "href"]

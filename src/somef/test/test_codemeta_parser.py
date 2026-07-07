@@ -131,12 +131,12 @@ class TestCodemetaParser(unittest.TestCase):
         found = False
 
         for cit in citations:
-            authors = cit["result"].get("authors", [])
+            authors = cit["result"].get(constants.CAT_AUTHORS, [])
             if any(a.get("name") == "Daniel Garijo" and a.get("family_name") == "Garijo" and a.get("given_name") == "Daniel" for a in authors):
                 found = True
                 break
         
-        self.assertTrue(found, "Author 'Daniel Garijo' with 'given_name' not found in citation authors")
+        self.assertTrue(found, "Author 'Daniel Garijo' with 'given_name' not found in citation author")
 
 
 if __name__ == "__main__":
