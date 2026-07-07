@@ -852,7 +852,7 @@ def map_reference_publication(pub_data):
             if isinstance(a, dict)
         ]
 
-        result["authors"] = mapped_authors
+        result[constants.CAT_AUTHORS] = mapped_authors
 
     return result
 
