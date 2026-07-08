@@ -443,7 +443,16 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                 is_bibtex = False
 
                 if constants.PROP_FORMAT in cit[constants.PROP_RESULT] and cit[constants.PROP_RESULT][constants.PROP_FORMAT] == "cff":
-                    yaml_content = yaml.safe_load(cit[constants.PROP_RESULT]["value"])
+                    # yaml_content = yaml.safe_load(cit[constants.PROP_RESULT]["value"])
+                    cff_value = cit[constants.PROP_RESULT]["value"]
+                    try:
+                        yaml_content = yaml.safe_load(cff_value) 
+                    except Exception:
+                        # Remove HTML tags that can break YAML parsing
+                        # ej:" <a href="..."> " has unescaped quotes
+                        cleaned = re.sub(constants.REGEXP_CLEAN_HTML_TAGS, '', cff_value)
+                        yaml_content = yaml.safe_load(cleaned)
+
                     preferred_citation = yaml_content.get("preferred-citation", {})
                     doi = yaml_content.get("doi") or preferred_citation.get("doi")
                     identifiers = yaml_content.get("identifiers", [])
@@ -514,6 +523,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                             "@type": "Organization",
                             "name": name
                         }
+                    else:
+                        continue
 
                     if family_name and given_name and orcid:
                         key = (family_name.lower(), given_name.lower())
