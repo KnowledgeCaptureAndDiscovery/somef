@@ -656,14 +656,14 @@ all = ["mypy (>=1.11.2)", "pytest (>=8.3.2)", "ruff (>=0.6.2)"]
 
 [[package]]
 name = "imbalanced-learn"
-version = "0.14.1"
+version = "0.14.2"
 description = "Toolbox for imbalanced dataset in machine learning"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "imbalanced_learn-0.14.1-py3-none-any.whl", hash = "sha256:fcdff8d27870d6992ea3496230788b97ff98e24302e7f6c598701da525ae440f"},
-    {file = "imbalanced_learn-0.14.1.tar.gz", hash = "sha256:46eeb5773a96b6fa92426356da66f3e4390a7ed8e715a633c6fb68ee4a3ccdcb"},
+    {file = "imbalanced_learn-0.14.2-py3-none-any.whl", hash = "sha256:f9b81c47231aa1e3a71a1e4b3cc85b42e3b14f85e3a36922f3323c4da23605ef"},
+    {file = "imbalanced_learn-0.14.2.tar.gz", hash = "sha256:f80ce7eafbcece8686e32571bd12978546c729c3f277215bead61a906ce9afe4"},
 ]
 
 [package.dependencies]
@@ -671,7 +671,7 @@ joblib = ">=1.2.0,<2"
 numpy = ">=1.25.2,<3"
 scikit-learn = ">=1.4.2,<2"
 scipy = ">=1.11.4,<2"
-sklearn-compat = ">=0.1.5,<0.2"
+sklearn-compat = ">=0.1.6,<0.2"
 threadpoolctl = ">=2.0.0,<4"
 
 [package.extras]
@@ -2413,18 +2413,18 @@ files = [
 
 [[package]]
 name = "sklearn-compat"
-version = "0.1.5"
+version = "0.1.6"
 description = "Ease support for compatible scikit-learn estimators across versions"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "sklearn_compat-0.1.5-py3-none-any.whl", hash = "sha256:dddd00c442027b6a2c2fd4a86667b804a7353cdb5093bfd0d5431f5e3c135fce"},
-    {file = "sklearn_compat-0.1.5.tar.gz", hash = "sha256:1a0c3a2f384100e034def49ee5a6cfe984a826f79d032eb559f10445e012b02c"},
+    {file = "sklearn_compat-0.1.6-py3-none-any.whl", hash = "sha256:b555db6c09d21eb50ee4a767dc08478a865f33f0e42b3ff8fc33f33c616bd7c1"},
+    {file = "sklearn_compat-0.1.6.tar.gz", hash = "sha256:8fd4731b4f709b66641b8f49c954dafec7e3b60afc48f2cfd298356c713277c6"},
 ]
 
 [package.dependencies]
-scikit-learn = ">=1.2,<1.9"
+scikit-learn = ">=1.2,<1.10"
 
 [package.extras]
 dev = ["ipython"]
