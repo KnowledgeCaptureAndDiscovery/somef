@@ -1144,4 +1144,34 @@ class TestJSONExport(unittest.TestCase):
         
         os.remove(output_path)
         
- 
+    def test_issue_1050(self):
+        """citation.cff yaml parsing with unescaped quotes in abstract should not crash"""
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url=None,
+                        local_repo=test_data_repositories + "nemo",
+                        output=test_data_path + "test_issue_1050.json",
+                        pretty=True,
+                        readme_only=False)
+
+
+        with open(test_data_path + "test_issue_1050.json") as f:
+            json_content = json.load(f)
+
+        cff_entries = [
+            c for c in json_content.get(constants.CAT_CITATION, [])
+            if "CITATION.cff" in c.get("source", "")
+        ]
+        assert len(cff_entries) > 0, "CITATION.cff not found in citations"
+        
+        cff_entry = json_content[constants.CAT_CITATION][0]["result"]
+        assert cff_entry.get("title") == "NEMO: A Stellar Dynamics Toolbox"
+        assert cff_entry.get("type") == "SoftwareApplication"
+
+        cff_authors = cff_entry.get("author", [])
+        assert len(cff_authors) == 3
+        orcid_urls = [a.get("url") for a in cff_authors]
+        assert all(u and u.startswith("https://orcid.org/") for u in orcid_urls)
+
+        os.remove(test_data_path + "test_issue_1050.json")
+

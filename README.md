@@ -2,6 +2,7 @@
 
 [![Documentation Status](https://readthedocs.org/projects/somef/badge/?version=latest)](https://somef.readthedocs.io/en/latest/?badge=latest)
 [![Python](https://img.shields.io/pypi/pyversions/somef.svg?style=plastic)](https://badge.fury.io/py/somef) [![PyPI](https://badge.fury.io/py/somef.svg)](https://badge.fury.io/py/somef) [![DOI](https://zenodo.org/badge/190487675.svg)](https://zenodo.org/badge/latestdoi/190487675) [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KnowledgeCaptureAndDiscovery/somef/HEAD?filepath=notebook%2FSOMEF%20Usage%20Example.ipynb) [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/KnowledgeCaptureAndDiscovery/somef/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/KnowledgeCaptureAndDiscovery/somef)[![SWH](https://archive.softwareheritage.org/badge/swh:1:dir:ebfdd002d998a2e9054c974ba8206d867b99fcfa/)](https://archive.softwareheritage.org/swh:1:dir:ebfdd002d998a2e9054c974ba8206d867b99fcfa;origin=https://github.com/KnowledgeCaptureAndDiscovery/somef;visit=swh:1:snp:55accea716399b0cc89486e37fbaab028ed8e748;anchor=swh:1:rev:cefb0f9a53ba1fae671819f943e84c087aed6f7d)
 
 <img src="docs/logo.png" alt="logo" width="150"/>
 

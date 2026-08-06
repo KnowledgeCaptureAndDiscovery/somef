@@ -611,7 +611,11 @@ def get_file_content_or_link(repo_type, file_path, owner, repo_name, repo_defaul
                 try:
                     yaml_content = yaml.safe_load(file_text)
                 except Exception:
-                    yaml_content = None
+                    cleaned = re.sub(constants.REGEXP_CLEAN_HTML_TAGS, '', file_text)
+                    try:
+                        yaml_content = yaml.safe_load(cleaned)
+                    except Exception:
+                        yaml_content = None
 
                 if yaml_content:
                     license_value = yaml_content.get("license")

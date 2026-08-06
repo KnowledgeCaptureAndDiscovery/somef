@@ -106,6 +106,8 @@ REGEXP_ZENODO_JSON_LD = r"<script[^>]*type=['\"]application/ld\+json['\"][^>]*>(
 # Detect copyright information in license files. 
 REGEXP_COPYRIGHT = r"copyright\s*(?:\(c\)|©|\(C\))?\s*\{?(\d{4}(?:-\d{4})?)\}?\s*\{?([^\n}]+)\}?"
 
+REGEXP_CLEAN_HTML_TAGS = r'<[^>]+>'
+
 LICENSES_DICT = {
     "Apache License 2.0": {"regex": REGEXP_APACHE, "spdx_id": "Apache-2.0"},
     "GNU General Public License v3.0": {"regex": REGEXP_GPL3, "spdx_id": "GPL-3.0"},

@@ -968,6 +968,29 @@ class TestCodemetaExport(unittest.TestCase):
         os.remove(output_path)
 
 
+    def test_codemeta_nemo_cff_issue_1050(self):
+        """CITATION.cff with HTML in abstract exports with unescaped quotes correctly to codemeta"""
+        output_path = test_data_path + 'test_codemeta_nemo.json'
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url=None,
+                        local_repo=test_data_repositories + "nemo",
+                        output=None,
+                        codemeta_out=output_path,
+                        pretty=True,
+                        readme_only=False)
+
+        with open(output_path) as f:
+            json_content = json.load(f)
+
+        credit_text = json_content.get(constants.CAT_CODEMETA_CREDITTEXT, [])
+        assert len(credit_text) > 0
+        assert any("NEMO" in ct.upper() for ct in credit_text)
+        assert any("BARNES" in ct.upper() for ct in credit_text)
+
+        os.remove(output_path)
+
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""
