@@ -601,3 +601,19 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
             extracted_url = status[0]['result']['value']
             expected_url = "https://www.repostatus.org/#active"
             self.assertEqual(extracted_url, expected_url)
+
+
+    def test_issue_1062(self):
+        """A Zenodo DOI badge in an rst README yields the exact DOI from the badge,
+        not the latest version's DOI."""
+        with open(test_data_path + "README-gammapy.rst", "r") as data_file:
+            test_text = data_file.read()
+            identifiers = regular_expressions.extract_doi_badges(test_text, Result(),
+                                                test_data_path + "README-gammapy.rst")
+            doi_values = []
+            if "identifier" in identifiers.results:
+                for result in identifiers.results["identifier"]:
+                    if "result" in result and "value" in result["result"]:
+                        doi_values.append(result["result"]["value"])
+            assert doi_values == ["https://doi.org/10.5281/zenodo.4701488"], \
+                f"Expected the exact badge DOI, got {doi_values}"
