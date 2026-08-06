@@ -711,26 +711,34 @@ def extract_doi_badges(readme_text, repository_metadata: Result, source) -> Resu
         else:
             match = re.search(constants.REGEXP_ZENODO_DOI, readme_text)
             if match:
-                badge_url = match.group(0)
+                # badge_url = match.group(0)
+                badge_url = f"https://doi.org/{match.group(1)}"
         try:
             if badge_url is not None:
-                response = requests.get(badge_url, allow_redirects=True, timeout=10)
-                match = re.search(constants.REGEXP_ZENODO_JSON_LD,
-                    response.text,
-                    re.DOTALL | re.IGNORECASE
-                )
-                if match:
-                    json_ld_text = match.group(1).strip()
-                    try:
-                        json_ld_data = json.loads(json_ld_text)
-                        identifier = json_ld_data.get('identifier')
-                        repository_metadata.add_result(constants.CAT_IDENTIFIER,
-                            {
-                                constants.PROP_TYPE: constants.URL,
-                                constants.PROP_VALUE: identifier,
-                            }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
-                    except json.JSONDecodeError:
-                        logging.warning("Error parsing Zenodo JSON-LD")
+                if badge_url.startswith("https://doi.org/"):
+                    repository_metadata.add_result(constants.CAT_IDENTIFIER,
+                        {
+                            constants.PROP_TYPE: constants.URL,
+                            constants.PROP_VALUE: badge_url,
+                        }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+                else:
+                    response = requests.get(badge_url, allow_redirects=True, timeout=10)
+                    match = re.search(constants.REGEXP_ZENODO_JSON_LD,
+                        response.text,
+                        re.DOTALL | re.IGNORECASE
+                    )
+                    if match:
+                        json_ld_text = match.group(1).strip()
+                        try:
+                            json_ld_data = json.loads(json_ld_text)
+                            identifier = json_ld_data.get('identifier')
+                            repository_metadata.add_result(constants.CAT_IDENTIFIER,
+                                {
+                                    constants.PROP_TYPE: constants.URL,
+                                    constants.PROP_VALUE: identifier,
+                                }, 1, constants.TECHNIQUE_REGULAR_EXPRESSION, source)
+                        except json.JSONDecodeError:
+                            logging.warning("Error parsing Zenodo JSON-LD")
         except requests.RequestException as e:
             logging.warning(f"Error fetching DOI from Zenodo badge: {e}")
     else:
