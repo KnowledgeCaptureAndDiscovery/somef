@@ -151,13 +151,14 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         if value:
             codemeta_output[constants.CAT_CODEMETA_DATEMODIFIED] = format_date(value)
     if constants.CAT_COPYRIGHT in repo_data:
-        holder = repo_data[constants.CAT_COPYRIGHT][0][constants.PROP_RESULT][constants.PROP_VALUE]
-        year = repo_data[constants.CAT_COPYRIGHT][0][constants.PROP_RESULT].get(constants.PROP_YEAR)
-        if holder:
-            codemeta_output[constants.CAT_CODEMETA_COPYRIGHTHOLDER] = holder
-
-        if year:
-            codemeta_output[constants.CAT_CODEMETA_COPYRIGHTYEAR] = year    
+        codemeta_output[constants.CAT_CODEMETA_COPYRIGHTHOLDER] = []
+        for copyright in repo_data[constants.CAT_COPYRIGHT]:
+            holder = copyright[constants.PROP_RESULT][constants.PROP_VALUE]
+            year = copyright[constants.PROP_RESULT].get(constants.PROP_YEAR)
+            if holder:
+                codemeta_output[constants.CAT_CODEMETA_COPYRIGHTHOLDER].append({constants.PROP_NAME: holder})
+            if year:
+                codemeta_output[constants.CAT_CODEMETA_COPYRIGHTYEAR] = year  
     if constants.CAT_DOWNLOAD_URL in repo_data:
         codemeta_output[constants.CAT_CODEMETA_DOWNLOADURL] = repo_data[constants.CAT_DOWNLOAD_URL][0][constants.PROP_RESULT][constants.PROP_VALUE]
     if constants.CAT_NAME in repo_data:
