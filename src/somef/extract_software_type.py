@@ -225,7 +225,7 @@ def check_static_websites(path_repo, repo_metadata: Result):
             elif file.endswith(".ipynb"):
                 if is_notebook_code(file_path):
                     return False
-            elif file.endswith(".rmd") or file.endswith('.Rmds'):
+            elif file.endswith(".rmd") or file.endswith('.Rmd'):
                 if has_code_in_rmd(file_path):
                     return False
     try:
