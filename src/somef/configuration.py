@@ -4,7 +4,8 @@ import json
 import sys
 import logging
 import base64
-
+import requests
+import nltk
 from .utils import constants
 
 path = Path(__file__).parent.absolute()
@@ -69,7 +70,7 @@ def configure(
         download_limit_mb=constants.SIZE_DOWNLOAD_LIMIT_MB):
     
     """ Function to configure the main program"""
-    import nltk
+
     nltk.download('wordnet')
     nltk.download('omw-1.4')
     nltk.download('punkt')
@@ -129,3 +130,51 @@ def configure(
         json.dump(data, fh)
         logging.info("Configuration file saved at "+os.path.dirname(credentials_file))
 
+
+def test_configuration_tokens():
+    """
+    Checks the API tokens stored in the configuration file against each
+    provider without running SOMEF.
+
+    Returns
+    -------
+    dict
+        Mapping of provider name to {"ok": bool, "message": str}. Providers
+        without a configured token are omitted.
+    """
+
+    file_paths = get_configuration_file()
+    providers = [
+        ("GitHub",    constants.CONF_GITHUB_AUTHORIZATION,    "https://api.github.com/user"),
+        ("GitLab",    constants.CONF_GITLAB_AUTHORIZATION,    "https://gitlab.com/api/v4/user"),
+        ("Codeberg",  constants.CONF_CODEBERG_AUTHORIZATION,  "https://codeberg.org/api/v1/user"),
+        ("Bitbucket", constants.CONF_BITBUCKET_AUTHORIZATION, "https://api.bitbucket.org/2.0/user"),
+    ]
+    results = {}
+    for label, key, url in providers:
+        if key not in file_paths:
+            continue
+
+        stored = file_paths[key]
+        if label == "Bitbucket" and not stored.lower().startswith("basic "):
+            results[label] = {
+                "ok": False,
+                "message": "Bitbucket token has an incorrect format (expected a 'Basic ' prefix). "
+                           "Run 'somef configure' to set it correctly.",
+            }
+            continue
+
+        try:
+            resp = requests.get(url, headers={constants.PROP_AUTHORIZATION: file_paths[key]}, timeout=10)
+        except requests.RequestException as e:
+            results[label] = {"ok": False, "message": f"Could not reach the api: {e}"}
+            continue
+        if resp.status_code == 200:
+            results[label] = {"ok": True, "message": "token valid"}
+        elif resp.status_code == 401:
+            results[label] = {"ok": False, "message": "token invalid (401)"}
+        elif resp.status_code == 403:
+            results[label] = {"ok": True, "message": "token valid but with limited permissions (403)"}
+        else:
+            results[label] = {"ok": False, "message": f"unexpected response ({resp.status_code})"}
+    return results
