@@ -67,7 +67,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 
 - `acknowledgement`: Any text that the authors have prepared to acknnowledge the contribution from others, or project funding.
 - `application_domain`: The application domain of the repository. This may be related to the research area of a software component (e.g., Astrophysics) or the general domain/functionality of the tool (i.e., machine learning projects). See all current recognized application domains [here](https://somef.readthedocs.io/en/latest/#myfootnote1).
-- `application_type`: Software type: Commandline Application, Notebook Application, Ontology, Scientific Workflow, Software. Non-Software types: Static Website, Uncategorized
+- `application_type`: Software type: Commandline Application, Notebook Application, Ontology, Scientific Workflow, Library, Service, Software. Non-Software types: Static Website.
 - `author`: Person(s) or organization(s) responsible of the project. This property is also used to indicate the responsible entities of a publication associated with the code repository.
 - `citation`: Software citation (usually in .bib or .cff format). SOMEF extracts and structures the metadata from these files (including authors, titles, and DOIs) instead of just returning a raw string.
 - `code_of_conduct`: Link to the code of conduct file of the project
