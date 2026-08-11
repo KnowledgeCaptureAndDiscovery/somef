@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 from ..extract_software_type import check_ontologies, check_notebooks, check_command_line, check_extras, \
-    check_static_websites, check_workflow, check_package_files, check_repository_type
+    check_static_websites, check_workflow, check_package_library, check_repository_type
 from ..process_results import Result
 from ..utils import constants
 
@@ -67,21 +67,27 @@ class TestEXTRAS(unittest.TestCase):
         result = check_workflow(path, 'DynamicPersonalWebsite-master')
         assert result is False
 
-    def test_true_package_files(self):
+    def test_true_package_library(self):
         path = test_data_repositories + "fuji"
-        result = check_package_files(path)
+        result = check_package_library(path)
         assert result
 
-    def test_false_package_files(self):
+    def test_false_package_library(self):
         path = test_data_repositories + "OWL-To-OAS-Specification-master"
-        result = check_package_files(path)
+        result = check_package_library(path)
         assert result is False
 
     def test_repository_type_software(self):
+        path = test_data_repositories + "ipynb-master"
+        result = check_repository_type(path, "ipynb-master", Result())
+        values = [r[constants.PROP_RESULT][constants.PROP_VALUE] for r in result.results[constants.CAT_APPLICATION_TYPE]]
+        assert "software" in values
+
+    def test_repository_type_service(self):
         path = test_data_repositories + "fuji"
         result = check_repository_type(path, "fuji", Result())
         values = [r[constants.PROP_RESULT][constants.PROP_VALUE] for r in result.results[constants.CAT_APPLICATION_TYPE]]
-        assert "software" in values
+        assert "service" in values
 
     def test_repository_type_non_software(self):
         path = test_data_repositories + "OWL-To-OAS-Specification-master"
@@ -94,6 +100,18 @@ class TestEXTRAS(unittest.TestCase):
         result = check_repository_type(path, "auroral-ontology-core", Result())
         values = [r[constants.PROP_RESULT][constants.PROP_VALUE] for r in result.results[constants.CAT_APPLICATION_TYPE]]
         assert "ontology" in values
+
+    def test_repository_type_library(self):
+        path = test_data_repositories + "captum"
+        result = check_repository_type(path, "captum", Result())
+        values = [r[constants.PROP_RESULT][constants.PROP_VALUE] for r in result.results[constants.CAT_APPLICATION_TYPE]]
+        assert "library" in values
+
+    def test_repository_type_commandline_from_package(self):
+        path = test_data_repositories + "soca"
+        result = check_repository_type(path, "soca", Result())
+        values = [r[constants.PROP_RESULT][constants.PROP_VALUE] for r in result.results[constants.CAT_APPLICATION_TYPE]]
+        assert "commandline-application" in values
 
     def test_true_static_website(self):
         path = test_data_repositories + "website-static-master"
