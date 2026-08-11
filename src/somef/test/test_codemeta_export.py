@@ -639,7 +639,8 @@ class TestCodemetaExport(unittest.TestCase):
         copyright_holder = json_content[constants.CAT_CODEMETA_COPYRIGHTHOLDER]
         copyright_year = json_content[constants.CAT_CODEMETA_COPYRIGHTYEAR]
     
-        assert copyright_holder == "Daniel Garijo, Information Sciences Institute, USC."
+        # assert copyright_holder == "Daniel Garijo, Information Sciences Institute, USC."
+        assert copyright_holder == [{constants.PROP_NAME: "Daniel Garijo, Information Sciences Institute, USC."}]
         assert copyright_year == "2016"
 
         os.remove(test_data_path + "test_issue_886_apache_code.json")
