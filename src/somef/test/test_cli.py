@@ -334,7 +334,7 @@ class TestCli(unittest.TestCase):
         data = text_file.read()
         json_content = json.loads(data)
         text_file.close()
-        assert len(json_content[constants.CAT_ONTOLOGIES]) == 2
+        assert len(json_content[constants.CAT_ONTOLOGIES]) == 1
         os.remove(test_data_path + "test-388.json")
 
     def test_issue_319_2(self):
@@ -993,3 +993,45 @@ class TestCli(unittest.TestCase):
         t = json_content[constants.CAT_APPLICATION_TYPE][0]
         assert t[constants.PROP_RESULT][constants.PROP_VALUE] == "ontology"
         os.remove(test_data_path + "test-ecfo.json")
+
+
+    def test_issue_531_ontology_metadata(self):
+        """Checks that ontology metadata is extracted as a structured object (issue #531)"""
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url=None,
+                        doc_src=None,
+                        local_repo=test_data_repositories + "Widoco",
+                        in_file=None,
+                        output=test_data_path + "test-531.json",
+                        graph_out=None,
+                        graph_format="turtle",
+                        codemeta_out=None,
+                        pretty=True,
+                        missing=False)
+        text_file = open(test_data_path + "test-531.json", "r")
+        data = text_file.read()
+        json_content = json.loads(data)
+        text_file.close()
+        os.remove(test_data_path + "test-531.json")
+
+        ontologies = json_content[constants.CAT_ONTOLOGIES]
+        assert len(ontologies) == 1
+
+        result = ontologies[0][constants.PROP_RESULT]
+        assert result[constants.PROP_VALUE] == "https://w3id.org/example"
+        assert result[constants.PROP_TYPE] == constants.ONTOLOGY
+        assert result[constants.PROP_URL] is not None
+        assert result[constants.PROP_TITLE] == "The example ontology"
+        assert result[constants.PROP_VERSION] == "1.0.1"
+        assert result[constants.PROP_DESCRIPTION] == (
+            "This is an example ontology to illustrate some of the annotations that should be included")
+        assert result[constants.PROP_AUTHOR] == ["Daniel Garijo", "Maria Poveda-Villalon"]
+        assert result[constants.PROP_LICENSE] == "http://creativecommons.org/licenses/by/2.0/"
+        assert result[constants.PROP_PREFERRED_NS_PREFIX] == "exo"
+        assert result[constants.PROP_PREFERRED_NS_URI] == "https://w3id.org/example"
+
+        sources = ontologies[0][constants.PROP_SOURCE]
+        assert len(sources) == 2
+        assert any(s.endswith("ontology.ttl") for s in sources)
+        assert any(s.endswith("ontology.nt") for s in sources)

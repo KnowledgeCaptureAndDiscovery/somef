@@ -74,7 +74,7 @@ When using `-e`, publication metadata is enriched via OpenAlex. We recognize the
 - **Logo**: Main logo used to represent the target software component
 - **Maintainer**: Individuals or teams responsible for maintaining the software component, extracted from the CODEOWNERS file
 - **Name**: Name identifying a software component
-- **Ontologies**: URL and path to the ontology files present in the repository
+- **Ontologies**: Structured representation of the ontologies present in the repository
 - **Owner**: Name and type of the user or organization in charge of the repository
 - **Package distribution**: Links to package sites like pypi in case the repository has a package available.
 - **Package files**: Links to package files used to wrap the project in a package.

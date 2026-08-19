@@ -104,7 +104,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `logo`: Main logo used to represent the target software component.
 - `maintainer`': Individuals or teams responsible for maintaining the software component, extracted from the CODEOWNERS file
 - `name`: Name identifying a software component
-- `ontologies`: URL and path to the ontology files present in the repository.
+- `ontologies`: Structured representation of the ontologies present in the repository
 - `owner`: Name of the user or organization in charge of the repository
 - `package_distribution`: Link to official package repositories where the software can be downloaded from (e.g., `pypi`).
 - `package_file`: Link to a package file used in the repository (e.g., `pyproject.toml`, `setup.py`).
@@ -293,6 +293,24 @@ A SoftwareApplication or SoftwareDependency has the following properties:
 | **type** | String | The object type: `SoftwareApplication` (for the main repository) or `SoftwareDependency` (for requirements and platforms). |
 | **value** | String | A string representation typically combining name and version. |
 | **version** | String | The version or version range of the software/dependency. |
+
+
+An Ontology has the following properties:
+
+For each ontology, SOMEF returns its URI and the metadata extracted from the ontology file itself (title, description, version, license, authors, date of creation, preferred namespace). When the same ontology appears in several files, its metadata is consolidated in a single object and the source files are reported together.
+
+| Property | Expected value | Definition |
+|---|---|---|
+| **author** | List of String | Names or URIs of the creators of the ontology, extracted from the ontology annotations (e.g., `dc:creator`). |
+| **date_created** | String | Date when the ontology was created. |
+| **description** | String | Description or abstract of the ontology. |
+| **license** | Url | URI of the license under which the ontology is released. |
+| **preferred_namespace_prefix** | String | Preferred prefix for the namespace of the ontology (e.g., `vann:preferredNamespacePrefix`). |
+| **preferred_namespace_uri** | Url | URI of the preferred namespace of the ontology (e.g., `vann:preferredNamespaceUri`). |
+| **title** | String | Title or name of the ontology. |
+| **url** | Url | URL to the file (or one of the files) where the ontology is stored in the repository. |
+| **value** | Url | URI identifying the ontology (`owl:Ontology`). |
+| **version** | String | Version of the ontology (e.g., `owl:versionInfo`). |
 
 
 A Text_excerpt has the following properties:
