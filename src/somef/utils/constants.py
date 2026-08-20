@@ -28,6 +28,14 @@ DC_NAMESPACE = "http://purl.org/dc/elements/1.1/"
 DCTERMS_NAMESPACE = "http://purl.org/dc/terms/"
 VANN_NAMESPACE = "http://purl.org/vocab/vann/"
 OWL_NAMESPACE = "http://www.w3.org/2002/07/owl#"
+RDFS_NAMESPACE = "http://www.w3.org/2000/01/rdf-schema#"
+SCHEMA_NAMESPACE = "http://schema.org/"
+SKOS_NAMESPACE = "http://www.w3.org/2004/02/skos/core#"
+PROV_NAMESPACE = "http://www.w3.org/ns/prov#"
+PAV_NAMESPACE = "http://purl.org/pav/"
+MOD_NAMESPACE = "http://www.isibang.ac.in/ns/mod#"
+CC_NAMESPACE = "http://creativecommons.org/ns#"
+FOAF_NAMESPACE = "http://xmlns.com/foaf/0.1/"
 
 # constants with regular expressions. Right now this has room for becoming more efficient
 REGEXP_BINDER = r'\[\!\[Binder\]([^\]]+)\]\(([^)]+)\)'

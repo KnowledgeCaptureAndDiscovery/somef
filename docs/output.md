@@ -301,10 +301,11 @@ For each ontology, SOMEF returns its URI and the metadata extracted from the ont
 
 | Property | Expected value | Definition |
 |---|---|---|
-| **author** | List of String | Names or URIs of the creators of the ontology, extracted from the ontology annotations (e.g., `dc:creator`). |
+| **author** | List of Agent | Creators of the ontology, each with `name` and/or `url`
 | **date_created** | String | Date when the ontology was created. |
 | **description** | String | Description or abstract of the ontology. |
 | **license** | Url | URI of the license under which the ontology is released. |
+| **name** | String | Short name/acronym of the ontology (e.g., `rdfs:label`, `skos:prefLabel`). |
 | **preferred_namespace_prefix** | String | Preferred prefix for the namespace of the ontology (e.g., `vann:preferredNamespacePrefix`). |
 | **preferred_namespace_uri** | Url | URI of the preferred namespace of the ontology (e.g., `vann:preferredNamespaceUri`). |
 | **title** | String | Title or name of the ontology. |

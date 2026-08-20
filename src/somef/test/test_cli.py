@@ -1026,7 +1026,10 @@ class TestCli(unittest.TestCase):
         assert result[constants.PROP_VERSION] == "1.0.1"
         assert result[constants.PROP_DESCRIPTION] == (
             "This is an example ontology to illustrate some of the annotations that should be included")
-        assert result[constants.PROP_AUTHOR] == ["Daniel Garijo", "Maria Poveda-Villalon"]
+        assert result[constants.PROP_AUTHOR] == [
+            {"type": "Agent", "name": "Daniel Garijo"},
+            {"type": "Agent", "name": "Maria Poveda-Villalon"}
+        ]
         assert result[constants.PROP_LICENSE] == "http://creativecommons.org/licenses/by/2.0/"
         assert result[constants.PROP_PREFERRED_NS_PREFIX] == "exo"
         assert result[constants.PROP_PREFERRED_NS_URI] == "https://w3id.org/example"

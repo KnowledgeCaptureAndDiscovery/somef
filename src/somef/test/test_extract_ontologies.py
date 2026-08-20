@@ -17,7 +17,10 @@ class TestOntologies(unittest.TestCase):
         assert onto[constants.PROP_URI] == "https://w3id.org/example"
         assert onto[constants.PROP_TITLE] == "The example ontology"
         assert onto[constants.PROP_VERSION] == "1.0.1"
-        assert onto[constants.PROP_AUTHOR] == ["Daniel Garijo", "Maria Poveda-Villalon"]
+        assert onto[constants.PROP_AUTHOR] == [
+            {"type": "Agent", "name": "Daniel Garijo"},
+            {"type": "Agent", "name": "Maria Poveda-Villalon"}
+        ]
         assert onto[constants.PROP_LICENSE] == "http://creativecommons.org/licenses/by/2.0/"
         assert onto[constants.PROP_PREFERRED_NS_PREFIX] == "exo"
 
