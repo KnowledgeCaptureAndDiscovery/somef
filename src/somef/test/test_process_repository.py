@@ -452,6 +452,13 @@ def _make_mock_response(status_code, content=b""):
     resp = MagicMock()
     resp.status_code = status_code
     resp.content = content
+    if isinstance(content, bytes):
+        try:
+            resp.text = content.decode("utf-8")
+        except UnicodeDecodeError:
+            resp.text = None  # e.g. binary zip content, not meant to be read as .text
+    else:
+        resp.text = content
     resp.headers = {}
     return resp
 
@@ -1255,3 +1262,97 @@ class TestResolveReleaseCommitsBitbucket(unittest.TestCase):
 
         resolved = result.results[constants.CAT_RELEASES][0][constants.PROP_RESULT]
         self.assertIsNone(resolved.get(constants.PROP_COMMIT))
+
+
+class TestIssue510LicenseFallback(unittest.TestCase):
+    """
+    Tests for the license-file fallback in load_gitlab_repository_metadata
+    (part of issue #510).
+
+    Previously the fallback license URL was hardcoded to '.../-/raw/master/LICENSE'
+    regardless of the repo's real default_branch. Now it must:
+      1. try default_branch first
+      2. fall back to the "other" common convention (main <-> master) if that fails
+    """
+
+    def _mock_project_details_response(self, default_branch="main"):
+        resp = MagicMock()
+        resp.json.return_value = {
+            "defaultBranch": default_branch,
+            "topics": None,
+            "star_count": 0,
+            "forks_count": 0,
+        }
+        return resp
+
+    @patch("somef.process_repository.requests.get")
+    @patch("somef.process_repository.get_all_gitlab_releases")
+    @patch("somef.process_repository.get_project_id")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_license_tries_default_branch_then_falls_back_to_master(
+        self, mock_rlg, mock_project_id, mock_releases, mock_requests_get
+    ):
+        """default_branch='main' -> primary LICENSE at 'main' 404s -> fallback tries 'master'."""
+        mock_rlg.return_value = (self._mock_project_details_response("main"), "")
+        mock_project_id.return_value = "12345"
+        mock_releases.return_value = []
+        mock_requests_get.side_effect = [
+            _make_mock_response(404),  # .../-/raw/main/LICENSE
+            _make_mock_response(200, b"MIT License"),  # .../-/raw/master/LICENSE
+        ]
+
+        repo_metadata = Result()
+        process_repository.load_gitlab_repository_metadata(
+            repo_metadata, "https://gitlab.com/owner/repo"
+        )
+
+        urls_tried = [c.args[0] for c in mock_requests_get.call_args_list]
+        self.assertIn("/-/raw/main/LICENSE", urls_tried[0])
+        self.assertIn("/-/raw/master/LICENSE", urls_tried[1])
+
+    @patch("somef.process_repository.requests.get")
+    @patch("somef.process_repository.get_all_gitlab_releases")
+    @patch("somef.process_repository.get_project_id")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_license_default_branch_master_falls_back_to_main(
+        self, mock_rlg, mock_project_id, mock_releases, mock_requests_get
+    ):
+        """default_branch='master' -> primary LICENSE at 'master' 404s -> fallback tries 'main'."""
+        mock_rlg.return_value = (self._mock_project_details_response("master"), "")
+        mock_project_id.return_value = "12345"
+        mock_releases.return_value = []
+        mock_requests_get.side_effect = [
+            _make_mock_response(404),  # .../-/raw/master/LICENSE
+            _make_mock_response(200, b"MIT License"),  # .../-/raw/main/LICENSE
+        ]
+
+        repo_metadata = Result()
+        process_repository.load_gitlab_repository_metadata(
+            repo_metadata, "https://gitlab.com/owner/repo"
+        )
+
+        urls_tried = [c.args[0] for c in mock_requests_get.call_args_list]
+        self.assertIn("/-/raw/master/LICENSE", urls_tried[0])
+        self.assertIn("/-/raw/main/LICENSE", urls_tried[1])
+
+    @patch("somef.process_repository.requests.get")
+    @patch("somef.process_repository.get_all_gitlab_releases")
+    @patch("somef.process_repository.get_project_id")
+    @patch("somef.process_repository.rate_limit_get")
+    def test_license_default_branch_hit_skips_fallback(
+        self, mock_rlg, mock_project_id, mock_releases, mock_requests_get
+    ):
+        """If the primary LICENSE request succeeds, the fallback URL must never be requested."""
+        mock_rlg.return_value = (self._mock_project_details_response("main"), "")
+        mock_project_id.return_value = "12345"
+        mock_releases.return_value = []
+        mock_requests_get.side_effect = [
+            _make_mock_response(200, b"MIT License"),  # .../-/raw/main/LICENSE succeeds
+        ]
+
+        repo_metadata = Result()
+        process_repository.load_gitlab_repository_metadata(
+            repo_metadata, "https://gitlab.com/owner/repo"
+        )
+
+        self.assertEqual(mock_requests_get.call_count, 1)
