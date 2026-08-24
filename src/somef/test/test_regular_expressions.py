@@ -1,5 +1,6 @@
 import unittest
 import os
+from unittest.mock import MagicMock, patch
 from pathlib import Path
 
 from .. import regular_expressions
@@ -617,3 +618,25 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
                         doi_values.append(result["result"]["value"])
             assert doi_values == ["https://doi.org/10.5281/zenodo.4701488"], \
                 f"Expected the exact badge DOI, got {doi_values}"
+
+
+    def test_extract_readthedocs_fallback_heuristics(self):
+        """If the README doesn't mention readthedocs but the site exists, we add it anyway"""
+        r = Result()
+        r.add_result(constants.CAT_NAME, {
+            constants.PROP_TYPE: constants.STRING,
+            constants.PROP_VALUE: "somef"
+        }, 1, "README.md")
+        readme_text = ("SOMEF extracts software metadata from repositories.\n\n"
+                    "See the docs_ for details.\n\n.. _docs:\n")
+        mock_resp = MagicMock(status_code=200, url="https://somef.readthedocs.io/en/latest/")
+        with patch("somef.regular_expressions.requests.head", return_value=mock_resp):
+            c = regular_expressions.extract_readthedocs(readme_text, r, "README.md")
+        entries = [e for e in c.results[constants.CAT_DOCUMENTATION]
+                if e[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_HEURISTICS]
+        assert len(entries) == 1
+        e = entries[0]
+        assert e[constants.PROP_RESULT][constants.PROP_VALUE] == "https://somef.readthedocs.io/"
+        assert e[constants.PROP_RESULT][constants.PROP_FORMAT] == constants.FORMAT_READTHEDOCS
+        assert e[constants.PROP_CONFIDENCE] == 0.9
+

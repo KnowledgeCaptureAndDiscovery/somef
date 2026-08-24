@@ -60,7 +60,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
     similarity_threshold = file_paths.get(constants.CONF_SIMILARITY_THRESHOLD, constants.CONF_DEFAULT_SIMILARITY_THRESHOLD)
     repo_type = constants.RepositoryType.GITHUB
     repository_metadata = Result()
-    def_branch = "master"
+    def_branch = "main"
 
     if branch and tag:
         logging.error("You cannot use --branch and --tag at the same time. Mutually exclusive")
