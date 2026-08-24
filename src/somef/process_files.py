@@ -241,17 +241,34 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                )
                 if filename.endswith(".ttl") or filename.endswith(".owl") or filename.endswith(".nt") or filename. \
                         endswith(".xml"):
-                    uri = extract_ontologies.is_file_ontology(os.path.join(repo_dir, file_path))
+                    onto = extract_ontologies.is_file_ontology(os.path.join(repo_dir, file_path))
 
-                    if uri is not None:
+                    if onto is not None:
                         onto_url = get_file_link(repo_type, file_path, owner, repo_name, repo_default_branch, repo_dir,
                                                  repo_relative_path, filename)
-                        metadata_result.add_result(constants.CAT_ONTOLOGIES,
-                                                   {
-                                                       constants.PROP_VALUE: onto_url,
-                                                       constants.PROP_TYPE: constants.URL
-                                                   }, 1, constants.TECHNIQUE_FILE_EXPLORATION
-                                                   )
+                        result = {
+                            constants.PROP_VALUE: onto[constants.PROP_URI],
+                            constants.PROP_TYPE: constants.ONTOLOGY,
+                            constants.PROP_URL: onto_url
+                        }
+                        for field, value in onto.items():
+                            if field != constants.PROP_URI and value not in (None, "", []):
+                                result[field] = value
+
+                        metadata_result.add_result(
+                            constants.CAT_ONTOLOGIES, 
+                            result, 
+                            1, 
+                            constants.TECHNIQUE_FILE_EXPLORATION,
+                            onto_url
+                        )
+                        
+                        # metadata_result.add_result(constants.CAT_ONTOLOGIES,
+                        #                            {
+                        #                                constants.PROP_VALUE: onto_url,
+                        #                                constants.PROP_TYPE: constants.URL
+                        #                            }, 1, constants.TECHNIQUE_FILE_EXPLORATION
+                        #                            )
                 if filename.upper() == constants.CODEOWNERS_FILE:
                     # codeowners_json = parse_codeowners_structured(dir_path,filename)
                     logging.info("Processing CODEOWNERS file...")

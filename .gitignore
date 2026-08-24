@@ -15,6 +15,7 @@ Scripts/*
 !**/package.json
 !**/bower.json
 *.ttl
+!**/test_data/repositories/ecfo/ontology.ttl
 env_3.9/*
 src/somef/create_corpus_for_NER.py
 src/somef.egg-info/*
