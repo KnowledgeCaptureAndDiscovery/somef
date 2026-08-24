@@ -366,8 +366,12 @@ def load_gitlab_repository_metadata(repo_metadata: Result, repository_url, autho
     # If we didn't find it, look for the license
     if constants.PROP_VALUE not in license_result or license_result[constants.PROP_VALUE] is None:
         # possible_license_url = f"{repository_url}/-/blob/master/LICENSE"
-        possible_license_url = f"{repository_url}/-/raw/master/LICENSE"
+        license_fallback_branch = "master" if default_branch == "main" else "main"
+        possible_license_url = f"{repository_url}/-/raw/{default_branch}/LICENSE"
         license_text_resp = requests.get(possible_license_url)
+        if license_text_resp.status_code != 200:
+            possible_license_url = f"{repository_url}/-/raw/{license_fallback_branch}/LICENSE"
+            license_text_resp = requests.get(possible_license_url)
         if license_text_resp.status_code == 200:
             license_text = license_text_resp.text
             license_result[constants.PROP_VALUE] = possible_license_url
@@ -563,19 +567,21 @@ def download_readme(owner, repo_name, default_branch, repo_type, authorization, 
     -------
     @return: text with the contents of the readme file
     """
+    fallback_branch = "master" if default_branch == "main" else "main"
+
     if repo_type is constants.RepositoryType.GITLAB:
         base = f"https://gitlab.com/{project_path}" if project_path else f"https://gitlab.com/{owner}/{repo_name}"
         primary_url = f"{base}/-/raw/{default_branch}/README.md"
-        secondary_url = f"{base}/-/raw/master/README.md"
+        secondary_url = f"{base}/-/raw/{fallback_branch}/README.mdREADME.md"
     elif repo_type is constants.RepositoryType.GITHUB:
         primary_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{default_branch}/README.md"
-        secondary_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/master/README.md"
+        secondary_url = f"https://raw.githubusercontent.com/{owner}/{repo_name}/{fallback_branch}/README.mdREADME.md"
     elif repo_type is constants.RepositoryType.CODEBERG:
         primary_url = f"https://codeberg.org/{owner}/{repo_name}/raw/branch/{default_branch}/README.md"
-        secondary_url = f"https://codeberg.org/{owner}/{repo_name}/raw/branch/master/README.md"
+        secondary_url = f"https://codeberg.org/{owner}/{repo_name}/raw/branch/{fallback_branch}/README.md"
     elif repo_type is constants.RepositoryType.BITBUCKET:
         primary_url = f"https://bitbucket.org/{owner}/{repo_name}/raw/{default_branch}/README.md"
-        secondary_url = f"https://bitbucket.org/{owner}/{repo_name}/raw/master/README.md"
+        secondary_url = f"https://bitbucket.org/{owner}/{repo_name}/raw/{fallback_branch}/README.md"
     else:
         logging.error("Repository type not supported")
         return None
@@ -703,7 +709,8 @@ def load_online_repository_metadata(repository_metadata: Result, repository_url,
         raise GithubUrlError
 
     if ignore_api_metadata:
-        default_branch = 'master'
+        if default_branch is None:
+            default_branch = 'master'
     elif default_branch is None:
         default_branch = general_resp['default_branch']
 
