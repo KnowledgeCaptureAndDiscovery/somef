@@ -134,7 +134,17 @@ def extract_readthedocs(readme_text, repository_metadata: Result, readme_source)
                 # add link as a regular doc link if we cannot retrieve name or there is an error
                 repository_metadata.add_result(constants.CAT_DOCUMENTATION, result, 1,
                                             constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
-
+    else:
+        url = check_readthedocs_exists(name)
+        if url:
+            repository_metadata.add_result(constants.CAT_DOCUMENTATION,
+                {
+                    constants.PROP_TYPE: constants.URL,
+                    constants.PROP_VALUE: url,
+                    constants.PROP_FORMAT: constants.FORMAT_READTHEDOCS
+                },
+                0.9, constants.TECHNIQUE_HEURISTICS, readme_source)
+            # Not sure about the confidence. Should be 1 or a lightly minor?
     return repository_metadata
 
 
@@ -1239,3 +1249,22 @@ def extract_scholarly_article_natural(citation_text, scholarly_article, type):
         scholarly_article["author"] = author_list
 
     return scholarly_article
+
+
+def check_readthedocs_exists(repo_name):
+    """Checks whether an active ReadTheDocs site exists at https://<repo_name>.readthedocs.io"""
+    if not repo_name:
+        return None
+    candidate_url = f"https://{repo_name.strip().lower()}.readthedocs.io/"
+    try:
+        resp = requests.head(candidate_url, timeout=5, allow_redirects=True)
+        final_host = urlparse(resp.url).hostname or ""
+      
+        if resp.status_code == 200:
+            if final_host.endswith("readthedocs.io"):
+                return f"https://{final_host.split('.')[0]}.readthedocs.io/"
+            parsed = urlparse(resp.url)
+            return f"{parsed.scheme}://{parsed.netloc}/"
+    except requests.RequestException:
+        pass
+    return None
