@@ -74,7 +74,7 @@ When using `-e`, publication metadata is enriched via OpenAlex. We recognize the
 - **Logo**: Main logo used to represent the target software component
 - **Maintainer**: Individuals or teams responsible for maintaining the software component, extracted from the CODEOWNERS file
 - **Name**: Name identifying a software component
-- **Ontologies**: URL and path to the ontology files present in the repository
+- **Ontologies**: Structured representation of the ontologies present in the repository
 - **Owner**: Name and type of the user or organization in charge of the repository
 - **Package distribution**: Links to package sites like pypi in case the repository has a package available.
 - **Package files**: Links to package files used to wrap the project in a package.
@@ -305,8 +305,34 @@ Usage: somef configure [OPTIONS]
 
 Options:
   -a, --auto  Automatically configure SOMEF
+  -b, --base_uri URL  Base URI for somef transformations
   -h, --help  Show this message and exit.
+
+Commands:
+  test  Test the configured API tokens
 ```
+
+### Testing your tokens
+
+To verify that the authentication tokens stored in your configuration file are valid **without having to run SOMEF**, run:
+
+```bash
+somef configure test
+```
+
+This contacts each configured provider's API (api.github.com, gitlab.com, codeberg.org, bitbucket.org) with the token stored in ~/.somef/config.json and reports the status of each one, e.g.:
+```bash
+GitHub: token valid
+GitLab: token valid
+Codeberg: token valid
+Bitbucket: token valid but with limited permissions (403)
+```
+
+401 means the token is invalid; 403 means it is valid but lacks the required scopes; any other non-200 response is reported as unexpected.
+Providers without a configured token are simply skipped.
+Bitbucket tokens must start with Basic (as set by somef configure); otherwise the test reports an incorrect format without contacting the API.
+The command exits with a non-zero status code if any configured token is invalid, which is useful for scripts and CI.
+
 
 ### Updating SOMEF
 
