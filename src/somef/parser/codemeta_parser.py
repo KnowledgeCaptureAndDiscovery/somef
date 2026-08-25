@@ -246,6 +246,29 @@ def parse_programming_language(language_data):
 
     return None
 
+def parse_funder(funder_data):
+    """
+    Parse funder information into an Organization object.
+    """
+    if isinstance(funder_data, dict):
+        funder_obj = {
+            constants.PROP_TYPE: constants.TYPE_ORGANIZATION,
+            constants.PROP_NAME: funder_data.get("name"),
+            constants.PROP_URL: funder_data.get("url") or funder_data.get("@id")
+        }
+        return {k: v for k, v in funder_obj.items() if v is not None}
+        
+    elif isinstance(funder_data, str):
+        return {
+            constants.PROP_TYPE: constants.TYPE_ORGANIZATION,
+            constants.PROP_NAME: funder_data
+        }
+        
+    elif isinstance(funder_data, list) and len(funder_data) > 0:
+        return parse_funder(funder_data[0])
+        
+    return None
+
 def parse_contributors(contributors_data):
     """
     Parse contributors from codemeta.json
@@ -535,31 +558,76 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
             funder_data = data.get("funder")
             funding_data = data.get("funding")
 
-            if funder_data or funding_data:
-                main_value = funding_data if funding_data else funder_data
+            # if funder_data or funding_data:
+            #     main_value = funding_data if funding_data else funder_data
                 
-                if isinstance(main_value, (list, dict)):
-                    main_value = str(main_value)
+            #     if isinstance(main_value, (list, dict)):
+            #         main_value = str(main_value)
 
-                res_fund = {
-                    "value": main_value,
-                    "type": constants.STRING
+            #     res_fund = {
+            #         "value": main_value,
+            #         "type": constants.STRING
+            #     }
+
+            #     if funder_data and (not isinstance(funder_data, list) or len(funder_data) > 0):
+            #         res_fund[constants.PROP_FUNDER] = funder_data
+                
+            #     if funding_data and (not isinstance(funding_data, list) or len(funding_data) > 0):
+            #         res_fund[constants.PROP_FUNDING] = funding_data
+
+            #     if res_fund.get("value"):
+            #         metadata_result.add_result(
+            #             constants.CAT_FUNDING,
+            #             res_fund,
+            #             1,
+            #             constants.TECHNIQUE_CODE_CONFIG_PARSER,
+            #             source
+            #         )
+            if funder_data or funding_data:
+                # Process funding into a structured Grant dictionary
+                grant_result = {
+                    "type": constants.TYPE_GRANT
                 }
 
-                if funder_data and (not isinstance(funder_data, list) or len(funder_data) > 0):
-                    res_fund[constants.PROP_FUNDER] = funder_data
-                
-                if funding_data and (not isinstance(funding_data, list) or len(funding_data) > 0):
-                    res_fund[constants.PROP_FUNDING] = funding_data
+                if funder_data:
+                    parsed_funder = parse_funder(funder_data)
+                    if parsed_funder:
+                        grant_result[constants.PROP_FUNDER] = parsed_funder
 
-                if res_fund.get("value"):
-                    metadata_result.add_result(
-                        constants.CAT_FUNDING,
-                        res_fund,
-                        1,
-                        constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                        source
-                    )
+                if isinstance(funding_data, dict):
+                    if constants.PROP_IDENTIFIER in funding_data:
+                        grant_result[constants.PROP_IDENTIFIER] = funding_data[constants.PROP_IDENTIFIER]
+                    if constants.PROP_NAME in funding_data:
+                        grant_result[constants.PROP_NAME] = funding_data[constants.PROP_NAME]
+                    if "@id" in funding_data and constants.PROP_IDENTIFIER not in grant_result:
+                        grant_result[constants.PROP_IDENTIFIER] = funding_data["@id"]
+
+                    if constants.PROP_NAME in grant_result and constants.PROP_IDENTIFIER in grant_result:
+                        grant_result[constants.PROP_VALUE] = f"{grant_result[constants.PROP_IDENTIFIER]}: {grant_result[constants.PROP_NAME]}"
+                    else:
+                        grant_result[constants.PROP_VALUE] = grant_result.get(constants.PROP_NAME) or grant_result.get(constants.PROP_IDENTIFIER) or str(funding_data)
+
+                elif isinstance(funding_data, str):
+                    grant_result[constants.PROP_VALUE] = funding_data
+                elif isinstance(funding_data, list) and len(funding_data) > 0:
+                    first_funding = funding_data[0]
+                    if isinstance(first_funding, dict):
+                        if constants.PROP_IDENTIFIER in first_funding:
+                            grant_result[constants.PROP_IDENTIFIER] = first_funding[constants.PROP_IDENTIFIER]
+                        if constants.PROP_NAME in first_funding:
+                            grant_result[constants.PROP_NAME] = first_funding[constants.PROP_NAME]
+                    grant_result[constants.PROP_VALUE] = str(first_funding)
+                else:
+                    funder_name = grant_result.get(constants.PROP_FUNDER, {}).get(constants.PROP_NAME) if isinstance(grant_result.get(constants.PROP_FUNDER), dict) else None
+                    grant_result[constants.PROP_VALUE] = funder_name or "Funding information"
+
+                metadata_result.add_result(
+                    constants.CAT_FUNDING,
+                    grant_result,
+                    1,
+                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                    source
+                )
 
             if "developmentStatus" in data:
                 metadata_result.add_result(
