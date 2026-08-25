@@ -28,3 +28,18 @@ class TestOntologies(unittest.TestCase):
         """This test checks that a RDF file with no ontology is not detected, as it should not."""
         onto = extract_ontologies.is_file_ontology(test_data_repositories + "Widoco/example_onto/test.ttl")
         assert(onto is None)
+
+    def test_is_ontology_orcid_name(self):
+        """This test checks if we get correctly url and name from authors."""
+        onto = extract_ontologies.is_file_ontology(test_data_repositories + "ecfo/ontology.ttl")
+
+        assert onto is not None
+        assert onto[constants.PROP_URI] == "https://w3id.org/ecfo"
+        assert onto[constants.PROP_TITLE] == "The Emission Conversion Factor Ontology"
+        assert onto[constants.PROP_VERSION] == "1.0.0"
+        expected_author = {
+            'type': 'Agent',
+            'url': 'https://orcid.org/0000-0003-0454-7145',
+            'name': 'Daniel Garijo'
+        }
+        assert expected_author in onto[constants.PROP_AUTHOR]
