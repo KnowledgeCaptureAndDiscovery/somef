@@ -139,5 +139,29 @@ class TestCodemetaParser(unittest.TestCase):
         self.assertTrue(found, "Author 'Daniel Garijo' with 'given_name' not found in citation author")
 
 
+    def test_issue_135_funding_extraction(self):
+        """
+        Test to ensure that fundinfg information is correctly extracted from the codemeta.json file, 
+        specifically checking for the presence of grant information and its associated funder details.
+        """
+        codemeta_path = REPOS_DIR / "codemeta_repo" / "codemeta.json"
+        result = Result()
+
+        metadata_result = parse_codemeta_json_file(codemeta_path, result, "https://example.org/codemeta.json")
+
+        self.assertIn(constants.CAT_FUNDING, metadata_result.results)
+        funding_entries = result.results[constants.CAT_FUNDING]
+        assert funding_entries is not None
+        assert len(funding_entries) == 1
+
+        grant = funding_entries[0][constants.PROP_RESULT]
+        assert grant["type"] == constants.TYPE_GRANT
+        assert grant["value"] == "1549758; Codemeta: A Rosetta Stone for Metadata in Scientific Software"
+        
+        funder = grant[constants.PROP_FUNDER]
+        assert funder["type"] == constants.TYPE_ORGANIZATION
+        assert funder["name"] == "National Science Foundation"
+        assert funder["url"] == "https://doi.org/10.13039/100000001"
+
 if __name__ == "__main__":
     unittest.main()
