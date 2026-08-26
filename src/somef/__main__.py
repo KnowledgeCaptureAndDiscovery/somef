@@ -64,7 +64,12 @@ def test():
     """Checks the configured tokens against each provider."""
     results = configuration.test_configuration_tokens() 
     for label, res in results.items():
-        click.echo(f"{label}: {res['message']}")
+        if res["ok"] is None:
+            click.secho(f"{label}: {res['message']}", fg="yellow")
+        elif res["ok"]:
+            click.secho(f"{label}: {res['message']}", fg="green")
+        else:
+            click.secho(f"{label}: {res['message']}", fg="red")
     if any(not res['ok'] for res in results.values()):
         raise SystemExit(1)
     
