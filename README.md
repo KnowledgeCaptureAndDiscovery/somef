@@ -57,7 +57,7 @@ When using `-e`, publication metadata is enriched via OpenAlex. We recognize the
 - **Forks url**: Links to forks made of the project
 - **Full name**: Name + owner (owner/name)
 - **Full title**: If the repository is a short name, we will attempt to extract the longer version of the repository name
-- **Funding**: Funding information associated with the project. **Note**: This information is extracted from existing `codemeta.json` files within the repository. When using `-e`, the project data is enriched with OpenAIRE, adding:
+- **Funding**: Funding information associated with the project. **Note**: This information is extracted from `codemeta.json` files within the repository and from the README (funding section headers and links to crowdfunding platforms). When using `-e`, the project data is enriched with OpenAIRE, adding:
 - `project_code`: Project code
 - `project_title`: Project title
 - `project_acronym`: Project acronym
