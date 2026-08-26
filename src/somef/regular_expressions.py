@@ -1268,3 +1268,37 @@ def check_readthedocs_exists(repo_name):
     except requests.RequestException:
         pass
     return None
+
+
+def extract_funding_badges(readme_text, repository_metadata: Result, readme_source) -> Result:
+    """
+    Extracts funding information from badges/links to known crowdfunding platforms.
+    """
+    matches = re.finditer(constants.REGEXP_FUNDING_BADGES, readme_text)
+    seen = set()
+    for match in matches:
+        url = match.group(0).rstrip(".,;:!?")
+        if url in seen:
+            continue
+        seen.add(url)
+        platform = "Funding platform"
+        for prefix, name in constants.FUNDING_PLATFORM_NAMES.items():
+            if prefix in url:
+                platform = name
+                break
+        repository_metadata.add_result(
+            constants.CAT_FUNDING,
+            {
+                constants.PROP_TYPE: constants.TYPE_GRANT,
+                constants.PROP_VALUE: url,
+                constants.PROP_URL: url,
+                constants.PROP_FUNDER: {
+                    constants.PROP_TYPE: constants.TYPE_ORGANIZATION,
+                    constants.PROP_NAME: platform
+                }
+            },
+            1,
+            constants.TECHNIQUE_REGULAR_EXPRESSION,
+            readme_source
+        )
+    return repository_metadata

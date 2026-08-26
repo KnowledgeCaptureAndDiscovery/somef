@@ -586,6 +586,8 @@ PROP_CODEMETA_TYPE = "@type"
 TYPE_CONTRIBUTOR_ORGANIZATION = "Organization"
 TYPE_CONTRIBUTOR_PERSON = "Person"
 
+TYPE_GRANT = "Grant"
+TYPE_ORGANIZATION = "Organization"
 # DOCKER labels maintainer
 # REGEXP_MAINTAINER_LABEL_OCI = r'^\s*LABEL\s+org\.opencontainers\.image\.authors\s*=\s*["\']?(.+?)["\']?\s*$'
 REGEXP_MAINTAINER_LABEL_OCI = r'^\s*LABEL\s+org\.opencontainers\.image\.authors\s*=\s*["\']([^"\'\\]+)["\']?\s*(?:\\)?\s*$'
@@ -750,3 +752,28 @@ PROP_GRANT_ID = "grant_id"
 PROP_FUNDER = "funder"
 PROP_START_DATE = "start_date"
 PROP_END_DATE = "end_date"
+
+# Funding badges regex to detect funding links in README
+REGEXP_FUNDING_BADGES = (
+    r'https?://(?:www\.)?(?:'
+    r'github\.com/sponsors/|'
+    r'opencollective\.com/|'
+    r'patreon\.com/|'
+    r'ko-fi\.com/|'
+    r'liberapay\.com/|'
+    r'buymeacoffee\.com/|'
+    r'paypal\.me/|'
+    r'paypal\.com/donate'
+    r')[^\s()\[\]{}<>"\']+'
+)
+
+FUNDING_PLATFORM_NAMES = {
+    "github.com/sponsors": "GitHub Sponsors",
+    "opencollective.com": "Open Collective",
+    "patreon.com": "Patreon",
+    "ko-fi.com": "Ko-fi",
+    "buymeacoffee.com": "Buy Me a Coffee",
+    "liberapay.com": "Liberapay",
+    "paypal.me": "PayPal",
+    "paypal.com/donate": "PayPal",
+}

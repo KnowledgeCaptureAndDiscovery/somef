@@ -662,14 +662,58 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
             codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY] = application_categories
 
     if constants.CAT_FUNDING in repo_data:
-        for funding_entry in repo_data[constants.CAT_FUNDING]:
-            res_fun = funding_entry[constants.PROP_RESULT]
+        grants_export = []
+            
+        for entry in repo_data[constants.CAT_FUNDING]:
+            res = entry.get(constants.PROP_RESULT, {})
 
-            if constants.PROP_FUNDING in res_fun and res_fun[constants.PROP_FUNDING] != "": 
-                codemeta_output[constants.CAT_CODEMETA_FUNDING] = res_fun[constants.PROP_FUNDING]
+            if res.get(constants.PROP_TYPE) == constants.TEXT_EXCERPT:
+                continue
+            
+            if isinstance(res, dict):
+                grant_item = {
+                    "@type": res.get("type", constants.TYPE_GRANT)
+                }
+                
+                if constants.PROP_IDENTIFIER in res:
+                    grant_item["identifier"] = res[constants.PROP_IDENTIFIER]
+                if constants.PROP_NAME in res:
+                    grant_item["name"] = res[constants.PROP_NAME]
+                if constants.PROP_URL in res:
+                    grant_item["url"] = res[constants.PROP_URL]
+                    
+                if constants.PROP_FUNDER in res:
+                    funder = res[constants.PROP_FUNDER]
+                    if isinstance(funder, dict):
+                        funder_obj = {
+                            "@type": funder.get("type", constants.TYPE_ORGANIZATION),
+                            "name": funder.get("name")
+                        }
+                        if constants.PROP_URL in funder:
+                            funder_obj["url"] = funder[constants.PROP_URL]
+                        grant_item["funder"] = funder_obj
+                    elif isinstance(funder, str):
+                        grant_item["funder"] = {
+                            "@type": constants.TYPE_ORGANIZATION,
+                            "name": funder
+                        }
+                
+                if constants.PROP_NAME not in grant_item and constants.PROP_VALUE in res:
+                    grant_item[constants.PROP_NAME] = res[constants.PROP_VALUE]
+                    
+                if grant_item not in grants_export:
+                    grants_export.append(grant_item)
 
-            if constants.PROP_FUNDER in res_fun and res_fun[constants.PROP_FUNDER] != "":
-                codemeta_output[constants.CAT_CODEMETA_FUNDER] = res_fun[constants.PROP_FUNDER]
+            elif isinstance(res, str):
+                grant_item = {
+                    "@type": constants.TYPE_GRANT,
+                    constants.PROP_NAME: res
+                }
+                if grant_item not in grants_export:
+                    grants_export.append(grant_item)
+
+        if grants_export:
+            codemeta_output[constants.CAT_CODEMETA_FUNDING] = grants_export
 
     # A person is expected, and we extract text at the moment
     if descriptions_text:

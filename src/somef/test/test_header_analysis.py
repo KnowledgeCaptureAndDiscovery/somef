@@ -229,3 +229,19 @@ class TestHeaderAnalysis(unittest.TestCase):
             assert any("macOS" in v for v in values)
             assert any("Docker" in v for v in values)
             assert any("Conda" in v for v in values)
+
+
+    def test_issue_135_funding_section(self):
+        """A Funding section in a real README yields a funding excerpt"""
+        readme_path = test_data_path + "README-stract.md"
+        with open(readme_path, "r", encoding="utf-8") as data_file:
+            text = data_file.read()
+
+        json_test, _ = extract_categories(text, Result())
+        entries = json_test.results.get(constants.CAT_FUNDING, [])
+
+        self.assertTrue(entries)
+        entry = entries[0][constants.PROP_RESULT]
+        self.assertIn("funding", entry[constants.PROP_ORIGINAL_HEADER].lower())
+        self.assertEqual(entry[constants.PROP_TYPE], constants.TEXT_EXCERPT)
+        self.assertIn("NGI0 Entrust", entry[constants.PROP_VALUE])
