@@ -153,6 +153,7 @@ def test_configuration_tokens():
     results = {}
     for label, key, url in providers:
         if key not in file_paths:
+            results[label] = {"ok": None, "message": "token not configured"}
             continue
 
         stored = file_paths[key]
