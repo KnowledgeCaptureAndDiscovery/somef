@@ -87,6 +87,10 @@ support = [Word("support").synsets[7], Word("help").synsets[0], Word("help").syn
            Word("report").synsets[6]]
 group.update({constants.CAT_SUPPORT: support})
 
+fund = [Word("funding").synsets[0], Word("fund").synsets[0]]   
+group.update({constants.CAT_FUNDING: fund})
+
+
 @lru_cache(maxsize=4096)
 def get_synsets(word: str):
     """Cached access to WordNet synsets."""
@@ -458,6 +462,10 @@ def extract_categories(repo_data: str, repository_metadata: Result, similarity_t
         if not df.iloc[0]['Group']:
             df.loc[df.index[0], 'Group'] = ['unknown']
 
+        df['Group'] = df['Group'].apply(
+            lambda cats: cats + [constants.CAT_FUNDING]
+            if constants.CAT_ACKNOWLEDGEMENT in cats else cats)
+        
         df = df.explode('Group')
         df.loc[df['Group'] == 'unknown', 'Group'] = np.nan
 
@@ -625,6 +633,11 @@ def build_wordnet_groups() -> Dict[str, List]:
         Word("help").synsets[9],
         Word("report").synsets[0],
         Word("report").synsets[6],
+    ]
+
+    g[constants.CAT_FUNDING] = [
+        Word("funding").synsets[0], 
+        Word("fund").synsets[0]
     ]
 
     return g

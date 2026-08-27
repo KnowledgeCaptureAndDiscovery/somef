@@ -604,6 +604,22 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
             self.assertEqual(extracted_url, expected_url)
 
 
+    def test_issue_135_extract_funding_badges(self):
+        """Funding badges and links are detected in a real README"""
+        with open(test_data_path + "README-fastify.md", "r") as data_file:
+            test_text = data_file.read()
+            c = regular_expressions.extract_funding_badges(
+                test_text, Result(), test_data_path + "README-fastify.md")
+            entries = c.results[constants.CAT_FUNDING]
+            values = [e[constants.PROP_RESULT][constants.PROP_VALUE] for e in entries]
+            self.assertIn("https://github.com/sponsors/fastify#sponsors", values)
+            self.assertIn("https://opencollective.com/fastify", values)
+            funders = [e[constants.PROP_RESULT][constants.PROP_FUNDER][constants.PROP_NAME]
+                    for e in entries]
+            self.assertIn("GitHub Sponsors", funders)
+            self.assertIn("Open Collective", funders)
+
+
     def test_issue_1062(self):
         """A Zenodo DOI badge in an rst README yields the exact DOI from the badge,
         not the latest version's DOI."""
