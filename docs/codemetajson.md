@@ -28,6 +28,7 @@ These fields are defined in the [Codemeta specification](https://github.com/code
 | development_status       |   development_status[i].result.value  |     developmentStatus  |
 | download_url              |   download_url[i].result.value          |     downloadUrl              |
 | has_package_file         |   has_package_file[i].result.value         |   URL of the codemeta.json file |
+| features                  |   features[i].result.value          |     featureList                 |
 | funding - type            |   funding[i].result.type         |     Always "Grant" *(1)*|
 | funding - value           |   funding[i].result.value        |     funding string, or "identifier: name" when both exist, or funder.name *(1)*|
 | funding - identifier      |   funding[i].result.identifier   |     funding.identifier *(2)*|
@@ -57,6 +58,7 @@ These fields are defined in the [Codemeta specification](https://github.com/code
 *(1)* 
 
 - SOMEF json result:
+```
 {
   "funding": [
     {
@@ -75,8 +77,10 @@ These fields are defined in the [Codemeta specification](https://github.com/code
     }
   ]
 }
+```
 
 - CODEMETA output:
+```
 "funding": [
   {
     "@type": "Grant",
@@ -88,3 +92,4 @@ These fields are defined in the [Codemeta specification](https://github.com/code
     }
   }
 ]
+```

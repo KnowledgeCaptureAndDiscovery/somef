@@ -1270,6 +1270,35 @@ def check_readthedocs_exists(repo_name):
     return None
 
 
+def extract_features_from_content(readme_text, repository_metadata: Result, readme_source) -> Result:
+    """
+    Function that extracts features from readme text
+
+    Parameters
+    ----------
+    @param readme_text: Text of the readme
+    @param repository_metadata: Result with all the processed results so far
+    @param readme_source: source to the readme file used
+    """
+    pattern = re.compile(constants.REGEXP_FEATURES)
+
+    existing_values = {
+        entry[constants.PROP_RESULT][constants.PROP_VALUE].strip()
+        for entry in repository_metadata.results.get(constants.CAT_FEATURES, [])
+    }
+
+    for match in pattern.finditer(readme_text):
+        feature_list = match.group(1).strip("\n")
+        if feature_list and feature_list.strip() not in existing_values:
+            repository_metadata.add_result(constants.CAT_FEATURES,
+                                           {
+                                               constants.PROP_TYPE: constants.TEXT_EXCERPT,
+                                               constants.PROP_VALUE: feature_list
+                                           }, 0.8, constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
+            existing_values.add(feature_list.strip())
+
+    return repository_metadata
+
 def extract_funding_badges(readme_text, repository_metadata: Result, readme_source) -> Result:
     """
     Extracts funding information from badges/links to known crowdfunding platforms.
