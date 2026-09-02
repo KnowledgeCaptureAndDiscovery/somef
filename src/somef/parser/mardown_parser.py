@@ -5,6 +5,16 @@ import re
 import pandas as pd
 from .. import regular_expressions
 
+# Internal marker used to disambiguate repeated header text
+_DUP_SEP = "\x00#"
+
+def _strip_dup_suffix(text):
+    """Removes the internal disambiguation suffix added for repeated header text."""
+    idx = text.find(_DUP_SEP)
+    if idx != -1:
+        return text[:idx]
+    return text
+
 def extract_headers(original_text):
     text, bashes = extract_bash(original_text)
     html_text = markdown.markdown(text)
@@ -12,6 +22,7 @@ def extract_headers(original_text):
     index = 0
     limit = len(splitted)
     output = {}
+    seen_counts = {}
     regex = r'<[^<>]+>'
     while index < limit:
         line = splitted[index]
@@ -23,12 +34,15 @@ def extract_headers(original_text):
                 if is_separator_header(text): 
                     index += 1
                     continue
+                seen_counts[text] = seen_counts.get(text, 0) + 1
+                key = text if seen_counts[text] == 1 else f"{text}{_DUP_SEP}{seen_counts[text]}"
+
                 if index + 1 >= limit:
-                    output[text] = True
+                    output[key] = True
                 elif not splitted[index + 1].startswith("<h") or not is_header(splitted[index + 1]):
-                    output[text] = True
+                    output[key] = True
                 else:
-                    output[text] = False
+                    output[key] = False
         index += 1
     return output
 
@@ -111,6 +125,7 @@ def extract_content_per_header(original_text, headers):
 
 
 def get_position(init_index, text_tokenized, text):
+    text = _strip_dup_suffix(text)
     while init_index < len(text_tokenized):
         val = text_tokenized[init_index]
         val = remove_hash(val).strip()
@@ -415,40 +430,58 @@ def process_blocks_header(headers_content):
     return df
 
 
+# def extract_headers_parents(original_text):
+#     headers = extract_headers_with_tags(original_text)
+#     output = {}
+#     parents = []
+#     parent = ""
+#     test = []
+#     for header in headers:
+#         parent, parents = update_parents(header, parents)
+#         output[header] = parents
+#         parents.append(header)
+
+#     return remove_tags(output)
+
 def extract_headers_parents(original_text):
     headers = extract_headers_with_tags(original_text)
     output = {}
     parents = []
     parent = ""
     test = []
+    seen_counts = {}
     for header in headers:
         parent, parents = update_parents(header, parents)
-        output[header] = parents
+        seen_counts[header] = seen_counts.get(header, 0) + 1
+        key = header if seen_counts[header] == 1 else f"{header}{_DUP_SEP}{seen_counts[header]}"
+        output[key] = parents
         parents.append(header)
 
-    return remove_tags_new(output)
+    return remove_tags(output)
 
+# def remove_tags(header_parents):
+#     output = {}
+#     regex = r'<[^<>]+>'
+#     for key in header_parents.keys():
+#         value = header_parents[key]
+#         new_key = re.sub(regex, '', key)
+#         new_value = re.sub(regex, '', value)
+#         output[new_key] = new_value
+
+#     return
 
 def remove_tags(header_parents):
     output = {}
     regex = r'<[^<>]+>'
     for key in header_parents.keys():
-        value = header_parents[key]
-        new_key = re.sub(regex, '', key)
-        new_value = re.sub(regex, '', value)
-        output[new_key] = new_value
-
-    return
-
-def remove_tags_new(header_parents):
-    output = {}
-    regex = r'<[^<>]+>'
-    for key in header_parents.keys():
         #new_key = re.sub(regex, '', key)
-        new_key = key[4:len(key)-5]
+        base_key, sep, suffix = key.partition(_DUP_SEP)
+        new_key = base_key[4:len(base_key)-5]
+        if sep:
+            new_key = f"{new_key}{sep}{suffix}"
         new_list = []
         for value in header_parents[key]:
-            if key != value:
+            if base_key != value:
                 #new_value = re.sub(regex, '', value)
                 new_value = value[4:len(value)-5]
                 new_list.append(new_value)

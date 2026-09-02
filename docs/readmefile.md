@@ -13,6 +13,7 @@ Unlike others files formats (pom, cargo, cabal...), README documents do not foll
 | download                       |     download[i].result.value      |  headers with download       |
 | executable_example                      |     executable_example[i].result.value      |  extracts Binder from badgets   **(3)**    |
 | faq                       |     faq[i].result.value      |  headers with faq, errors, problems   |
+| features                       |     features[i].result.value      |  headers with features, highlights, capabilities, functionalities **(15)** **(16)**   |
 | full_title                       |     full_title[i].result.value      |  extract full title   **(4)** |
 | funding | funding[i].result.value | headers with funding, fund; links to crowdfunding platforms in badges and text **(14)** |
 | homepage                       |     homepage[i].result.value      |  homepage from badgets  **(5)**  |
@@ -176,3 +177,21 @@ Funding badges are detected by matching links to known crowdfunding platforms. O
 
 Each match generates a `Grant` entry whose `value` and `url` are the detected link and whose `funder.name` is the platform.
 
+
+**(15)**
+- Example:
+```
+## Core Features
+
+Comprehensive metadata extraction support of various file types/formats.
+File attributes extraction: general metadata.
+```
+
+**(16)**
+- Example:
+```
+Features of WIDOCO:
+
+- Automatic documentation of the terms in your ontology (based on LODE)
+- Automatic annotation in JSON-LD snippets of the html produced.
+```

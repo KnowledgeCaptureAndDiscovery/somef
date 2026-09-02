@@ -245,3 +245,40 @@ class TestHeaderAnalysis(unittest.TestCase):
         self.assertIn("funding", entry[constants.PROP_ORIGINAL_HEADER].lower())
         self.assertEqual(entry[constants.PROP_TYPE], constants.TEXT_EXCERPT)
         self.assertIn("NGI0 Entrust", entry[constants.PROP_VALUE])
+
+
+    def test_issue_1096(self):
+        """
+        Test that ensures header analysis correctly captures BOTH occurrences of a
+        repeated header (e.g. two "Core Features" sections, one under MEL and one
+        under TNNT), instead of losing one due to duplicate header text collapsing.
+        """
+        with open(test_data_path + "README-MEL-TNNT.md", "r", encoding="utf-8") as data_file:
+            file_text = data_file.read()
+            json_test, results = extract_categories(file_text, Result())
+            assert constants.CAT_FEATURES in json_test.results
+            features = json_test.results[constants.CAT_FEATURES]
+            assert len(features) == 2, f"Expected 2 features fragments, got {len(features)}"
+
+    def test_issue_303_features(self):
+        """
+        Test that ensures the two '....Features' sections in README are extracted
+        """
+        with open(test_data_path + "README-MEL-TNNT.md", "r", encoding="utf-8") as data_file:
+            file_text = data_file.read()
+            json_test, results = extract_categories(file_text, Result())
+            features = json_test.results[constants.CAT_FEATURES]
+
+            mel_feature = next(f for f in features
+                                if "Comprehensive metadata extraction" in f[constants.PROP_RESULT][constants.PROP_VALUE])
+            tnnt_feature = next(f for f in features
+                                 if "Implements 21 models" in f[constants.PROP_RESULT][constants.PROP_VALUE])
+
+            mel_value = mel_feature[constants.PROP_RESULT][constants.PROP_VALUE]
+            tnnt_value = tnnt_feature[constants.PROP_RESULT][constants.PROP_VALUE]
+
+            assert "MEL" in mel_feature[constants.PROP_RESULT][constants.PROP_PARENT_HEADER][0]
+            assert "TNNT" in tnnt_feature[constants.PROP_RESULT][constants.PROP_PARENT_HEADER][0]
+            assert "Implements 21 models" not in mel_value
+            assert "Comprehensive metadata extraction" not in tnnt_value
+            assert mel_feature[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_HEADER_ANALYSIS

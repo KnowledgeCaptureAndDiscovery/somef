@@ -1023,6 +1023,38 @@ class TestCodemetaExport(unittest.TestCase):
 
         os.remove(output_path)
 
+
+    def test_issue_303_mel_tnnt_featurelist(self):
+        """Checks if codemeta file has featureList category, with one entry per ...Features section detected """
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=test_data_path + "README-MEL-TNNT.md",
+                          in_file=None,
+                          output=None,
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=test_data_path + 'test_codemeta_mel_tnnt_featurelist.json',
+                          pretty=True,
+                          missing=True)
+
+        json_file_path = test_data_path + "test_codemeta_mel_tnnt_featurelist.json"
+        # check if the file has been created in the correct path
+        assert os.path.exists(json_file_path), f"File {json_file_path} doesn't exist."
+
+        with open(json_file_path, "r") as f:
+            data = json.load(f)
+
+        assert "featureList" in data, "Key 'featureList' is missing in JSON"
+        feature_list = data["featureList"]
+        assert isinstance(feature_list, list)
+        assert len(feature_list) == 2, f"Expected 2 featureList entries, got {len(feature_list)}"
+        assert any("Comprehensive metadata extraction" in v for v in feature_list)
+        assert any("Implements 21 models" in v for v in feature_list)
+
+        os.remove(json_file_path)
+
+
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""
