@@ -124,6 +124,14 @@ REGEXP_COPYRIGHT = r"copyright\s*(?:\(c\)|©|\(C\))?\s*\{?(\d{4}(?:-\d{4})?)\}?\
 
 REGEXP_CLEAN_HTML_TAGS = r'<[^>]+>'
 
+# Features from readme
+REGEXP_FEATURES = (
+    r'(?im)^(?![ \t]*[-*+][ \t]+)[ \t]*.{0,80}?\b'
+    r'(?:features?|highlights?|capabilit(?:y|ies)|functionalit(?:y|ies))\b'
+    r'[^\n]{0,15}?:?[ \t]*\n'
+    r'((?:[ \t]*[-*+][ \t]+.+\n?)+)'
+)
+
 LICENSES_DICT = {
     "Apache License 2.0": {"regex": REGEXP_APACHE, "spdx_id": "Apache-2.0"},
     "GNU General Public License v3.0": {"regex": REGEXP_GPL3, "spdx_id": "GPL-3.0"},
@@ -160,6 +168,7 @@ CAT_DOWNLOAD = "download"
 CAT_DOWNLOAD_URL = "download_url"
 CAT_EXECUTABLE_EXAMPLE = "executable_example"
 CAT_FAQ = "faq"
+CAT_FEATURES = "features"
 CAT_FORK_COUNTS = "forks_count"
 CAT_FORKS_URLS = "forks_url"
 CAT_FULL_NAME = "full_name"
@@ -226,7 +235,7 @@ all_categories = [CAT_APPLICATION_DOMAIN, CAT_ACKNOWLEDGEMENT, CAT_AUTHORS, CAT_
                   CAT_COC, CAT_CODE_REPOSITORY, CAT_CONTACT, CAT_COPYRIGHT, CAT_DESCRIPTION, CAT_DATE_CREATED, CAT_DATE_UPDATED,
                   CAT_DOCUMENTATION, CAT_DOWNLOAD, CAT_DOWNLOAD_URL, CAT_EXECUTABLE_EXAMPLE,
                   CAT_FAQ, CAT_FORK_COUNTS, CAT_FORKS_URLS, CAT_FULL_NAME, CAT_FULL_TITLE, CAT_HAS_BUILD_FILE,
-                  CAT_HAS_SCRIPT_FILE, CAT_IDENTIFIER, CAT_IMAGE, CAT_INSTALLATION,
+                  CAT_HAS_SCRIPT_FILE, CAT_IDENTIFIER, CAT_IMAGE, CAT_INSTALLATION, CAT_FEATURES,
                   CAT_INVOCATION, CAT_ISSUE_TRACKER,CAT_HOMEPAGE, CAT_KEYWORDS, CAT_LICENSE, CAT_LOGO, CAT_NAME, CAT_ONTOLOGIES,
                   CAT_OWNER, CAT_PACKAGE_DISTRIBUTION, CAT_HAS_PACKAGE_FILE, CAT_PROGRAMMING_LANGUAGES, CAT_README_URL,
                   CAT_RELATED_DOCUMENTATION, CAT_RELEASES, CAT_RUN, CAT_RUNTIME_PLATFORM, CAT_RELATED_PAPERS,
@@ -560,6 +569,7 @@ CAT_CODEMETA_DATEPUBLISHED = "datePublished"
 CAT_CODEMETA_DESCRIPTION = "description"
 CAT_CODEMETA_DEVELOPMENTSTATUS = "developmentStatus"
 CAT_CODEMETA_DOWNLOADURL = "downloadUrl"
+CAT_CODEMETA_FEATURELIST = "featureList"
 CAT_CODEMETA_FUNDER = "funder"
 CAT_CODEMETA_FUNDING = "funding"
 CAT_CODEMETA_ISSUETRACKER = "issueTracker"
@@ -732,7 +742,7 @@ OS_PATTERNS = [
 OS_EXTRACTION_CATEGORIES = {
     CAT_RUNTIME_PLATFORM,
     CAT_REQUIREMENTS,
-    CAT_INSTALLATION,
+    CAT_INSTALLATION
 }
 
 # Enrichment 
@@ -777,3 +787,8 @@ FUNDING_PLATFORM_NAMES = {
     "paypal.me": "PayPal",
     "paypal.com/donate": "PayPal",
 }
+
+FEATURES_HEADER_KEYWORDS = [
+    "features", "core features", "main features", "key features",
+    "highlights", "capabilities", "functionalities", "functionality",
+]

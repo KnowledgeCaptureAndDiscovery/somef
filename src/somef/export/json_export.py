@@ -180,6 +180,13 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                 if item not in codemeta_output[constants.CAT_CODEMETA_KEYWORDS]:
                     codemeta_output[constants.CAT_CODEMETA_KEYWORDS].append(item)
 
+    if constants.CAT_FEATURES in repo_data:
+        codemeta_output[constants.CAT_CODEMETA_FEATURELIST] = []
+        for feature in repo_data[constants.CAT_FEATURES]:
+            feature_value = feature[constants.PROP_RESULT][constants.PROP_VALUE]
+            if feature_value and feature_value not in codemeta_output[constants.CAT_CODEMETA_FEATURELIST]:
+                codemeta_output[constants.CAT_CODEMETA_FEATURELIST].append(feature_value)
+                
     if constants.CAT_PROGRAMMING_LANGUAGES in repo_data:
         # Calculate the total code size of all the programming languages
         codemeta_output[constants.CAT_CODEMETA_PROGRAMMINGLANGUAGE] = []

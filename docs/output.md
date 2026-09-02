@@ -85,6 +85,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `download_url`: URL where to download the target software (typically the installer, package or a tarball to a stable version)
 - `executable_example`: Jupyter notebooks ready for execution (e.g., through myBinder, colab or files)
 - `faq`: Frequently asked questions about a software component
+- `features`: List of features or capabilities of the software
 - `forks_count`: Number of forks of the project at the time of the extraction.
 - `forks_url`: Links to forks made of the project (GitHub only)
 - `full_name`: Name + owner (owner/name) (if available)

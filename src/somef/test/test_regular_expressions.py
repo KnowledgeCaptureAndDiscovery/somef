@@ -656,3 +656,22 @@ The web UI works in recent desktop versions of Chrome, Firefox, Safari and Inter
         assert e[constants.PROP_RESULT][constants.PROP_FORMAT] == constants.FORMAT_READTHEDOCS
         assert e[constants.PROP_CONFIDENCE] == 0.9
 
+
+    def test_issue_303_widoco_features(self):
+        """
+        Test that ensures features embedded inside another section (not under their
+        own dedicated header, e.g. Widoco's "Features of WIDOCO:" list inside
+        Description) are detected via the regular-expression-based extraction.
+        """
+        with open(test_data_path + "README-widoco.md", "r", encoding="utf-8") as data_file:
+            test_text = data_file.read()
+            c = regular_expressions.extract_features_from_content(test_text, Result(),
+                                                                    test_data_path + "README-widoco.md")
+            assert constants.CAT_FEATURES in c.results
+            features = c.results[constants.CAT_FEATURES]
+            assert len(features) == 1
+            result = features[0][constants.PROP_RESULT]
+            assert result[constants.PROP_TYPE] == constants.TEXT_EXCERPT
+            assert "Automatic documentation of the terms in your ontology" in result[constants.PROP_VALUE]
+            assert "Integration with license metadata services" in result[constants.PROP_VALUE]
+            assert features[0][constants.PROP_TECHNIQUE] == constants.TECHNIQUE_REGULAR_EXPRESSION

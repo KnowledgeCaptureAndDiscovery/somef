@@ -53,6 +53,7 @@ When using `-e`, publication metadata is enriched via OpenAlex. We recognize the
 - **Download URL**: URL where to download the target software (typically the installer, package or a tarball to a stable version)
 - **Executable examples**: Jupyter notebooks ready for execution (e.g., files, or through myBinder/colab links)
 - **FAQ**: Frequently asked questions about a software component
+- **Features**: List of features or capabilities of the software
 - **Forks count**: Number of forks of the project
 - **Forks url**: Links to forks made of the project
 - **Full name**: Name + owner (owner/name)
