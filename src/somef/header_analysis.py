@@ -90,6 +90,8 @@ group.update({constants.CAT_SUPPORT: support})
 fund = [Word("funding").synsets[0], Word("fund").synsets[0]]   
 group.update({constants.CAT_FUNDING: fund})
 
+features = [Word("features").synsets[0]]
+group.update({constants.CAT_FEATURES: features})
 
 @lru_cache(maxsize=4096)
 def get_synsets(word: str):
@@ -156,9 +158,10 @@ def extract_header_content(text: str) -> Tuple[pd.DataFrame, str | None]:
     #     'Content': content,
     #     'ParentHeader': [parents.get(h) for h in header_list],
     # })
+    display_headers = [mardown_parser._strip_dup_suffix(h) for h in header_list]
 
     df = pd.DataFrame({
-        'Header': header_list,
+        'Header': display_headers,
         'Content': aligned_content,
         'ParentHeader': aligned_parents,
     })
@@ -459,6 +462,14 @@ def extract_categories(repo_data: str, repository_metadata: Result, similarity_t
             else []
         )
 
+        # feature keywords that wordnet cannot handle correctly
+        mask = df['Group'].str.len() == 0
+        df.loc[mask, 'Group'] = df.loc[mask, 'Header'].map(
+            lambda h: [constants.CAT_FEATURES]
+            if any(kw in h.lower() for kw in constants.FEATURES_HEADER_KEYWORDS)
+            else []
+        )
+
         if not df.iloc[0]['Group']:
             df.loc[df.index[0], 'Group'] = ['unknown']
 
@@ -625,6 +636,10 @@ def build_wordnet_groups() -> Dict[str, List]:
         Word("problems").synsets[0],
         Word("problems").synsets[2],
         Word("faq").synsets[0],
+    ]
+
+    g[constants.CAT_FEATURES] = [
+        Word("feature").synsets[0],
     ]
 
     g[constants.CAT_SUPPORT] = [
