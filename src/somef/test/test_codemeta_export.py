@@ -1054,6 +1054,30 @@ class TestCodemetaExport(unittest.TestCase):
 
         os.remove(json_file_path)
 
+    def test_issue_1102_name_reference(self):
+        """Checks that referencePublication has the correct name and no null identifier"""
+        output_path = test_data_path + 'test_codemeta_reference_name.json'
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url=None,
+                        local_repo=test_data_repositories + "fair-ontologies",
+                        output=None,
+                        codemeta_out=output_path,
+                        pretty=True,
+                        readme_only=False)
+
+        with open(output_path) as f:
+            json_content = json.load(f)
+
+        reference = json_content.get(constants.CAT_CODEMETA_REFERENCEPUBLICATION, [])
+        assert reference, "Key 'referencePublication' is missing in JSON"
+
+        assert reference[0]["name"] == "FOOPS!: An Ontology Pitfall Scanner for the FAIR Principles", \
+            f"Expected correct title, got '{reference[0].get('name')}'"
+        assert "identifier" not in reference[0], f"Expected no identifier (null), got '{reference[0].get('identifier')}'"
+
+
+        os.remove(output_path)
 
     @classmethod
     def tearDownClass(cls):
