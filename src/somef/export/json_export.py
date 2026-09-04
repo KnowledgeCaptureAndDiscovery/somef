@@ -469,8 +469,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                     identifier_doi = next((id["value"] for id in identifiers if id["type"] == "doi"), None)
                     if not authors:
                         authors = yaml_content.get("authors", []) or preferred_citation.get("authors", [])
-                    title = normalize_title(preferred_citation.get("title") or yaml_content.get("title"))
-
+                    raw_title = preferred_citation.get("title") or yaml_content.get("title")
+                    title = normalize_title(raw_title)
 
                     if identifier_doi:
                         final_url = f"https://doi.org/{identifier_doi}"
@@ -483,8 +483,9 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                     else:
                         final_url = ''
 
-                    scholarlyArticle[constants.PROP_NAME] = title 
-                    scholarlyArticle[constants.CAT_IDENTIFIER] = doi 
+                    scholarlyArticle[constants.PROP_NAME] = raw_title
+                    if doi or identifier_doi:
+                        scholarlyArticle[constants.CAT_IDENTIFIER] = doi or identifier_doi
                     scholarlyArticle[constants.PROP_URL] = final_url
 
                 else:
@@ -552,11 +553,15 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                             credit_str = format_to_credit_text(authors, title, doi, identifier_doi,repo_link=code_repository)
                             credit_text_list.append(credit_str)
                     else:
-                        # look por information in values as pagination, issn and others
-                        if re.search(r'@\w+\{', cit[constants.PROP_RESULT][constants.PROP_VALUE]):  
-                            scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle, 'CODEMETA')
-                        else:
-                            scholarlyArticle = extract_scholarly_article_natural(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle, 'CODEMETA')
+                        # For CFF citations, the YAML was already parsed above (title, authors, DOI, URL).
+                        # The problem was re run againt the regexp because yaml.dump
+                        # injects double quotes around accented names (e.g. "Poveda-Villal\xF3n")
+                        is_cff = cit[constants.PROP_RESULT].get(constants.PROP_FORMAT) == "cff"
+                        if not is_cff:
+                            if re.search(r'@\w+\{', cit[constants.PROP_RESULT][constants.PROP_VALUE]):  
+                                scholarlyArticle = extract_scholarly_article_properties(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle, 'CODEMETA')
+                            else:
+                                scholarlyArticle = extract_scholarly_article_natural(cit[constants.PROP_RESULT][constants.PROP_VALUE], scholarlyArticle, 'CODEMETA')
 
                         all_reference_publications.append({
                             **scholarlyArticle,

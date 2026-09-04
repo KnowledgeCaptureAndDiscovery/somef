@@ -1,0 +1,23 @@
+title: "FOOPS!: An Ontology Pitfall Scanner for the FAIR Principles"
+license: Apache-2.0
+authors:
+  - family-names: Garijo
+    given-names: Daniel
+    orcid: "http://orcid.org/0000-0003-0454-7145"
+  - family-names: Poveda-Villalón
+    given-names: María
+    orcid: "https://orcid.org/0000-0003-3587-0367"
+cff-version: 1.2.0
+message: "If you use this software, please cite both the article from preferred-citation and the software itself."
+preferred-citation:
+  authors:
+    - family-names: Garijo
+      given-names: Daniel
+    - family-names: Poveda-Villalón
+      given-names: María
+    - family-names: Corcho
+      given-names: Oscar
+  title: "FOOPS!: An Ontology Pitfall Scanner for the FAIR Principles"
+  type: article
+  year: 2021
+  url: http://ceur-ws.org/Vol-2980/paper321.pdf
