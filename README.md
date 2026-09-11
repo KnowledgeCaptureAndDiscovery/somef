@@ -175,11 +175,7 @@ pip install somef
 
 ### NLTK data
 
-SOMEF uses [NLTK](https://www.nltk.org/) / WordNet to match README section headers (e.g. "Getting Started", "Citation") against metadata categories. Download the required data before running SOMEF-Core:
-
-```bash
-python -m nltk.downloader wordnet omw-1.4 punkt punkt_tab stopwords
-```
+SOMEF-Core uses [NLTK](https://www.nltk.org/) / WordNet to match README section headers (e.g. "Getting Started", "Citation") against metadata categories. Running `somef configure` (see below) takes care of downloading the required NLTK data automatically.
 
 ## Install from GitHub
 
