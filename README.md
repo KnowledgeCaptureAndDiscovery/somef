@@ -173,6 +173,10 @@ SOMEF [is available in Pypi!](https://pypi.org/project/somef/) To install it jus
 pip install somef
 ```
 
+### NLTK data
+
+SOMEF-Core uses [NLTK](https://www.nltk.org/) / WordNet to match README section headers (e.g. "Getting Started", "Citation") against metadata categories. Running `somef configure` (see below) takes care of downloading the required NLTK data automatically.
+
 ## Install from GitHub
 
 To run SOMEF, please follow the next steps:
