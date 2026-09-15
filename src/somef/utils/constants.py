@@ -713,11 +713,11 @@ INSTALLATION_HEADER_KEYWORDS = [
 ]
 # Regular expressions for OS/platform detection in header analysis
 REGEXP_OS_WINDOWS = r'(?i)\bwindows\s*(\d[\d.]*\d|\d+)?'
-REGEXP_OS_MACOS = r'(?i)(?:\bmacos|\bmac\s*os|\bos\s*x|\bosx)\s*([\d.]+)?'
-REGEXP_OS_UBUNTU = r'(?i)\bubuntu\s*([\d.]+(?:\.\d+)?)?'
-REGEXP_OS_DEBIAN = r'(?i)\bdebian\s*([\d.]+)?'
-REGEXP_OS_CENTOS = r'(?i)\bcentos\s*([\d.]+)?'
-REGEXP_OS_FEDORA = r'(?i)\bfedora\s*([\d.]+)?'
+REGEXP_OS_MACOS = r'(?i)(?:\bmacos|\bmac\s*os|\bos\s*x|\bosx)\s*(\d+(?:\.\d+)*)?'
+REGEXP_OS_UBUNTU = r'(?i)\bubuntu\s*(\d+(?:\.\d+)*)?'
+REGEXP_OS_DEBIAN = r'(?i)\bdebian\s*(\d+(?:\.\d+)*)?'
+REGEXP_OS_CENTOS = r'(?i)\bcentos\s*(\d+(?:\.\d+)*)?'
+REGEXP_OS_FEDORA = r'(?i)\bfedora\s*(\d+(?:\.\d+)*)?'
 REGEXP_OS_REDHAT = r'(?i)\bred\s*hat\b'
 REGEXP_OS_LINUX = r'(?i)\blinux\b'
 REGEXP_OS_UNIX = r'(?i)\bunix\b'
