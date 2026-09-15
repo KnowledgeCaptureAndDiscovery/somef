@@ -97,7 +97,9 @@ def parse_requirements_txt(file_path, metadata_result: Result, source):
                         req = {
                                 "value": line,
                                 "name": name,
-                                "type": constants.SOFTWARE_DEPENDENCY
+                                "type": constants.SOFTWARE_DEPENDENCY,
+                                "dependency_type": constants.DEPENDENCY_TYPE_RUNTIME,
+                                "dependency_resolver": "pip"
                             }
                         if version:
                             req['version'] = version
