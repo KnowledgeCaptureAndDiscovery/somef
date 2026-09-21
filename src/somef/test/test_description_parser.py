@@ -111,6 +111,29 @@ class TestDescriptionParser(unittest.TestCase):
                 break
         self.assertTrue(found_scales, "scales dependency not found")
 
-        
+
+    def test_issue_1104_dependency_resolver(self):
+        """
+        Dependencies extracted from R's DESCRIPTION file (Depends/Imports)
+        must be tagged with the cran resolver, so that projects mixing
+        several ecosystems (e.g. Java via pom.xml and R via DESCRIPTION)
+        can tell them apart.
+        """
+        description_file_path = test_data_repositories + os.path.sep + "ggplot2" + os.path.sep + "DESCRIPTION"
+        result = Result()
+
+        metadata_result = parse_description_file(description_file_path, result, description_file_path)
+
+        requirements_results = metadata_result.results.get(constants.CAT_REQUIREMENTS, [])
+        self.assertTrue(len(requirements_results) > 0, "No dependencies found")
+
+        for req_result in requirements_results:
+            dependency = req_result["result"]
+            self.assertEqual(dependency.get("dependency_resolver"), "cran",
+                              f"{dependency.get('name')} should come from the cran resolver")
+            self.assertEqual(dependency.get("dependency_type"), constants.DEPENDENCY_TYPE_RUNTIME,
+                              f"{dependency.get('name')} should be a runtime dependency")
+
+            
 if __name__ == "__main__":
     unittest.main()
