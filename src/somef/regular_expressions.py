@@ -660,12 +660,14 @@ def extract_bibtex(readme_text, repository_metadata: Result, readme_source) -> R
     @returns Result object with the bibtex associated with this software component
     """
     try:
-        bib_database = bibtexparser.loads(readme_text)
-        entries = bib_database.entries
-        for entry in entries:
+        # bib_database = bibtexparser.loads(readme_text)
+        # entries = bib_database.entries
+        library = bibtexparser.parse_string(readme_text)
+        for entry in library.entries:
+            fields = {f.key.lower(): f.value for f in entry.fields}
             # dumping the found fields does not seem to work, so rebuilding the object:
-            exported_bibtex = f"@{entry['ENTRYTYPE']}{{{entry['ID']},\n"
-            for key, value in entry.items():
+            exported_bibtex = f"@{entry.entry_type.lower()}{{{entry.key},\n"
+            for key, value in fields.items():
                 if key not in ('ENTRYTYPE', 'ID'):
                     exported_bibtex += f"    {key} = {{{value}}},\n"
             exported_bibtex += "}"
@@ -674,21 +676,21 @@ def extract_bibtex(readme_text, repository_metadata: Result, readme_source) -> R
                 constants.PROP_TYPE: constants.TEXT_EXCERPT,
                 constants.PROP_FORMAT: constants.FORMAT_BIB
             }
-            if constants.PROP_DOI in entry:
-                result[constants.PROP_DOI] = entry[constants.PROP_DOI]
-            if constants.PROP_TITLE in entry:
-                clean_title = entry[constants.PROP_TITLE].strip("{}")
+            if constants.PROP_DOI in fields:
+                result[constants.PROP_DOI] = fields[constants.PROP_DOI]
+            if constants.PROP_TITLE in fields:
+                clean_title = fields[constants.PROP_TITLE].strip("{}")
                 result[constants.PROP_TITLE] = clean_title
-            if constants.PROP_AUTHOR in entry:
-                result[constants.PROP_AUTHOR] = parse_bibtex_authors(entry[constants.PROP_AUTHOR])
-            if constants.PROP_PAGES in entry:
-                result[constants.PROP_PAGES] = entry[constants.PROP_PAGES]
-            if constants.PROP_YEAR in entry:
-                result[constants.PROP_YEAR] = entry[constants.PROP_YEAR]
-            if constants.PROP_JOURNAL in entry:
-                result[constants.PROP_JOURNAL] = entry[constants.PROP_JOURNAL]
-            if constants.PROP_URL in entry:
-                result[constants.PROP_URL] = entry[constants.PROP_URL]
+            if constants.PROP_AUTHOR in fields:
+                result[constants.PROP_AUTHOR] = parse_bibtex_authors(fields[constants.PROP_AUTHOR])
+            if constants.PROP_PAGES in fields:
+                result[constants.PROP_PAGES] = fields[constants.PROP_PAGES]
+            if constants.PROP_YEAR in fields:
+                result[constants.PROP_YEAR] = fields[constants.PROP_YEAR]
+            if constants.PROP_JOURNAL in fields:
+                result[constants.PROP_JOURNAL] = fields[constants.PROP_JOURNAL]
+            if constants.PROP_URL in fields:
+                result[constants.PROP_URL] = fields[constants.PROP_URL]
             repository_metadata.add_result(constants.CAT_CITATION, result, 1,
                                            constants.TECHNIQUE_REGULAR_EXPRESSION, readme_source)
     except Exception as e:
