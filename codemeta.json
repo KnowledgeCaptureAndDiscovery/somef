@@ -66,7 +66,7 @@
     ],
     "codeRepository": "https://github.com/KnowledgeCaptureAndDiscovery/somef",
     "dateCreated": "2019-06-06",
-    "dateModified": "2025-03-31",
+    "dateModified": "2025-09-24",
     "description": "SOftware Metadata Extraction Framework: A tool for automatically extracting relevant software information from readme files \n",
     "downloadUrl": "https://github.com/KnowledgeCaptureAndDiscovery/somef/releases",
     "identifier": "https://zenodo.org/badge/latestdoi/190487675",
@@ -93,7 +93,7 @@
         }
     ],
     "softwareRequirements": "https://raw.githubusercontent.com/KnowledgeCaptureAndDiscovery/somef/refs/heads/master/pyproject.toml",
-    "version": "0.11.2",
+    "version": "0.11.4",
     "developmentStatus": "active",
     "issueTracker": "https://github.com/KnowledgeCaptureAndDiscovery/somef/issues",
     "@type": "SoftwareSourceCode"
