@@ -9,7 +9,8 @@ from .utils import constants
 from . import extract_ontologies, extract_workflows
 from .process_results import Result
 from .regular_expressions import detect_license_spdx, extract_scholarly_article_natural, extract_scholarly_article_properties
-from .parser.pom_xml_parser import parse_pom_file
+# from .parser.pom_xml_parser import parse_pom_file
+from .parser import pom_xml_parser
 from .parser.package_json_parser import parse_package_json_file
 from .parser.python_parser import parse_setup_py
 from .parser.codemeta_parser import parse_codemeta_json_file
@@ -61,7 +62,7 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
 
     try:
         parsed_build_files = set()
-
+        pom_xml_parser.processed_pom = False
         for dir_path, dir_names, filenames in sorted(os.walk(repo_dir),key=lambda x: x[0].count(os.sep)):
             dir_names.sort()
             filenames.sort()   
@@ -314,7 +315,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                                                1,
                                                constants.TECHNIQUE_FILE_EXPLORATION, build_file_url)
                         if filename.lower() == "pom.xml":
-                            metadata_result = parse_pom_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
+                            # metadata_result = parse_pom_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
+                            metadata_result = pom_xml_parser.parse_pom_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "package.json":
                             metadata_result = parse_package_json_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "setup.py":

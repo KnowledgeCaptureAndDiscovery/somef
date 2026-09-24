@@ -1,0 +1,133 @@
+{
+  "@context": "https://w3id.org/codemeta/3.0",
+  "@type": [
+    "SoftwareSourceCode",
+    "SoftwareApplication"
+  ],
+  "license": {
+    "name": "Apache License 2.0",
+    "url": "https://spdx.org/licenses/Apache-2.0",
+    "identifier": "https://spdx.org/licenses/Apache-2.0"
+  },
+  "codeRepository": "https://github.com/oeg-upm/fair_ontologies",
+  "issueTracker": "https://api.github.com/repos/oeg-upm/fair_ontologies/issues",
+  "dateCreated": "2021-05-14",
+  "dateModified": "2026-08-18",
+  "downloadUrl": "https://github.com/oeg-upm/fair_ontologies/releases",
+  "name": "fair_ontologies",
+  "logo": "https://raw.githubusercontent.com/oeg-upm/fair_ontologies//main/html_client/assets/foopsLogo.png",
+  "keywords": [
+    "fair",
+    "metadata",
+    "ontology",
+    "ontology-metadata",
+    "validator"
+  ],
+  "programmingLanguage": [
+    "Java",
+    "JavaScript"
+  ],
+  "softwareRequirements": [
+    {
+      "name": "springdoc-openapi-ui",
+      "@type": "SoftwareApplication",
+      "version": "1.7.0"
+    },
+    {
+      "name": "spring-boot-starter-web",
+      "@type": "SoftwareApplication"
+    },
+    {
+      "name": "spring-boot-starter-test",
+      "@type": "SoftwareApplication"
+    },
+    {
+      "name": "slf4j-api",
+      "@type": "SoftwareApplication",
+      "version": "1.7.30"
+    },
+    {
+      "name": "slf4j-simple",
+      "@type": "SoftwareApplication",
+      "version": "1.7.30"
+    },
+    {
+      "name": "jsoup",
+      "@type": "SoftwareApplication",
+      "version": "1.15.3"
+    },
+    {
+      "name": "gson",
+      "@type": "SoftwareApplication",
+      "version": "2.8.9"
+    },
+    {
+      "name": "junit",
+      "@type": "SoftwareApplication",
+      "version": "4.13.1"
+    },
+    {
+      "name": "owlapi-apibinding",
+      "@type": "SoftwareApplication",
+      "version": "5.5.0"
+    }
+  ],
+  "continuousIntegration": "https://raw.githubusercontent.com/oeg-upm/fair_ontologies/main/.github/workflows/test_before_PR.yml",
+  "releaseNotes": "This version of FOOPS! has several optimizations and improves the compliance with the FTR specification (https://w3id.org/ftr/)\r\n\r\n## What's Changed\r\n* improve yml action ttl_changes by @juanjemdIos in https://github.com/oeg-upm/fair_ontologies/pull/241\r\n* Move the throw to keep with the iteration when one fails. Fixes  #112 by @juanjemdIos in https://github.com/oeg-upm/fair_ontologies/pull/243\r\n* remove tmp folder when fail or exception. Fixes #236 by @juanjemdIos in https://github.com/oeg-upm/fair_ontologies/pull/244\r\n* Improve logs with more info. Fixes #117 by @juanjemdIos in https://github.com/oeg-upm/fair_ontologies/pull/245\r\n* Landing page and isDefinedBy in output. Fixes #242 by @juanjemdIos in https://github.com/oeg-upm/fair_ontologies/pull/246\r\n* gestTest with a list of test metadata instead of an array of ids. Fixes #224 by @juanjemdIos in https://github.com/oeg-upm/fair_ontologies/pull/247\r\n* Add version test in the JSON-LD being returned. Fixes #214 by @juanjemdIos in https://github.com/oeg-upm/fair_ontologies/pull/250\r\n* Improve documentation for GET requests. Fixes #222 by @juanjemdIos in https://github.com/oeg-upm/fair_ontologies/pull/249\r\n* Accept a URL in the assessment of a test. Fixes #223 by @juanjemdIos in https://github.com/oeg-upm/fair_ontologies/pull/248\r\n\r\n\r\n**Full Changelog**: https://github.com/oeg-upm/fair_ontologies/compare/v0.3.2...v0.4.0",
+  "softwareVersion": "v0.4.0",
+  "datePublished": "2021-06-25",
+  "buildInstructions": [
+    "https://raw.githubusercontent.com/oeg-upm/fair_ontologies/main/README.md"
+  ],
+  "schema:owner": [
+    {
+      "@type": "Organization",
+      "name": "oeg-upm"
+    }
+  ],
+  "referencePublication": [
+    {
+      "@type": "ScholarlyArticle",
+      "name": "FOOPS!: An Ontology Pitfall Scanner for the FAIR Principles",
+      "identifier": "http://ceur-ws.org/Vol-2980/paper321.pdf",
+      "url": "http://ceur-ws.org/Vol-2980/paper321.pdf",
+      "author": [
+        {
+          "@type": "Person",
+          "familyName": "Garijo",
+          "givenName": "Daniel",
+          "@id": "http://orcid.org/0000-0003-0454-7145"
+        },
+        {
+          "@type": "Person",
+          "familyName": "Poveda-Villalón",
+          "givenName": "María",
+          "@id": "https://orcid.org/0000-0003-3587-0367"
+        },
+        {
+          "@type": "Person",
+          "familyName": "Corcho",
+          "givenName": "Oscar"
+        }
+      ],
+      "datePublished": "2021"
+    }
+  ],
+  "creditText": [
+    "Garijo, D., Corcho, O., Poveda-Villal'on, M. (foops!: an ontology pitfall scanner for the fair principles). Available at: https://github.com/oeg-upm/fair_ontologies"
+  ],
+  "applicationCategory": [
+    "Semantic web"
+  ],
+  "identifier": [
+    "https://doi.org/10.5281/zenodo.14767999"
+  ],
+  "url": [
+    "https://w3id.org/foops"
+  ],
+  "readme": "https://raw.githubusercontent.com/oeg-upm/fair_ontologies/main/README.md",
+  "runtimePlatform": "Ubuntu",
+  "description": [
+    "Code for FOOPS! the OEG FAIR assessment tool for ontologies and vocabularies"
+  ]
+}

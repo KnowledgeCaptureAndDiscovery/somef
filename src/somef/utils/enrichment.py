@@ -198,6 +198,8 @@ def run_enrichment(results) -> dict:
         identifier = result.get(constants.PROP_FUNDING)
         if identifier:
             identifier = identifier.split(";")[0].strip()
+        elif result.get(constants.PROP_IDENTIFIER):
+            identifier = result.get(constants.PROP_IDENTIFIER)
         else:
             funder = result.get(constants.PROP_FUNDER)
             if isinstance(funder, dict):

@@ -1076,6 +1076,75 @@ class TestCodemetaExport(unittest.TestCase):
             f"Expected correct title, got '{reference[0].get('name')}'"
         assert "identifier" not in reference[0], f"Expected no identifier (null), got '{reference[0].get('identifier')}'"
 
+        os.remove(output_path)
+
+
+    def test_requirements_codemeta(self):
+        """Checks that Maven dependencies present in both pom.xml and an already
+        existing codemeta.json in the repo (and therefore merged by SOMEF into a
+        single requirement entry whose 'technique' and 'source' fields become
+        lists instead of plain strings) are still included as structured
+        softwareRequirements in the generated codemeta.json, instead of being
+        silently dropped."""
+        output_path = test_data_path + 'test_codemeta_requirements.json'
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url=None,
+                        local_repo=test_data_repositories + "fair-ontologies",
+                        output=None,
+                        codemeta_out=output_path,
+                        pretty=True,
+                        readme_only=False)
+
+        with open(output_path) as f:
+            json_content = json.load(f)
+
+        requirements = json_content.get(constants.CAT_CODEMETA_SOFTWAREREQUIREMENTS, [])
+        assert requirements, "Key 'softwareRequirements' is missing or empty in JSON"
+
+        requirement_names = {req.get("name") for req in requirements}
+
+        maven_dependencies = {
+            "springdoc-openapi-ui", "spring-boot-starter-web", "spring-boot-starter-test",
+            "slf4j-api", "slf4j-simple", "jsoup", "gson", "junit", "owlapi-apibinding"
+        }
+
+        missing = maven_dependencies - requirement_names
+        assert not missing, (
+            "Maven dependencies found in both pom.xml and codemeta.json (merged by "
+            "SOMEF into entries with list-valued 'technique'/'source') were dropped "
+            f"from softwareRequirements: {missing}"
+        )
+
+        springdoc = next(req for req in requirements if req["name"] == "springdoc-openapi-ui")
+        assert springdoc.get("version") == "1.7.0", \
+            f"Expected version '1.7.0' for springdoc-openapi-ui, got '{springdoc.get('version')}'"
+
+        os.remove(output_path)
+
+
+    def test_issue_1105_credit_text_deduplication(self):
+        """Checks that creditText for the same publication is not duplicated. 
+            Problem with citations with the same title but different authors, which should be deduplicated to a single creditText entry.
+        """
+        output_path = test_data_path + 'test_codemeta_credit_text.json'
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url=None,
+                        local_repo=test_data_repositories + "fair-ontologies",
+                        output=None,
+                        codemeta_out=output_path,
+                        pretty=True,
+                        readme_only=False)
+
+        with open(output_path) as f:
+            json_content = json.load(f)
+
+        credit_text = json_content.get(constants.CAT_CODEMETA_CREDITTEXT, [])
+        assert credit_text, "Key 'creditText' is missing in JSON"
+
+        assert len(credit_text) == 1, \
+            f"Expected a single deduplicated creditText entry, got {len(credit_text)}: {credit_text}"
 
         os.remove(output_path)
 

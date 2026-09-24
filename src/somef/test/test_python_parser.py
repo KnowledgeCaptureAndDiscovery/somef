@@ -52,5 +52,30 @@ class TestPythonParser(unittest.TestCase):
         programming_languages = result.results[constants.CAT_PROGRAMMING_LANGUAGES]
         self.assertEqual(programming_languages[0]["result"]["value"], "Python")
 
+
+    def test_issue_1104_dependency_resolver(self):
+        """""
+
+        Dependencies extracted from requirements.txt must be tagged with the
+        pip resolver, so that projects mixing several ecosystems (e.g. Java
+        via pom.xml and Python via requirements.txt) can tell them apart.
+        """
+        
+        inspect4py_dir = test_data_repositories + os.path.sep + "inspect4py"
+        requirements_path = os.path.join(inspect4py_dir, "requirements.txt")
+
+        result = Result()
+        metadata_result = parse_requirements_txt(requirements_path, result, "https://example.org/requirements.txt")
+
+        dependencies = metadata_result.results.get(constants.CAT_REQUIREMENTS, [])
+        self.assertTrue(len(dependencies) > 0, "No dependencies found in requirements.txt")
+
+        for dep in dependencies:
+            dependency = dep["result"]
+            self.assertEqual(dependency.get("dependency_resolver"), "pip",
+                            f"{dependency.get('name')} should come from the pip resolver")
+            self.assertEqual(dependency.get("dependency_type"), constants.DEPENDENCY_TYPE_RUNTIME,
+                            f"{dependency.get('name')} should be a runtime dependency")
+
 if __name__ == "__main__":
     unittest.main()

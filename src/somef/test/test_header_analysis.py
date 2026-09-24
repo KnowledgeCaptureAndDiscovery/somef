@@ -4,7 +4,7 @@ import unittest
 
 from pathlib import Path
 
-from ..header_analysis import extract_header_content, extract_categories, extract_bash_code
+from ..header_analysis import extract_header_content, extract_categories, extract_bash_code,extract_os_from_content
 from ..process_results import Result
 from ..utils import constants
 
@@ -282,3 +282,22 @@ class TestHeaderAnalysis(unittest.TestCase):
             assert "Implements 21 models" not in mel_value
             assert "Comprehensive metadata extraction" not in tnnt_value
             assert mel_feature[constants.PROP_TECHNIQUE] == constants.TECHNIQUE_HEADER_ANALYSIS
+
+
+    def test_issue_1103_os_trailing_dot(self):
+        """
+        Test that ensures OS/platform information is extracted from headers, even if the header has a trailing dot.
+        """
+        readme_path = test_data_path + "repositories" + os.path.sep + "fair-ontologies" + os.path.sep + "README.md"
+        with open(readme_path, "r", encoding="utf-8") as f:
+            readme_text = f.read()
+
+        self.assertIn("in Ubuntu.", readme_text)
+
+        os_entries = extract_os_from_content(readme_text)
+        ubuntu_entries = [e for e in os_entries if e["value"].lower().startswith("ubuntu")]
+
+        self.assertTrue(len(ubuntu_entries) > 0, "No Ubuntu entry found")
+        for entry in ubuntu_entries:
+            self.assertEqual(entry["value"], "Ubuntu")
+            self.assertNotIn("version", entry)
