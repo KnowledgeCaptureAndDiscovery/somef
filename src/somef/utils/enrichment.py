@@ -5,24 +5,84 @@ import logging
 from ..utils import constants
 import xml.etree.ElementTree as ET
 
+def _safe_json_response(resp):
+    try:
+        data = resp.json()
+    except ValueError:
+        return None
+    return data if isinstance(data, dict) else None
+
+def _extract_doi_from_value(value):
+    if isinstance(value, str):
+        match = re.search(constants.REGEXP_DOI_IN_URL, value)
+        return match.group(0) if match else None
+
+    if isinstance(value, dict):
+        for key in ("doi", "value", "identifier", "url"):
+            doi = _extract_doi_from_value(value.get(key))
+            if doi:
+                return doi
+        return None
+
+    if isinstance(value, list):
+        for item in value:
+            doi = _extract_doi_from_value(item)
+            if doi:
+                return doi
+
+    return None
+
 def get_openalex_id(doi):
     url = f"{constants.OPENALEX_BASE}/works/doi:{doi}"
-    resp = requests.get(url)
+    try:
+        resp = requests.get(url)
+    except requests.RequestException:
+        return None                             
     if resp.status_code != 200:
         return None
-    return resp.json().get("id")
+    data = _safe_json_response(resp)
+    if data:
+        return data.get("id")
+    return None
 
 def get_openaire_id(doi) -> dict | None:
     url = f"{constants.OPENAIRE_BASE}/search/researchProducts?doi={doi}&format=json"
-    resp = requests.get(url)
+    try:
+        resp = requests.get(url)
+    except requests.RequestException:
+        return None
     if resp.status_code != 200:
         return None
-    data = resp.json()
-    results = data.get("response", {}).get("results", {}).get("result", [])
-    if results:
-        raw_id = results[0].get("header", {}).get("dri:objIdentifier", {}).get("$")
-        if raw_id:
-            return f"{constants.OPENAIRE_EXPLORE}/search/software?orpId={raw_id}"
+    data = _safe_json_response(resp)
+    if not data:
+        return None
+    response = data.get("response")
+    if not isinstance(response, dict):
+        return None
+
+    results_obj = response.get("results")
+    if not isinstance(results_obj, dict):
+        return None
+
+    results = results_obj.get("result", [])
+    if not isinstance(results, list) or not results:
+        return None
+
+    first_result = results[0]
+    if not isinstance(first_result, dict):
+        return None
+
+    header = first_result.get("header", {})
+    if not isinstance(header, dict):
+        return None
+
+    obj_identifier = header.get("dri:objIdentifier", {})
+    if not isinstance(obj_identifier, dict):
+        return None
+
+    raw_id = obj_identifier.get("$")
+    if raw_id:
+        return f"{constants.OPENAIRE_EXPLORE}/search/software?orpId={raw_id}"
     return None
 
 def get_zenodo_swhid(doi):
@@ -72,12 +132,19 @@ def extract_doi(result):
 
 def search_openalex_author(name):
     url = f"{constants.OPENALEX_BASE}/authors?search={requests.utils.quote(name)}"
-    resp = requests.get(url)
+    try:
+        resp = requests.get(url)
+    except requests.RequestException:
+        return None
     if resp.status_code != 200:
         return None
-    results = resp.json().get("results", [])
-    if results:
-        return results[0].get("orcid")  
+    data = _safe_json_response(resp)
+    if not data:
+        return None
+
+    results = data.get("results", [])
+    if isinstance(results, list) and results and isinstance(results[0], dict):
+        return results[0].get("orcid")
     return None
 
 
@@ -160,15 +227,13 @@ def run_enrichment(results) -> dict:
 
     for identifier in results.get(constants.PROP_IDENTIFIER, []):
         value = identifier["result"].get("value", "")
-        m = re.search(constants.REGEXP_DOI_IN_URL, value)
-        if m:
-            doi = m.group(0)
-            if doi:
-                openaire_id = get_openaire_id(doi)
-                if openaire_id:
-                    identifier["result"][constants.PROP_OPENAIRE_ID] = openaire_id
-                else:
-                    identifier["result"][constants.PROP_OPENALEX_ID] = get_openalex_id(doi)
+        doi = _extract_doi_from_value(value)
+        if doi:
+            openaire_id = get_openaire_id(doi)
+            if openaire_id:
+                identifier["result"][constants.PROP_OPENAIRE_ID] = openaire_id
+            else:
+                identifier["result"][constants.PROP_OPENALEX_ID] = get_openalex_id(doi)
 
             if "zenodo" in doi.lower():
                 if constants.PROP_SWHID not in identifier["result"]:
