@@ -747,7 +747,7 @@ OS_EXTRACTION_CATEGORIES = {
 
 # Enrichment 
 OPENALEX_BASE = "https://api.openalex.org"
-OPENAIRE_BASE = "https://api.openaire.eu"
+OPENAIRE_BASE = "https://api.openaire.eu/graph/v4"
 OPENAIRE_EXPLORE = "https://explore.openaire.eu"
 OPENAIRE_NAMESPACE = "http://namespace.openaire.eu/oaf"
 REGEXP_DOI_IN_URL = r'(10\.\d{4,9}/[-._;()/:A-Za-z0-9]+)'
