@@ -792,3 +792,51 @@ FEATURES_HEADER_KEYWORDS = [
     "features", "core features", "main features", "key features",
     "highlights", "capabilities", "functionalities", "functionality",
 ]
+
+# Dcitionary used by rapidfuzz when a header token has no synsets (ej typo: "Instalation" = CAT_INSTALLATION).
+# Same keywords as the wordnet and synsets in header_analysis.
+
+HEADER_VOCABULARY = {
+    # citation
+    "citation": CAT_CITATION, "citations": CAT_CITATION,
+    "reference": CAT_CITATION, "references": CAT_CITATION,
+    # acknowledgement
+    "acknowledgement": CAT_ACKNOWLEDGEMENT, "acknowledgements": CAT_ACKNOWLEDGEMENT,
+    "acknowledgment": CAT_ACKNOWLEDGEMENT, "acknowledgments": CAT_ACKNOWLEDGEMENT,
+    # run
+    "execute": CAT_RUN,
+    # installation
+    "installation": CAT_INSTALLATION, "install": CAT_INSTALLATION,
+    "setup": CAT_INSTALLATION, "preparation": CAT_INSTALLATION,
+    "prepare": CAT_INSTALLATION, "manual": CAT_INSTALLATION,
+    "guide": CAT_INSTALLATION,
+    # download
+    "download": CAT_DOWNLOAD,
+    # requirements
+    "requirement": CAT_REQUIREMENTS, "requirements": CAT_REQUIREMENTS,
+    "prerequisite": CAT_REQUIREMENTS, "prerequisites": CAT_REQUIREMENTS,
+    "dependency": CAT_REQUIREMENTS, "dependencies": CAT_REQUIREMENTS,
+    # contact
+    "contact": CAT_CONTACT,
+    # description
+    "description": CAT_DESCRIPTION, "introduction": CAT_DESCRIPTION,
+    "basics": CAT_DESCRIPTION, "summary": CAT_DESCRIPTION,
+    # contributors / contributing
+    "contributor": CAT_CONTRIBUTORS, "contributors": CAT_CONTRIBUTORS,
+    "contributing": CAT_CONTRIBUTING_GUIDELINES,
+    # documentation
+    "documentation": CAT_DOCUMENTATION,
+    # license
+    "license": CAT_LICENSE, "licence": CAT_LICENSE,
+    # usage
+    "usage": CAT_USAGE, "example": CAT_USAGE, "examples": CAT_USAGE,
+    "tutorial": CAT_USAGE, "tutorials": CAT_USAGE, "started": CAT_USAGE,
+    # faq
+    "errors": CAT_FAQ, "problems": CAT_FAQ,
+    # features
+    "feature": CAT_FEATURES, "features": CAT_FEATURES,
+    # support
+    "support": CAT_SUPPORT, "report": CAT_SUPPORT,
+    # funding
+    "funding": CAT_FUNDING,
+}
