@@ -27,6 +27,7 @@ from .parser.publiccode_parser import parse_publiccode_file
 from .parser.codeowners_parser import parse_codeowners_file
 from .parser.conda_environment_parser import parse_conda_environment_file
 from .parser.setupcfg_parser import parse_setup_cfg
+from .parser.zenodo_parser import parse_zenodo_file
 from chardet import detect
 
 
@@ -341,8 +342,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             metadata_result = parse_conda_environment_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         if filename.lower() == "setup.cfg":
                             metadata_result = parse_setup_cfg(os.path.join(dir_path, filename), metadata_result, build_file_url)
-                        # if filename.lower() == ".zenodo":
-                        #     metadata_result = parse_zenodo_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
+                        if filename.lower() == ".zenodo.json":
+                            metadata_result = parse_zenodo_file(os.path.join(dir_path, filename), metadata_result, build_file_url)
                         parsed_build_files.add(filename.lower())
                           
                 # if repo_type == constants.RepositoryType.GITLAB: 

@@ -1,0 +1,41 @@
+{
+    "description": "The Elliptical Parcel-In-Cell (EPIC) model for fluid dynamics",
+    "access_right": "open",
+    "upload_type": "software",
+    "keywords": ["PIC",
+                 "elliptical parcels",
+                 "Lagrangian methods",
+                 "density stratified flows",
+                 "turbulent flows"],
+    "license": "BSD-3-Clause",
+    "creators": [
+      {
+          "affiliation": "University of St Andrews",
+          "name": "Frey, Matthias",
+          "orcid": "0000-0002-7842-0051"
+      },
+      {
+          "affiliation": "University of Leeds",
+          "name": "Böing, Steven",
+          "orcid": "0000-0003-3794-2563"
+      },
+      {
+          "affiliation": "University of St Andrews",
+          "name": "Dritschel, David",
+          "orcid": "0000-0001-6489-3395"
+      },
+      {
+          "affiliation": "Edinburgh Parallel Computing Centre (EPCC)",
+          "name": "Apóstolo, Rui",
+          "orcid": "0000-0003-1161-9098"
+      }
+    ],
+    "grants": [
+        {
+            "id": "10.13039/100014013::EP/T025301/1"
+        },
+        {
+            "id": "10.13039/100014013::EP/T025409/1"
+        }
+    ]
+}

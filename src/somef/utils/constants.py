@@ -101,6 +101,7 @@ REGEXP_GPL2 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*2(?:\.0)?'
 REGEXP_LGPL1 = r'(?i)gnu\s+lesser\s+general\s+public\s+license\s*,?\s*version\s*1\.0'
 REGEXP_MPL2 = r'(?i)mozilla\s+public\s+license\s*,?\s*version\s*2\.0'
 REGEXP_UNLICENSE = r'(?i)the\s+unlicense'
+REGEXP_CCBY4 = r'(?i)(creative\s+commons\s+attribution\s+4\.0(?:\s+international)?|cc[\s-]by[\s-]4\.0)'
 
 # detect choosealicense in badges
 REGEXP_CHOOSE_LICENSE = r'choosealicense\.com/licenses/([^/\s]+)'
@@ -140,6 +141,7 @@ LICENSES_DICT = {
     "BSD 3-Clause": {"regex": REGEXP_BSD3, "spdx_id": "BSD-3-Clause"},
     "Boost Software License 1.0": {"regex": REGEXP_BOOST, "spdx_id": "BSL-1.0"},
     "Creative Commons Zero v1.0": {"regex": REGEXP_CC0, "spdx_id": "CC0-1.0"},
+    "Creative Commons Attribution 4.0 International": {"regex": REGEXP_CCBY4, "spdx_id": "CC-BY-4.0"},
     "Eclipse Public License 2.0": {"regex": REGEXP_EPL2, "spdx_id": "EPL-2.0"},
     "GNU Affero General Public License v3.0": {"regex": REGEXP_AGPL3, "spdx_id": "AGPL-3.0"},
     "GNU General Public License v2": {"regex": REGEXP_GPL2, "spdx_id": "GPL-2.0"},
