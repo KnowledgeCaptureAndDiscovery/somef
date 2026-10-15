@@ -43,6 +43,7 @@ REGEXP_READTHEDOCS = r'http[s]?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%
 REGEXP_REDDIT = "(https://www.reddit.com/r/"
 REGEXP_DISCORD = "(https://discord.com/invite/"
 REGEXP_GITTER = "[![Gitter chat]"
+REGEXP_SLACK = r"(https://(?:join\.slack\.com|[\w-]+\.slack\.com)/[^\s)\"'<>\]]+)"
 # These are two of the most common ones for Python, but it may be expanded
 REGEXP_PYPI = "[![PyPI]"
 REGEXP_PYPI_2 = "[![Latest PyPI version]"
