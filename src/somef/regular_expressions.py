@@ -182,6 +182,9 @@ def extract_support_channels(readme_text, repository_metadata: Result, readme_so
         repo_status = readme_text[init + 1:end]
         results.append(repo_status)
 
+    # slack
+    results.extend(re.findall(constants.REGEXP_SLACK, readme_text))
+
     for link in results:
         repository_metadata.add_result(constants.CAT_SUPPORT_CHANNELS,
                                        {
