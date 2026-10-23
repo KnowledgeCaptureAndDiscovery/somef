@@ -70,6 +70,7 @@ class TestEnrichment(unittest.TestCase):
             data = json.load(f)
 
         fundings = data.get("funding", [])
+        print(fundings)
         self.assertTrue(any("project_code" in f["result"] for f in fundings))
         self.assertTrue(any("project_title" in f["result"] for f in fundings))
 
