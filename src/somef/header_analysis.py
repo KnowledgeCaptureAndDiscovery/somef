@@ -5,7 +5,8 @@ import string
 import numpy as np
 import pandas as pd
 from textblob import Word
-
+from rapidfuzz import process
+from rapidfuzz.distance import Levenshtein
 from .process_results import Result
 from .parser import mardown_parser
 from .utils import constants
@@ -306,17 +307,20 @@ def label_text(text: str, similarity_threshold=constants.CONF_DEFAULT_SIMILARITY
     for token in tokenize_header(text):
         synsets = get_synsets(token)
         if synsets:
-            grp = match_group(synsets, similarity_threshold )
+            # grp = match_group(synsets, similarity_threshold )
             # Skip if the header matches a known false positive for this group
-           
-            # if isinstance(text, list):
-            #     text = " ".join(text)
+            grp = match_group(synsets, similarity_threshold)
+        else:
+            grp = fuzzy_group(token)
 
-            if is_false_positive_header(text, grp):
-                # print(f"Skipping false positive header '{text}' for category '{grp}'")
-                continue
-            if grp and grp not in labels:
-                labels.append(grp)
+        # if isinstance(text, list):
+        #     text = " ".join(text)
+
+        if is_false_positive_header(text, grp):
+            # print(f"Skipping false positive header '{text}' for category '{grp}'")
+            continue
+        if grp and grp not in labels:
+            labels.append(grp)
     return labels
 
 def is_false_positive_header(text: str, category: str) -> bool:
@@ -710,3 +714,20 @@ def extract_os_from_content(text: str) -> List[dict]:
                 })
 
     return results
+
+def fuzzy_group(token, max_distance=1, min_length=5):
+
+    """
+    Try to match a word to a category, allowing small typos (ej: 'Instalation' would be accpet as 'installation').
+    See the dictionary in constants.
+    """
+
+    t = token.lower()
+    if t in constants.HEADER_VOCABULARY:
+        return constants.HEADER_VOCABULARY[t]
+    if len(t) < min_length:
+        return ""
+    match = process.extractOne(t, constants.HEADER_VOCABULARY.keys(),
+                            scorer=Levenshtein.distance, score_cutoff=max_distance)
+    return constants.HEADER_VOCABULARY[match[0]] if match else ""
+

@@ -158,6 +158,19 @@ class TestRegExp(unittest.TestCase):
             assert "https://gitter.im/OpenGeoscience/geonotebook" == result[0][constants.PROP_RESULT][
                 constants.PROP_VALUE]
 
+    def test_extract_slack(self):
+        """Test designed to check if Slack channels are detected"""
+        test_text = """
+        [![Slack](https://img.shields.io/badge/slack-join%20us-black?logo=slack)](https://join.slack.com/t/myteam/shared-invite/AbCdEfGhIjKlMnOp)
+        Also at [workspace](https://myteam.slack.com/archives/C0123456789)
+        """
+        channels = regular_expressions.extract_support_channels(test_text, Result(), "slack_test.txt")
+        values = [c[constants.PROP_RESULT][constants.PROP_VALUE]
+                  for c in channels.results[constants.CAT_SUPPORT_CHANNELS]]
+        assert "https://join.slack.com/t/myteam/shared-invite/AbCdEfGhIjKlMnOp" in values
+        assert "https://myteam.slack.com/archives/C0123456789" in values
+        
+
     def test_repo_status(self):
         """Test designed to check if repostatus badges are detected"""
         with open(test_data_path + "test_repo_status.txt", "r") as data_file:
