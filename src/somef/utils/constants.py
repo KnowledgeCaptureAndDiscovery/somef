@@ -120,6 +120,13 @@ REGEXP_ZENODO_LATEST_DOI = r':target:\s*(https://zenodo\.org/badge/latestdoi/\d+
 REGEXP_ZENODO_DOI = r'https://zenodo\.org/badge/DOI/(10\.\d{4,9}/zenodo\.\d+)'
 REGEXP_ZENODO_JSON_LD = r"<script[^>]*type=['\"]application/ld\+json['\"][^>]*>(.*?)</script>"
 
+# Zenodo DOI as input accepts 10.5281/zenodo.X, https://doi.org/10.5281/zenodo.X
+# and https://zenodo.org/records/X (or /record/X). Capture group = record id.
+REGEXP_ZENODO_RECORD_ID = r'(?:10\.5281/zenodo\.|zenodo\.org/records?/)(\d+)'
+REGEXP_ZENODO_REPOSITORY_PATTERN = (
+    r'(https?://(?:github\.com|gitlab\.com|codeberg\.org|bitbucket\.org)/[^/\s]+/[^/\s#?]+)'
+    r'(?:/(?:-/)?tree/([^/\s#?]+))?'
+)
 # Detect copyright information in license files. 
 REGEXP_COPYRIGHT = r"copyright\s*(?:\(c\)|©|\(C\))?\s*\{?(\d{4}(?:-\d{4})?)\}?\s*\{?([^\n}]+)\}?"
 
@@ -357,6 +364,7 @@ TECHNIQUE_GITHUB_API = "GitHub_API"
 TECHNIQUE_GITLAB_API = "GitLab_API"
 TECHNIQUE_CODEBERG_API = "Codeberg_API"
 TECHNIQUE_BITBUCKET_API = "Bitbucket_API"
+TECHNIQUE_ZENODO_API = "Zenodo_API"
 TECHNIQUE_HEURISTICS = "software_type_heuristics"
 
 # GitHub properties
