@@ -88,25 +88,37 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             bGitLab = False
             bCodeberg = False
             bBitbucket = False
-            if process_repository.is_gitlab(servidor):
-                logging.info(f"{servidor} is GitLab.")
-                repo_type = constants.RepositoryType.GITLAB
-                bGitLab = True
-                logging.info(f"DEBUG: {servidor} is_gitlab = {bGitLab}")
-            elif servidor == constants.CODEBERG_DOMAIN:
+            if servidor == constants.CODEBERG_DOMAIN:
                 repo_type = constants.RepositoryType.CODEBERG
                 bCodeberg = True
                 logging.info(f"DEBUG: {servidor} is_codeberg = {bCodeberg}")
             elif "bitbucket.org" in servidor:
                 repo_type = constants.RepositoryType.BITBUCKET
                 bBitbucket = True
-           
+                logging.info(f"DEBUG: {servidor} is_bitbucket = {bBitbucket}")
+            elif process_repository.is_gitlab(servidor):
+                logging.info(f"{servidor} is GitLab.")
+                repo_type = constants.RepositoryType.GITLAB
+                bGitLab = True
+                logging.info(f"DEBUG: {servidor} is_gitlab = {bGitLab}")
+
 
             # if bGitLab:
             #     repo_type = constants.RepositoryType.GITLAB
 
             logging.info("Processing repository metadata.")
-            repository_metadata, owner, repo_name, def_branch, project_path = process_repository.load_online_repository_metadata(
+            # repository_metadata, owner, repo_name, def_branch, project_path = process_repository.load_online_repository_metadata(
+            #     repository_metadata,
+            #     repo_url,
+            #     ignore_github_metadata,
+            #     repo_type,
+            #     authorization,
+            #     reconcile_authors,
+            #     branch=branch,
+            #     tag=tag,
+            #     commit=commit
+            # )
+            repo_meta_result = process_repository.load_online_repository_metadata(
                 repository_metadata,
                 repo_url,
                 ignore_github_metadata,
@@ -117,7 +129,11 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
                 tag=tag,
                 commit=commit
             )
-
+            if isinstance(repo_meta_result, tuple) and len(repo_meta_result) == 6:
+                repository_metadata, owner, repo_name, def_branch, project_path, project_id = repo_meta_result
+            else:
+                repository_metadata, owner, repo_name, def_branch, project_path = repo_meta_result
+                project_id = None
             # download files and obtain path to download folder
             if readme_only:
                 logging.info("Downloading README only...")
@@ -127,7 +143,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             elif keep_tmp is not None:  # save downloaded files locally
                 os.makedirs(keep_tmp, exist_ok=True)
                 local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
-                                                                            keep_tmp, repo_url, authorization, download_limit)
+                                                                            keep_tmp, repo_url, authorization, download_limit, project_id)
                 if local_folder is not None:
                     readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
                                                                                                repository_metadata,
@@ -145,7 +161,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
               
                 with tempfile.TemporaryDirectory() as temp_dir:
                     local_folder = process_repository.download_repository_files(owner, repo_name, def_branch, repo_type,
-                                                                                temp_dir, repo_url, authorization, download_limit)
+                                                                                temp_dir, repo_url, authorization, download_limit, project_id)
                     if local_folder is not None:
                         readme_text, full_repository_metadata = process_files.process_repository_files(local_folder,
                                                                                                     repository_metadata,

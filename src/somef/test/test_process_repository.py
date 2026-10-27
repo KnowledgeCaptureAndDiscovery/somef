@@ -120,8 +120,8 @@ class TestProcessRepository(unittest.TestCase):
 
     def test_issue_286(self):
         """Test designed to check if gitlab repositories are properly parsed"""
-        gitlab_data, owner, name, def_br, project_path = process_repository.load_gitlab_repository_metadata(Result(),
-            "https://gitlab.com/gitlab-org/ci-sample-projects/platform-team")
+        gitlab_data, owner, name, def_br, project_path, project_id = process_repository.load_gitlab_repository_metadata(Result(),
+            "https://gitlab.com/gitlab-org/ci-sample-projects/platform-team",)
         # print(gitlab_data.results)
         assert len(gitlab_data.results[constants.CAT_DOWNLOAD_URL]) > 0
 
