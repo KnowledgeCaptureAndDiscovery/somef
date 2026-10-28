@@ -120,6 +120,7 @@ The `-e` (or `--enrichment`) flag queries external APIs to complete the extracte
 - **OpenAlex**: Adds `openalex_id` to DOIs of publications and reconciles missing author ORCIDs.
 - **OpenAIRE**: Adds `openaire_id` to publications/identifiers and enriches project funding metadata.
 - **Zenodo**: Adds `swhid` (Software Heritage ID) for records matching Zenodo DOIs.
+**DataCite / Software Heritage**: Adds `provider` to identifier entries. For Software Heritage identifiers the value is `Software Heritage`. For DOIs registered with DataCite, the value is the DataCite provider name.
 
 For a detailed technical breakdown of the fields mapped by each external service, please refer to the specific documentation pages:
 - See the [OpenAlex Mapping Guide](openalex.md) for citation and author properties.
