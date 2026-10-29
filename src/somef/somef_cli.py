@@ -167,6 +167,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
             logging.error("Error processing the target repository")
             return repository_metadata
     elif local_repo is not None:
+        repo_type = constants.RepositoryType.LOCAL
         try:
             readme_text, full_repository_metadata = process_files.process_repository_files(local_repo,
                                                                                            repository_metadata,
