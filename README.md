@@ -359,6 +359,7 @@ Options:
   -t, --threshold FLOAT           Threshold to classify the text  [required]
   Input: [mutually_exclusive, required]
     -r, --repo_url URL            Github/Gitlab/Codeberg/Bitbucket Repository URL
+    --doi TEXT                    Zenodo DOI or record URL (e.g. 10.5281/zenodo.X, https://doi.org/10.5281/zenodo.X or https://zenodo.org/records/X)
     -d, --doc_src PATH            Path to the README file source
     -i, --in_file PATH            A file of newline separated links to GitHub/
                                   Gitlab/Codeberg/Bitbucket repositories

@@ -19,6 +19,7 @@ from .export.turtle_export import DataGraph
 from .export import json_export
 from .export import google_codemeta_export
 from .extract_software_type import check_repository_type
+from .zenodo_deposit import ZenodoDeposit 
 from urllib.parse import urlparse, quote
 
 def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, local_repo=None,
@@ -182,6 +183,7 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
         except process_repository.GithubUrlError:
             logging.error("Error processing the target repository")
             return repository_metadata
+
     elif local_repo is not None:
         try:
             readme_text, full_repository_metadata = process_files.process_repository_files(local_repo,
@@ -311,9 +313,31 @@ def run_cli(*,
             bitbucket_token=None,
             bitbucket_email=None,
             download_limit=None,
-            commit=None 
+            commit=None,
+            doi=None
             ):
     """Function to run all the required components of the cli for a repository"""
+
+    # zenodo doi
+
+    if doi:
+        if repo_url or local_repo or doc_src or in_file:
+            logging.error("--doi cannot be combined with other input options")
+            return None
+        
+        try:
+            deposit = ZenodoDeposit(doi)
+        except ValueError as e:
+            logging.error(f"Could not retrieve the Zenodo record: {e}")
+            return None
+
+        repo_url = deposit.repository_url
+        if repo_url is None:
+            logging.error("No source repository found in the Zenodo record")
+            return None
+        if tag is None and not (branch or commit):
+            tag = deposit.tag
+
     # check if it is a valid url
     if repo_url:
         if not validators.url(repo_url):
@@ -397,8 +421,11 @@ def run_cli(*,
             repo_data = cli_get_data(threshold=threshold, ignore_classifiers=ignore_classifiers,
                                      doc_src=doc_src, keep_tmp=keep_tmp, ignore_test_folder=ignore_test_folder, reconcile_authors=reconcile_authors,
                                      branch=branch, tag=tag, download_limit= download_limit, commit=commit)
-        
-        if hasattr(repo_data, "get_json"): 
+
+        if doi:
+            deposit.load_metadata(repo_data)
+
+        if hasattr(repo_data, "get_json"):
             repo_data = repo_data.get_json()
 
         repo_data = json_export.unify_results(repo_data.results)
