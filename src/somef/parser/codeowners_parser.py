@@ -5,6 +5,7 @@ import requests
 from pathlib import Path
 from ..process_results import Result
 from ..utils import constants
+from .. import configuration
 
 def parse_codeowners_structured(dir_path, filename):
     codeowners = []
@@ -159,11 +160,23 @@ def enrich_user(username, repo_type, server_url=None, gitlab_authorization=None)
             # response = requests.get(api_url, timeout=5)
             # Build auth header — same token works for gitlab.com and self-hosted instances
             gl_headers = {}
-            if gitlab_authorization:
-                token = gitlab_authorization
-                if not token.startswith("Bearer "):
-                    token = "Bearer " + token
-                gl_headers["Authorization"] = token
+            token = gitlab_authorization
+            if not token:
+                try:
+                    file_paths = configuration.get_configuration_file()
+                    if constants.CONF_GITLAB_AUTHORIZATION in file_paths:
+                        token = file_paths[constants.CONF_GITLAB_AUTHORIZATION]
+                except Exception:
+                    pass
+            if token and isinstance(token, str):
+                t = token.strip()
+                if t.lower().startswith('bearer '):
+                    t = t[7:].strip()
+                elif t.lower().startswith('token '):
+                    t = t[6:].strip()
+                elif t.lower().startswith('private-token '):
+                    t = t[14:].strip()
+                gl_headers['Authorization'] = f'Bearer {t}'
             response = requests.get(api_url, headers=gl_headers, timeout=5)
             if response.status_code != 200:
                 logging.warning(f"GitLab API request failed for {username}: {response.status_code}")
@@ -180,7 +193,6 @@ def enrich_user(username, repo_type, server_url=None, gitlab_authorization=None)
         except Exception as e:
             logging.error(f"Error enriching GitLab user {username}: {e}")
             return None
-
     elif repo_type == constants.RepositoryType.CODEBERG:
         url = f"https://codeberg.org/api/v1/users/{username}"
         response = requests.get(url, timeout=5)
