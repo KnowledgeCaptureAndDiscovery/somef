@@ -841,3 +841,8 @@ HEADER_VOCABULARY = {
     # funding
     "funding": CAT_FUNDING,
 }
+
+# provider DOI
+DATACITE_API_BASE = "https://api.datacite.org"
+PROP_PROVIDER = "provider"
+SWH_PROVIDER_NAME = "Software Heritage"

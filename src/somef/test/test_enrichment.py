@@ -1,10 +1,11 @@
 import json
 import os
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 from pathlib import Path
 from .. import somef_cli
 from ..utils import constants
+from ..utils import enrichment
 from ..utils.enrichment import run_enrichment
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
@@ -219,3 +220,61 @@ class TestEnrichment(unittest.TestCase):
         self.assertNotIn(constants.PROP_OPENAIRE_ID, cit_result)
         self.assertIn(constants.PROP_OPENALEX_ID, cit_result)
         self.assertEqual(cit_result[constants.PROP_OPENALEX_ID], "https://openalex.org/W123456")
+
+
+class TestIssue778Provider(unittest.TestCase):
+
+    def setUp(self):
+        # Clear provider cache between tests to keep them isolated
+        if hasattr(enrichment, '_provider_cache'):
+            enrichment._provider_cache.clear()
+
+    def test_issue_778_swh_provider(self):
+        results = {
+            constants.PROP_IDENTIFIER: [{
+                "result": {
+                    "type": constants.URL,
+                    "value": "https://archive.softwareheritage.org/swh:1:rev:cefb0f9a53ba1fae671819f943e84c087aed6f7d"
+                }
+            }]
+        }
+        results = enrichment.run_enrichment(results)
+        result = results[constants.PROP_IDENTIFIER][0]["result"]
+        self.assertEqual(result[constants.PROP_PROVIDER], constants.SWH_PROVIDER_NAME)
+
+    @patch('somef.utils.enrichment.requests.get')
+    def test_issue_778_doi_provider_datacite(self, mock_get):
+        mock_prefix_resp = Mock()
+        mock_prefix_resp.status_code = 200
+        mock_prefix_resp.json.return_value = {
+            "data": {
+                "relationships": {
+                    "providers": {
+                        "data": [{"id": "cern"}]
+                    }
+                }
+            }
+        }
+
+        mock_provider_resp = Mock()
+        mock_provider_resp.status_code = 200
+        mock_provider_resp.json.return_value = {
+            "data": {
+                "attributes": {
+                    "name": "CERN - European Organization for Nuclear Research"
+                }
+            }
+        }
+
+        mock_get.side_effect = [mock_prefix_resp, mock_provider_resp]
+
+        provider = enrichment.get_doi_provider("10.5281/zenodo.11093793")
+        self.assertIn("CERN", provider)
+
+    @patch('somef.utils.enrichment.requests.get')
+    def test_issue_778_doi_provider_not_datacite(self, mock_get):
+        mock_resp = Mock()
+        mock_resp.status_code = 404
+        mock_get.return_value = mock_resp
+
+        self.assertIsNone(enrichment.get_doi_provider("10.1162/qss_a_00167"))

@@ -100,6 +100,40 @@ def get_zenodo_swhid(doi):
     return None
 
 
+_provider_cache = {}
+
+def get_doi_provider(doi):
+    """Get the DataCite provider name of a DOI (via its prefix). Returns None if not resolvable."""
+    match = re.search(constants.REGEXP_DOI_IN_URL, doi)
+    if not match:
+        return None
+    prefix = match.group(1).split("/")[0]
+    if prefix in _provider_cache:
+        return _provider_cache[prefix]
+
+    try:
+        resp = requests.get(f"{constants.DATACITE_API_BASE}/prefixes/{prefix}", timeout=10)
+    except requests.RequestException:
+        return None  # error de red: no se cachea, se puede reintentar
+
+    provider_name = None
+    data = _safe_json_response(resp) if resp.status_code == 200 else None
+    if data:
+        providers = data.get("data", {}).get("relationships", {}).get("providers", {}).get("data", [])
+        if providers:
+            try:
+                resp = requests.get(
+                    f"{constants.DATACITE_API_BASE}/providers/{providers[0]['id']}", timeout=10)
+            except requests.RequestException:
+                return None
+            data = _safe_json_response(resp) if resp.status_code == 200 else None
+            if data:
+                provider_name = data.get("data", {}).get("attributes", {}).get("name")
+
+    _provider_cache[prefix] = provider_name  # respuestas definitivas (incluido 404) sí se cachean
+    return provider_name
+
+
 def extract_doi(result):
     """Extract a DOI from a result dict which may contain a DOI in different fields and formats."""
 
@@ -284,5 +318,16 @@ def run_enrichment(results) -> dict:
                     result[constants.PROP_PROJECT_ACRONYM] = project[constants.PROP_PROJECT_ACRONYM]
                 if project[constants.PROP_GRANT_ID]:
                     result[constants.PROP_GRANT_ID] = project[constants.PROP_GRANT_ID]
+
+    # Provider of identifiers
+    for identifier in results.get(constants.PROP_IDENTIFIER, []):
+        value = identifier["result"].get("value", "")
+        doi = _extract_doi_from_value(value)
+        if doi:
+            provider = get_doi_provider(doi)
+            if provider:
+                identifier["result"][constants.PROP_PROVIDER] = provider
+        elif isinstance(value, str) and re.search(constants.REGEXP_SWH_ALL_IDENTIFIERS, value):
+            identifier["result"][constants.PROP_PROVIDER] = constants.SWH_PROVIDER_NAME
 
     return results
