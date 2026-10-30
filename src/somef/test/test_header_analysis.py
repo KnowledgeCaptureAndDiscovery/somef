@@ -301,3 +301,34 @@ class TestHeaderAnalysis(unittest.TestCase):
         for entry in ubuntu_entries:
             self.assertEqual(entry["value"], "Ubuntu")
             self.assertNotIn("version", entry)
+
+
+    def test_extract_categories_header_typos(self):
+        """Headers with typos are still categorized (issue #228)"""
+        text = (
+            "# Project\n\n"
+            "A short introduction.\n\n"
+            "## Instalation\n\n"
+            "pip install foo\n\n"
+            "## Documentaion\n\n"
+            "See the docs.\n\n"
+            "## Usege\n\n"
+            "Run foo.\n"
+        )
+        result, _ = extract_categories(text, Result())
+        assert constants.CAT_INSTALLATION in result.results
+        assert constants.CAT_DOCUMENTATION in result.results
+        assert constants.CAT_USAGE in result.results
+
+    def test_extract_categories_header_no_false_positives(self):
+        """Unrelated headers must not be matched by the fuzzy matching (issue #228)"""
+        text = (
+            "# Project\n\n"
+            "A short introduction.\n\n"
+            "## Content\n\n"
+            "Some text.\n\n"
+            "## Roadmap\n\n"
+            "Future work.\n"
+        )
+        result, _ = extract_categories(text, Result())
+        assert constants.CAT_CONTACT not in result.results

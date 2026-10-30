@@ -66,6 +66,7 @@ When using `-e`, publication metadata is enriched via OpenAlex. We recognize the
 - **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers and Software Heritage identifiers (SWH). DOIs associated with publications will also be detected. When using `-e`, the following enrichment identifiers are also added:
 - `openaire_id`: URL to the OpenAIRE explore page for the software
 - `swhid`: Software Heritage identifier (for Zenodo DOIs)
+- `provider`: Name of the identifier provider. For Software Heritage identifiers this is set to `Software Heritage`. For DOIs registered with DataCite, this is set to the DataCite provider name (e.g., `CERN - European Organization for Nuclear Research`).
 - **Images**: Images used to illustrate the software component
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component

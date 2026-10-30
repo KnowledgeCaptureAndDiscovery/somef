@@ -2,6 +2,8 @@
 import requests
 import re
 import logging
+import json
+from urllib.parse import quote
 from ..utils import constants
 import xml.etree.ElementTree as ET
 
@@ -46,43 +48,30 @@ def get_openalex_id(doi):
     return None
 
 def get_openaire_id(doi) -> dict | None:
-    url = f"{constants.OPENAIRE_BASE}/search/researchProducts?doi={doi}&format=json"
+    # url = f"{constants.OPENAIRE_BASE}/search/researchProducts?doi={doi}&format=json"
+    url = f"{constants.OPENAIRE_BASE}/research-products?filter=ids.doi:{doi}&pageSize=1"
     try:
-        resp = requests.get(url)
+        resp = requests.get(url, timeout=15)
     except requests.RequestException:
         return None
     if resp.status_code != 200:
         return None
+    
     data = _safe_json_response(resp)
+    
     if not data:
         return None
-    response = data.get("response")
-    if not isinstance(response, dict):
-        return None
 
-    results_obj = response.get("results")
-    if not isinstance(results_obj, dict):
-        return None
-
-    results = results_obj.get("result", [])
+    results = data.get("results")
     if not isinstance(results, list) or not results:
         return None
-
     first_result = results[0]
-    if not isinstance(first_result, dict):
-        return None
+    if doi.lower() not in json.dumps(first_result).lower():
+            return None
 
-    header = first_result.get("header", {})
-    if not isinstance(header, dict):
-        return None
-
-    obj_identifier = header.get("dri:objIdentifier", {})
-    if not isinstance(obj_identifier, dict):
-        return None
-
-    raw_id = obj_identifier.get("$")
+    raw_id = first_result.get("id")
     if raw_id:
-        return f"{constants.OPENAIRE_EXPLORE}/search/software?orpId={raw_id}"
+        return f"{constants.OPENAIRE_EXPLORE}/search/result?id={raw_id}"
     return None
 
 def get_zenodo_swhid(doi):
@@ -109,6 +98,40 @@ def get_zenodo_swhid(doi):
             return rel_id["identifier"]
     
     return None
+
+
+_provider_cache = {}
+
+def get_doi_provider(doi):
+    """Get the DataCite provider name of a DOI (via its prefix). Returns None if not resolvable."""
+    match = re.search(constants.REGEXP_DOI_IN_URL, doi)
+    if not match:
+        return None
+    prefix = match.group(1).split("/")[0]
+    if prefix in _provider_cache:
+        return _provider_cache[prefix]
+
+    try:
+        resp = requests.get(f"{constants.DATACITE_API_BASE}/prefixes/{prefix}", timeout=10)
+    except requests.RequestException:
+        return None  # error de red: no se cachea, se puede reintentar
+
+    provider_name = None
+    data = _safe_json_response(resp) if resp.status_code == 200 else None
+    if data:
+        providers = data.get("data", {}).get("relationships", {}).get("providers", {}).get("data", [])
+        if providers:
+            try:
+                resp = requests.get(
+                    f"{constants.DATACITE_API_BASE}/providers/{providers[0]['id']}", timeout=10)
+            except requests.RequestException:
+                return None
+            data = _safe_json_response(resp) if resp.status_code == 200 else None
+            if data:
+                provider_name = data.get("data", {}).get("attributes", {}).get("name")
+
+    _provider_cache[prefix] = provider_name  # respuestas definitivas (incluido 404) sí se cachean
+    return provider_name
 
 
 def extract_doi(result):
@@ -190,26 +213,34 @@ def has_orcid(result):
 
 def get_openaire_project(identifier):
     """Search for a project in OpenAIRE by grant ID or call identifierr"""
-    url = f"{constants.OPENAIRE_BASE}/search/projects?keywords={requests.utils.quote(identifier)}"
+    # url = f"{constants.OPENAIRE_BASE}/search/projects?keywords={requests.utils.quote(identifier)}"
+    url = f"{constants.OPENAIRE_BASE}/projects?code={requests.utils.quote(identifier)}&pageSize=1"
+  
     resp = requests.get(url)
     if resp.status_code != 200:
         return None
     
-    root = ET.fromstring(resp.text)
-    ns = constants.OPENAIRE_NAMESPACE
-    
-    project = root.find(f".//{{{ns}}}project")
-    if project is None:
+    data = _safe_json_response(resp)
+    if not data:
         return None
-    
+
+    results = data.get("results")
+    if not isinstance(results, list) or not results or not isinstance(results[0], dict):
+        return None
+  
+    project = results[0]
+    funding = project.get("funding") or {}
+    funder = funding.get("funder") or {}
+
     return {
-        constants.PROP_PROJECT_CODE: project.findtext("code"),
-        constants.PROP_PROJECT_TITLE: project.findtext("title"),
-        constants.PROP_PROJECT_ACRONYM: project.findtext("acronym"),
-        constants.PROP_GRANT_ID: project.findtext("callidentifier"),
-        constants.PROP_FUNDER: project.findtext(".//funder/shortname"),
-        constants.PROP_START_DATE: project.findtext("startdate"),
-        constants.PROP_END_DATE: project.findtext("enddate"),
+        constants.PROP_PROJECT_CODE: project.get("code"),
+        constants.PROP_PROJECT_TITLE: project.get("title"),
+        constants.PROP_PROJECT_ACRONYM: project.get("acronym"),
+        constants.PROP_GRANT_ID: project.get("callidentifier"),
+        # constants.PROP_FUNDER: project.findtext(".//funder/shortname"),
+        constants.PROP_FUNDER: funder.get("shortname"),
+        constants.PROP_START_DATE: project.get("startdate"),
+        constants.PROP_END_DATE: project.get("enddate"),
     }
 
 def run_enrichment(results) -> dict:
@@ -233,11 +264,14 @@ def run_enrichment(results) -> dict:
             if openaire_id:
                 identifier["result"][constants.PROP_OPENAIRE_ID] = openaire_id
             else:
-                identifier["result"][constants.PROP_OPENALEX_ID] = get_openalex_id(doi)
+                openalex_id = get_openalex_id(doi)
+                if openalex_id:
+                    identifier["result"][constants.PROP_OPENALEX_ID] = openalex_id
 
-            if "zenodo" in doi.lower():
-                if constants.PROP_SWHID not in identifier["result"]:
-                    identifier["result"][constants.PROP_SWHID] = get_zenodo_swhid(doi)
+            if "zenodo" in doi.lower() and constants.PROP_SWHID not in identifier["result"]:
+                swhid = get_zenodo_swhid(doi)
+                if swhid:
+                    identifier["result"][constants.PROP_SWHID] = swhid
 
     orcid_map = collect_existing_orcids(results)
 
@@ -284,5 +318,16 @@ def run_enrichment(results) -> dict:
                     result[constants.PROP_PROJECT_ACRONYM] = project[constants.PROP_PROJECT_ACRONYM]
                 if project[constants.PROP_GRANT_ID]:
                     result[constants.PROP_GRANT_ID] = project[constants.PROP_GRANT_ID]
+
+    # Provider of identifiers
+    for identifier in results.get(constants.PROP_IDENTIFIER, []):
+        value = identifier["result"].get("value", "")
+        doi = _extract_doi_from_value(value)
+        if doi:
+            provider = get_doi_provider(doi)
+            if provider:
+                identifier["result"][constants.PROP_PROVIDER] = provider
+        elif isinstance(value, str) and re.search(constants.REGEXP_SWH_ALL_IDENTIFIERS, value):
+            identifier["result"][constants.PROP_PROVIDER] = constants.SWH_PROVIDER_NAME
 
     return results
