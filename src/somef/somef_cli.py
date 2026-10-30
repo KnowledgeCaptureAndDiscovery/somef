@@ -14,7 +14,7 @@ from . import header_analysis, regular_expressions, process_repository, configur
     supervised_classification
 from .process_results import Result
 from .utils import constants, markdown_utils, enrichment
-from .parser import mardown_parser, create_excerpts
+from .parser import mardown_parser, create_excerpts, docker_references
 from .export.turtle_export import DataGraph
 from .export import json_export
 from .export import google_codemeta_export
@@ -269,6 +269,10 @@ def cli_get_data(threshold, ignore_classifiers, repo_url=None, doc_src=None, loc
 
             repository_metadata = regular_expressions.extract_features_from_content(readme_unfiltered_text,
                                                                 repository_metadata, readme_source)
+            repository_metadata = docker_references.extract_containers(readme_unfiltered_text,
+                                                           repository_metadata,
+                                                           readme_source)
+
             logging.info("Completed extracting regular expressions")
 
         return repository_metadata

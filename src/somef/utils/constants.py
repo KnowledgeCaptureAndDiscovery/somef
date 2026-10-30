@@ -133,6 +133,41 @@ REGEXP_FEATURES = (
     r'((?:[ \t]*[-*+][ \t]+.+\n?)+)'
 )
 
+
+# Docker detection 
+REGEXP_DOCKER_CLI_CMD  = r'^\s*(?:\$\s*)?(?:sudo\s+)?(?P<cmd>docker\s+(?P<sub>run|pull|build)\b.*)$'
+REGEXP_LINE_CONTINUATION = r'\\[ \t]*\r?\n'
+REGEXP_DOCKER_CLI_IMAGE_REF = (
+    r'^(?:[a-z0-9.-]+(?::\d+)?/)?'
+    r'[a-z0-9]+(?:[._-][a-z0-9]+)*(?:/[a-z0-9]+(?:[._-][a-z0-9]+)*)*'
+    r'(?::\w[\w.-]{0,127})?'
+    r'(?:@sha256:[a-f0-9]{64})?$'
+)
+# Flags that consume the next token, per docker subcommand
+DOCKER_FLAGS_WITH_VALUE = {
+    "run": {
+        "-v", "--volume", "-p", "--publish", "-e", "--env", "--env-file",
+        "-w", "--workdir", "--name", "--network", "--net", "-u", "--user",
+        "--entrypoint", "--mount", "-l", "--label", "--platform", "-h",
+        "--hostname", "--cpus", "-m", "--memory", "--gpus", "--device",
+        "--restart", "--add-host", "--cap-add", "--cap-drop", "--shm-size",
+        "--ulimit", "--log-driver", "--pull", "-a", "--attach",
+        "--runtime", "--ipc", "--pid", "--uts", "--userns", "--dns",
+        "--link", "--volumes-from", "--tmpfs", "--expose", "--ip",
+        "--group-add", "--security-opt", "--cpuset-cpus", "--memory-swap",
+        "--pids-limit", "--sysctl", "--label-file", "--stop-signal",
+    },
+    "pull": {"--platform"},
+    "build": {
+        "-t", "--tag", "-f", "--file", "--build-arg", "--platform", "--target",
+        "--label", "--network", "--cache-from", "--secret", "--ssh",
+        "--progress", "-o", "--output",
+        "--add-host", "--cache-to", "--iidfile", "-m", "--memory",
+        "--shm-size", "--ulimit", "--cpuset-cpus",
+    },
+}
+DOCKER_BUILD_TAG_FLAGS = ("-t", "--tag")
+
 LICENSES_DICT = {
     "Apache License 2.0": {"regex": REGEXP_APACHE, "spdx_id": "Apache-2.0"},
     "GNU General Public License v3.0": {"regex": REGEXP_GPL3, "spdx_id": "GPL-3.0"},
@@ -159,6 +194,7 @@ CAT_CONTRIBUTING_GUIDELINES = "contributing_guidelines"
 CAT_COC = "code_of_conduct"
 CAT_CODE_REPOSITORY = "code_repository"
 CAT_CONTACT = "contact"
+CAT_CONTAINER = "container"
 CAT_COPYRIGHT = "copyright_holder"
 CAT_DATE_CREATED = "date_created"
 CAT_DATE_UPDATED = "date_updated"
@@ -312,6 +348,10 @@ PROP_ENCODING_FORMAT = "encoding_format"
 PROP_UPLOAD_DATE = "upload_date"
 PROP_CONTENT_SIZE = "content_size"
 PROP_DOWNLOAD_COUNT = "download_count"
+
+PROP_IMAGE = "image"
+PROP_EXECUTION_COMMAND = "execution_command"
+PROP_BUILD_COMMAND = "build_command"
 
 # Format:
 FORMAT_BIB = "bibtex"
@@ -841,3 +881,5 @@ HEADER_VOCABULARY = {
     # funding
     "funding": CAT_FUNDING,
 }
+
+
