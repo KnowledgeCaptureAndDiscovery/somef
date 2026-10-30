@@ -14,6 +14,7 @@ Scripts/*
 !**/composer.json
 !**/package.json
 !**/bower.json
+!**/.zenodo.json
 *.ttl
 !**/test_data/repositories/ecfo/ontology.ttl
 env_3.9/*
@@ -27,5 +28,6 @@ repos.txt
 !test_data/api_responses/*.json
 !**/test_data/api_responses/codeberg/*.json
 !**/test_data/api_responses/bitbucket/*.json
+!**/test_data/api_responses/zenodo/*.json
 uv.lock
 .python-version

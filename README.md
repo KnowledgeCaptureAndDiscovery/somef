@@ -66,6 +66,7 @@ When using `-e`, publication metadata is enriched via OpenAlex. We recognize the
 - **Identifier**: Identifier associated with the software (if any), such as Digital Object Identifiers and Software Heritage identifiers (SWH). DOIs associated with publications will also be detected. When using `-e`, the following enrichment identifiers are also added:
 - `openaire_id`: URL to the OpenAIRE explore page for the software
 - `swhid`: Software Heritage identifier (for Zenodo DOIs)
+- `provider`: Name of the identifier provider. For Software Heritage identifiers this is set to `Software Heritage`. For DOIs registered with DataCite, this is set to the DataCite provider name (e.g., `CERN - European Organization for Nuclear Research`).
 - **Images**: Images used to illustrate the software component
 - **Installation instructions**: A set of instructions that indicate how to install a target repository
 - **Invocation**: Execution command(s) needed to run a scientific software component
@@ -358,6 +359,7 @@ Options:
   -t, --threshold FLOAT           Threshold to classify the text  [required]
   Input: [mutually_exclusive, required]
     -r, --repo_url URL            Github/Gitlab/Codeberg/Bitbucket Repository URL
+    --doi TEXT                    Zenodo DOI or record URL (e.g. 10.5281/zenodo.X, https://doi.org/10.5281/zenodo.X or https://zenodo.org/records/X)
     -d, --doc_src PATH            Path to the README file source
     -i, --in_file PATH            A file of newline separated links to GitHub/
                                   Gitlab/Codeberg/Bitbucket repositories
@@ -488,8 +490,8 @@ To run a classifier with an additional category or remove an existing one, a cor
 
 ## Metadata Support
 
-SOMEF supports the extraction and analysis of metadata in package files of several programming languages.  Current support includes: `setup.py` and `pyproject.toml` for Python, `pom.xml` for Java, `.gemspec` for Ruby, `DESCRIPTION` for R, `bower.json` for JavaScript, HTML or CSS, `.cabal` for Haskell, `cargo.toml` for RUST, `composer` for PHP, `.juliaProject.toml` for Julia , `AUTHORS`, `codemeta.json`, `publiccode.yml`, `dockerfile` and `citation.cff`
-This includes identifying dependencies, runtime requirements, and development tools specified in project configuration files.  
+SOMEF supports the extraction and analysis of metadata in package files of several programming languages.  Current support includes: `setup.py` and `pyproject.toml` for Python, `pom.xml` for Java, `.gemspec` for Ruby, `DESCRIPTION` for R, `bower.json` for JavaScript, HTML or CSS, `.cabal` for Haskell, `cargo.toml` for RUST, `composer` for PHP, `.juliaProject.toml` for Julia , `AUTHORS`, `codemeta.json`, `publiccode.yml`, `dockerfile` and `citation.cff` and `.zenodo.json`.
+This includes identifying dependencies, runtime requirements, and development tools specified in project configuration files. 
 
 ## Limitations
 

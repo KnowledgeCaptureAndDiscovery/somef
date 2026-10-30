@@ -556,9 +556,11 @@ class TestCli(unittest.TestCase):
         json_content = json.loads(data)
         readme_url = json_content[constants.CAT_README_URL][0]
         excerpt = readme_url[constants.PROP_RESULT][constants.PROP_VALUE]
-        print(excerpt)
-        # assert excerpt == 'https://raw.githubusercontent.com/oeg-upm/wot-hive/main/README.md'
-        assert excerpt == 'https://raw.githubusercontent.com////README.md' 
+
+        # For local repositories we expect a local path to the README
+        self.assertTrue(excerpt.endswith("README.md"))
+        self.assertTrue(os.path.exists(excerpt))
+
         os.remove(test_data_path + "test-403.json")
 
     def test_issue_408(self):
@@ -1038,3 +1040,25 @@ class TestCli(unittest.TestCase):
         assert len(sources) == 2
         assert any(s.endswith("ontology.ttl") for s in sources)
         assert any(s.endswith("ontology.nt") for s in sources)
+
+
+    def test_issue_638_local_repo(self):
+        """Issue 638: analyzing a local repo should not produce broken raw GitHub URLs"""
+        somef_cli.run_cli(threshold=0.8,
+                          ignore_classifiers=False,
+                          repo_url=None,
+                          doc_src=None,
+                          local_repo=test_data_repositories + "Widoco",
+                          in_file=None,
+                          output=test_data_path + "test-638.json",
+                          graph_out=None,
+                          graph_format="turtle",
+                          codemeta_out=None,
+                          pretty=True,
+                          missing=False)
+        text_file = open(test_data_path + "test-638.json", "r")
+        data = text_file.read()
+        text_file.close()
+        # The main bug: broken URLs with empty owner/repo
+        self.assertNotIn("raw.githubusercontent.com///", data)
+        os.remove(test_data_path + "test-638.json")

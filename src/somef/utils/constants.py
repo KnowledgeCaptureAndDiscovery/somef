@@ -43,6 +43,7 @@ REGEXP_READTHEDOCS = r'http[s]?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%
 REGEXP_REDDIT = "(https://www.reddit.com/r/"
 REGEXP_DISCORD = "(https://discord.com/invite/"
 REGEXP_GITTER = "[![Gitter chat]"
+REGEXP_SLACK = r"(https://(?:join\.slack\.com|[\w-]+\.slack\.com)/[^\s)\"'<>\]]+)"
 # These are two of the most common ones for Python, but it may be expanded
 REGEXP_PYPI = "[![PyPI]"
 REGEXP_PYPI_2 = "[![Latest PyPI version]"
@@ -101,6 +102,7 @@ REGEXP_GPL2 = r'(?i)gnu\s+general\s+public\s+license\s*,?\s*version\s*2(?:\.0)?'
 REGEXP_LGPL1 = r'(?i)gnu\s+lesser\s+general\s+public\s+license\s*,?\s*version\s*1\.0'
 REGEXP_MPL2 = r'(?i)mozilla\s+public\s+license\s*,?\s*version\s*2\.0'
 REGEXP_UNLICENSE = r'(?i)the\s+unlicense'
+REGEXP_CCBY4 = r'(?i)(creative\s+commons\s+attribution\s+4\.0(?:\s+international)?|cc[\s-]by[\s-]4\.0)'
 
 # detect choosealicense in badges
 REGEXP_CHOOSE_LICENSE = r'choosealicense\.com/licenses/([^/\s]+)'
@@ -119,6 +121,13 @@ REGEXP_ZENODO_LATEST_DOI = r':target:\s*(https://zenodo\.org/badge/latestdoi/\d+
 REGEXP_ZENODO_DOI = r'https://zenodo\.org/badge/DOI/(10\.\d{4,9}/zenodo\.\d+)'
 REGEXP_ZENODO_JSON_LD = r"<script[^>]*type=['\"]application/ld\+json['\"][^>]*>(.*?)</script>"
 
+# Zenodo DOI as input accepts 10.5281/zenodo.X, https://doi.org/10.5281/zenodo.X
+# and https://zenodo.org/records/X (or /record/X). Capture group = record id.
+REGEXP_ZENODO_RECORD_ID = r'(?:10\.5281/zenodo\.|zenodo\.org/records?/)(\d+)'
+REGEXP_ZENODO_REPOSITORY_PATTERN = (
+    r'(https?://(?:github\.com|gitlab\.com|codeberg\.org|bitbucket\.org)/[^/\s]+/[^/\s#?]+)'
+    r'(?:/(?:-/)?tree/([^/\s#?]+))?'
+)
 # Detect copyright information in license files. 
 REGEXP_COPYRIGHT = r"copyright\s*(?:\(c\)|©|\(C\))?\s*\{?(\d{4}(?:-\d{4})?)\}?\s*\{?([^\n}]+)\}?"
 
@@ -140,6 +149,7 @@ LICENSES_DICT = {
     "BSD 3-Clause": {"regex": REGEXP_BSD3, "spdx_id": "BSD-3-Clause"},
     "Boost Software License 1.0": {"regex": REGEXP_BOOST, "spdx_id": "BSL-1.0"},
     "Creative Commons Zero v1.0": {"regex": REGEXP_CC0, "spdx_id": "CC0-1.0"},
+    "Creative Commons Attribution 4.0 International": {"regex": REGEXP_CCBY4, "spdx_id": "CC-BY-4.0"},
     "Eclipse Public License 2.0": {"regex": REGEXP_EPL2, "spdx_id": "EPL-2.0"},
     "GNU Affero General Public License v3.0": {"regex": REGEXP_AGPL3, "spdx_id": "AGPL-3.0"},
     "GNU General Public License v2": {"regex": REGEXP_GPL2, "spdx_id": "GPL-2.0"},
@@ -356,6 +366,7 @@ TECHNIQUE_GITHUB_API = "GitHub_API"
 TECHNIQUE_GITLAB_API = "GitLab_API"
 TECHNIQUE_CODEBERG_API = "Codeberg_API"
 TECHNIQUE_BITBUCKET_API = "Bitbucket_API"
+TECHNIQUE_ZENODO_API = "Zenodo_API"
 TECHNIQUE_HEURISTICS = "software_type_heuristics"
 
 # GitHub properties
@@ -747,7 +758,7 @@ OS_EXTRACTION_CATEGORIES = {
 
 # Enrichment 
 OPENALEX_BASE = "https://api.openalex.org"
-OPENAIRE_BASE = "https://api.openaire.eu"
+OPENAIRE_BASE = "https://api.openaire.eu/graph/v4"
 OPENAIRE_EXPLORE = "https://explore.openaire.eu"
 OPENAIRE_NAMESPACE = "http://namespace.openaire.eu/oaf"
 REGEXP_DOI_IN_URL = r'(10\.\d{4,9}/[-._;()/:A-Za-z0-9]+)'
@@ -792,3 +803,56 @@ FEATURES_HEADER_KEYWORDS = [
     "features", "core features", "main features", "key features",
     "highlights", "capabilities", "functionalities", "functionality",
 ]
+
+# Dcitionary used by rapidfuzz when a header token has no synsets (ej typo: "Instalation" = CAT_INSTALLATION).
+# Same keywords as the wordnet and synsets in header_analysis.
+
+HEADER_VOCABULARY = {
+    # citation
+    "citation": CAT_CITATION, "citations": CAT_CITATION,
+    "reference": CAT_CITATION, "references": CAT_CITATION,
+    # acknowledgement
+    "acknowledgement": CAT_ACKNOWLEDGEMENT, "acknowledgements": CAT_ACKNOWLEDGEMENT,
+    "acknowledgment": CAT_ACKNOWLEDGEMENT, "acknowledgments": CAT_ACKNOWLEDGEMENT,
+    # run
+    "execute": CAT_RUN,
+    # installation
+    "installation": CAT_INSTALLATION, "install": CAT_INSTALLATION,
+    "setup": CAT_INSTALLATION, "preparation": CAT_INSTALLATION,
+    "prepare": CAT_INSTALLATION, "manual": CAT_INSTALLATION,
+    "guide": CAT_INSTALLATION,
+    # download
+    "download": CAT_DOWNLOAD,
+    # requirements
+    "requirement": CAT_REQUIREMENTS, "requirements": CAT_REQUIREMENTS,
+    "prerequisite": CAT_REQUIREMENTS, "prerequisites": CAT_REQUIREMENTS,
+    "dependency": CAT_REQUIREMENTS, "dependencies": CAT_REQUIREMENTS,
+    # contact
+    "contact": CAT_CONTACT,
+    # description
+    "description": CAT_DESCRIPTION, "introduction": CAT_DESCRIPTION,
+    "basics": CAT_DESCRIPTION, "summary": CAT_DESCRIPTION,
+    # contributors / contributing
+    "contributor": CAT_CONTRIBUTORS, "contributors": CAT_CONTRIBUTORS,
+    "contributing": CAT_CONTRIBUTING_GUIDELINES,
+    # documentation
+    "documentation": CAT_DOCUMENTATION,
+    # license
+    "license": CAT_LICENSE, "licence": CAT_LICENSE,
+    # usage
+    "usage": CAT_USAGE, "example": CAT_USAGE, "examples": CAT_USAGE,
+    "tutorial": CAT_USAGE, "tutorials": CAT_USAGE, "started": CAT_USAGE,
+    # faq
+    "errors": CAT_FAQ, "problems": CAT_FAQ,
+    # features
+    "feature": CAT_FEATURES, "features": CAT_FEATURES,
+    # support
+    "support": CAT_SUPPORT, "report": CAT_SUPPORT,
+    # funding
+    "funding": CAT_FUNDING,
+}
+
+# provider DOI
+DATACITE_API_BASE = "https://api.datacite.org"
+PROP_PROVIDER = "provider"
+SWH_PROVIDER_NAME = "Software Heritage"

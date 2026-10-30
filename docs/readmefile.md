@@ -30,7 +30,7 @@ Unlike others files formats (pom, cargo, cabal...), README documents do not foll
 | repository_status                       |     repository_status[i].result.value      |  badges with Project status **(12)**  |
 | requirements                     |     requirements[i].result.value      |  headers with requirement, prerequisite, dependency, dependent      |
 | support                       |     support[i].result.value      |  headers with support, help, report   |
-| support_channels               |     support_channels[i].result.value      |  extract information of gitter, reddit and discord in badges and text  **(13)**  |
+| support_channels               |     support_channels[i].result.value      |  extract information of gitter, reddit, slack and discord in badges and text  **(13)**  |
 | usage                       |     usage[i].result.value      |  headers with usage, example, implement, implementation, demo, tutorial, start, started      |
 
 
@@ -152,6 +152,7 @@ f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse
 [![Gitter chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/myproject/community)
 [Reddit](https://www.reddit.com/r/myproject)
 [Discord](https://discord.com/invite/xyz789)
+[Slack](https://join.slack.com/t/myteam/shared-invite/xyz789)
 ```
 - Result:
 ```
@@ -160,6 +161,8 @@ f"https://raw.githubusercontent.com/{owner}/{repo_name}/{repo_ref}/{urllib.parse
 "value": "https://www.reddit.com/r/myproject"
 .....
 "value": "https://discord.com/invite/xyz789"
+.....
+"value": "https://join.slack.com/t/myteam/shared-invite/xyz789"
 ```
 
 **(14)** 
