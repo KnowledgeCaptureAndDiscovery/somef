@@ -14,6 +14,7 @@ Scripts/*
 !**/composer.json
 !**/package.json
 !**/bower.json
+!**/.zenodo.json
 *.ttl
 !**/test_data/repositories/ecfo/ontology.ttl
 env_3.9/*
