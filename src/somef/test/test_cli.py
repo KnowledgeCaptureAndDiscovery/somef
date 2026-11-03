@@ -3,7 +3,9 @@ import os
 import unittest
 import validators
 from pathlib import Path
+from unittest.mock import patch
 from .. import somef_cli
+from .. import process_repository
 from ..utils import constants
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
@@ -519,13 +521,18 @@ class TestCli(unittest.TestCase):
         os.remove(test_data_path + "test-314-3.json")
 
     @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
+    @patch.object(constants, "RATE_LIMIT_MAX_RETRIES", 0) # no waiting in tests: skip instead
     def test_gitlab(self):
         """Checks if SOMEF works against Gitlab. Full analysis"""
-        somef_cli.run_cli(threshold=0.8,
-                          repo_url="https://gitlab.com/jleblay/tokei",
-                          output=test_data_path + "test-314-2.json",
-                          pretty=True,
-                          readme_only=False)
+        try:
+            somef_cli.run_cli(threshold=0.8,
+                              repo_url="https://gitlab.com/jleblay/tokei",
+                              output=test_data_path + "test-314-2.json",
+                              pretty=True,
+                              readme_only=False)
+        except process_repository.RateLimitExceeded as e:
+            self.skipTest(f"GitLab rate limit exceeded, cannot verify against the live service: {e}")
+
         text_file = open(test_data_path + "test-314-2.json", "r")
         data = text_file.read()
         text_file.close()

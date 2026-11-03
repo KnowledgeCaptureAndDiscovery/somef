@@ -2,6 +2,7 @@ import json
 import os
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 from .. import somef_cli
 from ..utils import constants
 
@@ -587,7 +588,6 @@ class TestJSONExport(unittest.TestCase):
         os.remove(test_data_path + "test_somef_unify.json")
 
     
-
     def test_new_properties_citation_issue_935(self):
         """
         Checks that duplicated requirement entries extracted by different techniques
@@ -654,10 +654,29 @@ class TestJSONExport(unittest.TestCase):
 
 
     @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
-    def test_issue_gitlab_enrich_authors(self):
+    @patch("somef.parser.codeowners_parser.enrich_user")
+    def test_issue_gitlab_enrich_authors(self, mock_enrich_user):
         """Tests if a gitlab repository with codeowners file gets enriched with the information of the users in the codeowners file.
         This test is skipped in CI because it requires real requests to GitLab API and we want to avoid hitting the rate limit.
+        The repository is downloaded from GitLab, but the user lookups (one request per codeowner)
+        are mocked to avoid hitting the users API rate limit.
         """
+        fake_users = {
+            "dbeyer": {
+                constants.PROP_CODEOWNERS_NAME: "Dirk Beyer",
+                constants.PROP_CODEOWNERS_COMPANY: None,
+                constants.PROP_CODEOWNERS_EMAIL: "dirk.beyer@sosy-lab.org",
+            },
+            "FrNecas": {
+                constants.PROP_CODEOWNERS_NAME: "František Nečas",
+                constants.PROP_CODEOWNERS_COMPANY: None,
+                constants.PROP_CODEOWNERS_EMAIL: None,
+            },
+        }
+
+        mock_enrich_user.side_effect = lambda username, *args, **kwargs: fake_users.get(username)
+
+
         output_file = test_data_path + "test-gitlab-reconcile.json"
 
         somef_cli.run_cli(threshold=0.8,

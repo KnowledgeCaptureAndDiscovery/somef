@@ -48,6 +48,28 @@ def is_gitlab(gitlab_server):
         pass
     return False
 
+
+class RateLimitExceeded(Exception):
+    """Raised when a repository API keeps answering HTTP 429 after all retries."""
+
+def _retry_after_seconds(response, default):
+    """
+    Seconds to wait after an HTTP 429. Uses Retry-After when present. Returns None when
+    the server asks for more than RATE_LIMIT_MAX_WAIT_SECONDS (e.g. an hourly quota),
+    because waiting would not help.
+    """
+    header = response.headers.get("Retry-After")
+    if header is not None:
+        try:
+            wait = float(header)
+        except (TypeError, ValueError):
+            wait = default
+        if wait > constants.RATE_LIMIT_MAX_WAIT_SECONDS:
+            return None
+        return max(1, wait)
+    return max(1, min(default, constants.RATE_LIMIT_MAX_WAIT_SECONDS))
+
+
 # the same as requests.get(args).json(), but protects against rate limiting
 def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=None, **kwargs):
 # def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, **kwargs):
@@ -100,6 +122,8 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=None,
             logging.warning(f"HEAD/stream request failed: {e}. Continuing with GET...")
 
     rate_limited = True
+    retries_429 = 0
+    wait_429 = constants.RATE_LIMIT_DEFAULT_WAIT_SECONDS
     date = ""
     response = {}
     while rate_limited:
@@ -115,7 +139,16 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=None,
             raise Exception("Invalid token. Run `somef configure` to set a valid token.") 
         if response.status_code == 403: 
             raise Exception("Token lacks required permissions or scopes.")
-        
+        # HTTP 429 (e.g. GitLab answers with plain text, not JSON, and sometimes no rate limit headers)
+        if response.status_code == 429:
+            wait = _retry_after_seconds(response, wait_429)
+            if wait is None or retries_429 >= constants.RATE_LIMIT_MAX_RETRIES:
+                raise RateLimitExceeded(f"Rate limit exceeded: {url}")
+            retries_429 += 1
+            wait_429 *= 2
+            logging.warning(f"HTTP 429 for {url}. Waiting {wait} seconds (retry {retries_429}/{constants.RATE_LIMIT_MAX_RETRIES})")
+            time.sleep(wait)
+            continue
         date = response.headers.get("Date", "")
         # Show rate limit information if available
         rate_limit_remaining = response.headers.get("X-RateLimit-Remaining") or response.headers.get("RateLimit-Remaining")
