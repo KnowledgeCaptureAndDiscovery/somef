@@ -1,9 +1,11 @@
 import json
 import os
 import unittest
+import requests
 from pathlib import Path
 from unittest.mock import patch
 from .. import somef_cli
+from .. import process_repository
 from ..utils import constants
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
@@ -441,8 +443,8 @@ class TestJSONExport(unittest.TestCase):
 
     def test_issue_859(self):
         """Checks whether a repository without content works fine. Must have just some results from the API."""
-
-        somef_cli.run_cli(threshold=0.8,
+        try:
+            somef_cli.run_cli(threshold=0.8,
                         ignore_classifiers=False,
                         repo_url="https://github.com/shiningZZ/GU-CAFF",
                         local_repo=None,
@@ -455,6 +457,11 @@ class TestJSONExport(unittest.TestCase):
                         pretty=True,
                         missing=False,
                         readme_only=False)
+        except requests.exceptions.ConnectionError:
+            raise unittest.SkipTest("GitHub connection error (likely no token configured). "
+                            "Run `somef configure` to set a GitHub token.")
+        except process_repository.InsufficientTokenPermissions:
+            raise unittest.SkipTest("Insufficient token permissions. Run `somef configure` (without -a) to set a token with proper scopes.")
         
         with open(test_data_path + "test-859.json", "r") as text_file: 
             json_content = json.load(text_file)

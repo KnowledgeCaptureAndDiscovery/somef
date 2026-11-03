@@ -52,6 +52,9 @@ def is_gitlab(gitlab_server):
 class RateLimitExceeded(Exception):
     """Raised when a repository API keeps answering HTTP 429 after all retries."""
 
+class InsufficientTokenPermissions(Exception):
+    """Raised when a token lacks required permissions or scopes."""
+    
 def _retry_after_seconds(response, default):
     """
     Seconds to wait after an HTTP 429. Uses Retry-After when present. Returns None when
@@ -138,7 +141,7 @@ def rate_limit_get(*args, backoff_rate=2, initial_backoff=1, size_limit_mb=None,
         if response.status_code == 401: 
             raise Exception("Invalid token. Run `somef configure` to set a valid token.") 
         if response.status_code == 403: 
-            raise Exception("Token lacks required permissions or scopes.")
+            raise InsufficientTokenPermissions("Token lacks required permissions or scopes.")
         # HTTP 429 (e.g. GitLab answers with plain text, not JSON, and sometimes no rate limit headers)
         if response.status_code == 429:
             wait = _retry_after_seconds(response, wait_429)
