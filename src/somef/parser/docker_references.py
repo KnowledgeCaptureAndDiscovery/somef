@@ -1,19 +1,8 @@
 import logging
 import re
 import shlex
-
 from ..process_results import Result
 from ..utils import constants
-from .mardown_parser import extract_bash
-
-
-def _code_block_body(block):
-    """Strip the ''' and the language line from a fenced markdown code block."""
-
-    body = block[3:-3]
-    first_nl = body.find("\n")
-    return body[first_nl + 1:] if first_nl != -1 else body
-
 
 def _split_docker_reference(ref):
     """Split a docker image reference into its components."""
@@ -62,32 +51,40 @@ def detect_docker_commands(readme_unfiltered_text):
     The result is an intermediate structure, independent of the output format.
     """
     found = []
-    _, bashes = extract_bash(readme_unfiltered_text)
-    for block in bashes.values():
-        body = re.sub(constants.REGEXP_LINE_CONTINUATION, " ", _code_block_body(block))
-        for line in body.splitlines():
-            m = re.match(constants.REGEXP_DOCKER_CLI_CMD, line, re.IGNORECASE)
-            if not m:
-                continue
-            sub = m.group("sub").lower()
-            raw = " ".join(m.group("cmd").split())
-            try:
-                tokens = shlex.split(m.group("cmd"))[2:]
-            except ValueError:
-                continue
-            ref = _find_docker_image_token(sub, tokens)
-            if not ref or not re.match(constants.REGEXP_DOCKER_CLI_IMAGE_REF, ref, re.IGNORECASE):
-                continue
-            name, tag, registry, digest = _split_docker_reference(ref)
-            found.append({
-                "subcommand": sub,
-                "raw_command": raw,
-                "reference": ref,
-                "name": name,
-                "tag": tag,
-                "registry": registry,
-                "digest": digest,
-            })
+    seen = set()
+    # Join multi-line commands (trailing backslash) and scan every line,
+    # not only fenced blocks: many READMEs use 4-space indented code blocks.
+    text = re.sub(constants.REGEXP_LINE_CONTINUATION, " ", readme_unfiltered_text)
+    for line in text.splitlines():
+        m = re.match(constants.REGEXP_DOCKER_CLI_CMD, line, re.IGNORECASE)
+        if not m:
+            continue
+        sub = m.group("sub").lower()
+        raw = " ".join(m.group("cmd").split())
+        if raw in seen:
+            continue
+        try:
+            tokens = shlex.split(m.group("cmd"))[2:]
+        except ValueError:
+            continue
+        ref = _find_docker_image_token(sub, tokens)
+        if not ref or not re.match(constants.REGEXP_DOCKER_CLI_IMAGE_REF, ref, re.IGNORECASE):
+            continue
+        # Skip template commands (e.g. "docker run -it [container name]") whose
+        # candidate image is a bare word: no namespace, no tag.
+        if any(c in m.group("cmd") for c in "[<{$") and "/" not in ref and ":" not in ref:
+            continue
+        seen.add(raw)
+        name, tag, registry, digest = _split_docker_reference(ref)
+        found.append({
+            "subcommand": sub,
+            "raw_command": raw,
+            "reference": ref,
+            "name": name,
+            "tag": tag,
+            "registry": registry,
+            "digest": digest,
+        })
     return found
 
 

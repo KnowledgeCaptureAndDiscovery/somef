@@ -48,6 +48,7 @@ We recognize the following properties:
 - **Code of conduct**: Link to the code of conduct of the project
 - **Code repository**: Link to the GitHub/GitLab/Codeberg/Bitbucket repository used for the extraction
 - **Contact**: Contact person responsible for maintaining a software component
+- **Container**: Docker image reference(s) used by the software (registry, image name and tag), together with the `docker run` / `docker build` commands found in the README. Metadata declared in Dockerfile `LABEL` instructions is also grouped under this category
 - **Continuous integration**: Link to continuous integration service(s)
 - **Contribution guidelines**: Text indicating how to contribute to this code repository
 - **Contributor**: Contributors to a software component. Note: Contributor metadata is exported from metadata files (e.g., CodeMeta, CONTRIBUTORS, etc.) not from git logs.

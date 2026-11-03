@@ -73,6 +73,7 @@ SOMEF aims to recognize the following categories (in alphabetical order):
 - `code_of_conduct`: Link to the code of conduct file of the project
 - `code_repository`: Link to the source code (typically the repository where the readme can be found)
 - `contact`: Contact person responsible for maintaining a software component.
+- `container`: Docker image reference(s) used by the software (registry, image name and tag), together with the `docker run` / `docker build` commands found in the README. Metadata declared in Dockerfile `LABEL` instructions is also grouped under this category.
 - `continuous_integration`: Link to continuous integration service, supported on GitHub as well as in GitLab, Codeberg and Bitbucket.
 - `contributing guidelines`: Guidelines indicating how to contribute to a software component.
 - `contributor`: Contributors to this software. Note: Contributor metadata is exported from metadata files (e.g., CodeMeta, CONTRIBUTORS, etc.) not from git logs.
