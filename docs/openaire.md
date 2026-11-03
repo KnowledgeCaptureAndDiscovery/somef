@@ -1,4 +1,4 @@
-# OpenAIRE and Zenodo API Mapping
+# OpenAIRE, Zenodo, DataCite and Software Heritage API Mapping
 
 When the enrichment flag (`-e` / `--enrichment`) is enabled, SOMEF integrates with the **OpenAIRE** and **Zenodo** APIs to fetch project context, funding background, and ecosystem identifiers.
 
@@ -13,11 +13,14 @@ These fields are injected into the **Funding** category when a matching grant or
 | `project_acronym` | `acronym` | The official acronym of the project. |
 | `grant_id` | `callidentifier` | Unique identifier for the specific call or grant agreement. |
 
-## Identifier Enrichment (OpenAIRE & Zenodo)
+## Identifier Enrichment (OpenAIRE, Zenodo, DataCite & Software Heritage)
 
-When processing repository identifiers or DOIs found in citations, SOMEF resolves them against OpenAIRE to construct an explore landing page link. Additionally, if the DOI belongs to Zenodo, SOMEF queries the Zenodo API to extract its corresponding Software Heritage identifier (`swhid`).
+When processing repository identifiers or DOIs found in citations, SOMEF resolves them against OpenAIRE to construct an explore landing page link. Additionally, if the DOI belongs to Zenodo, SOMEF queries the Zenodo API to extract its corresponding Software Heritage identifier (`swhid`). For identifier entries, SOMEF may also add a `provider` property.
 
 | SOMEF Property | Source API / Function | Description |
 | :--- | :--- | :--- |
 | `openaire_id` | `get_openaire_id(doi)` | Direct link to the OpenAIRE explore page dedicated to this artifact. |
 | `swhid` | `get_zenodo_swhid(doi)` | The Software Heritage Identifier (SWHID) associated with a Zenodo record. |
+| `provider` | `get_doi_provider(doi)` / SWH detection | Name of the identifier provider. |
+
+**Note:** For Software Heritage identifiers, `provider` is set to `Software Heritage`. For DOIs registered with DataCite, `provider` is set to the DataCite provider name (e.g., `CERN - European Organization for Nuclear Research`).

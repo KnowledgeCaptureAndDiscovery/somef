@@ -1,0 +1,35 @@
+{
+  "title": "Zenodo Test Software",
+  "description": "<p>Software to test the <b>zenodo</b> parser.</p>",
+  "version": "1.2.3",
+  "publication_date": "2024-05-17",
+  "upload_type": "software",
+  "access_right": "open",
+  "keywords": ["metadata", "research software", "zenodo"],
+  "license": {"id": "apache-2.0"},
+  "creators": [
+    {
+      "name": "Garijo, Daniel",
+      "affiliation": "Universidad Politécnica de Madrid",
+      "orcid": "0000-0003-0454-7145"
+    },
+    {
+      "name": "Maintainer Without Comma",
+      "orcid": "https://orcid.org/0000-0001-2345-6789"
+    },
+    {
+      "name": "Only Name"
+    }
+  ],
+  "contributors": [
+    {
+      "type": "Editor",
+      "name": "Doe, Jane",
+      "affiliation": "Example University"
+    },
+    {
+      "type": "Other",
+      "name": "Contributor Without Comma"
+    }
+  ]
+}

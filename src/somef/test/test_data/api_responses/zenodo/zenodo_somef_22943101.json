@@ -1,0 +1,168 @@
+{
+    "created": "2026-09-24T16:32:58.315386+00:00",
+    "modified": "2026-09-24T16:32:58.501010+00:00",
+    "id": 22943101,
+    "conceptrecid": "3477929",
+    "doi": "10.5281/zenodo.22943101",
+    "conceptdoi": "10.5281/zenodo.3477929",
+    "doi_url": "https://doi.org/10.5281/zenodo.22943101",
+    "metadata": {
+        "title": "SOMEF: Software metadata extraction framework",
+        "doi": "10.5281/zenodo.22943101",
+        "publication_date": "2026-09-24",
+        "description": "<p>This release includes minor bug fixes when detecting bibliographic metadata, duplicate headers, and extraction of requirements aligned with CodeMeta. It also attempts to extract a feature list from tools (supported by schema.org).</p>\n<p>Security issues are also updates.</p>\n<h2>What's Changed</h2>\n<ul>\n<li>new Features - featureList category. Fix duplicate headers. Fixes #303, Fixes #1096 by @juanjemdIos in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1098</li>\n<li>checked test with ntlk 3.10.3 by @juanjemdIos in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1099</li>\n<li>Bump click from 8.4.2 to 8.5.0 by @dependabot[bot] in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1101</li>\n<li>wrong name in referencePublication. Fixes #1102 by @juanjemdIos in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1106</li>\n<li>Small fix for reference publication title extraction by @dgarijo in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1107</li>\n<li>improve requirements codemeta by @juanjemdIos in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1109</li>\n<li>Bump lxml from 6.1.2 to 6.1.3 by @dependabot[bot] in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1112</li>\n<li>improve credit text. AVoid dup results. Better enrichment. Fixes #1105 by @juanjemdIos in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1113</li>\n<li>small instruction about nltk by @juanjemdIos in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1114</li>\n<li>better explanation about nltk by @juanjemdIos in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1116</li>\n<li>depedency resolver. Fixes #1104 by @juanjemdIos in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1117</li>\n<li>bad ubuntu extraction. Fixes #1103 by @juanjemdIos in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1118</li>\n<li>Bump matplotlib from 3.11.1 to 3.11.2 by @dependabot[bot] in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1119</li>\n<li>updated bibtexparser. Some changes required by @juanjemdIos in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1122</li>\n<li>Update master with changes for 0.11.4. by @juanjemdIos in https://github.com/KnowledgeCaptureAndDiscovery/somef/pull/1123</li>\n</ul>\n<p><strong>Full Changelog</strong>: https://github.com/KnowledgeCaptureAndDiscovery/somef/compare/0.11.3...0.11.4</p>",
+        "access_right": "open",
+        "creators": [
+            {
+                "name": "Garijo, Daniel",
+                "affiliation": null,
+                "orcid": "0000-0003-0454-7145"
+            },
+            {
+                "name": "Mao, Allen",
+                "affiliation": null
+            },
+            {
+                "name": "Dharmala, Haripriya",
+                "affiliation": null
+            },
+            {
+                "name": "Diwanji, Cedant",
+                "affiliation": null
+            },
+            {
+                "name": "Wang, Jiajing",
+                "affiliation": null
+            },
+            {
+                "name": "Kelley, Aidan",
+                "affiliation": null
+            },
+            {
+                "name": "Garc\u00eda, Miguel Angel",
+                "affiliation": null
+            },
+            {
+                "name": "Ciuciu-Kiss, Jenifer",
+                "affiliation": null
+            },
+            {
+                "name": "Mendoza, Juanje",
+                "affiliation": null
+            },
+            {
+                "name": "Vuillaume, Thomas",
+                "affiliation": null
+            },
+            {
+                "name": "El Hounsri, Anas",
+                "affiliation": null
+            }
+        ],
+        "related_identifiers": [
+            {
+                "identifier": "https://github.com/KnowledgeCaptureAndDiscovery/somef/tree/0.11.4",
+                "relation": "isSupplementTo",
+                "resource_type": "software",
+                "scheme": "url"
+            }
+        ],
+        "version": "0.11.4",
+        "custom": {
+            "code:codeRepository": "https://github.com/KnowledgeCaptureAndDiscovery/somef"
+        },
+        "resource_type": {
+            "title": "Software",
+            "type": "software"
+        },
+        "license": {
+            "id": "mit-license"
+        },
+        "communities": [
+            {
+                "id": "ontologyengineeringgroup"
+            }
+        ],
+        "relations": {
+            "version": [
+                {
+                    "index": 39,
+                    "is_last": true,
+                    "parent": {
+                        "pid_type": "recid",
+                        "pid_value": "3477929"
+                    }
+                }
+            ]
+        },
+        "notes": "If you use this software, please cite both the article from preferred-citation and the software itself."
+    },
+    "title": "SOMEF: Software metadata extraction framework",
+    "links": {
+        "self": "https://zenodo.org/api/records/22943101",
+        "self_html": "https://zenodo.org/records/22943101",
+        "preview_html": "https://zenodo.org/records/22943101?preview=1",
+        "doi": "https://doi.org/10.5281/zenodo.22943101",
+        "self_doi": "https://doi.org/10.5281/zenodo.22943101",
+        "self_doi_html": "https://zenodo.org/doi/10.5281/zenodo.22943101",
+        "reserve_doi": "https://zenodo.org/api/records/22943101/draft/pids/doi",
+        "parent": "https://zenodo.org/api/records/3477929",
+        "parent_html": "https://zenodo.org/records/3477929",
+        "parent_doi": "https://doi.org/10.5281/zenodo.3477929",
+        "parent_doi_html": "https://zenodo.org/doi/10.5281/zenodo.3477929",
+        "self_iiif_manifest": "https://zenodo.org/api/iiif/record:22943101/manifest",
+        "self_iiif_sequence": "https://zenodo.org/api/iiif/record:22943101/sequence/default",
+        "files": "https://zenodo.org/api/records/22943101/files",
+        "media_files": "https://zenodo.org/api/records/22943101/media-files",
+        "latest": "https://zenodo.org/api/records/22943101/versions/latest",
+        "latest_html": "https://zenodo.org/records/22943101/latest",
+        "versions": "https://zenodo.org/api/records/22943101/versions",
+        "draft": "https://zenodo.org/api/records/22943101/draft",
+        "access_links": "https://zenodo.org/api/records/22943101/access/links",
+        "access_grants": "https://zenodo.org/api/records/22943101/access/grants",
+        "access_users": "https://zenodo.org/api/records/22943101/access/users",
+        "access_request": "https://zenodo.org/api/records/22943101/access/request",
+        "access": "https://zenodo.org/api/records/22943101/access",
+        "communities": "https://zenodo.org/api/records/22943101/communities",
+        "communities-suggestions": "https://zenodo.org/api/records/22943101/communities-suggestions",
+        "request_deletion": "https://zenodo.org/api/records/22943101/request-deletion",
+        "file_modification": "https://zenodo.org/api/records/22943101/file-modification",
+        "quota_increase": "https://zenodo.org/api/records/22943101/quota-increase",
+        "requests": "https://zenodo.org/api/records/22943101/requests"
+    },
+    "updated": "2026-09-24T16:32:58.501010+00:00",
+    "recid": "22943101",
+    "revision": 4,
+    "files": [
+        {
+            "id": "e22611ea-b23f-41a2-b4dd-984c7fd0a030",
+            "key": "KnowledgeCaptureAndDiscovery/somef-0.11.4.zip",
+            "size": 44241572,
+            "checksum": "md5:328ded5ddf44bb0cfd474cdc075341d2",
+            "links": {
+                "self": "https://zenodo.org/api/records/22943101/files/KnowledgeCaptureAndDiscovery/somef-0.11.4.zip/content"
+            }
+        }
+    ],
+    "swh": {
+        "swhid": "swh:1:dir:06a82b785660f0a48cf241fb82afce7149e0238d;origin=https://doi.org/10.5281/zenodo.3477929;visit=swh:1:snp:f5dcc0495e0f24bf5f0e5df9dbbce9c86e3f2dff;anchor=swh:1:rel:710684aa95e99aaea2ec6e307599957aeac599c6;path=KnowledgeCaptureAndDiscovery-somef-83dc061"
+    },
+    "owners": [
+        {
+            "id": "18504"
+        }
+    ],
+    "status": "published",
+    "stats": {
+        "downloads": 1161,
+        "unique_downloads": 1141,
+        "views": 3834,
+        "unique_views": 3773,
+        "version_downloads": 12,
+        "version_unique_downloads": 12,
+        "version_unique_views": 96,
+        "version_views": 99
+    },
+    "state": "done",
+    "submitted": true
+}

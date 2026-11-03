@@ -14,6 +14,7 @@ nav:
       - GitLab: gitlab.md
       - Codeberg: codeberg.md
       - Bitbucket: bitbucket.md
+      - Zenodo: zenodo.md
   - Enrichment:
       - OpenAlex: openalex.md
       - OpenAIRE / Zenodo: openaire.md

@@ -112,6 +112,11 @@ def test():
     help="Github/Gitlab Repository URL",
 )
 @optgroup.option(
+    "--doi",
+    help="Zenodo DOI or record URL (e.g. https://doi.org/10.5281/zenodo.22943101, "
+         "10.5281/zenodo.22943101or https://zenodo.org/records/22943101)",
+)
+@optgroup.option(
     "--doc_src",
     "-d",
     type=click.Path(exists=True),

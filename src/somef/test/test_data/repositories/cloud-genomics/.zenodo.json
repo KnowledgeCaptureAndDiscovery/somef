@@ -1,0 +1,69 @@
+{
+  "contributors": [
+    {
+      "type": "Editor",
+      "name": "Amanda Charbonneau",
+      "orcid": "0000-0001-7376-7702"
+    },
+    {
+      "type": "Editor",
+      "name": "Wendy Wong",
+      "orcid": "0000-0001-9850-3797"
+    },
+    {
+      "type": "Editor",
+      "name": "Anuj Guruacharya"
+    }
+  ],
+  "creators": [
+    {
+      "name": "Amanda Charbonneau",
+      "orcid": "0000-0001-7376-7702"
+    },
+    {
+      "name": "Zohaib Anwar",
+      "orcid": "0000-0001-8236-485X"
+    },
+    {
+      "name": "Wendy Wong",
+      "orcid": "0000-0001-9850-3797"
+    },
+    {
+      "name": "Darya P Vanichkina",
+      "orcid": "0000-0002-0406-164X"
+    },
+    {
+      "name": "Amanda Tan"
+    },
+    {
+      "name": "Christina Koch",
+      "orcid": "0000-0001-8600-8158"
+    },
+    {
+      "name": "Dinindu Senanayake"
+    },
+    {
+      "name": "LHurst-UoB"
+    },
+    {
+      "name": "PeterNICD"
+    },
+    {
+      "name": "Venkat Rajeev Reddy Malipeddi"
+    },
+    {
+      "name": "Serah Njambi",
+      "orcid": "0000-0002-7834-1038"
+    },
+    {
+      "name": "brynnelliott"
+    },
+    {
+      "name": "Daniel Kerchner",
+      "orcid": "0000-0002-5921-2193"
+    }
+  ],
+  "license": {
+    "id": "CC-BY-4.0"
+  }
+}

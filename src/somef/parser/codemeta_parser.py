@@ -642,16 +642,22 @@ def parse_codemeta_json_file(file_path, metadata_result: Result, source):
                 )
 
             if "identifier" in data:
-                metadata_result.add_result(
-                    constants.CAT_IDENTIFIER,
-                    {
-                        "value": data["identifier"],
-                        "type": constants.STRING
-                    },
-                    1,
-                    constants.TECHNIQUE_CODE_CONFIG_PARSER,
-                    source
-                )
+                if isinstance(data["identifier"], list) :
+                    identifiers = data["identifier"]
+                else:
+                    identifiers = [data["identifier"]]
+
+                for identifier in identifiers:
+                    metadata_result.add_result(
+                        constants.CAT_IDENTIFIER,
+                        {
+                            "value": identifier,
+                            "type": constants.STRING
+                        },
+                        1,
+                        constants.TECHNIQUE_CODE_CONFIG_PARSER,
+                        source
+                    )
 
             if "readme" in data:
                 metadata_result.add_result(
