@@ -1356,3 +1356,15 @@ class TestIssue510LicenseFallback(unittest.TestCase):
         )
 
         self.assertEqual(mock_requests_get.call_count, 1)
+
+
+    @patch("somef.process_repository.time.sleep")
+    @patch("somef.process_repository.requests.get")
+    def test_get_project_id_retries_on_429(self, mock_get, mock_sleep):
+        def resp(code):
+            r = MagicMock(); r.status_code = code; r.headers = {}
+            r.content = b'{"project_id":42,"x":1}'; return r
+        mock_get.side_effect = [resp(429), resp(200)]
+        with patch("somef.process_repository.gitlab_header_template", return_value={}):
+            pid = process_repository.get_project_id("https://gitlab.com/api/v4/projects/a%2Fb", False)
+        self.assertEqual(pid, "42")
