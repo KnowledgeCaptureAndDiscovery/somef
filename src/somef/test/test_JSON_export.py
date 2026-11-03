@@ -1,8 +1,11 @@
 import json
 import os
 import unittest
+import requests
 from pathlib import Path
+from unittest.mock import patch
 from .. import somef_cli
+from .. import process_repository
 from ..utils import constants
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
@@ -440,8 +443,8 @@ class TestJSONExport(unittest.TestCase):
 
     def test_issue_859(self):
         """Checks whether a repository without content works fine. Must have just some results from the API."""
-
-        somef_cli.run_cli(threshold=0.8,
+        try:
+            somef_cli.run_cli(threshold=0.8,
                         ignore_classifiers=False,
                         repo_url="https://github.com/shiningZZ/GU-CAFF",
                         local_repo=None,
@@ -454,6 +457,11 @@ class TestJSONExport(unittest.TestCase):
                         pretty=True,
                         missing=False,
                         readme_only=False)
+        except requests.exceptions.ConnectionError:
+            raise unittest.SkipTest("GitHub connection error (likely no token configured). "
+                            "Run `somef configure` to set a GitHub token.")
+        except process_repository.InsufficientTokenPermissions:
+            raise unittest.SkipTest("Insufficient token permissions. Run `somef configure` (without -a) to set a token with proper scopes.")
         
         with open(test_data_path + "test-859.json", "r") as text_file: 
             json_content = json.load(text_file)
@@ -587,7 +595,6 @@ class TestJSONExport(unittest.TestCase):
         os.remove(test_data_path + "test_somef_unify.json")
 
     
-
     def test_new_properties_citation_issue_935(self):
         """
         Checks that duplicated requirement entries extracted by different techniques
@@ -654,10 +661,29 @@ class TestJSONExport(unittest.TestCase):
 
 
     @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
-    def test_issue_gitlab_enrich_authors(self):
+    @patch("somef.parser.codeowners_parser.enrich_user")
+    def test_issue_gitlab_enrich_authors(self, mock_enrich_user):
         """Tests if a gitlab repository with codeowners file gets enriched with the information of the users in the codeowners file.
         This test is skipped in CI because it requires real requests to GitLab API and we want to avoid hitting the rate limit.
+        The repository is downloaded from GitLab, but the user lookups (one request per codeowner)
+        are mocked to avoid hitting the users API rate limit.
         """
+        fake_users = {
+            "dbeyer": {
+                constants.PROP_CODEOWNERS_NAME: "Dirk Beyer",
+                constants.PROP_CODEOWNERS_COMPANY: None,
+                constants.PROP_CODEOWNERS_EMAIL: "dirk.beyer@sosy-lab.org",
+            },
+            "FrNecas": {
+                constants.PROP_CODEOWNERS_NAME: "František Nečas",
+                constants.PROP_CODEOWNERS_COMPANY: None,
+                constants.PROP_CODEOWNERS_EMAIL: None,
+            },
+        }
+
+        mock_enrich_user.side_effect = lambda username, *args, **kwargs: fake_users.get(username)
+
+
         output_file = test_data_path + "test-gitlab-reconcile.json"
 
         somef_cli.run_cli(threshold=0.8,
