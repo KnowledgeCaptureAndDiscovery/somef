@@ -87,9 +87,12 @@ class TestProcessRepository(unittest.TestCase):
     @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
     def test_issue_no_readme(self):
         """Test designed to check if repositories with no readme are detected"""
-        github_data, owner, repo, def_br, project_path = process_repository.load_online_repository_metadata(Result(),
-            "https://github.com/oeg-upm/OpenRefineExtension_Transformation")
-        assert constants.CAT_CODE_REPOSITORY in github_data.results.keys()
+        try:
+            github_data, owner, repo, def_br, project_path = process_repository.load_online_repository_metadata(Result(),
+                "https://github.com/oeg-upm/OpenRefineExtension_Transformation")
+            assert constants.CAT_CODE_REPOSITORY in github_data.results.keys()
+        except process_repository.InsufficientTokenPermissions:
+            raise unittest.SkipTest("Insufficient token permissions. Run `somef configure` (without -a) to set a token with proper scopes.")
 
     def test_issue_268(self):
         """Test designed to check if license is properly captured"""
@@ -136,26 +139,36 @@ class TestProcessRepository(unittest.TestCase):
     @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
     def test_no_repository_metadata(self):
         """Test designed to assess repositories with no releases"""
-        github_data, owner, repo_name, default_branch, project_path = process_repository.load_online_repository_metadata(Result(),
-            "https://github.com/oeg-upm/delta-ontology")
-        assert constants.CAT_RELEASES not in github_data.results.keys()
+        try:
+            github_data, owner, repo_name, default_branch, project_path = process_repository.load_online_repository_metadata(Result(),
+                "https://github.com/oeg-upm/delta-ontology")
+            assert constants.CAT_RELEASES not in github_data.results.keys()
+        except process_repository.InsufficientTokenPermissions:
+            raise unittest.SkipTest("Insufficient token permissions. Run `somef configure` (without -a) to set a token with proper scopes.")
 
     @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
     def test_issue_284_issue_272(self):
         """Test designed to check if there are errors detecting title or stargazers"""
-        github_data, owner, repo_name, default_br, project_path = process_repository.\
-            load_online_repository_metadata(Result(), "https://github.com/3b1b/manim")
-        
-        result_keys = github_data.results.keys()
-        assert ((constants.CAT_STARS in result_keys) and (constants.CAT_FULL_TITLE not in result_keys))
+        try:
+            github_data, owner, repo_name, default_br, project_path = process_repository.\
+                load_online_repository_metadata(Result(), "https://github.com/3b1b/manim")
+            
+            result_keys = github_data.results.keys()
+            assert ((constants.CAT_STARS in result_keys) and (constants.CAT_FULL_TITLE not in result_keys))
+        except process_repository.InsufficientTokenPermissions:
+            raise unittest.SkipTest("Insufficient token permissions. Run `somef configure` (without -a) to set a token with proper scopes.")
 
     @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI because it is already verified locally")
     def test_feature_462(self):
         """Test designed to process a repo and keep the results in disk"""
         with tempfile.TemporaryDirectory() as tmp_folder:
-            somef_cli.cli_get_data(0.8, ignore_classifiers=False,
+            try:
+                somef_cli.cli_get_data(0.8, ignore_classifiers=False,
                                    repo_url="https://github.com/KnowledgeCaptureAndDiscovery/OBA_sparql/",
                                    keep_tmp=tmp_folder)
+            except process_repository.InsufficientTokenPermissions:
+                raise unittest.SkipTest("Insufficient token permissions. Run `somef configure` (without -a) to set a token with proper scopes.")
+            
             assert os.path.isfile(tmp_folder+"/KnowledgeCaptureAndDiscovery_OBA_sparql.zip")
 
     def test_feature_477(self):
@@ -246,19 +259,22 @@ class TestProcessRepository(unittest.TestCase):
         The test ensures Somef can handle the repo and produces a JSON output.
         """
 
-        somef_cli.run_cli(threshold=0.8,
-                        ignore_classifiers=False,
-                        repo_url="https://github.com/Balaje/iceFem",
-                        local_repo=None,
-                        doc_src=None,
-                        in_file=None,
-                        output=test_data_path + "test-909.json",
-                        graph_out=None,
-                        graph_format="turtle",
-                        codemeta_out= None,
-                        pretty=True,
-                        missing=False,
-                        readme_only=False)
+        try:
+            somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url="https://github.com/Balaje/iceFem",
+                            local_repo=None,
+                            doc_src=None,
+                            in_file=None,
+                            output=test_data_path + "test-909.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out= None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False)
+        except process_repository.InsufficientTokenPermissions:
+            raise unittest.SkipTest("Insufficient token permissions. Run `somef configure` (without -a) to set a token with proper scopes.")
         
         with open(test_data_path + "test-909.json", "r") as text_file: 
             json_content = json.load(text_file)
@@ -278,20 +294,23 @@ class TestProcessRepository(unittest.TestCase):
         """
         
         # pom_xml_parser.processed_pom = False  
-        somef_cli.run_cli(threshold=0.8,
-                        ignore_classifiers=False,
-                        repo_url="https://github.com/dgarijo/Widoco/",
-                        local_repo=None,
-                        doc_src=None,
-                        in_file=None,
-                        output=test_data_path + "test_905_branch.json",
-                        graph_out=None,
-                        graph_format="turtle",
-                        codemeta_out= None,
-                        pretty=True,
-                        missing=False,
-                        readme_only=False,
-                        branch="develop")
+        try:
+            somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url="https://github.com/dgarijo/Widoco/",
+                            local_repo=None,
+                            doc_src=None,
+                            in_file=None,
+                            output=test_data_path + "test_905_branch.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out= None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False,
+                            branch="develop")
+        except process_repository.InsufficientTokenPermissions:
+            raise unittest.SkipTest("Insufficient token permissions. Run `somef configure` (without -a) to set a token with proper scopes.")
         
         with open(test_data_path + "test_905_branch.json", "r") as text_file: 
             json_content = json.load(text_file)
@@ -314,21 +333,24 @@ class TestProcessRepository(unittest.TestCase):
         """
         # pom_xml_parser.processed_pom = False    
 
-        somef_cli.run_cli(threshold=0.8,
-                        ignore_classifiers=False,
-                        repo_url="https://github.com/dgarijo/Widoco/",
-                        local_repo=None,
-                        doc_src=None,
-                        in_file=None,
-                        output=test_data_path + "test_905_tag.json",
-                        graph_out=None,
-                        graph_format="turtle",
-                        codemeta_out= None,
-                        pretty=True,
-                        missing=False,
-                        readme_only=False,
-                        tag='v1.4.25')
-        
+        try:
+            somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url="https://github.com/dgarijo/Widoco/",
+                            local_repo=None,
+                            doc_src=None,
+                            in_file=None,
+                            output=test_data_path + "test_905_tag.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out= None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False,
+                            tag='v1.4.25')
+        except process_repository.InsufficientTokenPermissions:
+                raise unittest.SkipTest("Insufficient token permissions. Run `somef configure` (without -a) to set a token with proper scopes.")
+
         with open(test_data_path + "test_905_tag.json", "r") as text_file: 
             json_content = json.load(text_file)
 
@@ -345,20 +367,23 @@ class TestProcessRepository(unittest.TestCase):
     def test_issue_905_commit(self):
         commit_sha = "f567b46b593123e22db5880b4f7fd97c9fe9c94b"
 
-        somef_cli.run_cli(threshold=0.8,
-                        ignore_classifiers=False,
-                        repo_url="https://github.com/dgarijo/Widoco/",
-                        local_repo=None,
-                        doc_src=None,
-                        in_file=None,
-                        output=test_data_path + "test_905_commit.json",
-                        graph_out=None,
-                        graph_format="turtle",
-                        codemeta_out=None,
-                        pretty=True,
-                        missing=False,
-                        readme_only=False,
-                        commit=commit_sha)
+        try:
+            somef_cli.run_cli(threshold=0.8,
+                            ignore_classifiers=False,
+                            repo_url="https://github.com/dgarijo/Widoco/",
+                            local_repo=None,
+                            doc_src=None,
+                            in_file=None,
+                            output=test_data_path + "test_905_commit.json",
+                            graph_out=None,
+                            graph_format="turtle",
+                            codemeta_out=None,
+                            pretty=True,
+                            missing=False,
+                            readme_only=False,
+                            commit=commit_sha)
+        except process_repository.InsufficientTokenPermissions:
+            raise unittest.SkipTest("Insufficient token permissions. Run `somef configure` (without -a) to set a token with proper scopes.")
 
         with open(test_data_path + "test_905_commit.json", "r") as text_file:
             json_content = json.load(text_file)

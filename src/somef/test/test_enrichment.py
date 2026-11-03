@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch, Mock
 from pathlib import Path
 from .. import somef_cli
+from .. import process_repository
 from ..utils import constants
 from ..utils import enrichment
 from ..utils.enrichment import run_enrichment
@@ -18,12 +19,16 @@ class TestEnrichment(unittest.TestCase):
         """Tests that --enrich adds openalex_id, openaire_id, swhid,
         orcid identifier and funding project properties to the output."""
 
-        somef_cli.run_cli(threshold=0.8,
-                          repo_url="https://github.com/oeg-upm/rsfc",
-                          output=test_data_path + "test-enrich.json",
-                          enrich=True,
-                          pretty=True)
-
+        try:
+            somef_cli.run_cli(threshold=0.8,
+                            repo_url="https://github.com/oeg-upm/rsfc",
+                            output=test_data_path + "test-enrich.json",
+                            enrich=True,
+                            pretty=True)
+        except process_repository.InsufficientTokenPermissions as e:
+            raise unittest.SkipTest(f"Token lacks permissions: {e}. "
+                            "Run `somef configure` (without -a) to set a token with proper scopes.")
+        
         with open(test_data_path + "test-enrich.json") as f:
             data = json.load(f)
 
@@ -78,12 +83,16 @@ class TestEnrichment(unittest.TestCase):
 
         output_file = test_data_path + "test-enrich-fair-ontologies.json"
 
-        somef_cli.run_cli(threshold=0.8,
-                          repo_url="https://github.com/oeg-upm/fair_ontologies",
-                          output=output_file,
-                          enrich=True,
-                          pretty=True)
-
+        try:
+            somef_cli.run_cli(threshold=0.8,
+                            repo_url="https://github.com/oeg-upm/fair_ontologies",
+                            output=output_file,
+                            enrich=True,
+                            pretty=True)
+        except process_repository.InsufficientTokenPermissions as e:
+            raise unittest.SkipTest(f"Token lacks permissions: {e}. "
+                            "Run `somef configure` (without -a) to set a token with proper scopes.")
+        
         with open(output_file) as f:
             data = json.load(f)
 
@@ -111,13 +120,16 @@ class TestEnrichment(unittest.TestCase):
     @unittest.skipIf(os.getenv("CI") == "true", "Skipped in CI")
     def test_enrichment_funding(self):
         """Tests funding enrichment with a repo that has codemeta.json with funding."""
+        try:
+            somef_cli.run_cli(threshold=0.8,
+                            repo_url="https://github.com/codemeta/codemeta",
+                            output=test_data_path + "test-enrich-funding.json",
+                            enrich=True,
+                            pretty=True)
+        except process_repository.InsufficientTokenPermissions as e:
+            raise unittest.SkipTest(f"Token lacks permissions: {e}. "
+                            "Run `somef configure` (without -a) to set a token with proper scopes.")
         
-        somef_cli.run_cli(threshold=0.8,
-                        repo_url="https://github.com/codemeta/codemeta",
-                        output=test_data_path + "test-enrich-funding.json",
-                        enrich=True,
-                        pretty=True)
-
         with open(test_data_path + "test-enrich-funding.json") as f:
             data = json.load(f)
 
