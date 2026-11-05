@@ -1,8 +1,10 @@
 import os
 import unittest
 import json
+import requests
 from pathlib import Path
 from .. import somef_cli
+from .. import process_repository
 
 test_data_path = str(Path(__file__).parent / "test_data") + os.path.sep
 test_data_repositories = str(Path(__file__).parent / "test_data" / "repositories") + os.path.sep
@@ -13,17 +15,23 @@ class TestWiki(unittest.TestCase):
     
     def test_wiki_with_content(self):
         """Checks if codemeta file has been exported without wiki content"""
-        somef_cli.run_cli(threshold=0.8,
-                            ignore_classifiers=False,
-                            repo_url='https://github.com/juanjemdIos/fair_ontologies',
-                            doc_src=None,
-                            in_file=None,
-                            output=None,
-                            graph_out=None,
-                            graph_format="turtle",
-                            codemeta_out=test_data_path + 'test_wiki_with_content.json',
-                            pretty=False,
-                            missing=False)
+        try:
+            somef_cli.run_cli(threshold=0.8,
+                                ignore_classifiers=False,
+                                repo_url='https://github.com/juanjemdIos/fair_ontologies',
+                                doc_src=None,
+                                in_file=None,
+                                output=None,
+                                graph_out=None,
+                                graph_format="turtle",
+                                codemeta_out=test_data_path + 'test_wiki_with_content.json',
+                                pretty=False,
+                                missing=False)
+        except requests.exceptions.ConnectionError:
+            raise unittest.SkipTest("GitHub connection error (likely no token configured). "
+                                "Run `somef configure` to set a GitHub token.")
+        except process_repository.InsufficientTokenPermissions:
+            raise unittest.SkipTest("Insufficient token permissions. Run `somef configure` (without -a) to set a token with proper scopes.")
         
         json_file_path = test_data_path + "test_wiki_with_content.json"
         # check if the file has been created in the correct path

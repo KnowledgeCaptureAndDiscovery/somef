@@ -346,6 +346,17 @@ If you update SOMEF to a newer version, you must `configure` again the library (
 
 If you installed through poetry and you  have upgraded the python environment (e.g., from 3.10 to 3.11), you may need to run `poetry env use python3.11` and `poetry install` to update your environment.
 
+Sometimes when updating the library, you may see an error message like :
+
+```
+RuntimeWarning: NLTK will not read data from '/path/to/your/nltk_data/corpora': it is writable by, 
+or owned by, another account, so a planted or rewritten file would be loaded as trusted data. 
+Make it private to its owner (chmod go-w).
+```
+
+If you face this issue, just run the following command to fix it: 
+`chmod -R go-w /path/to/your/nltk_data folder`
+
 ## Usage
 
 ```bash
