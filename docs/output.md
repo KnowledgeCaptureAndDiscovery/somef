@@ -461,9 +461,13 @@ The table below summarizes the mapping between the SOMEF internal JSON structure
 
 | Codemeta / Schema.org Field  | SOMEF Category | Description |
 | :---                  | :---                  | :--- |
+| `alternateName`       | `full_title`	        | Alternative or full project title |
 | `applicationCategory` | `application_domain`  | Categories |
+| `archivedAt`          | `identifier`	        | Historical code archives (e.g., Software Heritage URLs) |
 | `author`              | `author`              | Principal authors |
 | `buildInstructions`   | `installation` / `documentation` | Installation or build instructions |
+| `citeAsID`          | `identifier`	        | Primary persistent identifier / DOI for the software citation |
+| `citeWith`          | `citation` ∫(Papers)        | Complete list of associated scholarly articles and publications |
 | `creditText`          | `citation` (Software)   | Human-readable citation for the software  *1*|
 | `codeRepository`      | `code_repository`       | Source code repository URL |
 | `contributor`         | `contributor`           | Project contributors |
@@ -487,21 +491,23 @@ The table below summarizes the mapping between the SOMEF internal JSON structure
 | `schema:owner`        | `owner`                  | Software owner |
 | `programmingLanguage` | `programming_languages` | Languages used |
 | `readme`              | `readme_url`            | README file URL |
-| `referencePublication`| `citation` (Papers)     || References to the main publication associated with this software component (as per author preference) *1*|
+| `referencePublication`| `citation` (Papers)     | References to the main/preferred publication associated with this software component *1*|
 | `releaseNotes`        | `releases`              | Release notes extracted from each release description |
-| `runtimePlatform`     | `runtime_platform`      || Supported runtime platforms (e.g., Python3, Java1.8)  |
+| `runtimePlatform`     | `runtime_platform`      | Supported runtime platforms (e.g., Python3, Java1.8)  |
 | `softwareRequirements`| `requirements`          | Technical dependencies and requirements extracted from config files or text|
 | `softwareVersion`     | `releases`              | Current version extracted from version of releases|
 | `url` | `homepage`              | Project homepage URL |
 
-*1* Handling Citations: `creditText` vs. `referencePublication`
+*1* Handling Citations: `creditText` vs. `referencePublication` vs. `citeWith`
 
 SOMEF reconciles extracted citations by distinguishing between the software itself and its associated scholarly articles. To ensure compliance with the Codemeta specification, the `citation` category from the internal JSON is processed and mapped to two distinct fields in the output:
 
 * **`creditText`**: This field is intended for the software itself, providing a ready-to-use citation string for users. It includes authors, the software title, and a direct link to the repository (added during the export process). SOMEF populates this when it detects software-related citations (e.g., from `CITATION.cff` or root metadata).
-* **`referencePublication`**: This field is intended for scholarly articles (including *preferred-citations* and general papers). These are mapped as `ScholarlyArticle` objects containing structured metadata such as DOI, journal, and title. SOMEF populates this field when it identifies citations based on specific indicators like `DOI`, `journal`, or explicit `ScholarlyArticle` classification.
+* **`referencePublication`**: This field is intended exclusively for the primary or *preferred-citation*  associated with the software (e.g., from a preferred-citation block in a `CITATION.cff` file). It is mapped as a structured `ScholarlyArticle` object containing metadata such as DOI, journal, authors, and title.
+* **`citeWith`**: This field aggregates the complete list of academic papers and references related to the software. It includes both the primary reference publication and any supplementary or cross-reference citations discovered during extraction, ensuring users have access to all contextual literature.
 
 This transformation ensures that the final Codemeta JSON-LD remains clean, compliant, and clearly separates the software project from its associated academic literature.
+
 
 Example: 
 ```
