@@ -759,21 +759,30 @@ class TestCodemetaExport(unittest.TestCase):
             json_content = json.loads(text_file.read())
         
         referencePublication = json_content[constants.CAT_CODEMETA_REFERENCEPUBLICATION]
+        citeWith = json_content[constants.CAT_CODEMETA_CITEWITH]
         creditText = json_content.get(constants.CAT_CODEMETA_CREDITTEXT, [])
 
-        assert len(referencePublication) == 2, f"Expected 2 publications, found {len(referencePublication)}"
-        
-        qss_pub = next((p for p in referencePublication if p.get("identifier") == "10.1162/qss_a_00167"), None)
+
+        # referencePublication: only the main publication (the preferred citation)
+        assert len(referencePublication) == 1, f"Expected 1 publication, found {len(referencePublication)}"
+        assert referencePublication[0]["identifier"] == "10.1162/qss_a_00167"
+
+        # citeWith: all the publications
+        assert len(citeWith) == 2, f"Expected 2 publications, found {len(citeWith)}"
+     
+        qss_pub = next((p for p in citeWith if p.get("identifier") == "10.1162/qss_a_00167"), None)
         assert qss_pub is not None, "QSS publication not found in referencePublication"
         assert qss_pub["@type"] == "ScholarlyArticle"
         assert qss_pub["name"] == "A Framework for Creating Knowledge Graphs of Scientific Software Metadata"
 
-        ieee_pub = next((p for p in referencePublication if p.get("identifier") == "10.1109/BigData47090.2019.9006447"), None)
+        ieee_pub = next((p for p in citeWith if p.get("identifier") == "10.1109/BigData47090.2019.9006447"), None)
         assert ieee_pub is not None, "IEEE publication not found in referencePublication"
         assert ieee_pub["@type"] == "ScholarlyArticle"
         assert "SoMEF" in ieee_pub["name"]
 
-  
+          # the main publication is the first one in citeWith too
+        assert citeWith[0]["identifier"] == "10.1162/qss_a_00167"
+
         assert len(creditText) > 0, "creditText list should not be empty"
         assert any("somef: software metadata extraction framework" in c.lower() for c in creditText), \
             "Software citation not found in creditText"
@@ -830,6 +839,7 @@ class TestCodemetaExport(unittest.TestCase):
         assert isinstance(owners, list), "schema:owner should be a list"
         assert any(o.get("@type") == "Organization" for o in owners), "schema:owner should contain an Organization"
         assert any(o.get("name") == "KnowledgeCaptureAndDiscovery" for o in owners), "Expected KnowledgeCaptureAndDiscovery as owner"
+
     def test_issue_544(self):
         """Checks whether application domain is correctly exported to applicationCategory in codemeta"""
         
@@ -1147,6 +1157,36 @@ class TestCodemetaExport(unittest.TestCase):
             f"Expected a single deduplicated creditText entry, got {len(credit_text)}: {credit_text}"
 
         os.remove(output_path)
+
+
+    def test_issue_1143_codemeta_v4(self):
+        """Checks new terms in codemeta v4"""
+        output_path = test_data_path + 'test_codemeta_v4.json'
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url=None,
+                        local_repo=test_data_repositories + "Widoco",
+                        output=None,
+                        codemeta_out=output_path,
+                        pretty=True,
+                        readme_only=False)
+
+        with open(output_path) as f:
+            json_content = json.load(f)
+
+        alternate_name = json_content.get(constants.CAT_CODEMETA_ALTERNATENAME)
+        assert alternate_name == ["WIzard for DOCumenting Ontologies (WIDOCO)"], "Key 'alternateName' is missing or incorrect"
+   
+        cite_with = json_content.get(constants.CAT_CODEMETA_CITEWITH)
+        assert cite_with, "Key 'citeWith' is missing in JSON"
+        assert cite_with[0]["@type"] == "ScholarlyArticle"
+        assert cite_with[0]["name"] == "WIDOCO: a wizard for documenting ontologies"
+
+        cite_as_id = json_content.get(constants.CAT_CODEMETA_CITEASID)
+        assert cite_as_id == ["https://doi.org/10.5281/zenodo.591294"], "Key 'citeAsID' is missing or incorrect"
+
+        os.remove(output_path)
+
 
     @classmethod
     def tearDownClass(cls):
