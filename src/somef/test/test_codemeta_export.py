@@ -1165,7 +1165,7 @@ class TestCodemetaExport(unittest.TestCase):
         somef_cli.run_cli(threshold=0.8,
                         ignore_classifiers=False,
                         repo_url=None,
-                        local_repo=test_data_repositories + "widoco",
+                        local_repo=test_data_repositories + "Widoco",
                         output=None,
                         codemeta_out=output_path,
                         pretty=True,
@@ -1174,17 +1174,17 @@ class TestCodemetaExport(unittest.TestCase):
         with open(output_path) as f:
             json_content = json.load(f)
 
-        alternate_name = json_content.get("alternateName")
+        alternate_name = json_content.get(constants.CAT_CODEMETA_ALTERNATENAME)
         assert alternate_name == ["WIzard for DOCumenting Ontologies (WIDOCO)"], "Key 'alternateName' is missing or incorrect"
-
-        cite_with = json_content.get("citeWith")
+   
+        cite_with = json_content.get(constants.CAT_CODEMETA_CITEWITH)
         assert cite_with, "Key 'citeWith' is missing in JSON"
         assert cite_with[0]["@type"] == "ScholarlyArticle"
         assert cite_with[0]["name"] == "WIDOCO: a wizard for documenting ontologies"
 
-        cite_as_id = json_content.get("citeAsID")
+        cite_as_id = json_content.get(constants.CAT_CODEMETA_CITEASID)
         assert cite_as_id == ["https://doi.org/10.5281/zenodo.591294"], "Key 'citeAsID' is missing or incorrect"
-        
+
         os.remove(output_path)
 
 
