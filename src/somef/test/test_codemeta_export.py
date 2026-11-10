@@ -57,7 +57,7 @@ class TestCodemetaExport(unittest.TestCase):
 
 
     def test_codemeta_version(self):
-        """Checks if codemeta version is v3"""
+        """Checks if codemeta version is v4"""
         somef_cli.run_cli(threshold=0.8,
                           ignore_classifiers=False,
                           repo_url=None,
@@ -78,8 +78,8 @@ class TestCodemetaExport(unittest.TestCase):
         data = text_file.read()
         text_file.close()
 
-        assert "https://w3id.org/codemeta/3.0" in json.dumps(data), \
-        "Json must be contained codemeta version 3"
+        assert "https://w3id.org/codemeta/4.0" in json.dumps(data), \
+        "Json must be contained codemeta version 4"
 
         os.remove(json_file_path)
 
