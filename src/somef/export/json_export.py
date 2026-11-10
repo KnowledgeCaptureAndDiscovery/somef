@@ -55,7 +55,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         code_repository = repo_data[constants.CAT_CODE_REPOSITORY][0][constants.PROP_RESULT][constants.PROP_VALUE]
 
     codemeta_output = {
-        "@context": "https://w3id.org/codemeta/3.0",
+        "@context": "https://w3id.org/codemeta/4.0",
         "@type": ["SoftwareSourceCode", "SoftwareApplication"]
     }
 
