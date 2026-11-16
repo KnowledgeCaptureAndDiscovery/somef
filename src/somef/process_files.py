@@ -462,38 +462,8 @@ def process_repository_files(repo_dir, metadata_result: Result, repo_type, owner
                             break
 
         # Use CFF authors only as fallback when no other authors were found (issue #1061)
-        if not metadata_result.results.get(constants.CAT_AUTHORS):
-            for entry in metadata_result.results.get(constants.CAT_CITATION, []):
-                cff_result = entry.get(constants.PROP_RESULT, {})
-                if (cff_result.get(constants.PROP_FORMAT) == constants.FORMAT_CFF
-                        and cff_result.get(constants.PROP_TYPE) == constants.SOFTWARE_APPLICATION):
-                    for author_item in cff_result.get(constants.PROP_AUTHOR, []):
-                        given = author_item.get(constants.PROP_GIVEN_NAME, "")
-                        family = author_item.get(constants.PROP_FAMILY_NAME, "")
-                        name = author_item.get(constants.PROP_NAME) or f"{given} {family}".strip()
-                        if not name:
-                            continue
+        add_cff_authors_fallback(metadata_result)
 
-                        author_data = {
-                            constants.PROP_NAME: name,
-                            constants.PROP_TYPE: constants.AGENT,
-                            constants.PROP_VALUE: name,
-                        }
-                        if family:
-                            author_data["last_name"] = family
-                        if given:
-                            author_data["given_name"] = given
-                        if author_item.get(constants.PROP_URL):
-                            author_data[constants.PROP_URL] = author_item[constants.PROP_URL]
-
-                        metadata_result.add_result(
-                            constants.CAT_AUTHORS,
-                            author_data,
-                            1,
-                            constants.TECHNIQUE_FILE_EXPLORATION,
-                            entry.get(constants.PROP_SOURCE)
-                        )
-                    break
         return text, metadata_result
     except TypeError:
         logging.error("Error when opening the repository files")
@@ -965,3 +935,43 @@ def parse_version_cff(version_value, metadata_result, url):
 
     except Exception as e:
         logging.error(f"Error parsing version from CFF: {str(e)}")
+
+
+def add_cff_authors_fallback(metadata_result):
+    """use authors declared in CITATION.cff only when no
+    other source (AUTHORS.md, package files, codemeta, ...) provided authors."""
+    
+    if metadata_result.results.get(constants.CAT_AUTHORS):
+        return
+
+    for entry in metadata_result.results.get(constants.CAT_CITATION, []):
+        cff_result = entry.get(constants.PROP_RESULT, {})
+        if (cff_result.get(constants.PROP_FORMAT) != constants.FORMAT_CFF
+                or cff_result.get(constants.PROP_TYPE) != constants.SOFTWARE_APPLICATION):
+            continue
+
+        for author in cff_result.get(constants.PROP_AUTHOR, []):
+            name = author.get(constants.PROP_NAME)
+            if not name:
+                continue
+
+            author_data = {
+                constants.PROP_NAME: name,
+                constants.PROP_TYPE: constants.AGENT,
+                constants.PROP_VALUE: name,
+            }
+            if author.get(constants.PROP_FAMILY_NAME):
+                author_data["last_name"] = author[constants.PROP_FAMILY_NAME]
+            if author.get(constants.PROP_GIVEN_NAME):
+                author_data["given_name"] = author[constants.PROP_GIVEN_NAME]
+            if author.get(constants.PROP_URL):
+                author_data[constants.PROP_URL] = author[constants.PROP_URL]
+
+            metadata_result.add_result(
+                constants.CAT_AUTHORS,
+                author_data,
+                1,
+                constants.TECHNIQUE_FILE_EXPLORATION,
+                entry.get(constants.PROP_SOURCE)
+            )
+        break
