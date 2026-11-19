@@ -17,6 +17,7 @@ def parse_dockerfile(file_path, metadata_result: Result, source):
         logging.warning(f"Could not process Dockerfile {file_path}: {e}")
         return None
 
+    container = {}      
     # print(content)
     title_match = re.search(
         constants.REGEXP_DOCKER_TITLE,
@@ -37,6 +38,7 @@ def parse_dockerfile(file_path, metadata_result: Result, source):
                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
                 source
             )
+            container[constants.PROP_NAME] = title
 
     description_match = re.search(
         constants.REGEXP_DOCKER_DESCRIPTION,
@@ -57,6 +59,7 @@ def parse_dockerfile(file_path, metadata_result: Result, source):
                 constants.TECHNIQUE_CODE_CONFIG_PARSER,
                 source
             )
+            container[constants.PROP_DESCRIPTION] = description
 
     licenses_match = re.search(constants.REGEXP_DOCKER_LICENSES, content, re.IGNORECASE)
     if licenses_match:
@@ -81,6 +84,9 @@ def parse_dockerfile(file_path, metadata_result: Result, source):
             constants.TECHNIQUE_CODE_CONFIG_PARSER,
             source
         )
+        container[constants.PROP_LICENSE] = license_data["value"]
+        if license_data.get("spdx_id"):
+            container[constants.PROP_SPDX_ID] = license_data["spdx_id"]
 
 
     # source_match = re.search(constants.REGEXP_DOCKER_SOURCE, content, re.IGNORECASE)
@@ -99,10 +105,11 @@ def parse_dockerfile(file_path, metadata_result: Result, source):
             constants.TECHNIQUE_CODE_CONFIG_PARSER,
             source
         )
+        container[constants.PROP_URL] = url_match.group(1).strip()
 
     version_match = re.search(constants.REGEXP_DOCKER_VERSION, content, re.IGNORECASE)
     if version_match:
-            metadata_result.add_result(
+        metadata_result.add_result(
             constants.CAT_VERSION,
             {
                 "value": version_match.group(1).strip(),
@@ -113,7 +120,8 @@ def parse_dockerfile(file_path, metadata_result: Result, source):
             constants.TECHNIQUE_CODE_CONFIG_PARSER,
             source
         )
-
+        container[constants.PROP_VERSION] = version_match.group(1).strip()
+    
     documentation_match = re.search(constants.REGEXP_DOCKER_DOCUMENTATION, content, re.IGNORECASE)
     if documentation_match:
         metadata_result.add_result(
@@ -126,6 +134,7 @@ def parse_dockerfile(file_path, metadata_result: Result, source):
             constants.TECHNIQUE_CODE_CONFIG_PARSER,
             source
         )
+        container[constants.PROP_DOCUMENTATION] = documentation_match.group(1).strip()
 
 
     vendor_match = re.search(
@@ -179,7 +188,10 @@ def parse_dockerfile(file_path, metadata_result: Result, source):
     maintainers.extend(maintainer_match)
 
     unique_maintainers = list({m.strip() for m in maintainers if m.strip()})
-
+    if unique_maintainers:
+        container[constants.PROP_AUTHOR] = [
+            {constants.PROP_TYPE: constants.AGENT, constants.PROP_VALUE: m} for m in unique_maintainers
+        ]
     for maintainer in unique_maintainers:         
         metadata_result.add_result(
             constants.CAT_AUTHORS,
@@ -187,6 +199,20 @@ def parse_dockerfile(file_path, metadata_result: Result, source):
                 "type": constants.AGENT,
                 "value": maintainer
             },
+            1,
+            constants.TECHNIQUE_CODE_CONFIG_PARSER,
+            source
+        )
+
+    if container:
+        container_result = {
+            constants.PROP_TYPE: constants.URL if str(source).startswith("http") else constants.STRING,
+            constants.PROP_VALUE: source,
+        }
+        container_result.update(container)
+        metadata_result.add_result(
+            constants.CAT_CONTAINER,
+            container_result,
             1,
             constants.TECHNIQUE_CODE_CONFIG_PARSER,
             source
