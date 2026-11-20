@@ -1183,7 +1183,12 @@ class TestCodemetaExport(unittest.TestCase):
         assert cite_with[0]["name"] == "WIDOCO: a wizard for documenting ontologies"
 
         cite_as_id = json_content.get(constants.CAT_CODEMETA_CITEASID)
+
         assert cite_as_id == ["https://doi.org/10.5281/zenodo.591294"], "Key 'citeAsID' is missing or incorrect"
+        
+        archived_at = json_content.get(constants.CAT_CODEMETA_ARCHIVEDAT)
+        assert archived_at, "Key 'archivedAt' is missing in JSON"
+        assert any("zenodo" in a for a in archived_at), archived_at
 
         os.remove(output_path)
 

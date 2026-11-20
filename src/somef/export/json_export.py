@@ -486,6 +486,13 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                         if cite_as_id not in cite_as_ids:
                             cite_as_ids.append(cite_as_id)
 
+
+                    if not cite_as_ids and constants.CAT_IDENTIFIER in repo_data:
+                        for identifier in repo_data[constants.CAT_IDENTIFIER]:
+                            value = identifier[constants.PROP_RESULT][constants.PROP_VALUE]
+                            if isinstance(value, str) and value.startswith("http") and value not in cite_as_ids:
+                                cite_as_ids.append(value)
+                                
                     if not authors:
                         authors = yaml_content.get("authors", []) or preferred_citation.get("authors", [])
                     raw_title = preferred_citation.get("title") or yaml_content.get("title")
@@ -626,7 +633,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
             value = domain[constants.PROP_RESULT][constants.PROP_VALUE]
             if value not in codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY]:
                 codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY].append(value)
-                
+
     if constants.CAT_IDENTIFIER in repo_data:
         codemeta_output[constants.CAT_CODEMETA_IDENTIFIER] = []
         archived_at = []
@@ -635,7 +642,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
             value = identifier[constants.PROP_RESULT][constants.PROP_VALUE]
             if value not in codemeta_output[constants.CAT_CODEMETA_IDENTIFIER]:
                 codemeta_output[constants.CAT_CODEMETA_IDENTIFIER].append(value)
-            if isinstance(value, str) and value.startswith(constants.SWH_ROOT) and value not in archived_at:
+            if is_archived_identifier(value) and value not in archived_at:
                 archived_at.append(value)
 
         if archived_at:
@@ -865,6 +872,16 @@ def extract_doi(url: str) -> str:
 
     match = re.search(constants.REGEXP_ALL_DOIS, url, re.IGNORECASE)
     return match.group(0).lower() if match else ""
+
+def is_archived_identifier(value: str) -> bool:
+    """Checks whether an identifier points to an archived copy of the software."""
+    if not isinstance(value, str):
+        return False
+    return value.startswith((
+        constants.SWH_ROOT,
+        constants.ZENODO_DOI_ROOT,
+        constants.ZENODO_RECORD_ROOT,
+    ))
 
 def map_requirement_type(t):
     """

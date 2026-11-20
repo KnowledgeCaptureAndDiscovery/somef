@@ -384,6 +384,8 @@ BITBUCKET_API = "https://api.bitbucket.org/2.0/repositories"
 
 # Software Heritage
 SWH_ROOT = "https://archive.softwareheritage.org/"
+ZENODO_DOI_ROOT = "https://doi.org/10.5281/zenodo."
+ZENODO_RECORD_ROOT = "https://zenodo.org/records/"
 REGEXP_SWH = r'\[\!\[SWH\]([^\]]+)\]\(([^)]+)\)'
 REGEXP_SWH_ANCHOR = r"anchor=(swh:1:[a-z]+:[a-f0-9]{40})"
 REGEXP_SWH_ALL_IDENTIFIERS = r"(swh:1:[a-z]+:[a-f0-9]{40})"

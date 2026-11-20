@@ -463,11 +463,11 @@ The table below summarizes the mapping between the SOMEF internal JSON structure
 | :---                  | :---                  | :--- |
 | `alternateName`       | `full_title`	        | Alternative or full project title |
 | `applicationCategory` | `application_domain`  | Categories |
-| `archivedAt`          | `identifier`	        | Historical code archives (e.g., Software Heritage URLs) |
+| `archivedAt`          | `identifier`	        | Historical code archives (e.g., Software Heritage, Zenodo URLs) |
 | `author`              | `author`              | Principal authors |
 | `buildInstructions`   | `installation` / `documentation` | Installation or build instructions |
-| `citeAsID`          | `identifier`	        | Primary persistent identifier / DOI for the software citation |
-| `citeWith`          | `citation` ∫(Papers)        | Complete list of associated scholarly articles and publications |
+| `citeAsID`  | `identifier` | Permanent identifier (if it is a URL) of a specific citable version of the software |
+| `citeWith`  | `citation` (Papers) | Papers that should be cited with this version of the software |
 | `creditText`          | `citation` (Software)   | Human-readable citation for the software  *1*|
 | `codeRepository`      | `code_repository`       | Source code repository URL |
 | `contributor`         | `contributor`           | Project contributors |
@@ -491,7 +491,7 @@ The table below summarizes the mapping between the SOMEF internal JSON structure
 | `schema:owner`        | `owner`                  | Software owner |
 | `programmingLanguage` | `programming_languages` | Languages used |
 | `readme`              | `readme_url`            | README file URL |
-| `referencePublication`| `citation` (Papers)     | References to the main/preferred publication associated with this software component *1*|
+| `referencePublication`| `citation` (Papers)     | References to the main/preferred publication(s) associated with this software component *1*|
 | `releaseNotes`        | `releases`              | Release notes extracted from each release description |
 | `runtimePlatform`     | `runtime_platform`      | Supported runtime platforms (e.g., Python3, Java1.8)  |
 | `softwareRequirements`| `requirements`          | Technical dependencies and requirements extracted from config files or text|
