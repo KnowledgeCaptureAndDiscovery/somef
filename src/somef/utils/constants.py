@@ -384,6 +384,8 @@ BITBUCKET_API = "https://api.bitbucket.org/2.0/repositories"
 
 # Software Heritage
 SWH_ROOT = "https://archive.softwareheritage.org/"
+ZENODO_DOI_ROOT = "https://doi.org/10.5281/zenodo."
+ZENODO_RECORD_ROOT = "https://zenodo.org/records/"
 REGEXP_SWH = r'\[\!\[SWH\]([^\]]+)\]\(([^)]+)\)'
 REGEXP_SWH_ANCHOR = r"anchor=(swh:1:[a-z]+:[a-f0-9]{40})"
 REGEXP_SWH_ALL_IDENTIFIERS = r"(swh:1:[a-z]+:[a-f0-9]{40})"
@@ -568,9 +570,13 @@ RATE_LIMIT_MAX_WAIT_SECONDS = 60
 RATE_LIMIT_DEFAULT_WAIT_SECONDS = 5
 
 # CODEMETA Categories. All start with CAT_CODEMETA
+CAT_CODEMETA_ALTERNATENAME = "alternateName"
 CAT_CODEMETA_APPLICATIONCATEGORY = "applicationCategory"
+CAT_CODEMETA_ARCHIVEDAT = "archivedAt"
 CAT_CODEMETA_AUTHOR = "author"
 CAT_CODEMETA_BUILDINSTRUCTIONS = "buildInstructions"
+CAT_CODEMETA_CITEASID = "citeAsID"
+CAT_CODEMETA_CITEWITH = "citeWith"  
 CAT_CODEMETA_CODEREPOSITORY = "codeRepository"
 CAT_CODEMETA_CONTRIBUTOR = "contributor"
 CAT_CODEMETA_CONTINUOUSINTEGRATION = "continuousIntegration"

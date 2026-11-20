@@ -1,5 +1,5 @@
 The following metadata fields can be extracted from a codemeta.json file.   
-These fields are defined in the [Codemeta specification](https://github.com/codemeta/codemeta/blob/master/crosswalk.csv), currently at version **3.0**, and are mapped according to the properties and classes defined in the CodeMeta vocabulary.
+These fields are defined in the [Codemeta specification](https://github.com/codemeta/codemeta/blob/master/crosswalk.csv), currently at version **4.0**, and are mapped according to the properties and classes defined in the CodeMeta vocabulary.
 
 | Software metadata category    |    SOMEF metadata JSON path  | CODEMETA.JSON metadata file field          |
 |-------------------------------|------------------------------|--------------------------------------------|
@@ -8,11 +8,12 @@ These fields are defined in the [Codemeta specification](https://github.com/code
 | author - email                   |   author[i].result.email                 |     author.email    |
 | author - affiliation                  |   author[i].result.affiliation    |     author.affiliation  |
 | author - identifier                   |   author[i].result.identifier     |     author.identifier or author.@id  |
-| citation - value                 |   citation[i].result.value     |     referencePublication.name or referencePublication.title           |    
-| citation - title                  |   citation[i].result.title     |      referencePublication.name or referencePublication.title            |    
-| citation - url                  |   citation[i].result.url  |         referencePublication.url   |    
-| citation - date published                  |   citation[i].result.date_published  |     referencePublication.datePublished        
-| citation - doi                   |   citation[i].result.doi       |     referencePublication.identifier   | 
+| citation - value                 |   citation[i].result.value     |     referencePublication.name or referencePublication.title (main); citeWith.name or citeWith.title (all papers) |
+| citation - title                  |   citation[i].result.title     |      referencePublication.name or referencePublication.title (main); citeWith.name or citeWith.title (all papers) |
+| citation - url                  |   citation[i].result.url  |         referencePublication.url (main); citeWith.url (all papers)   |
+| citation - date published                  |   citation[i].result.date_published  |     referencePublication.datePublished (main); citeWith.datePublished (all papers) |
+| citation - doi                   |   citation[i].result.doi       |     referencePublication.identifier (main); citeWith.identifier (all papers) |
+| citeWith         | citation (Papers)  | Papers that should be cited with this version of the software |
 | code_repository           |   code_repository[i].result.value   |     codeRepository           |
 | continuous_integration    |   continuous_integration[i].result.value |     contIntegration          |
 | contributor - value   |   contributor[i].result.value |     contributor.givenName + contributor.familyName or just name if organization       |
@@ -27,14 +28,17 @@ These fields are defined in the [Codemeta specification](https://github.com/code
 | description               |   description[i].result.value   |     description                    |
 | development_status       |   development_status[i].result.value  |     developmentStatus  |
 | download_url              |   download_url[i].result.value          |     downloadUrl              |
-| has_package_file         |   has_package_file[i].result.value         |   URL of the codemeta.json file |
 | features                  |   features[i].result.value          |     featureList                 |
 | funding - type            |   funding[i].result.type         |     Always "Grant" *(1)*|
 | funding - value           |   funding[i].result.value        |     funding string, or "identifier: name" when both exist, or funder.name *(1)*|
-| funding - identifier      |   funding[i].result.identifier   |     funding.identifier *(2)*|
-| funding - name            |   funding[i].result.name         |     funding.name *(2)*|
+| funding - identifier      |   funding[i].result.identifier   |     funding.identifier |
+| funding - name            |   funding[i].result.name         |     funding.name |
 | funding - funder          |   funding[i].result.funder       |     funder object: name + url taken from funder.url or funder.@id *(1)*|
+| full_title - value       |   full_title[i].result.value   |     alternateName      |
+| has_package_file         |   has_package_file[i].result.value         |   URL of the codemeta.json file |
 | identifier               |   identifier[i].result.value       |     identifier                     |
+| identifier - value | identifier[i].result.value (if it is a URL) | citeAsID (permanent identifier of a specific citable version of the software) |
+| identifier - value | identifier[i].result.value (if it is an archive URL, e.g. Software Heritage, Zenodo) | archivedAt |
 | issue_tracker             |   issue_tracker[i].result.value           |     issueTracker             |
 | keywords                  |   keywords[i].result.value          |     keywords                 |
 | license - value                   |   license[i].result .value        |     license.name                   |

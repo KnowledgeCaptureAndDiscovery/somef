@@ -55,7 +55,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         code_repository = repo_data[constants.CAT_CODE_REPOSITORY][0][constants.PROP_RESULT][constants.PROP_VALUE]
 
     codemeta_output = {
-        "@context": "https://w3id.org/codemeta/3.0",
+        "@context": "https://w3id.org/codemeta/4.0",
         "@type": ["SoftwareSourceCode", "SoftwareApplication"]
     }
 
@@ -444,6 +444,7 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
         credit_candidates = {}
         author_orcids = {}
         all_reference_publications = []
+        cite_as_ids = []
 
         if constants.CAT_CITATION in repo_data:
             publications_source = repo_data[constants.CAT_CITATION]
@@ -477,6 +478,21 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                     url_citation = preferred_citation.get("url") or yaml_content.get("url")
                     identifier_url = next((id["value"] for id in identifiers if id["type"] == "url"), None)
                     identifier_doi = next((id["value"] for id in identifiers if id["type"] == "doi"), None)
+                     # DOI of the software itself (not of the preferred-citation paper)
+                    software_doi = yaml_content.get("doi") or identifier_doi
+                    if software_doi:
+                        cite_as_id = software_doi if software_doi.startswith("http") \
+                            else f"https://doi.org/{software_doi}"
+                        if cite_as_id not in cite_as_ids:
+                            cite_as_ids.append(cite_as_id)
+
+
+                    if not cite_as_ids and constants.CAT_IDENTIFIER in repo_data:
+                        for identifier in repo_data[constants.CAT_IDENTIFIER]:
+                            value = identifier[constants.PROP_RESULT][constants.PROP_VALUE]
+                            if isinstance(value, str) and value.startswith("http") and value not in cite_as_ids:
+                                cite_as_ids.append(value)
+                                
                     if not authors:
                         authors = yaml_content.get("authors", []) or preferred_citation.get("authors", [])
                     raw_title = preferred_citation.get("title") or yaml_content.get("title")
@@ -578,7 +594,8 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
 
                         all_reference_publications.append({
                             **scholarlyArticle,
-                            "_source_format": "cff" if not is_bibtex else "bibtex"
+                            "_source_format": "cff" if not is_bibtex else "bibtex",
+                            "_preferred": str(cit_result.get("is_preferred_citation")).lower() == "true"
                         })
 
             for article in all_reference_publications:
@@ -591,10 +608,17 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                         if key and key in author_orcids:
                             author["@id"] = author_orcids[key] 
 
-            codemeta_output[constants.CAT_CODEMETA_REFERENCEPUBLICATION] = deduplicate_publications(all_reference_publications)
-            # if credit_text_list:
+            publications = deduplicate_publications(all_reference_publications)
+            if publications:
+                # main
+                codemeta_output[constants.CAT_CODEMETA_REFERENCEPUBLICATION] = [publications[0]]
+                # all the publications
+                codemeta_output[constants.CAT_CODEMETA_CITEWITH] = publications
+
+            if cite_as_ids:
+                codemeta_output[constants.CAT_CODEMETA_CITEASID] = cite_as_ids
+
             if credit_candidates:
-                # codemeta_output[constants.CAT_CODEMETA_CREDITTEXT] = list(set(credit_text_list))
                 codemeta_output[constants.CAT_CODEMETA_CREDITTEXT] = [c for _, c in credit_candidates.values()]
 
     if constants.CAT_STATUS in repo_data:
@@ -609,14 +633,20 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
             value = domain[constants.PROP_RESULT][constants.PROP_VALUE]
             if value not in codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY]:
                 codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY].append(value)
-                
+
     if constants.CAT_IDENTIFIER in repo_data:
         codemeta_output[constants.CAT_CODEMETA_IDENTIFIER] = []
+        archived_at = []
 
         for identifier in repo_data[constants.CAT_IDENTIFIER]:
-          value = identifier[constants.PROP_RESULT][constants.PROP_VALUE]
-          if value not in codemeta_output[constants.CAT_CODEMETA_IDENTIFIER]:
-            codemeta_output[constants.CAT_CODEMETA_IDENTIFIER].append(value)
+            value = identifier[constants.PROP_RESULT][constants.PROP_VALUE]
+            if value not in codemeta_output[constants.CAT_CODEMETA_IDENTIFIER]:
+                codemeta_output[constants.CAT_CODEMETA_IDENTIFIER].append(value)
+            if is_archived_identifier(value) and value not in archived_at:
+                archived_at.append(value)
+
+        if archived_at:
+            codemeta_output[constants.CAT_CODEMETA_ARCHIVEDAT] = archived_at
 
     if constants.CAT_HOMEPAGE in repo_data:
 
@@ -687,6 +717,15 @@ def save_codemeta_output(repo_data, outfile, pretty=False, requirements_mode='al
                 application_categories.append(value)
         if application_categories:
             codemeta_output[constants.CAT_CODEMETA_APPLICATIONCATEGORY] = application_categories
+
+    if constants.CAT_FULL_TITLE in repo_data:
+        alternate_names = []
+        for title in repo_data[constants.CAT_FULL_TITLE]:
+            value = title[constants.PROP_RESULT][constants.PROP_VALUE]
+            if value and value not in alternate_names:
+                alternate_names.append(value)
+        if alternate_names:
+            codemeta_output[constants.CAT_CODEMETA_ALTERNATENAME] = alternate_names
 
     if constants.CAT_FUNDING in repo_data:
         grants_export = []
@@ -792,6 +831,7 @@ def deduplicate_publications(publications: List[Dict]) -> List[Dict]:
             seen[key] = pub
         else:
             existing = seen[key]
+            preferred = existing.get("_preferred") or pub.get("_preferred")
             existing_format = existing.get("_source_format", "")
             new_format = pub.get("_source_format", "")
             existing_url = (existing.get("url") or "").lower()
@@ -814,9 +854,13 @@ def deduplicate_publications(publications: List[Dict]) -> List[Dict]:
                 if not is_doi_url_existing and is_doi_url_new:
                     seen[key] = pub
 
+            if preferred:
+                seen[key]["_preferred"] = True
+
     result = []
     for pub in seen.values():
         pub.pop("_source_format", None)
+        pub.pop("_preferred", None)
         result.append(pub)
 
     return result
@@ -828,6 +872,16 @@ def extract_doi(url: str) -> str:
 
     match = re.search(constants.REGEXP_ALL_DOIS, url, re.IGNORECASE)
     return match.group(0).lower() if match else ""
+
+def is_archived_identifier(value: str) -> bool:
+    """Checks whether an identifier points to an archived copy of the software."""
+    if not isinstance(value, str):
+        return False
+    return value.startswith((
+        constants.SWH_ROOT,
+        constants.ZENODO_DOI_ROOT,
+        constants.ZENODO_RECORD_ROOT,
+    ))
 
 def map_requirement_type(t):
     """
