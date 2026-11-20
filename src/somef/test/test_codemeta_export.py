@@ -1159,6 +1159,40 @@ class TestCodemetaExport(unittest.TestCase):
         os.remove(output_path)
 
 
+    def test_issue_1061_cff_authors_without_authors_md(self):
+        """If there is no AUTHORS.md but a CITATION.cff, the CFF authors must be
+        exported as software authors in codemeta (#1061)"""
+        output_path = test_data_path + 'test_codemeta_issue_1061.json'
+
+        somef_cli.run_cli(threshold=0.8,
+                        ignore_classifiers=False,
+                        repo_url=None,
+                        local_repo=test_data_repositories + "fair-ontologies",
+                        output=None,
+                        codemeta_out=output_path,
+                        pretty=True,
+                        readme_only=False)
+        
+        assert os.path.exists(output_path), f"File {output_path} doesn't exist."
+
+        with open(output_path) as f:
+            json_content = json.load(f)
+
+        authors = json_content.get(constants.CAT_CODEMETA_AUTHOR, [])
+        author_names = [a.get("name", "") for a in authors]
+
+        # The two authors declared at the root of CITATION.cff
+        assert len(authors) == 2, f"Expected 2 authors from CITATION.cff, got {authors}"
+        assert any("Garijo" in name for name in author_names), author_names
+        assert any("Poveda" in name for name in author_names), author_names
+
+        # Oscar Corcho only appears in preferred-citation -> must stay in
+        # referencePublication, not be promoted to software author
+        assert not any("Corcho" in name for name in author_names), author_names
+
+        os.remove(output_path)
+                         
+          
     def test_issue_1143_codemeta_v4(self):
         """Checks new terms in codemeta v4"""
         output_path = test_data_path + 'test_codemeta_v4.json'
@@ -1169,8 +1203,8 @@ class TestCodemetaExport(unittest.TestCase):
                         output=None,
                         codemeta_out=output_path,
                         pretty=True,
-                        readme_only=False)
-
+                        readme_only=False)   
+        
         with open(output_path) as f:
             json_content = json.load(f)
 
@@ -1191,8 +1225,8 @@ class TestCodemetaExport(unittest.TestCase):
         assert any("zenodo" in a for a in archived_at), archived_at
 
         os.remove(output_path)
-
-
+       
+                          
     @classmethod
     def tearDownClass(cls):
         """delete temp file JSON just if all the test pass"""
@@ -1203,7 +1237,8 @@ class TestCodemetaExport(unittest.TestCase):
             except Exception as e:
                 print(f"Failed to delete {cls.json_file}: {e}")  
 
-    
+
+
 if __name__ == "__main__":
     unittest.main()
  
