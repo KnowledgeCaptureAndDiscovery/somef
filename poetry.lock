@@ -286,14 +286,14 @@ files = [
 
 [[package]]
 name = "click-option-group"
-version = "0.5.9"
+version = "0.5.10"
 description = "Option groups missing in Click"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "click_option_group-0.5.9-py3-none-any.whl", hash = "sha256:ad2599248bd373e2e19bec5407967c3eec1d0d4fc4a5e77b08a0481e75991080"},
-    {file = "click_option_group-0.5.9.tar.gz", hash = "sha256:f94ed2bc4cf69052e0f29592bd1e771a1789bd7bfc482dd0bc482134aff95823"},
+    {file = "click_option_group-0.5.10-py3-none-any.whl", hash = "sha256:667f9dafdbe15f69c7e877e14c94175ab2e16b6a1ab4b7ffac51513ed624a8dc"},
+    {file = "click_option_group-0.5.10.tar.gz", hash = "sha256:22d6a7d102b4ead6a0b8601d577386d390deae91038662f2bd1d013806184ab7"},
 ]
 
 [package.dependencies]
